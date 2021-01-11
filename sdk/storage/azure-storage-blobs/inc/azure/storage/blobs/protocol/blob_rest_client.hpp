@@ -4788,7 +4788,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -4882,7 +4883,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
           if (content_md5__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentHash.Value = Azure::Core::Base64Decode(content_md5__iterator->second);
+            response.HttpHeaders.ContentHash.Value
+                = Azure::Core::Base64Decode(content_md5__iterator->second);
           }
           auto x_ms_blob_content_md5__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
@@ -5220,7 +5222,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -5335,7 +5338,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
           if (content_md5__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentHash.Value = Azure::Core::Base64Decode(content_md5__iterator->second);
+            response.HttpHeaders.ContentHash.Value
+                = Azure::Core::Base64Decode(content_md5__iterator->second);
           }
           auto x_ms_blob_content_md5__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
@@ -5526,7 +5530,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (!Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
+                "x-ms-blob-content-md5",
+                Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -5630,7 +5635,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -5977,7 +5983,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -6723,7 +6730,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -6739,7 +6747,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
             {
               request.AddHeader(
-                  "Content-MD5", Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
+                  "Content-MD5",
+                  Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
             }
             else if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
             {
@@ -6767,7 +6776,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (!Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
+                "x-ms-blob-content-md5",
+                Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -6907,7 +6917,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
             {
               request.AddHeader(
-                  "Content-MD5", Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
+                  "Content-MD5",
+                  Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
             }
             else if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
             {
@@ -6927,7 +6938,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -7061,7 +7073,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -7206,7 +7219,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (!Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
+                "x-ms-blob-content-md5",
+                Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -7228,7 +7242,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -7575,7 +7590,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (!Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
+                "x-ms-blob-content-md5",
+                Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -7608,7 +7624,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -7735,7 +7752,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
             {
               request.AddHeader(
-                  "Content-MD5", Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
+                  "Content-MD5",
+                  Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
             }
             else if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
             {
@@ -7774,7 +7792,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -7967,7 +7986,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -8132,7 +8152,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -8254,7 +8275,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -8731,7 +8753,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (!Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
+                "x-ms-blob-content-md5",
+                Azure::Core::Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -8754,7 +8777,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -8870,7 +8894,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
             {
               request.AddHeader(
-                  "Content-MD5", Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
+                  "Content-MD5",
+                  Azure::Core::Base64Encode(options.TransactionalContentHash.GetValue().Value));
             }
             else if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
             {
@@ -8900,7 +8925,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
@@ -9078,7 +9104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionKeySha256.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-key-sha256", Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
+                "x-ms-encryption-key-sha256",
+                Azure::Core::Base64Encode(options.EncryptionKeySha256.GetValue()));
           }
           if (options.EncryptionAlgorithm.HasValue())
           {
