@@ -23,10 +23,6 @@ namespace Azure { namespace Storage {
     constexpr static const char* HttpHeaderContentType = "content-type";
     constexpr static const char* DefaultSasVersion = "2020-02-10";
 
-    // Error Codes.
-    constexpr static const char* ParentNotFound = "ParentNotFound";
-    constexpr static const char* ResourceNotFound = "ResourceNotFound";
-
     constexpr int ReliableStreamRetryCount = 3;
   } // namespace Details
 }} // namespace Azure::Storage

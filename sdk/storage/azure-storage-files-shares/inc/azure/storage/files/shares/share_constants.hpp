@@ -18,6 +18,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_ShareSnapshotQueryParameter = "sharesnapshot";
 
     // Error codes:
+    constexpr static const char* ParentNotFound = "ParentNotFound";
+    constexpr static const char* ResourceNotFound = "ResourceNotFound";
     constexpr static const char* ShareAlreadyExists = "ShareAlreadyExists";
     constexpr static const char* ShareNotFound = "ShareNotFound";
     constexpr static const char* ResourceAlreadyExists = "ResourceAlreadyExists";

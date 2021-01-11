@@ -226,8 +226,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ShareNotFound || e.ErrorCode == Storage::Details::ParentNotFound
-          || e.ErrorCode == Storage::Details::ResourceNotFound)
+      if (e.ErrorCode == Details::ShareNotFound || e.ErrorCode == Details::ParentNotFound
+          || e.ErrorCode == Details::ResourceNotFound)
       {
         Models::DeleteFileResult ret;
         ret.Deleted = false;
