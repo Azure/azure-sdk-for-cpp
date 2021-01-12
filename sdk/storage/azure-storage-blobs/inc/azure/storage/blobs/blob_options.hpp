@@ -1330,15 +1330,4 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobAccessConditions AccessConditions;
   };
 
-  /**
-   * @brief Optional parameters for BlobBatchClient::SubmitBatch.
-   */
-  struct SubmitBlobBatchOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-  };
-
 }}} // namespace Azure::Storage::Blobs
