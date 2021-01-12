@@ -119,25 +119,6 @@ stages:
                           
                           Write-Host "cd $(Pipeline.Workspace)/vcpkg"
                           cd $(Pipeline.Workspace)/vcpkg
-                          Write-Host "git remote add fork https://github.com/azure-sdk/vcpkg -f"
-                          git remote add fork https://github.com/azure-sdk/vcpkg -f
-
-                          # If there is a remote branch by this name check it 
-                          # out. ls-remote with --exit-code will exit with a 
-                          # status code of 2 indicates that the remote branch 
-                          # does not exist
-                          # https://git-scm.com/docs/git-ls-remote.html
-                          Write-Host "git ls-remote --exit-code --heads fork $(PrBranchName)"
-                          git ls-remote --exit-code --heads fork $(PrBranchName)
-                          if ($LASTEXITCODE -ne 2) {
-                            # Remote branch exists, check it out
-                            Write-Host "git checkout -b $(PrBranchName) fork/$(PrBranchName)"
-                            git checkout -b $(PrBranchName) fork/$(PrBranchName)
-                          } else {
-                            # No remote branch, check out a new branch
-                            Write-Host "git checkout -b $(PrBranchName)"
-                            git checkout -b $(PrBranchName)
-                          }
 
                           # Clean out the folder so that template files removed
                           # are not inadvertently re-added
@@ -153,10 +134,6 @@ stages:
                           
                           Write-Host "git status"
                           git status
-
-                          # Exit successfully, otherwise $LASTEXITCODE from the
-                          # git ls-remote command is returned instead
-                          exit 0
                         displayName: Copy updated files into vcpkg fork for PR
                         condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
@@ -172,7 +149,6 @@ stages:
                           CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
                           PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
                           BaseBranchName: master
-                          SkipCheckout: true
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

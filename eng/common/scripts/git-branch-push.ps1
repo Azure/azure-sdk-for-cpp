@@ -12,8 +12,6 @@ The message for this particular commit
 The GitHub repository URL
 .PARAMETER PushArgs
 Optional arguments to the push command
-.PARAMETER SkipCheckout
-Skip checking out $PRBranchName
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -35,10 +33,7 @@ param(
     [boolean] $SkipCommit = $false,
 
     [Parameter(Mandatory = $false)]
-    [boolean] $AmendCommit = $false,
-
-    [Parameter(Mandatory = $false)]
-    [boolean] $SkipCheckout = $false
+    [boolean] $AmendCommit = $false
 )
 
 # This is necessay because of the janky git command output writing to stderr.
@@ -65,14 +60,12 @@ if ($LASTEXITCODE -ne 0)
     exit $LASTEXITCODE
 }
 
-if (-not $SkipCheckout) {
-    Write-Host "git checkout -b $PRBranchName"
-    git checkout -b $PRBranchName
-    if ($LASTEXITCODE -ne 0)
-    {
-        Write-Error "Unable to create branch LASTEXITCODE=$($LASTEXITCODE), see command output above."
-        exit $LASTEXITCODE
-    }
+Write-Host "git checkout -b $PRBranchName"
+git checkout -b $PRBranchName
+if ($LASTEXITCODE -ne 0)
+{
+    Write-Error "Unable to create branch LASTEXITCODE=$($LASTEXITCODE), see command output above."
+    exit $LASTEXITCODE
 }
 
 if (!$SkipCommit) {
