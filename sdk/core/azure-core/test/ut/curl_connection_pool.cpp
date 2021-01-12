@@ -3,6 +3,7 @@
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
+#include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/policy.hpp>
 #include <azure/core/response.hpp>
 
