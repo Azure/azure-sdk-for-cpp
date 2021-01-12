@@ -194,8 +194,7 @@ void ValidateDate(
     {
       if (year == 1 && month == 1)
       {
-        auto const fracSecSince0001_01_01
-            = ((static_cast<decltype(OneDayIn100ns)>(day) - 1) * OneDayIn100ns)
+        auto const fracSecSince0001_01_01 = ((static_cast<int64_t>(day) - 1) * OneDayIn100ns)
             + (hour * OneHourIn100ns) + (minute * OneMinuteIn100ns) + (second * OneSecondIn100ns)
             + fracSec + (roundFracSecUp ? 1 : 0);
 
@@ -208,8 +207,7 @@ void ValidateDate(
     }
     else if (year == 9999 && month == 12)
     {
-      auto const fracSecSince9999_12_01
-          = ((static_cast<decltype(OneDayIn100ns)>(day) - 1) * OneDayIn100ns)
+      auto const fracSecSince9999_12_01 = ((static_cast<int64_t>(day) - 1) * OneDayIn100ns)
           + (hour * OneHourIn100ns) + (minute * OneMinuteIn100ns) + (second * OneSecondIn100ns)
           + fracSec + (roundFracSecUp ? 1 : 0);
 
@@ -240,7 +238,7 @@ constexpr int32_t DivideAndUpdateRemainder(int64_t* remainder, int64_t value)
   return retval;
 }
 
-constexpr bool SubstringEquals(
+bool SubstringEquals(
     std::string const& str,
     std::string::size_type startAt,
     std::string::size_type len,
@@ -258,7 +256,7 @@ constexpr bool SubstringEquals(
 }
 
 template <int8_t N>
-constexpr int8_t SubstringEqualsAny(
+int8_t SubstringEqualsAny(
     std::string const& str,
     std::string::size_type startAt,
     std::string::size_type len,
@@ -420,7 +418,8 @@ DateTime::operator std::chrono::system_clock::time_point() const
         + (outOfRange < 0 ? "small." : "big."));
   }
 
-  return std::chrono::system_clock::time_point() + (*this - SystemClockEpoch);
+  return std::chrono::system_clock::time_point()
+      + std::chrono::duration_cast<std::chrono::system_clock::duration>(*this - SystemClockEpoch);
 }
 
 DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
