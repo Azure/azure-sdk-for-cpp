@@ -24,7 +24,7 @@
 - Renamed methods from `Azure::Core::Context`.
   - `IsCanceled` to `IsCancelled`
   - `ThrowIfCanceled` to `ThrowIfCancelled`.
-- Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details`.
+- Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details` namespace.
 
 ### Bug Fixes
 
