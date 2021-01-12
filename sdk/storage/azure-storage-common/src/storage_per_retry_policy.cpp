@@ -24,7 +24,8 @@ namespace Azure { namespace Storage { namespace Details {
       // add x-ms-date header in RFC1123 format
       request.AddHeader(
           HttpHeaderXMsDate,
-          Core::DateTime(std::chrono::system_clock::now()).GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+          Core::DateTime(std::chrono::system_clock::now())
+              .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
     }
 
     return nextHttpPolicy.Send(ctx, request);
