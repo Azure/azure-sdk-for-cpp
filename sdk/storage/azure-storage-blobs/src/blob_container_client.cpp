@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto blobClient = GetBlobClient(blobName);
     auto response = blobClient.Delete(options);
-    return Azure::Core::Response<nullptr_t>(nullptr, response.ExtractRawResponse());
+    return Azure::Core::Response<std::nullptr_t>(nullptr, response.ExtractRawResponse());
   }
 
 }}} // namespace Azure::Storage::Blobs
