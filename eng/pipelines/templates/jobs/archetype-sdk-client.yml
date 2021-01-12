@@ -106,7 +106,7 @@ jobs:
         echo Please run clang-format to fix the issue by using this bash command at the root of the repo:
         echo "find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \;"
         echo ""
-        echo "List of files missing format:"
+        echo "List of files not formatted correctly:"
         git status | grep modified | awk '{print $2}'
         exit 1
       fi
