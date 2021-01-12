@@ -6,6 +6,8 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
+
 namespace Azure { namespace Storage { namespace Details {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
@@ -22,7 +24,7 @@ namespace Azure { namespace Storage { namespace Details {
       // add x-ms-date header in RFC1123 format
       request.AddHeader(
           HttpHeaderXMsDate,
-          Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+          Core::DateTime(std::chrono::system_clock::now()).GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
     }
 
     return nextHttpPolicy.Send(ctx, request);

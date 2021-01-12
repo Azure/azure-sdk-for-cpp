@@ -4,6 +4,7 @@
 #include "share_directory_client_test.hpp"
 
 #include <algorithm>
+#include <chrono>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -219,8 +220,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::Models::FileShareSmbProperties properties;
       properties.Attributes = Files::Shares::Models::FileAttributes::Directory
           | Files::Shares::Models::FileAttributes::NotContentIndexed;
-      properties.CreatedOn = Core::DateTime::Now();
-      properties.LastWrittenOn = Core::DateTime::Now();
+      properties.CreatedOn = std::chrono::system_clock::now();
+      properties.LastWrittenOn = std::chrono::system_clock::now();
       properties.PermissionKey = "";
       auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
@@ -252,8 +253,8 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::FileShareSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::Directory
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
-    properties.CreatedOn = Core::DateTime::Now();
-    properties.LastWrittenOn = Core::DateTime::Now();
+    properties.CreatedOn = std::chrono::system_clock::now();
+    properties.LastWrittenOn = std::chrono::system_clock::now();
     properties.PermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works

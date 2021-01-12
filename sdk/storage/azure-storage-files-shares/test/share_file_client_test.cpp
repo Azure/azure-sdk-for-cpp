@@ -4,6 +4,7 @@
 #include "share_file_client_test.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <future>
 
 #include <azure/storage/common/crypt.hpp>
@@ -168,8 +169,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::Models::FileShareSmbProperties properties;
       properties.Attributes = Files::Shares::Models::FileAttributes::System
           | Files::Shares::Models::FileAttributes::NotContentIndexed;
-      properties.CreatedOn = Core::DateTime::Now();
-      properties.LastWrittenOn = Core::DateTime::Now();
+      properties.CreatedOn = std::chrono::system_clock::now();
+      properties.LastWrittenOn = std::chrono::system_clock::now();
       properties.PermissionKey = "";
       auto client1 = m_fileShareDirectoryClient->GetShareFileClient(LowercaseRandomString());
       auto client2 = m_fileShareDirectoryClient->GetShareFileClient(LowercaseRandomString());
@@ -201,8 +202,8 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::FileShareSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::System
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
-    properties.CreatedOn = Core::DateTime::Now();
-    properties.LastWrittenOn = Core::DateTime::Now();
+    properties.CreatedOn = std::chrono::system_clock::now();
+    properties.LastWrittenOn = std::chrono::system_clock::now();
     properties.PermissionKey = m_fileClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
