@@ -112,7 +112,7 @@ constexpr int8_t GetDayOfWeek(int16_t year, int8_t month, int8_t day)
   return DaySinceEpoch(year, month, day) % 7;
 }
 
-constexpr uint8_t WeekDayMonthDayOfYear(int8_t* month, int8_t* day, int16_t year, int16_t dayOfYear)
+constexpr int8_t WeekDayMonthDayOfYear(int8_t* month, int8_t* day, int16_t year, int16_t dayOfYear)
 {
   auto remainder = dayOfYear;
   for (int8_t i = 1; i <= 12; ++i)
@@ -625,7 +625,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
               int const ch = dateTime[cursor];
               if (std::isdigit(ch))
               {
-                uint8_t num = ch - '0';
+                auto const num = static_cast<int>(ch - '0');
                 if (num > 4)
                 {
                   if (fracSec < 9999999)

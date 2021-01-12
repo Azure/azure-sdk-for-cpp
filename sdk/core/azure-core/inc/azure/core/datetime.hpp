@@ -104,7 +104,8 @@ namespace Azure { namespace Core {
      * @param systemTime A value of `std::chrono::system_clock::time_point`.
      */
     DateTime(std::chrono::system_clock::time_point const& systemTime)
-        : DateTime(SystemClockEpoch + systemTime.time_since_epoch())
+        : DateTime(
+            SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
     {
     }
 
