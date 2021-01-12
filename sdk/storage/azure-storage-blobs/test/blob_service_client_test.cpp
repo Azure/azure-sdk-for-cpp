@@ -344,4 +344,77 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlobServiceClientTest, CreateDeleteBlobContainer)
+  {
+    std::string containerName = LowercaseRandomString();
+    auto containerClient = m_blobServiceClient.CreateBlobContainer(containerName);
+    EXPECT_NO_THROW(containerClient->GetProperties());
+
+    m_blobServiceClient.DeleteBlobContainer(containerName);
+    EXPECT_THROW(containerClient->GetProperties(), StorageException);
+  }
+
+  TEST_F(BlobServiceClientTest, UndeleteBlobContainer)
+  {
+    std::string containerName = LowercaseRandomString();
+    auto containerClient = m_blobServiceClient.GetBlobContainerClient(containerName);
+    containerClient.Create();
+    containerClient.Delete();
+
+    Blobs::Models::BlobContainerItem deletedContainerItem;
+    {
+      Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
+      options.Prefix = containerName;
+      options.Include = Blobs::Models::ListBlobContainersIncludeItem::Deleted;
+      do
+      {
+        auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
+        options.ContinuationToken = res->ContinuationToken;
+        for (const auto& container : res->Items)
+        {
+          if (container.Name == containerName)
+          {
+            deletedContainerItem = container;
+            break;
+          }
+        }
+      } while (options.ContinuationToken.HasValue());
+    }
+    EXPECT_EQ(deletedContainerItem.Name, containerName);
+    EXPECT_TRUE(deletedContainerItem.IsDeleted);
+    EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
+    EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
+    EXPECT_TRUE(deletedContainerItem.DeletedOn.HasValue());
+    EXPECT_TRUE(IsValidTime(deletedContainerItem.DeletedOn.GetValue()));
+    EXPECT_TRUE(deletedContainerItem.RemainingRetentionDays.HasValue());
+    EXPECT_GE(deletedContainerItem.RemainingRetentionDays.GetValue(), 0);
+
+    std::string containerName2 = LowercaseRandomString();
+    auto containerClient2 = m_blobServiceClient.GetBlobContainerClient(containerName2);
+    for (int i = 0; i < 60; ++i)
+    {
+      try
+      {
+        Azure::Storage::Blobs::UndeleteBlobContainerOptions options;
+        options.DestinationBlobContainerName = containerName2;
+        m_blobServiceClient.UndeleteBlobContainer(
+            deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
+        break;
+      }
+      catch (StorageException& e)
+      {
+        if (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict
+            && e.ReasonPhrase == "The specified container is being deleted.")
+        {
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        else
+        {
+          throw;
+        }
+      }
+    }
+    EXPECT_NO_THROW(containerClient2.GetProperties());
+  }
+
 }}} // namespace Azure::Storage::Test
