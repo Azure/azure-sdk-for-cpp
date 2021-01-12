@@ -24,16 +24,17 @@
 - Renamed methods from `Azure::Core::Context`.
   - `IsCanceled` to `IsCancelled`
   - `ThrowIfCanceled` to `ThrowIfCancelled`.
-- Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to `Azure::Core::Details` namespace in `azure/core/version.hpp` header.
+- Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details`.
 
 ### Bug Fixes
 
 - Fixed the Curl transport adapter connection pooling when setting options.
-- Fixed for setting up the default transport adapter.
+- Fixed setting up the default transport adapter.
 
 ## 1.0.0-beta.3 (2020-11-11)
 
 ### New Features
+
 - Added `strings.hpp` with `Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Strings::ToLower`.
 - Added `GetPort()` to `Url`.
 - Added `TransportPolicyOptions`.
