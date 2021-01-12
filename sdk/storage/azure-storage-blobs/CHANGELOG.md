@@ -7,6 +7,8 @@
 - `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
 - Add `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
 - New API: `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
+- Add `CreateBlobContainer`, `DeleteBlobContainer`, `UndeleteBlobContainer` into `BlobServiceClient`.
+- Add `DeleteBlob` into `BlobContainerClient`.
 
 ### Breaking Changes
 
@@ -67,6 +69,7 @@
 - Rename `SourceConditions` in API options to `SourceAccessConditions`.
 - Remove Blob Batch.
 - `DownloadBlobResult::Content-Range` is changed to an `Azure::Core::Http::Range`, an extra field `BlobSize` is added.
+- Remove `Undelete` from `BlobContainerClient`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
