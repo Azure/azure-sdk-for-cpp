@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blobContainerClient), response.ExtractRawResponse());
   }
 
-  Azure::Core::Response<nullptr_t> BlobServiceClient::DeleteBlobContainer(
+  Azure::Core::Response<std::nullptr_t> BlobServiceClient::DeleteBlobContainer(
       const std::string& blobContainerName,
       const DeleteBlobContainerOptions& options) const
   {

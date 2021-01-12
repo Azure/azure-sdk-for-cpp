@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return Nothing.
      */
-    Azure::Core::Response<nullptr_t> DeleteBlobContainer(
+    Azure::Core::Response<std::nullptr_t> DeleteBlobContainer(
         const std::string& blobContainerName,
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
