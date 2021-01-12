@@ -1080,4 +1080,14 @@ namespace Azure { namespace Storage { namespace Test {
         blobUrl, m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
   }
 
+  TEST_F(BlobContainerClientTest, DeleteBlob)
+  {
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
+    blobClient.Create();
+    EXPECT_NO_THROW(blobClient.GetProperties());
+    blobClient.Delete();
+    EXPECT_THROW(blobClient.GetProperties(), StorageException);
+  }
+
 }}} // namespace Azure::Storage::Test

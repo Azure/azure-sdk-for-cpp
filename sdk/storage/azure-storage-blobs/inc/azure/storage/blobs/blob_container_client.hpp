@@ -311,6 +311,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<Models::BreakBlobContainerLeaseResult> BreakLease(
         const BreakBlobContainerLeaseOptions& options = BreakBlobContainerLeaseOptions()) const;
 
+    /**
+     * @brief Marks the specified blob or snapshot for deletion. The blob is later deleted
+     * during garbage collection. Note that in order to delete a blob, you must delete all of its
+     * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
+     *
+     * @param blobName The name of the blob to delete.
+     * @param options Optional parameters to execute this function.
+     * @return Nothing.
+     */
+    Azure::Core::Response<nullptr_t> DeleteBlob(
+        const std::string& blobName,
+        const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+
   private:
     Azure::Core::Http::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
