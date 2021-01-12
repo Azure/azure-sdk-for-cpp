@@ -2738,8 +2738,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             Storage::Details::XmlWriter& writer,
             const SetServicePropertiesOptions& options)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "StorageServiceProperties"});
           BlobServicePropertiesToXml(writer, options.Properties);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -2768,16 +2768,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.DefaultServiceVersion.HasValue())
           {
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::StartTag, "DefaultServiceVersion"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                options.DefaultServiceVersion.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                   "DefaultServiceVersion"});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                          nullptr,
+                                          options.DefaultServiceVersion.GetValue().data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "DeleteRetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "DeleteRetentionPolicy"});
           BlobRetentionPolicyToXml(writer, options.DeleteRetentionPolicy);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
@@ -2808,8 +2808,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, options.Write ? "true" : "false"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "RetentionPolicy"});
           BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -2840,12 +2840,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, options.ExposedHeaders.data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
-              nullptr,
-              std::to_string(options.MaxAgeInSeconds).data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "MaxAgeInSeconds"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                                 nullptr,
+                                                 std::to_string(options.MaxAgeInSeconds).data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -2868,14 +2867,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             writer.Write(
                 Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                options.IncludeApis.GetValue() ? "true" : "false"});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                          nullptr,
+                                          options.IncludeApis.GetValue() ? "true" : "false"});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "RetentionPolicy"});
           BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -2893,10 +2892,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             writer.Write(
                 Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Days"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                std::to_string(options.Days.GetValue()).data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                                   nullptr,
+                                                   std::to_string(options.Days.GetValue()).data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
         }
@@ -2912,32 +2910,30 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.IndexDocument.HasValue())
           {
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::StartTag, "IndexDocument"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                options.IndexDocument.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                   "IndexDocument"});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                                   nullptr,
+                                                   options.IndexDocument.GetValue().data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
           if (options.DefaultIndexDocumentPath.HasValue())
           {
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::StartTag, "DefaultIndexDocumentPath"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                options.DefaultIndexDocumentPath.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                   "DefaultIndexDocumentPath"});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                          nullptr,
+                                          options.DefaultIndexDocumentPath.GetValue().data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
           if (options.ErrorDocument404Path.HasValue())
           {
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::StartTag, "ErrorDocument404Path"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                options.ErrorDocument404Path.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                   "ErrorDocument404Path"});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                                   nullptr,
+                                                   options.ErrorDocument404Path.GetValue().data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
         }
@@ -4690,8 +4686,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             Storage::Details::XmlWriter& writer,
             const SetBlobContainerAccessPolicyOptions& options)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "SignedIdentifiers"});
           for (const auto& i : options.SignedIdentifiers)
           {
             BlobSignedIdentifierToXml(writer, i);
@@ -4703,8 +4699,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             Storage::Details::XmlWriter& writer,
             const BlobSignedIdentifier& options)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "SignedIdentifier"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Id"});
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, options.Id.data()});
