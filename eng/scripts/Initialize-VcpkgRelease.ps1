@@ -49,6 +49,6 @@ Write-Host "SHA512: $sha512"
 Write-Verbose "Writing the SHA512 hash"
 $portfileLocation = "$SourceDirectory/port/portfile.cmake"
 $newContent = Get-Content -Raw -Path $portfileLocation `
-    | ForEach-Object { $_.Replace('%SHA512%', $sha512) }
+    | ForEach-Object { $_ -replace '(SHA512\s+)(1)', "`${1}$sha512" }
 
 $newContent | Set-Content $portfileLocation 

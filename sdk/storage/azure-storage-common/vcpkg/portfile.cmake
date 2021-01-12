@@ -7,7 +7,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
     REF azure-storage-common_@AZ_LIBRARY_VERSION@
-    SHA512 %SHA512%
+    SHA512 1
 )
 
 vcpkg_configure_cmake(

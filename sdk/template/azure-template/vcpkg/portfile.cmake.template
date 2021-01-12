@@ -35,7 +35,7 @@
 vcpkg_download_distfile(ARCHIVE
     URLS "%URL%"
     FILENAME "%FILENAME%"
-    SHA512 %SHA512%
+    SHA512 1
 )
 
 vcpkg_extract_source_archive_ex(
