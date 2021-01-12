@@ -8,7 +8,7 @@
 #include <sstream>
 
 #if defined(AZ_PLATFORM_WINDOWS)
-
+#if !defined(WINDOWS_UWP)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -77,6 +77,10 @@ std::string GetOSVersion()
 }
 
 } // namespace
+
+#else
+std::string GetOSVersion() { return "UWP"; }
+#endif
 
 #elif defined(AZ_PLATFORM_POSIX)
 
