@@ -12,7 +12,7 @@
 #include <string>
 #include <utility> // for std::move
 
-#include "azure/core/strings.hpp"
+#include "azure/core/internal/strings.hpp"
 
 namespace Azure { namespace Core {
 
@@ -51,7 +51,7 @@ namespace Azure { namespace Core {
      */
     bool operator==(const OperationStatus& other) const noexcept
     {
-      return Strings::LocaleInvariantCaseInsensitiveEqual(m_value, other.m_value);
+      return Internal::LocaleInvariantCaseInsensitiveEqual(m_value, other.m_value);
     }
 
     /**

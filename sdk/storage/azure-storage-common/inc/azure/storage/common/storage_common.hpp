@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include <azure/core/strings.hpp>
+#include <azure/core/internal/strings.hpp>
 
 namespace Azure { namespace Storage {
 
@@ -57,7 +57,7 @@ namespace Azure { namespace Storage {
       {
         return std::lexicographical_compare(
             lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-              return Core::Strings::ToLower(c1) < Core::Strings::ToLower(c2);
+              return Core::Internal::ToLower(c1) < Core::Internal::ToLower(c2);
             });
       }
     };

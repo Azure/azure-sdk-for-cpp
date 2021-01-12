@@ -21,7 +21,7 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/platform.hpp>
-#include <azure/core/strings.hpp>
+#include <azure/core/internal/strings.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string LowercaseRandomString(size_t size)
   {
-    return Azure::Core::Strings::ToLower(RandomString(size));
+    return Azure::Core::Internal::ToLower(RandomString(size));
   }
 
   Storage::Metadata RandomMetadata(size_t size)

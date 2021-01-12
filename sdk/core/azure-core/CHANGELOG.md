@@ -25,6 +25,7 @@
   - `IsCanceled` to `IsCancelled`
   - `ThrowIfCanceled` to `ThrowIfCancelled`.
 - Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to `Azure::Core::Details` namespace in `azure/core/version.hpp` header.
+- Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal`.
 
 ### Bug Fixes
 

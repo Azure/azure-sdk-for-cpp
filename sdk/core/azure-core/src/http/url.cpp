@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
-#include "azure/core/strings.hpp"
+#include "azure/core/internal/strings.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -21,7 +21,7 @@ Url::Url(const std::string& url)
   if (schemeIter != std::string::npos)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
-      return static_cast<char>(Azure::Core::Strings::ToLower(static_cast<unsigned char>(c)));
+      return static_cast<char>(Azure::Core::Internal::ToLower(static_cast<unsigned char>(c)));
     });
 
     pos = url.begin() + schemeIter + schemeEnd.length();
