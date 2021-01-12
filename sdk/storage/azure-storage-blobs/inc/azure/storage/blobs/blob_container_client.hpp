@@ -137,7 +137,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @return A CreateBlobContainerResult describing the newly created blob container if the
-     * container doesn't exist. Null if the container already exists.
+     * container doesn't exist. CreateBlobContainerResult.Created is false if the container already
+     * exists.
      */
     Azure::Core::Response<Models::CreateBlobContainerResult> CreateIfNotExists(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
@@ -157,8 +158,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * contained within it are later deleted during garbage collection.
      *
      * @param options Optional parameters to execute this function.
-     * @return A DeleteBlobContainerResult if the container exists. Null if the container doesn't
-     * exist.
+     * @return A DeleteBlobContainerResult if the container exists.
+     * DeleteBlobContainerResult.Deleted is false if the container doesn't exist.
      */
     Azure::Core::Response<Models::DeleteBlobContainerResult> DeleteIfExists(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;

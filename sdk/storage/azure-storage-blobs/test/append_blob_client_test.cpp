@@ -340,14 +340,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(), StorageException);
     {
       auto response = blobClient.CreateIfNotExists();
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_TRUE(response->Created);
     }
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blobClient.AppendBlock(&blobContent);
     {
       auto response = blobClient.CreateIfNotExists();
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Created);
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(

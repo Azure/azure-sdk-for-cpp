@@ -79,19 +79,19 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), LowercaseRandomString());
     {
       auto response = container_client.DeleteIfExists();
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Deleted);
     }
     {
       auto response = container_client.CreateIfNotExists();
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_TRUE(response->Created);
     }
     {
       auto response = container_client.CreateIfNotExists();
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Created);
     }
     {
       auto response = container_client.DeleteIfExists();
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_TRUE(response->Deleted);
     }
   }
 

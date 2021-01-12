@@ -780,14 +780,14 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClientWithoutAuth = Azure::Storage::Blobs::BlockBlobClient(blobClient.GetUrl());
     {
       auto response = blobClient.DeleteIfExists();
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Deleted);
     }
     std::vector<uint8_t> emptyContent;
     blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
     EXPECT_THROW(blobClientWithoutAuth.DeleteIfExists(), StorageException);
     {
       auto response = blobClient.DeleteIfExists();
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_TRUE(response->Deleted);
     }
 
     blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
@@ -795,11 +795,11 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClientWithSnapshot = blobClient.WithSnapshot(snapshot);
     {
       auto response = blobClientWithSnapshot.DeleteIfExists();
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_TRUE(response->Deleted);
     }
     {
       auto response = blobClientWithSnapshot.DeleteIfExists();
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Deleted);
     }
   }
 

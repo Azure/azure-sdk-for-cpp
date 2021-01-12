@@ -278,7 +278,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Marks the specified blob or snapshot for deletion if it exists.
      *
      * @param options Optional parameters to execute this function.
-     * @return A DeleteBlobResult on successfully deleting. Null if the blob doesn't exist.
+     * @return A DeleteBlobResult on successfully deleting. DeleteBlobResult.Deleted is false if the
+     * blob doesn't exist.
      */
     Azure::Core::Response<Models::DeleteBlobResult> DeleteIfExists(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
