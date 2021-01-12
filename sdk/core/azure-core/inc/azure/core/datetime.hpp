@@ -240,21 +240,21 @@ namespace Azure { namespace Core {
 
   inline bool operator<(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
   {
-    return !(dt >= tp);
+    return (dt > tp);
   }
 
   inline bool operator<=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
   {
-    return !(dt > tp);
+    return (dt >= tp);
   }
 
   inline bool operator>(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
   {
-    return !(dt <= tp);
+    return (dt < tp);
   }
 
   inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
   {
-    return !(dt < tp);
+    return (dt <= tp);
   }
 }} // namespace Azure::Core
