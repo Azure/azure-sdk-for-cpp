@@ -94,26 +94,11 @@ jobs:
   - checkout: self
     submodules: recursive
 
-  # Install apt dependencies (if appropriate)
-  - bash: sudo apt install -y $(AptDependencies)
-    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
-    displayName: Install dependencies from apt
-
-  - template: /eng/pipelines/templates/steps/vcpkg.yml
-    parameters:
-      DependenciesVariableName: VcpkgInstall
-
-  - script: |
-      dotnet tool install -g dotnet-reportgenerator-globaltool
-      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
-    displayName: Install coverage tools
-    # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
-    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
-
   # Validate all the files are formatted correctly according to the .clang-format file.
   - bash: |
       # Run clang-format recursively on each source and header file within the repo sdk folder.
+      echo Check clang-formatting
+      clang-format --version
       find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \;
 
       if [[ `git status | grep modified | awk '{print $2}'` ]]; then
@@ -130,6 +115,23 @@ jobs:
       exit 0
 
     displayName: Validate Clang Format
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+
+  # Install apt dependencies (if appropriate)
+  - bash: sudo apt install -y $(AptDependencies)
+    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+
+  - template: /eng/pipelines/templates/steps/vcpkg.yml
+    parameters:
+      DependenciesVariableName: VcpkgInstall
+
+  - script: |
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    displayName: Install coverage tools
+    # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
+    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
     condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
