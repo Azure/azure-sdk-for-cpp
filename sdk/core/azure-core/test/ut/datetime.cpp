@@ -5,6 +5,7 @@
 
 #include <azure/core/datetime.hpp>
 
+#include <chrono>
 #include <limits>
 
 using namespace Azure::Core;
@@ -593,4 +594,43 @@ TEST(DateTime, DefaultConstructible)
 {
   DateTime dt;
   EXPECT_EQ(0, dt.time_since_epoch().count());
+}
+
+TEST(DateTime, ComparisonOperators)
+{
+  std::chrono::system_clock::time_point const chronoPast = std::chrono::system_clock::now();
+  std::chrono::system_clock::time_point const chronoFuture = chronoPast + std::chrono::hours(1);
+
+  DateTime const azcorePast = chronoPast;
+  DateTime const azcoreFuture = chronoFuture;
+
+  EXPECT_LT(azcorePast, chronoFuture);
+  EXPECT_LT(chronoPast, azcoreFuture);
+
+  EXPECT_GT(azcoreFuture, chronoPast);
+  EXPECT_GT(chronoFuture, azcorePast);
+
+  EXPECT_NE(azcorePast, chronoFuture);
+  EXPECT_NE(azcoreFuture, chronoPast);
+  EXPECT_NE(chronoPast, azcoreFuture);
+  EXPECT_NE(chronoFuture, azcorePast);
+
+  EXPECT_EQ(azcorePast, chronoPast);
+  EXPECT_EQ(azcoreFuture, chronoFuture);
+  EXPECT_EQ(chronoPast, azcorePast);
+  EXPECT_EQ(chronoFuture, azcoreFuture);
+
+  EXPECT_LE(azcorePast, chronoFuture);
+  EXPECT_LE(azcorePast, chronoPast);
+  EXPECT_LE(azcoreFuture, chronoFuture);
+  EXPECT_LE(chronoPast, azcoreFuture);
+  EXPECT_LE(chronoPast, azcorePast);
+  EXPECT_LE(chronoFuture, azcoreFuture);
+
+  EXPECT_GE(azcoreFuture, chronoPast);
+  EXPECT_GE(azcorePast, chronoPast);
+  EXPECT_GE(azcoreFuture, chronoFuture);
+  EXPECT_GE(chronoFuture, azcorePast);
+  EXPECT_GE(chronoPast, azcorePast);
+  EXPECT_GE(chronoFuture, azcoreFuture);
 }
