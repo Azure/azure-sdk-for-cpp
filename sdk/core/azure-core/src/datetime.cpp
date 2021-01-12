@@ -296,7 +296,7 @@ T ParseNumber(
     auto i = 0;
     for (; i < MaxChars; ++i)
     {
-      auto const ch = str[*cursor + i];
+      int const ch = str[*cursor + i];
       if (std::isdigit(ch))
       {
         value = (value * 10) + (static_cast<decltype(value)>(ch) - '0');
@@ -612,7 +612,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
 
             auto const charsRead = (cursor - oldCursor);
             {
-              auto const zerosToAdd = (7 - charsRead);
+              auto const zerosToAdd = static_cast<int>(7 - charsRead);
               for (auto i = 0; i < zerosToAdd; ++i)
               {
                 fracSec *= 10;
@@ -622,7 +622,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
             minDateTimeLength += charsRead;
             if (charsRead == 7 && (DateTimeLength - cursor) > 0)
             {
-              auto ch = dateTime[cursor];
+              int const ch = dateTime[cursor];
               if (std::isdigit(ch))
               {
                 uint8_t num = ch - '0';
@@ -645,7 +645,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
 
           for (auto i = DateTimeLength - cursor; i > 0; --i)
           {
-            if (std::isdigit(dateTime[cursor]))
+            if (std::isdigit(static_cast<int>(dateTime[cursor])))
             {
               ++minDateTimeLength;
               ++cursor;
