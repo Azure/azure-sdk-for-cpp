@@ -29,9 +29,9 @@ az_vcpkg_integrate()
 
 set(
   AZURE_TEMPLATE_HEADER
-    inc/azure/template/template_client.hpp
-    inc/azure/template/version.hpp
-    inc/azure/template.hpp
+    inc/azure/template2/template_client.hpp
+    inc/azure/template2/version.hpp
+    inc/azure/template2.hpp
 )
 
 set(
@@ -60,7 +60,7 @@ add_library(Azure::azure-template2 ALIAS azure-template2)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(template azure-template2 azure-template2-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template2/version.hpp")
 generate_documentation(azure-template2 ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(azure-template2)
