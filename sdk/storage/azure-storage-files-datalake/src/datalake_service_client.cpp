@@ -173,7 +173,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::ListFileSystemsSinglePageResult>
-  DataLakeServiceClient::ListFileSystemsSinglePage(const ListFileSystemsSinglePageOptions& options) const
+  DataLakeServiceClient::ListFileSystemsSinglePage(
+      const ListFileSystemsSinglePageOptions& options) const
   {
     Blobs::ListBlobContainersSinglePageOptions blobOptions;
     blobOptions.Context = options.Context;

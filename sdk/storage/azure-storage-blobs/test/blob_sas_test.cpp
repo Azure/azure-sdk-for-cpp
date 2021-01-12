@@ -169,15 +169,14 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
-    for (auto permissions :
-         {Sas::BlobSasPermissions::All,
-          Sas::BlobSasPermissions::Read,
-          Sas::BlobSasPermissions::Write,
-          Sas::BlobSasPermissions::Delete,
-          Sas::BlobSasPermissions::Add,
-          Sas::BlobSasPermissions::Create,
-          Sas::BlobSasPermissions::Tags,
-          Sas::BlobSasPermissions::DeleteVersion})
+    for (auto permissions : {Sas::BlobSasPermissions::All,
+                             Sas::BlobSasPermissions::Read,
+                             Sas::BlobSasPermissions::Write,
+                             Sas::BlobSasPermissions::Delete,
+                             Sas::BlobSasPermissions::Add,
+                             Sas::BlobSasPermissions::Create,
+                             Sas::BlobSasPermissions::Tags,
+                             Sas::BlobSasPermissions::DeleteVersion})
     {
       blobSasBuilder.SetPermissions(permissions);
       auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
@@ -269,15 +268,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(serviceClient.ListBlobContainersSinglePage());
     }
 
-    for (auto permissions :
-         {Sas::BlobContainerSasPermissions::All,
-          Sas::BlobContainerSasPermissions::Read,
-          Sas::BlobContainerSasPermissions::Write,
-          Sas::BlobContainerSasPermissions::Delete,
-          Sas::BlobContainerSasPermissions::List,
-          Sas::BlobContainerSasPermissions::Add,
-          Sas::BlobContainerSasPermissions::Create,
-          Sas::BlobContainerSasPermissions::Tags})
+    for (auto permissions : {Sas::BlobContainerSasPermissions::All,
+                             Sas::BlobContainerSasPermissions::Read,
+                             Sas::BlobContainerSasPermissions::Write,
+                             Sas::BlobContainerSasPermissions::Delete,
+                             Sas::BlobContainerSasPermissions::List,
+                             Sas::BlobContainerSasPermissions::Add,
+                             Sas::BlobContainerSasPermissions::Create,
+                             Sas::BlobContainerSasPermissions::Tags})
     {
       containerSasBuilder.SetPermissions(permissions);
       auto sasToken = containerSasBuilder.GenerateSasToken(*keyCredential);

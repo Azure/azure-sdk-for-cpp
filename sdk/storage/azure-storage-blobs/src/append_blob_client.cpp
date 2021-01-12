@@ -112,7 +112,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Models::CreateAppendBlobResult ret;
         ret.Created = false;
-        return Azure::Core::Response<Models::CreateAppendBlobResult>(std::move(ret), std::move(e.RawResponse));
+        return Azure::Core::Response<Models::CreateAppendBlobResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
