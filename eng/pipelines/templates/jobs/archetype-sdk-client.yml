@@ -133,12 +133,11 @@ jobs:
   - checkout: self
     submodules: recursive
 
-  # Validate all the files are formatted correctly according to the .clang-format file.
+  # Validate all the files are formatted correctly according to the
+  # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |
       # Run clang-format recursively on each source and header file within the repo sdk folder.
       echo "Check clang-formatting"
-      #sudo apt-get update > /dev/null
-      #sudo apt-get install clang-format > /dev/null
       brew install clang-format
       clang-format --version
       find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \;
