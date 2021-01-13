@@ -88,9 +88,9 @@ stages:
 
                       - pwsh: |
                           $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
-                          if ($(VcpkgForkBranchName)) { 
+                          if ('$(VcpkgForkBranchName)') { 
                             Write-Host "Using queue time branch name" 
-                            $branchName = $(VcpkgForkBranchName)
+                            $branchName = '$(VcpkgForkBranchName)'
                           } 
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
                         displayName: Set fork branch name
