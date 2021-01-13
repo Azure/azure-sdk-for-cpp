@@ -86,11 +86,19 @@ stages:
                     steps:
                       - checkout: self
 
+                      - pwsh: |
+                          $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
+                          if ('$(VcpkgForkBranchName)') { 
+                            Write-Host "Using queue time branch name" 
+                            $branchName = '$(VcpkgForkBranchName)'
+                          } 
+                          Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
+                        displayName: Set fork branch name
+
                       - task: Powershell@2
                         inputs:
                           filePath: eng/scripts/Initialize-VcpkgRelease.ps1
                           arguments: >-
-                            -GitHubPat $(azuresdk-github-pat)
                             -GitHubRepo "$(Build.Repository.Name)"
                             -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
                             -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
@@ -98,41 +106,49 @@ stages:
                           pwsh: true
                         displayName: Initialize vcpkg release
 
+                      # There are potential race conditions if this script runs
+                      # in parallel against the same branch name. Release only 
+                      # one package at a time.
                       - pwsh: |
+                          Write-Host "git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg"
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
                             Write-Error "Unable to check out vcpkg repo"
                             exit $LASTEXITCODE
                           }
+                          
+                          Write-Host "cd $(Pipeline.Workspace)/vcpkg"
                           cd $(Pipeline.Workspace)/vcpkg
-
-                          # There is no need to check out a branch, the
-                          # create-pull-request.yml template creates the branch
 
                           # Clean out the folder so that template files removed
                           # are not inadvertently re-added
-                          if (Test-Path "ports/${{ artifact.Name }}") {
-                            Remove-Item -v -r "ports/${{ artifact.Name }}"
+                          if (Test-Path "ports/${{ artifact.VcpkgPortName }}") {
+                            Remove-Item -v -r "ports/${{ artifact.VcpkgPortName }}"
                           }
 
-                          New-Item -Type Directory ports/${{ artifact.Name }}
-                          Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
+                          New-Item -Type Directory ports/${{ artifact.VcpkgPortName }}
+                          Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.VcpkgPortName }}
 
                           # Show artifacts copied into ports folder for PR
-                          Get-ChildItem -Recurse ports/${{ artifact.Name }}
+                          Get-ChildItem -Recurse ports/${{ artifact.VcpkgPortName }}
+                          
+                          Write-Host "git status"
+                          git status
                         displayName: Copy updated files into vcpkg fork for PR
                         condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
+                      # This template does not need to check the 
+                      # SkipVcpkgUpdate variable, it will stop if there are no
+                      # changes in the git repo.
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoOwner: Microsoft
                           RepoName: vcpkg
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-                          PrBranchName: azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
-                          CommitMsg: "Update port for ${{ artifact.Name }}"
-                          PRTitle: "Update port for ${{ artifact.Name }}"
+                          PrBranchName: $(PrBranchName)
+                          CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
+                          PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
                           BaseBranchName: master
-                          PushArgs: -f
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

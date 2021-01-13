@@ -241,40 +241,25 @@ jobs:
               Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
             displayName: Create package info JSON file
 
-          # Building from the root of the repo at this point because of the
-          # nature of the CMake build system. The SoureDirectory should probably
-          # change.
-          - task: PowerShell@2
-            inputs:
-              targetType: filePath
-              filePath: eng/scripts/New-ReleaseArtifact.ps1
-              arguments: >-
-                -SourceDirectory ./
-                -PackageSpecPath $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
-                -Destination $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg
-                -Workspace $(Agent.TempDirectory)/vcpkg-${{ artifact.Name }}
-              pwsh: true
-            displayName: Compress publish artifact and stage for publishing
-
           - task: Powershell@2
             inputs:
               targetType: inline
               script: |
                 # If there is no vcpkg directory skip staging the vcpkg port artifacts
-                if (!(Test-Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/)) {
+                if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
+                  Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
                   exit
                 }
 
                 New-Item `
                   -ItemType Directory `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Force
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
 
-                Copy-Item `
-                  sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/* `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port `
-                  -Exclude README.md
+                Copy-Item -Recurse `
+                  build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
               pwsh: true
-            displayName: Copy vcpkg port template files and remove .template extension
+            displayName: Copy vcpkg port files from build
 
           - pwsh: |
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
