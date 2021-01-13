@@ -9,8 +9,7 @@
 - Added support for long-running operations with `Operation<T>`.
 - Added support for setting a custom transport adapter by implementing the method `std::shared_ptr<HttpTransport> ::AzureSdkGetCustomHttpTransport()`.
 - Added interoperability between `std::chrono::system_clock` types and `DateTime`.
-- Added default constructor to `DateTime`.
-- Added `DateTime` supporting dates since 0001.
+- Added default constructor to `DateTime` and support for dates since 0001.
 - Added Base64 encoding and decoding utility APIs to the `Azure::Core` namespace available from `azure/core/base64.hpp`.
 - Added `Http::Response<void>` template specialization.
 - Added `GetHeadersAsString()` on the `Azure::Core::Http::Request` class.
