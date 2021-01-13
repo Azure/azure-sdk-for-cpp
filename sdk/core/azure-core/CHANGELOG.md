@@ -12,6 +12,10 @@
 - Added `DateTime` supporting dates since 0001.
 - Added Base64 encoding and decoding utility APIs to the `Azure::Core` namespace available from `azure/core/base64.hpp`.
 - Added `Http::Response<void>` template specialization.
+- Added `GetHeadersAsString()` on the `Request` class.
+- Added a `platform.hpp` header file for defining commonly used OS-specific `#define` constants.
+- Added `IsCancelled()` on the `Context class.
+- Added interoperability between `std::chrono::system_clock` types and `DateTime`.
 
 ### Breaking Changes
 
@@ -26,11 +30,27 @@
   - `IsCanceled` to `IsCancelled`
   - `ThrowIfCanceled` to `ThrowIfCancelled`.
 - Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details` namespace.
+- Changed `Azure::Core::AuthenticationException` to derive from `std::exception` instead of `std::runtime_error`.
+- Changed the `BodyStream::Read` API from being a pure virtual function to non-virtual.
+- Removed `CurlConnection`, `CurlConnectionPool`, `CurlSession` and `CurlNetworkConnection` by making these headers private:
+  - curl_connection.hpp
+  - curl_connection_pool.hpp
+  - curl_session.hpp
+- Removed `DateTime::Duration` typedef.
 
 ### Bug Fixes
 
 - Fixed the Curl transport adapter connection pooling when setting options.
 - Fixed setting up the default transport adapter.
+- Fixed linker error of missing pthread on Linux.
+- Initialize class data members to avoid MSVC warning.
+- Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle.
+
+### Other changes and Improvements
+
+- Added support for distributing the C++ SDK as a source package via vcpkg.
+- Added a 3rd party JSON library (nlohmann_json) to Azure Core provided as a CMake inteface for anyone using Azure Core to be able to include a json header.
+- Fixed `DateTime` documentation for `GetString()` to reference the correct type of exception being thrown, `invalid_argument`.
 
 ## 1.0.0-beta.3 (2020-11-11)
 
