@@ -8,7 +8,7 @@
 #include <sstream>
 
 #if defined(AZ_PLATFORM_WINDOWS)
-#if defined(AZ_PLATFORM_WINDOWS_DESKTOP)
+#if !defined(AZ_PLATFORM_WINDOWS_UWP)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif

@@ -12,7 +12,7 @@ using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
-#if !defined(AZ_PLATFORM_WINDOWS) || defined(AZ_PLATFORM_WINDOWS_DESKTOP)
+#if !defined(AZ_PLATFORM_WINDOWS_UWP)
 #if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
