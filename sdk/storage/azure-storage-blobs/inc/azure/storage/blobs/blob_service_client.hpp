@@ -194,18 +194,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Marks the specified blob container for deletion. The container and any blobs
      * contained within it are later deleted during garbage collection.
-     * 
+     *
      * @param blobContainerName The name of the container to delete.
      * @param options Optional parameters to execute this function.
      * @return Nothing.
      */
-    Azure::Core::Response<std::nullptr_t> DeleteBlobContainer(
+    Azure::Core::Response<void> DeleteBlobContainer(
         const std::string& blobContainerName,
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
      * @brief Restores a previously deleted container.
-     * 
+     *
      * @param deletedBlobContainerName The name of the previously deleted container.
      * @param deletedBlobContainerVersion The version of the previously deleted container.
      * @param options Optional parameters to execute this function.
