@@ -22,8 +22,10 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
   return ::AzureSdkGetCustomHttpTransport();
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   return std::make_shared<Azure::Core::Http::WinHttpTransport>();
-#else
+#elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   return std::make_shared<Azure::Core::Http::CurlTransport>();
+#else
+  return std::shared_ptr<HttpTransport>();
 #endif
 }
 
