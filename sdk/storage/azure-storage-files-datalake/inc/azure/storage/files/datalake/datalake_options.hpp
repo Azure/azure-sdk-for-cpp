@@ -26,6 +26,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct DataLakeClientOptions
   {
     /**
+     * Versioning for Azure Storage Services.
+     */
+    struct ServiceVersion
+    {
+      /**
+       * 2020-02-10 service version.
+       */
+      constexpr static const char* V2020_02_10 = "2020-02-10";
+    };
+
+    /**
      * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
      * are applied to every request.
      */
