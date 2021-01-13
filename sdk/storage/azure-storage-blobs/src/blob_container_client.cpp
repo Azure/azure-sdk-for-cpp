@@ -204,18 +204,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  Azure::Core::Response<Models::UndeleteBlobContainerResult> BlobContainerClient::Undelete(
-      const std::string& deletedBlobContainerName,
-      const std::string& deletedBlobContainerVersion,
-      const UndeleteBlobContainerOptions& options) const
-  {
-    Details::BlobRestClient::BlobContainer::UndeleteBlobContainerOptions protocolLayerOptions;
-    protocolLayerOptions.DeletedBlobContainerName = deletedBlobContainerName;
-    protocolLayerOptions.DeletedBlobContainerVersion = deletedBlobContainerVersion;
-    return Details::BlobRestClient::BlobContainer::Undelete(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
-  }
-
   Azure::Core::Response<Models::GetBlobContainerPropertiesResult>
   BlobContainerClient::GetProperties(const GetBlobContainerPropertiesOptions& options) const
   {
@@ -372,6 +360,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::BreakLease(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<void> BlobContainerClient::DeleteBlob(
+      const std::string& blobName,
+      const DeleteBlobOptions& options) const
+  {
+    auto blobClient = GetBlobClient(blobName);
+    auto response = blobClient.Delete(options);
+    return Azure::Core::Response<void>(response.ExtractRawResponse());
   }
 
 }}} // namespace Azure::Storage::Blobs
