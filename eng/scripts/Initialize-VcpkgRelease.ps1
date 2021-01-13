@@ -39,7 +39,7 @@ if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
 $tarGzUri = "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).tar.gz" 
 
-Write-Host "Downloading tarball to compute hash" 
+Write-Host "Downloading tarball to compute hash from $tarGzUri" 
 $localTarGzPath = New-TemporaryFile
 Invoke-WebRequest -Uri $tarGzUri -OutFile $localTarGzPath
 
@@ -48,7 +48,12 @@ Write-Host "SHA512: $sha512"
 
 Write-Verbose "Writing the SHA512 hash"
 $portfileLocation = "$SourceDirectory/port/portfile.cmake"
-$newContent = Get-Content -Raw -Path $portfileLocation `
-    | ForEach-Object { $_ -replace '(SHA512\s+)(1)', "`${1}$sha512" }
 
-$newContent | Set-Content $portfileLocation 
+# Regex replace SHA512 preserving spaces. The placeholder "SHA512 1" is
+# recommended in vcpkg documentation
+# Before: "   SHA512   1"
+# After:  "   SHA512   f6cf1c16c52" 
+$newContent = Get-Content -Raw -Path $portfileLocation `
+    | ForEach-Object { $_ -replace '(SHA512\s+)1', "`${1}$sha512" }
+
+$newContent | Set-Content $portfileLocation

@@ -210,6 +210,7 @@ jobs:
               script: |
                 # If there is no vcpkg directory skip staging the vcpkg port artifacts
                 if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
+                  Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
                   exit
                 }
 
