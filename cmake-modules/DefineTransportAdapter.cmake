@@ -1,6 +1,11 @@
 ## Copyright (c) Microsoft Corporation. All rights reserved.
 ## SPDX-License-Identifier: MIT
 
+if(AZ_ALL_LIBRARIES)
+# This script does override options that are supplied to cmake, such as "SET(BUILD_TRANSPORT_WINHTTP ON)"
+# or, "SET(BUILD_TRANSPORT_CURL ON)". Whether it is a desirable behavior for whole-SDK build, it is absolutely
+# unacceptable behavior when building individual libraries as VcPkgs.
+
 #############                      TRANSPORT ADAPTER BUILD                     #####################
 #  Default: If no option is explicitly added, curl will be used for POSIX and WIN HTTP for Windows #
 #  Windows: Both CURL and WIN_HTTP can be built to be used.                                        #
@@ -35,4 +40,6 @@ elseif (UNIX)
   endif()
 else()
   message(FATAL_ERROR "Unsupported platform.")
+endif()
+
 endif()
