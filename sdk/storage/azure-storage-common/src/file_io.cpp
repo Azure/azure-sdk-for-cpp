@@ -12,18 +12,9 @@
 #include <unistd.h>
 #endif
 
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
-
+#include <codecvt>
 #include <limits>
+#include <locale>
 #include <stdexcept>
 
 namespace Azure { namespace Storage { namespace Details {
@@ -41,7 +32,12 @@ namespace Azure { namespace Storage { namespace Details {
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 #else
-    m_handle = CreateFile2(filename.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
+    m_handle = CreateFile2(
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        OPEN_EXISTING,
+        NULL);
 #endif
     if (m_handle == INVALID_HANDLE_VALUE)
     {
@@ -73,7 +69,11 @@ namespace Azure { namespace Storage { namespace Details {
         NULL);
 #else
     m_handle = CreateFile2(
-        filename.data(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, CREATE_ALWAYS, NULL);
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
+        GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        CREATE_ALWAYS,
+        NULL);
 #endif
     if (m_handle == INVALID_HANDLE_VALUE)
     {
