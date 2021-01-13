@@ -7,3 +7,5 @@ Build-Depends: azure-core-cpp, libxml2, openssl (!windows)
 Description: Microsoft Azure Common Storage SDK for C++
   This library provides common Azure Storage-related abstractions for Azure SDK.
 Homepage: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-common
+Supports: !uwp
+# One of the dependencies, libxml2 depends on libiconv, which does not compile on UWP.

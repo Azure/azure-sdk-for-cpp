@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+# One of the dependencies, libxml2 depends on libiconv, which does not compile on UWP.
+vcpkg_fail_port_install(ON_TARGET "UWP")
+
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
