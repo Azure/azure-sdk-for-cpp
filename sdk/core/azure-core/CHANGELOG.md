@@ -11,6 +11,7 @@
 - Added default constructor to `DateTime`.
 - Added `DateTime` supporting dates since 0001.
 - Added Base64 encoding and decoding utility APIs to the `Azure::Core` namespace available from `azure/core/base64.hpp`.
+- Added `Http::Response<void>` template specialization.
 
 ### Breaking Changes
 
