@@ -20,6 +20,7 @@ namespace Azure { namespace Storage { namespace Details {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
+#if !defined(AZ_PLATFORM_WINDOWS_UWP)
     m_handle = CreateFile(
         filename.data(),
         GENERIC_READ,
@@ -28,6 +29,9 @@ namespace Azure { namespace Storage { namespace Details {
         OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL,
         NULL);
+#else
+    m_handle = CreateFile2(filename.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
+#endif
     if (m_handle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("failed to open file");
@@ -47,6 +51,7 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileWriter::FileWriter(const std::string& filename)
   {
+#if !defined(AZ_PLATFORM_WINDOWS_UWP)
     m_handle = CreateFile(
         filename.data(),
         GENERIC_WRITE,
@@ -55,6 +60,10 @@ namespace Azure { namespace Storage { namespace Details {
         CREATE_ALWAYS,
         FILE_ATTRIBUTE_NORMAL,
         NULL);
+#else
+    m_handle = CreateFile2(
+        filename.data(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, CREATE_ALWAYS, NULL);
+#endif
     if (m_handle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("failed to open file");
