@@ -3,6 +3,8 @@
 
 #include "azure/core/http/policy.hpp"
 
+#include <chrono>
+
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
@@ -14,7 +16,7 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
   {
     std::lock_guard<std::mutex> lock(m_accessTokenMutex);
 
-    if (DateTime::Now() > m_accessToken.ExpiresOn)
+    if (std::chrono::system_clock::now() > m_accessToken.ExpiresOn)
     {
       m_accessToken = m_credential->GetToken(context, m_scopes);
     }

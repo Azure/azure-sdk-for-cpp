@@ -264,7 +264,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(m_blobContent.size()), StorageException);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_TRUE(response->Created);
     }
 
     auto blobContent
@@ -272,7 +272,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.UploadPages(0, &blobContent);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Created);
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(

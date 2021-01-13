@@ -297,6 +297,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct CreateAppendBlobResult
     {
+      bool Created = true;
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
@@ -307,6 +308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct CreateBlobContainerResult
     {
+      bool Created = true;
       std::string ETag;
       Azure::Core::DateTime LastModified;
     }; // struct CreateBlobContainerResult
@@ -324,6 +326,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct CreatePageBlobResult
     {
+      bool Created = true;
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
@@ -335,10 +338,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DeleteBlobContainerResult
     {
+      bool Deleted = true;
     }; // struct DeleteBlobContainerResult
 
     struct DeleteBlobResult
     {
+      bool Deleted = true;
     }; // struct DeleteBlobResult
 
     class DeleteSnapshotsOption {

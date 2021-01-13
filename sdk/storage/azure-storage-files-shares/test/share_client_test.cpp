@@ -4,6 +4,7 @@
 #include "share_client_test.hpp"
 
 #include <algorithm>
+#include <chrono>
 
 #include <azure/storage/common/crypt.hpp>
 
@@ -194,8 +195,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.Policy.StartsOn = Core::DateTime::Now() - std::chrono::minutes(10);
-      identifier.Policy.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(100);
+      identifier.Policy.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(10);
+      identifier.Policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(100);
       identifier.Policy.Permission = "r";
       identifiers.emplace_back(identifier);
     }

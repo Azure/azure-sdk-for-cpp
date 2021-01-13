@@ -7,13 +7,15 @@
 
 #include "datalake_file_system_client_test.hpp"
 
+#include <chrono>
+
 namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, DataLakeSasTest)
   {
-    auto sasStartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(5);
-    auto sasExpiredOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
-    auto sasExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(60);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     std::string directory1Name = RandomString();
     std::string directory2Name = RandomString();

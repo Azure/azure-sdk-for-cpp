@@ -4,15 +4,17 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 
+#include <chrono>
+
 #include "blob_container_client_test.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BlobSasTest)
   {
-    auto sasStartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(5);
-    auto sasExpiredOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
-    auto sasExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(60);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
