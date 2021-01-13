@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- Moved `Azure::Identity::Version`, defined in `azure/identity/version.hpp` to `Azure::Identity::Details` namespace in `azure/identity/version.hpp` header.
+- Moved `Azure::Identity::Version`, defined in `azure/identity/version.hpp` to the `Azure::Identity::Details` namespace.
 
 ### Other changes and Improvements
 
