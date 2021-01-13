@@ -8,29 +8,38 @@
 - Added `Range` type to `Azure::Core::Http` namespace.
 - Added support for long-running operations with `Operation<T>`.
 - Added support for setting a custom transport adapter by implementing the method `std::shared_ptr<HttpTransport> ::AzureSdkGetCustomHttpTransport()`.
-- Added default constructor to `DateTime`.
-- Added `DateTime` supporting dates since 0001.
+- Added interoperability between `std::chrono::system_clock` types and `DateTime`.
+- Added default constructor to `DateTime` and support for dates since 0001.
 - Added Base64 encoding and decoding utility APIs to the `Azure::Core` namespace available from `azure/core/base64.hpp`.
 - Added `Http::Response<void>` template specialization.
+- Added `GetHeadersAsString()` on the `Azure::Core::Http::Request` class.
+- Added a `platform.hpp` header file for defining commonly used OS-specific `#define` constants.
+- Added `IsCancelled()` on the `Azure::Core::Context` class.
 
 ### Breaking Changes
 
-- Removed `DateTime::operator Duration()`.
-- Removed `DateTime::Now()`.
+- Removed `DateTime::operator Duration()`, `DateTime::Duration` typedef and `DateTime::Now()`.
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
+- Changed type of `Token::ExpiresOn` to `DateTime`.
+- Renamed exception `OperationCanceledException` to `OperationCancelledException` and `ThrowIfCanceled()` to `ThrowIfCancelled()` on the `Context` class.
+- Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details` namespace.
+- Changed `Azure::Core::AuthenticationException` to derive from `std::exception` instead of `std::runtime_error`.
+- Changed the `BodyStream::Read` API from being a pure virtual function to non-virtual.
+- Removed `CurlConnection`, `CurlConnectionPool`, `CurlSession`, and `CurlNetworkConnection` by making headers meant as implementation, private.
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
-- Changed type of `Token::ExpiresOn` to `DateTime`.
-- Renamed exception `OperationCanceledException` to `OperationCancelledException`.
-- Renamed methods from `Azure::Core::Context`.
-  - `IsCanceled` to `IsCancelled`
-  - `ThrowIfCanceled` to `ThrowIfCancelled`.
-- Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details` namespace.
 
 ### Bug Fixes
 
 - Fixed the Curl transport adapter connection pooling when setting options.
 - Fixed setting up the default transport adapter.
+- Fixed linker error of missing pthread on Linux.
+- Initialize class data members to avoid MSVC warning.
+- Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle.
+
+### Other changes and Improvements
+
+- Added support for distributing the C++ SDK as a source package via vcpkg.
 
 ## 1.0.0-beta.3 (2020-11-11)
 
