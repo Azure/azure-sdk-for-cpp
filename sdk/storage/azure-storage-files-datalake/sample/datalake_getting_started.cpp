@@ -24,7 +24,7 @@ void DataLakeGettingStarted()
   // Initializing a FileSystemClient that can then initialize the PathClient, FileClient,
   // DirectoryClient.
   auto fileSystemClient
-      = FileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
+      = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
 
   try
   {

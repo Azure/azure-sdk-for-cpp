@@ -18,7 +18,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  class FileSystemClient;
+  class DataLakeFileSystemClient;
 
   class DataLakeServiceClient {
   public:
@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileSystemName The name of the file system.
      * @return FileSystemClient
      */
-    FileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
+    DataLakeFileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
 
     /**
      * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for blob

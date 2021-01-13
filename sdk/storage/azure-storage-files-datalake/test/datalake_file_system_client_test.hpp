@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     static Files::DataLake::Models::PathHttpHeaders GetInterestingHttpHeaders();
 
-    static std::shared_ptr<Files::DataLake::FileSystemClient> m_fileSystemClient;
+    static std::shared_ptr<Files::DataLake::DataLakeFileSystemClient> m_fileSystemClient;
     static std::string m_fileSystemName;
 
     // Path related

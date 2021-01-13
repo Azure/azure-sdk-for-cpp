@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::shared_ptr<Files::DataLake::FileClient> m_fileClient;
+    static std::shared_ptr<Files::DataLake::DataLakeFileClient> m_fileClient;
     static std::string m_fileName;
   };
 
