@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   // FileSystemClient models:
 
-  using ListDataLakePathsResult = FileSystemListPathsResult;
+  using ListPathsSinglePageResult = FileSystemListPathsResult;
 
   struct GetDataLakeFileSystemPropertiesResult
   {

@@ -289,9 +289,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ListDataLakePathsResult> DataLakeFileSystemClient::ListPaths(
-      bool recursive,
-      const ListDataLakePathsOptions& options) const
+  Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::
+      ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
   {
     Details::DataLakeRestClient::FileSystem::ListDataLakePathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;

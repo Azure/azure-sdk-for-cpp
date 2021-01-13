@@ -89,8 +89,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return Azure::Core::Response<Models::ListFileSystemsSinglePageResult> containing the listed
-     * result of file systems and continuation token for unfinished list result.
+     * @return Azure::Core::Response<Models::ListFileSystemsSinglePageResult> containing the
+     * listed result of file systems and continuation token for unfinished list result.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::ListFileSystemsSinglePageResult> ListFileSystemsSinglePage(

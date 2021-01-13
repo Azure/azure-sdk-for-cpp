@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for ServiceClient::ListFilesSystems
+   * @brief Optional parameters for ServiceClient::ListFileSystemsSinglePageOptions
    */
   struct ListFileSystemsSinglePageOptions
   {
@@ -164,9 +164,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::ListPaths
+   * @brief Optional parameters for FileSystemClient::ListPathsSinglePage
    */
-  struct ListDataLakePathsOptions
+  struct ListPathsSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
