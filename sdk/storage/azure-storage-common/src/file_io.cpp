@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Details {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
-#if !AZ_PLATFORM_IS_UWP()
+#if AZ_PLATFORM_IS_NOT_UWP()
     m_handle = CreateFile(
         filename.data(),
         GENERIC_READ,
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-#if !AZ_PLATFORM_IS_UWP()
+#if AZ_PLATFORM_IS_NOT_UWP()
     m_handle = CreateFile(
         filename.data(),
         GENERIC_WRITE,

@@ -23,7 +23,7 @@ using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
-#if !AZ_PLATFORM_IS_UWP()
+#if AZ_PLATFORM_IS_NOT_UWP()
 
 #if defined(_MSC_VER)
 #pragma warning(push)
