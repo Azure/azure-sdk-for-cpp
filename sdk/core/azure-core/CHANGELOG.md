@@ -19,19 +19,14 @@
 
 ### Breaking Changes
 
-- Removed `DateTime::operator Duration()` and `DateTime::Duration` typedef.
-- Removed `DateTime::Now()`.
+- Removed `DateTime::operator Duration()`, `DateTime::Duration` typedef and `DateTime::Now()`.
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
 - Changed type of `Token::ExpiresOn` to `DateTime`.
-- Renamed exception `OperationCanceledException` to `OperationCancelledException`.
-- Renamed `ThrowIfCanceled()` to `ThrowIfCancelled()` on the `Azure::Core::Context` class.
+- Renamed exception `OperationCanceledException` to `OperationCancelledException` and `ThrowIfCanceled()` to `ThrowIfCancelled()` on the `Context` class.
 - Moved `Azure::Core::Version`, defined in `azure/core/version.hpp` to the `Azure::Core::Details` namespace.
 - Changed `Azure::Core::AuthenticationException` to derive from `std::exception` instead of `std::runtime_error`.
 - Changed the `BodyStream::Read` API from being a pure virtual function to non-virtual.
-- Removed `CurlConnection`, `CurlConnectionPool`, `CurlSession` and `CurlNetworkConnection` by making these headers private:
-  - curl_connection.hpp
-  - curl_connection_pool.hpp
-  - curl_session.hpp
+- Removed `CurlConnection`, `CurlConnectionPool`, `CurlSession`, and `CurlNetworkConnection` by making headers meant as implementation, private.
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
 
@@ -46,8 +41,6 @@
 ### Other changes and Improvements
 
 - Added support for distributing the C++ SDK as a source package via vcpkg.
-- Added a 3rd party JSON library (nlohmann_json) to Azure Core provided as a CMake inteface for anyone using Azure Core to be able to include a json header.
-- Fixed `DateTime` documentation for `GetString()` to reference the correct type of exception being thrown, `invalid_argument`.
 
 ## 1.0.0-beta.3 (2020-11-11)
 
