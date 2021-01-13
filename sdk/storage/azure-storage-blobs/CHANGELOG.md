@@ -66,6 +66,7 @@
 - Rename `Models::DeleteSnapshotsOption::Only` to `Models::DeleteSnapshotsOption::OnlySnapshots`.
 - Rename `SourceConditions` in API options to `SourceAccessConditions`.
 - Remove Blob Batch.
+- `DownloadBlobResult::Content-Range` is changed to an `Azure::Core::Http::Range`, an extra field `BlobSize` is added.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
