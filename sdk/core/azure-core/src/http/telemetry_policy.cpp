@@ -8,7 +8,6 @@
 #include <sstream>
 
 #if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(AZ_PLATFORM_WINDOWS_UWP)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -18,6 +17,7 @@
 
 #include <windows.h>
 
+#if !AZ_PLATFORM_IS_UWP
 namespace {
 
 std::string GetOSVersion()

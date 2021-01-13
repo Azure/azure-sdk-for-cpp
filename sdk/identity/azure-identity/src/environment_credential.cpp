@@ -8,11 +8,23 @@
 
 #include <cstdlib>
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
 using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
-#if !defined(AZ_PLATFORM_WINDOWS_UWP)
+#if !AZ_PLATFORM_IS_UWP()
+
 #if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
@@ -33,6 +45,8 @@ EnvironmentCredential::EnvironmentCredential()
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
+
 #endif
 
   if (tenantId != nullptr && clientId != nullptr)
@@ -61,7 +75,6 @@ EnvironmentCredential::EnvironmentCredential()
     //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
     //}
   }
-#endif
 }
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(

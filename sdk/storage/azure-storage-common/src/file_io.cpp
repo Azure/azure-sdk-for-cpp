@@ -12,6 +12,17 @@
 #include <unistd.h>
 #endif
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
 #include <limits>
 #include <stdexcept>
 
@@ -20,7 +31,7 @@ namespace Azure { namespace Storage { namespace Details {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
-#if !defined(AZ_PLATFORM_WINDOWS_UWP)
+#if !AZ_PLATFORM_IS_UWP()
     m_handle = CreateFile(
         filename.data(),
         GENERIC_READ,
@@ -51,7 +62,7 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-#if !defined(AZ_PLATFORM_WINDOWS_UWP)
+#if !AZ_PLATFORM_IS_UWP()
     m_handle = CreateFile(
         filename.data(),
         GENERIC_WRITE,
