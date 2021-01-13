@@ -137,8 +137,9 @@ jobs:
   - bash: |
       # Run clang-format recursively on each source and header file within the repo sdk folder.
       echo "Check clang-formatting"
-      sudo apt-get update > /dev/null
-      sudo apt-get install clang-format > /dev/null
+      #sudo apt-get update > /dev/null
+      #sudo apt-get install clang-format > /dev/null
+      brew install clang-format
       clang-format --version
       find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \;
 
