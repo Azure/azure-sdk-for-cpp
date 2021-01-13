@@ -17,7 +17,7 @@
 
 #include <windows.h>
 
-#if !AZ_PLATFORM_IS_UWP
+#if !AZ_PLATFORM_IS_UWP()
 namespace {
 
 std::string GetOSVersion()
