@@ -390,7 +390,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_GE(deletedContainerItem.RemainingRetentionDays.GetValue(), 0);
 
     std::string containerName2 = LowercaseRandomString();
-    auto containerClient2 = m_blobServiceClient.GetBlobContainerClient(containerName2);
     for (int i = 0; i < 60; ++i)
     {
       try
@@ -398,7 +397,7 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Storage::Blobs::UndeleteBlobContainerOptions options;
         options.DestinationBlobContainerName = containerName2;
         m_blobServiceClient.UndeleteBlobContainer(
-            deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
+            deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue(), options);
         break;
       }
       catch (StorageException& e)
@@ -414,6 +413,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
     }
+    auto containerClient2 = m_blobServiceClient.GetBlobContainerClient(containerName2);
     EXPECT_NO_THROW(containerClient2.GetProperties());
   }
 
