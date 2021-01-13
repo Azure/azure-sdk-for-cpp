@@ -13,9 +13,9 @@
 - Added `DateTime` supporting dates since 0001.
 - Added Base64 encoding and decoding utility APIs to the `Azure::Core` namespace available from `azure/core/base64.hpp`.
 - Added `Http::Response<void>` template specialization.
-- Added `GetHeadersAsString()` on the `Request` class.
+- Added `GetHeadersAsString()` on the `Azure::Core::Http::Request` class.
 - Added a `platform.hpp` header file for defining commonly used OS-specific `#define` constants.
-- Added `IsCancelled()` on the `Context class.
+- Added `IsCancelled()` on the `Azure::Core::Context` class.
 
 ### Breaking Changes
 
