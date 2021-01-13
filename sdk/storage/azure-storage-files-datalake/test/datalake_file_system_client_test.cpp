@@ -56,14 +56,14 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::DataLake::Models::Path> result;
     std::string continuation;
-    Files::DataLake::ListDataLakePathsOptions options;
+    Files::DataLake::ListPathsSinglePageOptions options;
     if (!directory.empty())
     {
       options.Directory = directory;
     }
     do
     {
-      auto response = m_fileSystemClient->ListPaths(recursive, options);
+      auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
       result.insert(result.end(), response->Paths.begin(), response->Paths.end());
       if (response->ContinuationToken.HasValue())
       {
@@ -281,9 +281,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::DataLake::ListDataLakePathsOptions options;
+      Files::DataLake::ListPathsSinglePageOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileSystemClient->ListPaths(true, options);
+      auto response = m_fileSystemClient->ListPathsSinglePage(true, options);
       EXPECT_LE(2U, response->Paths.size());
     }
   }

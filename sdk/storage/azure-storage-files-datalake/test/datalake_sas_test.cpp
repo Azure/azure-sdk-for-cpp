@@ -90,14 +90,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_filesystem_list = [&](const std::string& sas) {
       auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUri + sas);
-      EXPECT_NO_THROW(filesystemClient.ListPaths(true));
+      EXPECT_NO_THROW(filesystemClient.ListPathsSinglePage(true));
     };
 
     auto verify_directory_list = [&](const std::string& sas) {
       auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUri + sas);
-      Files::DataLake::ListDataLakePathsOptions options;
+      Files::DataLake::ListPathsSinglePageOptions options;
       options.Directory = directory1Name;
-      EXPECT_NO_THROW(filesystemClient.ListPaths(true, options));
+      EXPECT_NO_THROW(filesystemClient.ListPathsSinglePage(true, options));
     };
 
     auto verify_file_create = [&](const std::string& sas) {

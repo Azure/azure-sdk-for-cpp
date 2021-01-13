@@ -177,13 +177,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                  filesystem are listed. If "directory" is specified, the list will only
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
-     * @return Azure::Core::Response<Models::ListDataLakePathsResult> containing the results when
-     * listing the paths under a file system.
+     * @return Azure::Core::Response<Models::ListPathsSinglePageResult> containing the
+     * results when listing the paths under a file system.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::ListDataLakePathsResult> ListPaths(
+    Azure::Core::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
         bool recursive,
-        const ListDataLakePathsOptions& options = ListDataLakePathsOptions()) const;
+        const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions()) const;
 
   private:
     Azure::Core::Http::Url m_dfsUri;

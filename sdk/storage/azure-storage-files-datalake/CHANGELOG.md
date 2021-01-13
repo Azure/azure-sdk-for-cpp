@@ -19,6 +19,7 @@
 - `ReadFileResult` now have `ContentRange` as string.
 - `ReadFileOptions` now have `Azure::Core::Http::Range Range` instead of `Content-Length` and `Offset`.
 - Replace scoped enums that don't support bitwise operations with extensible enum.
+- `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
