@@ -73,6 +73,7 @@ jobs:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
+        CHECK_CLANG_FORMAT: 1
 
       # Unit testing ON
       Linux_x64_with_unit_test:
@@ -135,11 +136,11 @@ jobs:
   # Validate all the files are formatted correctly according to the .clang-format file.
   - bash: |
       # Run clang-format recursively on each source and header file within the repo sdk folder.
-      echo "Check clang-formatting (will use version 10)"
-      sudo apt-get update > /dev/null
-      sudo apt-get install clang-format-10 > /dev/null
-      clang-format-10 --version
-      find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format-10 -style=file -i {} \;
+      echo "Check clang-formatting"
+      #sudo apt-get update > /dev/null
+      #sudo apt-get install clang-format-10 > /dev/null
+      clang-format --version
+      find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \;
 
       if [[ `git status | grep modified | awk '{print $2}'` ]]; then
         echo Some files were not formatted correctly according to the .clang-format file.
@@ -155,7 +156,7 @@ jobs:
       exit 0
 
     displayName: Validate Clang Format
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+    condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
 
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
