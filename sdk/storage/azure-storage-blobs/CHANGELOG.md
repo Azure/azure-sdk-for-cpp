@@ -70,6 +70,7 @@
 - Remove Blob Batch.
 - `DownloadBlobResult::Content-Range` is changed to an `Azure::Core::Http::Range`, an extra field `BlobSize` is added.
 - Remove `Undelete` from `BlobContainerClient`.
+- `BlobRetentionPolicy::Enabled` is renamed to `BlobRetentionPolicy::IsEnabled`, `BlobStaticWebsite::Enabled` is renamed to `BlobStaticWebsite::IsEnabled`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

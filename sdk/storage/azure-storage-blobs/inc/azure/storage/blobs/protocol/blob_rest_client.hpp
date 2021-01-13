@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct BlobRetentionPolicy
     {
-      bool Enabled = false;
+      bool IsEnabled = false;
       Azure::Core::Nullable<int32_t> Days;
     }; // struct BlobRetentionPolicy
 
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct BlobStaticWebsite
     {
-      bool Enabled = false;
+      bool IsEnabled = false;
       Azure::Core::Nullable<std::string> IndexDocument;
       Azure::Core::Nullable<std::string> DefaultIndexDocumentPath;
       Azure::Core::Nullable<std::string> ErrorDocument404Path;
@@ -2527,7 +2527,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
-                ret.Enabled = std::strcmp(node.Value, "true") == 0;
+                ret.IsEnabled = std::strcmp(node.Value, "true") == 0;
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Days)
               {
@@ -2595,7 +2595,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
-                ret.Enabled = std::strcmp(node.Value, "true") == 0;
+                ret.IsEnabled = std::strcmp(node.Value, "true") == 0;
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_IndexDocument)
               {
@@ -2893,7 +2893,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
           writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+              Storage::Details::XmlNodeType::Text, nullptr, options.IsEnabled ? "true" : "false"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.Days.HasValue())
           {
@@ -2914,7 +2914,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
           writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+              Storage::Details::XmlNodeType::Text, nullptr, options.IsEnabled ? "true" : "false"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.IndexDocument.HasValue())
           {
