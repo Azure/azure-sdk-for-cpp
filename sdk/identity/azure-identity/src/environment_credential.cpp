@@ -23,8 +23,7 @@ using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
-#if AZ_PLATFORM_IS_NOT_UWP()
-
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
 #if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
@@ -45,8 +44,6 @@ EnvironmentCredential::EnvironmentCredential()
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
-#endif
-
 #endif
 
   if (tenantId != nullptr && clientId != nullptr)
@@ -75,6 +72,7 @@ EnvironmentCredential::EnvironmentCredential()
     //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
     //}
   }
+#endif
 }
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(

@@ -17,7 +17,7 @@
 
 #include <windows.h>
 
-#if AZ_PLATFORM_IS_NOT_UWP()
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
 namespace {
 
 std::string GetOSVersion()

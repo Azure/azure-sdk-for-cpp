@@ -10,9 +10,6 @@
 
 #if defined(_WIN32)
 #define AZ_PLATFORM_WINDOWS
-// The macro will work as expected once windows.h is included, but not before that.
-#define AZ_PLATFORM_IS_NOT_UWP() \
-  (!defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP))
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #define AZ_PLATFORM_POSIX
 #endif
