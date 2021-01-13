@@ -137,9 +137,9 @@ jobs:
       # Run clang-format recursively on each source and header file within the repo sdk folder.
       echo Check clang-formatting
       sudo apt-get update
-      sudo apt-get install clang-format-11
-      clang-format-11 --version
-      find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format-11 -style=file -i {} \;
+      sudo apt-get install clang-format-10
+      clang-format-10 --version
+      find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format-10 -style=file -i {} \;
 
       if [[ `git status | grep modified | awk '{print $2}'` ]]; then
         echo Some files were not formatted correctly according to the .clang-format file.
