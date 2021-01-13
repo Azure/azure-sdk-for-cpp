@@ -43,9 +43,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto filesystemClient0 = serviceClient0.GetFileSystemClient(m_fileSystemName);
     auto containerClinet0 = Blobs::BlobContainerClient::CreateFromConnectionString(
         AdlsGen2ConnectionString(), m_fileSystemName);
-    auto directory1Client0 = filesystemClient0.GetDataLakeDirectoryClient(directory1Name);
-    auto directory2Client0 = directory1Client0.GetSubDataLakeDirectoryClient(directory2Name);
-    auto fileClient0 = directory2Client0.GetDataLakeFileClient(fileName);
+    auto directory1Client0 = filesystemClient0.GetDirectoryClient(directory1Name);
+    auto directory2Client0 = directory1Client0.GetSubDirectoryClient(directory2Name);
+    auto fileClient0 = directory2Client0.GetFileClient(fileName);
     directory1Client0.Create();
     directory2Client0.Create();
 
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
       }
       std::string newFilename = RandomString();
-      auto newDataLakeFileClient0 = directory2Client0.GetDataLakeFileClient(newFilename);
+      auto newDataLakeFileClient0 = directory2Client0.GetFileClient(newFilename);
       newDataLakeFileClient0.Create();
       auto fileClient
           = Files::DataLake::DataLakeFileClient(newDataLakeFileClient0.GetDfsUri() + sas);

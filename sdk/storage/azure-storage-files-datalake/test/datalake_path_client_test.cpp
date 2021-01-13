@@ -18,8 +18,8 @@ namespace Azure { namespace Storage { namespace Test {
     DataLakeFileSystemClientTest::SetUpTestSuite();
     m_pathName = LowercaseRandomString(10);
     m_pathClient = std::make_shared<Files::DataLake::DataLakePathClient>(
-        m_fileSystemClient->GetDataLakePathClient(m_pathName));
-    m_fileSystemClient->GetDataLakeFileClient(m_pathName).Create();
+        m_fileSystemClient->GetPathClient(m_pathName));
+    m_fileSystemClient->GetFileClient(m_pathName).Create();
   }
 
   void DataLakePathClientTest::TearDownTestSuite()
@@ -73,8 +73,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetDataLakeFileClient(LowercaseRandomString());
-      auto client2 = m_fileSystemClient->GetDataLakeFileClient(LowercaseRandomString());
+      auto client1 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+      auto client2 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
       Files::DataLake::CreateDataLakePathOptions options1;
       Files::DataLake::CreateDataLakePathOptions options2;
       options1.Metadata = metadata1;
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(LowercaseRandomString());
+        auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
         Files::DataLake::CreateDataLakePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(LowercaseRandomString());
+        auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         EXPECT_NO_THROW(client.SetHttpHeaders(httpHeader));
         pathClient.emplace_back(std::move(client));

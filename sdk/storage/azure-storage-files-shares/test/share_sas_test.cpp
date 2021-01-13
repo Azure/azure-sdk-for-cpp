@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto fileServiceClient0 = Files::Shares::ShareServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
     auto shareClient0 = fileServiceClient0.GetShareClient(m_shareName);
-    auto fileClient0 = shareClient0.GetShareFileClient(fileName);
+    auto fileClient0 = shareClient0.GetFileClient(fileName);
 
     std::string shareUri = shareClient0.GetUri();
     std::string fileUri = fileClient0.GetUri();

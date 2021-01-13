@@ -47,11 +47,11 @@ void DataLakeGettingStarted()
     }
 
     // Create a directory.
-    auto directoryClient = fileSystemClient.GetDataLakeDirectoryClient(directoryName);
+    auto directoryClient = fileSystemClient.GetDirectoryClient(directoryName);
     directoryClient.Create();
 
     // Creates a file under the directory.
-    auto fileClient = directoryClient.GetDataLakeFileClient(fileName);
+    auto fileClient = directoryClient.GetFileClient(fileName);
     fileClient.Create();
 
     // Append/flush/read data from the client.

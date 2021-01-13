@@ -160,14 +160,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  DataLakePathClient DataLakeFileSystemClient::GetDataLakePathClient(const std::string& path) const
+  DataLakePathClient DataLakeFileSystemClient::GetPathClient(const std::string& path) const
   {
     auto builder = m_dfsUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(path));
     return DataLakePathClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
-  DataLakeFileClient DataLakeFileSystemClient::GetDataLakeFileClient(const std::string& path) const
+  DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& path) const
   {
 
     auto builder = m_dfsUri;
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
-  DataLakeDirectoryClient DataLakeFileSystemClient::GetDataLakeDirectoryClient(
+  DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
       const std::string& path) const
   {
     auto builder = m_dfsUri;

@@ -37,12 +37,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       {
         auto name = m_directoryA + "/" + LowercaseRandomString();
-        m_fileSystemClient->GetDataLakeFileClient(name).Create();
+        m_fileSystemClient->GetFileClient(name).Create();
         m_pathNameSetA.emplace_back(std::move(name));
       }
       {
         auto name = m_directoryB + "/" + LowercaseRandomString();
-        m_fileSystemClient->GetDataLakeFileClient(name).Create();
+        m_fileSystemClient->GetFileClient(name).Create();
         m_pathNameSetB.emplace_back(std::move(name));
       }
     }
@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
     {
       std::string pathName = baseName + RandomString();
-      auto pathClient = m_fileSystemClient->GetDataLakePathClient(pathName);
+      auto pathClient = m_fileSystemClient->GetPathClient(pathName);
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
       auto pathUrl = pathClient.GetUri();
       EXPECT_EQ(
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       std::string directoryName = baseName + RandomString();
-      auto directoryClient = m_fileSystemClient->GetDataLakeDirectoryClient(directoryName);
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
       EXPECT_NO_THROW(directoryClient.Create());
       auto directoryUrl = directoryClient.GetUri();
       EXPECT_EQ(
@@ -312,7 +312,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       std::string fileName = baseName + RandomString();
-      auto fileClient = m_fileSystemClient->GetDataLakeFileClient(fileName);
+      auto fileClient = m_fileSystemClient->GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUri();
       EXPECT_EQ(

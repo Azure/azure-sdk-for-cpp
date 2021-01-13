@@ -35,13 +35,13 @@ namespace Azure { namespace Storage { namespace Test {
     DataLakeFileSystemClientTest::SetUpTestSuite();
     m_fileName = RandomString(10);
     m_fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
-        m_fileSystemClient->GetDataLakeFileClient(m_fileName));
+        m_fileSystemClient->GetFileClient(m_fileName));
     m_fileClient->Create();
   }
 
   void DataLakeFileClientTest::TearDownTestSuite()
   {
-    m_fileSystemClient->GetDataLakeFileClient(m_fileName).Delete();
+    m_fileSystemClient->GetFileClient(m_fileName).Delete();
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, CreateDeleteIfExistsFiles)
   {
     {
-      auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(RandomString());
       bool created = false;
       bool deleted = false;
       EXPECT_NO_THROW(created = client.Create()->Created);
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClients;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClients.emplace_back(std::move(client));
       }
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& newPath : newPaths)
       {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Test {
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -196,7 +196,7 @@ namespace Azure { namespace Storage { namespace Test {
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           auto newPath = RandomString();
           EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
         }
       }
     }
@@ -253,8 +253,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetDataLakeFileClient(RandomString());
-      auto client2 = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto client1 = m_fileSystemClient->GetFileClient(RandomString());
+      auto client2 = m_fileSystemClient->GetFileClient(RandomString());
       Files::DataLake::CreateDataLakeFileOptions options1;
       Files::DataLake::CreateDataLakeFileOptions options2;
       options1.Metadata = metadata1;
@@ -304,7 +304,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         Files::DataLake::CreateDataLakeFileOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
@@ -357,7 +357,7 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Core::Http::MemoryBodyStream(buffer));
     auto newFileName = RandomString(10);
     auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
-        m_fileSystemClient->GetDataLakeFileClient(newFileName));
+        m_fileSystemClient->GetFileClient(newFileName));
     newFileClient->Create();
     auto properties1 = newFileClient->GetProperties();
 
@@ -431,13 +431,13 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
   {
     {
-      auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(RandomString());
       EXPECT_NO_THROW(client.Create());
       EXPECT_NO_THROW(client.ScheduleDeletion(
           Files::DataLake::ScheduleDataLakeFileExpiryOriginType::NeverExpire));
     }
     {
-      auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(RandomString());
       EXPECT_NO_THROW(client.Create());
       Files::DataLake::ScheduleDataLakeFileDeletionOptions options;
       EXPECT_THROW(
@@ -449,7 +449,7 @@ namespace Azure { namespace Storage { namespace Test {
           Files::DataLake::ScheduleDataLakeFileExpiryOriginType::RelativeToNow, options));
     }
     {
-      auto client = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(RandomString());
       EXPECT_NO_THROW(client.Create());
       Files::DataLake::ScheduleDataLakeFileDeletionOptions options;
       EXPECT_THROW(
@@ -477,7 +477,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> fileContent = RandomBuffer(static_cast<std::size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency, int64_t fileSize) {
-      auto fileClient = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
 
       Azure::Storage::Files::DataLake::UploadDataLakeFileFromOptions options;
       options.ChunkSize = 1_MB;
@@ -506,7 +506,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto testUploadFromFile = [&](int concurrency, int64_t fileSize) {
-      auto fileClient = m_fileSystemClient->GetDataLakeFileClient(RandomString());
+      auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
 
       Azure::Storage::Files::DataLake::UploadDataLakeFileFromOptions options;
       options.ChunkSize = 1_MB;

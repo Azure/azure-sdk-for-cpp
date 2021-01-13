@@ -20,13 +20,13 @@ namespace Azure { namespace Storage { namespace Test {
     DataLakeFileSystemClientTest::SetUpTestSuite();
     m_directoryName = RandomString(10);
     m_directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
-        m_fileSystemClient->GetDataLakeDirectoryClient(m_directoryName));
-    m_fileSystemClient->GetDataLakeFileClient(m_directoryName).Create();
+        m_fileSystemClient->GetDirectoryClient(m_directoryName));
+    m_fileSystemClient->GetFileClient(m_directoryName).Create();
   }
 
   void DataLakeDirectoryClientTest::TearDownTestSuite()
   {
-    m_fileSystemClient->GetDataLakeFileClient(m_directoryName).Delete();
+    m_fileSystemClient->GetFileClient(m_directoryName).Delete();
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -92,12 +92,11 @@ namespace Azure { namespace Storage { namespace Test {
       // Recursive delete works.
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       auto rootDir = RandomString();
-      auto rootDirClient = m_fileSystemClient->GetDataLakeDirectoryClient(rootDir);
+      auto rootDirClient = m_fileSystemClient->GetDirectoryClient(rootDir);
       EXPECT_NO_THROW(rootDirClient.Create());
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client
-            = m_fileSystemClient->GetDataLakeDirectoryClient(rootDir + "/" + RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(rootDir + "/" + RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -109,7 +108,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteIfExistsDirectory)
   {
     {
-      auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+      auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
       bool created = false;
       bool deleted = false;
       EXPECT_NO_THROW(created = client.Create()->Created);
@@ -137,7 +136,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClients;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
@@ -154,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& newPath : newPaths)
       {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -162,7 +161,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -177,7 +176,7 @@ namespace Azure { namespace Storage { namespace Test {
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -185,7 +184,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -199,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -207,7 +206,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -234,7 +233,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           auto newPath = RandomString();
           EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
+          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
         }
       }
     }
@@ -256,8 +255,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
-      auto client2 = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+      auto client1 = m_fileSystemClient->GetDirectoryClient(RandomString());
+      auto client2 = m_fileSystemClient->GetDirectoryClient(RandomString());
       Files::DataLake::CreateDataLakePathOptions options1;
       Files::DataLake::CreateDataLakePathOptions options2;
       options1.Metadata = metadata1;
@@ -309,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
         Files::DataLake::CreateDataLakePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
@@ -333,13 +332,13 @@ namespace Azure { namespace Storage { namespace Test {
     auto rootDirectoryName = RandomString();
     auto directoryName1 = RandomString();
     auto directoryName2 = RandomString();
-    auto rootDirectoryClient = m_fileSystemClient->GetDataLakeDirectoryClient(rootDirectoryName);
+    auto rootDirectoryClient = m_fileSystemClient->GetDirectoryClient(rootDirectoryName);
     rootDirectoryClient.Create();
     auto directoryClient1
-        = m_fileSystemClient->GetDataLakeDirectoryClient(rootDirectoryName + "/" + directoryName1);
+        = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + "/" + directoryName1);
     directoryClient1.Create();
     auto directoryClient2
-        = m_fileSystemClient->GetDataLakeDirectoryClient(rootDirectoryName + "/" + directoryName2);
+        = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + "/" + directoryName2);
     directoryClient2.Create();
 
     {
