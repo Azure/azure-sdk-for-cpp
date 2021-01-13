@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.0-beta.25 (2020-01-12)
+
+* Validate vcpkg publishing automation (part 20)
+
 ## 1.0.0-beta.24 (2020-01-11)
 
 * Validate vcpkg publishing automation (part 19)
