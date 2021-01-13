@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareDirectoryClient ShareDirectoryClient::GetSubDirectoryClient(
+  ShareDirectoryClient ShareDirectoryClient::GetSubdirectoryClient(
       const std::string& subDirectoryName) const
   {
     auto builder = m_shareDirectoryUri;

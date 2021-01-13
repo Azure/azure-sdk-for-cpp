@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
-  DataLakeDirectoryClient DataLakeDirectoryClient::GetSubDirectoryClient(
+  DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
       const std::string& path) const
   {
     auto builder = m_dfsUri;

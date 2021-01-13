@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // CreateIfNotExists & DeleteIfExists.
       {
-        auto client = m_shareClient->GetRootDirectoryClient().GetSubDirectoryClient(
+        auto client = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(
             LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         EXPECT_NO_THROW(client.CreateIfNotExists());
@@ -111,14 +111,14 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.DeleteIfExists());
       }
       {
-        auto client = m_shareClient->GetRootDirectoryClient().GetSubDirectoryClient(
+        auto client = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(
             LowercaseRandomString());
         EXPECT_NO_THROW(client.CreateIfNotExists());
         EXPECT_THROW(client.Create(), StorageException);
         EXPECT_NO_THROW(client.DeleteIfExists());
       }
       {
-        auto client = m_shareClient->GetRootDirectoryClient().GetSubDirectoryClient(
+        auto client = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(
             LowercaseRandomString());
         auto created = client.Create()->Created;
         EXPECT_TRUE(created);
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(deleted);
       }
       {
-        auto client = m_shareClient->GetRootDirectoryClient().GetSubDirectoryClient(
+        auto client = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(
             LowercaseRandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult->Deleted);
@@ -139,14 +139,14 @@ namespace Azure { namespace Storage { namespace Test {
         auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
             StandardStorageConnectionString(), LowercaseRandomString());
         auto client
-            = shareClient.GetRootDirectoryClient().GetSubDirectoryClient(LowercaseRandomString());
+            = shareClient.GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult->Deleted);
       }
       {
         auto client = m_shareClient->GetRootDirectoryClient()
-                          .GetSubDirectoryClient(LowercaseRandomString())
-                          .GetSubDirectoryClient(LowercaseRandomString());
+                          .GetSubdirectoryClient(LowercaseRandomString())
+                          .GetSubdirectoryClient(LowercaseRandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult->Deleted);
       }
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto directoryName = LowercaseRandomString();
         auto fileName = LowercaseRandomString();
-        EXPECT_NO_THROW(clientA.GetSubDirectoryClient(directoryName).Create());
+        EXPECT_NO_THROW(clientA.GetSubdirectoryClient(directoryName).Create());
         EXPECT_NO_THROW(clientA.GetFileClient(fileName).Create(1024));
         directoryNameSetA.emplace_back(std::move(directoryName));
         fileNameSetA.emplace_back(std::move(fileName));
@@ -316,7 +316,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto directoryName = LowercaseRandomString();
         auto fileName = LowercaseRandomString();
-        EXPECT_NO_THROW(clientB.GetSubDirectoryClient(directoryName).Create());
+        EXPECT_NO_THROW(clientB.GetSubdirectoryClient(directoryName).Create());
         EXPECT_NO_THROW(clientB.GetFileClient(fileName).Create(1024));
         directoryNameSetB.emplace_back(std::move(directoryName));
         fileNameSetB.emplace_back(std::move(fileName));

@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param path Path of the directory under the current directory.
      * @return DataLakeDirectoryClient
      */
-    DataLakeDirectoryClient GetSubDirectoryClient(const std::string& path) const;
+    DataLakeDirectoryClient GetSubdirectoryClient(const std::string& path) const;
 
     /**
      * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob
