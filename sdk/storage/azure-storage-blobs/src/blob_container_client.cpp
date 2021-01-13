@@ -163,7 +163,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (e.StatusCode == Core::Http::HttpStatusCode::Conflict
           && e.ErrorCode == "ContainerAlreadyExists")
       {
-        return Azure::Core::Response<Models::CreateBlobContainerResult>(std::move(e.RawResponse));
+        Models::CreateBlobContainerResult ret;
+        ret.Created = false;
+        return Azure::Core::Response<Models::CreateBlobContainerResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
@@ -192,7 +195,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (e.StatusCode == Core::Http::HttpStatusCode::NotFound
           && e.ErrorCode == "ContainerNotFound")
       {
-        return Azure::Core::Response<Models::DeleteBlobContainerResult>(std::move(e.RawResponse));
+        Models::DeleteBlobContainerResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteBlobContainerResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }

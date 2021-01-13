@@ -634,7 +634,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (e.StatusCode == Core::Http::HttpStatusCode::NotFound
           && (e.ErrorCode == "BlobNotFound" || e.ErrorCode == "ContainerNotFound"))
       {
-        return Azure::Core::Response<Models::DeleteBlobResult>(std::move(e.RawResponse));
+        Models::DeleteBlobResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteBlobResult>(std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
