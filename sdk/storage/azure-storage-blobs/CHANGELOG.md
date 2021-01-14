@@ -73,8 +73,6 @@
 - Remove `Undelete` from `BlobContainerClient`.
 - `BlobRetentionPolicy::Enabled` is renamed to `BlobRetentionPolicy::IsEnabled`, `BlobStaticWebsite::Enabled` is renamed to `BlobStaticWebsite::IsEnabled`.
 - Change type for metadta to case-insensitive `std::map`.
-- Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
-- Move `StoragePerRetryPolicy` and `StorageSharedKeyPolicy` to `Details` namespace.
 - Change parameter type for token credential from `Azure::Identity::ClientSecretCredential` to `Azure::Core::TokenCredential`.
 - Rename member function `GetUri` of client types to `GetUrl`.
 - `BlobClient::GetBlockBlobClient`, `BlobClient::GetAppendBlobClient` and `BlobClient::GetPageBlobClient` are renamed to `BlobClient::AsBlockBlobClient`, `BlobClient::AsAppendBlobClient` and `BlobClient::AsPageBlobClient` respectively.

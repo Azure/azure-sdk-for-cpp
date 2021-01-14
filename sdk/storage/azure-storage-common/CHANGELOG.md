@@ -1,10 +1,12 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
 
 - Add new type `ContentHash`.
+- Add definition of `Metadata`.
+- Support setting account sas permission with a raw string.
 
 ### Breaking Changes
 
