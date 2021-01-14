@@ -527,7 +527,6 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #endif
 
 #define JSON_NODISCARD
-#endif
 
 // allow to disable exceptions
 #if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) \
