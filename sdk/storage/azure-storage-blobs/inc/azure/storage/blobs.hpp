@@ -9,5 +9,5 @@
 #include "azure/storage/blobs/blob_sas_builder.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
-#include "azure/storage/blobs/export.hpp"
+#include "azure/storage/blobs/dllexport.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"

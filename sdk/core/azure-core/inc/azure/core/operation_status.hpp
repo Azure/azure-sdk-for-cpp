@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/core/export.hpp"
+#include "azure/core/dllexport.hpp"
 
 #include <string>
 #include <utility> // for std::move

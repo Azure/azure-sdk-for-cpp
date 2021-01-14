@@ -3,6 +3,6 @@
 
 #pragma once
 
-#include "azure/template/export.hpp"
+#include "azure/template/dllexport.hpp"
 #include "azure/template/template_client.hpp"
 #include "azure/template/version.hpp"

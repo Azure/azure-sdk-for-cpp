@@ -17,7 +17,11 @@ if(MSVC)
   # Since we could be built as either DLL or a static library, when we are built as static library,
   # linker does generate a bunch of warnings related to the use of dllimport attribute,
   # basically, suggesting that its use is unneccessary. We know that.
-  add_link_options(/ignore:4217 /ignore:4286)
+  # LNK4217: symbol 'symbol' defined in 'filename_1.obj' is imported by 'filename_2.obj' in function 'function'
+  # LNK4286: symbol 'symbol' defined in 'filename_1.obj' is imported by 'filename_2.obj'
+  if (NOT BUILD_SHARED_LIBS)
+    add_link_options(/ignore:4217 /ignore:4286)
+  endif()
   
   # NOTE: Static analysis will slow building time considerably and it is run during CI gates.
   # It is better to turn in on to debug errors reported by CI than have it ON all the time. 

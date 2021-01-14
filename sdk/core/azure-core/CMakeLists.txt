@@ -6,8 +6,8 @@ project(azure-core LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(AZ_CORE_EXPORTS)
+set(CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_CORE_BEING_BUILT)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -69,8 +69,8 @@ set(
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
+    inc/azure/core/dllexport.hpp
     inc/azure/core/exception.hpp
-    inc/azure/core/export.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp

@@ -6,8 +6,8 @@ project(azure-identity LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(AZ_IDENTITY_EXPORTS)
+set(CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_IDENTITY_BEING_BUILT)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -31,7 +31,7 @@ set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/environment_credential.hpp
-    inc/azure/identity/export.hpp
+    inc/azure/identity/dllexport.hpp
     inc/azure/identity/version.hpp
     inc/azure/identity.hpp
 )

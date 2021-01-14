@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "azure/storage/files/shares/export.hpp"
+#include "azure/storage/files/shares/dllexport.hpp"
 
 #include <functional>
 #include <iostream>
@@ -151,8 +151,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const PermissionCopyModeType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static PermissionCopyModeType Source;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static PermissionCopyModeType Override;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyModeType Source;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyModeType Override;
 
     private:
       std::string m_value;
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const DeleteSnapshotsOptionType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static DeleteSnapshotsOptionType Include;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOptionType Include;
 
     private:
       std::string m_value;
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const FileRangeWriteFromUrlType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static FileRangeWriteFromUrlType Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteFromUrlType Update;
 
     private:
       std::string m_value;
@@ -278,8 +278,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseDurationType Infinite;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseDurationType Fixed;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
 
     private:
       std::string m_value;
@@ -294,11 +294,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStateType Available;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStateType Leased;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStateType Expired;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStateType Breaking;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStateType Broken;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Available;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Leased;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Expired;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Breaking;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Broken;
 
     private:
       std::string m_value;
@@ -313,8 +313,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStatusType Locked;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseStatusType Unlocked;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatusType Locked;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatusType Unlocked;
 
     private:
       std::string m_value;
@@ -483,11 +483,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseAction& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseAction Acquire;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseAction Release;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseAction Change;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseAction Renew;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static LeaseAction Break;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Acquire;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Release;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Change;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Renew;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Break;
 
     private:
       std::string m_value;
@@ -502,10 +502,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const CopyStatusType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static CopyStatusType Pending;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static CopyStatusType Success;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static CopyStatusType Aborted;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static CopyStatusType Failed;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Pending;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Success;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Aborted;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Failed;
 
     private:
       std::string m_value;
@@ -524,8 +524,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_EXPORT const static FileRangeWriteType Update;
-      AZ_STORAGE_FILES_SHARES_EXPORT const static FileRangeWriteType Clear;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Clear;
 
     private:
       std::string m_value;

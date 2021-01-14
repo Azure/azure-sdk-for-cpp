@@ -6,8 +6,8 @@ project(azure-storage-files-shares LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(AZ_STORAGE_FILES_SHARES_EXPORTS)
+set(CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_STORAGE_FILES_SHARES_BEING_BUILT)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -30,10 +30,10 @@ endif()
 set(
   AZURE_STORAGE_FILES_SHARES_HEADER
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
+    inc/azure/storage/files/shares/dllexport.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp
-    inc/azure/storage/files/shares/export.hpp
     inc/azure/storage/files/shares/share_file_attribute.hpp
     inc/azure/storage/files/shares/share_file_client.hpp
     inc/azure/storage/files/shares/share_options.hpp

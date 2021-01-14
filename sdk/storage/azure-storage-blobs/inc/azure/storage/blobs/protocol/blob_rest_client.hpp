@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/storage/blobs/export.hpp"
+#include "azure/storage/blobs/dllexport.hpp"
 
 #include <cstring>
 #include <limits>
@@ -45,23 +45,23 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
       bool operator!=(const AccessTier& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P1;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P2;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P3;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P4;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P6;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P10;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P15;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P20;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P30;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P40;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P50;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P60;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P70;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier P80;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier Hot;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier Cool;
-      AZ_STORAGE_BLOBS_EXPORT const static AccessTier Archive;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P2;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P3;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P4;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P6;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P10;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P15;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P20;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P30;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P40;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P50;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P60;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P70;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P80;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Hot;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
 
     private:
       std::string m_value;
@@ -74,11 +74,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
       bool operator!=(const AccountKind& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static AccountKind Storage;
-      AZ_STORAGE_BLOBS_EXPORT const static AccountKind BlobStorage;
-      AZ_STORAGE_BLOBS_EXPORT const static AccountKind StorageV2;
-      AZ_STORAGE_BLOBS_EXPORT const static AccountKind FileStorage;
-      AZ_STORAGE_BLOBS_EXPORT const static AccountKind BlockBlobStorage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
 
     private:
       std::string m_value;
@@ -105,8 +105,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlobArchiveStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobArchiveStatus& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlobArchiveStatus RehydratePendingToHot;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobArchiveStatus RehydratePendingToCool;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobArchiveStatus RehydratePendingToHot;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobArchiveStatus RehydratePendingToCool;
 
     private:
       std::string m_value;
@@ -137,9 +137,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const BlobGeoReplicationStatus& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlobGeoReplicationStatus Live;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobGeoReplicationStatus Bootstrap;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobGeoReplicationStatus Unavailable;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobGeoReplicationStatus Live;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobGeoReplicationStatus Bootstrap;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobGeoReplicationStatus Unavailable;
 
     private:
       std::string m_value;
@@ -152,11 +152,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlobLeaseState& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobLeaseState& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseState Available;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseState Leased;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseState Expired;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseState Breaking;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseState Broken;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Available;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Leased;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Expired;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Breaking;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Broken;
 
     private:
       std::string m_value;
@@ -169,8 +169,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlobLeaseStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobLeaseStatus& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseStatus Locked;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobLeaseStatus Unlocked;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseStatus Locked;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseStatus Unlocked;
 
     private:
       std::string m_value;
@@ -210,9 +210,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlobType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlobType BlockBlob;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobType PageBlob;
-      AZ_STORAGE_BLOBS_EXPORT const static BlobType AppendBlob;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
 
     private:
       std::string m_value;
@@ -225,9 +225,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlockListTypeOption& other) const { return m_value == other.m_value; }
       bool operator!=(const BlockListTypeOption& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlockListTypeOption Committed;
-      AZ_STORAGE_BLOBS_EXPORT const static BlockListTypeOption Uncommitted;
-      AZ_STORAGE_BLOBS_EXPORT const static BlockListTypeOption All;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption Committed;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption Uncommitted;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption All;
 
     private:
       std::string m_value;
@@ -240,9 +240,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlockType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlockType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static BlockType Committed;
-      AZ_STORAGE_BLOBS_EXPORT const static BlockType Uncommitted;
-      AZ_STORAGE_BLOBS_EXPORT const static BlockType Latest;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
 
     private:
       std::string m_value;
@@ -290,8 +290,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const CopyStatus& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static CopyStatus Success;
-      AZ_STORAGE_BLOBS_EXPORT const static CopyStatus Pending;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
 
     private:
       std::string m_value;
@@ -355,8 +355,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
       bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static DeleteSnapshotsOption IncludeSnapshots;
-      AZ_STORAGE_BLOBS_EXPORT const static DeleteSnapshotsOption OnlySnapshots;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
 
     private:
       std::string m_value;
@@ -372,7 +372,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const EncryptionAlgorithmType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static EncryptionAlgorithmType Aes256;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
 
     private:
       std::string m_value;
@@ -496,8 +496,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static ObjectReplicationStatus Complete;
-      AZ_STORAGE_BLOBS_EXPORT const static ObjectReplicationStatus Failed;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
 
     private:
       std::string m_value;
@@ -510,9 +510,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static PublicAccessType BlobContainer;
-      AZ_STORAGE_BLOBS_EXPORT const static PublicAccessType Blob;
-      AZ_STORAGE_BLOBS_EXPORT const static PublicAccessType Private;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Private;
 
     private:
       std::string m_value;
@@ -525,8 +525,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
       bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static RehydratePriority High;
-      AZ_STORAGE_BLOBS_EXPORT const static RehydratePriority Standard;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
 
     private:
       std::string m_value;
@@ -576,10 +576,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
-      AZ_STORAGE_BLOBS_EXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
-      AZ_STORAGE_BLOBS_EXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
-      AZ_STORAGE_BLOBS_EXPORT const static ScheduleBlobExpiryOriginType Absolute;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
 
     private:
       std::string m_value;
@@ -641,14 +641,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const SkuName& other) const { return m_value == other.m_value; }
       bool operator!=(const SkuName& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName StandardLrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName StandardGrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName StandardRagrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName StandardZrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName PremiumLrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName PremiumZrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName StandardGzrs;
-      AZ_STORAGE_BLOBS_EXPORT const static SkuName StandardRagzrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
 
     private:
       std::string m_value;

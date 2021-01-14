@@ -13,6 +13,10 @@
 
 #include <vector>
 
+class DllExportTest {
+  AZ_CORE_DLLEXPORT static const bool DllExportHIncluded;
+};
+
 TEST(Logging, simplifiedHeader)
 {
   EXPECT_NO_THROW(Azure::Core::Context c);

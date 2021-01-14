@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/storage/files/shares/export.hpp"
+#include "azure/storage/files/shares/dllexport.hpp"
 #include "azure/storage/files/shares/share_client.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"

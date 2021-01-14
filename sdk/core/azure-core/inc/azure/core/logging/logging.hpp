@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/core/export.hpp"
+#include "azure/core/dllexport.hpp"
 
 #include <functional>
 #include <initializer_list>
@@ -134,12 +134,12 @@ namespace Azure { namespace Core { namespace Logging {
     /**
      * @brief Represents a list of all classifications.
      */
-    AZ_CORE_EXPORT static LogClassifications const All;
+    AZ_CORE_DLLEXPORT static LogClassifications const All;
 
     /**
      * @brief Represents an empty list of classifications.
      */
-    AZ_CORE_EXPORT static LogClassifications const None;
+    AZ_CORE_DLLEXPORT static LogClassifications const None;
   };
 
   namespace Details {
