@@ -64,13 +64,7 @@
 
 - Release based on azure-core_1.0.0-beta.1.
 
-## 1.0.0-beta.1
-
-### New Features
-
-- Support for Lease related operations.
-
-## 1.0.0-preview.1 (Unreleased)
+## 1.0.0-beta.1 (2020-08-28)
 
 ### New Features
 
@@ -103,3 +97,4 @@
   - DirectoryClient::Create
   - DirectoryClient::Rename
   - DirectoryClient::Delete
+- Support for Lease related operations.
