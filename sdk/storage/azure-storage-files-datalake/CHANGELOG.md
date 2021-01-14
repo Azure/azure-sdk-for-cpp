@@ -3,6 +3,7 @@
 ## 12.0.0-beta.6 (Unreleased)
 
 ### New Features
+
 - Support setting DataLake sas permission with a raw string.
 
 ### Breaking Changes
