@@ -12,8 +12,6 @@
 #include <string>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
@@ -22,6 +20,8 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
+
+#include <azure/core/internal/json.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -534,7 +534,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::ServiceListFileSystemsResult result = bodyBuffer.empty()
                 ? Models::ServiceListFileSystemsResult()
                 : ServiceListFileSystemsResultFromFileSystemList(
-                    FileSystemListFromJson(nlohmann::json::parse(bodyBuffer)));
+                    FileSystemListFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -550,7 +550,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Models::FileSystem FileSystemFromJson(const nlohmann::json& node)
+        static Models::FileSystem FileSystemFromJson(const Azure::Core::Internal::Json::json& node)
         {
           Models::FileSystem result;
           result.Name = node["name"].get<std::string>();
@@ -560,7 +560,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static Models::FileSystemList FileSystemListFromJson(const nlohmann::json& node)
+        static Models::FileSystemList FileSystemListFromJson(
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::FileSystemList result;
           for (const auto& element : node["filesystems"])
@@ -936,7 +937,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::FileSystemListPathsResult result = bodyBuffer.empty()
                 ? Models::FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
-                    PathListFromJson(nlohmann::json::parse(bodyBuffer)));
+                    PathListFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -952,7 +953,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Models::Path PathFromJson(const nlohmann::json& node)
+        static Models::Path PathFromJson(const Azure::Core::Internal::Json::json& node)
         {
           Models::Path result;
           result.Name = node["name"].get<std::string>();
@@ -973,7 +974,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static Models::PathList PathListFromJson(const nlohmann::json& node)
+        static Models::PathList PathListFromJson(const Azure::Core::Internal::Json::json& node)
         {
           Models::PathList result;
           for (const auto& element : node["paths"])
@@ -2054,7 +2055,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::PathSetAccessControlRecursiveResult result = bodyBuffer.empty()
                 ? Models::PathSetAccessControlRecursiveResult()
                 : PathSetAccessControlRecursiveResultFromSetAccessControlRecursiveResponse(
-                    SetAccessControlRecursiveResponseFromJson(nlohmann::json::parse(bodyBuffer)));
+                    SetAccessControlRecursiveResponseFromJson(
+                        Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -2070,7 +2072,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Models::AclFailedEntry AclFailedEntryFromJson(const nlohmann::json& node)
+        static Models::AclFailedEntry AclFailedEntryFromJson(
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::AclFailedEntry result;
           result.Name = node["name"].get<std::string>();
@@ -2080,7 +2083,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
         static Models::SetAccessControlRecursiveResponse SetAccessControlRecursiveResponseFromJson(
-            const nlohmann::json& node)
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::SetAccessControlRecursiveResponse result;
           result.DirectoriesSuccessful = node["directoriesSuccessful"].get<int32_t>();
