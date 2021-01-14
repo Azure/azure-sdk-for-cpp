@@ -18,6 +18,7 @@
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
 - Made version strings private by moving them into the `Details` namespace.
 - Moved `Base64Encode` and `Base64Decode` from the `Azure::Storage` namespace to `Azure::Core` and removed the string accepting overload of `Base64Encode`.
+- Renamed public constants so they no longer start with the prefix `c_`. For example, `c_InfiniteLeaseDuration` became `InfiniteLeaseDuration`.
 
 ### Bug Fixes
 
