@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <azure/core/export.hpp>
+
 #include <functional>
 #include <initializer_list>
 #include <set>
@@ -132,12 +134,12 @@ namespace Azure { namespace Core { namespace Logging {
     /**
      * @brief Represents a list of all classifications.
      */
-    static LogClassifications const All;
+    AZ_CORE_EXPORT static LogClassifications const All;
 
     /**
      * @brief Represents an empty list of classifications.
      */
-    static LogClassifications const None;
+    AZ_CORE_EXPORT static LogClassifications const None;
   };
 
   namespace Details {

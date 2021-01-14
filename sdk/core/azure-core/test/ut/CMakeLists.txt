@@ -66,6 +66,11 @@ if (MSVC)
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812)
+
+  # Since we could be built as either DLL or a static library, when we are built as static library,
+  # linker does generate a bunch of warnings related to the use of dllimport attribute,
+  # basically, suggesting that its use is unneccessary. We know that.
+  target_link_options(azure-core-test PRIVATE  /ignore:4217 /ignore:4286)
 endif()
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.

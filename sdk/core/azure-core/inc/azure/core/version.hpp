@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <azure/core/export.hpp>
+
 #include <string>
 
 #define AZURE_CORE_VERSION_MAJOR 1
@@ -32,7 +34,7 @@ namespace Azure { namespace Core { namespace Details {
     static constexpr int Patch = AZURE_CORE_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static std::string const PreRelease;
+    AZ_CORE_EXPORT static std::string const PreRelease;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard

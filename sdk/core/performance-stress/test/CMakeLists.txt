@@ -13,3 +13,10 @@ add_executable (
 )
 
 target_link_libraries(azure-perf-stress-test PRIVATE azure-core azure-perf-stress)
+
+if(MSVC)
+  # Since we could be built as either DLL or a static library, when we are built as static library,
+  # linker does generate a bunch of warnings related to the use of dllimport attribute,
+  # basically, suggesting that its use is unneccessary. We know that.
+  target_link_options(azure-perf-stress-test PRIVATE /ignore:4217 /ignore:4286)
+endif()

@@ -7,6 +7,7 @@ project(azure-storage-common LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_STORAGE_COMMON_EXPORTS)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -36,6 +37,7 @@ set(
     inc/azure/storage/common/concurrent_transfer.hpp
     inc/azure/storage/common/constants.hpp
     inc/azure/storage/common/crypt.hpp
+    inc/azure/storage/common/export.hpp
     inc/azure/storage/common/file_io.hpp
     inc/azure/storage/common/reliable_stream.hpp
     inc/azure/storage/common/shared_key_policy.hpp

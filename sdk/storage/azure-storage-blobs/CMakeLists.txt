@@ -7,6 +7,7 @@ project(azure-storage-blobs LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_STORAGE_BLOBS_EXPORTS)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -37,6 +38,7 @@ set(
     inc/azure/storage/blobs/blob_sas_builder.hpp
     inc/azure/storage/blobs/blob_service_client.hpp
     inc/azure/storage/blobs/block_blob_client.hpp
+    inc/azure/storage/blobs/export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/version.hpp
     inc/azure/storage/blobs.hpp

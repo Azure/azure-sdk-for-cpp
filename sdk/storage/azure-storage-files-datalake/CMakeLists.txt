@@ -7,6 +7,7 @@ project(azure-storage-files-datalake LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_STORAGE_FILES_DATALAKE_EXPORTS)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -31,6 +32,7 @@ set(
     inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
     inc/azure/storage/files/datalake/datalake_constants.hpp
     inc/azure/storage/files/datalake/datalake_directory_client.hpp
+    inc/azure/storage/files/datalake/export.hpp
     inc/azure/storage/files/datalake/datalake_file_client.hpp
     inc/azure/storage/files/datalake/datalake_file_system_client.hpp
     inc/azure/storage/files/datalake/datalake_options.hpp

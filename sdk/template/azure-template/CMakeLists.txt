@@ -7,6 +7,7 @@ project(azure-template LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(AZ_TEMPLATE_EXPORTS)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -28,6 +29,7 @@ endif()
 
 set(
   AZURE_TEMPLATE_HEADER
+    inc/azure/template/export.hpp
     inc/azure/template/template_client.hpp
     inc/azure/template/version.hpp
     inc/azure/template.hpp

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <azure/core/export.hpp>
+
 #include <string>
 #include <utility> // for std::move
 
