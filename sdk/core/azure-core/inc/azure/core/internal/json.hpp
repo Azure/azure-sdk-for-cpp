@@ -526,16 +526,6 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #define JSON_DEPRECATED
 #endif
 
-// allow for portable nodiscard warnings
-#if defined(__has_cpp_attribute)
-#if __has_cpp_attribute(nodiscard)
-#define JSON_NODISCARD [[nodiscard]]
-#elif __has_cpp_attribute(gnu::warn_unused_result)
-#define JSON_NODISCARD [[gnu::warn_unused_result]]
-#else
-#define JSON_NODISCARD
-#endif
-#else
 #define JSON_NODISCARD
 #endif
 
