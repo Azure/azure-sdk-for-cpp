@@ -69,6 +69,9 @@
 - Renamed `Models::DeleteSnapshotsOption::Only` to `OnlySnapshots`.
 - Renamed `SourceConditions` in API options to `SourceAccessConditions`.
 - Removed Blob Batch.
+- `DownloadBlobResult::Content-Range` is changed to an `Azure::Core::Http::Range`, an extra field `BlobSize` is added.
+- Removed `Undelete` from `BlobContainerClient`.
+- `BlobRetentionPolicy::Enabled` is renamed to `BlobRetentionPolicy::IsEnabled`, `BlobStaticWebsite::Enabled` is renamed to `BlobStaticWebsite::IsEnabled`.
 - Changed type for metadata to case-insensitive `std::map`.
 - Changed parameter type for token credential from `Azure::Identity::ClientSecretCredential` to `Azure::Core::TokenCredential`.
 - Renamed member function `GetUri` of client types to `GetUrl`.

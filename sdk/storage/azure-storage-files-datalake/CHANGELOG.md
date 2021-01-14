@@ -1,6 +1,11 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.6 (2020-01-14)
+
+### New Features
+
+- Support setting DataLake SAS permission with a raw string.
+- Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
 
 ### New Features
 
@@ -23,6 +28,11 @@
 - `ReadFileResult` now have `ContentRange` as string.
 - `ReadFileOptions` now have `Azure::Core::Http::Range` instead of `Content-Length` and `Offset`.
 - Replaced scoped enums that don't support bitwise operations with extensible enum.
+- `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
+- Added `DataLake` prefix to `FileSystemClient`, `PathClient`,  `DirectoryClient`, and `FileClient` types.
+- FileSystems, Path, Directory and File related result types and options types now have a `DataLake` prefix. For example, `GetFileSystemPropertiesResult` is changed to `GetDataLakeFileSystemPropertiesResult`.
+- Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Removed `NamespaceEnabled` field in `CreateDataLakeFileSystemResult`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
