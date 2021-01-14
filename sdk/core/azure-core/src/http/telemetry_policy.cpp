@@ -16,14 +16,17 @@
 #endif
 
 #include <windows.h>
+#elif defined(AZ_PLATFORM_POSIX)
+#include <sys/utsname.h>
+#endif
 
-#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
 namespace {
-
 std::string GetOSVersion()
 {
   std::ostringstream osVersionInfo;
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
   {
     HKEY regKey{};
     auto regKeyOpened = false;
@@ -72,28 +75,12 @@ std::string GetOSVersion()
       throw;
     }
   }
-
-  return osVersionInfo.str();
-}
-
-} // namespace
-
 #else
-namespace {
-std::string GetOSVersion() { return "UWP"; }
-} // namespace
+  {
+    osVersionInfo << "UWP";
+  }
 #endif
-
 #elif defined(AZ_PLATFORM_POSIX)
-
-#include <sys/utsname.h>
-
-namespace {
-
-std::string GetOSVersion()
-{
-  std::ostringstream osVersionInfo;
-
   {
     utsname sysInfo{};
     if (uname(&sysInfo) == 0)
@@ -102,15 +89,11 @@ std::string GetOSVersion()
                     << sysInfo.version;
     }
   }
+#endif
 
   return osVersionInfo.str();
 }
 
-} // namespace
-
-#endif
-
-namespace {
 std::string TrimString(std::string s)
 {
   auto const isSpace = [](int c) { return !std::isspace(c); };

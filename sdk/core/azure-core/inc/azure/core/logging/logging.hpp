@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/core/export.hpp>
+#include "azure/core/export.hpp"
 
 #include <functional>
 #include <initializer_list>

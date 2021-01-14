@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <azure/identity/export.hpp>
+#include "azure/identity/export.hpp"
 
 #include <string>
 

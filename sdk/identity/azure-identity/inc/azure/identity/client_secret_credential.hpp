@@ -8,8 +8,9 @@
 
 #pragma once
 
+#include "azure/identity/export.hpp"
+
 #include <azure/core/credentials.hpp>
-#include <azure/identity/export.hpp>
 
 #include <string>
 #include <utility>

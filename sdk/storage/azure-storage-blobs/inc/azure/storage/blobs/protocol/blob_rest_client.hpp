@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "azure/storage/blobs/export.hpp"
+
 #include <cstring>
 #include <limits>
 #include <map>
@@ -19,7 +21,6 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/strings.hpp>
-#include <azure/storage/blobs/export.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>

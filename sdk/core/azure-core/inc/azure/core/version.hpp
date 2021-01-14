@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <azure/core/export.hpp>
+#include "azure/core/export.hpp"
 
 #include <string>
 

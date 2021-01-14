@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "azure/storage/files/shares/export.hpp"
+
 #include <functional>
 #include <iostream>
 #include <map>
@@ -23,7 +25,6 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 #include <azure/storage/common/xml_wrapper.hpp>
-#include <azure/storage/files/shares/export.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
