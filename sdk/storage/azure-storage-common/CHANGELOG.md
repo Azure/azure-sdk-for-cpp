@@ -6,7 +6,7 @@
 
 - Add new type `ContentHash`.
 - Add definition of `Metadata`.
-- Support setting account sas permission with a raw string.
+- Support setting account SAS permission with a raw string.
 
 ### Breaking Changes
 
