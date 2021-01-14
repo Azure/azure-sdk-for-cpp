@@ -24,7 +24,7 @@ static std::map<std::string, std::string> MergeMaps(
 
 void Request::AddHeader(std::string const& name, std::string const& value)
 {
-  auto headerNameLowerCase = Azure::Core::Internal::ToLower(name);
+  auto headerNameLowerCase = Azure::Core::Internal::Strings::ToLower(name);
   return this->m_retryModeEnabled
       ? Details::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
       : Details::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);

@@ -21,7 +21,8 @@ Url::Url(const std::string& url)
   if (schemeIter != std::string::npos)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
-      return static_cast<char>(Azure::Core::Internal::ToLower(static_cast<unsigned char>(c)));
+      return static_cast<char>(
+          Azure::Core::Internal::Strings::ToLower(static_cast<unsigned char>(c)));
     });
 
     pos = url.begin() + schemeIter + schemeEnd.length();

@@ -57,7 +57,7 @@ namespace Azure { namespace Storage {
       {
         return std::lexicographical_compare(
             lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-              return Core::Internal::ToLower(c1) < Core::Internal::ToLower(c2);
+              return Core::Internal::Strings::ToLower(c1) < Core::Internal::Strings::ToLower(c2);
             });
       }
     };

@@ -67,7 +67,7 @@ const unsigned char c_LocaleInvariantLowercaseTable[256] = {
 };
 } // unnamed namespace
 
-namespace Azure { namespace Core { namespace Internal {
+namespace Azure { namespace Core { namespace Internal { namespace Strings {
 
   unsigned char ToLower(const unsigned char symbol) noexcept
   {
@@ -97,4 +97,4 @@ namespace Azure { namespace Core { namespace Internal {
         });
   }
 
-}}} // namespace Azure::Core::Internal
+}}}} // namespace Azure::Core::Internal::Strings
