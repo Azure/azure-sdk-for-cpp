@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.6 (2020-01-14)
 
 ### Breaking Changes
 
@@ -22,6 +22,8 @@
 - Replace scoped enums that don't support bitwise operations with extensible enum.
 - `IsServerEncrypted` member in `DownloadFileToResult`, `UploadFileFromResult`, `FileDownloadResult` and `FileGetPropertiesResult` are no longer nullable.
 - Create APIs for Directory and File now returns `FileShareSmbProperties` that aggregates SMB related properties.
+- `DirectoryClient` is renamed to `ShareDirectoryClient`, `FileClient` is renamed to `ShareFileClient`.
+- Directory and File related result types and options types now have a `Share` prefix. E.g. `SetDirectoryPropertiesResult` is changed to `SetShareDirectoryPropertiesResult`.
 
 ### New Features
 
