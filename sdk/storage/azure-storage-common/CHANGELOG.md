@@ -19,6 +19,10 @@
 - Made version strings private by moving them into the `Details` namespace.
 - Moved `Base64Encode` and `Base64Decode` from the `Azure::Storage` namespace to `Azure::Core` and removed the string accepting overload of `Base64Encode`.
 
+### Bug Fixes
+
+- Fixed default EndpointSuffix when parsing a connection string.
+
 ## 12.0.0-beta.5 (2020-11-13)
 
 ### Breaking Changes
