@@ -5,6 +5,7 @@
 ### New Features
 
 - Support setting DataLake SAS permission with a raw string.
+- Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
 
 ### Breaking Changes
 
@@ -26,9 +27,7 @@
 - `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
 - `FileSystemClient` is renamed to `DataLakeFileSystemClient`, `PathClient` is renamed to `DataLakePathClient`, `DirectoryClient` is renamed to `DataLakeDirectoryClient` and `FileClient` is renamed to `DataLakeFileClient`.
 - FileSystems, Path, Directory and File related result types and options types now have a `DataLake` prefix. E.g. `GetFileSystemPropertiesResult` is changed to `GetDataLakeFileSystemPropertiesResult`.
-
-### New Features
-- Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
+- Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
