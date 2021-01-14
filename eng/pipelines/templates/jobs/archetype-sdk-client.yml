@@ -32,7 +32,7 @@ jobs:
       Linux_x64_gcc8:
         Pool: $(LinuxPool)
         OSVmImage:
-        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-8'
         CXX: '/usr/bin/g++-8'
@@ -40,7 +40,7 @@ jobs:
       Linux_x64_gcc9:
         Pool: $(LinuxPool)
         OSVmImage:
-        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-9'
         CXX: '/usr/bin/g++-9'
@@ -48,13 +48,13 @@ jobs:
       Linux_x64:
         Pool: $(LinuxPool)
         OSVmImage:
-        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         BuildArgs: '-j 10'
       Win_x86:
         Pool: $(WindowsPool)
         OSVmImage:
-        VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
+        VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -63,7 +63,7 @@ jobs:
       Win_x64:
         Pool: $(WindowsPool)
         OSVmImage:
-        VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
+        VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
@@ -71,14 +71,14 @@ jobs:
       MacOS_x64:
         Pool:
         OSVmImage: 'macOS-10.14'
-        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
 
       # Unit testing ON
       Linux_x64_with_unit_test:
         Pool: $(LinuxPool)
         OSVmImage:
-        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
@@ -89,7 +89,7 @@ jobs:
       Win_x86_with_unit_test:
         Pool: $(WindowsPool)
         OSVmImage:
-        VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
+        VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -98,7 +98,7 @@ jobs:
       Win_x64_with_unit_test:
         Pool: $(WindowsPool)
         OSVmImage:
-        VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
+        VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
@@ -107,7 +107,7 @@ jobs:
       MacOS_x64_with_unit_test:
         Pool:
         OSVmImage: 'macOS-10.14'
-        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
   pool:
@@ -180,7 +180,7 @@ jobs:
     pool:
       name: ${{ parameters.WindowsPool }}
     variables:
-      VcpkgDependencies: curl[winssl] libxml2 nlohmann-json
+      VcpkgDependencies: curl[winssl] libxml2
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-links.yml
