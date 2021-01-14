@@ -2,11 +2,15 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### New Features
+
+- Support setting DataLake SAS permission with a raw string.
+
 ### Breaking Changes
 
-- Move DataLake SAS into `Azure::Storage::Sas` namespace.
-- `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
-- Replaced all transactional content MD5/CRC64 with `ContentHash` struct.
+- Moved DataLake SAS into `Azure::Storage::Sas` namespace.
+- `EncrytionKeySha256` are changed to binary (`std::vector<uint8_t>`).
+- Replaced all transactional content MD5/CRC64 with the `ContentHash` struct.
 - `DataLakeHttpHeaders` is renamed to `PathHttpHeaders`, and now contains `ContentHash` for the resource.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
 - `CreationTime` is renamed to `CreatedOn`.
@@ -14,12 +18,11 @@
 - `CopyCompletionTime` is renamed to `CopyCompletedOn`.
 - `ExpiryTime` is renamed to `ExpiresOn`.
 - `LastAccessTime` is renamed to `LastAccessedOn`.
-- Move version strings into `Details` namespace.
+- Made version strings private by moving them into the `Details` namespace.
 - Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
 - `ReadFileResult` now have `ContentRange` as string.
-- `ReadFileOptions` now have `Azure::Core::Http::Range Range` instead of `Content-Length` and `Offset`.
-- Replace scoped enums that don't support bitwise operations with extensible enum.
-- `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
+- `ReadFileOptions` now have `Azure::Core::Http::Range` instead of `Content-Length` and `Offset`.
+- Replaced scoped enums that don't support bitwise operations with extensible enum.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
