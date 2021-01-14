@@ -7,10 +7,6 @@
 - Support setting DataLake SAS permission with a raw string.
 - Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
 
-### New Features
-
-- Support setting DataLake SAS permission with a raw string.
-
 ### Breaking Changes
 
 - Moved DataLake SAS into `Azure::Storage::Sas` namespace.
