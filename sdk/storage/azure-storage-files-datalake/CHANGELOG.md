@@ -28,6 +28,7 @@
 - `FileSystemClient` is renamed to `DataLakeFileSystemClient`, `PathClient` is renamed to `DataLakePathClient`, `DirectoryClient` is renamed to `DataLakeDirectoryClient` and `FileClient` is renamed to `DataLakeFileClient`.
 - FileSystems, Path, Directory and File related result types and options types now have a `DataLake` prefix. E.g. `GetFileSystemPropertiesResult` is changed to `GetDataLakeFileSystemPropertiesResult`.
 - Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Removed `NamespaceEnabled` field in `CreateDataLakeFileSystemResult`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
