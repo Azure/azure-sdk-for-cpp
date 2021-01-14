@@ -12,7 +12,7 @@
 
 - Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
 - Rename `StorageSharedKeyCredential::UpdateAccountKey` to `StorageSharedKeyCredential::Update`.
-- Move `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` to `Details` namespace.
+- Make `StoragePerRetryPolicy` and `StorageSharedKeyPolicy` private by moving them to the`Details` namespace.
 - Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
 - Move Account SAS into `Azure::Storage::Sas` namespace.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
