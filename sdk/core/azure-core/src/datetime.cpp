@@ -359,16 +359,9 @@ void ParseSingleOptionalChar(
     IncreaseAndCheckMinLength(minLength, actualLength, 1);
   }
 }
-
-DateTime const SystemClockEpoch = GetSystemClockEpoch();
 } // namespace
 
-DateTime::DateTime(std::chrono::system_clock::time_point const& systemTime)
-    : DateTime(
-        SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
-{
-}
-
+DateTime const DateTime::SystemClockEpoch = GetSystemClockEpoch();
 
 DateTime::DateTime(
     int16_t year,

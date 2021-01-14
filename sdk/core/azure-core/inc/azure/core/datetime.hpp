@@ -48,6 +48,7 @@ namespace Azure { namespace Core {
    * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
    */
   class DateTime : public Details::Clock::time_point {
+    static DateTime const SystemClockEpoch;
   public:
     /**
      * @brief Construct a default instance of @DateTime (00:00:00.0000000 on Janualy 1st, 0001).
@@ -101,7 +102,11 @@ namespace Azure { namespace Core {
      * @brief Construct an instance of @DateTime from `std::chrono::system_clock::time_point`.
      * @param systemTime A value of `std::chrono::system_clock::time_point`.
      */
-    DateTime(std::chrono::system_clock::time_point const& systemTime);
+    DateTime(std::chrono::system_clock::time_point const& systemTime)
+        : DateTime(
+            SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
+    {
+    }
 
     /**
      * @brief Convert an instance of @DateTime to `std::chrono::system_clock::time_point`.
