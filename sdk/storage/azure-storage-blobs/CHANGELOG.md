@@ -9,7 +9,7 @@
 - New API: `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
 - Add `CreateBlobContainer`, `DeleteBlobContainer`, `UndeleteBlobContainer` into `BlobServiceClient`.
 - Add `DeleteBlob` into `BlobContainerClient`.
-- Support setting blob sas permission with a raw string.
+- Support setting blob SAS permission with a raw string.
 
 ### Breaking Changes
 
