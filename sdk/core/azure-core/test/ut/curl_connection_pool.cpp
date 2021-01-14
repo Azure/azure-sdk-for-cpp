@@ -3,9 +3,12 @@
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
-#include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/policy.hpp>
 #include <azure/core/response.hpp>
+
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#include <azure/core/http/curl/curl.hpp>
+#endif
 
 #include <iostream>
 #include <string>

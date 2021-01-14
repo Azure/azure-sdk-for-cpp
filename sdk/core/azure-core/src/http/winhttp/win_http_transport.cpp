@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/winhttp/win_http_client.hpp"
+
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#include <azure/core/http/winhttp/win_http_client.hpp>
+#endif
 
 #include <Windows.h>
 #include <algorithm>
