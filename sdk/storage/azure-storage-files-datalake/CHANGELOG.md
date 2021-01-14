@@ -4,7 +4,7 @@
 
 ### New Features
 
-- Support setting DataLake sas permission with a raw string.
+- Support setting DataLake SAS permission with a raw string.
 
 ### Breaking Changes
 
