@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0-beta.7 (Unreleased)
+
+
 ## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
@@ -97,54 +100,6 @@
 - Default uploading/downloading concurrency is changed from 1 to 5.
 - Remove support for specifying SAS version.
 
-## 1.0.0-beta.4 (2020-10-16)
-
-### New Features
-
-- Bump up API version to 2020-02-10.
-- Support for Last Accessting Time.
-- Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs.
-
-### Breaking Changes
-
-- Variable name change: BreakContainerLeaseOptions::breakPeriod -> BreakContainerLeaseOptions::BreakPeriod.
-- Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod.
-- CreateFromConnectionString now accepts unencoded blob name.
-- TagConditions is changed to nullable.
-- Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
-- Variable name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
-
-### Bug Fixes
-
-- Unencoded Container/Blob name is now encoded.
-
-## 1.0.0-beta.2 (2020-09-09)
-
-### New Features
-
-- Support for Blob Batch.
-- Support for Blob Index.
-- Release based on azure-core_1.0.0-beta.1.
-
-## 1.0.0-beta.1
-
-### New Features
-
-- New APIs:
-  - BlobServiceClient::SetProperties
-  - BlobServiceClient::GetProperties
-  - BlobServiceClient::GetAccountInfo
-  - BlobServiceClient::GetStatistics
-  - BlobContainerClient::Undelete
-  - BlobContainerClient::GetAccessPolicy
-  - BlobContainerClient::SetAccessPolicy
-  - AppendBlobClient::Seal
-- Support for blob versioning.
-- Support for blob lease and container lease.
-- Support for account SAS and blob SAS.
-- Support for transactional checksum.
-
-
 ## 1.0.0-preview.1 (Unreleased)
 
 ### New Features
@@ -187,3 +142,51 @@
   - PageBlobClient::Resize
   - PageBlobClient::GetPageRanges
   - PageBlobClient::StartCopyIncremental
+## 1.0.0-beta.4 (2020-10-16)
+
+### New Features
+
+- Bump up API version to 2020-02-10.
+- Support for Last Accessting Time.
+- Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs.
+
+### Breaking Changes
+
+- Variable name change: BreakContainerLeaseOptions::breakPeriod -> BreakContainerLeaseOptions::BreakPeriod.
+- Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod.
+- CreateFromConnectionString now accepts unencoded blob name.
+- TagConditions is changed to nullable.
+- Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
+- Variable name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
+
+### Bug Fixes
+
+- Unencoded Container/Blob name is now encoded.
+
+## 1.0.0-beta.2 (2020-09-09)
+
+### New Features
+
+- Support for Blob Batch.
+- Support for Blob Index.
+- Release based on azure-core_1.0.0-beta.1.
+
+## 1.0.0-beta.1 
+
+### New Features
+
+- New APIs:
+  - BlobServiceClient::SetProperties
+  - BlobServiceClient::GetProperties
+  - BlobServiceClient::GetAccountInfo
+  - BlobServiceClient::GetStatistics
+  - BlobContainerClient::Undelete
+  - BlobContainerClient::GetAccessPolicy
+  - BlobContainerClient::SetAccessPolicy
+  - AppendBlobClient::Seal
+- Support for blob versioning.
+- Support for blob lease and container lease.
+- Support for account SAS and blob SAS.
+- Support for transactional checksum.
+
+
