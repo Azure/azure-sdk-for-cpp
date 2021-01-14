@@ -1,16 +1,18 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
 
 - Add new type `ContentHash`.
+- Add definition of `Metadata`.
+- Support setting account SAS permission with a raw string.
 
 ### Breaking Changes
 
 - Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
 - Rename `StorageSharedKeyCredential::UpdateAccountKey` to `StorageSharedKeyCredential::Update`.
-- Move `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` to `Details` namespace.
+- Make `StoragePerRetryPolicy` and `StorageSharedKeyPolicy` private by moving them to the`Details` namespace.
 - Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
 - Move Account SAS into `Azure::Storage::Sas` namespace.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.

@@ -26,6 +26,7 @@
 ### New Features
 
 - Added support for `CreateIfNotExists` for Share and Directory clients, and `DeleteIfExists` for Share, Directory and File clients.
+- Support setting file SAS permission with a raw string.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

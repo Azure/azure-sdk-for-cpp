@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
 
@@ -9,6 +9,7 @@
 - New API: `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
 - Add `CreateBlobContainer`, `DeleteBlobContainer`, `UndeleteBlobContainer` into `BlobServiceClient`.
 - Add `DeleteBlob` into `BlobContainerClient`.
+- Support setting blob sas permission with a raw string.
 
 ### Breaking Changes
 
@@ -71,6 +72,10 @@
 - `DownloadBlobResult::Content-Range` is changed to an `Azure::Core::Http::Range`, an extra field `BlobSize` is added.
 - Remove `Undelete` from `BlobContainerClient`.
 - `BlobRetentionPolicy::Enabled` is renamed to `BlobRetentionPolicy::IsEnabled`, `BlobStaticWebsite::Enabled` is renamed to `BlobStaticWebsite::IsEnabled`.
+- Change type for metadata to case-insensitive `std::map`.
+- Change parameter type for token credential from `Azure::Identity::ClientSecretCredential` to `Azure::Core::TokenCredential`.
+- Rename member function `GetUri` of client types to `GetUrl`.
+- `BlobClient::GetBlockBlobClient`, `BlobClient::GetAppendBlobClient` and `BlobClient::GetPageBlobClient` are renamed to `BlobClient::AsBlockBlobClient`, `BlobClient::AsAppendBlobClient` and `BlobClient::AsPageBlobClient` respectively.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

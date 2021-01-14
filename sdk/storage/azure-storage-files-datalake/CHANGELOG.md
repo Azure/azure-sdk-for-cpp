@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### New Features
+
+- Support setting DataLake SAS permission with a raw string.
+
 ### Breaking Changes
 
 - Move DataLake SAS into `Azure::Storage::Sas` namespace.
