@@ -1,22 +1,28 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
 
-- Add new type `ContentHash`.
+- Added new type `ContentHash`.
+- Added definition of `Metadata`.
+- Support setting account SAS permission with a raw string.
 
 ### Breaking Changes
 
-- Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
-- Rename `StorageSharedKeyCredential::UpdateAccountKey` to `StorageSharedKeyCredential::Update`.
-- Move `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` to `Details` namespace.
-- Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
-- Move Account SAS into `Azure::Storage::Sas` namespace.
+- Renamed `SharedKeyCredential` to `StorageSharedKeyCredential`.
+- Renamed `StorageSharedKeyCredential::UpdateAccountKey` to `Update`.
+- Made `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` private by moving them to the `Details` namespace.
+- Removed `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
+- Moved Account SAS into `Azure::Storage::Sas` namespace.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
-- Move version strings into `Details` namespace.
-- Move `Base64Encode` and `Base64Decode` from the `Azure::Storage` namespace to `Azure::Core`.
-- Remove the string accepting overload of `Base64Encode`.
+- Made version strings private by moving them into the `Details` namespace.
+- Moved `Base64Encode` and `Base64Decode` from the `Azure::Storage` namespace to `Azure::Core` and removed the string accepting overload of `Base64Encode`.
+- Renamed public constants so they no longer start with the prefix `c_`. For example, `c_InfiniteLeaseDuration` became `InfiniteLeaseDuration`.
+
+### Bug Fixes
+
+- Fixed default EndpointSuffix when parsing a connection string.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
