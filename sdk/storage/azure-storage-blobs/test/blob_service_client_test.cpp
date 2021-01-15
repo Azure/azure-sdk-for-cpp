@@ -338,10 +338,6 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.Get().empty());
-    if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
-    {
-      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.GetValue()));
-    }
   }
 
   TEST_F(BlobServiceClientTest, CreateDeleteBlobContainer)
