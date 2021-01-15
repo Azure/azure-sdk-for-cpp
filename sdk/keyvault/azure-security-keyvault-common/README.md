@@ -1,4 +1,4 @@
-# Azure Key Vault Keys Package client library for C++
+# Azure Key Vault Common Package client library for C++
 
 ### License
 
