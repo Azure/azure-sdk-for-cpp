@@ -126,38 +126,26 @@
 - Support for Blob Index.
 - Release based on azure-core_1.0.0-beta.1.
 
-## 1.0.0-beta.1
-
-### New Features
-
-- New APIs:
-  - BlobServiceClient::SetProperties
-  - BlobServiceClient::GetProperties
-  - BlobServiceClient::GetAccountInfo
-  - BlobServiceClient::GetStatistics
-  - BlobContainerClient::Undelete
-  - BlobContainerClient::GetAccessPolicy
-  - BlobContainerClient::SetAccessPolicy
-  - AppendBlobClient::Seal
-- Support for blob versioning.
-- Support for blob lease and container lease.
-- Support for account SAS and blob SAS.
-- Support for transactional checksum.
-
-
-## 1.0.0-preview.1 (Unreleased)
+## 1.0.0-beta.1 (2020-08-28)
 
 ### New Features
 
 - Added support for Blob features:
   - BlobServiceClient::ListBlobContainersSegment
   - BlobServiceClient::GetUserDelegationKey
+  - BlobServiceClient::SetProperties
+  - BlobServiceClient::GetProperties
+  - BlobServiceClient::GetAccountInfo
+  - BlobServiceClient::GetStatistics
   - BlobContainerClient::Create
   - BlobContainerClient::Delete
   - BlobContainerClient::GetProperties
   - BlobContainerClient::SetMetadata
   - BlobContainerClient::ListBlobsFlat
   - BlobContainerClient::ListBlobsByHierarchy
+  - BlobContainerClient::Undelete
+  - BlobContainerClient::GetAccessPolicy
+  - BlobContainerClient::SetAccessPolicy
   - BlobClient::GetProperties
   - BlobClient::SetHttpHeaders
   - BlobClient::SetMetadata
@@ -180,6 +168,7 @@
   - AppendBlobClient::Create
   - AppendBlobClient::AppendBlock
   - AppendBlobClient::AppendBlockFromUri
+  - AppendBlobClient::Seal
   - PageBlobClient::Create
   - PageBlobClient::UploadPages
   - PageBlobClient::UploadPagesFromUri
@@ -187,3 +176,7 @@
   - PageBlobClient::Resize
   - PageBlobClient::GetPageRanges
   - PageBlobClient::StartCopyIncremental
+- Support for blob versioning.
+- Support for blob lease and container lease.
+- Support for account SAS and blob SAS.
+- Support for transactional checksum.
