@@ -165,20 +165,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
-     * @brief Restores a previously deleted container. The destionation is referenced by current
-     * BlobContainerClient.
-     *
-     * @param deletedBlobContainerName The name of the previously deleted container.
-     * @param deletedBlobContainerVersion The version of the previously deleted container.
-     * @param options Optional parameters to execute this function.
-     * @return An UndeleteBlobContainerResult if successful.
-     */
-    Azure::Core::Response<Models::UndeleteBlobContainerResult> Undelete(
-        const std::string& deletedBlobContainerName,
-        const std::string& deletedBlobContainerVersion,
-        const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions()) const;
-
-    /**
      * @brief Returns all user-defined metadata and system properties for the specified
      * container. The data returned does not include the container's list of blobs.
      *
@@ -324,6 +310,19 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<Models::BreakBlobContainerLeaseResult> BreakLease(
         const BreakBlobContainerLeaseOptions& options = BreakBlobContainerLeaseOptions()) const;
+
+    /**
+     * @brief Marks the specified blob or snapshot for deletion. The blob is later deleted
+     * during garbage collection. Note that in order to delete a blob, you must delete all of its
+     * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
+     *
+     * @param blobName The name of the blob to delete.
+     * @param options Optional parameters to execute this function.
+     * @return Nothing.
+     */
+    Azure::Core::Response<void> DeleteBlob(
+        const std::string& blobName,
+        const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
   private:
     Azure::Core::Http::Url m_blobContainerUrl;

@@ -79,6 +79,9 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, UploadDownload)
   {
     auto res = m_blockBlobClient->Download();
+    EXPECT_EQ(res->BlobSize, static_cast<int64_t>(m_blobContent.size()));
+    EXPECT_EQ(res->ContentRange.Offset, 0);
+    EXPECT_EQ(res->ContentRange.Length.GetValue(), static_cast<int64_t>(m_blobContent.size()));
     EXPECT_EQ(ReadBodyStream(res->BodyStream), m_blobContent);
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
@@ -99,7 +102,9 @@ namespace Azure { namespace Storage { namespace Test {
             m_blobContent.begin()
                 + static_cast<std::size_t>(
                     options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue())));
-    EXPECT_FALSE(res->ContentRange.GetValue().empty());
+    EXPECT_EQ(res->ContentRange.Offset, options.Range.GetValue().Offset);
+    EXPECT_EQ(res->ContentRange.Length.GetValue(), options.Range.GetValue().Length.GetValue());
+    EXPECT_EQ(res->BlobSize, static_cast<int64_t>(m_blobContent.size()));
   }
 
   TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)

@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * ShareClient
      * @return ShareDirectoryClient The root directory of the share.
      */
-    ShareDirectoryClient GetRootShareDirectoryClient() const;
+    ShareDirectoryClient GetRootDirectoryClient() const;
 
     /**
      * @brief Create a ShareDirectoryClient from current ShareClient
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return ShareDirectoryClient A directory client that can be used to manage a share directory
      * resource.
      */
-    ShareDirectoryClient GetShareDirectoryClient(const std::string& directoryPath) const;
+    ShareDirectoryClient GetDirectoryClient(const std::string& directoryPath) const;
 
     /**
      * @brief Create a ShareFileClient from current ShareClient
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return ShareFileClient A file client that can be used to manage a share file
      * resource.
      */
-    ShareFileClient GetShareFileClient(const std::string& filePath) const;
+    ShareFileClient GetFileClient(const std::string& filePath) const;
 
     /**
      * @brief Creates the file share.
@@ -106,7 +106,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateShareOptions& options = CreateShareOptions()) const;
 
     /**
-     * @brief Creates the file share if it does not exist, nothing will happen if the file share already exists.
+     * @brief Creates the file share if it does not exist, nothing will happen if the file share
+     * already exists.
      * @param options Optional parameters to create this file share.
      * @return Azure::Core::Response<Models::CreateShareResult> containing the information including
      * the version and modified time of a share if it is successfully created.

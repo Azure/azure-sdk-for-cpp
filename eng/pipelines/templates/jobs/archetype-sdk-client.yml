@@ -1,10 +1,28 @@
 parameters:
-  Artifacts: []
-  ServiceDirectory: not-specified
-  Coverage: ''
-  CtestRegex: .*
-  BuildReleaseArtifacts: true
-  CoverageReportPath: 'sdk/*/*/*cov_xml.xml'
+  - name: Artifacts
+    type: object
+    default: []
+  - name: ServiceDirectory
+    type: string
+    default: not-specified
+  - name: Coverage
+    type: string
+    default: ''
+  - name: CtestRegex
+    type: string
+    default: .*
+  - name: BuildReleaseArtifacts
+    type: boolean
+    default: true
+  - name: CoverageReportPath
+    type: string
+    default: 'sdk/*/*/*cov_xml.xml'
+  - name: WindowsPool
+    type: string
+    default: azsdk-pool-mms-win-2019-general
+  - name: LinuxPool
+    type: string
+    default: azsdk-pool-mms-ubuntu-1804-general
 
 jobs:
 - job: Validate
@@ -12,26 +30,30 @@ jobs:
   strategy:
     matrix:
       Linux_x64_gcc8:
-        OSVmImage: 'ubuntu-18.04'
+        Pool: $(LinuxPool)
+        OSVmImage:
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-8'
         CXX: '/usr/bin/g++-8'
         BuildArgs: '-j 10'
       Linux_x64_gcc9:
-        OSVmImage: 'ubuntu-18.04'
+        Pool: $(LinuxPool)
+        OSVmImage:
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-9'
         CXX: '/usr/bin/g++-9'
         BuildArgs: '-j 10'
       Linux_x64:
-        OSVmImage: 'ubuntu-18.04'
+        Pool: $(LinuxPool)
+        OSVmImage:
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         BuildArgs: '-j 10'
       Win_x86:
-        OSVmImage: 'windows-2019'
+        Pool: $(WindowsPool)
+        OSVmImage:
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -39,20 +61,23 @@ jobs:
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #Leaving curl on here to explicitly test what the default behavior is on windows.
         BuildArgs: '-v --parallel 8'
       Win_x64:
-        OSVmImage: 'windows-2019'
+        Pool: $(WindowsPool)
+        OSVmImage:
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         BuildArgs: '-v --parallel 8'
       MacOS_x64:
-       OSVmImage: 'macOS-10.14'
-       VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
-       VCPKG_DEFAULT_TRIPLET: 'x64-osx'
+        Pool:
+        OSVmImage: 'macOS-10.14'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
+        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
 
       # Unit testing ON
       Linux_x64_with_unit_test:
-        OSVmImage: 'ubuntu-18.04'
+        Pool: $(LinuxPool)
+        OSVmImage:
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
@@ -62,7 +87,8 @@ jobs:
         CODE_COVERAGE_COLLECT_ONLY: 1
         BuildArgs: '-j 10'
       Win_x86_with_unit_test:
-        OSVmImage: 'windows-2019'
+        Pool: $(WindowsPool)
+        OSVmImage:
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -70,7 +96,8 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
         BuildArgs: '-v --parallel 8'
       Win_x64_with_unit_test:
-        OSVmImage: 'windows-2019'
+        Pool: $(WindowsPool)
+        OSVmImage:
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -78,17 +105,28 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
         BuildArgs: '-v --parallel 8'
       MacOS_x64_with_unit_test:
+        Pool:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
   pool:
-    vmImage: $(OSVmImage)
+    name: $[coalesce(variables['Pool'], '')]
+    vmImage: $[coalesce(variables['OSVmImage'], '')]
+
   variables:
-    CMOCKA_XML_FILE: "%g-test-results.xml"
-    CMOCKA_MESSAGE_OUTPUT: "xml"
-    BuildArgs: ""
-    AZURE_ENABLE_STATIC_ANALYSIS: 1
+  - name: CMOCKA_XML_FILE
+    value: "%g-test-results.xml"
+  - name: CMOCKA_MESSAGE_OUTPUT
+    value: "xml"
+  - name: BuildArgs
+    value: ""
+  - name: AZURE_ENABLE_STATIC_ANALYSIS
+    value: 1
+  - name: WindowsPool
+    value: ${{parameters.WindowsPool}}
+  - name: LinuxPool
+    value: ${{parameters.LinuxPool}}
 
   steps:
   - checkout: self
@@ -140,9 +178,8 @@ jobs:
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
   - job: GenerateReleaseArtifacts
     pool:
-      vmImage: $(OSVmImage)
+      name: ${{ parameters.WindowsPool }}
     variables:
-      OSVmImage: windows-2019
       VcpkgDependencies: curl[winssl] libxml2 nlohmann-json
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
@@ -204,40 +241,25 @@ jobs:
               Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
             displayName: Create package info JSON file
 
-          # Building from the root of the repo at this point because of the
-          # nature of the CMake build system. The SoureDirectory should probably
-          # change.
-          - task: PowerShell@2
-            inputs:
-              targetType: filePath
-              filePath: eng/scripts/New-ReleaseArtifact.ps1
-              arguments: >-
-                -SourceDirectory ./
-                -PackageSpecPath $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
-                -Destination $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg
-                -Workspace $(Agent.TempDirectory)/vcpkg-${{ artifact.Name }}
-              pwsh: true
-            displayName: Compress publish artifact and stage for publishing
-
           - task: Powershell@2
             inputs:
               targetType: inline
               script: |
                 # If there is no vcpkg directory skip staging the vcpkg port artifacts
-                if (!(Test-Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/)) {
+                if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
+                  Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
                   exit
                 }
 
                 New-Item `
                   -ItemType Directory `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Force
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
 
-                Copy-Item `
-                  sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/* `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port `
-                  -Exclude README.md
+                Copy-Item -Recurse `
+                  build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
               pwsh: true
-            displayName: Copy vcpkg port template files and remove .template extension
+            displayName: Copy vcpkg port files from build
 
           - pwsh: |
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}

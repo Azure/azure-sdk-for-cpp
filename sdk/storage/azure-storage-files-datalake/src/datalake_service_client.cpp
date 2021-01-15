@@ -163,17 +163,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  FileSystemClient DataLakeServiceClient::GetFileSystemClient(
+  DataLakeFileSystemClient DataLakeServiceClient::GetFileSystemClient(
       const std::string& fileSystemName) const
   {
     auto builder = m_dfsUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
-    return FileSystemClient(
+    return DataLakeFileSystemClient(
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
   Azure::Core::Response<Models::ListFileSystemsSinglePageResult>
-  DataLakeServiceClient::ListFileSystemsSinglePage(const ListFileSystemsSinglePageOptions& options) const
+  DataLakeServiceClient::ListFileSystemsSinglePage(
+      const ListFileSystemsSinglePageOptions& options) const
   {
     Blobs::ListBlobContainersSinglePageOptions blobOptions;
     blobOptions.Context = options.Context;

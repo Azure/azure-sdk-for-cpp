@@ -1,16 +1,13 @@
 <#
 .SYNOPSIS
-Uploads the release asset and mutates files in $SourceDirectory/port to point to
-the uploaded GitHub release asset.
+Downloads the release asset and mutates the portfile.cmake file to use the
+SHA512 hash of the release asset.
 
 .PARAMETER SourceDirectory
 Location of vcpkg assets (usually `<artifact-path>/packages/<package-name>/vcpkg`)
 
 .PARAMETER PackageSpecPath
 Location of the relevant package-info.json file
-
-.PARAMETER GitHubPat
-PAT for uploading asset to GitHub release and creating PR
 
 .PARAMETER GitHubRepo
 Name of the GitHub repo (of the form Azure/azure-sdk-for-cpp)
@@ -28,39 +25,35 @@ param (
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $GitHubPat,
-
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
     [string] $GitHubRepo
 )
 
 # If there's nothing in the "port" folder to upload set SkipVcpkgUpdate to true
 # and exit. Other steps will check SkipVcpkgUpdate to decide whether to move
 # forward.
-if (!(Get-ChildItem -Path "$SourceDirectory/port")) {
+if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
     Write-Host "###vso[task.setvariable variable=SkipVcpkgUpdate]true"
     exit
 }
 
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-$assetFilename = "$($packageSpec.packageName).tar.gz"
+$tarGzUri = "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).tar.gz" 
 
-# Upload the asset to the release
-Write-Verbose "Uploading asset: $assetFilename..."
-$assetInfo = & $PSScriptRoot/../common/scripts/New-ReleaseAsset.ps1 `
-    -ReleaseTag $packageSpec.packageName `
-    -AssetPath $SourceDirectory/$assetFilename `
-    -GitHubRepo $GitHubRepo `
-    -GitHubPat $GitHubPat
+Write-Host "Downloading tarball to compute hash from $tarGzUri" 
+$localTarGzPath = New-TemporaryFile
+Invoke-WebRequest -Uri $tarGzUri -OutFile $localTarGzPath
 
-$sha512 = (Get-FileHash -Path "$SourceDirectory/$assetFilename" -Algorithm SHA512).Hash
+$sha512 = (Get-FileHash -Path $localTarGzPath -Algorithm SHA512).Hash.ToLower()
+Write-Host "SHA512: $sha512"
 
-Write-Verbose "Mutating files with release info and creating PR"
-# Use asset URL to fill in vcpkg port tokens
-& $PSScriptRoot/New-VcpkgPortDefinition.ps1 `
-    -SourceDirectory "$SourceDirectory/port" `
-    -Version $packageSpec.Version `
-    -Url $assetInfo.browser_download_url `
-    -Filename $assetFilename `
-    -Sha512 $sha512
+Write-Verbose "Writing the SHA512 hash"
+$portfileLocation = "$SourceDirectory/port/portfile.cmake"
+
+# Regex replace SHA512 preserving spaces. The placeholder "SHA512 1" is
+# recommended in vcpkg documentation
+# Before: "   SHA512   1"
+# After:  "   SHA512   f6cf1c16c52" 
+$newContent = Get-Content -Raw -Path $portfileLocation `
+    | ForEach-Object { $_ -replace '(SHA512\s+)1', "`${1}$sha512" }
+
+$newContent | Set-Content $portfileLocation

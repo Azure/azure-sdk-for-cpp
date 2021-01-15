@@ -192,4 +192,46 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
+  Azure::Core::Response<BlobContainerClient> BlobServiceClient::CreateBlobContainer(
+      const std::string& blobContainerName,
+      const CreateBlobContainerOptions& options) const
+  {
+    auto blobContainerClient = GetBlobContainerClient(blobContainerName);
+    auto response = blobContainerClient.Create(options);
+    return Azure::Core::Response<BlobContainerClient>(
+        std::move(blobContainerClient), response.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<void> BlobServiceClient::DeleteBlobContainer(
+      const std::string& blobContainerName,
+      const DeleteBlobContainerOptions& options) const
+  {
+    auto blobContainerClient = GetBlobContainerClient(blobContainerName);
+    auto response = blobContainerClient.Delete(options);
+    return Azure::Core::Response<void>(response.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<BlobContainerClient> BlobServiceClient::UndeleteBlobContainer(
+      const std::string deletedBlobContainerName,
+      const std::string deletedBlobContainerVersion,
+      const UndeleteBlobContainerOptions& options) const
+  {
+    std::string destinationBlobContainerName = options.DestinationBlobContainerName.HasValue()
+        ? options.DestinationBlobContainerName.GetValue()
+        : deletedBlobContainerName;
+    auto blobContainerClient = GetBlobContainerClient(destinationBlobContainerName);
+
+    Details::BlobRestClient::BlobContainer::UndeleteBlobContainerOptions protocolLayerOptions;
+    protocolLayerOptions.DeletedBlobContainerName = deletedBlobContainerName;
+    protocolLayerOptions.DeletedBlobContainerVersion = deletedBlobContainerVersion;
+    auto response = Details::BlobRestClient::BlobContainer::Undelete(
+        options.Context,
+        *m_pipeline,
+        Azure::Core::Http::Url(blobContainerClient.GetUrl()),
+        protocolLayerOptions);
+
+    return Azure::Core::Response<BlobContainerClient>(
+        std::move(blobContainerClient), response.ExtractRawResponse());
+  }
+
 }}} // namespace Azure::Storage::Blobs

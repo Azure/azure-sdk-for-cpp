@@ -245,8 +245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
-          firstChunk->ContentRange.GetValue().find('/') + 1));
+      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -375,8 +374,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
-          firstChunk->ContentRange.GetValue().find('/') + 1));
+      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {

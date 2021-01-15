@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t c_PATH_TEST_SIZE = 5;
 
-  std::shared_ptr<Files::DataLake::FileSystemClient>
+  std::shared_ptr<Files::DataLake::DataLakeFileSystemClient>
       DataLakeFileSystemClientTest::m_fileSystemClient;
   std::string DataLakeFileSystemClientTest::m_fileSystemName;
 
@@ -24,8 +24,8 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeFileSystemClientTest::SetUpTestSuite()
   {
     m_fileSystemName = LowercaseRandomString();
-    m_fileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
-        Files::DataLake::FileSystemClient::CreateFromConnectionString(
+    m_fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+        Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), m_fileSystemName));
     m_fileSystemClient->Create();
 
@@ -56,14 +56,14 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::DataLake::Models::Path> result;
     std::string continuation;
-    Files::DataLake::ListPathsOptions options;
+    Files::DataLake::ListPathsSinglePageOptions options;
     if (!directory.empty())
     {
       options.Directory = directory;
     }
     do
     {
-      auto response = m_fileSystemClient->ListPaths(recursive, options);
+      auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
       result.insert(result.end(), response->Paths.begin(), response->Paths.end());
       if (response->ContinuationToken.HasValue())
       {
@@ -96,10 +96,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/delete.
-      std::vector<Files::DataLake::FileSystemClient> fileSystemClient;
+      std::vector<Files::DataLake::DataLakeFileSystemClient> fileSystemClient;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         fileSystemClient.emplace_back(std::move(client));
@@ -111,10 +111,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // Normal delete with access condition.
-      std::vector<Files::DataLake::FileSystemClient> fileSystemClient;
+      std::vector<Files::DataLake::DataLakeFileSystemClient> fileSystemClient;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         fileSystemClient.emplace_back(std::move(client));
@@ -122,10 +122,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileSystemClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::DeleteFileSystemOptions options1;
+        Files::DataLake::DeleteDataLakeFileSystemOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_THROW(client.Delete(options1), StorageException);
-        Files::DataLake::DeleteFileSystemOptions options2;
+        Files::DataLake::DeleteDataLakeFileSystemOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // CreateIfNotExists & DeleteIfExists.
       {
-        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         EXPECT_NO_THROW(client.CreateIfNotExists());
@@ -141,14 +141,14 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.DeleteIfExists());
       }
       {
-        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.CreateIfNotExists());
         EXPECT_THROW(client.Create(), StorageException);
         EXPECT_NO_THROW(client.DeleteIfExists());
       }
       {
-        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         auto created = client.Create()->Created;
         EXPECT_TRUE(created);
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(deleted);
       }
       {
-        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult->Deleted);
@@ -184,12 +184,12 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create file system with metadata works
-      auto client1 = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+      auto client1 = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      auto client2 = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+      auto client2 = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateFileSystemOptions options1;
-      Files::DataLake::CreateFileSystemOptions options2;
+      Files::DataLake::CreateDataLakeFileSystemOptions options1;
+      Files::DataLake::CreateDataLakeFileSystemOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, GetFileSystemPropertiesResult)
+  TEST_F(DataLakeFileSystemClientTest, GetDataLakeFileSystemPropertiesResult)
   {
     auto metadata1 = RandomMetadata();
     auto metadata2 = RandomMetadata();
@@ -281,9 +281,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::DataLake::ListPathsOptions options;
+      Files::DataLake::ListPathsSinglePageOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileSystemClient->ListPaths(true, options);
+      auto response = m_fileSystemClient->ListPathsSinglePage(true, options);
       EXPECT_LE(2U, response->Paths.size());
     }
   }
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
       // Create from connection string validates static creator function and shared key constructor.
       auto fileSystemName = LowercaseRandomString(10);
       auto connectionStringClient
-          = Azure::Storage::Files::DataLake::FileSystemClient::CreateFromConnectionString(
+          = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), fileSystemName);
       EXPECT_NO_THROW(connectionStringClient.Create());
       EXPECT_NO_THROW(connectionStringClient.Delete());
@@ -337,8 +337,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           AadTenantId(), AadClientId(), AadClientSecret());
 
-      auto clientSecretClient = Azure::Storage::Files::DataLake::FileSystemClient(
-          Azure::Storage::Files::DataLake::FileSystemClient::CreateFromConnectionString(
+      auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileSystemClient(
+          Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), LowercaseRandomString(10))
               .GetUri(),
           credential);
