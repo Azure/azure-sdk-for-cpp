@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->BlobSize, static_cast<int64_t>(m_blobContent.size()));
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)
+  TEST_F(BlockBlobClientTest, LastAccessTime)
   {
     {
       auto res = m_blockBlobClient->Download();
