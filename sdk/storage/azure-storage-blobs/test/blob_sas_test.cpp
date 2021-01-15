@@ -105,19 +105,19 @@ namespace Azure { namespace Storage { namespace Test {
       blobClient0.Delete(options);
     };
 
-    // auto verify_blob_tags = [&](const std::string& sas) {
-    //  blobClient0.Create();
-    //  std::map<std::string, std::string> tags = {{"tag_key1", "tag_value1"}};
-    //  blobClient0.SetTags(tags);
-    //  auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
-    //  EXPECT_NO_THROW(blobClient.GetTags());
-    //  blobClient0.Delete();
-    //};
+    auto verify_blob_tags = [&](const std::string& sas) {
+      blobClient0.Create();
+      std::map<std::string, std::string> tags = {{"tag_key1", "tag_value1"}};
+      blobClient0.SetTags(tags);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
+      EXPECT_NO_THROW(blobClient.GetTags());
+      blobClient0.Delete();
+    };
 
-    // auto verify_blob_filter = [&](const std::string& sas) {
-    //  auto serviceClient = Blobs::BlobServiceClient(serviceUrl + sas);
-    //  EXPECT_NO_THROW(serviceClient.FindBlobsByTags("\"tag_key1\" = 'tag_value1'"));
-    //};
+    auto verify_blob_filter = [&](const std::string& sas) {
+      auto serviceClient = Blobs::BlobServiceClient(serviceUrl + sas);
+      EXPECT_NO_THROW(serviceClient.FindBlobsByTagsSinglePage("\"tag_key1\" = 'tag_value1'"));
+    };
 
     for (auto permissions : {
              Sas::AccountSasPermissions::All,
@@ -161,11 +161,11 @@ namespace Azure { namespace Storage { namespace Test {
       }
       if ((permissions & Sas::AccountSasPermissions::Tags) == Sas::AccountSasPermissions::Tags)
       {
-        // verify_blob_tags(sasToken);
+        verify_blob_tags(sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Filter) == Sas::AccountSasPermissions::Filter)
       {
-        // verify_blob_filter(sasToken);
+        verify_blob_filter(sasToken);
       }
     }
 
@@ -210,8 +210,8 @@ namespace Azure { namespace Storage { namespace Test {
       }
       if ((permissions & Sas::BlobSasPermissions::Tags) == Sas::BlobSasPermissions::Tags)
       {
-        // verify_blob_tags(sasToken);
-        // verify_blob_tags(sasToken2);
+        verify_blob_tags(sasToken);
+        verify_blob_tags(sasToken2);
       }
     }
 
@@ -322,8 +322,8 @@ namespace Azure { namespace Storage { namespace Test {
       if ((permissions & Sas::BlobContainerSasPermissions::Tags)
           == Sas::BlobContainerSasPermissions::Tags)
       {
-        // verify_blob_tags(sasToken);
-        // verify_blob_tags(sasToken2);
+        verify_blob_tags(sasToken);
+        verify_blob_tags(sasToken2);
       }
     }
 
