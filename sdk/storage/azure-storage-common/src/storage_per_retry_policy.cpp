@@ -4,7 +4,6 @@
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 
 #include <azure/core/datetime.hpp>
-#include <azure/core/platform.hpp>
 
 #include <chrono>
 

@@ -7,6 +7,7 @@
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_operation_policy.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 
 #include "azure/storage/blobs/version.hpp"
@@ -41,6 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StoragePerOperationPolicy>(options.ApiVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -68,6 +71,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StoragePerOperationPolicy>(options.ApiVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -95,6 +100,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StoragePerOperationPolicy>(options.ApiVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());

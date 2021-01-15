@@ -10,6 +10,7 @@
 #include <azure/storage/common/reliable_stream.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_operation_policy.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 
 #include "azure/storage/blobs/append_blob_client.hpp"
@@ -50,6 +51,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StoragePerOperationPolicy>(options.ApiVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -77,6 +80,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StoragePerOperationPolicy>(options.ApiVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -103,6 +108,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StoragePerOperationPolicy>(options.ApiVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -193,7 +200,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
         {
-          newOptions.Range.GetValue().Length = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
+          newOptions.Range.GetValue().Length
+              = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {
@@ -634,7 +642,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Models::DeleteBlobResult ret;
         ret.Deleted = false;
-        return Azure::Core::Response<Models::DeleteBlobResult>(std::move(ret), std::move(e.RawResponse));
+        return Azure::Core::Response<Models::DeleteBlobResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }

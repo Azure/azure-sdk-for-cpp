@@ -124,6 +124,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobClientOptions
   {
     /**
+     * API version used by this client.
+     */
+    std::string ApiVersion = Details::ApiVersion;
+
+    /**
      * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
      * are applied to every request.
      */
