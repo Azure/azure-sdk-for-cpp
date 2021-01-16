@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
-#include "azure/core/strings.hpp"
+#include "azure/core/internal/strings.hpp"
 
 #include <map>
 #include <string>
@@ -24,7 +24,7 @@ static std::map<std::string, std::string> MergeMaps(
 
 void Request::AddHeader(std::string const& name, std::string const& value)
 {
-  auto headerNameLowerCase = Azure::Core::Strings::ToLower(name);
+  auto headerNameLowerCase = Azure::Core::Internal::Strings::ToLower(name);
   return this->m_retryModeEnabled
       ? Details::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
       : Details::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);

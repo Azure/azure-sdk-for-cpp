@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.5 (Unreleased)
 
+### Breaking Changes
+
+- Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
 
 ## 1.0.0-beta.4 (2021-01-13)
 
