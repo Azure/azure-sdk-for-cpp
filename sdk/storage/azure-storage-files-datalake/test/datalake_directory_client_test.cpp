@@ -344,7 +344,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Acls recursive works.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(directoryClient1.SetAccessControl(acls));
+      EXPECT_NO_THROW(directoryClient1.SetAccessControlList(acls));
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
           Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;

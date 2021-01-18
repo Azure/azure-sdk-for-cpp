@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
       fileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
       auto acls = fileClient0.GetAccessControls()->Acls;
-      EXPECT_NO_THROW(fileClient.SetAccessControl(acls));
+      EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
 
     for (auto permissions : {
