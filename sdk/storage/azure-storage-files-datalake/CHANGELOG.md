@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
+- Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
