@@ -12,6 +12,7 @@
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
+#include "azure/storage/files/datalake/datalake_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
@@ -206,6 +207,50 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        if the directory does not exist.
      */
     Azure::Core::Nullable<std::string> Directory;
+  };
+
+  /**
+   * @brief Optional parameters for FileSystemClient::GetAccessPolicy.
+   */
+  struct GetDataLakeFileSystemAccessPolicyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for FileSystemClient::SetAccessPolicy.
+   */
+  struct SetDataLakeFileSystemAccessPolicyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Specifies whether data in the file system may be accessed publicly and the level
+     * of access.
+     */
+    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
+
+    /**
+     * @brief Stored access policies that you can use to provide fine grained control over
+     * file system permissions.
+     */
+    std::vector<Models::DataLakeSignedIdentifier> SignedIdentifiers;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    FileSystemAccessConditions AccessConditions;
   };
 
   /**

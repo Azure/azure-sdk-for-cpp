@@ -22,6 +22,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   // FileSystemClient models:
 
   using ListPathsSinglePageResult = FileSystemListPathsResult;
+  using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
+
+  struct GetDataLakeFileSystemAccessPolicyResult
+  {
+    PublicAccessType AccessType = PublicAccessType::Private;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
+  }; // struct GetDataLakeFileSystemAccessPolicyResult
+
+  using SetDataLakeFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 
   struct GetDataLakeFileSystemPropertiesResult
   {

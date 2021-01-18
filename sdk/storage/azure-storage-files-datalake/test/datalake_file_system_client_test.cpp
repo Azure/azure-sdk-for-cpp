@@ -347,4 +347,53 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(clientSecretClient.Delete());
     }
   }
+
+  TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy)
+  {
+    auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString(), LowercaseRandomString());
+    fileSystem.Create();
+
+    Files::DataLake::SetDataLakeFileSystemAccessPolicyOptions options;
+    options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+    Files::DataLake::Models::DataLakeSignedIdentifier identifier;
+    identifier.Id = RandomString(64);
+    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+    identifier.Permissions = "r";
+    options.SignedIdentifiers.emplace_back(identifier);
+    identifier.Id = RandomString(64);
+    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
+    identifier.Permissions = "racwdxlt";
+    options.SignedIdentifiers.emplace_back(identifier);
+
+    auto ret = fileSystem.SetAccessPolicy(options);
+    EXPECT_FALSE(ret->ETag.empty());
+    EXPECT_TRUE(IsValidTime(ret->LastModified));
+
+    auto ret2 = fileSystem.GetAccessPolicy();
+    EXPECT_EQ(ret2->ETag, ret->ETag);
+    EXPECT_EQ(ret2->LastModified, ret->LastModified);
+    EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
+    for (int32_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
+    {
+      EXPECT_EQ(ret2->SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
+      EXPECT_EQ(ret2->SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
+      EXPECT_EQ(ret2->SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
+      EXPECT_EQ(ret2->SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
+    }
+
+    options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
+    EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
+    ret2 = fileSystem.GetAccessPolicy();
+    EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
+
+    // options.AccessType = Files::DataLake::Models::PublicAccessType::Private;
+    // EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
+    // ret2 = fileSystem.GetAccessPolicy();
+    // EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
+
+    fileSystem.Delete();
+  }
 }}} // namespace Azure::Storage::Test
