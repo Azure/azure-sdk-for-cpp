@@ -98,14 +98,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string GetUri() const { return m_blobContainerClient.GetUrl(); }
 
     /**
-     * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The filesystem's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
-
-    /**
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
      * @return Azure::Core::Response<Models::CreateDataLakeFileSystemResult> containing the

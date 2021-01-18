@@ -77,14 +77,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string GetUri() const { return m_blobClient.GetUrl(); }
 
     /**
-     * @brief Gets the path's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The path's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
-
-    /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.

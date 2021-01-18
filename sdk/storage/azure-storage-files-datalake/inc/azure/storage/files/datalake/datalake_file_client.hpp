@@ -76,14 +76,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string GetUri() const { return m_blockBlobClient.GetUrl(); }
 
     /**
-     * @brief Gets the file's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The file's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
-
-    /**
      * @brief Uploads data to be appended to a file. Data can only be appended to a file.
      * @param content The data to be appended.
      * @param offset This parameter allows the caller to upload data in parallel and control
