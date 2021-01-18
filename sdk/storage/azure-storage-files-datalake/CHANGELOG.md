@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.7 (Unreleased)
 
+### Breaking Changes
+
+- Removed `GetDfsUri` in all clients since they are currently implementation details.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

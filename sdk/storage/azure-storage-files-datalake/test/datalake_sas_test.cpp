@@ -4,6 +4,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 #include <azure/storage/files/datalake/datalake_sas_builder.hpp>
+#include <azure/storage/files/datalake/datalake_utilities.hpp>
 
 #include "datalake_file_system_client_test.hpp"
 
@@ -51,10 +52,10 @@ namespace Azure { namespace Storage { namespace Test {
     directory1Client0.Create();
     directory2Client0.Create();
 
-    auto serviceUri = serviceClient0.GetDfsUri();
-    auto filesystemUri = filesystemClient0.GetDfsUri();
-    auto directory1Uri = directory1Client0.GetDfsUri();
-    auto directory2Uri = directory2Client0.GetDfsUri();
+    auto serviceUri = Files::DataLake::Details::GetDfsUriFromUri(serviceClient0.GetUri());
+    auto filesystemUri = Files::DataLake::Details::GetDfsUriFromUri(filesystemClient0.GetUri());
+    auto directory1Uri = Files::DataLake::Details::GetDfsUriFromUri(directory1Client0.GetUri());
+    auto directory2Uri = Files::DataLake::Details::GetDfsUriFromUri(directory2Client0.GetUri());
     auto fileUri = fileClient0.GetUri();
 
     auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
@@ -123,7 +124,8 @@ namespace Azure { namespace Storage { namespace Test {
       std::string newFilename = RandomString();
       auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
       newFileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(newFileClient0.GetDfsUri() + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(
+          Files::DataLake::Details::GetDfsUriFromUri(newFileClient0.GetUri()) + sas);
       EXPECT_NO_THROW(fileClient.Rename(directory1Name + "/" + directory2Name + "/" + fileName));
     };
 
