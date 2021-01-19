@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     static ShareDirectoryClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
-        const std::string& directoryPath,
+        const std::string& directoryName,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return ShareFileClient A file client that can be used to manage a share file
      * resource.
      */
-    ShareFileClient GetFileClient(const std::string& filePath) const;
+    ShareFileClient GetFileClient(const std::string& fileName) const;
 
     /**
      * @brief Initializes a new instance of the ShareDirectoryClient class with an identical uri
