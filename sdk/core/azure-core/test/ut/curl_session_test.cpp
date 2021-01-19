@@ -82,6 +82,130 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
   }
 
+  TEST_F(CurlSession, chunkBadFormatResponse)
+  {
+    // chunked response with unexpected char at the end
+    std::string response("HTTP/1.1 200 Ok\r\ntransfer-encoding: chunked\r\n\r\n9\r\n");
+    std::string response2("123456789\r\n0\r\n\rx");
+    std::string connectionKey("connection-key");
+
+    // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
+    // unique ptr for it
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
+    EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response.data(), response.data() + response.size()),
+            Return(response.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response2.data(), response2.data() + response2.size()),
+            Return(response2.size())));
+    EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
+    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, DestructObj());
+
+    // Create the unique ptr to take care about memory free at the end
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    // Simulate a request to be sent
+    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    {
+      // Create the session inside scope so it is released and the connection is moved to the pool
+      auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+          request, std::move(uniqueCurlMock), true);
+
+      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      auto response = session->GetResponse();
+      response->SetBodyStream(std::move(session));
+      auto bodyS = response->GetBodyStream();
+
+      // Read the bodyStream to get get all chunks
+      EXPECT_THROW(
+          Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *bodyS),
+          Azure::Core::Http::TransportException);
+    }
+    // Clear the connections from the pool to invoke clean routine
+    Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+  }
+
+  TEST_F(CurlSession, chunkSegmentedResponse)
+  {
+    // chunked response - simulate the data that the wire will return on every read
+    std::string response0("HTTP/1.1 200 Ok\r");
+    std::string response1("\ntransfer-encoding:");
+    std::string response2(" chunke");
+    std::string response3("d\r\n");
+    std::string response4("\r");
+    std::string response5("\n3\r\n");
+    std::string response6("123");
+    std::string response7("\r\n0\r\n");
+    std::string response8("\r\n");
+
+    std::string connectionKey("connection-key");
+
+    // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
+    // unique ptr for it
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
+    EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response0.data(), response0.data() + response0.size()),
+            Return(response0.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response1.data(), response1.data() + response1.size()),
+            Return(response1.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response2.data(), response2.data() + response2.size()),
+            Return(response2.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response3.data(), response3.data() + response3.size()),
+            Return(response3.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response4.data(), response4.data() + response4.size()),
+            Return(response4.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response5.data(), response5.data() + response5.size()),
+            Return(response5.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response6.data(), response6.data() + response6.size()),
+            Return(response6.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response7.data(), response7.data() + response7.size()),
+            Return(response7.size())))
+        .WillOnce(DoAll(
+            SetArrayArgument<1>(response8.data(), response8.data() + response8.size()),
+            Return(response8.size())));
+    EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
+    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, DestructObj());
+
+    // Create the unique ptr to take care about memory free at the end
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    // Simulate a request to be sent
+    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    {
+      // Create the session inside scope so it is released and the connection is moved to the pool
+      auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+          request, std::move(uniqueCurlMock), true);
+
+      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      auto response = session->GetResponse();
+      response->SetBodyStream(std::move(session));
+      auto bodyS = response->GetBodyStream();
+
+      // Read the bodyStream to get get all chunks
+      EXPECT_NO_THROW(
+          Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *bodyS));
+    }
+    // Clear the connections from the pool to invoke clean routine
+    Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+  }
+
   TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
   {
 
