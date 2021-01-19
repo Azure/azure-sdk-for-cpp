@@ -90,21 +90,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
   {
-    return GetDirectoryClient("");
-  }
-
-  ShareDirectoryClient ShareClient::GetDirectoryClient(const std::string& directoryPath) const
-  {
-    auto builder = m_shareUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(directoryPath));
-    return ShareDirectoryClient(builder, m_pipeline);
-  }
-
-  ShareFileClient ShareClient::GetFileClient(const std::string& filePath) const
-  {
-    auto builder = m_shareUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(filePath));
-    return ShareFileClient(builder, m_pipeline);
+    return ShareDirectoryClient(m_shareUri, m_pipeline);
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const

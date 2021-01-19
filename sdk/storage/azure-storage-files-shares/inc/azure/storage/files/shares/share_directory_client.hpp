@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     static ShareDirectoryClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
-        const std::string& directoryPath,
+        const std::string& directoryName,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -67,11 +67,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Create a ShareDirectoryClient that's a sub directory of the current
      * ShareDirectoryClient
-     * @param subDirectoryName The name of the subdirectory.
+     * @param subdirectoryName The name of the subdirectory.
      * @return ShareDirectoryClient A directory client that can be used to manage a share directory
      * resource.
      */
-    ShareDirectoryClient GetSubdirectoryClient(const std::string& subDirectoryName) const;
+    ShareDirectoryClient GetSubdirectoryClient(const std::string& subdirectoryName) const;
 
     /**
      * @brief Create a ShareFileClient from current ShareDirectoryClient
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return ShareFileClient A file client that can be used to manage a share file
      * resource.
      */
-    ShareFileClient GetFileClient(const std::string& filePath) const;
+    ShareFileClient GetFileClient(const std::string& fileName) const;
 
     /**
      * @brief Initializes a new instance of the ShareDirectoryClient class with an identical uri

@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     static ShareFileClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
-        const std::string& filePath,
+        const std::string& fileName,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
