@@ -138,12 +138,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
-      const std::string& subDirectoryName) const
+      const std::string& subdirectoryName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
+    builder.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
+    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     return DataLakeDirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 

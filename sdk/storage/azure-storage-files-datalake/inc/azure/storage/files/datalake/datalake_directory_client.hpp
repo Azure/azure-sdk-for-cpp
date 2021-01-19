@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param fileSystemName The name of a file system.
-     * @param directoryPath The path of a directory within the file system.
+     * @param directoryName The name of a directory within the file system.
      * @param options Optional parameters used to initialize the client.
      * @return DataLakeDirectoryClient
      */
@@ -68,17 +68,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Create a FileClient from current DataLakeDirectoryClient
-     * @param path Path of the file under the directory.
+     * @param fileName Name of the file under the directory.
      * @return FileClient
      */
     DataLakeFileClient GetFileClient(const std::string& fileName) const;
 
     /**
      * @brief Create a DataLakeDirectoryClient from current DataLakeDirectoryClient
-     * @param path Path of the directory under the current directory.
+     * @param subdirectoryName Name of the directory under the current directory.
      * @return DataLakeDirectoryClient
      */
-    DataLakeDirectoryClient GetSubdirectoryClient(const std::string& subDirectoryName) const;
+    DataLakeDirectoryClient GetSubdirectoryClient(const std::string& subdirectoryName) const;
 
     /**
      * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob

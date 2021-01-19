@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     static DataLakePathClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
-        const std::string& pathName,
+        const std::string& path,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
