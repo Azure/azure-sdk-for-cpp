@@ -467,6 +467,7 @@ void CurlSession::ParseChunkSize(Context const& context)
         if (this->m_chunkSize == 0)
         { // Response with no content. end of chunk
           keepPolling = false;
+          this->m_bodyStartInBuffer = index + 1;
           break;
         }
 
@@ -603,6 +604,31 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   */
 }
 
+void CurlSession::ReadExpected(Context const& context, uint8_t expected)
+{
+  if (this->m_bodyStartInBuffer == -1 || this->m_bodyStartInBuffer == this->m_innerBufferSize)
+  {
+    // end of buffer, pull data from wire
+    this->m_innerBufferSize = m_connection->ReadFromSocket(
+        context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+    this->m_bodyStartInBuffer = 0;
+  }
+  auto data = this->m_readBuffer[this->m_bodyStartInBuffer];
+  if (data != expected)
+  {
+    throw TransportException(
+        "Un-expected format in HTTP response. Expecting: " + std::to_string(expected)
+        + " but found: " + std::to_string(data));
+  }
+  this->m_bodyStartInBuffer += 1;
+}
+
+void CurlSession::ReadCRLF(Context const& context)
+{
+  ReadExpected(context, '\r');
+  ReadExpected(context, '\n');
+}
+
 // Read from curl session
 int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
@@ -614,27 +640,17 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
   // check if all chunked is all read already
   if (this->m_isChunkedResponseType && this->m_chunkSize == this->m_sessionTotalRead)
   {
-    // Need to read CRLF after all chunk was read
-    for (int8_t i = 0; i < 2; i++)
-    {
-      if (this->m_bodyStartInBuffer > 0 && this->m_bodyStartInBuffer < this->m_innerBufferSize)
-      {
-        this->m_bodyStartInBuffer += 1;
-      }
-      else
-      { // end of buffer, pull data from wire
-        this->m_innerBufferSize = m_connection->ReadFromSocket(
-            context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
-        this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
-      }
-    }
+    ReadCRLF(context);
     // Reset session read counter for next chunk
     this->m_sessionTotalRead = 0;
     // get the size of next chunk
     ParseChunkSize(context);
 
     if (this->IsEOF())
-    { // after parsing next chunk, check if it is zero
+    {
+      // Final CRLF after end of chunk
+      ReadCRLF(context);
+      // after parsing next chunk, check if it is zero
       return 0;
     }
   }
