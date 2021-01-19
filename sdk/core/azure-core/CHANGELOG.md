@@ -6,6 +6,10 @@
 
 - Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
 
+### Bug Fixes
+
+- Fixed Curl transport adapter parsing the last chunk of a chunked response.
+
 ## 1.0.0-beta.4 (2021-01-13)
 
 ### New Features
