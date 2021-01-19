@@ -92,10 +92,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareDirectoryClient ShareDirectoryClient::GetSubdirectoryClient(
-      const std::string& subDirectoryName) const
+      const std::string& subdirectoryName) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
+    builder.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     return ShareDirectoryClient(builder, m_pipeline);
   }
 
