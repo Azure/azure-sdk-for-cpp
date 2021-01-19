@@ -60,7 +60,9 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key2"] = "TWO";
     options.Metadata = metadata;
     auto res = container_client.Create(options);
+    EXPECT_FALSE(res->RequestId.empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
+    EXPECT_EQ(res->RequestId, res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId));
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
@@ -68,7 +70,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(container_client.Create(), StorageException);
 
     auto res2 = container_client.Delete();
+    EXPECT_FALSE(res2->RequestId.empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
+    EXPECT_EQ(res2->RequestId, res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId));
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
 
@@ -80,10 +84,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto response = container_client.DeleteIfExists();
       EXPECT_FALSE(response->Deleted);
+      EXPECT_FALSE(response->RequestId.empty());
     }
     {
       auto response = container_client.CreateIfNotExists();
       EXPECT_TRUE(response->Created);
+      EXPECT_FALSE(response->RequestId.empty());
     }
     {
       auto response = container_client.CreateIfNotExists();
@@ -101,6 +107,7 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);
+    EXPECT_FALSE(res->RequestId.empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -108,6 +115,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(res->LastModified));
 
     auto res2 = m_blobContainerClient->GetProperties();
+    EXPECT_FALSE(res2->RequestId.empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -164,6 +172,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
+      EXPECT_FALSE(res->RequestId.empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -251,6 +260,7 @@ namespace Azure { namespace Storage { namespace Test {
     while (true)
     {
       auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
+      EXPECT_FALSE(res->RequestId.empty());
       EXPECT_EQ(res->Delimiter, delimiter);
       EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
       EXPECT_TRUE(res->Items.empty());
@@ -324,6 +334,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
+      EXPECT_FALSE(res->RequestId.empty());
       options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
@@ -387,10 +398,12 @@ namespace Azure { namespace Storage { namespace Test {
     options.SignedIdentifiers.emplace_back(identifier);
 
     auto ret = container_client.SetAccessPolicy(options);
+    EXPECT_FALSE(ret->RequestId.empty());
     EXPECT_FALSE(ret->ETag.empty());
     EXPECT_TRUE(IsValidTime(ret->LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
+    EXPECT_FALSE(ret2->RequestId.empty());
     EXPECT_EQ(ret2->ETag, ret->ETag);
     EXPECT_EQ(ret2->LastModified, ret->LastModified);
     EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
@@ -404,10 +417,12 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId1 = CreateUniqueLeaseId();
     int32_t leaseDuration = 20;
     auto aLease = *m_blobContainerClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.RequestId.empty());
     EXPECT_FALSE(aLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     aLease = *m_blobContainerClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.RequestId.empty());
     EXPECT_FALSE(aLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
@@ -418,6 +433,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_blobContainerClient->RenewLease(leaseId1);
+    EXPECT_FALSE(rLease.RequestId.empty());
     EXPECT_FALSE(rLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(rLease.LastModified));
     EXPECT_EQ(rLease.LeaseId, leaseId1);
@@ -425,11 +441,13 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     auto cLease = *m_blobContainerClient->ChangeLease(leaseId1, leaseId2);
+    EXPECT_FALSE(cLease.RequestId.empty());
     EXPECT_FALSE(cLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     auto containerInfo = *m_blobContainerClient->ReleaseLease(leaseId2);
+    EXPECT_FALSE(containerInfo.RequestId.empty());
     EXPECT_FALSE(containerInfo.ETag.empty());
     EXPECT_TRUE(IsValidTime(containerInfo.LastModified));
 
