@@ -57,7 +57,7 @@ CMake version 3.13 or higher is required to build these libraries. Download and 
 #### Third Party Dependencies
 - curl
 - libxml2
-- clang-format (min version 9)
+- clang-format (min version 10)
 
 Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
 Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started) to get vcpkg and install the following dependencies:
