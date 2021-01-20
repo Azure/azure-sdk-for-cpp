@@ -1,24 +1,37 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.7 (Unreleased)
 
 ### New Features
 
-- `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
-- Add `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
-- New API: `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
+- Added `RequestId` in API return types.
 
 ### Breaking Changes
 
-- Rename AppendBlobAccessConditions::MaxSize to AppendBlobAccessConditions::IfMaxSizeLessThanOrEqual.
-- Rename AppendBlobAccessConditions::AppendPosition to AppendBlobAccessConditions::IfAppendPositionEqual.
-- BlobServiceProperties.DefaultServiceVersion is now nullable.
-- Rename `DeleteBlobSubRequest::containerName` to `DeleteBlobSubRequest::blobContainerName`.
-- Rename `SetBlobAccessTierSubRequest::containerName` to `SetBlobAccessTierSubRequest::blobContainerName`.
-- Rename `BlobSasBuilder::ContainerName` to `BlobSasBuilder::BlobContainerName`.
-- Rename `BlobSasResource::Container` to `BlobSasResource::BlobContainer`.
-- Rename `AccountSasResource::Container` to `AccountSasResource::BlobContainer`
-- Rename some structs:
+- `UserDelegationKey` was changed to a member of `GetUserDelegationKeyResult` rather than a typedef like before.
+
+## 12.0.0-beta.6 (2020-01-14)
+
+### New Features
+
+- Added `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
+- Added `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
+- Added `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
+- Added `CreateBlobContainer`, `DeleteBlobContainer`, `UndeleteBlobContainer` into `BlobServiceClient`.
+- Added `DeleteBlob` to `BlobContainerClient`.
+- Support setting blob SAS permission with a raw string.
+
+### Breaking Changes
+
+- Renamed `AppendBlobAccessConditions::MaxSize` to `IfMaxSizeLessThanOrEqual`.
+- Renamed `AppendBlobAccessConditions::AppendPosition` to `IfAppendPositionEqual`.
+- `BlobServiceProperties.DefaultServiceVersion` is now nullable.
+- Renamed `DeleteBlobSubRequest::containerName` to `blobContainerName`.
+- Renamed `SetBlobAccessTierSubRequest::containerName` to `blobContainerName`.
+- Renamed `BlobSasBuilder::ContainerName` to `BlobContainerName`.
+- Renamed `BlobSasResource::Container` to `BlobContainer`.
+- Renamed `AccountSasResource::Container` to `BlobContainer`
+- Renamed some structs:
   - `CreateContainerResult` to `CreateBlobContainerOptions`
   - `CreateContainerOptions` to `CreateBlobContainerOptions`
   - `DeleteContainerResult` to `DeleteBlobContainerResult`
@@ -26,7 +39,7 @@
   - `GetContainerPropertiesResult` to `GetBlobContainerPropertiesResult`
   - `GetContainerPropertiesOptions` to `GetBlobContainerPropertiesOptions`
   - `SetContainerMetadataResult` to `SetBlobContainerMetadataResult`
-  - `SetContainerMetadataOptions ` to `SetBlobContainerMetadataOptions`
+  - `SetContainerMetadataOptions` to `SetBlobContainerMetadataOptions`
   - `GetContainerAccessPolicyResult` to `GetBlobContainerAccessPolicyResult`
   - `GetContainerAccessPolicyOptions` to `GetBlobContainerAccessPolicyOptions`
   - `SetContainerAccessPolicyResult` to `SetBlobContainerAccessPolicyResult`
@@ -41,17 +54,17 @@
   - `ChangeContainerLeaseOptions` to `ChangeBlobContainerLeaseOptions`
   - `BreakContainerLeaseResult` to `BreakBlobContainerLeaseResult`
   - `BreakContainerLeaseOptions` to `BreakBlobContainerLeaseOptions`
-  - `ContainerAccessConditions ` to `BlobContainerAccessConditions`
+  - `ContainerAccessConditions` to `BlobContainerAccessConditions`
   - `ListContainersSegmentResult` to `ListBlobContainersSegmentResult`
   - `ListContainersSegmentOptions` to `ListBlobContainersSegmentOptions`
-- API signature for CommitBlockList has changed. `BlockType` doesn't need to be specified anymore.
+- API signature for `CommitBlockList` has changed. `BlockType` doesn't need to be specified anymore.
 - `PageBlobClient::GetPageRanges` doesn't support getting difference between current blob and a snapshot anymore. Use `PageBlobClient::GetPageRangesDiff` instead.
-- Move Blob SAS into `Azure::Storage::Sas` namespace.
-- Replace all transactional content MD5/CRC64 with `ContentHash` struct.
-- `EncrytionKeySha256` is changed to binary(`std::vector<uint8_t>`).
+- Moved Blob SAS into `Azure::Storage::Sas` namespace.
+- Replaced all transactional content MD5/CRC64 with the `ContentHash` struct.
+- `EncryptionKeySha256` is changed to binary (`std::vector<uint8_t>`).
 - `ContentMd5` HTTP header is renamed to `ContentHash`, the type is also changed to `ContentHash`.
 - `ServerEncrypted` fields are renamed to `IsServerEncrypted`, and changed to non-nullable type.
-- Add `Is` prefix to bool variable names. Like `IsAccessTierInferred`, `IsDeleted`.
+- Added `Is` prefix to bool variable names. Like `IsAccessTierInferred`, `IsDeleted`.
 - `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` are removed from `ClearPageBlobPagesResult`, since they are never returned from storage server.
 - `ListBlobsFlatSegment` is renamed to `ListBlobsSinglePage`.
 - `ListBlobsByHierarchySegment` is renamed to `ListBlobsByHierarchySinglePage`.
@@ -59,13 +72,20 @@
 - `FindBlobsByTags` is renamed to `FindBlobsByTagsSinglePage`.
 - `MaxResults` in list APIs are renamed to `PageSizeHint`.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
-- Replace `std::pair<int64_t, int64_t>` with `Azure::Core::Http::Range` to denote blob ranges.
-- Move version strings into `Details` namespace.
-- Replace scoped enums that don't support bitwise operations with extensible enum.
+- Replaced `std::pair<int64_t, int64_t>` with `Azure::Core::Http::Range` to denote blob ranges.
+- Made version strings private by moving them into the `Details` namespace.
+- Replaced scoped enums that don't support bitwise operations with extensible enum.
 - Continuation token of result types are changed to nullable.
-- Rename `Models::DeleteSnapshotsOption::Only` to `Models::DeleteSnapshotsOption::OnlySnapshots`.
-- Rename `SourceConditions` in API options to `SourceAccessConditions`.
-- Remove Blob Batch.
+- Renamed `Models::DeleteSnapshotsOption::Only` to `OnlySnapshots`.
+- Renamed `SourceConditions` in API options to `SourceAccessConditions`.
+- Removed Blob Batch.
+- `DownloadBlobResult::Content-Range` is changed to an `Azure::Core::Http::Range`, an extra field `BlobSize` is added.
+- Removed `Undelete` from `BlobContainerClient`.
+- `BlobRetentionPolicy::Enabled` is renamed to `BlobRetentionPolicy::IsEnabled`, `BlobStaticWebsite::Enabled` is renamed to `BlobStaticWebsite::IsEnabled`.
+- Changed type for metadata to case-insensitive `std::map`.
+- Changed parameter type for token credential from `Azure::Identity::ClientSecretCredential` to `Azure::Core::TokenCredential`.
+- Renamed member function `GetUri` of client types to `GetUrl`.
+- `BlobClient::GetBlockBlobClient`, `BlobClient::GetAppendBlobClient` and `BlobClient::GetPageBlobClient` are renamed to `BlobClient::AsBlockBlobClient`, `BlobClient::AsAppendBlobClient` and `BlobClient::AsPageBlobClient` respectively.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
@@ -116,38 +136,26 @@
 - Support for Blob Index.
 - Release based on azure-core_1.0.0-beta.1.
 
-## 1.0.0-beta.1
-
-### New Features
-
-- New APIs:
-  - BlobServiceClient::SetProperties
-  - BlobServiceClient::GetProperties
-  - BlobServiceClient::GetAccountInfo
-  - BlobServiceClient::GetStatistics
-  - BlobContainerClient::Undelete
-  - BlobContainerClient::GetAccessPolicy
-  - BlobContainerClient::SetAccessPolicy
-  - AppendBlobClient::Seal
-- Support for blob versioning.
-- Support for blob lease and container lease.
-- Support for account SAS and blob SAS.
-- Support for transactional checksum.
-
-
-## 1.0.0-preview.1 (Unreleased)
+## 1.0.0-beta.1 (2020-08-28)
 
 ### New Features
 
 - Added support for Blob features:
   - BlobServiceClient::ListBlobContainersSegment
   - BlobServiceClient::GetUserDelegationKey
+  - BlobServiceClient::SetProperties
+  - BlobServiceClient::GetProperties
+  - BlobServiceClient::GetAccountInfo
+  - BlobServiceClient::GetStatistics
   - BlobContainerClient::Create
   - BlobContainerClient::Delete
   - BlobContainerClient::GetProperties
   - BlobContainerClient::SetMetadata
   - BlobContainerClient::ListBlobsFlat
   - BlobContainerClient::ListBlobsByHierarchy
+  - BlobContainerClient::Undelete
+  - BlobContainerClient::GetAccessPolicy
+  - BlobContainerClient::SetAccessPolicy
   - BlobClient::GetProperties
   - BlobClient::SetHttpHeaders
   - BlobClient::SetMetadata
@@ -170,6 +178,7 @@
   - AppendBlobClient::Create
   - AppendBlobClient::AppendBlock
   - AppendBlobClient::AppendBlockFromUri
+  - AppendBlobClient::Seal
   - PageBlobClient::Create
   - PageBlobClient::UploadPages
   - PageBlobClient::UploadPagesFromUri
@@ -177,3 +186,7 @@
   - PageBlobClient::Resize
   - PageBlobClient::GetPageRanges
   - PageBlobClient::StartCopyIncremental
+- Support for blob versioning.
+- Support for blob lease and container lease.
+- Support for account SAS and blob SAS.
+- Support for transactional checksum.

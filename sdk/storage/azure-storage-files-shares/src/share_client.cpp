@@ -88,23 +88,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareDirectoryClient ShareClient::GetRootShareDirectoryClient() const
+  ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
   {
-    return GetShareDirectoryClient("");
-  }
-
-  ShareDirectoryClient ShareClient::GetShareDirectoryClient(const std::string& directoryPath) const
-  {
-    auto builder = m_shareUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(directoryPath));
-    return ShareDirectoryClient(builder, m_pipeline);
-  }
-
-  ShareFileClient ShareClient::GetShareFileClient(const std::string& filePath) const
-  {
-    auto builder = m_shareUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(filePath));
-    return ShareFileClient(builder, m_pipeline);
+    return ShareDirectoryClient(m_shareUri, m_pipeline);
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const

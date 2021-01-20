@@ -78,23 +78,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * ShareClient
      * @return ShareDirectoryClient The root directory of the share.
      */
-    ShareDirectoryClient GetRootShareDirectoryClient() const;
-
-    /**
-     * @brief Create a ShareDirectoryClient from current ShareClient
-     * @param directoryPath The path of the directory.
-     * @return ShareDirectoryClient A directory client that can be used to manage a share directory
-     * resource.
-     */
-    ShareDirectoryClient GetShareDirectoryClient(const std::string& directoryPath) const;
-
-    /**
-     * @brief Create a ShareFileClient from current ShareClient
-     * @param filePath The path of the file.
-     * @return ShareFileClient A file client that can be used to manage a share file
-     * resource.
-     */
-    ShareFileClient GetShareFileClient(const std::string& filePath) const;
+    ShareDirectoryClient GetRootDirectoryClient() const;
 
     /**
      * @brief Creates the file share.

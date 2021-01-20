@@ -21,7 +21,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  class PathClient {
+  class DataLakePathClient {
   public:
     /**
      * @brief Create from connection string
@@ -29,9 +29,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileSystemName The name of a file system.
      * @param path The path of a resource within the file system.
      * @param options Optional parameters used to initialize the client.
-     * @return PathClient
+     * @return DataLakePathClient
      */
-    static PathClient CreateFromConnectionString(
+    static DataLakePathClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
         const std::string& path,
@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit PathClient(
+    explicit DataLakePathClient(
         const std::string& pathUri,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit PathClient(
+    explicit DataLakePathClient(
         const std::string& pathUri,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param pathUri The URI of the path this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit PathClient(
+    explicit DataLakePathClient(
         const std::string& pathUri,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
@@ -77,57 +77,49 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string GetUri() const { return m_blobClient.GetUrl(); }
 
     /**
-     * @brief Gets the path's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The path's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
-
-    /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @return Azure::Core::Response<Models::CreatePathResult> containing the information returned
-     * when creating a path.
+     * @return Azure::Core::Response<Models::CreateDataLakePathResult> containing the information
+     * returned when creating a path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::CreatePathResult> Create(
+    Azure::Core::Response<Models::CreateDataLakePathResult> Create(
         Models::PathResourceType type,
-        const CreatePathOptions& options = CreatePathOptions()) const;
+        const CreateDataLakePathOptions& options = CreateDataLakePathOptions()) const;
 
     /**
      * @brief Creates a file or directory. By default, the destination is not changed if it already
      * exists.
      * @param options Optional parameters to create the resource the path points to.
-     * @return Azure::Core::Response<Models::CreatePathResult> containing the information returned
-     * when creating a path, the information will only be valid when the create operation is
-     * successful.
+     * @return Azure::Core::Response<Models::CreateDataLakePathResult> containing the information
+     * returned when creating a path, the information will only be valid when the create operation
+     * is successful.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::CreatePathResult> CreateIfNotExists(
+    Azure::Core::Response<Models::CreateDataLakePathResult> CreateIfNotExists(
         Models::PathResourceType type,
-        const CreatePathOptions& options = CreatePathOptions()) const;
+        const CreateDataLakePathOptions& options = CreateDataLakePathOptions()) const;
 
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
-     * @return Azure::Core::Response<Models::DeletePathResult> which is current empty but preserved
-     * for future usage.
+     * @return Azure::Core::Response<Models::DeleteDataLakePathResult> which is current empty but
+     * preserved for future usage.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeletePathResult> Delete(
-        const DeletePathOptions& options = DeletePathOptions()) const;
+    Azure::Core::Response<Models::DeleteDataLakePathResult> Delete(
+        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions()) const;
 
     /**
      * @brief Deletes the resource the path points to if it exists.
      * @param options Optional parameters to delete the reource the path points to.
-     * @return Azure::Core::Response<Models::DeletePathResult> which is current empty but preserved
-     * for future usage. The result will only valid if the delete operation is successful.
+     * @return Azure::Core::Response<Models::DeleteDataLakePathResult> which is current empty but
+     * preserved for future usage. The result will only valid if the delete operation is successful.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeletePathResult> DeleteIfExists(
-        const DeletePathOptions& options = DeletePathOptions()) const;
+    Azure::Core::Response<Models::DeleteDataLakePathResult> DeleteIfExists(
+        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions()) const;
 
     /**
      * @brief Sets the owner, group, permissions, or access control list for a file or directory.
@@ -140,25 +132,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
-     * @return Azure::Core::Response<Models::SetPathAccessControlResult> containing the information
-     * returned when setting path's access control.
+     * @return Azure::Core::Response<Models::SetDataLakePathAccessControlResult> containing the
+     * information returned when setting path's access control.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::SetPathAccessControlResult> SetAccessControl(
+    Azure::Core::Response<Models::SetDataLakePathAccessControlResult> SetAccessControl(
         std::vector<Models::Acl> acls,
-        const SetPathAccessControlOptions& options = SetPathAccessControlOptions()) const;
+        const SetDataLakePathAccessControlOptions& options
+        = SetDataLakePathAccessControlOptions()) const;
 
     /**
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the http headers to the resource the path points
      * to.
-     * @return Azure::Core::Response<SetPathHttpHeadersResult> containing the information returned
-     * when setting the path's Http headers.
+     * @return Azure::Core::Response<SetDataLakePathHttpHeadersResult> containing the information
+     * returned when setting the path's Http headers.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::SetPathHttpHeadersResult> SetHttpHeaders(
+    Azure::Core::Response<Models::SetDataLakePathHttpHeadersResult> SetHttpHeaders(
         Models::PathHttpHeaders httpHeaders,
-        const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
+        const SetDataLakePathHttpHeadersOptions& options
+        = SetDataLakePathHttpHeadersOptions()) const;
 
     /**
      * @brief Get Properties returns all system and user defined properties for a path. Get Status
@@ -166,35 +160,36 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control list for a path.
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
-     * @return Azure::Core::Response<Models::GetPathPropertiesResult> containing the properties of
-     * the path.
+     * @return Azure::Core::Response<Models::GetDataLakePathPropertiesResult> containing the
+     * properties of the path.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::GetPathPropertiesResult> GetProperties(
-        const GetPathPropertiesOptions& options = GetPathPropertiesOptions()) const;
+    Azure::Core::Response<Models::GetDataLakePathPropertiesResult> GetProperties(
+        const GetDataLakePathPropertiesOptions& options = GetDataLakePathPropertiesOptions()) const;
 
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
-     * @return Azure::Core::Response<Models::GetPathAccessControlResult> containing the access
-     * control list of the path.
+     * @return Azure::Core::Response<Models::GetDataLakePathAccessControlResult> containing the
+     * access control list of the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::GetPathAccessControlResult> GetAccessControls(
-        const GetPathAccessControlOptions& options = GetPathAccessControlOptions()) const;
+    Azure::Core::Response<Models::GetDataLakePathAccessControlResult> GetAccessControls(
+        const GetDataLakePathAccessControlOptions& options
+        = GetDataLakePathAccessControlOptions()) const;
 
     /**
      * @brief Sets the metadata of a resource the path points to.
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to the resource the path points to.
-     * @return Azure::Core::Response<Models::SetPathMetadataResult> containing the information
-     * returned when setting the metadata.
+     * @return Azure::Core::Response<Models::SetDataLakePathMetadataResult> containing the
+     * information returned when setting the metadata.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::SetPathMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetDataLakePathMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
+        const SetDataLakePathMetadataOptions& options = SetDataLakePathMetadataOptions()) const;
 
     /**
      * @brief Acquires a lease on the path.
@@ -203,13 +198,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Azure::Storage::InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
      * can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::AcquirePathLeaseResult> describing the lease.
+     * @return Azure::Core::Response<Models::AcquireDataLakePathLeaseResult> describing the lease.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::AcquirePathLeaseResult> AcquireLease(
+    Azure::Core::Response<Models::AcquireDataLakePathLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
         int32_t duration,
-        const AcquirePathLeaseOptions& options = AcquirePathLeaseOptions()) const
+        const AcquireDataLakePathLeaseOptions& options = AcquireDataLakePathLeaseOptions()) const
     {
       return m_blobClient.AcquireLease(proposedLeaseId, duration, options);
     }
@@ -218,12 +213,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Renews the path's previously-acquired lease.
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::RenewPathLeaseResult> describing the lease.
+     * @return Azure::Core::Response<Models::RenewDataLakePathLeaseResult> describing the lease.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::RenewPathLeaseResult> RenewLease(
+    Azure::Core::Response<Models::RenewDataLakePathLeaseResult> RenewLease(
         const std::string& leaseId,
-        const RenewPathLeaseOptions& options = RenewPathLeaseOptions()) const
+        const RenewDataLakePathLeaseOptions& options = RenewDataLakePathLeaseOptions()) const
     {
       return m_blobClient.RenewLease(leaseId, options);
     }
@@ -232,12 +227,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Releases the path's previously-acquired lease.
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ReleasePathLeaseResult> describing the updated path.
+     * @return Azure::Core::Response<Models::ReleaseDataLakePathLeaseResult> describing the updated
+     * path.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::ReleasePathLeaseResult> ReleaseLease(
+    Azure::Core::Response<Models::ReleaseDataLakePathLeaseResult> ReleaseLease(
         const std::string& leaseId,
-        const ReleasePathLeaseOptions& options = ReleasePathLeaseOptions()) const
+        const ReleaseDataLakePathLeaseOptions& options = ReleaseDataLakePathLeaseOptions()) const
     {
       return m_blobClient.ReleaseLease(leaseId, options);
     }
@@ -247,13 +243,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ChangePathLeaseResult> describing the lease.
+     * @return Azure::Core::Response<Models::ChangeDataLakePathLeaseResult> describing the lease.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::ChangePathLeaseResult> ChangeLease(
+    Azure::Core::Response<Models::ChangeDataLakePathLeaseResult> ChangeLease(
         const std::string& leaseId,
         const std::string& proposedLeaseId,
-        const ChangePathLeaseOptions& options = ChangePathLeaseOptions()) const
+        const ChangeDataLakePathLeaseOptions& options = ChangeDataLakePathLeaseOptions()) const
     {
       return m_blobClient.ChangeLease(leaseId, proposedLeaseId, options);
     }
@@ -261,11 +257,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Breaks the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::BreakPathLeaseResult> describing the broken lease.
+     * @return Azure::Core::Response<Models::BreakDataLakePathLeaseResult> describing the broken
+     * lease.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::BreakPathLeaseResult> BreakLease(
-        const BreakPathLeaseOptions& options = BreakPathLeaseOptions()) const
+    Azure::Core::Response<Models::BreakDataLakePathLeaseResult> BreakLease(
+        const BreakDataLakePathLeaseOptions& options = BreakDataLakePathLeaseOptions()) const
     {
       return m_blobClient.BreakLease(options);
     }
@@ -275,7 +272,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::BlobClient m_blobClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    explicit PathClient(
+    explicit DataLakePathClient(
         Azure::Core::Http::Url dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
@@ -284,6 +281,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
     }
 
-    friend class FileSystemClient;
+    friend class DataLakeFileSystemClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

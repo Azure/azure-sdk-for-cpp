@@ -16,7 +16,6 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
-#include "azure/core/strings.hpp"
 #include "azure/core/uuid.hpp"
 #include "azure/core/version.hpp"
 
