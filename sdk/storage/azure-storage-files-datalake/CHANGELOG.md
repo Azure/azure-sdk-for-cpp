@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
+- Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
 - `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
 - Renamed `GetUri` to `GetUrl`.
 

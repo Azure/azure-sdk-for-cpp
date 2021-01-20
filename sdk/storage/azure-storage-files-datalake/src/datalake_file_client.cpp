@@ -197,10 +197,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  Azure::Core::Response<Models::AppendDataLakeFileDataResult> DataLakeFileClient::AppendData(
+  Azure::Core::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
       Azure::Core::Http::BodyStream* content,
       int64_t offset,
-      const AppendDataLakeFileDataOptions& options) const
+      const AppendDataLakeFileOptions& options) const
   {
     Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
@@ -221,9 +221,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUrl, *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::FlushDataLakeFileDataResult> DataLakeFileClient::FlushData(
+  Azure::Core::Response<Models::FlushDataLakeFileResult> DataLakeFileClient::Flush(
       int64_t endingOffset,
-      const FlushDataLakeFileDataOptions& options) const
+      const FlushDataLakeFileOptions& options) const
   {
     Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = endingOffset;
