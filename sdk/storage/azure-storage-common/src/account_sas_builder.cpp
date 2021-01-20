@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       resourceTypes += "s";
     }
-    if ((ResourceTypes & AccountSasResource::BlobContainer) == AccountSasResource::BlobContainer)
+    if ((ResourceTypes & AccountSasResource::Container) == AccountSasResource::Container)
     {
       resourceTypes += "c";
     }
