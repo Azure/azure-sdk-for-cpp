@@ -46,6 +46,19 @@ namespace Azure { namespace Core { namespace Http {
 #endif
   private:
     /**
+     * @brief Read one expected byte and throw if it is different than the \p expected
+     *
+     */
+    void ReadExpected(Context const& context, uint8_t expected);
+
+    /**
+     * @brief Read `\r\n` from internal buffer or from the wire.
+     *
+     * @remark throw if `\r\n` are not the next data read.
+     */
+    void ReadCRLF(Context const& context);
+
+    /**
      * @brief This is used to set the current state of a session.
      *
      * @remark The session needs to know what's the state on it when an exception occurs so the
