@@ -167,23 +167,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakePathClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
-  DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& path) const
+  DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& fileName) const
   {
 
     auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
-    auto blobClient = m_blobContainerClient.GetBlobClient(path);
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
+    auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
     auto blockBlobClient = blobClient.AsBlockBlobClient();
     return DataLakeFileClient(
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
   DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
-      const std::string& path) const
+      const std::string& directoryName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
-    return DataLakeDirectoryClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
+    builder.AppendPath(Storage::Details::UrlEncodePath(directoryName));
+    return DataLakeDirectoryClient(
+        builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
   }
 
   Azure::Core::Response<Models::CreateDataLakeFileSystemResult> DataLakeFileSystemClient::Create(
@@ -292,7 +293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::
       ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
   {
-    Details::DataLakeRestClient::FileSystem::ListDataLakePathsOptions protocolLayerOptions;
+    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;

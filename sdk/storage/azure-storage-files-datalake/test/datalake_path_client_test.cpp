@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Acls works.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls));
+      EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls;
       EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControls()->Acls);
       EXPECT_EQ(resultAcls.size(), acls.size() + 1); // Always append mask::rwx
@@ -216,24 +216,70 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
 
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetDataLakePathAccessControlOptions options1;
+      Files::DataLake::SetDataLakePathAccessControlListOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
-      Files::DataLake::SetDataLakePathAccessControlOptions options2;
+      EXPECT_THROW(m_pathClient->SetAccessControlList(acls, options1), StorageException);
+      Files::DataLake::SetDataLakePathAccessControlListOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-      EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
+      EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls, options2));
     }
 
     {
       // Set/Get Acls works with if match access condition.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetDataLakePathAccessControlOptions options1;
+      Files::DataLake::SetDataLakePathAccessControlListOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
-      Files::DataLake::SetDataLakePathAccessControlOptions options2;
+      EXPECT_THROW(m_pathClient->SetAccessControlList(acls, options1), StorageException);
+      Files::DataLake::SetDataLakePathAccessControlListOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
-      EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
+      EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls, options2));
+    }
+  }
+
+  TEST_F(DataLakePathClientTest, PathSetPermissions)
+  {
+    {
+      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+      pathClient.Create(Files::DataLake::Models::PathResourceType::File);
+      std::string pathPermissions = "rwxrw-rw-";
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
+      auto result = pathClient.GetAccessControls();
+      EXPECT_EQ(pathPermissions, result->Permissions);
+
+      pathPermissions = "rw-rw-rw-";
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
+      result = pathClient.GetAccessControls();
+      EXPECT_EQ(pathPermissions, result->Permissions);
+
+      EXPECT_NO_THROW(pathClient.SetPermissions("0766"));
+      result = pathClient.GetAccessControls();
+      EXPECT_EQ("rwxrw-rw-", result->Permissions);
+    }
+    {
+      // Set/Get Permissions works with last modified access condition.
+      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+      auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
+      Files::DataLake::SetDataLakePathPermissionsOptions options1, options2;
+      options1.AccessConditions.IfUnmodifiedSince = response->LastModified;
+      options2.AccessConditions.IfModifiedSince = response->LastModified;
+      std::string pathPermissions = "rwxrw-rw-";
+      EXPECT_THROW(pathClient.SetPermissions(pathPermissions, options2), StorageException);
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions, options1));
+    }
+    {
+      // Set/Get Permissions works with if match access condition.
+      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+      auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
+      Files::DataLake::SetDataLakePathPermissionsOptions options1, options2;
+      options1.AccessConditions.IfMatch = response->ETag;
+      options2.AccessConditions.IfNoneMatch = response->ETag;
+      std::string pathPermissions = "rwxrw-rw-";
+      EXPECT_THROW(pathClient.SetPermissions(pathPermissions, options2), StorageException);
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions, options1));
     }
   }
 

@@ -26,14 +26,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param fileSystemName The name of a file system.
-     * @param filePath The path of a file within the file system.
+     * @param fileName The name of a file within the file system.
      * @param options Optional parameters used to initialize the client.
      * @return DataLakeFileClient
      */
     static DataLakeFileClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
-        const std::string& filePath,
+        const std::string& fileName,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**

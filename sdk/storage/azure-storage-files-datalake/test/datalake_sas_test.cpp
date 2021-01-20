@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUri,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn);
+    auto userDelegationKey = serviceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn)->Key;
 
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
       fileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
       auto acls = fileClient0.GetAccessControls()->Acls;
-      EXPECT_NO_THROW(fileClient.SetAccessControl(acls));
+      EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
 
     for (auto permissions : {

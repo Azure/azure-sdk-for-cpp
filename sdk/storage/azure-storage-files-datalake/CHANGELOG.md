@@ -2,10 +2,15 @@
 
 ## 12.0.0-beta.7 (Unreleased)
 
+### New Features
+
+- Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
+
 ### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
+- `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

@@ -188,17 +188,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  Azure::Core::Response<Models::SetDataLakePathAccessControlResult>
-  DataLakePathClient::SetAccessControl(
+  Azure::Core::Response<Models::SetDataLakePathAccessControlListResult>
+  DataLakePathClient::SetAccessControlList(
       std::vector<Models::Acl> acls,
-      const SetDataLakePathAccessControlOptions& options) const
+      const SetDataLakePathAccessControlListOptions& options) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
-    protocolLayerOptions.Permissions = options.Permissions;
     protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    return Details::DataLakeRestClient::Path::SetAccessControl(
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<Models::SetDataLakePathPermissionsResult>
+  DataLakePathClient::SetPermissions(
+      std::string permissions,
+      const SetDataLakePathPermissionsOptions& options) const
+  {
+    Details::DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.Owner = options.Owner;
+    protocolLayerOptions.Group = options.Group;
+    protocolLayerOptions.Permissions = permissions;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -395,6 +412,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       throw std::runtime_error("Got null value returned when getting access control.");
     }
     ret.Acls = std::move(acl.GetValue());
+    if (result->Owner.HasValue())
+    {
+      ret.Owner = result->Owner.GetValue();
+    }
+    if (result->Group.HasValue())
+    {
+      ret.Group = result->Group.GetValue();
+    }
+    if (result->Permissions.HasValue())
+    {
+      ret.Permissions = result->Permissions.GetValue();
+    }
     return Azure::Core::Response<Models::GetDataLakePathAccessControlResult>(
         std::move(ret), result.ExtractRawResponse());
   }

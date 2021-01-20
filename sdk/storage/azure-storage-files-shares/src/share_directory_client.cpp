@@ -20,13 +20,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareDirectoryClient ShareDirectoryClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& shareName,
-      const std::string& directoryPath,
+      const std::string& directoryName,
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.FileServiceUrl);
     directoryUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryPath));
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -92,17 +92,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareDirectoryClient ShareDirectoryClient::GetSubdirectoryClient(
-      const std::string& subDirectoryName) const
+      const std::string& subdirectoryName) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
+    builder.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     return ShareDirectoryClient(builder, m_pipeline);
   }
 
-  ShareFileClient ShareDirectoryClient::GetFileClient(const std::string& filePath) const
+  ShareFileClient ShareDirectoryClient::GetFileClient(const std::string& fileName) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(filePath));
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
     return ShareFileClient(builder, m_pipeline);
   }
 

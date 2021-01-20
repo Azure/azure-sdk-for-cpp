@@ -11,8 +11,6 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  using UserDelegationKey = GetUserDelegationKeyResult;
-
   struct DownloadBlobToResult
   {
     std::string ETag;
