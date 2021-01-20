@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControl
+   * @brief Optional parameters for PathClient::SetAccessControlList
    */
   struct SetDataLakePathAccessControlListOptions
   {
@@ -309,7 +309,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControl
+   * @brief Optional parameters for PathClient::SetPermissions
    */
   struct SetDataLakePathPermissionsOptions
   {
