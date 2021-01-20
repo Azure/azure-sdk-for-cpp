@@ -209,9 +209,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::AppendData
+   * @brief Optional parameters for PathClient::Append
    */
-  struct AppendDataLakeFileDataOptions
+  struct AppendDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -230,9 +230,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::FlushData
+   * @brief Optional parameters for PathClient::Flush
    */
-  struct FlushDataLakeFileDataOptions
+  struct FlushDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -283,9 +283,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControl
+   * @brief Optional parameters for PathClient::SetAccessControlList
    */
-  struct SetDataLakePathAccessControlOptions
+  struct SetDataLakePathAccessControlListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -303,13 +303,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Group;
 
     /**
-     * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
-     *        access permissions for the file owner, the file owning group, and others.
-     *        Each class may be granted read, write, or execute permission.
-     *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
-     *        notation (e.g. 0766) are supported.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> Permissions;
+    PathAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for PathClient::SetPermissions
+   */
+  struct SetDataLakePathPermissionsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The owner of the path or directory.
+     */
+    Azure::Core::Nullable<std::string> Owner;
+
+    /**
+     * @brief The owning group of the path or directory.
+     */
+    Azure::Core::Nullable<std::string> Group;
 
     /**
      * @brief Specify the access condition for the path.

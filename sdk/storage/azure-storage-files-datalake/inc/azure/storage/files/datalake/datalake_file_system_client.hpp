@@ -70,40 +70,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Create a DataLakePathClient from current DataLakeFileSystemClient
-     * @param path Path of the resource within the file system.
+     * @param path Name of path within the file system.
      * @return DataLakePathClient
      */
     DataLakePathClient GetPathClient(const std::string& path) const;
 
     /**
      * @brief Create a DataLakeFileClient from current DataLakeFileSystemClient
-     * @param path Path of the file within the file system.
+     * @param fileName Name of the file within the file system.
      * @return DataLakeFileClient
      */
-    DataLakeFileClient GetFileClient(const std::string& path) const;
+    DataLakeFileClient GetFileClient(const std::string& fileName) const;
 
     /**
      * @brief Create a DataLakeDirectoryClient from current DataLakeFileSystemClient
-     * @param path Path of the directory within the file system.
+     * @param directoryName Name of the directory within the file system.
      * @return DataLakeDirectoryClient
      */
-    DataLakeDirectoryClient GetDirectoryClient(const std::string& path) const;
+    DataLakeDirectoryClient GetDirectoryClient(const std::string& directoryName) const;
 
     /**
-     * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the filesystem's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The filesystem's primary uri endpoint.
+     * @return The filesystem's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobContainerClient.GetUrl(); }
-
-    /**
-     * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The filesystem's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blobContainerClient.GetUrl(); }
 
     /**
      * @brief Creates the file system.
@@ -186,15 +178,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_dfsUri;
+    Azure::Core::Http::Url m_dfsUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakeFileSystemClient(
-        Azure::Core::Http::Url dfsUri,
+        Azure::Core::Http::Url dfsUrl,
         Blobs::BlobContainerClient blobContainerClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUri(std::move(dfsUri)), m_blobContainerClient(std::move(blobContainerClient)),
+        : m_dfsUrl(std::move(dfsUrl)), m_blobContainerClient(std::move(blobContainerClient)),
           m_pipeline(std::move(pipeline))
     {
     }

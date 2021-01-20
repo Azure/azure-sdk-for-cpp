@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     static ShareDirectoryClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
-        const std::string& directoryPath,
+        const std::string& directoryName,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -58,20 +58,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the directory's primary uri endpoint.
+     * @brief Gets the directory's primary url endpoint.
      *
-     * @return The directory's primary uri endpoint.
+     * @return The directory's primary url endpoint.
      */
-    std::string GetUri() const { return m_shareDirectoryUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_shareDirectoryUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Create a ShareDirectoryClient that's a sub directory of the current
      * ShareDirectoryClient
-     * @param subDirectoryName The name of the subdirectory.
+     * @param subdirectoryName The name of the subdirectory.
      * @return ShareDirectoryClient A directory client that can be used to manage a share directory
      * resource.
      */
-    ShareDirectoryClient GetSubdirectoryClient(const std::string& subDirectoryName) const;
+    ShareDirectoryClient GetSubdirectoryClient(const std::string& subdirectoryName) const;
 
     /**
      * @brief Create a ShareFileClient from current ShareDirectoryClient
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return ShareFileClient A file client that can be used to manage a share file
      * resource.
      */
-    ShareFileClient GetFileClient(const std::string& filePath) const;
+    ShareFileClient GetFileClient(const std::string& fileName) const;
 
     /**
      * @brief Initializes a new instance of the ShareDirectoryClient class with an identical uri
@@ -209,13 +209,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = ForceCloseAllShareDirectoryHandlesOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_shareDirectoryUri;
+    Azure::Core::Http::Url m_shareDirectoryUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareDirectoryClient(
         Azure::Core::Http::Url shareDirectoryUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareDirectoryUri(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
+        : m_shareDirectoryUrl(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
     {
     }
 

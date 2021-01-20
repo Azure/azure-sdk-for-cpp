@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     static ShareFileClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
-        const std::string& filePath,
+        const std::string& fileName,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -57,11 +57,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the file's primary uri endpoint.
+     * @brief Gets the file's primary url endpoint.
      *
-     * @return The file's primary uri endpoint.
+     * @return The file's primary url endpoint.
      */
-    std::string GetUri() const { return m_shareFileUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_shareFileUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the ShareFileClient class with an identical uri
@@ -344,13 +344,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const BreakShareFileLeaseOptions& options = BreakShareFileLeaseOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_shareFileUri;
+    Azure::Core::Http::Url m_shareFileUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareFileClient(
         Azure::Core::Http::Url shareFileUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareFileUri(std::move(shareFileUri)), m_pipeline(std::move(pipeline))
+        : m_shareFileUrl(std::move(shareFileUri)), m_pipeline(std::move(pipeline))
     {
     }
 

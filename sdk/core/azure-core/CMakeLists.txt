@@ -53,6 +53,7 @@ set(
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
+    inc/azure/core/internal/strings.hpp
     inc/azure/core/logging/logging.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/context.hpp
@@ -64,7 +65,6 @@ set(
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
-    inc/azure/core/strings.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core/version.hpp
     inc/azure/core.hpp
