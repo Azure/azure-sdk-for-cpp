@@ -292,7 +292,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::
       ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
   {
-    Details::DataLakeRestClient::FileSystem::ListDataLakePathsOptions protocolLayerOptions;
+    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;

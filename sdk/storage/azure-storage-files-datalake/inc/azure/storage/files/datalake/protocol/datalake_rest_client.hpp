@@ -760,7 +760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return DeleteParseResult(context, pipeline.Send(context, request));
         }
 
-        struct ListDataLakePathsOptions
+        struct ListPathsOptions
         {
           Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
@@ -777,7 +777,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
-            const ListDataLakePathsOptions& listPathsOptions)
+            const ListPathsOptions& listPathsOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(
