@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 - `UserDelegationKey` was changed to a member of `GetUserDelegationKeyResult` rather than a typedef like before.
+- `AccessType` in `CreateBlobContainerOptions` was changed to non-nullable.
+- `ListType` in `GetBlockListOptions` was changed to non-nullable.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

@@ -3055,7 +3055,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct CreateBlobContainerOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<PublicAccessType> AccessType;
+          PublicAccessType AccessType = PublicAccessType::Private;
           Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> DefaultEncryptionScope;
           Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
@@ -3081,9 +3081,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          if (options.AccessType.HasValue())
+          if (!options.AccessType.Get().empty())
           {
-            request.AddHeader("x-ms-blob-public-access", options.AccessType.GetValue().Get());
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
           }
           if (options.DefaultEncryptionScope.HasValue())
           {
@@ -3529,8 +3529,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
-          response.AccessType
-              = PublicAccessType(httpResponse.GetHeaders().at("x-ms-blob-public-access"));
+          auto x_ms_blob_public_access__iterator
+              = httpResponse.GetHeaders().find("x-ms-blob-public-access");
+          if (x_ms_blob_public_access__iterator != httpResponse.GetHeaders().end())
+          {
+            response.AccessType = PublicAccessType(x_ms_blob_public_access__iterator->second);
+          }
           return Azure::Core::Response<GetBlobContainerAccessPolicyResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -3538,7 +3542,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct SetBlobContainerAccessPolicyOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<PublicAccessType> AccessType;
+          PublicAccessType AccessType = PublicAccessType::Private;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
@@ -3572,9 +3576,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "acl");
-          if (options.AccessType.HasValue())
+          if (!options.AccessType.Get().empty())
           {
-            request.AddHeader("x-ms-blob-public-access", options.AccessType.GetValue().Get());
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
           }
           if (options.LeaseId.HasValue())
           {
@@ -7491,7 +7495,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct GetBlockListOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<BlockListTypeOption> ListType;
+          BlockListTypeOption ListType = BlockListTypeOption::Committed;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct GetBlockListOptions
@@ -7505,12 +7509,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           unused(options);
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("comp", "blocklist");
-          if (options.ListType.HasValue())
-          {
-            request.GetUrl().AppendQueryParameter(
-                "blocklisttype",
-                Storage::Details::UrlEncodeQueryParameter(options.ListType.GetValue().Get()));
-          }
+          request.GetUrl().AppendQueryParameter(
+              "blocklisttype", Storage::Details::UrlEncodeQueryParameter(options.ListType.Get()));
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
           {

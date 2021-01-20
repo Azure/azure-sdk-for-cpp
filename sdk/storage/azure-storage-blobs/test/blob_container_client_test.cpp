@@ -406,7 +406,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(ret2->RequestId.empty());
     EXPECT_EQ(ret2->ETag, ret->ETag);
     EXPECT_EQ(ret2->LastModified, ret->LastModified);
-    EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
+    EXPECT_EQ(ret2->AccessType, options.AccessType);
     EXPECT_EQ(ret2->SignedIdentifiers, options.SignedIdentifiers);
 
     container_client.Delete();
