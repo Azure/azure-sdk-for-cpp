@@ -34,7 +34,7 @@
 // CMakeLists.txt) will take care of patching the installed header to carry the knowledge that the
 // library was built as DLL (and if it was built as both static and dynamic library, there will be
 // no collision because each installation has its own header installation directory).
-// (/*@AZ_xxx_DLL_INSTALLED_AS_PACKAGE@*/ will be replaced with "/**/ +1 /**/") if the SDK library
+// (/*@AZ_xxx_DLL_INSTALLED_AS_PACKAGE@*/ will be replaced with "/**/ + 1 /**/") if the SDK library
 // was built as Windows DLL.
 // CMakeLists.txt snippet to achieve all this is the following (***):
 //
