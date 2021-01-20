@@ -254,9 +254,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::AppendData
+   * @brief Optional parameters for PathClient::Append
    */
-  struct AppendDataLakeFileDataOptions
+  struct AppendDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -275,9 +275,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::FlushData
+   * @brief Optional parameters for PathClient::Flush
    */
-  struct FlushDataLakeFileDataOptions
+  struct FlushDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.

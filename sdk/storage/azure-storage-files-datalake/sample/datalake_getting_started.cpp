@@ -66,16 +66,16 @@ void DataLakeGettingStarted()
     // One way of passing in the buffer, note that the buffer is not copied.
     auto bufferStream = Azure::Core::Http::MemoryBodyStream(buffer);
 
-    fileClient.AppendData(&bufferStream, 0 /* Offset of the position to be appended.*/);
+    fileClient.Append(&bufferStream, 0 /* Offset of the position to be appended.*/);
 
     // Another way of passing in the buffer, note that buffer is also not copied.
     bufferStream = Azure::Core::Http::MemoryBodyStream(
         reinterpret_cast<const uint8_t*>(str2.data()), str2.size());
 
-    fileClient.AppendData(&bufferStream, str1.size());
+    fileClient.Append(&bufferStream, str1.size());
 
     // Flush
-    fileClient.FlushData(str1.size() + str2.size());
+    fileClient.Flush(str1.size() + str2.size());
 
     // Read
     auto result = fileClient.Read();
