@@ -326,12 +326,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::ReadDataLakeFileResult ret;
     ret.Body = std::move(result->BodyStream);
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
-    // FIXME
-    if (result.GetRawResponse().GetHeaders().find("content-range")
-        != result.GetRawResponse().GetHeaders().end())
-    {
-      ret.ContentRange = result.GetRawResponse().GetHeaders().at("content-range");
-    }
+    ret.ContentRange = result->ContentRange;
+    ret.ContentLength = result->BlobSize;
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

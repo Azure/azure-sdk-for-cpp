@@ -162,7 +162,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<std::string> ContentRange;
+    int64_t ContentLength = int64_t();
+    Azure::Core::Http::Range ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     std::string ETag;
     Core::DateTime LastModified;

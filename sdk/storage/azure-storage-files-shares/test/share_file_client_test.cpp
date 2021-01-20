@@ -592,15 +592,20 @@ namespace Azure { namespace Storage { namespace Test {
 
       for (int32_t i = 0; i < numOfChunks; ++i)
       {
-        std::vector<uint8_t> resultBuffer;
         Files::Shares::DownloadShareFileOptions downloadOptions;
         downloadOptions.Range = Core::Http::Range();
         downloadOptions.Range.GetValue().Offset = static_cast<int64_t>(rangeSize) * i;
         downloadOptions.Range.GetValue().Length = rangeSize;
-        EXPECT_NO_THROW(
-            resultBuffer = Core::Http::BodyStream::ReadToEnd(
-                Core::Context(), *fileClient.Download(downloadOptions)->BodyStream));
+        Files::Shares::Models::DownloadShareFileResult result;
+        EXPECT_NO_THROW(result = fileClient.Download(downloadOptions).ExtractValue());
+        auto resultBuffer
+            = Core::Http::BodyStream::ReadToEnd(Core::Context(), *(result.BodyStream));
         EXPECT_EQ(rangeContent, resultBuffer);
+        EXPECT_EQ(
+            downloadOptions.Range.GetValue().Length.GetValue(),
+            result.ContentRange.Length.GetValue());
+        EXPECT_EQ(downloadOptions.Range.GetValue().Offset, result.ContentRange.Offset);
+        EXPECT_EQ(static_cast<int64_t>(numOfChunks) * rangeSize, result.ContentLength);
       }
     }
 

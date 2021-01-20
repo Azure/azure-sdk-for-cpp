@@ -405,7 +405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
       int64_t ContentLength = int64_t();
-      Azure::Core::Nullable<std::string> ContentRange;
+      Azure::Core::Http::Range ContentRange;
       std::string ETag;
       Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> ResourceType;
@@ -1920,10 +1920,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.ContentLength
                   = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
+
+            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            if (content_range_iterator != response.GetHeaders().end())
             {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
+              const std::string& content_range = content_range_iterator->second;
+              auto bytes_pos = content_range.find("bytes ");
+              auto dash_pos = content_range.find("-", bytes_pos + 6);
+              auto slash_pos = content_range.find("/", dash_pos + 1);
+              int64_t range_start_offset = std::stoll(std::string(
+                  content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
+              int64_t range_end_offset = std::stoll(std::string(
+                  content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
+              result.ContentRange = Azure::Core::Http::Range{
+                  range_start_offset, range_end_offset - range_start_offset + 1};
+            }
+            else
+            {
+              result.ContentRange = Azure::Core::Http::Range{
+                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+            }
+            if (content_range_iterator != response.GetHeaders().end())
+            {
+              const std::string& content_range = content_range_iterator->second;
+              auto slash_pos = content_range.find("/");
+              result.ContentLength = std::stoll(content_range.substr(slash_pos + 1));
             }
             if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
             {
