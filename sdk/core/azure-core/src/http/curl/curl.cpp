@@ -258,6 +258,7 @@ CURLcode CurlSession::Perform(Context const& context)
   if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
     LogThis("Server rejected the upload request");
+    m_sessionState = SessionState::STREAMING;
     return result; // Won't upload.
   }
 
@@ -267,6 +268,7 @@ CURLcode CurlSession::Perform(Context const& context)
     // If internal buffer has more data after the 100-continue means Server return an error.
     // We don't need to upload body, just parse the response from Server and return
     ReadStatusLineAndHeadersFromRawResponse(context, true);
+    m_sessionState = SessionState::STREAMING;
     return result;
   }
 
@@ -274,6 +276,7 @@ CURLcode CurlSession::Perform(Context const& context)
   result = this->UploadBody(context);
   if (result != CURLE_OK)
   {
+    m_sessionState = SessionState::STREAMING;
     return result; // will throw transport exception before trying to read
   }
 
@@ -1130,7 +1133,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
-
 
   /******************** Curl handle options apply to all connections created
    * The keepAlive option is managed by the session directly.
