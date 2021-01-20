@@ -1134,6 +1134,16 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 
+  // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
+  // timeout >= 25 days. Fails as soon as trying to upload any data
+  // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
+  if (!SetLibcurlOption(newHandle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
+
   /******************** Curl handle options apply to all connections created
    * The keepAlive option is managed by the session directly.
    */
