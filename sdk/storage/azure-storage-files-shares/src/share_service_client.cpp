@@ -92,8 +92,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareClient(builder, m_pipeline);
   }
 
-  Azure::Core::Response<Models::ListSharesSinglePageResult> ShareServiceClient::ListSharesSinglePage(
-      const ListSharesSinglePageOptions& options) const
+  Azure::Core::Response<Models::ListSharesSinglePageResult>
+  ShareServiceClient::ListSharesSinglePage(const ListSharesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
