@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       blobOptions.RetryOptions = options.RetryOptions;
       blobOptions.RetryOptions.SecondaryHostForRetryReads
-          = Details::GetBlobUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+          = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
       return blobOptions;
     }
 
@@ -99,8 +99,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
-        m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
+      : m_dfsUrl(Details::GetDfsUrlFromUrl(pathUri)),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUri), credential, GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -130,8 +130,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
-        m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
+      : m_dfsUrl(Details::GetDfsUrlFromUrl(pathUri)),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUri), credential, GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -161,8 +161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakePathClient::DataLakePathClient(
       const std::string& pathUri,
       const DataLakeClientOptions& options)
-      : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
-        m_blobClient(Details::GetBlobUriFromUri(pathUri), GetBlobClientOptions(options))
+      : m_dfsUrl(Details::GetDfsUrlFromUrl(pathUri)),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUri), GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     for (const auto& p : options.PerRetryPolicies)
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::SetAccessControl(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetDataLakePathPermissionsResult>
@@ -221,7 +221,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::SetAccessControl(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetDataLakePathHttpHeadersResult>
@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
     auto result = Details::DataLakeRestClient::Path::Create(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::CreateDataLakePathResult ret;
     ret.ETag = std::move(result->ETag.GetValue());
     ret.LastModified = std::move(result->LastModified.GetValue());
@@ -314,7 +314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = options.Recursive;
     auto result = Details::DataLakeRestClient::Path::Delete(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteDataLakePathResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Deleted = true;
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = Details::DataLakeRestClient::Path::GetProperties(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Azure::Core::Nullable<std::vector<Models::Acl>> acl;
     if (result->Acl.HasValue())
     {

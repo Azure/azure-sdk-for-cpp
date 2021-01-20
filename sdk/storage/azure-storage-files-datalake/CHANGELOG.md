@@ -10,6 +10,7 @@
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
+- Renamed `GetUri` to `GetUrl`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

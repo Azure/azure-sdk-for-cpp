@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -184,7 +184,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -218,7 +218,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::DataLakeRestClient::Path::AppendData(
-        m_dfsUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::FlushDataLakeFileDataResult> DataLakeFileClient::FlushData(
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::FlushData(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::RenameDataLakeFileResult> DataLakeFileClient::Rename(
@@ -257,11 +257,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
     {
-      const auto& currentPath = m_dfsUri.GetPath();
+      const auto& currentPath = m_dfsUrl.GetPath();
       std::string::const_iterator cur = currentPath.begin();
       destinationFileSystem = Details::GetSubstringTillDelimiter('/', currentPath, cur);
     }
-    auto destinationDfsUri = m_dfsUri;
+    auto destinationDfsUri = m_dfsUrl;
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
     Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
+    protocolLayerOptions.RenameSource = "/" + m_dfsUrl.GetPath();
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.

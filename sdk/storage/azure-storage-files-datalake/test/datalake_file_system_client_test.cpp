@@ -297,26 +297,26 @@ namespace Azure { namespace Storage { namespace Test {
       std::string pathName = baseName + RandomString();
       auto pathClient = m_fileSystemClient->GetPathClient(pathName);
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
-      auto pathUrl = pathClient.GetUri();
+      auto pathUrl = pathClient.GetUrl();
       EXPECT_EQ(
-          pathUrl, m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(pathName));
+          pathUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(pathName));
     }
     {
       std::string directoryName = baseName + RandomString();
       auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
       EXPECT_NO_THROW(directoryClient.Create());
-      auto directoryUrl = directoryClient.GetUri();
+      auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(directoryName));
+          m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
       auto fileClient = m_fileSystemClient->GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create());
-      auto fileUrl = fileClient.GetUri();
+      auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(fileName));
+          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(fileName));
     }
   }
 
@@ -340,7 +340,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileSystemClient(
           Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), LowercaseRandomString(10))
-              .GetUri(),
+              .GetUrl(),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create());
