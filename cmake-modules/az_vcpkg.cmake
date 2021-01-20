@@ -26,6 +26,9 @@ macro(az_vcpkg_export targetName)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/CONTROL" "${CMAKE_BINARY_DIR}/vcpkg/ports/${targetName}-cpp/CONTROL" @ONLY)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/portfile.cmake" "${CMAKE_BINARY_DIR}/vcpkg/ports/${targetName}-cpp/portfile.cmake" @ONLY)
 
+  # Standard names for folders such as "bin", "lib", "include". We could hardcode, but some other libs use it too (curl).
+  include(GNUInstallDirs)
+
   # When installing, copy our "inc" directory (headers) to "include" directory at the install location.
   install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/inc/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
