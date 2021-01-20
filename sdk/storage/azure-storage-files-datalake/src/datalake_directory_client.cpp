@@ -20,13 +20,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeDirectoryClient DataLakeDirectoryClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& fileSystemName,
-      const std::string& path,
+      const std::string& directoryName,
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUrl);
     directoryUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(path));
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -126,24 +126,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  DataLakeFileClient DataLakeDirectoryClient::GetFileClient(const std::string& path) const
+  DataLakeFileClient DataLakeDirectoryClient::GetFileClient(const std::string& fileName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(path));
+    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(fileName));
     auto blockBlobClient = blobClient.AsBlockBlobClient();
     return DataLakeFileClient(
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
   DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
-      const std::string& path) const
+      const std::string& subdirectoryName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
+    builder.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(path));
+    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     return DataLakeDirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
