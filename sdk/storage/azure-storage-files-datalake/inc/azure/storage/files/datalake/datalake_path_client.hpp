@@ -69,12 +69,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Gets the path's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the path's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The path's primary uri endpoint.
+     * @return The path's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobClient.GetUrl(); }
+    std::string GetUrl() const { return m_blobClient.GetUrl(); }
 
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
@@ -281,15 +281,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   protected:
-    Azure::Core::Http::Url m_dfsUri;
+    Azure::Core::Http::Url m_dfsUrl;
     Blobs::BlobClient m_blobClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakePathClient(
-        Azure::Core::Http::Url dfsUri,
+        Azure::Core::Http::Url dfsUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUri(std::move(dfsUri)), m_blobClient(std::move(blobClient)),
+        : m_dfsUrl(std::move(dfsUrl)), m_blobClient(std::move(blobClient)),
           m_pipeline(std::move(pipeline))
     {
     }

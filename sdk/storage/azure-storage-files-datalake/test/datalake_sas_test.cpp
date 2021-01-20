@@ -52,33 +52,33 @@ namespace Azure { namespace Storage { namespace Test {
     directory1Client0.Create();
     directory2Client0.Create();
 
-    auto serviceUri = Files::DataLake::Details::GetDfsUriFromUri(serviceClient0.GetUri());
-    auto filesystemUri = Files::DataLake::Details::GetDfsUriFromUri(filesystemClient0.GetUri());
-    auto directory1Uri = Files::DataLake::Details::GetDfsUriFromUri(directory1Client0.GetUri());
-    auto directory2Uri = Files::DataLake::Details::GetDfsUriFromUri(directory2Client0.GetUri());
-    auto fileUri = fileClient0.GetUri();
+    auto serviceUrl = Files::DataLake::Details::GetDfsUrlFromUrl(serviceClient0.GetUrl());
+    auto filesystemUrl = Files::DataLake::Details::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
+    auto directory1Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory1Client0.GetUrl());
+    auto directory2Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory2Client0.GetUrl());
+    auto fileUrl = fileClient0.GetUrl();
 
     auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
-        serviceUri,
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
     auto userDelegationKey = serviceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn)->Key;
 
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       auto downloadedContent = fileClient.Read();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->Body).empty());
     };
 
     auto verify_file_write = [&](const std::string& sas) {
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       EXPECT_NO_THROW(fileClient.Create());
     };
 
     auto verify_file_delete = [&](const std::string& sas) {
       fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       EXPECT_NO_THROW(fileClient.Delete());
     };
 
@@ -90,12 +90,12 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_filesystem_list = [&](const std::string& sas) {
-      auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUri + sas);
+      auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUrl + sas);
       EXPECT_NO_THROW(filesystemClient.ListPathsSinglePage(true));
     };
 
     auto verify_directory_list = [&](const std::string& sas) {
-      auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUri + sas);
+      auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUrl + sas);
       Files::DataLake::ListPathsSinglePageOptions options;
       options.Directory = directory1Name;
       EXPECT_NO_THROW(filesystemClient.ListPathsSinglePage(true, options));
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Test {
       catch (StorageException&)
       {
       }
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       fileClient.Create();
     };
 
@@ -125,25 +125,25 @@ namespace Azure { namespace Storage { namespace Test {
       auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
       newFileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(
-          Files::DataLake::Details::GetDfsUriFromUri(newFileClient0.GetUri()) + sas);
+          Files::DataLake::Details::GetDfsUrlFromUrl(newFileClient0.GetUrl()) + sas);
       EXPECT_NO_THROW(fileClient.Rename(directory1Name + "/" + directory2Name + "/" + fileName));
     };
 
     auto verify_file_execute = [&](const std::string& sas) {
       fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       EXPECT_NO_THROW(fileClient0.GetAccessControls());
     };
 
     auto verify_file_ownership = [&](const std::string& sas) {
       fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       EXPECT_NO_THROW(fileClient0.GetAccessControls());
     };
 
     auto verify_file_permissions = [&](const std::string& sas) {
       fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sas);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       auto acls = fileClient0.GetAccessControls()->Acls;
       EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
@@ -422,7 +422,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.CacheControl = "no-cache";
       builder2.ContentEncoding = "identify";
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUri + sasToken);
+      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sasToken);
       fileClient0.Create();
       auto p = fileClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
@@ -432,7 +432,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
 
       auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      fileClient = Files::DataLake::DataLakeFileClient(fileUri + sasToken);
+      fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sasToken);
       p = fileClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
       EXPECT_EQ(p->HttpHeaders.ContentLanguage, headers.ContentLanguage);

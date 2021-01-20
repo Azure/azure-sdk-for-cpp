@@ -81,12 +81,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeDirectoryClient GetSubdirectoryClient(const std::string& subdirectoryName) const;
 
     /**
-     * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the directory's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The directory's primary uri endpoint.
+     * @return The directory's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobClient.GetUrl(); }
+    std::string GetUrl() const { return m_blobClient.GetUrl(); }
 
     /**
      * @brief Create a directory. By default, the destination is overwritten and
@@ -181,10 +181,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     explicit DataLakeDirectoryClient(
-        Azure::Core::Http::Url dfsUri,
+        Azure::Core::Http::Url dfsUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(dfsUri), std::move(blobClient), pipeline)
+        : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline)
     {
     }
     friend class DataLakeFileSystemClient;
