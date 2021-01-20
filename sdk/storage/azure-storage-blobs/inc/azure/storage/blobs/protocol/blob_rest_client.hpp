@@ -3081,7 +3081,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
+          if (!options.AccessType.Get().empty())
+          {
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
+          }
           if (options.DefaultEncryptionScope.HasValue())
           {
             request.AddHeader(
@@ -3526,8 +3529,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
-          response.AccessType
-              = PublicAccessType(httpResponse.GetHeaders().at("x-ms-blob-public-access"));
+          auto x_ms_blob_public_access__iterator
+              = httpResponse.GetHeaders().find("x-ms-blob-public-access");
+          if (x_ms_blob_public_access__iterator != httpResponse.GetHeaders().end())
+          {
+            response.AccessType = PublicAccessType(x_ms_blob_public_access__iterator->second);
+          }
           return Azure::Core::Response<GetBlobContainerAccessPolicyResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -3569,7 +3576,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "acl");
-          request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
+          if (!options.AccessType.Get().empty())
+          {
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
+          }
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
