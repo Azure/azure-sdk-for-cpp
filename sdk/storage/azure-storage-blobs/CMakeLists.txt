@@ -6,8 +6,7 @@ project(azure-storage-blobs LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(AZ_STORAGE_BLOBS_BEING_BUILT)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -38,7 +37,7 @@ set(
     inc/azure/storage/blobs/blob_sas_builder.hpp
     inc/azure/storage/blobs/blob_service_client.hpp
     inc/azure/storage/blobs/block_blob_client.hpp
-    inc/azure/storage/blobs/dllexport.hpp
+    inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/version.hpp
     inc/azure/storage/blobs.hpp
@@ -74,6 +73,19 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp"
 generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(azure-storage-blobs)
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_compile_definitions(AZ_STORAGE_BLOBS_BEING_BUILT)
+  target_compile_definitions(azure-storage-blobs PUBLIC AZ_STORAGE_BLOBS_DLL)
+
+  set(AZ_STORAGE_BLOBS_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/dll_import_export.hpp"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/storage/blobs/dll_import_export.hpp"
+    @ONLY
+  )
+  unset(AZ_STORAGE_BLOBS_DLL_INSTALLED_AS_PACKAGE)
+endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-blobs azure-storage-test)

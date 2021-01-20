@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/core/dllexport.hpp"
+#include "azure/core/dll_import_export.hpp"
 
 #include <chrono>
 #include <string>

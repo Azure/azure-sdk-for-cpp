@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/core/dllexport.hpp"
+#include "azure/core/dll_import_export.hpp"
 
 #include <string>
 #include <utility> // for std::move
@@ -73,23 +73,23 @@ namespace Azure { namespace Core {
     /**
      * @brief The #Operation is Not Started.
      */
-    static const OperationStatus NotStarted;
+    AZ_CORE_DLLEXPORT static const OperationStatus NotStarted;
     /**
      * @brief The #Operation is Running.
      */
-    static const OperationStatus Running;
+    AZ_CORE_DLLEXPORT static const OperationStatus Running;
     /**
      * @brief The #Operation Succeeded.
      */
-    static const OperationStatus Succeeded;
+    AZ_CORE_DLLEXPORT static const OperationStatus Succeeded;
     /**
      * @brief The #Operation was Cancelled.
      */
-    static const OperationStatus Cancelled;
+    AZ_CORE_DLLEXPORT static const OperationStatus Cancelled;
     /**
      * @brief The #Operation Failed.
      */
-    static const OperationStatus Failed;
+    AZ_CORE_DLLEXPORT static const OperationStatus Failed;
   };
 
 }} // namespace Azure::Core

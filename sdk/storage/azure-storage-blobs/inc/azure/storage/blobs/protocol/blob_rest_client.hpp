@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/storage/blobs/dllexport.hpp"
+#include "azure/storage/blobs/dll_import_export.hpp"
 
 #include <cstring>
 #include <limits>

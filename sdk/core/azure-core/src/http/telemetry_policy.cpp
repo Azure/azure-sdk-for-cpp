@@ -26,7 +26,8 @@ std::string GetOSVersion()
   std::ostringstream osVersionInfo;
 
 #if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
     HKEY regKey{};
     auto regKeyOpened = false;

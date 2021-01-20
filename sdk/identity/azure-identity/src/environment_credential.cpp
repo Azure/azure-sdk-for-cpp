@@ -23,7 +23,8 @@ using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
-#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 #if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s

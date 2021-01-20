@@ -6,8 +6,7 @@ project(azure-storage-files-datalake LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(AZ_STORAGE_FILES_DATALAKE_BEING_BUILT)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -40,7 +39,7 @@ set(
     inc/azure/storage/files/datalake/datalake_sas_builder.hpp
     inc/azure/storage/files/datalake/datalake_service_client.hpp
     inc/azure/storage/files/datalake/datalake_utilities.hpp
-    inc/azure/storage/files/datalake/dllexport.hpp
+    inc/azure/storage/files/datalake/dll_import_export.hpp
     inc/azure/storage/files/datalake/version.hpp
     inc/azure/storage/files/datalake.hpp
 )
@@ -76,6 +75,19 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/ver
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(azure-storage-files-datalake)
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_compile_definitions(AZ_STORAGE_FILES_DATALAKE_BEING_BUILT)
+  target_compile_definitions(azure-storage-files-datalake PUBLIC AZ_STORAGE_FILES_DATALAKE_DLL)
+
+  set(AZ_STORAGE_FILES_DATALAKE_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/dll_import_export.hpp"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/storage/files/datalake/dll_import_export.hpp"
+    @ONLY
+  )
+  unset(AZ_STORAGE_FILES_DATALAKE_DLL_INSTALLED_AS_PACKAGE)
+endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)

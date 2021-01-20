@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "azure/storage/files/shares/dllexport.hpp"
+#include "azure/storage/files/shares/dll_import_export.hpp"
 
 #include <functional>
 #include <iostream>

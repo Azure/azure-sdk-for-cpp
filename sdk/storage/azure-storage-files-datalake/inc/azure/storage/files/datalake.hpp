@@ -9,4 +9,4 @@
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_sas_builder.hpp"
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
-#include "azure/storage/files/datalake/dllexport.hpp"
+#include "azure/storage/files/datalake/dll_import_export.hpp"

@@ -22,7 +22,8 @@ namespace Azure { namespace Storage { namespace Details {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
-#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
     m_handle = CreateFile(
         filename.data(),
         GENERIC_READ,
@@ -58,7 +59,8 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
     m_handle = CreateFile(
         filename.data(),
         GENERIC_WRITE,

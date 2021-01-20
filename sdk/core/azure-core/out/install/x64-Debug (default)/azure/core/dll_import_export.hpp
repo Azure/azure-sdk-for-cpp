@@ -6,7 +6,7 @@
  * @brief This file defines a macro for DLL export.
  */
 
-// We use CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS which does most of the job for us, but static data
+// We use CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS which does most of the job for us, but static data
 // members do still need to be declared as __declspec(dllimport) for the client code. (See
 // https://cmake.org/cmake/help/v3.13/prop_tgt/WINDOWS_DLLEXPORT_ALL_SYMBOLS.html)
 // The way it works is this: each library has its own AZ_xxx_DLLEXPORT macro, which is used as
@@ -21,8 +21,8 @@
 // when they include the header and consume the static veriable from the (xxx) library.
 // For that reason, each library should have its own AZ_xxx_DLLEXPORT macro: when we build (yyy)
 // library which consumes (xxx) library, (xxx)'s symbols are dllimport, while, from (yyy)'s point of
-// view, (yyy)'s symbols are dllexport. Do not reuse dllexport.hpp file from other libraries, do not
-// reuse AZ_CORE_DLLEXPORT or AZ_CORE_BEING_BUILT names.
+// view, (yyy)'s symbols are dllexport. Do not reuse dll_import_export.hpp file from other
+// libraries, do not reuse AZ_CORE_DLLEXPORT or AZ_CORE_BEING_BUILT names.
 // --
 // (*) - could be private, but if a public inline class member function uses it, it is effectively
 // public and the export attribute should be used.
@@ -31,12 +31,21 @@
 
 #pragma once
 
+#define AZ_CORE_BUILT_AS_DLL ((0 /**/ + 1 /**/) || (defined(AZ_CORE_DLL)))
+
+#if AZ_CORE_BUILT_AS_DLL
 #if defined(_MSC_VER)
 #if defined(AZ_CORE_BEING_BUILT)
 #define AZ_CORE_DLLEXPORT __declspec(dllexport)
-#else
+#error "export"
+#else // !defined(AZ_CORE_BEING_BUILT)
 #define AZ_CORE_DLLEXPORT __declspec(dllimport)
-#endif
-#else
+#endif // AZ_CORE_BEING_BUILT
+#else // !defined(_MSC_VER)
 #define AZ_CORE_DLLEXPORT
-#endif
+#endif // _MSC_VER
+#else // !AZ_CORE_BUILT_AS_DLL
+#define AZ_CORE_DLLEXPORT
+#endif // AZ_CORE_BUILT_AS_DLL
+
+#undef AZ_CORE_BUILT_AS_DLL

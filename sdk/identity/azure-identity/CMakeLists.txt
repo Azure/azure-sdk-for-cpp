@@ -6,8 +6,7 @@ project(azure-identity LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_WINDOWS_DLLEXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(AZ_IDENTITY_BEING_BUILT)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
@@ -31,7 +30,7 @@ set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/environment_credential.hpp
-    inc/azure/identity/dllexport.hpp
+    inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/version.hpp
     inc/azure/identity.hpp
 )
@@ -66,3 +65,16 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(azure-identity)
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_compile_definitions(AZ_IDENTITY_BEING_BUILT)
+  target_compile_definitions(azure-identity PUBLIC AZ_IDENTITY_DLL)
+
+  set(AZ_IDENTITY_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/dll_import_export.hpp"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/identity/dll_import_export.hpp"
+    @ONLY
+  )
+  unset(AZ_IDENTITY_DLL_INSTALLED_AS_PACKAGE)
+endif()
