@@ -122,24 +122,37 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions()) const;
 
     /**
-     * @brief Sets the owner, group, permissions, or access control list for a file or directory.
+     * @brief Sets the owner, group, and access control list for a file or directory.
      *        Note that Hierarchical Namespace must be enabled for the account in order to use
-     *        access control. Also note that the Access Control List (ACL) includes permissions for
-     *        the owner, owning group, and others, so the x-ms-permissions and x-ms-acl request
-     *        headers are mutually exclusive.
+     *        access control.
      * @param acls Sets POSIX access control rights on files and directories. Each access control
      *             entry (ACE) consists of a scope, a type, a user or group identifier, and
      *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
-     * @return Azure::Core::Response<Models::SetDataLakePathAccessControlResult> containing the
+     * @return Azure::Core::Response<Models::SetDataLakePathAccessControlListResult> containing the
      * information returned when setting path's access control.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::SetDataLakePathAccessControlResult> SetAccessControl(
+    Azure::Core::Response<Models::SetDataLakePathAccessControlListResult> SetAccessControlList(
         std::vector<Models::Acl> acls,
-        const SetDataLakePathAccessControlOptions& options
-        = SetDataLakePathAccessControlOptions()) const;
+        const SetDataLakePathAccessControlListOptions& options
+        = SetDataLakePathAccessControlListOptions()) const;
+
+    /**
+     * @brief Sets the owner, group, and permissions for a file or directory.
+     *        Note that Hierarchical Namespace must be enabled for the account in order to use
+     *        access control.
+     * @param permissions Sets the permissions on the path
+     * @param options Optional parameters to set permissions to the resource the path points to.
+     * @return Azure::Core::Response<Models::SetDataLakePathPermissionsResult> containing the
+     * information returned when setting path's permissions.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::SetDataLakePathPermissionsResult> SetPermissions(
+        std::string permissions,
+        const SetDataLakePathPermissionsOptions& options
+        = SetDataLakePathPermissionsOptions()) const;
 
     /**
      * @brief Sets the properties of a resource the path points to.

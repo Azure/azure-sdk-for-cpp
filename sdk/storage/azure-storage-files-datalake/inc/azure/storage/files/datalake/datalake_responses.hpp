@@ -122,6 +122,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     std::string ETag;
     Core::DateTime LastModified;
+    std::string Owner;
+    std::string Group;
+    std::string Permissions;
     std::vector<Acl> Acls;
   };
 
@@ -145,7 +148,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<int64_t> ContentLength;
   };
 
-  using SetDataLakePathAccessControlResult = PathSetAccessControlResult;
+  using SetDataLakePathAccessControlListResult = PathSetAccessControlResult;
+  using SetDataLakePathPermissionsResult = PathSetAccessControlResult;
 
   // FileClient models:
 
