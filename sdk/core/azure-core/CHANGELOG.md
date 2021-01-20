@@ -8,7 +8,7 @@
 
 ### Bug Fixes
 
-- Fixed Curl transport adapter parsing the last chunk of a chunked response.
+- Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
 
 ## 1.0.0-beta.4 (2021-01-13)
 

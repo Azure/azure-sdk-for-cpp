@@ -620,8 +620,8 @@ void CurlSession::ReadExpected(Context const& context, uint8_t expected)
   if (data != expected)
   {
     throw TransportException(
-        "Un-expected format in HTTP response. Expecting: " + std::to_string(expected)
-        + " but found: " + std::to_string(data));
+        "Unexpected format in HTTP response. Expecting: " + std::to_string(expected)
+        + ", but found: " + std::to_string(data) + ".");
   }
   this->m_bodyStartInBuffer += 1;
 }

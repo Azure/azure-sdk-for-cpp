@@ -121,7 +121,7 @@ namespace Azure { namespace Core { namespace Test {
       response->SetBodyStream(std::move(session));
       auto bodyS = response->GetBodyStream();
 
-      // Read the bodyStream to get get all chunks
+      // Read the bodyStream to get all chunks
       EXPECT_THROW(
           Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *bodyS),
           Azure::Core::Http::TransportException);
@@ -198,7 +198,7 @@ namespace Azure { namespace Core { namespace Test {
       response->SetBodyStream(std::move(session));
       auto bodyS = response->GetBodyStream();
 
-      // Read the bodyStream to get get all chunks
+      // Read the bodyStream to get all chunks
       EXPECT_NO_THROW(
           Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *bodyS));
     }
