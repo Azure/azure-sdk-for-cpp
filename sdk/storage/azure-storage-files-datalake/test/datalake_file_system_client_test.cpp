@@ -375,8 +375,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto ret2 = fileSystem.GetAccessPolicy();
     EXPECT_EQ(ret2->ETag, ret->ETag);
     EXPECT_EQ(ret2->LastModified, ret->LastModified);
-    EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
-    for (int32_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
+    EXPECT_EQ(ret2->AccessType, options.AccessType);
+    for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
     {
       EXPECT_EQ(ret2->SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
       EXPECT_EQ(ret2->SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
@@ -387,7 +387,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
     EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
     ret2 = fileSystem.GetAccessPolicy();
-    EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
+    EXPECT_EQ(ret2->AccessType, options.AccessType);
 
     // options.AccessType = Files::DataLake::Models::PublicAccessType::Private;
     // EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));

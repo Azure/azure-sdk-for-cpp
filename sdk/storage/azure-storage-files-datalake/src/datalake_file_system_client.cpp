@@ -346,25 +346,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     blobOptions.SignedIdentifiers = options.SignedIdentifiers;
-    if (options.AccessType.HasValue())
+    if (options.AccessType == Models::PublicAccessType::FileSystem)
     {
-      if (options.AccessType.GetValue() == Models::PublicAccessType::FileSystem)
-      {
-        blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
-      }
-      else if (options.AccessType.GetValue() == Models::PublicAccessType::Path)
-      {
-        blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
-      }
-      else if (options.AccessType.GetValue() == Models::PublicAccessType::Private)
-      {
-        blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
-      }
-      else
-      {
-        blobOptions.AccessType
-            = Blobs::Models::PublicAccessType(options.AccessType.GetValue().Get());
-      }
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
+    }
+    else if (options.AccessType == Models::PublicAccessType::Path)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
+    }
+    else if (options.AccessType == Models::PublicAccessType::Private)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
+    }
+    else
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
     }
     auto result = m_blobContainerClient.SetAccessPolicy(blobOptions);
     Models::SetDataLakeFileSystemAccessPolicyResult ret;
