@@ -214,6 +214,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<Models::FileSystem> Filesystems;
     };
 
+    class PublicAccessType {
+    public:
+      PublicAccessType() = default;
+      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PublicAccessType FileSystem;
+      const static PublicAccessType Path;
+      const static PublicAccessType None;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PublicAccessType
+
     // The value must be "account" for all account operations.
     class AccountResourceType {
     public:
