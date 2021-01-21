@@ -694,7 +694,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::AcquireLease.
+   * @brief Optional parameters for BlobLeaseClient::Acquire.
    */
   struct AcquireBlobLeaseOptions
   {
@@ -710,7 +710,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::RenewLease.
+   * @brief Optional parameters for BlobLeaseClient::Renew.
    */
   struct RenewBlobLeaseOptions
   {
@@ -726,7 +726,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::ChangeLease.
+   * @brief Optional parameters for BlobLeaseClient::Change.
    */
   struct ChangeBlobLeaseOptions
   {
@@ -742,7 +742,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::ReleaseLease.
+   * @brief Optional parameters for BlobLeaseClient::Release.
    */
   struct ReleaseBlobLeaseOptions
   {
@@ -758,7 +758,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::BreakLease.
+   * @brief Optional parameters for BlobLeaseClient::Break.
    */
   struct BreakBlobLeaseOptions
   {
