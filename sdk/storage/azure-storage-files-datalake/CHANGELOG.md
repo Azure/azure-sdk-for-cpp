@@ -12,7 +12,8 @@
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
 - `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
-- `ContentRange` in `PathGetPropertiesResult` and `ReadDataLakeFileResult` are now `Azure::Core::Http::Range`.
+- `ContentRange` in `ReadDataLakeFileResult` is now `Azure::Core::Http::Range`.
+- Removed `ContentRange` in `PathGetPropertiesResult`.
 - Renamed `ContentLength` in `GetDataLakePathPropertiesResult` and `CreateDataLakePathResult` to `FileSize` to be more accurate.
 - Renamed `GetUri` to `GetUrl`.
 
