@@ -58,11 +58,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the directory's primary uri endpoint.
+     * @brief Gets the directory's primary url endpoint.
      *
-     * @return The directory's primary uri endpoint.
+     * @return The directory's primary url endpoint.
      */
-    std::string GetUri() const { return m_shareDirectoryUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_shareDirectoryUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Create a ShareDirectoryClient that's a sub directory of the current
@@ -209,13 +209,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = ForceCloseAllShareDirectoryHandlesOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_shareDirectoryUri;
+    Azure::Core::Http::Url m_shareDirectoryUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareDirectoryClient(
         Azure::Core::Http::Url shareDirectoryUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareDirectoryUri(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
+        : m_shareDirectoryUrl(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
     {
     }
 

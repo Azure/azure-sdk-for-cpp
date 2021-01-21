@@ -60,11 +60,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient GetShareClient(const std::string& shareName) const;
 
     /**
-     * @brief Gets the file share service's primary uri endpoint.
+     * @brief Gets the file share service's primary url endpoint.
      *
-     * @return The file share service's primary uri endpoint.
+     * @return The file share service's primary url endpoint.
      */
-    std::string GetUri() const { return m_serviceUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief List the shares from the service.
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_serviceUri;
+    Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::Shares

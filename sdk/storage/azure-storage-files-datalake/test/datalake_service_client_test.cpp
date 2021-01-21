@@ -152,12 +152,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
 
     // Create from Anonymous credential.
-    auto datalakeServiceUri
+    auto datalakeServiceUrl
         = Azure::Storage::Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
               AdlsGen2ConnectionString())
-              .GetUri();
+              .GetUrl();
     auto datalakeServiceClient
-        = Azure::Storage::Files::DataLake::DataLakeServiceClient(datalakeServiceUri + sasToken);
+        = Azure::Storage::Files::DataLake::DataLakeServiceClient(datalakeServiceUrl + sasToken);
     EXPECT_NO_THROW(datalakeServiceClient.ListFileSystemsSinglePage());
   }
 

@@ -57,11 +57,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the share's primary uri endpoint.
+     * @brief Gets the share's primary url endpoint.
      *
-     * @return The share's primary uri endpoint.
+     * @return The share's primary url endpoint.
      */
-    std::string GetUri() const { return m_shareUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_shareUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the ShareClient class with an identical uri
@@ -220,13 +220,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = ListFilesAndDirectoriesSinglePageOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_shareUri;
+    Azure::Core::Http::Url m_shareUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareClient(
         Azure::Core::Http::Url shareUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareUri(std::move(shareUri)), m_pipeline(std::move(pipeline))
+        : m_shareUrl(std::move(shareUri)), m_pipeline(std::move(pipeline))
     {
     }
     friend class ShareServiceClient;

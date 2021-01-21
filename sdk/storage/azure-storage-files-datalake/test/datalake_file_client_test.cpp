@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties1 = m_fileClient->GetProperties();
 
     // Append
-    m_fileClient->AppendData(bufferStream.get(), 0);
+    m_fileClient->Append(bufferStream.get(), 0);
     auto properties2 = m_fileClient->GetProperties();
     // Append does not change etag because not committed yet.
     EXPECT_EQ(properties1->ETag, properties2->ETag);
@@ -339,7 +339,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
     // Flush
-    m_fileClient->FlushData(bufferSize);
+    m_fileClient->Flush(bufferSize);
     auto properties3 = m_fileClient->GetProperties();
     EXPECT_NE(properties2->ETag, properties3->ETag);
 
@@ -362,7 +362,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties1 = newFileClient->GetProperties();
 
     // Append
-    newFileClient->AppendData(bufferStream.get(), 0);
+    newFileClient->Append(bufferStream.get(), 0);
     auto properties2 = newFileClient->GetProperties();
     // Append does not change etag because not committed yet.
     EXPECT_EQ(properties1->ETag, properties2->ETag);
@@ -370,7 +370,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
     // Flush
-    newFileClient->FlushData(bufferSize);
+    newFileClient->Flush(bufferSize);
     auto properties3 = newFileClient->GetProperties();
     EXPECT_NE(properties2->ETag, properties3->ETag);
 
@@ -591,7 +591,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
           Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
-              .GetUri(),
+              .GetUrl(),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create());
@@ -617,7 +617,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto anonymousClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
           Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, objectName)
-              .GetUri());
+              .GetUrl());
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 

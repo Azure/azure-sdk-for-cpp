@@ -154,8 +154,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   // FileClient models:
 
   using UploadDataLakeFileFromResult = Blobs::Models::UploadBlockBlobResult;
-  using AppendDataLakeFileDataResult = PathAppendDataResult;
-  using FlushDataLakeFileDataResult = PathFlushDataResult;
+  using AppendDataLakeFileResult = PathAppendDataResult;
+  using FlushDataLakeFileResult = PathFlushDataResult;
   using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
 
   struct ReadDataLakeFileResult

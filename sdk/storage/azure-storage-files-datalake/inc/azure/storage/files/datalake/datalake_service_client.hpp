@@ -71,12 +71,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeFileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
 
     /**
-     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the datalake service's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The datalake service's primary uri endpoint.
+     * @return The datalake service's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobServiceClient.GetUrl(); }
+    std::string GetUrl() const { return m_blobServiceClient.GetUrl(); }
 
     /**
      * @brief List the file systems from the service.
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    Azure::Core::Http::Url m_dfsUri;
+    Azure::Core::Http::Url m_dfsUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };

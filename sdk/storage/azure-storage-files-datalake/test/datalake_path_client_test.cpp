@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakePathClient(
           Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
-              .GetUri(),
+              .GetUrl(),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));
@@ -387,7 +387,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
 
       auto anonymousClient
-          = Azure::Storage::Files::DataLake::DataLakePathClient(pathClient.GetUri());
+          = Azure::Storage::Files::DataLake::DataLakePathClient(pathClient.GetUrl());
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 
