@@ -122,8 +122,6 @@ jobs:
     value: "xml"
   - name: BuildArgs
     value: ""
-  - name: AZURE_ENABLE_STATIC_ANALYSIS
-    value: 1
   - name: WindowsPool
     value: ${{parameters.WindowsPool}}
   - name: LinuxPool
