@@ -1,10 +1,10 @@
 # Integrating the Azure SDK for C++ with CMake fetch content to your application
 
-This application is an example of integrating the Azure SDK for C++ to your application. It uses the CMake fetch content functionality to automatically clone the Azure SDK for C++ repo to your `build` directory. This approach is useful if you are using CMake to build your application.
+This application shows how to integrate the Azure SDK for C++ in your application. It uses CMake fetch content functionality to clone the Azure SDK for C++ repo into your `build` directory. This approach is useful when using CMake to build your application.
 
 ## Pre-requisites
 
-Make sure to install the [Azure SDK for C++ dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#third-party-dependencies) first.
+Install the [Azure SDK for C++ dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#third-party-dependencies).
 
 - CMake project (min version 3.13).
 - C++ version 14 or greater.
@@ -29,7 +29,7 @@ cmake -build .
 
 ## Run application
 
-Review source code header to learn if there is any `environment variable` that needs to be set up before running the app.
+Review source code header for `environment variables` that must be set up before running the app.
 
 ```bash
 #
