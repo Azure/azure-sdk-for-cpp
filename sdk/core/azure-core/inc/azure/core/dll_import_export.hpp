@@ -26,14 +26,14 @@
 // libraries, do not reuse AZ_xxx_DLLEXPORT, AZ_xxx_BEING_BUILT, AZ_xxx_DLL, or
 // AZ_xxx_BUILT_AS_DLL names.
 //
-// CMakeLists.txt makes sure that during the SDK build on Windows when SDK is being built as a DLL,
-// AZ_xxx_DLL is defined. It is also being propagated to any code that consumes Azure SDK code via
-// CMake, i.e. anything in the build tree of the Azure SDK when building the entire SDK, OR if a
-// customer code consumes SDK via fetchcontent.
-// In case that the SDK is being distributed as a package, i.e. VcPkg, the install step (defined in
-// CMakeLists.txt) will take care of patching the installed header to carry the knowledge that the
-// library was built as DLL (and if it was built as both static and dynamic library, there will be
-// no collision because each installation has its own header installation directory).
+// CMakeLists.txt (via az_vcpkg_export()) makes sure that during the SDK build on Windows when SDK
+// is being built as a DLL, AZ_xxx_DLL is defined. It is also being propagated to any code that
+// consumes Azure SDK code via CMake, i.e. anything in the build tree of the Azure SDK when building
+// the entire SDK, OR if a customer code consumes SDK via fetchcontent. In case that the SDK is
+// being distributed as a package, i.e. VcPkg, the install step (defined in az_vcpkg_export()) will
+// take care of patching the installed header to carry the knowledge that the library was built as
+// DLL (and if it was built as both static and dynamic library, there will be no collision because
+// each installation has its own header installation directory).
 // (/*(at)AZ_xxx_DLL_INSTALLED_AS_PACKAGE(at)*/ will be replaced with "/**/ + 1 /**/") if the SDK
 // library was built as Windows DLL. CMakeLists.txt snippet to achieve all this is the following
 // (***):

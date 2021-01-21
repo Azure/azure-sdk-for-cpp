@@ -61,20 +61,11 @@ create_code_coverage(template azure-template azure-template-test)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
 generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-template)
-
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_compile_definitions(AZ_TEMPLATE_BEING_BUILT)
-  target_compile_definitions(azure-template PUBLIC AZ_TEMPLATE_DLL)
-
-  set(AZ_TEMPLATE_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/dll_import_export.hpp"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/template/dll_import_export.hpp"
-    @ONLY
+az_vcpkg_export(
+    azure-template
+    TEMPLATE
+    "azure/template/dll_import_export.hpp"
   )
-  unset(AZ_TEMPLATE_DLL_INSTALLED_AS_PACKAGE)
-endif()
 
 if(BUILD_TESTING)
     # tests

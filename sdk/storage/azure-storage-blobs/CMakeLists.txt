@@ -72,20 +72,11 @@ target_link_libraries(azure-storage-blobs PUBLIC Azure::azure-storage-common)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp")
 generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-storage-blobs)
-
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_compile_definitions(AZ_STORAGE_BLOBS_BEING_BUILT)
-  target_compile_definitions(azure-storage-blobs PUBLIC AZ_STORAGE_BLOBS_DLL)
-
-  set(AZ_STORAGE_BLOBS_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/dll_import_export.hpp"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/storage/blobs/dll_import_export.hpp"
-    @ONLY
+az_vcpkg_export(
+    azure-storage-blobs
+    STORAGE_BLOBS
+    "azure/storage/blobs/dll_import_export.hpp"
   )
-  unset(AZ_STORAGE_BLOBS_DLL_INSTALLED_AS_PACKAGE)
-endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-blobs azure-storage-test)

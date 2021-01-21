@@ -74,20 +74,11 @@ target_link_libraries(azure-storage-files-datalake PUBLIC Azure::azure-storage-b
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-storage-files-datalake)
-
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_compile_definitions(AZ_STORAGE_FILES_DATALAKE_BEING_BUILT)
-  target_compile_definitions(azure-storage-files-datalake PUBLIC AZ_STORAGE_FILES_DATALAKE_DLL)
-
-  set(AZ_STORAGE_FILES_DATALAKE_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/dll_import_export.hpp"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/storage/files/datalake/dll_import_export.hpp"
-    @ONLY
+az_vcpkg_export(
+    azure-storage-files-datalake
+    STORAGE_FILES_DATALAKE
+    "azure/storage/files/datalake/dll_import_export.hpp"
   )
-  unset(AZ_STORAGE_FILES_DATALAKE_DLL_INSTALLED_AS_PACKAGE)
-endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)

@@ -64,17 +64,8 @@ target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-identity)
-
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_compile_definitions(AZ_IDENTITY_BEING_BUILT)
-  target_compile_definitions(azure-identity PUBLIC AZ_IDENTITY_DLL)
-
-  set(AZ_IDENTITY_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/dll_import_export.hpp"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/identity/dll_import_export.hpp"
-    @ONLY
+az_vcpkg_export(
+    azure-identity
+    IDENTITY
+    "azure/identity/dll_import_export.hpp"
   )
-  unset(AZ_IDENTITY_DLL_INSTALLED_AS_PACKAGE)
-endif()

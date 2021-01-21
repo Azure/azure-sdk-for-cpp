@@ -143,17 +143,8 @@ endif()
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-core)
-
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_compile_definitions(AZ_CORE_BEING_BUILT)
-  target_compile_definitions(azure-core PUBLIC AZ_CORE_DLL)
-
-  set(AZ_CORE_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/dll_import_export.hpp"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/core/dll_import_export.hpp"
-    @ONLY
+az_vcpkg_export(
+    azure-core
+    CORE
+    "azure/core/dll_import_export.hpp"
   )
-  unset(AZ_CORE_DLL_INSTALLED_AS_PACKAGE)
-endif()

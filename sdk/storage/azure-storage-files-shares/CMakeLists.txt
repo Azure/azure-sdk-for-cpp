@@ -70,20 +70,11 @@ target_link_libraries(azure-storage-files-shares PUBLIC Azure::azure-storage-com
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/version.hpp")
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-storage-files-shares)
-
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_compile_definitions(AZ_STORAGE_FILES_SHARES_BEING_BUILT)
-  target_compile_definitions(azure-storage-files-shares PUBLIC AZ_STORAGE_FILES_SHARES_DLL)
-
-  set(AZ_STORAGE_FILES_SHARES_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/dll_import_export.hpp"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/azure/storage/files/shares/dll_import_export.hpp"
-    @ONLY
+az_vcpkg_export(
+    azure-storage-files-shares
+    STORAGE_FILES_SHARES
+    "azure/storage/files/shares/dll_import_export.hpp"
   )
-  unset(AZ_STORAGE_FILES_SHARES_DLL_INSTALLED_AS_PACKAGE)
-endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-shares azure-storage-test)
