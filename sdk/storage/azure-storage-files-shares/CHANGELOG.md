@@ -1,31 +1,36 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.7 (Unreleased)
 
 ### Breaking Changes
 
-- Removed constructors in clients that takes a `Azure::Identity::ClientSecretCredential`.
-- Removed Share Lease related API due to it not supported in recent service versions.
-  - ShareClient::AcquireLease
-  - ShareClient::ReleaseLease
-  - ShareClient::ChangeLease
-  - ShareClient::BreakLease
-  - ShareClient::RenewLease
-- Move File SAS into `Azure::Storage::Sas` namespace.
-- Replaced all transactional content MD5/CRC64 with `ContentHash` struct.
-- `FileShareHttpHeaders` is renamed to `ShareFileHttpHeaders`, and member `std::string ContentMd5` is changed to `Storage::ContentHash ContentHash`.
-- All date time related strings are now changed to `Azure::Core::DateTime` type.
-- Move version strings into `Details` namespace.
-- Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
-- Removed `FileRange` and `ClearRange`, they are now represented with `Azure::Core::Http::Range`.
-- Removed `Offset` and `Length` pair in options. They are now represented with `Azure::Core::Http::Range`.
-- Replace scoped enums that don't support bitwise operations with extensible enum.
-- `IsServerEncrypted` member in `DownloadFileToResult`, `UploadFileFromResult`, `FileDownloadResult` and `FileGetPropertiesResult` are no longer nullable.
-- Create APIs for Directory and File now returns `FileShareSmbProperties` that aggregates SMB related properties.
+- Removed `GetDirectoryClient` and `GetFileClient` from `ShareClient`. `ShareDirectoryClient` and `ShareFileClient` now initializes with the name of the resource, not path, to indicate that no path parsing is done for the API
+- Renamed `GetUri` to `GetUrl`.
+
+## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
 
 - Added support for `CreateIfNotExists` for Share and Directory clients, and `DeleteIfExists` for Share, Directory and File clients.
+- Support setting file SAS permission with a raw string.
+
+### Breaking Changes
+
+- Removed constructors in clients that takes a `Azure::Identity::ClientSecretCredential`.
+- Removed Share Lease related APIs such as `ShareClient::AcquireLease` and `ReleaseLease` since they are not supported in recent service versions.
+- Moved File SAS into `Azure::Storage::Sas` namespace.
+- Replaced all transactional content MD5/CRC64 with the `ContentHash` struct.
+- `FileShareHttpHeaders` is renamed to `ShareFileHttpHeaders`, and member `std::string ContentMd5` is changed to `Storage::ContentHash ContentHash`.
+- All date time related strings are now changed to `Azure::Core::DateTime` type.
+- Moved version strings into `Details` namespace.
+- Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
+- Removed `FileRange`, `ClearRange`, and `Offset` and `Length` pair in options. They are now represented with `Azure::Core::Http::Range`.
+- Replace scoped enums that don't support bitwise operations with extensible enum.
+- `IsServerEncrypted` members in `DownloadFileToResult`, `UploadFileFromResult`, `FileDownloadResult` and `FileGetPropertiesResult` are no longer nullable.
+- Create APIs for Directory and File now returns `FileShareSmbProperties` that aggregates SMB related properties.
+- `DirectoryClient` is renamed to `ShareDirectoryClient`, `FileClient` is renamed to `ShareFileClient`.
+- Directory and File related result types and options types now have a `Share` prefix. For example, `SetDirectoryPropertiesResult` is changed to `SetShareDirectoryPropertiesResult`.
+- Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
@@ -69,7 +74,7 @@
 - Added File SAS generation support.
 - Release based on azure-core_1.0.0-beta.1.
 
-## 1.0.0-preview.1 (Unreleased)
+## 1.0.0-beta.1 (2020-08-28)
 
 ### New Features
 

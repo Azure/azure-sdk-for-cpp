@@ -17,33 +17,33 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  DirectoryClient DirectoryClient::CreateFromConnectionString(
+  DataLakeDirectoryClient DataLakeDirectoryClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& fileSystemName,
-      const std::string& path,
+      const std::string& directoryName,
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUrl);
     directoryUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(path));
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryName));
 
     if (parsedConnectionString.KeyCredential)
     {
-      return DirectoryClient(
+      return DataLakeDirectoryClient(
           directoryUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DirectoryClient(directoryUri.GetAbsoluteUrl(), options);
+      return DataLakeDirectoryClient(directoryUri.GetAbsoluteUrl(), options);
     }
   }
 
-  DirectoryClient::DirectoryClient(
+  DataLakeDirectoryClient::DataLakeDirectoryClient(
       const std::string& directoryUri,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : PathClient(directoryUri, credential, options)
+      : DataLakePathClient(directoryUri, credential, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -69,11 +69,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  DirectoryClient::DirectoryClient(
+  DataLakeDirectoryClient::DataLakeDirectoryClient(
       const std::string& directoryUri,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : PathClient(directoryUri, credential, options)
+      : DataLakePathClient(directoryUri, credential, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -99,10 +99,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  DirectoryClient::DirectoryClient(
+  DataLakeDirectoryClient::DataLakeDirectoryClient(
       const std::string& directoryUri,
       const DataLakeClientOptions& options)
-      : PathClient(directoryUri, options)
+      : DataLakePathClient(directoryUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -126,38 +126,39 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  FileClient DirectoryClient::GetFileClient(const std::string& path) const
+  DataLakeFileClient DataLakeDirectoryClient::GetFileClient(const std::string& fileName) const
   {
-    auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
+    auto builder = m_dfsUrl;
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(path));
+    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(fileName));
     auto blockBlobClient = blobClient.AsBlockBlobClient();
-    return FileClient(
+    return DataLakeFileClient(
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
-  DirectoryClient DirectoryClient::GetSubDirectoryClient(const std::string& path) const
+  DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
+      const std::string& subdirectoryName) const
   {
-    auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
+    auto builder = m_dfsUrl;
+    builder.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(path));
-    return DirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
+    blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(subdirectoryName));
+    return DataLakeDirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
-  Azure::Core::Response<Models::RenameDirectoryResult> DirectoryClient::Rename(
+  Azure::Core::Response<Models::RenameDataLakeDirectoryResult> DataLakeDirectoryClient::Rename(
       const std::string& destinationPath,
-      const RenameDirectoryOptions& options) const
+      const RenameDataLakeDirectoryOptions& options) const
   {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
     {
-      const auto& currentPath = m_dfsUri.GetPath();
+      const auto& currentPath = m_dfsUrl.GetPath();
       std::string::const_iterator cur = currentPath.begin();
       destinationFileSystem = Details::GetSubstringTillDelimiter('/', currentPath, cur);
     }
-    auto destinationDfsUri = m_dfsUri;
+    auto destinationDfsUri = m_dfsUrl;
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
     Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
@@ -173,45 +174,44 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
+    protocolLayerOptions.RenameSource = "/" + m_dfsUrl.GetPath();
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    Models::RenameDirectoryResult ret;
+    Models::RenameDataLakeDirectoryResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
-    return Azure::Core::Response<Models::RenameDirectoryResult>(
+    return Azure::Core::Response<Models::RenameDataLakeDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteDirectoryResult> DirectoryClient::Delete(
+  Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::Delete(
       bool recursive,
-      const DeleteDirectoryOptions& options) const
+      const DeleteDataLakeDirectoryOptions& options) const
   {
-    DeletePathOptions deleteOptions;
+    DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Context = options.Context;
     deleteOptions.ContinuationToken = options.ContinuationToken;
     deleteOptions.Recursive = recursive;
-    return PathClient::Delete(deleteOptions);
+    return DataLakePathClient::Delete(deleteOptions);
   }
 
-  Azure::Core::Response<Models::DeleteDirectoryResult> DirectoryClient::DeleteIfExists(
-      bool recursive,
-      const DeleteDirectoryOptions& options) const
+  Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::
+      DeleteIfExists(bool recursive, const DeleteDataLakeDirectoryOptions& options) const
   {
-    DeletePathOptions deleteOptions;
+    DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Context = options.Context;
     deleteOptions.ContinuationToken = options.ContinuationToken;
     deleteOptions.Recursive = recursive;
-    return PathClient::DeleteIfExists(deleteOptions);
+    return DataLakePathClient::DeleteIfExists(deleteOptions);
   }
 
-  Azure::Core::Response<Models::SetDirectoryAccessControlRecursiveResult>
-  DirectoryClient::SetAccessControlRecursive(
+  Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
+  DataLakeDirectoryClient::SetAccessControlRecursive(
       Models::PathSetAccessControlRecursiveMode mode,
       std::vector<Models::Acl> acls,
-      const SetDirectoryAccessControlRecursiveOptions& options) const
+      const SetDataLakeDirectoryAccessControlRecursiveOptions& options) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
     protocolLayerOptions.Mode = mode;
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ForceFlag = options.ForceFlag;
     protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
     return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -345,19 +345,20 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string directoryName = baseName + RandomString();
-      auto directoryClient = m_shareClient->GetShareDirectoryClient(directoryName);
+      auto directoryClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryName);
       EXPECT_NO_THROW(directoryClient.Create());
-      auto directoryUrl = directoryClient.GetUri();
+      auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_shareClient->GetUri() + "/" + Storage::Details::UrlEncodePath(directoryName));
+          m_shareClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
-      auto fileClient = m_shareClient->GetShareFileClient(fileName);
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create(1024));
-      auto fileUrl = fileClient.GetUri();
-      EXPECT_EQ(fileUrl, m_shareClient->GetUri() + "/" + Storage::Details::UrlEncodePath(fileName));
+      auto fileUrl = fileClient.GetUrl();
+      EXPECT_EQ(fileUrl, m_shareClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(fileName));
     }
   }
 }}} // namespace Azure::Storage::Test

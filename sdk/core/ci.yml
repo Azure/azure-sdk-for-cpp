@@ -35,3 +35,4 @@ stages:
       Artifacts:
         - Name: azure-core
           Path: azure-core
+          VcpkgPortName: azure-core-cpp

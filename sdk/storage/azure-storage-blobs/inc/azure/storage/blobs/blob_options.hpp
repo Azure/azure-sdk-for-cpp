@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
 
     /**
      * @brief Name-value pairs to associate with the container as metadata.
@@ -330,6 +330,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Use this parameter if you would like to restore the container under a
+     * different name.
+     */
+    Azure::Core::Nullable<std::string> DestinationBlobContainerName;
   };
 
   /**
@@ -432,7 +438,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
 
     /**
      * @brief Stored access policies that you can use to provide fine grained control over
@@ -1074,7 +1080,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
-    Azure::Core::Nullable<Models::BlockListTypeOption> ListType;
+    Models::BlockListTypeOption ListType = Models::BlockListTypeOption::Committed;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

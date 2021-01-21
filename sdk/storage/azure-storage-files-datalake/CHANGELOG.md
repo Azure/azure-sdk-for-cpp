@@ -1,12 +1,30 @@
 # Release History
 
-## 12.0.0-beta.6 (Unreleased)
+## 12.0.0-beta.7 (Unreleased)
+
+### New Features
+
+- Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
 
 ### Breaking Changes
 
-- Move DataLake SAS into `Azure::Storage::Sas` namespace.
-- `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
-- Replaced all transactional content MD5/CRC64 with `ContentHash` struct.
+- Removed `GetDfsUri` in all clients since they are currently implementation details.
+- Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
+- `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
+- Renamed `GetUri` to `GetUrl`.
+
+## 12.0.0-beta.6 (2020-01-14)
+
+### New Features
+
+- Support setting DataLake SAS permission with a raw string.
+- Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
+
+### Breaking Changes
+
+- Moved DataLake SAS into `Azure::Storage::Sas` namespace.
+- `EncrytionKeySha256` are changed to binary (`std::vector<uint8_t>`).
+- Replaced all transactional content MD5/CRC64 with the `ContentHash` struct.
 - `DataLakeHttpHeaders` is renamed to `PathHttpHeaders`, and now contains `ContentHash` for the resource.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
 - `CreationTime` is renamed to `CreatedOn`.
@@ -14,11 +32,16 @@
 - `CopyCompletionTime` is renamed to `CopyCompletedOn`.
 - `ExpiryTime` is renamed to `ExpiresOn`.
 - `LastAccessTime` is renamed to `LastAccessedOn`.
-- Move version strings into `Details` namespace.
+- Made version strings private by moving them into the `Details` namespace.
 - Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
 - `ReadFileResult` now have `ContentRange` as string.
-- `ReadFileOptions` now have `Azure::Core::Http::Range Range` instead of `Content-Length` and `Offset`.
-- Replace scoped enums that don't support bitwise operations with extensible enum.
+- `ReadFileOptions` now have `Azure::Core::Http::Range` instead of `Content-Length` and `Offset`.
+- Replaced scoped enums that don't support bitwise operations with extensible enum.
+- `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
+- Added `DataLake` prefix to `FileSystemClient`, `PathClient`,  `DirectoryClient`, and `FileClient` types.
+- FileSystems, Path, Directory and File related result types and options types now have a `DataLake` prefix. For example, `GetFileSystemPropertiesResult` is changed to `GetDataLakeFileSystemPropertiesResult`.
+- Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Removed `NamespaceEnabled` field in `CreateDataLakeFileSystemResult`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
@@ -54,13 +77,7 @@
 
 - Release based on azure-core_1.0.0-beta.1.
 
-## 1.0.0-beta.1
-
-### New Features
-
-- Support for Lease related operations.
-
-## 1.0.0-preview.1 (Unreleased)
+## 1.0.0-beta.1 (2020-08-28)
 
 ### New Features
 
@@ -93,3 +110,4 @@
   - DirectoryClient::Create
   - DirectoryClient::Rename
   - DirectoryClient::Delete
+- Support for Lease related operations.

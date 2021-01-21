@@ -36,3 +36,4 @@ stages:
       Artifacts:
         - Name: azure-identity
           Path: azure-identity
+          VcpkgPortName: azure-identity-cpp

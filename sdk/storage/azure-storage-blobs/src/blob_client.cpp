@@ -193,7 +193,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
         {
-          newOptions.Range.GetValue().Length = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
+          newOptions.Range.GetValue().Length
+              = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {
@@ -245,8 +246,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
-          firstChunk->ContentRange.GetValue().find('/') + 1));
+      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -375,8 +375,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
-          firstChunk->ContentRange.GetValue().find('/') + 1));
+      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -635,8 +634,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           && (e.ErrorCode == "BlobNotFound" || e.ErrorCode == "ContainerNotFound"))
       {
         Models::DeleteBlobResult ret;
+        ret.RequestId = e.RequestId;
         ret.Deleted = false;
-        return Azure::Core::Response<Models::DeleteBlobResult>(std::move(ret), std::move(e.RawResponse));
+        return Azure::Core::Response<Models::DeleteBlobResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
