@@ -44,6 +44,16 @@ namespace Azure { namespace Core {
        | "1"    | "1"    | match             | match           |
        +--------+--------+-------------------+-----------------+
 
+    // etag:                            //This is possible and means no etag is present
+    // etag:""
+    // etag:"*"                         //This means the etag is value '*'
+    // etag:"some value"                //This means the etag is value 'some value'
+    // etag:/W""                        //Weak eTag
+    // etag:*                           //This is special, means any etag
+    // If-Match header can do this
+    // If-Match:"value1","value2","value3"  // Do this if any of these match
+    //
+
     */
     bool ETagComparison(const ETag& left, const ETag& right) const
     {
@@ -91,25 +101,24 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct a #ETag.
      */
-    ETag(std::string etag) : m_value(etag) {}
+    explicit ETag(std::string etag) : m_value(std::move(etag)) {}
 
     /**
-     * @brief Copy constructor.
+     * @brief Copy assignment.
      */
     ETag& operator=(const ETag&) = default;
 
-    bool HasValue() { return m_value.HasValue(); }
-    // etag:                            //This is possible and means no etag is present
-    // etag:""
-    // etag:"*"                         //This means the etag is value '*'
-    // etag:"some value"
-    // etag:/W""                        //Weak eTag
-    // etag:*                           //This is special, means any etag
-    // If-Match header can do this
-    // If-Match:"value1","value2","value3"  // Do this if any of these match
-    //
+    /**
+     * @brief Whether @Tag is present.
+     * @return `true` if @ETag has a value, `false` otherwise.
+     */
+    const bool HasValue() { return m_value.HasValue(); }
 
-    std::string ToString()
+    /*
+     * @brief Return the contained string value
+     * @return #std::string
+     */
+    const std::string& ToString()
     {
       if (!m_value.HasValue())
       {
@@ -132,6 +141,11 @@ namespace Azure { namespace Core {
      */
     bool operator!=(const ETag& other) const { return !(*this == other); }
 
+    /**
+     * @brief Compare with \p other @ETag for inequality.
+     * @param other Other @ETag to compare with.
+     * @return `true` if @ETag instances are not equal, `false` otherwise.
+     */
     bool IsWeak() const
     {
       // A null eTag is considered strong
@@ -148,25 +162,33 @@ namespace Azure { namespace Core {
         return false;
       }
 
-      if (val[0] == 'W' && val[1] == '/' && val[2] == '"')
+      // Valid format is W/""
+      //   Must end with a " in the string
+      if (val[0] == 'W' && val[1] == '/' && val[2] == '"' && val[val.size() - 1] == '"')
       {
         return true;
       }
 
       return false;
     }
-    
-    static ETag& Any()
+
+    /**
+     * @brief @ETag representing everything
+     * @notes The any ETag is *, (unquoted).  It is NOT the same as "*"
+     */
+    static const ETag& Any()
     {
       static ETag Any = ETag("*");
       return Any;
     }
 
-    static ETag& Null()
+    /**
+     * @brief @ETag representing no @ETag present
+     */
+    static const ETag& Null()
     {
       static ETag Null = ETag();
       return Null;
     }
-    
   };
 }} // namespace Azure::Core

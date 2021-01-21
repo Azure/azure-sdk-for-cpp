@@ -76,7 +76,7 @@ TEST(ETag, StrongWeakComparison)
 }
 
 TEST(ETag, Empty) { 
-    auto anyETag = ETag::Any(); 
+    auto anyETag = ETag::Any();
     auto nullETag = ETag::Null();
     auto strongETag = ETag("\"SomeInteresting1234567!@#$^&*ETAG___\"");
 
