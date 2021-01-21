@@ -192,8 +192,9 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     appendBlobClient.Create();
 
-    std::string leaseId = CreateUniqueLeaseId();
-    appendBlobClient.AcquireLease(leaseId, 30);
+    std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    Blobs::BlobLeaseClient leaseClient(appendBlobClient, leaseId);
+    leaseClient.Acquire(30);
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
     Blobs::DeleteBlobOptions options;
     options.AccessConditions.LeaseId = leaseId;
@@ -205,8 +206,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto sourceBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     sourceBlobClient.Create();
-    auto leaseResponse
-        = sourceBlobClient.AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
+    Blobs::BlobLeaseClient sourceLeaseClient(
+        sourceBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+    auto leaseResponse = sourceLeaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
     std::string leaseId = leaseResponse->LeaseId;
     std::string eTag = leaseResponse->ETag;
     auto lastModifiedTime = leaseResponse->LastModified;
@@ -218,7 +220,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceAccessConditions.LeaseId = CreateUniqueLeaseId();
+      options.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
       /*
       don't know why, the copy operation also succeeds even if the lease id doesn't match.
       EXPECT_THROW(
@@ -227,7 +229,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SourceAccessConditions.LeaseId = leaseId;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
     }
-    sourceBlobClient.BreakLease();
+    sourceLeaseClient.Break();
     {
       Blobs::StartCopyBlobFromUriOptions options;
       options.SourceAccessConditions.IfMatch = eTag;

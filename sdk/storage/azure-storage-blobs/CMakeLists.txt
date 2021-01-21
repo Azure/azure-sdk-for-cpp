@@ -32,6 +32,7 @@ set(
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
+    inc/azure/storage/blobs/blob_lease_client.hpp
     inc/azure/storage/blobs/blob_options.hpp
     inc/azure/storage/blobs/blob_responses.hpp
     inc/azure/storage/blobs/blob_sas_builder.hpp
@@ -47,6 +48,7 @@ set(
     src/append_blob_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
+    src/blob_lease_client.cpp
     src/blob_rest_client.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp

@@ -25,6 +25,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   class BlockBlobClient;
   class AppendBlobClient;
   class PageBlobClient;
+  class BlobLeaseClient;
 
   /**
    * @brief The BlobClient allows you to manipulate Azure Storage blobs.
@@ -295,67 +296,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
     /**
-     * @brief Acquires a lease on the blob.
-     *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
-     * @param duration Specifies the duration of
-     * the lease, in seconds, or Azure::Storage::InfiniteLeaseDuration for a lease that never
-     * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
-     * changed using renew or change.
-     * @param options Optional parameters to execute this function.
-     * @return A AcquireBlobLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::AcquireBlobLeaseResult> AcquireLease(
-        const std::string& proposedLeaseId,
-        int32_t duration,
-        const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions()) const;
-
-    /**
-     * @brief Renews the blob's previously-acquired lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to execute this function.
-     * @return A RenewBlobLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::RenewBlobLeaseResult> RenewLease(
-        const std::string& leaseId,
-        const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions()) const;
-
-    /**
-     * @brief Releases the blob's previously-acquired lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to execute this function.
-     * @return A ReleaseBlobLeaseResult describing the updated container.
-     */
-    Azure::Core::Response<Models::ReleaseBlobLeaseResult> ReleaseLease(
-        const std::string& leaseId,
-        const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
-
-    /**
-     * @brief Changes the lease of an active lease.
-     *
-     * @param leaseId ID of the
-     * previously-acquired lease.
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
-     * @param options Optional parameters to execute this function.
-     * @return A ChangeBlobLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::ChangeBlobLeaseResult> ChangeLease(
-        const std::string& leaseId,
-        const std::string& proposedLeaseId,
-        const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
-
-    /**
-     * @brief Breaks the previously-acquired lease.
-     *
-     * @param options Optional parameters to execute this function.
-     * @return A BreakBlobLeaseResult describing the broken lease.
-     */
-    Azure::Core::Response<Models::BreakBlobLeaseResult> BreakLease(
-        const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
-
-    /**
      * @brief Sets tags on the underlying blob.
      *
      * @param tags The tags to set on the blob.
@@ -396,5 +336,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobContainerClient;
     friend class Files::DataLake::DataLakeDirectoryClient;
     friend class Files::DataLake::DataLakeFileClient;
+    friend class BlobLeaseClient;
   };
 }}} // namespace Azure::Storage::Blobs

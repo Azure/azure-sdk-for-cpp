@@ -11,6 +11,8 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  class BlobLeaseClient;
+
   /**
    * The BlobContainerClient allows you to manipulate Azure Storage containers and their
    * blobs.
@@ -243,75 +245,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         = SetBlobContainerAccessPolicyOptions()) const;
 
     /**
-     * @brief Acquires a lease on the container.
-     *
-     * @param proposedLeaseId
-     * Proposed lease ID, in a GUID string format.
-     * @param duration Specifies the duration of
-     * the lease, in seconds, or Azure::Storage::InfiniteLeaseDuration for a lease that never
-     * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
-     * changed using renew or change.
-     * @param options Optional parameters to execute this
-     * function.
-     * @return A AcquireBlobContainerLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::AcquireBlobContainerLeaseResult> AcquireLease(
-        const std::string& proposedLeaseId,
-        int32_t duration,
-        const AcquireBlobContainerLeaseOptions& options = AcquireBlobContainerLeaseOptions()) const;
-
-    /**
-     * @brief Renews the container's previously-acquired lease.
-     *
-     * @param
-     * leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to
-     * execute this function.
-     * @return A RenewBlobContainerLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::RenewBlobContainerLeaseResult> RenewLease(
-        const std::string& leaseId,
-        const RenewBlobContainerLeaseOptions& options = RenewBlobContainerLeaseOptions()) const;
-
-    /**
-     * @brief Releases the container's previously-acquired lease.
-     *
-     * @param
-     * leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to
-     * execute this function.
-     * @return A ReleaseBlobContainerLeaseResult describing the updated container.
-     */
-    Azure::Core::Response<Models::ReleaseBlobContainerLeaseResult> ReleaseLease(
-        const std::string& leaseId,
-        const ReleaseBlobContainerLeaseOptions& options = ReleaseBlobContainerLeaseOptions()) const;
-
-    /**
-     * @brief Changes the lease of an active lease.
-     *
-     * @param leaseId ID of the
-     * previously-acquired lease.
-     * @param proposedLeaseId Proposed lease ID, in a GUID string
-     * format.
-     * @param options Optional parameters to execute this function.
-     * @return A ChangeBlobContainerLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::ChangeBlobContainerLeaseResult> ChangeLease(
-        const std::string& leaseId,
-        const std::string& proposedLeaseId,
-        const ChangeBlobContainerLeaseOptions& options = ChangeBlobContainerLeaseOptions()) const;
-
-    /**
-     * @brief Breaks the previously-acquired lease.
-     *
-     * @param options Optional
-     * parameters to execute this function.
-     * @return A BreakBlobContainerLeaseResult describing the broken lease.
-     */
-    Azure::Core::Response<Models::BreakBlobContainerLeaseResult> BreakLease(
-        const BreakBlobContainerLeaseOptions& options = BreakBlobContainerLeaseOptions()) const;
-
-    /**
      * @brief Marks the specified blob or snapshot for deletion. The blob is later deleted
      * during garbage collection. Note that in order to delete a blob, you must delete all of its
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
@@ -342,6 +275,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     friend class BlobServiceClient;
+    friend class BlobLeaseClient;
   };
 
 }}} // namespace Azure::Storage::Blobs
