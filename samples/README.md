@@ -27,7 +27,7 @@ Each package folder contains a subfolder called `/samples` with additional code 
 
 ## Integration Samples
 
-Simple applications that illustrates the different approaches to integrate the Azure SDK for C++ to your application or library. Each Sample contains a ReadMe with description and explanation. 
+Simple applications that illustrate the different approaches to integrate the Azure SDK for C++ to your application or library. Each sample contains a README with a description and explanation.
 
 ## Sample Applications
 
