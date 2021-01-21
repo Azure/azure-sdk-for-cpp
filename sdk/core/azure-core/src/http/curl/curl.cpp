@@ -1127,12 +1127,12 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
-  {
-    throw Azure::Core::Http::TransportException(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  // if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
+  // {
+  //   throw Azure::Core::Http::TransportException(
+  //       Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+  //       + std::string(curl_easy_strerror(result)));
+  // }
 
   /******************** Curl handle options apply to all connections created
    * The keepAlive option is managed by the session directly.
