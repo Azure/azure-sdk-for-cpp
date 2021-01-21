@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     explicit BlockBlobClient(BlobClient blobClient);
     friend class BlobClient;
-    friend class Files::DataLake::FileClient;
+    friend class Files::DataLake::DataLakeFileClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

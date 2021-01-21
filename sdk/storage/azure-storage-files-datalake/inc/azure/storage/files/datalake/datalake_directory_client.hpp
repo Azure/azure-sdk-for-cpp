@@ -19,20 +19,20 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  class DirectoryClient : public PathClient {
+  class DataLakeDirectoryClient : public DataLakePathClient {
   public:
     /**
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param fileSystemName The name of a file system.
-     * @param directoryPath The path of a directory within the file system.
+     * @param directoryName The name of a directory within the file system.
      * @param options Optional parameters used to initialize the client.
-     * @return DirectoryClient
+     * @return DataLakeDirectoryClient
      */
-    static DirectoryClient CreateFromConnectionString(
+    static DataLakeDirectoryClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
-        const std::string& directoryPath,
+        const std::string& directoryName,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit DirectoryClient(
+    explicit DataLakeDirectoryClient(
         const std::string& directoryUri,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit DirectoryClient(
+    explicit DataLakeDirectoryClient(
         const std::string& directoryUri,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -62,52 +62,57 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param directoryUri The URI of the file system this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit DirectoryClient(
+    explicit DataLakeDirectoryClient(
         const std::string& directoryUri,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Create a FileClient from current DirectoryClient
-     * @param path Path of the file under the directory.
+     * @brief Create a FileClient from current DataLakeDirectoryClient
+     * @param fileName Name of the file under the directory.
      * @return FileClient
      */
-    FileClient GetFileClient(const std::string& path) const;
+    DataLakeFileClient GetFileClient(const std::string& fileName) const;
 
     /**
-     * @brief Create a DirectoryClient from current DirectoryClient
-     * @param path Path of the directory under the current directory.
-     * @return DirectoryClient
+     * @brief Create a DataLakeDirectoryClient from current DataLakeDirectoryClient
+     * @param subdirectoryName Name of the directory under the current directory.
+     * @return DataLakeDirectoryClient
      */
-    DirectoryClient GetSubDirectoryClient(const std::string& path) const;
+    DataLakeDirectoryClient GetSubdirectoryClient(const std::string& subdirectoryName) const;
 
     /**
-     * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the directory's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The directory's primary uri endpoint.
+     * @return The directory's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobClient.GetUrl(); }
-
-    /**
-     * @brief Gets the directory's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The directory's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blobClient.GetUrl(); }
 
     /**
      * @brief Create a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the directory the path points to.
-     * @return Azure::Core::Response<Models::CreateDirectoryResult> containing the information of
-     * the created directory
+     * @return Azure::Core::Response<Models::CreateDataLakeDirectoryResult> containing the
+     * information of the created directory
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::CreateDirectoryResult> Create(
-        const CreateDirectoryOptions& options = CreateDirectoryOptions()) const
+    Azure::Core::Response<Models::CreateDataLakeDirectoryResult> Create(
+        const CreateDataLakeDirectoryOptions& options = CreateDataLakeDirectoryOptions()) const
     {
-      return PathClient::Create(Models::PathResourceType::Directory, options);
+      return DataLakePathClient::Create(Models::PathResourceType::Directory, options);
+    }
+
+    /**
+     * @brief Create a directory. If it already exists, nothing will happen.
+     * @param options Optional parameters to create the directory the path points to.
+     * @return Azure::Core::Response<Models::CreateDataLakeDirectoryResult> containing the
+     * information of the created directory
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::CreateDataLakeDirectoryResult> CreateIfNotExists(
+        const CreateDataLakeDirectoryOptions& options = CreateDataLakeDirectoryOptions()) const
+    {
+      return DataLakePathClient::CreateIfNotExists(Models::PathResourceType::Directory, options);
     }
 
     /**
@@ -116,28 +121,41 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
      * @param options Optional parameters to rename a resource to the resource the destination
      * directory points to.
-     * @return Azure::Core::Response<Models::RenameDirectoryResult> containing the information
-     * returned when renaming the directory.
+     * @return Azure::Core::Response<Models::RenameDataLakeDirectoryResult> containing the
+     * information returned when renaming the directory.
      * @remark This operation will not change the URL this directory client points too, to use the
      *         new name, customer needs to initialize a new directory client with the new name/path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDirectoryResult> Rename(
+    Azure::Core::Response<Models::RenameDataLakeDirectoryResult> Rename(
         const std::string& destinationDirectoryPath,
-        const RenameDirectoryOptions& options = RenameDirectoryOptions()) const;
+        const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions()) const;
 
     /**
      * @brief Deletes the directory.
      * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
      *                  the directory is non-empty, an error occurs.
      * @param options Optional parameters to delete the directory the path points to.
-     * @return Azure::Core::Response<Models::DeleteDirectoryResult> containing the information
+     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDirectoryResult> Delete(
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> Delete(
         bool recursive,
-        const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
+
+    /**
+     * @brief Deletes the directory if it already exists.
+     * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
+     *                  the directory is non-empty, an error occurs.
+     * @param options Optional parameters to delete the directory the path points to.
+     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * returned when deleting the directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfExists(
+        bool recursive,
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
 
     /**
      * @brief Sets POSIX access control rights on files and directories under given directory
@@ -151,24 +169,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
-     * @return Azure::Core::Response<Models::SetDirectoryAccessControlRecursiveResult>
+     * @return Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::SetDirectoryAccessControlRecursiveResult>
+    Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
     SetAccessControlRecursive(
         Models::PathSetAccessControlRecursiveMode mode,
         std::vector<Models::Acl> acls,
-        const SetDirectoryAccessControlRecursiveOptions& options
-        = SetDirectoryAccessControlRecursiveOptions()) const;
+        const SetDataLakeDirectoryAccessControlRecursiveOptions& options
+        = SetDataLakeDirectoryAccessControlRecursiveOptions()) const;
 
   private:
-    explicit DirectoryClient(
-        Azure::Core::Http::Url dfsUri,
+    explicit DataLakeDirectoryClient(
+        Azure::Core::Http::Url dfsUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : PathClient(std::move(dfsUri), std::move(blobClient), pipeline)
+        : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline)
     {
     }
-    friend class FileSystemClient;
+    friend class DataLakeFileSystemClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

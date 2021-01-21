@@ -68,7 +68,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual void Rewind()
     {
-      throw "Not Implemented"; // TODO: Replace with best practice as defined by guideline
+      // Exception is not meant to be caught. This is rather an indication of a bad program that
+      // needs to be updated. This is the reason of using `throw` alone.
+      throw "The upload BodyStream doesn't support Rewind which is required to guarantee fault "
+            "tolerance when retrying the operation.";
     };
 
     /**

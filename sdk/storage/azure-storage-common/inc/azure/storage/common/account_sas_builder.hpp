@@ -51,10 +51,10 @@ namespace Azure { namespace Storage { namespace Sas {
     Service = 1,
 
     /**
-     * @brief Indicates whether blob container-level APIs are accessible from this shared
+     * @brief Indicates whether container-level APIs are accessible from this shared
      * access signature.
      */
-    BlobContainer = 2,
+    Container = 2,
 
     /**
      * @brief Indicates whether object-level APIs for blobs, queue messages, and files are

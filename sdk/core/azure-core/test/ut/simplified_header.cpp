@@ -20,9 +20,8 @@ TEST(Logging, simplifiedHeader)
   EXPECT_NO_THROW(Azure::Core::Nullable<int> n);
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse r(
       1, 1, Azure::Core::Http::HttpStatusCode::Accepted, "phrase"));
-  EXPECT_NO_THROW(Azure::Core::Strings::ToLower("A"));
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
-  EXPECT_NO_THROW(Azure::Core::Version::VersionString());
+  EXPECT_NO_THROW(Azure::Core::Details::Version::VersionString());
 
   {
     std::vector<uint8_t> buffer(10);

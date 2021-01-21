@@ -117,7 +117,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (e.StatusCode == Core::Http::HttpStatusCode::Conflict
           && e.ErrorCode == "BlobAlreadyExists")
       {
-        return Azure::Core::Response<Models::CreatePageBlobResult>(std::move(e.RawResponse));
+        Models::CreatePageBlobResult ret;
+        ret.RequestId = e.RequestId;
+        ret.Created = false;
+        return Azure::Core::Response<Models::CreatePageBlobResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }

@@ -16,8 +16,8 @@
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
-  class DirectoryClient;
-  class FileClient;
+  class DataLakeDirectoryClient;
+  class DataLakeFileClient;
 }}}} // namespace Azure::Storage::Files::DataLake
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -278,7 +278,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Marks the specified blob or snapshot for deletion if it exists.
      *
      * @param options Optional parameters to execute this function.
-     * @return A DeleteBlobResult on successfully deleting. Null if the blob doesn't exist.
+     * @return A DeleteBlobResult on successfully deleting. DeleteBlobResult.Deleted is false if the
+     * blob doesn't exist.
      */
     Azure::Core::Response<Models::DeleteBlobResult> DeleteIfExists(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
@@ -393,7 +394,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     friend class BlobContainerClient;
-    friend class Files::DataLake::DirectoryClient;
-    friend class Files::DataLake::FileClient;
+    friend class Files::DataLake::DataLakeDirectoryClient;
+    friend class Files::DataLake::DataLakeFileClient;
   };
 }}} // namespace Azure::Storage::Blobs

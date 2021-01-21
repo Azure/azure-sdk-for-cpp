@@ -80,7 +80,7 @@ target_include_directories(azure-storage-common PRIVATE ${LIBXML2_INCLUDE_DIRS})
 target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
 
 if(MSVC)
-    target_link_libraries(azure-storage-common PRIVATE bcrypt crypt32)
+    target_link_libraries(azure-storage-common PRIVATE bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
     target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()

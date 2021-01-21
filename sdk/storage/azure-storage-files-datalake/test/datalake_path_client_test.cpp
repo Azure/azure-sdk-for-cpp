@@ -10,14 +10,14 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Files::DataLake::PathClient> DataLakePathClientTest::m_pathClient;
+  std::shared_ptr<Files::DataLake::DataLakePathClient> DataLakePathClientTest::m_pathClient;
   std::string DataLakePathClientTest::m_pathName;
 
   void DataLakePathClientTest::SetUpTestSuite()
   {
     DataLakeFileSystemClientTest::SetUpTestSuite();
     m_pathName = LowercaseRandomString(10);
-    m_pathClient = std::make_shared<Files::DataLake::PathClient>(
+    m_pathClient = std::make_shared<Files::DataLake::DataLakePathClient>(
         m_fileSystemClient->GetPathClient(m_pathName));
     m_fileSystemClient->GetFileClient(m_pathName).Create();
   }
@@ -75,8 +75,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create path with metadata works
       auto client1 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
       auto client2 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-      Files::DataLake::CreatePathOptions options1;
-      Files::DataLake::CreatePathOptions options2;
+      Files::DataLake::CreateDataLakePathOptions options1;
+      Files::DataLake::CreateDataLakePathOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, GetPathPropertiesResult)
+  TEST_F(DataLakePathClientTest, GetDataLakePathPropertiesResult)
   {
     auto metadata1 = RandomMetadata();
     auto metadata2 = RandomMetadata();
@@ -123,11 +123,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Http headers works with create.
       auto httpHeader = GetInterestingHttpHeaders();
-      std::vector<Files::DataLake::PathClient> pathClient;
+      std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-        Files::DataLake::CreatePathOptions options;
+        Files::DataLake::CreateDataLakePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
         pathClient.emplace_back(std::move(client));
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Http headers works with SetHttpHeaders.
       auto httpHeader = GetInterestingHttpHeaders();
-      std::vector<Files::DataLake::PathClient> pathClient;
+      std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
@@ -166,11 +166,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set http headers work with last modified access condition.
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetPathHttpHeadersOptions options1;
+      Files::DataLake::SetDataLakePathHttpHeadersOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_THROW(
           m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageException);
-      Files::DataLake::SetPathHttpHeadersOptions options2;
+      Files::DataLake::SetDataLakePathHttpHeadersOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options2));
     }
@@ -178,11 +178,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set http headers work with last modified access condition.
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetPathHttpHeadersOptions options1;
+      Files::DataLake::SetDataLakePathHttpHeadersOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
       EXPECT_THROW(
           m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageException);
-      Files::DataLake::SetPathHttpHeadersOptions options2;
+      Files::DataLake::SetDataLakePathHttpHeadersOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options2));
     }
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Acls works.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls));
+      EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls;
       EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControls()->Acls);
       EXPECT_EQ(resultAcls.size(), acls.size() + 1); // Always append mask::rwx
@@ -216,24 +216,70 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
 
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetPathAccessControlOptions options1;
+      Files::DataLake::SetDataLakePathAccessControlListOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
-      Files::DataLake::SetPathAccessControlOptions options2;
+      EXPECT_THROW(m_pathClient->SetAccessControlList(acls, options1), StorageException);
+      Files::DataLake::SetDataLakePathAccessControlListOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-      EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
+      EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls, options2));
     }
 
     {
       // Set/Get Acls works with if match access condition.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetPathAccessControlOptions options1;
+      Files::DataLake::SetDataLakePathAccessControlListOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
-      Files::DataLake::SetPathAccessControlOptions options2;
+      EXPECT_THROW(m_pathClient->SetAccessControlList(acls, options1), StorageException);
+      Files::DataLake::SetDataLakePathAccessControlListOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
-      EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
+      EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls, options2));
+    }
+  }
+
+  TEST_F(DataLakePathClientTest, PathSetPermissions)
+  {
+    {
+      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+      pathClient.Create(Files::DataLake::Models::PathResourceType::File);
+      std::string pathPermissions = "rwxrw-rw-";
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
+      auto result = pathClient.GetAccessControls();
+      EXPECT_EQ(pathPermissions, result->Permissions);
+
+      pathPermissions = "rw-rw-rw-";
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
+      result = pathClient.GetAccessControls();
+      EXPECT_EQ(pathPermissions, result->Permissions);
+
+      EXPECT_NO_THROW(pathClient.SetPermissions("0766"));
+      result = pathClient.GetAccessControls();
+      EXPECT_EQ("rwxrw-rw-", result->Permissions);
+    }
+    {
+      // Set/Get Permissions works with last modified access condition.
+      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+      auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
+      Files::DataLake::SetDataLakePathPermissionsOptions options1, options2;
+      options1.AccessConditions.IfUnmodifiedSince = response->LastModified;
+      options2.AccessConditions.IfModifiedSince = response->LastModified;
+      std::string pathPermissions = "rwxrw-rw-";
+      EXPECT_THROW(pathClient.SetPermissions(pathPermissions, options2), StorageException);
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions, options1));
+    }
+    {
+      // Set/Get Permissions works with if match access condition.
+      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+      auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
+      Files::DataLake::SetDataLakePathPermissionsOptions options1, options2;
+      options1.AccessConditions.IfMatch = response->ETag;
+      options2.AccessConditions.IfNoneMatch = response->ETag;
+      std::string pathPermissions = "rwxrw-rw-";
+      EXPECT_THROW(pathClient.SetPermissions(pathPermissions, options2), StorageException);
+      EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions, options1));
     }
   }
 
@@ -285,7 +331,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(brokenLease.LeaseTime, 0);
 
     aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
-    Files::DataLake::BreakPathLeaseOptions breakOptions;
+    Files::DataLake::BreakDataLakePathLeaseOptions breakOptions;
     breakOptions.BreakPeriod = 30;
     lastModified = m_pathClient->GetProperties()->LastModified;
     brokenLease = *m_pathClient->BreakLease(breakOptions);
@@ -293,7 +339,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(brokenLease.LastModified > lastModified);
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
-    Files::DataLake::BreakPathLeaseOptions options;
+    Files::DataLake::BreakDataLakePathLeaseOptions options;
     options.BreakPeriod = 0;
     m_pathClient->BreakLease(options);
   }
@@ -304,7 +350,7 @@ namespace Azure { namespace Storage { namespace Test {
       // Create from connection string validates static creator function and shared key constructor.
       auto pathName = LowercaseRandomString(10);
       auto connectionStringClient
-          = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+          = Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, pathName);
       EXPECT_NO_THROW(
           connectionStringClient.Create(Files::DataLake::Models::PathResourceType::File));
@@ -316,10 +362,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           AadTenantId(), AadClientId(), AadClientSecret());
 
-      auto clientSecretClient = Azure::Storage::Files::DataLake::PathClient(
-          Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+      auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakePathClient(
+          Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
-              .GetUri(),
+              .GetUrl(),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));
@@ -335,11 +381,13 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer;
       containerClient.SetAccessPolicy(options);
 
-      auto pathClient = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), m_fileSystemName, objectName);
+      auto pathClient
+          = Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, objectName);
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
 
-      auto anonymousClient = Azure::Storage::Files::DataLake::PathClient(pathClient.GetUri());
+      auto anonymousClient
+          = Azure::Storage::Files::DataLake::DataLakePathClient(pathClient.GetUrl());
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 

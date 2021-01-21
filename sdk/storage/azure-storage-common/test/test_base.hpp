@@ -8,6 +8,7 @@
 #include <limits>
 #include <vector>
 
+#include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/body_stream.hpp>
 #include <azure/storage/common/constants.hpp>
@@ -82,5 +83,10 @@ namespace Azure { namespace Storage { namespace Test {
   std::string InferSecondaryUrl(const std::string primaryUri);
 
   bool IsValidTime(const Azure::Core::DateTime& datetime);
+
+  inline std::string Base64EncodeText(const std::string& text)
+  {
+    return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
+  }
 
 }}} // namespace Azure::Storage::Test

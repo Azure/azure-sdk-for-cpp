@@ -95,4 +95,36 @@ namespace Azure { namespace Core {
       return std::move(this->m_rawResponse);
     }
   };
+
+  /**
+   * @brief Wraps raw HTTP response into a response of a void type.
+   */
+  template <> class Response<void> {
+    std::unique_ptr<Http::RawResponse> m_rawResponse;
+
+  public:
+    /**
+     * @brief Initialize a #Response<void> with a raw response.
+     *
+     * @param rawResponse Raw HTTP response.
+     */
+    explicit Response(std::unique_ptr<Http::RawResponse>&& rawResponse)
+        : m_rawResponse(std::move(rawResponse))
+    {
+    }
+
+    /**
+     * @brief Get raw HTTP response.
+     */
+    // Do not give up raw response ownership.
+    Http::RawResponse& GetRawResponse() { return *this->m_rawResponse; }
+
+    /**
+     * @brief Get a smart pointer rvalue reference to the value of a specific type.
+     */
+    std::unique_ptr<Http::RawResponse>&& ExtractRawResponse()
+    {
+      return std::move(this->m_rawResponse);
+    }
+  };
 }} // namespace Azure::Core

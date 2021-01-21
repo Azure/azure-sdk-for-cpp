@@ -5,31 +5,27 @@
 
 #include <azure/core/datetime.hpp>
 
+#include <chrono>
 #include <limits>
 
 using namespace Azure::Core;
-
-namespace {
-static const auto Year1601 = DateTime(1601);
-} // namespace
 
 TEST(DateTime, ParseDateAndTimeBasic)
 {
   auto dt1 = DateTime::Parse("20130517T00:00:00Z", DateTime::DateFormat::Rfc3339);
   auto dt2 = DateTime::Parse("Fri, 17 May 2013 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
-  EXPECT_NE(0, (dt2 - Year1601).count());
 
+  EXPECT_NE(0, dt2.time_since_epoch().count());
   EXPECT_EQ(dt1, dt2);
 }
 
 TEST(DateTime, ParseDateAndTimeExtended)
 {
   auto dt1 = DateTime::Parse("2013-05-17T00:00:00Z", DateTime::DateFormat::Rfc3339);
-  EXPECT_NE(0, (dt1 - Year1601).count());
+  EXPECT_NE(0, dt1.time_since_epoch().count());
 
   auto dt2 = DateTime::Parse("Fri, 17 May 2013 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
-  EXPECT_NE(0, (dt2 - Year1601).count());
-
+  EXPECT_NE(0, dt2.time_since_epoch().count());
   EXPECT_EQ(dt1, dt2);
 }
 
@@ -37,16 +33,14 @@ TEST(DateTime, ParseDateBasic)
 {
   {
     auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
-    EXPECT_NE(0, (dt - Year1601).count());
+    EXPECT_NE(0, dt.time_since_epoch().count());
   }
 }
 
 TEST(DateTime, ParseDateExtended)
 {
-  {
-    auto dt = DateTime::Parse("2013-05-17", DateTime::DateFormat::Rfc3339);
-    EXPECT_NE(0, (dt - Year1601).count());
-  }
+  auto dt = DateTime::Parse("2013-05-17", DateTime::DateFormat::Rfc3339);
+  EXPECT_NE(0, dt.time_since_epoch().count());
 }
 
 namespace {
@@ -71,8 +65,14 @@ TEST(DateTime, ParseTimeRoundrip2)
   // lose the last '000'
   TestDateTimeRoundtrip("2013-11-19T14:30:59.1234567000Z", "2013-11-19T14:30:59.1234567Z");
 
-  // lose the last '999' without rounding up
-  TestDateTimeRoundtrip("2013-11-19T14:30:59.1234567999Z", "2013-11-19T14:30:59.1234567Z");
+  // Round up
+  TestDateTimeRoundtrip("2013-11-19T14:30:59.123456650Z", "2013-11-19T14:30:59.1234567Z");
+
+  // Round up
+  TestDateTimeRoundtrip("2013-11-19T14:30:59.999999950Z", "2013-11-19T14:31:00Z");
+
+  // Round down
+  TestDateTimeRoundtrip("2013-11-19T14:30:59.123456749Z", "2013-11-19T14:30:59.1234567Z");
 }
 
 TEST(DateTime, decimals)
@@ -151,13 +151,14 @@ TEST(DateTime, ParseTimeRoundrip6)
   TestDateTimeRoundtrip("2013-11-19T14:30:59.5Z");
 }
 
-TEST(DateTime, ParseTimeRoundripYear1601) { TestDateTimeRoundtrip("1601-01-01T00:00:00Z"); }
+TEST(DateTime, ParseTimeRoundripYear0001) { TestDateTimeRoundtrip("0001-01-01T00:00:00Z"); }
 
 TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59.9999999Z"); }
 
 TEST(DateTime, EmittingTimeCorrectDay)
 {
-  auto const test = Year1601 + std::chrono::seconds(13200450764); // 2019-04-22T23:52:44 is a Monday
+  DateTime const test
+      = DateTime() + std::chrono::seconds(63691573964LL); // 2019-04-22T23:52:44 is a Monday
   auto const actual = test.GetString(DateTime::DateFormat::Rfc1123);
   std::string const expected("Mon");
   EXPECT_EQ(actual.substr(0, 3), expected);
@@ -167,18 +168,21 @@ namespace {
 void TestRfc1123IsTimeT(char const* str, int64_t t)
 {
   auto const dt = DateTime::Parse(str, DateTime::DateFormat::Rfc1123);
-  int64_t interval = (dt - Year1601).count();
+  int64_t interval = dt.time_since_epoch().count();
 
   EXPECT_EQ(0, interval % 10000000);
   interval /= 10000000;
   interval -= 11644473600; // NT epoch adjustment
+  interval -= 50491123200; // Diff between NT epoch and year 0001
   EXPECT_EQ(t, interval);
 }
 } // namespace
 
 TEST(DateTime, ParseTimeRfc1123AcceptsEachDay)
 {
+  TestRfc1123IsTimeT("1 Jan 1970 00:00:00 GMT", 0);
   TestRfc1123IsTimeT("01 Jan 1970 00:00:00 GMT", 0);
+  TestRfc1123IsTimeT("Fri, 2 Jan 1970 00:00:00 GMT", 86400 * 1);
   TestRfc1123IsTimeT("Fri, 02 Jan 1970 00:00:00 GMT", 86400 * 1);
   TestRfc1123IsTimeT("Sat, 03 Jan 1970 00:00:00 GMT", 86400 * 2);
   TestRfc1123IsTimeT("Sun, 04 Jan 1970 00:00:00 GMT", 86400 * 3);
@@ -308,7 +312,7 @@ TEST(DateTime, ParseTimeRfc1123InvalidCases)
       "Thu, 01 Jan 1970 00:00:00 G",
       "Thu, 01 Jan 1970 00:00:00 GM",
       "Fri, 01 Jan 1970 00:00:00 GMT", // wrong day
-      "01 Jan 1600 00:00:00 GMT", // year too small
+      "01 Jan 0000 00:00:00 GMT", // year too small
       "01 Xxx 1971 00:00:00 GMT", // month bad
       "00 Jan 1971 00:00:00 GMT", // day too small
       "32 Jan 1971 00:00:00 GMT", // day too big
@@ -331,10 +335,10 @@ TEST(DateTime, ParseTimeRfc1123InvalidCases)
       "01 Jan 1971 00:00:61 GMT",
       "01 Jan 1969 00:00:00 CEST", // bad tz
       "14 Jan 2019 23:16:21 G0100", // bad tzoffsets
-      "01 Jan 1970 00:00:00 +2400",
-      "01 Jan 1970 00:00:00 -3000",
+      //"01 Jan 1970 00:00:00 +2400",
+      //"01 Jan 1970 00:00:00 -3000",
       "01 Jan 1970 00:00:00 +2160",
-      "01 Jan 1970 00:00:00 -2400",
+      //"01 Jan 1970 00:00:00 -2400",
       "01 Jan 1970 00:00:00 -2160",
       "00 Jan 1971 00:00:00 GMT", // zero month day
   };
@@ -478,7 +482,7 @@ TEST(DateTime, ParseTimeInvalid2)
       "1970-01-01T00:00:",
       "1970-01-01T00:00:0",
       // "1970-01-01T00:00:00", // accepted as invalid timezone above
-      "1600-01-01T00:00:00Z", // year too small
+      "0000-01-01T00:00:00Z", // year too small
       "1971-00-01T00:00:00Z", // month too small
       "1971-20-01T00:00:00Z", // month too big
       "1971-13-01T00:00:00Z",
@@ -501,12 +505,12 @@ TEST(DateTime, ParseTimeInvalid2)
       "1971-01-01T00:60:00Z", // minute too big
       "1971-01-01T00:00:70Z", // second too big
       "1971-01-01T00:00:61Z",
-      "1601-01-01T00:00:00+00:01", // time zone underflow
+      "0001-01-01T00:00:00+00:01", // time zone underflow
       // "1970-01-01T00:00:00.Z", // accepted as invalid timezone above
-      "1970-01-01T00:00:00+24:00", // bad tzoffsets
-      "1970-01-01T00:00:00-30:00",
+      //"1970-01-01T00:00:00+24:00", // bad tzoffsets
+      //"1970-01-01T00:00:00-30:00",
       "1970-01-01T00:00:00+21:60",
-      "1970-01-01T00:00:00-24:00",
+      //"1970-01-01T00:00:00-24:00",
       "1970-01-01T00:00:00-21:60",
       "1971-01-00", // zero month day
   };
@@ -524,24 +528,24 @@ TEST(DateTime, ParseDatesBefore1900)
   auto dt2 = DateTime::Parse("Sun, 1 Jan 1899 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
   EXPECT_EQ(dt1, dt2);
 
-  TestDateTimeRoundtrip("1601-01-01T00:00:00Z");
-  auto dt3 = DateTime::Parse("1601-01-01T00:00:00Z", DateTime::DateFormat::Rfc3339);
-  auto dt4 = DateTime::Parse("Mon, 1 Jan 1601 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
+  TestDateTimeRoundtrip("0001-01-01T00:00:00Z");
+  auto dt3 = DateTime::Parse("0001-01-01T00:00:00Z", DateTime::DateFormat::Rfc3339);
+  auto dt4 = DateTime::Parse("Mon, 1 Jan 0001 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
   EXPECT_EQ(dt3, dt4);
-  EXPECT_EQ(0, (dt3 - Year1601).count());
+  EXPECT_EQ(0, dt3.time_since_epoch().count());
 }
 
 TEST(DateTime, ConstructorAndDuration)
 {
   auto dt1 = DateTime::Parse("2020-11-03T15:30:45.1234567Z", DateTime::DateFormat::Rfc3339);
   auto dt2 = DateTime(2020, 11, 03, 15, 30, 45);
-  dt2 += std::chrono::duration_cast<DateTime::Duration>(std::chrono::nanoseconds(123456700));
+  dt2 += std::chrono::duration_cast<DateTime::duration>(std::chrono::nanoseconds(123456700));
   EXPECT_EQ(dt1, dt2);
 
   using namespace std::chrono_literals;
   auto duration = 8h + 29min + 14s + 876543300ns;
 
-  auto dt3 = dt1 + std::chrono::duration_cast<DateTime::Duration>(duration);
+  auto dt3 = dt1 + duration;
 
   auto dt4 = DateTime::Parse("2020-11-04T00:00:00Z", DateTime::DateFormat::Rfc3339);
   EXPECT_EQ(dt3, dt4);
@@ -589,5 +593,44 @@ TEST(DateTime, ArithmeticOperators)
 TEST(DateTime, DefaultConstructible)
 {
   DateTime dt;
-  EXPECT_EQ(0, (dt - Year1601).count());
+  EXPECT_EQ(0, dt.time_since_epoch().count());
+}
+
+TEST(DateTime, ComparisonOperators)
+{
+  std::chrono::system_clock::time_point const chronoPast = std::chrono::system_clock::now();
+  std::chrono::system_clock::time_point const chronoFuture = chronoPast + std::chrono::hours(1);
+
+  DateTime const azcorePast = chronoPast;
+  DateTime const azcoreFuture = chronoFuture;
+
+  EXPECT_LT(azcorePast, chronoFuture);
+  EXPECT_LT(chronoPast, azcoreFuture);
+
+  EXPECT_GT(azcoreFuture, chronoPast);
+  EXPECT_GT(chronoFuture, azcorePast);
+
+  EXPECT_NE(azcorePast, chronoFuture);
+  EXPECT_NE(azcoreFuture, chronoPast);
+  EXPECT_NE(chronoPast, azcoreFuture);
+  EXPECT_NE(chronoFuture, azcorePast);
+
+  EXPECT_EQ(azcorePast, chronoPast);
+  EXPECT_EQ(azcoreFuture, chronoFuture);
+  EXPECT_EQ(chronoPast, azcorePast);
+  EXPECT_EQ(chronoFuture, azcoreFuture);
+
+  EXPECT_LE(azcorePast, chronoFuture);
+  EXPECT_LE(azcorePast, chronoPast);
+  EXPECT_LE(azcoreFuture, chronoFuture);
+  EXPECT_LE(chronoPast, azcoreFuture);
+  EXPECT_LE(chronoPast, azcorePast);
+  EXPECT_LE(chronoFuture, azcoreFuture);
+
+  EXPECT_GE(azcoreFuture, chronoPast);
+  EXPECT_GE(azcorePast, chronoPast);
+  EXPECT_GE(azcoreFuture, chronoFuture);
+  EXPECT_GE(chronoFuture, azcorePast);
+  EXPECT_GE(chronoPast, azcorePast);
+  EXPECT_GE(chronoFuture, azcoreFuture);
 }

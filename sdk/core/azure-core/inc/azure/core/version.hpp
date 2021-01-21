@@ -13,9 +13,9 @@
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
-#define AZURE_CORE_VERSION_PRERELEASE "beta.4"
+#define AZURE_CORE_VERSION_PRERELEASE "beta.5"
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace Details {
 
   /**
    * @brief Provides version information.
@@ -46,7 +46,7 @@ namespace Azure { namespace Core {
     static constexpr const char* secret = AZURE_CORE_VERSION_PRERELEASE;
   };
 
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::Details
 
 #undef AZURE_CORE_VERSION_MAJOR
 #undef AZURE_CORE_VERSION_MINOR

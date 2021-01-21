@@ -13,9 +13,9 @@
 #define AZURE_IDENTITY_VERSION_MAJOR 1
 #define AZURE_IDENTITY_VERSION_MINOR 0
 #define AZURE_IDENTITY_VERSION_PATCH 0
-#define AZURE_IDENTITY_VERSION_PRERELEASE "beta.2"
+#define AZURE_IDENTITY_VERSION_PRERELEASE "beta.3"
 
-namespace Azure { namespace Identity {
+namespace Azure { namespace Identity { namespace Details {
 
   /**
    * @brief Provides version information.
@@ -46,7 +46,7 @@ namespace Azure { namespace Identity {
     static constexpr char const* secret = AZURE_IDENTITY_VERSION_PRERELEASE;
   };
 
-}} // namespace Azure::Identity
+}}} // namespace Azure::Identity::Details
 
 #undef AZURE_IDENTITY_VERSION_MAJOR
 #undef AZURE_IDENTITY_VERSION_MINOR
