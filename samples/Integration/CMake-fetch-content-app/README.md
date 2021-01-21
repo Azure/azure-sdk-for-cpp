@@ -6,7 +6,7 @@ This application is an example of integrating the Azure SDK for C++ to your appl
 
 Make sure to install the [Azure SDK for C++ dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#third-party-dependencies) first.
 
-- CMake project.
+- CMake project (min version 3.13).
 - C++ version 14 or greater.
 
 ## Build
