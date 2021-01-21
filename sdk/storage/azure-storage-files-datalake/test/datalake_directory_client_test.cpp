@@ -344,7 +344,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Acls recursive works.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(directoryClient1.SetAccessControl(acls));
+      EXPECT_NO_THROW(directoryClient1.SetAccessControlList(acls));
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
           Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
@@ -386,7 +386,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(
           Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
-              .GetUri(),
+              .GetUrl(),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create());
@@ -408,7 +408,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(directoryClient.Create());
 
       auto anonymousClient
-          = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(directoryClient.GetUri());
+          = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(directoryClient.GetUrl());
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 

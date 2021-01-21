@@ -27,7 +27,7 @@ void FileShareGettingStarted()
     std::cout << e.what() << std::endl;
   }
 
-  ShareFileClient fileClient = shareClient.GetFileClient(fileName);
+  ShareFileClient fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
 
   fileClient.UploadFrom(reinterpret_cast<const uint8_t*>(fileContent.data()), fileContent.size());
 

@@ -9,8 +9,8 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
 
-  std::string GetBlobUriFromUri(const std::string& uri);
-  std::string GetDfsUriFromUri(const std::string& uri);
+  std::string GetBlobUrlFromUrl(const std::string& url);
+  std::string GetDfsUrlFromUrl(const std::string& url);
 
   std::string SerializeMetadata(const Storage::Metadata& dataLakePropertiesMap);
 

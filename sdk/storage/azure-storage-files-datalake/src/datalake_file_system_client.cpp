@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       blobOptions.RetryOptions = options.RetryOptions;
       blobOptions.RetryOptions.SecondaryHostForRetryReads
-          = Details::GetBlobUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+          = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
       return blobOptions;
     }
   } // namespace
@@ -63,9 +63,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
+      : m_dfsUrl(Details::GetDfsUrlFromUrl(fileSystemUri)),
         m_blobContainerClient(
-            Details::GetBlobUriFromUri(fileSystemUri),
+            Details::GetBlobUrlFromUrl(fileSystemUri),
             credential,
             GetBlobContainerClientOptions(options))
   {
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -98,9 +98,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
+      : m_dfsUrl(Details::GetDfsUrlFromUrl(fileSystemUri)),
         m_blobContainerClient(
-            Details::GetBlobUriFromUri(fileSystemUri),
+            Details::GetBlobUrlFromUrl(fileSystemUri),
             credential,
             GetBlobContainerClientOptions(options))
   {
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -132,9 +132,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeFileSystemClient::DataLakeFileSystemClient(
       const std::string& fileSystemUri,
       const DataLakeClientOptions& options)
-      : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
+      : m_dfsUrl(Details::GetDfsUrlFromUrl(fileSystemUri)),
         m_blobContainerClient(
-            Details::GetBlobUriFromUri(fileSystemUri),
+            Details::GetBlobUrlFromUrl(fileSystemUri),
             GetBlobContainerClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
     policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
@@ -162,28 +162,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakePathClient DataLakeFileSystemClient::GetPathClient(const std::string& path) const
   {
-    auto builder = m_dfsUri;
+    auto builder = m_dfsUrl;
     builder.AppendPath(Storage::Details::UrlEncodePath(path));
     return DataLakePathClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
-  DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& path) const
+  DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& fileName) const
   {
 
-    auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
-    auto blobClient = m_blobContainerClient.GetBlobClient(path);
+    auto builder = m_dfsUrl;
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
+    auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
     auto blockBlobClient = blobClient.AsBlockBlobClient();
     return DataLakeFileClient(
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
   DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
-      const std::string& path) const
+      const std::string& directoryName) const
   {
-    auto builder = m_dfsUri;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
-    return DataLakeDirectoryClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
+    auto builder = m_dfsUrl;
+    builder.AppendPath(Storage::Details::UrlEncodePath(directoryName));
+    return DataLakeDirectoryClient(
+        builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
   }
 
   Azure::Core::Response<Models::CreateDataLakeFileSystemResult> DataLakeFileSystemClient::Create(
@@ -292,7 +293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::
       ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
   {
-    Details::DataLakeRestClient::FileSystem::ListDataLakePathsOptions protocolLayerOptions;
+    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
@@ -300,7 +301,74 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>
+  DataLakeFileSystemClient::GetAccessPolicy(
+      const GetDataLakeFileSystemAccessPolicyOptions& options) const
+  {
+    Blobs::GetBlobContainerAccessPolicyOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    auto result = m_blobContainerClient.GetAccessPolicy(blobOptions);
+    Models::GetDataLakeFileSystemAccessPolicyResult ret;
+    if (result->AccessType == Blobs::Models::PublicAccessType::BlobContainer)
+    {
+      ret.AccessType = Models::PublicAccessType::FileSystem;
+    }
+    else if (result->AccessType == Blobs::Models::PublicAccessType::Blob)
+    {
+      ret.AccessType = Models::PublicAccessType::Path;
+    }
+    else if (result->AccessType == Blobs::Models::PublicAccessType::Private)
+    {
+      ret.AccessType = Models::PublicAccessType::None;
+    }
+    else
+    {
+      ret.AccessType = Models::PublicAccessType(result->AccessType.Get());
+    }
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    ret.SignedIdentifiers = std::move(result->SignedIdentifiers);
+    return Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>
+  DataLakeFileSystemClient::SetAccessPolicy(
+      const SetDataLakeFileSystemAccessPolicyOptions& options) const
+  {
+    Blobs::SetBlobContainerAccessPolicyOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    blobOptions.SignedIdentifiers = options.SignedIdentifiers;
+    if (options.AccessType == Models::PublicAccessType::FileSystem)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
+    }
+    else if (options.AccessType == Models::PublicAccessType::Path)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
+    }
+    else if (options.AccessType == Models::PublicAccessType::None)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
+    }
+    else
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
+    }
+    auto result = m_blobContainerClient.SetAccessPolicy(blobOptions);
+    Models::SetDataLakeFileSystemAccessPolicyResult ret;
+
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    return Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -26,14 +26,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param fileSystemName The name of a file system.
-     * @param filePath The path of a file within the file system.
+     * @param fileName The name of a file within the file system.
      * @param options Optional parameters used to initialize the client.
      * @return DataLakeFileClient
      */
     static DataLakeFileClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
-        const std::string& filePath,
+        const std::string& fileName,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -68,20 +68,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Gets the file's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the file's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The file's primary uri endpoint.
+     * @return The file's primary url endpoint.
      */
-    std::string GetUri() const { return m_blockBlobClient.GetUrl(); }
-
-    /**
-     * @brief Gets the file's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The file's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blockBlobClient.GetUrl(); }
 
     /**
      * @brief Uploads data to be appended to a file. Data can only be appended to a file.
@@ -95,14 +87,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to append data to the resource the path points to.
-     * @return Azure::Core::Response<Models::AppendDataLakeFileDataResult> containing the
+     * @return Azure::Core::Response<Models::AppendDataLakeFileResult> containing the
      * information returned when appending some data to the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::AppendDataLakeFileDataResult> AppendData(
+    Azure::Core::Response<Models::AppendDataLakeFileResult> Append(
         Azure::Core::Http::BodyStream* content,
         int64_t offset,
-        const AppendDataLakeFileDataOptions& options = AppendDataLakeFileDataOptions()) const;
+        const AppendDataLakeFileOptions& options = AppendDataLakeFileOptions()) const;
 
     /**
      * @brief Flushes previous uploaded data to a file.
@@ -115,13 +107,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to flush data to the resource the path points to.
-     * @return Azure::Core::Response<Models::FlushDataLakeFileDataResult> containing the information
+     * @return Azure::Core::Response<Models::FlushDataLakeFileResult> containing the information
      * returned when flushing the data appended to the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::FlushDataLakeFileDataResult> FlushData(
+    Azure::Core::Response<Models::FlushDataLakeFileResult> Flush(
         int64_t endingOffset,
-        const FlushDataLakeFileDataOptions& options = FlushDataLakeFileDataOptions()) const;
+        const FlushDataLakeFileOptions& options = FlushDataLakeFileOptions()) const;
 
     /**
      * @brief Create a file. By default, the destination is overwritten and
@@ -268,11 +260,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::BlockBlobClient m_blockBlobClient;
 
     explicit DataLakeFileClient(
-        Azure::Core::Http::Url dfsUri,
+        Azure::Core::Http::Url dfsUrl,
         Blobs::BlobClient blobClient,
         Blobs::BlockBlobClient blockBlobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(dfsUri), std::move(blobClient), pipeline),
+        : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline),
           m_blockBlobClient(std::move(blockBlobClient))
     {
     }

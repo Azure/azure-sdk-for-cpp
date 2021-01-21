@@ -1,5 +1,11 @@
 # Release History
 
+## 12.0.0-beta.7 (Unreleased)
+
+### Breaking Changes
+
+- `AccountSasResource::BlobContainer` was renamed to `AccountSasResource::Container`.
+
 ## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features

@@ -214,6 +214,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<Models::FileSystem> Filesystems;
     };
 
+    class PublicAccessType {
+    public:
+      PublicAccessType() = default;
+      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PublicAccessType FileSystem;
+      const static PublicAccessType Path;
+      const static PublicAccessType None;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PublicAccessType
+
     // The value must be "account" for all account operations.
     class AccountResourceType {
     public:
@@ -760,7 +776,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return DeleteParseResult(context, pipeline.Send(context, request));
         }
 
-        struct ListDataLakePathsOptions
+        struct ListPathsOptions
         {
           Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
@@ -777,7 +793,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
-            const ListDataLakePathsOptions& listPathsOptions)
+            const ListPathsOptions& listPathsOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(

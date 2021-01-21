@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
             StandardStorageConnectionString(), m_shareName));
     m_shareClient->Create();
     m_fileShareDirectoryClient = std::make_shared<Files::Shares::ShareDirectoryClient>(
-        m_shareClient->GetDirectoryClient(m_directoryName));
+        m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(m_directoryName));
     m_fileShareDirectoryClient->Create();
   }
 
@@ -57,7 +57,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       options.Prefix = prefix;
     }
-    auto directoryClient = m_shareClient->GetDirectoryClient(directoryPath);
+    auto directoryClient
+        = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryPath);
     do
     {
       auto response = directoryClient.ListFilesAndDirectoriesSinglePage(options);
@@ -81,7 +82,8 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto name = RandomString(10);
-        Files::Shares::ShareDirectoryClient client = m_shareClient->GetDirectoryClient(name);
+        Files::Shares::ShareDirectoryClient client
+            = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(name);
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
@@ -96,7 +98,8 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto name = RandomString(10);
-        Files::Shares::ShareDirectoryClient client = m_shareClient->GetDirectoryClient(name);
+        Files::Shares::ShareDirectoryClient client
+            = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(name);
         EXPECT_NO_THROW(client.Create());
         EXPECT_THROW(client.Create(), StorageException);
       }
@@ -170,8 +173,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create directory with metadata works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+      auto client2
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
       Files::Shares::CreateShareDirectoryOptions options1;
       Files::Shares::CreateShareDirectoryOptions options2;
       options1.Metadata = metadata1;
@@ -194,8 +199,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create directory with permission/permission key works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+      auto client2
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
       Files::Shares::CreateShareDirectoryOptions options1;
       Files::Shares::CreateShareDirectoryOptions options2;
       options1.DirectoryPermission = permission;
@@ -207,7 +214,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto result2 = client2.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result2);
 
-      auto client3 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client3
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
       Files::Shares::CreateShareDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(options3));
@@ -223,8 +231,10 @@ namespace Azure { namespace Storage { namespace Test {
       properties.CreatedOn = std::chrono::system_clock::now();
       properties.LastWrittenOn = std::chrono::system_clock::now();
       properties.PermissionKey = "";
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+      auto client2
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
 
       EXPECT_NO_THROW(client1.Create());
       EXPECT_NO_THROW(client2.Create());
@@ -238,7 +248,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto result2 = client2.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result2);
 
-      auto client3 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client3
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
       Files::Shares::CreateShareDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
@@ -258,8 +269,10 @@ namespace Azure { namespace Storage { namespace Test {
     properties.PermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+      auto client2
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
       Files::Shares::CreateShareDirectoryOptions options1;
       Files::Shares::CreateShareDirectoryOptions options2;
       options1.SmbProperties = properties;
@@ -276,8 +289,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // SetProperties works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+      auto client2
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
 
       EXPECT_NO_THROW(client1.Create());
       EXPECT_NO_THROW(client2.Create());
@@ -300,9 +315,9 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<std::string> directoryNameSetB;
     std::vector<std::string> fileNameSetA;
     std::vector<std::string> fileNameSetB;
-    auto clientA = m_shareClient->GetDirectoryClient(directoryNameA);
+    auto clientA = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
     clientA.Create();
-    auto clientB = m_shareClient->GetDirectoryClient(directoryNameB);
+    auto clientB = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameB);
     clientB.Create();
     for (size_t i = 0; i < 5; ++i)
     {
@@ -399,7 +414,8 @@ namespace Azure { namespace Storage { namespace Test {
       // List max result
       Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
       options.PageSizeHint = 2;
-      auto directoryNameAClient = m_shareClient->GetDirectoryClient(directoryNameA);
+      auto directoryNameAClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
       auto response = directoryNameAClient.ListFilesAndDirectoriesSinglePage(options);
       EXPECT_LE(2U, response->DirectoryItems.size() + response->FileItems.size());
     }
