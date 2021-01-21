@@ -193,7 +193,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
         {
-          newOptions.Range.GetValue().Length = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
+          newOptions.Range.GetValue().Length
+              = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {
@@ -245,8 +246,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
-          firstChunk->ContentRange.GetValue().find('/') + 1));
+      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -375,8 +375,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
-          firstChunk->ContentRange.GetValue().find('/') + 1));
+      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -563,13 +562,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    protocolLayerOptions.SourceLeaseId = options.SourceConditions.LeaseId;
-    protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
-    protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
-    protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
-    protocolLayerOptions.SourceIfTags = options.SourceConditions.TagConditions;
+    protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
     return Details::BlobRestClient::Blob::StartCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
@@ -631,9 +630,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     catch (StorageException& e)
     {
-      if (e.StatusCode == Core::Http::HttpStatusCode::NotFound && e.ErrorCode == "BlobNotFound")
+      if (e.StatusCode == Core::Http::HttpStatusCode::NotFound
+          && (e.ErrorCode == "BlobNotFound" || e.ErrorCode == "ContainerNotFound"))
       {
-        return Azure::Core::Response<Models::DeleteBlobResult>(std::move(e.RawResponse));
+        Models::DeleteBlobResult ret;
+        ret.RequestId = e.RequestId;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteBlobResult>(
+            std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }

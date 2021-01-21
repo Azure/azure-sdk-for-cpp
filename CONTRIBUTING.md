@@ -57,7 +57,7 @@ CMake version 3.13 or higher is required to build these libraries. Download and 
 #### Third Party Dependencies
 - curl
 - libxml2
-- clang-format (min version 9)
+- clang-format (min version 10)
 
 Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
 Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started) to get vcpkg and install the following dependencies:
@@ -165,6 +165,7 @@ ctest -N
 # Use -R to use a regular exp for what to run
 ctest -R Http # runs only Http tests
 ```
+
 #### Generating Code Coverage reports
 `gcov` and `gcovr` must be installed on your system.
 Also, make sure to generate the project with Debug mode. Then, option `-DBUILD_TESTING` must be `ON` and to use a GNU compiler (like gcc).
@@ -182,7 +183,7 @@ make package-name_cov_html # for example `azure-core_cov_html`
 
 Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be `../build/path/sdk/core/azure-core/`.
 
-If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step. 
+If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step.
 
 ### Visual Studio 2019
 You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.

@@ -30,7 +30,6 @@ set(
   AZURE_STORAGE_BLOB_HEADER
     inc/azure/storage/blobs/protocol/blob_rest_client.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
-    inc/azure/storage/blobs/blob_batch_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
     inc/azure/storage/blobs/blob_options.hpp
@@ -46,7 +45,6 @@ set(
 set(
   AZURE_STORAGE_BLOB_SOURCE
     src/append_blob_client.cpp
-    src/blob_batch_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_rest_client.cpp
@@ -84,7 +82,6 @@ if(BUILD_TESTING)
       PRIVATE
         test/append_blob_client_test.cpp
         test/append_blob_client_test.hpp
-        test/blob_batch_client_test.cpp
         test/blob_container_client_test.cpp
         test/blob_container_client_test.hpp
         test/blob_sas_test.cpp

@@ -16,7 +16,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
+  using DownloadDataLakeFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for ServiceClient::ListFilesSystems
+   * @brief Optional parameters for ServiceClient::ListFileSystemsSinglePageOptions
    */
   struct ListFileSystemsSinglePageOptions
   {
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::Create
    */
-  struct CreateFileSystemOptions
+  struct CreateDataLakeFileSystemOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::Delete
    */
-  struct DeleteFileSystemOptions
+  struct DeleteDataLakeFileSystemOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::GetProperties
    */
-  struct GetFileSystemPropertiesOptions
+  struct GetDataLakeFileSystemPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::SetMetadata
    */
-  struct SetFileSystemMetadataOptions
+  struct SetDataLakeFileSystemMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -164,9 +164,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::ListPaths
+   * @brief Optional parameters for FileSystemClient::ListPathsSinglePage
    */
-  struct ListPathsOptions
+  struct ListPathsSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -209,9 +209,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::AppendData
+   * @brief Optional parameters for PathClient::Append
    */
-  struct AppendFileDataOptions
+  struct AppendDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -230,9 +230,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::FlushData
+   * @brief Optional parameters for PathClient::Flush
    */
-  struct FlushFileDataOptions
+  struct FlushDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -283,9 +283,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControl
+   * @brief Optional parameters for PathClient::SetAccessControlList
    */
-  struct SetPathAccessControlOptions
+  struct SetDataLakePathAccessControlListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -303,13 +303,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Group;
 
     /**
-     * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
-     *        access permissions for the file owner, the file owning group, and others.
-     *        Each class may be granted read, write, or execute permission.
-     *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
-     *        notation (e.g. 0766) are supported.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> Permissions;
+    PathAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for PathClient::SetPermissions
+   */
+  struct SetDataLakePathPermissionsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The owner of the path or directory.
+     */
+    Azure::Core::Nullable<std::string> Owner;
+
+    /**
+     * @brief The owning group of the path or directory.
+     */
+    Azure::Core::Nullable<std::string> Group;
 
     /**
      * @brief Specify the access condition for the path.
@@ -320,7 +337,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::SetHttpHeaders
    */
-  struct SetPathHttpHeadersOptions
+  struct SetDataLakePathHttpHeadersOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -336,7 +353,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::SetMetadata
    */
-  struct SetPathMetadataOptions
+  struct SetDataLakePathMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -355,7 +372,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
    */
-  struct CreatePathOptions
+  struct CreateDataLakePathOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -410,7 +427,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
    */
-  struct DeletePathOptions
+  struct DeleteDataLakePathOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -445,7 +462,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/getproperties
    */
-  struct GetPathPropertiesOptions
+  struct GetDataLakePathPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -461,7 +478,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::GetAccessControl
    */
-  struct GetPathAccessControlOptions
+  struct GetDataLakePathAccessControlOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -480,7 +497,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
    */
-  struct ReadFileOptions
+  struct ReadDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -511,7 +528,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileClient::Create
    */
-  struct RenameFileOptions
+  struct RenameDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -545,7 +562,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileClient::Delete
    */
-  struct FileDeleteOptions
+  struct DeleteDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -564,7 +581,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
    */
-  struct RenameDirectoryOptions
+  struct RenameDataLakeDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -607,7 +624,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for DirectoryClient::Delete
    */
-  struct DeleteDirectoryOptions
+  struct DeleteDataLakeDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -632,7 +649,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::SetAccessControlRecursive
    */
-  struct SetDirectoryAccessControlRecursiveOptions
+  struct SetDataLakeDirectoryAccessControlRecursiveOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -666,13 +683,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<bool> ForceFlag;
   };
 
-  using CreateFileOptions = CreatePathOptions;
-  using CreateDirectoryOptions = CreatePathOptions;
+  using CreateDataLakeFileOptions = CreateDataLakePathOptions;
+  using CreateDataLakeDirectoryOptions = CreateDataLakePathOptions;
 
   /**
    * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
    */
-  struct UploadFileFromOptions
+  struct UploadDataLakeFileFromOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -700,12 +717,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     int Concurrency = 5;
   };
 
-  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
+  using ScheduleDataLakeFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
 
   /**
    * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
    */
-  struct ScheduleFileDeletionOptions
+  struct ScheduleDataLakeFileDeletionOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -726,10 +743,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ExpiresOn;
   };
 
-  using AcquirePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;
-  using BreakPathLeaseOptions = Blobs::BreakBlobLeaseOptions;
-  using RenewPathLeaseOptions = Blobs::RenewBlobLeaseOptions;
-  using ReleasePathLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
-  using ChangePathLeaseOptions = Blobs::ChangeBlobLeaseOptions;
+  using AcquireDataLakePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;
+  using BreakDataLakePathLeaseOptions = Blobs::BreakBlobLeaseOptions;
+  using RenewDataLakePathLeaseOptions = Blobs::RenewBlobLeaseOptions;
+  using ReleaseDataLakePathLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
+  using ChangeDataLakePathLeaseOptions = Blobs::ChangeBlobLeaseOptions;
 
 }}}} // namespace Azure::Storage::Files::DataLake

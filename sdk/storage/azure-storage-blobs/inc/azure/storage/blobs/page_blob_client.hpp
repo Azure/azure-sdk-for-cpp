@@ -125,8 +125,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobContentLength Specifies the maximum size for the page blob. The size must be
      * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
-     * @return A CreatePageBlobResult describing the newly created page blob. Null if the blob
-     * already exists.
+     * @return A CreatePageBlobResult describing the newly created page blob.
+     * CreatePageBlobResult.Created is false if the blob already exists.
      */
     Azure::Core::Response<Models::CreatePageBlobResult> CreateIfNotExists(
         int64_t blobContentLength,

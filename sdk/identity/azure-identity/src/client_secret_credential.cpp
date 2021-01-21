@@ -5,6 +5,7 @@
 
 #include <azure/core/http/pipeline.hpp>
 
+#include <chrono>
 #include <iomanip>
 #include <sstream>
 
@@ -180,7 +181,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
 
     return {
         std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        DateTime::Now()
+        std::chrono::system_clock::now()
             + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds),
     };
   }

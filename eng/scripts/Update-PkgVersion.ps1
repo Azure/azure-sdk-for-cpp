@@ -40,7 +40,7 @@ function Update-Version(
     [AzureEngSemanticVersion]$SemVer,
     $VersionHppLocation,
     $Unreleased=$True,
-    $ReplaceVersion=$False)
+    $ReplaceLatestEntryTitle=$False)
 {
     Write-Verbose "New Version: $SemVer"
     if ($SemVer.HasValidPrereleaseLabel() -ne $true){
@@ -57,15 +57,15 @@ function Update-Version(
         $newContent = $versionHppContent -replace $VersionRegex, "`${1}$($SemVer.Major)`${2}$($SemVer.Minor)`${3}$($SemVer.Patch)`${4}`"`""
     }
 
-    $newContent | Set-Content $VersionHppLocation
+    $newContent | Set-Content $VersionHppLocation -NoNewline
 
     # Set Version in ChangeLog file
-    $ChangelogPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageName "CHANGELOG.md"
-    & "${RepoRoot}/eng/common/Update-Change-Log.ps1" `
+    & "${RepoRoot}/eng/common/scripts/Update-ChangeLog.ps1" `
         -Version $SemVer.ToString() `
-        -ChangeLogPath $ChangelogPath `
+        -ServiceDirectory $ServiceDirectory `
+        -PackageName $PackageName `
         -Unreleased $Unreleased `
-        -ReplaceVersion $ReplaceVersion
+        -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
 }
 
 $versionHppLocation = Get-VersionHppLocaiton `
@@ -94,6 +94,6 @@ else
         -SemVer $SemVer `
         -VersionHppLocation $versionHppLocation `
         -Unreleased $False `
-        -ReplaceVersion $True
+        -ReplaceLatestEntryTitle $True
 }
 

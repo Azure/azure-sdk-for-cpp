@@ -179,13 +179,47 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& tagFilterSqlExpression,
         const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions()) const;
 
-  protected:
+    /**
+     * @brief Creates a new blob container under the specified account. If the container with the
+     * same name already exists, the operation fails.
+     *
+     * @param blobContainerName The name of the container to create.
+     * @param options Optional parameters to execute this function.
+     * @return A BlobContainerClient referencing the newly created container.
+     */
+    Azure::Core::Response<BlobContainerClient> CreateBlobContainer(
+        const std::string& blobContainerName,
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
+
+    /**
+     * @brief Marks the specified blob container for deletion. The container and any blobs
+     * contained within it are later deleted during garbage collection.
+     *
+     * @param blobContainerName The name of the container to delete.
+     * @param options Optional parameters to execute this function.
+     * @return Nothing.
+     */
+    Azure::Core::Response<void> DeleteBlobContainer(
+        const std::string& blobContainerName,
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
+
+    /**
+     * @brief Restores a previously deleted container.
+     *
+     * @param deletedBlobContainerName The name of the previously deleted container.
+     * @param deletedBlobContainerVersion The version of the previously deleted container.
+     * @param options Optional parameters to execute this function.
+     * @return A BlobContainerClient referencing the undeleted container.
+     */
+    Azure::Core::Response<BlobContainerClient> UndeleteBlobContainer(
+        const std::string deletedBlobContainerName,
+        const std::string deletedBlobContainerVersion,
+        const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions()) const;
+
+  private:
     Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
-
-  private:
-    friend class BlobBatchClient;
   };
 }}} // namespace Azure::Storage::Blobs

@@ -18,7 +18,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  class FileSystemClient;
+  class DataLakeFileSystemClient;
 
   class DataLakeServiceClient {
   public:
@@ -68,29 +68,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileSystemName The name of the file system.
      * @return FileSystemClient
      */
-    FileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
+    DataLakeFileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
 
     /**
-     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the datalake service's primary url endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The datalake service's primary uri endpoint.
+     * @return The datalake service's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobServiceClient.GetUrl(); }
-
-    /**
-     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for dfs
-     * endpoint only operations
-     *
-     * @return The datalake service's primary uri endpoint.
-     */
-    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blobServiceClient.GetUrl(); }
 
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return Azure::Core::Response<Models::ListFileSystemsSinglePageResult> containing the listed
-     * result of file systems and continuation token for unfinished list result.
+     * @return Azure::Core::Response<Models::ListFileSystemsSinglePageResult> containing the
+     * listed result of file systems and continuation token for unfinished list result.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::ListFileSystemsSinglePageResult> ListFileSystemsSinglePage(
@@ -119,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    Azure::Core::Http::Url m_dfsUri;
+    Azure::Core::Http::Url m_dfsUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };

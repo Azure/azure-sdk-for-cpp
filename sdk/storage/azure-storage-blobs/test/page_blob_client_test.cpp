@@ -49,6 +49,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContentInfo = pageBlobClient.Create(0, m_blobUploadOptions);
+    EXPECT_FALSE(blobContentInfo->RequestId.empty());
     EXPECT_FALSE(blobContentInfo->ETag.empty());
     EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
@@ -98,6 +99,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(downloadContent->BodyStream), blobContent);
 
     auto pageRanges = *pageBlobClient.GetPageRanges();
+    EXPECT_FALSE(pageRanges.RequestId.empty());
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 3_KB);
@@ -147,6 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     sourceUri.AppendQueryParameters(GetSas());
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
+    EXPECT_FALSE(copyInfo->RequestId.empty());
     EXPECT_FALSE(copyInfo->ETag.empty());
     EXPECT_TRUE(IsValidTime(copyInfo->LastModified));
     EXPECT_FALSE(copyInfo->CopyId.empty());
@@ -160,6 +163,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId1 = CreateUniqueLeaseId();
     int32_t leaseDuration = 20;
     auto aLease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.RequestId.empty());
     EXPECT_FALSE(aLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
@@ -174,6 +178,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_pageBlobClient->RenewLease(leaseId1);
+    EXPECT_FALSE(rLease.RequestId.empty());
     EXPECT_FALSE(rLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(rLease.LastModified));
     EXPECT_EQ(rLease.LeaseId, leaseId1);
@@ -181,11 +186,13 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     auto cLease = *m_pageBlobClient->ChangeLease(leaseId1, leaseId2);
+    EXPECT_FALSE(cLease.RequestId.empty());
     EXPECT_FALSE(cLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     auto blobInfo = *m_pageBlobClient->ReleaseLease(leaseId2);
+    EXPECT_FALSE(blobInfo.RequestId.empty());
     EXPECT_FALSE(blobInfo.ETag.empty());
     EXPECT_TRUE(IsValidTime(blobInfo.LastModified));
 
@@ -227,7 +234,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    hash.Value = Base64Decode(DummyMd5);
+    hash.Value = Azure::Core::Base64Decode(DummyMd5);
     options.TransactionalContentHash = hash;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
@@ -251,7 +258,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    hash.Value = Base64Decode(DummyCrc64);
+    hash.Value = Azure::Core::Base64Decode(DummyCrc64);
     options.TransactionalContentHash = hash;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
@@ -264,7 +271,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(m_blobContent.size()), StorageException);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_FALSE(response->RequestId.empty());
+      EXPECT_TRUE(response->Created);
     }
 
     auto blobContent
@@ -272,7 +280,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.UploadPages(0, &blobContent);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->Created);
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(

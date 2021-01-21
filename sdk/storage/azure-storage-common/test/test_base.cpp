@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -19,8 +20,8 @@
 #include <string>
 
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/platform.hpp>
-#include <azure/core/strings.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -165,7 +166,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string LowercaseRandomString(size_t size)
   {
-    return Azure::Core::Strings::ToLower(RandomString(size));
+    return Azure::Core::Internal::Strings::ToLower(RandomString(size));
   }
 
   Storage::Metadata RandomMetadata(size_t size)
@@ -249,8 +250,8 @@ namespace Azure { namespace Storage { namespace Test {
   bool IsValidTime(const Azure::Core::DateTime& datetime)
   {
     // We assume datetime within a week is valid.
-    const auto minTime = Azure::Core::DateTime::Now() - std::chrono::hours(24 * 7);
-    const auto maxTime = Azure::Core::DateTime::Now() + std::chrono::hours(24 * 7);
+    const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
+    const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
     return datetime > minTime && datetime < maxTime;
   }
 

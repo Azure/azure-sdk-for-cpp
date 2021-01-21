@@ -119,8 +119,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * exists.
      *
      * @param options Optional parameters to execute this function.
-     * @return A CreateAppendBlobResult describing the newly created append blob. Null if the blob
-     * already exists.
+     * @return A CreateAppendBlobResult describing the newly created append blob.
+     * CreateAppendBlobResult.Created is false if the blob already exists.
      */
     Azure::Core::Response<Models::CreateAppendBlobResult> CreateIfNotExists(
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;

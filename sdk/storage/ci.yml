@@ -43,9 +43,13 @@ stages:
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common
+          VcpkgPortName: azure-storage-common-cpp
         - Name: azure-storage-blobs
           Path: azure-storage-blobs
+          VcpkgPortName: azure-storage-blobs-cpp
         - Name: azure-storage-files-datalake
           Path: azure-storage-files-datalake
+          VcpkgPortName: azure-storage-files-datalake-cpp
         - Name: azure-storage-files-shares
           Path: azure-storage-files-shares
+          VcpkgPortName: azure-storage-files-shares-cpp

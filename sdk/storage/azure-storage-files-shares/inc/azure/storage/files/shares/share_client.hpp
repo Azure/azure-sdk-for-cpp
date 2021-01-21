@@ -57,11 +57,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the share's primary uri endpoint.
+     * @brief Gets the share's primary url endpoint.
      *
-     * @return The share's primary uri endpoint.
+     * @return The share's primary url endpoint.
      */
-    std::string GetUri() const { return m_shareUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_shareUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the ShareClient class with an identical uri
@@ -78,23 +78,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * ShareClient
      * @return ShareDirectoryClient The root directory of the share.
      */
-    ShareDirectoryClient GetRootShareDirectoryClient() const;
-
-    /**
-     * @brief Create a ShareDirectoryClient from current ShareClient
-     * @param directoryPath The path of the directory.
-     * @return ShareDirectoryClient A directory client that can be used to manage a share directory
-     * resource.
-     */
-    ShareDirectoryClient GetShareDirectoryClient(const std::string& directoryPath) const;
-
-    /**
-     * @brief Create a ShareFileClient from current ShareClient
-     * @param filePath The path of the file.
-     * @return ShareFileClient A file client that can be used to manage a share file
-     * resource.
-     */
-    ShareFileClient GetShareFileClient(const std::string& filePath) const;
+    ShareDirectoryClient GetRootDirectoryClient() const;
 
     /**
      * @brief Creates the file share.
@@ -106,12 +90,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateShareOptions& options = CreateShareOptions()) const;
 
     /**
+     * @brief Creates the file share if it does not exist, nothing will happen if the file share
+     * already exists.
+     * @param options Optional parameters to create this file share.
+     * @return Azure::Core::Response<Models::CreateShareResult> containing the information including
+     * the version and modified time of a share if it is successfully created.
+     */
+    Azure::Core::Response<Models::CreateShareResult> CreateIfNotExists(
+        const CreateShareOptions& options = CreateShareOptions()) const;
+
+    /**
      * @brief Deletes the file share.
      * @param options Optional parameters to delete this file share.
      * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
      * future usage.
      */
     Azure::Core::Response<Models::DeleteShareResult> Delete(
+        const DeleteShareOptions& options = DeleteShareOptions()) const;
+
+    /**
+     * @brief Deletes the file share if it exists.
+     * @param options Optional parameters to delete this file share.
+     * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * future usage.
+     */
+    Azure::Core::Response<Models::DeleteShareResult> DeleteIfExists(
         const DeleteShareOptions& options = DeleteShareOptions()) const;
 
     /**
@@ -217,13 +220,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = ListFilesAndDirectoriesSinglePageOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_shareUri;
+    Azure::Core::Http::Url m_shareUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareClient(
         Azure::Core::Http::Url shareUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareUri(std::move(shareUri)), m_pipeline(std::move(pipeline))
+        : m_shareUrl(std::move(shareUri)), m_pipeline(std::move(pipeline))
     {
     }
     friend class ShareServiceClient;

@@ -19,12 +19,15 @@ namespace Azure { namespace Storage {
     ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm)
     {
       ContentHash hash;
-      hash.Value = Base64Decode(base64String);
+      hash.Value = Azure::Core::Base64Decode(base64String);
       hash.Algorithm = algorithm;
       return hash;
     }
 
-    std::string ToBase64String(const ContentHash& hash) { return Base64Encode(hash.Value); }
+    std::string ToBase64String(const ContentHash& hash)
+    {
+      return Azure::Core::Base64Encode(hash.Value);
+    }
   } // namespace Details
 
 }} // namespace Azure::Storage

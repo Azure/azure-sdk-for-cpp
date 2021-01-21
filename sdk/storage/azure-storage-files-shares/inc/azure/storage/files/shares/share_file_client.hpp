@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     static ShareFileClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
-        const std::string& filePath,
+        const std::string& fileName,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -57,11 +57,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the file's primary uri endpoint.
+     * @brief Gets the file's primary url endpoint.
      *
-     * @return The file's primary uri endpoint.
+     * @return The file's primary url endpoint.
      */
-    std::string GetUri() const { return m_shareFileUri.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_shareFileUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the ShareFileClient class with an identical uri
@@ -78,31 +78,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates the file.
      * @param fileSize Size of the file in bytes.
      * @param options Optional parameters to create this file.
-     * @return Azure::Core::Response<CreateFileResult> containing the information returned when
+     * @return Azure::Core::Response<CreateShareFileResult> containing the information returned when
      * creating the file.
      */
-    Azure::Core::Response<Models::CreateFileResult> Create(
+    Azure::Core::Response<Models::CreateShareFileResult> Create(
         int64_t fileSize,
-        const CreateFileOptions& options = CreateFileOptions()) const;
+        const CreateShareFileOptions& options = CreateShareFileOptions()) const;
 
     /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete this file.
-     * @return Azure::Core::Response<DeleteFileResult> containing the information returned when
+     * @return Azure::Core::Response<DeleteShareFileResult> containing the information returned when
      * deleting the file.
      */
-    Azure::Core::Response<Models::DeleteFileResult> Delete(
-        const DeleteFileOptions& options = DeleteFileOptions()) const;
+    Azure::Core::Response<Models::DeleteShareFileResult> Delete(
+        const DeleteShareFileOptions& options = DeleteShareFileOptions()) const;
+
+    /**
+     * @brief Deletes the file if it exists.
+     * @param options Optional parameters to delete this file.
+     * @return Azure::Core::Response<DeleteShareFileResult> containing the information returned when
+     * deleting the file. Only valid when successfully deleted.
+     */
+    Azure::Core::Response<Models::DeleteShareFileResult> DeleteIfExists(
+        const DeleteShareFileOptions& options = DeleteShareFileOptions()) const;
 
     /**
      * @brief Open a stream for the file's content, or a range of the file's content that can be
      * used to download the server end data.
      * @param options Optional parameters to get the content of this file.
-     * @return Azure::Core::Response<Models::DownloadFileResult> containing the range or full
+     * @return Azure::Core::Response<Models::DownloadShareFileResult> containing the range or full
      * content and the information of the file.
      */
-    Azure::Core::Response<Models::DownloadFileResult> Download(
-        const DownloadFileOptions& options = DownloadFileOptions()) const;
+    Azure::Core::Response<Models::DownloadShareFileResult> Download(
+        const DownloadShareFileOptions& options = DownloadShareFileOptions()) const;
 
     /**
      * @brief Downloads a file or a file range from the service to a memory buffer using parallel
@@ -112,13 +121,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the file
      * or file range.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::DownloadFileToResult> containing the information of the
-     * downloaded file/file range.
+     * @return Azure::Core::Response<Models::DownloadShareFileToResult> containing the information
+     * of the downloaded file/file range.
      */
-    Azure::Core::Response<Models::DownloadFileToResult> DownloadTo(
+    Azure::Core::Response<Models::DownloadShareFileToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const DownloadFileToOptions& options = DownloadFileToOptions()) const;
+        const DownloadShareFileToOptions& options = DownloadShareFileToOptions()) const;
 
     /**
      * @brief Downloads a file or a file range from the service to a memory buffer using parallel
@@ -126,12 +135,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::DownloadFileToResult> containing the information of the
-     * downloaded file/file range.
+     * @return Azure::Core::Response<Models::DownloadShareFileToResult> containing the information
+     * of the downloaded file/file range.
      */
-    Azure::Core::Response<Models::DownloadFileToResult> DownloadTo(
+    Azure::Core::Response<Models::DownloadShareFileToResult> DownloadTo(
         const std::string& fileName,
-        const DownloadFileToOptions& options = DownloadFileToOptions()) const;
+        const DownloadShareFileToOptions& options = DownloadShareFileToOptions()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
@@ -140,13 +149,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::UploadFileFromResult> describing the state of the
+     * @return Azure::Core::Response<Models::UploadShareFileFromResult> describing the state of the
      * updated file.
      */
-    Azure::Core::Response<Models::UploadFileFromResult> UploadFrom(
+    Azure::Core::Response<Models::UploadShareFileFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const UploadFileFromOptions& options = UploadFileFromOptions()) const;
+        const UploadShareFileFromOptions& options = UploadShareFileFromOptions()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
@@ -154,12 +163,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::UploadFileFromResult> describing the state of the
+     * @return Azure::Core::Response<Models::UploadShareFileFromResult> describing the state of the
      * updated file.
      */
-    Azure::Core::Response<Models::UploadFileFromResult> UploadFrom(
+    Azure::Core::Response<Models::UploadShareFileFromResult> UploadFrom(
         const std::string& fileName,
-        const UploadFileFromOptions& options = UploadFileFromOptions()) const;
+        const UploadShareFileFromOptions& options = UploadShareFileFromOptions()) const;
 
     /**
      * @brief Starts copy the file specified from source URI to the file this client points to.
@@ -171,58 +180,58 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * public file, no authentication is required to perform the copy operation. A file in a share
      * snapshot can also be specified as a copy source.
      * @param options Optional parameters to copy the content of this file.
-     * @return Azure::Core::Response<Models::StartCopyFileResult> containing the copy related
+     * @return Azure::Core::Response<Models::StartCopyShareFileResult> containing the copy related
      * information.
      */
-    Azure::Core::Response<Models::StartCopyFileResult> StartCopy(
+    Azure::Core::Response<Models::StartCopyShareFileResult> StartCopy(
         std::string copySource,
-        const StartCopyFileOptions& options = StartCopyFileOptions()) const;
+        const StartCopyShareFileOptions& options = StartCopyShareFileOptions()) const;
 
     /**
      * @brief Aborts copying the file specified with the copy ID.
-     * @param copyId The copy identifier provided in the StartCopyFileResult of the original
+     * @param copyId The copy identifier provided in the StartCopyShareFileResult of the original
      * StartCopy operation.
      * @param options Optional parameters to abort copying the content of this file.
-     * @return Azure::Core::Response<Models::AbortCopyFileResult> containing the abort copy related
-     * information, current empty but preserved for future usage.
+     * @return Azure::Core::Response<Models::AbortCopyShareFileResult> containing the abort copy
+     * related information, current empty but preserved for future usage.
      */
-    Azure::Core::Response<Models::AbortCopyFileResult> AbortCopy(
+    Azure::Core::Response<Models::AbortCopyShareFileResult> AbortCopy(
         std::string copyId,
-        const AbortCopyFileOptions& options = AbortCopyFileOptions()) const;
+        const AbortCopyShareFileOptions& options = AbortCopyShareFileOptions()) const;
 
     /**
      * @brief Gets the properties of a file.
      * @param options Optional parameters to get the properties of this file.
-     * @return Azure::Core::Response<Models::GetFilePropertiesResult> containing the file
+     * @return Azure::Core::Response<Models::GetShareFilePropertiesResult> containing the file
      * properties.
      */
-    Azure::Core::Response<Models::GetFilePropertiesResult> GetProperties(
-        const GetFilePropertiesOptions& options = GetFilePropertiesOptions()) const;
+    Azure::Core::Response<Models::GetShareFilePropertiesResult> GetProperties(
+        const GetShareFilePropertiesOptions& options = GetShareFilePropertiesOptions()) const;
 
     /**
      * @brief Sets the properties of the file, or resize a file specifying NewSize in options.
      * @param httpHeaders The Http headers to be set to the file.
      * @param smbProperties The SMB properties to be set to the file.
      * @param options Optional parameters to set this file's properties.
-     * @return Azure::Core::Response<Models::SetFilePropertiesResult> containing the properties of
-     * the file returned from the server.
+     * @return Azure::Core::Response<Models::SetShareFilePropertiesResult> containing the properties
+     * of the file returned from the server.
      */
-    Azure::Core::Response<Models::SetFilePropertiesResult> SetProperties(
+    Azure::Core::Response<Models::SetShareFilePropertiesResult> SetProperties(
         Models::ShareFileHttpHeaders httpHeaders,
         Models::FileShareSmbProperties smbProperties,
-        const SetFilePropertiesOptions& options = SetFilePropertiesOptions()) const;
+        const SetShareFilePropertiesOptions& options = SetShareFilePropertiesOptions()) const;
 
     /**
      * @brief Sets the metadata of the file.
      * @param metadata User-defined metadata to be stored with the file. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set this file's metadata.
-     * @return Azure::Core::Response<Models::SetFileMetadataResult> containing the information of
-     * the file returned from the server.
+     * @return Azure::Core::Response<Models::SetShareFileMetadataResult> containing the information
+     * of the file returned from the server.
      */
-    Azure::Core::Response<Models::SetFileMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetShareFileMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetFileMetadataOptions& options = SetFileMetadataOptions()) const;
+        const SetShareFileMetadataOptions& options = SetShareFileMetadataOptions()) const;
 
     /**
      * @brief Uploads some data to a range of the file.
@@ -231,83 +240,85 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return Azure::Core::Response<Models::UploadFileRange> containing the information of the
      * uploaded range and the file returned from the server.
      */
-    Azure::Core::Response<Models::UploadFileRangeResult> UploadRange(
+    Azure::Core::Response<Models::UploadShareFileRangeResult> UploadRange(
         int64_t offset,
         Azure::Core::Http::BodyStream* content,
-        const UploadFileRangeOptions& options = UploadFileRangeOptions()) const;
+        const UploadShareFileRangeOptions& options = UploadShareFileRangeOptions()) const;
 
     /**
      * @brief Clears some range of data within the file.
      * @param offset Specifies the starting offset for the content to be cleared within the file.
      * @param length Specifies the length for the content to be cleared within the file.
-     * @return Azure::Core::Response<Models::ClearFileRangeResult> containing the information of the
-     * cleared range returned from the server.
+     * @return Azure::Core::Response<Models::ClearShareFileRangeResult> containing the information
+     * of the cleared range returned from the server.
      */
-    Azure::Core::Response<Models::ClearFileRangeResult> ClearRange(
+    Azure::Core::Response<Models::ClearShareFileRangeResult> ClearRange(
         int64_t offset,
         int64_t length,
-        const ClearFileRangeOptions& options = ClearFileRangeOptions()) const;
+        const ClearShareFileRangeOptions& options = ClearShareFileRangeOptions()) const;
 
     /**
      * @brief Gets the list of valid range from the file within specified range.
-     * @return Azure::Core::Response<Models::GetFileRangeListResult> containing the valid ranges
-     * within the file for the specified range.
+     * @return Azure::Core::Response<Models::GetShareFileRangeListResult> containing the valid
+     * ranges within the file for the specified range.
      */
-    Azure::Core::Response<Models::GetFileRangeListResult> GetRangeList(
-        const GetFileRangeListOptions& options = GetFileRangeListOptions()) const;
+    Azure::Core::Response<Models::GetShareFileRangeListResult> GetRangeList(
+        const GetShareFileRangeListOptions& options = GetShareFileRangeListOptions()) const;
 
     /**
      * @brief List open handles on the file.
      * @param options Optional parameters to list this file's open handles.
-     * @return Azure::Core::Response<Models::ListFileHandlesSinglePageResult> containing the
+     * @return Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult> containing the
      * information of the operation and the open handles of this file
      */
-    Azure::Core::Response<Models::ListFileHandlesSinglePageResult> ListHandlesSinglePage(
-        const ListFileHandlesSinglePageOptions& options = ListFileHandlesSinglePageOptions()) const;
+    Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult> ListHandlesSinglePage(
+        const ListShareFileHandlesSinglePageOptions& options
+        = ListShareFileHandlesSinglePageOptions()) const;
 
     /**
      * @brief Closes a handle opened on a file at the service.
      * @param handleId The ID of the handle to be closed.
      * @param options Optional parameters to close one of this file's open handles.
-     * @return Azure::Core::Response<Models::ForceCloseFileHandleResult> containing the information
-     * of the closed handle. Current empty but preserved for future usage.
+     * @return Azure::Core::Response<Models::ForceCloseShareFileHandleResult> containing the
+     * information of the closed handle. Current empty but preserved for future usage.
      */
-    Azure::Core::Response<Models::ForceCloseFileHandleResult> ForceCloseHandle(
+    Azure::Core::Response<Models::ForceCloseShareFileHandleResult> ForceCloseHandle(
         const std::string& handleId,
-        const ForceCloseFileHandleOptions& options = ForceCloseFileHandleOptions()) const;
+        const ForceCloseShareFileHandleOptions& options = ForceCloseShareFileHandleOptions()) const;
 
     /**
      * @brief Closes all handles opened on a file at the service.
      * @param options Optional parameters to close all this file's open handles.
-     * @return Azure::Core::Response<Models::ForceCloseAllFileHandlesResult> containing the
+     * @return Azure::Core::Response<Models::ForceCloseAllShareFileHandlesResult> containing the
      * information of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<Models::ForceCloseAllFileHandlesResult> ForceCloseAllHandles(
-        const ForceCloseAllFileHandlesOptions& options = ForceCloseAllFileHandlesOptions()) const;
+    Azure::Core::Response<Models::ForceCloseAllShareFileHandlesResult> ForceCloseAllHandles(
+        const ForceCloseAllShareFileHandlesOptions& options
+        = ForceCloseAllShareFileHandlesOptions()) const;
 
     /**
      * @brief Acquires an infinite lease on the file.
      *
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::AcquireFileLeaseResult> describing the lease.
+     * @return Azure::Core::Response<Models::AcquireShareFileLeaseResult> describing the lease.
      */
-    Azure::Core::Response<Models::AcquireFileLeaseResult> AcquireLease(
+    Azure::Core::Response<Models::AcquireShareFileLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
-        const AcquireFileLeaseOptions& options = AcquireFileLeaseOptions()) const;
+        const AcquireShareFileLeaseOptions& options = AcquireShareFileLeaseOptions()) const;
 
     /**
      * @brief Releases the file's previously-acquired lease.
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ReleaseFileLeaseResult> describing the updated
+     * @return Azure::Core::Response<Models::ReleaseShareFileLeaseResult> describing the updated
      * container.
      */
-    Azure::Core::Response<Models::ReleaseFileLeaseResult> ReleaseLease(
+    Azure::Core::Response<Models::ReleaseShareFileLeaseResult> ReleaseLease(
         const std::string& leaseId,
-        const ReleaseFileLeaseOptions& options = ReleaseFileLeaseOptions()) const;
+        const ReleaseShareFileLeaseOptions& options = ReleaseShareFileLeaseOptions()) const;
 
     /**
      * @brief Changes the lease of an active lease.
@@ -315,30 +326,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ChangeFileLeaseResult> describing the changed lease.
+     * @return Azure::Core::Response<Models::ChangeShareFileLeaseResult> describing the changed
+     * lease.
      */
-    Azure::Core::Response<Models::ChangeFileLeaseResult> ChangeLease(
+    Azure::Core::Response<Models::ChangeShareFileLeaseResult> ChangeLease(
         const std::string& leaseId,
         const std::string& proposedLeaseId,
-        const ChangeFileLeaseOptions& options = ChangeFileLeaseOptions()) const;
+        const ChangeShareFileLeaseOptions& options = ChangeShareFileLeaseOptions()) const;
 
     /**
      * @brief Breaks the previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::BreakFileLeaseResult> describing the broken lease.
+     * @return Azure::Core::Response<Models::BreakShareFileLeaseResult> describing the broken lease.
      */
-    Azure::Core::Response<Models::BreakFileLeaseResult> BreakLease(
-        const BreakFileLeaseOptions& options = BreakFileLeaseOptions()) const;
+    Azure::Core::Response<Models::BreakShareFileLeaseResult> BreakLease(
+        const BreakShareFileLeaseOptions& options = BreakShareFileLeaseOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_shareFileUri;
+    Azure::Core::Http::Url m_shareFileUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareFileClient(
         Azure::Core::Http::Url shareFileUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareFileUri(std::move(shareFileUri)), m_pipeline(std::move(pipeline))
+        : m_shareFileUrl(std::move(shareFileUri)), m_pipeline(std::move(pipeline))
     {
     }
 

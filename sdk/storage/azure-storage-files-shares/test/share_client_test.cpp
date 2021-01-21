@@ -4,6 +4,7 @@
 #include "share_client_test.hpp"
 
 #include <algorithm>
+#include <chrono>
 
 #include <azure/storage/common/crypt.hpp>
 
@@ -70,6 +71,42 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : shareClients)
       {
         EXPECT_NO_THROW(client.Delete());
+      }
+    }
+    {
+      // CreateIfNotExists & DeleteIfExists.
+      {
+        auto client = Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), LowercaseRandomString());
+        EXPECT_NO_THROW(client.Create());
+        EXPECT_NO_THROW(client.CreateIfNotExists());
+        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), LowercaseRandomString());
+        EXPECT_NO_THROW(client.CreateIfNotExists());
+        EXPECT_THROW(client.Create(), StorageException);
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), LowercaseRandomString());
+        auto created = client.Create()->Created;
+        EXPECT_TRUE(created);
+        auto createResult = client.CreateIfNotExists();
+        EXPECT_FALSE(createResult->Created);
+        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_EQ(Core::DateTime(), createResult->LastModified);
+        auto deleted = client.Delete()->Deleted;
+        EXPECT_TRUE(deleted);
+      }
+      {
+        auto client = Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
       }
     }
   }
@@ -158,8 +195,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.Policy.StartsOn = Core::DateTime::Now() - std::chrono::minutes(10);
-      identifier.Policy.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(100);
+      identifier.Policy.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(10);
+      identifier.Policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(100);
       identifier.Policy.Permission = "r";
       identifiers.emplace_back(identifier);
     }
@@ -308,19 +345,20 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string directoryName = baseName + RandomString();
-      auto directoryClient = m_shareClient->GetShareDirectoryClient(directoryName);
+      auto directoryClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryName);
       EXPECT_NO_THROW(directoryClient.Create());
-      auto directoryUrl = directoryClient.GetUri();
+      auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_shareClient->GetUri() + "/" + Storage::Details::UrlEncodePath(directoryName));
+          m_shareClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
-      auto fileClient = m_shareClient->GetShareFileClient(fileName);
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create(1024));
-      auto fileUrl = fileClient.GetUri();
-      EXPECT_EQ(fileUrl, m_shareClient->GetUri() + "/" + Storage::Details::UrlEncodePath(fileName));
+      auto fileUrl = fileClient.GetUrl();
+      EXPECT_EQ(fileUrl, m_shareClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(fileName));
     }
   }
 }}} // namespace Azure::Storage::Test

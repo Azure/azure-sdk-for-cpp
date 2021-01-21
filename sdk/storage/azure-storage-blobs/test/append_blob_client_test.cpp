@@ -43,6 +43,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContentInfo = appendBlobClient.Create(m_blobUploadOptions);
+    EXPECT_FALSE(blobContentInfo->RequestId.empty());
     EXPECT_FALSE(blobContentInfo->ETag.empty());
     EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
@@ -51,13 +52,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobContentInfo->EncryptionKeySha256.HasValue());
 
     auto properties = *appendBlobClient.GetProperties();
+    EXPECT_FALSE(properties.RequestId.empty());
     EXPECT_TRUE(properties.CommittedBlockCount.HasValue());
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 0);
     EXPECT_EQ(properties.ContentLength, 0);
 
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    appendBlobClient.AppendBlock(&blockContent);
+    auto appendResponse = appendBlobClient.AppendBlock(&blockContent);
+    EXPECT_FALSE(appendResponse->RequestId.empty());
     properties = *appendBlobClient.GetProperties();
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
     EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
@@ -88,7 +91,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         properties.ContentLength, static_cast<int64_t>(originalLength + m_blobContent.size()));
 
-    appendBlobClient.Delete();
+    auto deleteResponse = appendBlobClient.Delete();
+    EXPECT_TRUE(deleteResponse->Deleted);
+    EXPECT_FALSE(deleteResponse->RequestId.empty());
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
@@ -213,45 +218,45 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceConditions.LeaseId = CreateUniqueLeaseId();
+      options.SourceAccessConditions.LeaseId = CreateUniqueLeaseId();
       /*
       don't know why, the copy operation also succeeds even if the lease id doesn't match.
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
       */
-      options.SourceConditions.LeaseId = leaseId;
+      options.SourceAccessConditions.LeaseId = leaseId;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
     }
     sourceBlobClient.BreakLease();
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceConditions.IfMatch = eTag;
+      options.SourceAccessConditions.IfMatch = eTag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceConditions.IfMatch = DummyETag;
+      options.SourceAccessConditions.IfMatch = DummyETag;
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceConditions.IfNoneMatch = DummyETag;
+      options.SourceAccessConditions.IfNoneMatch = DummyETag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceConditions.IfNoneMatch = eTag;
+      options.SourceAccessConditions.IfNoneMatch = eTag;
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceConditions.IfModifiedSince = timeBeforeStr;
+      options.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceConditions.IfModifiedSince = timeAfterStr;
+      options.SourceAccessConditions.IfModifiedSince = timeAfterStr;
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceConditions.IfUnmodifiedSince = timeAfterStr;
+      options.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceConditions.IfUnmodifiedSince = timeBeforeStr;
+      options.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
@@ -284,6 +289,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size();
     auto sealResult = blobClient.Seal(sealOptions);
+    EXPECT_FALSE(sealResult->RequestId.empty());
     EXPECT_FALSE(sealResult->ETag.empty());
     EXPECT_TRUE(IsValidTime(sealResult->LastModified));
     EXPECT_TRUE(sealResult->IsSealed);
@@ -310,7 +316,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_TRUE(blob.IsSealed.GetValue());
         }
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 
@@ -340,14 +346,16 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(), StorageException);
     {
       auto response = blobClient.CreateIfNotExists();
-      EXPECT_TRUE(response.HasValue());
+      EXPECT_FALSE(response->RequestId.empty());
+      EXPECT_TRUE(response->Created);
     }
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blobClient.AppendBlock(&blobContent);
     {
       auto response = blobClient.CreateIfNotExists();
-      EXPECT_FALSE(response.HasValue());
+      EXPECT_FALSE(response->RequestId.empty());
+      EXPECT_FALSE(response->Created);
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(

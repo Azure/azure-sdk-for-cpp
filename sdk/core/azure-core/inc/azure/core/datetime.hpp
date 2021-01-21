@@ -12,16 +12,108 @@
 #include <string>
 
 namespace Azure { namespace Core {
+  namespace Details {
+    class Clock {
+    public:
+      using rep = int64_t;
+      using period = std::ratio<1, 10000000>;
+      using duration = std::chrono::duration<rep, period>;
+      using time_point = std::chrono::time_point<Clock>;
+
+      // since now() calls system_clock::now(), we have the same to say about the clock steadiness.
+      // system_clock is not a steady clock. It is calendar-based, which means it can be adjusted,
+      // and it may go backwards in time after adjustments, or jump forward faster than the actual
+      // time passes, if you catch the moment before and after syncing the clock.
+      // Steady clock would be good for measuring elapsed time without reboots (or hybernation?).
+      // Steady clock's epoch = boot time, and it would only go forward in steady fashion, after the
+      // system has started.
+      // Using this clock in combination with system_clock is common scenario.
+      // It would not be possible to base this clock on steady_clock and provide an implementation
+      // that universally works in any context in predictable manner. However, it does not mean that
+      // implementation can't use steady_clock in conjunction with this clock: an author can get a
+      // duration beteen two time_points of this clock (or between system_clock::time point ant this
+      // clock's time_point), and add that duration to steady clock's time_point to get a new
+      // time_point in the steady clock's "coordinate system".
+      static constexpr bool is_steady = std::chrono::system_clock::is_steady;
+      static time_point now() noexcept;
+    };
+  } // namespace Details
+
   /**
    * @brief Manages date and time in standardized string formats.
+   * @detail Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places for
+   * fractional second) precision.
+   * @remark `std::chrono::system_clock::time_point` can't be used, because there is no guarantees
+   * for the date range and precision.
+   * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
    */
-  class DateTime {
+  class DateTime : public Details::Clock::time_point {
+    static DateTime const SystemClockEpoch;
+
   public:
     /**
-     * @brief Units of measurement the difference between instances of @DateTime.
+     * @brief Construct a default instance of @DateTime (00:00:00.0000000 on Janualy 1st, 0001).
      */
-    // 1 == 100 ns (1 / 10,000,000 of a second, 7 fractional digits).
-    typedef std::chrono::duration<int64_t, std::ratio<1, 10000000>> Duration;
+    constexpr DateTime() : time_point() {}
+
+  private:
+    DateTime(
+        int16_t year,
+        int8_t month,
+        int8_t day,
+        int8_t hour,
+        int8_t minute,
+        int8_t second,
+        int32_t fracSec,
+        int8_t dayOfWeek,
+        int8_t localDiffHours,
+        int8_t localDiffMinutes,
+        bool roundFracSecUp = false);
+
+  public:
+    /**
+     * @brief Construct an instance of @DateTime.
+     *
+     * @param year Year.
+     * @param month Month.
+     * @param day Day.
+     * @param hour Hour.
+     * @param minute Minute.
+     * @param second Seconds.
+     *
+     * @throw std::invalid_argument If any parameter is invalid.
+     */
+    explicit DateTime(
+        int16_t year,
+        int8_t month = 1,
+        int8_t day = 1,
+        int8_t hour = 0,
+        int8_t minute = 0,
+        int8_t second = 0)
+        : DateTime(year, month, day, hour, minute, second, 0, -1, 0, 0)
+    {
+    }
+
+    /**
+     * @brief Construct an instance of @DateTime from base class.
+     */
+    constexpr DateTime(time_point const& timePoint) : time_point(timePoint) {}
+
+    /**
+     * @brief Construct an instance of @DateTime from `std::chrono::system_clock::time_point`.
+     * @param systemTime A value of `std::chrono::system_clock::time_point`.
+     */
+    DateTime(std::chrono::system_clock::time_point const& systemTime)
+        : DateTime(
+            SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
+    {
+    }
+
+    /**
+     * @brief Convert an instance of @DateTime to `std::chrono::system_clock::time_point`.
+     * @throw std::invalid_argument if @DateTime is outside of the range that can be represented.
+     */
+    explicit operator std::chrono::system_clock::time_point() const;
 
     /**
      * @brief Defines the format applied to the fraction part of any @DateTime.
@@ -50,31 +142,6 @@ namespace Azure { namespace Core {
       /// RFC 3339.
       Rfc3339,
     };
-
-    /**
-     * @brief Get the current UTC time.
-     */
-    static DateTime Now();
-
-    /**
-     * @brief Construct an instance of @DateTime.
-     *
-     * @param year Year.
-     * @param month Month.
-     * @param day Day.
-     * @param hour Hour.
-     * @param minute Minute.
-     * @param second Seconds.
-     *
-     * @throw std::invalid_argument If any parameter is invalid.
-     */
-    explicit DateTime(
-        int16_t year,
-        int8_t month = 1,
-        int8_t day = 1,
-        int8_t hour = 0,
-        int8_t minute = 0,
-        int8_t second = 0);
 
     /**
      * @brief Create @DateTime from a string representing time in UTC in the specified format.
@@ -124,114 +191,70 @@ namespace Azure { namespace Core {
     {
       return GetString(DateFormat::Rfc3339, fractionFormat);
     };
-
-    /**
-     * @brief Add \p duration to this @DateTime.
-     * @param duration @Duration to add.
-     * @return Reference to this @DateTime.
-     */
-    DateTime& operator+=(Duration const& duration)
-    {
-      m_since1601 += duration;
-      return *this;
-    }
-
-    /**
-     * @brief Subtract \p duration from this @DateTime.
-     * @param duration @Duration to subtract from this @DateTime.
-     * @return Reference to this @DateTime.
-     */
-    DateTime& operator-=(Duration const& duration)
-    {
-      m_since1601 -= duration;
-      return *this;
-    }
-
-    /**
-     * @brief Subtract @Duration from @DateTime.
-     * @param duration @Duration to subtract from this @DateTime.
-     * @return New DateTime representing subtraction result.
-     */
-    DateTime operator-(Duration const& duration) const { return DateTime(m_since1601 - duration); }
-
-    /**
-     * @brief Add @Duration to @DateTime.
-     * @param duration @Duration to add to this @DateTime.
-     * @return New DateTime representing addition result.
-     */
-    DateTime operator+(Duration const& duration) const { return DateTime(m_since1601 + duration); }
-
-    /**
-     * @brief Get @Duration between two instances of @DateTime.
-     * @param other @DateTime to subtract from this @DateTime.
-     * @return @Duration between this @DateTime and the \p other.
-     */
-    Duration operator-(DateTime const& other) const { return m_since1601 - other.m_since1601; }
-
-    /**
-     * @brief Compare with \p other @DateTime for equality.
-     * @param other Other @DateTime to compare with.
-     * @return `true` if @DateTime instances are equal, `false` otherwise.
-     */
-    constexpr bool operator==(DateTime const& other) const
-    {
-      return m_since1601 == other.m_since1601;
-    }
-
-    /**
-     * @brief Compare with \p other @DateTime for inequality.
-     * @param other Other @DateTime to compare with.
-     * @return `true` if @DateTime instances are not equal, `false` otherwise.
-     */
-    constexpr bool operator!=(const DateTime& other) const { return !(*this == other); }
-
-    /**
-     * @brief Check if \p other @DateTime precedes this @DateTime chronologically.
-     * @param other @DateTime to compare with.
-     * @return `true` if the \p other @DateTime precedes this, `false` otherwise.
-     */
-    constexpr bool operator>(const DateTime& other) const { return !(*this <= other); }
-
-    /**
-     * @brief Check if \p other @DateTime is chronologically after this @DateTime.
-     * @param other @DateTime to compare with.
-     * @return `true` if the \p other @DateTime is chonologically after this @DateTime, `false`
-     * otherwise.
-     */
-    constexpr bool operator<(const DateTime& other) const
-    {
-      return this->m_since1601 < other.m_since1601;
-    }
-
-    /**
-     * @brief Check if \p other @DateTime precedes this @DateTime chronologically, or is equal to
-     * it.
-     * @param other @DateTime to compare with.
-     * @return `true` if the \p other @DateTime precedes or is equal to this @DateTime, `false`
-     * otherwise.
-     */
-    constexpr bool operator>=(const DateTime& other) const { return !(*this < other); }
-
-    /**
-     * @brief Check if \p other @DateTime is chronologically after or equal to this @DateTime.
-     * @param other @DateTime to compare with.
-     * @return `true` if the \p other @DateTime is chonologically after or equal to this @DateTime,
-     * `false` otherwise.
-     */
-    constexpr bool operator<=(const DateTime& other) const
-    {
-      return (*this == other) || (*this < other);
-    }
-
-  private:
-    // Private constructor. Use static methods to create an instance.
-    explicit DateTime(Duration const& since1601) : m_since1601(since1601) {}
-    Duration m_since1601;
-
-  public:
-    /**
-     * @brief Construct an instance of @DateTime.
-     */
-    DateTime() : m_since1601(0) {}
   };
+
+  inline Details::Clock::time_point Details::Clock::now() noexcept
+  {
+    return DateTime(std::chrono::system_clock::now());
+  }
+
+  inline bool operator==(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
+  {
+    return dt == DateTime(tp);
+  }
+
+  inline bool operator<(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
+  {
+    return dt < DateTime(tp);
+  }
+
+  inline bool operator<=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
+  {
+    return dt <= DateTime(tp);
+  }
+
+  inline bool operator!=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
+  {
+    return !(dt == tp);
+  }
+
+  inline bool operator>(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
+  {
+    return !(dt <= tp);
+  }
+
+  inline bool operator>=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
+  {
+    return !(dt < tp);
+  }
+
+  inline bool operator==(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
+  {
+    return dt == tp;
+  }
+
+  inline bool operator!=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
+  {
+    return dt != tp;
+  }
+
+  inline bool operator<(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
+  {
+    return (dt > tp);
+  }
+
+  inline bool operator<=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
+  {
+    return (dt >= tp);
+  }
+
+  inline bool operator>(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
+  {
+    return (dt < tp);
+  }
+
+  inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
+  {
+    return (dt <= tp);
+  }
 }} // namespace Azure::Core

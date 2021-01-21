@@ -12,6 +12,16 @@
         },
         {
             "Component": {
+              "Type": "git",
+              "git": {
+                "RepositoryUrl": "https://github.com/nlohmann/json",
+                "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
+              }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
                 "Type": "git",
                 "git": {
                     "RepositoryUrl": "https://github.com/google/googletest",
