@@ -641,7 +641,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t fileRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      fileSize = firstChunk->ContentLength;
+      fileSize = firstChunk->FileSize;
       fileRangeSize = fileSize - firstChunkOffset;
       if (options.Range.GetValue().Length.HasValue())
       {
@@ -764,7 +764,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t fileRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      fileSize = firstChunk->ContentLength;
+      fileSize = firstChunk->FileSize;
       fileRangeSize = fileSize - firstChunkOffset;
       if (options.Range.GetValue().Length.HasValue())
       {

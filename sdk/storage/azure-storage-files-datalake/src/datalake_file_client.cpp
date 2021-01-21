@@ -326,8 +326,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::ReadDataLakeFileResult ret;
     ret.Body = std::move(result->BodyStream);
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
-    ret.ContentRange = result->ContentRange;
-    ret.ContentLength = result->BlobSize;
+    ret.ContentRange = std::move(result->ContentRange);
+    ret.FileSize = result->BlobSize;
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

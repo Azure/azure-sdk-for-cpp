@@ -404,8 +404,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::Core::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
-      int64_t ContentLength = int64_t();
       Azure::Core::Http::Range ContentRange;
+      int64_t FileSize;
       std::string ETag;
       Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> ResourceType;
@@ -1914,12 +1914,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
             }
-            if (response.GetHeaders().find(Details::HeaderContentLength)
-                != response.GetHeaders().end())
-            {
-              result.ContentLength
-                  = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
-            }
 
             auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
             if (content_range_iterator != response.GetHeaders().end())
@@ -1944,7 +1938,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               const std::string& content_range = content_range_iterator->second;
               auto slash_pos = content_range.find("/");
-              result.ContentLength = std::stoll(content_range.substr(slash_pos + 1));
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
             {

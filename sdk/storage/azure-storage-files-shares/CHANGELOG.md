@@ -6,6 +6,7 @@
 
 - Removed `GetDirectoryClient` and `GetFileClient` from `ShareClient`. `ShareDirectoryClient` and `ShareFileClient` now initializes with the name of the resource, not path, to indicate that no path parsing is done for the API
 - `ContentRange` in `FileDownloadResult` is now `Azure::Core::Http::Range`.
+- `ContentLength` in `FileDownloadResult` is renamed to `FileSize`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

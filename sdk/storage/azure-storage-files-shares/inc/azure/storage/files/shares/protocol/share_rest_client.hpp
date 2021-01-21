@@ -770,9 +770,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
       Core::DateTime LastModified;
       Storage::Metadata Metadata;
-      int64_t ContentLength = int64_t();
       ShareFileHttpHeaders HttpHeaders;
       Azure::Core::Http::Range ContentRange;
+      int64_t FileSize;
       std::string ETag;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       std::string AcceptRanges;
@@ -6097,8 +6097,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ContentLength
-                = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
 
             auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
@@ -6124,7 +6122,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               const std::string& content_range = content_range_iterator->second;
               auto slash_pos = content_range.find("/");
-              result.ContentLength = std::stoll(content_range.substr(slash_pos + 1));
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
@@ -6254,8 +6256,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ContentLength
-                = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
 
             auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
@@ -6281,7 +6281,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               const std::string& content_range = content_range_iterator->second;
               auto slash_pos = content_range.find("/");
-              result.ContentLength = std::stoll(content_range.substr(slash_pos + 1));
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)

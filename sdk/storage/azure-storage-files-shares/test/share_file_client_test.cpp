@@ -605,7 +605,7 @@ namespace Azure { namespace Storage { namespace Test {
             downloadOptions.Range.GetValue().Length.GetValue(),
             result.ContentRange.Length.GetValue());
         EXPECT_EQ(downloadOptions.Range.GetValue().Offset, result.ContentRange.Offset);
-        EXPECT_EQ(static_cast<int64_t>(numOfChunks) * rangeSize, result.ContentLength);
+        EXPECT_EQ(static_cast<int64_t>(numOfChunks) * rangeSize, result.FileSize);
       }
     }
 

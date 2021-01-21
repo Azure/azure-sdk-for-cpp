@@ -5,12 +5,14 @@
 ### New Features
 
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
+- `ReadDataLakeFileResult` now has a new field `FileSize`.
 
 ### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
 - `ContentRange` in `PathGetPropertiesResult` and `ReadDataLakeFileResult` are now `Azure::Core::Http::Range`.
+- Renamed `ContentLength` in `GetDataLakePathPropertiesResult` and `CreateDataLakePathResult` to `FileSize` to be more accurate.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
