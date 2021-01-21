@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Specifies whether data in the file system may be accessed publicly and the level
      * of access.
      */
-    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
 
     /**
      * @brief Stored access policies that you can use to provide fine grained control over

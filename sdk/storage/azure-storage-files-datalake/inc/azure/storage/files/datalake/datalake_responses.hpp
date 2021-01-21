@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct GetDataLakeFileSystemAccessPolicyResult
   {
-    PublicAccessType AccessType = PublicAccessType::Private;
+    PublicAccessType AccessType = PublicAccessType::None;
     std::string ETag;
     Azure::Core::DateTime LastModified;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;

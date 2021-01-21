@@ -224,7 +224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
       const static PublicAccessType FileSystem;
       const static PublicAccessType Path;
-      const static PublicAccessType Private;
+      const static PublicAccessType None;
 
     private:
       std::string m_value;

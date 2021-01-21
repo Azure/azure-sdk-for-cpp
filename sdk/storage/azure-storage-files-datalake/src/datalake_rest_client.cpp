@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   const PublicAccessType PublicAccessType::FileSystem("FileSystem");
   const PublicAccessType PublicAccessType::Path("Path");
-  const PublicAccessType PublicAccessType::Private("Private");
+  const PublicAccessType PublicAccessType::None("None");
 
   const AccountResourceType AccountResourceType::Account("account");
 

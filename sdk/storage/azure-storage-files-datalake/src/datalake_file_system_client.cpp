@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     else if (result->AccessType == Blobs::Models::PublicAccessType::Private)
     {
-      ret.AccessType = Models::PublicAccessType::Private;
+      ret.AccessType = Models::PublicAccessType::None;
     }
     else
     {
@@ -354,7 +354,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
     }
-    else if (options.AccessType == Models::PublicAccessType::Private)
+    else if (options.AccessType == Models::PublicAccessType::None)
     {
       blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
     }
