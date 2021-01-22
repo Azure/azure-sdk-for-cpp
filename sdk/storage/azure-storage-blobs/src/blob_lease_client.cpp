@@ -7,6 +7,8 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  const std::chrono::seconds BlobLeaseClient::InfiniteLeaseDuration{-1};
+
   std::string BlobLeaseClient::CreateUniqueLeaseId()
   {
     return Azure::Core::Uuid::CreateUuid().GetUuidString();
