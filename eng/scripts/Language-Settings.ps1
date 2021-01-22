@@ -1,4 +1,5 @@
 $Language = "cpp"
+$LanguageDisplayName = "C++"
 $PackageRepository = "CPP"
 $packagePattern = "*.json"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/cpp-packages.csv"

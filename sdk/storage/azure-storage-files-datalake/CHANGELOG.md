@@ -6,6 +6,7 @@
 
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
 - `ReadDataLakeFileResult` now has a new field `FileSize`.
+- Added support for `GetAccessPolicy` and `SetAccessPolicy` in `DataLakeFileSystemClient`.
 
 ### Breaking Changes
 

@@ -12,7 +12,9 @@
 #include <unistd.h>
 #endif
 
+#include <codecvt>
 #include <limits>
+#include <locale>
 #include <stdexcept>
 
 namespace Azure { namespace Storage { namespace Details {
@@ -20,6 +22,8 @@ namespace Azure { namespace Storage { namespace Details {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
     m_handle = CreateFile(
         filename.data(),
         GENERIC_READ,
@@ -28,6 +32,14 @@ namespace Azure { namespace Storage { namespace Details {
         OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL,
         NULL);
+#else
+    m_handle = CreateFile2(
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        OPEN_EXISTING,
+        NULL);
+#endif
     if (m_handle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("failed to open file");
@@ -47,6 +59,8 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileWriter::FileWriter(const std::string& filename)
   {
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
     m_handle = CreateFile(
         filename.data(),
         GENERIC_WRITE,
@@ -55,6 +69,14 @@ namespace Azure { namespace Storage { namespace Details {
         CREATE_ALWAYS,
         FILE_ATTRIBUTE_NORMAL,
         NULL);
+#else
+    m_handle = CreateFile2(
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
+        GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        CREATE_ALWAYS,
+        NULL);
+#endif
     if (m_handle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("failed to open file");

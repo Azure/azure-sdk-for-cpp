@@ -30,6 +30,7 @@ set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/environment_credential.hpp
+    inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/version.hpp
     inc/azure/identity.hpp
 )
@@ -63,4 +64,8 @@ target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-identity)
+az_vcpkg_export(
+    azure-identity
+    IDENTITY
+    "azure/identity/dll_import_export.hpp"
+  )

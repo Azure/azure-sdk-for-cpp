@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 
 #include "curl_connection_private.hpp"
@@ -44,7 +45,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Mutex for accessing connection pool for thread-safe reading and writing.
      */
-    static std::mutex ConnectionPoolMutex;
+    AZ_CORE_DLLEXPORT static std::mutex ConnectionPoolMutex;
 
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
@@ -54,8 +55,9 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark There might be multiple connections for each host.
      */
-    static std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
-        ConnectionPoolIndex;
+    AZ_CORE_DLLEXPORT static std::
+        map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
+            ConnectionPoolIndex;
 
     /**
      * @brief Finds a connection to be re-used from the connection pool.
@@ -89,8 +91,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     static void CleanUp();
 
-    static int32_t s_connectionCounter;
-    static bool s_isCleanConnectionsRunning;
+    AZ_CORE_DLLEXPORT static int32_t s_connectionCounter;
+    AZ_CORE_DLLEXPORT static bool s_isCleanConnectionsRunning;
     // Removes all connections and indexes
     static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
 
