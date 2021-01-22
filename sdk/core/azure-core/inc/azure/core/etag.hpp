@@ -15,13 +15,16 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief Represents an HTTP ETag.
+   * @brief Represents an HTTP validator.
    */
   class ETag {
   private:
     Nullable<std::string> m_value;
 
   public:
+    /**
+     * @brief The comparison type.
+     */
     enum class ETagComparison
     {
       Strong,
@@ -61,7 +64,15 @@ namespace Azure { namespace Core {
     //
 
     */
-    static bool Compare(const ETag& left, const ETag& right, const ETagComparison comparisonKind = ETagComparison::Strong)
+
+    /*
+    * @brief Indicates whether two @ETag values are equal
+    * @param left @ETag to compare
+    * @param right @ETag to compare
+    * @param comparisonKind Determines what @ETagComparison to perform, default is #ETagComparison Strong
+    * @return `true` if @ETag matches, `false` otherwise. 
+    */
+    static bool Equals(const ETag& left, const ETag& right, const ETagComparison comparisonKind = ETagComparison::Strong)
     {
       // ETags are != if one of the values is null
       if (!left.m_value || !right.m_value)
@@ -102,13 +113,11 @@ namespace Azure { namespace Core {
       abort();
     }
 
-  protected:
     /**
      * @brief Construct an empty (null) #ETag.
      */
     ETag() = default;
 
-  public:
     /**
      * @brief Construct a #ETag.
      */
@@ -145,7 +154,7 @@ namespace Azure { namespace Core {
      */
     bool operator==(const ETag& other) const
     {
-      return Compare(*this, other, ETagComparison::Strong);
+      return Equals(*this, other, ETagComparison::Strong);
     }
 
     /**
@@ -182,15 +191,6 @@ namespace Azure { namespace Core {
     {
       static ETag Any = ETag("*");
       return Any;
-    }
-
-    /**
-     * @brief @ETag representing no @ETag present
-     */
-    static const ETag& Null()
-    {
-      static ETag Null = ETag();
-      return Null;
     }
   };
 }} // namespace Azure::Core

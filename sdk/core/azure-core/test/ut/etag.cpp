@@ -9,7 +9,7 @@
 
 using namespace Azure::Core;
 
-TEST(ETag, Equality)
+TEST(ETag, ToString)
 {
   auto et1 = ETag("tag");
   EXPECT_EQ(et1.ToString(), "tag");
@@ -43,10 +43,16 @@ TEST(ETag, IsWeak)
   
   auto et4 = ETag("W/\"\"");
   EXPECT_TRUE(et4.IsWeak());
+
+  auto any = ETag::Any();
+  EXPECT_FALSE(any.IsWeak());
 }
 
 TEST(ETag, Equals)
 {
+  ETag empty;
+  ETag empty2;
+
   auto weakTag = ETag("W/\"\"");
   auto weakTag1 = ETag("W/\"1\"");
   auto weakTag2 = ETag("W/\"Two\"");
@@ -59,6 +65,9 @@ TEST(ETag, Equals)
       = ETag("W/\"#$%&'()*+,-./"
              "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"");
 
+  EXPECT_TRUE(empty == empty);
+  EXPECT_TRUE(empty2 == empty2);
+  EXPECT_TRUE(empty == empty2);
 
   EXPECT_FALSE(weakTag == weakTag);
   EXPECT_FALSE(weakTag1 == weakTag1);
@@ -99,23 +108,35 @@ TEST(ETag, Equals)
   EXPECT_TRUE(strongTag2 != weakTag2);
 }
 
-TEST(ETag, Empty)
+TEST(ETag, Any)
 {
   auto anyETag = ETag::Any();
-  auto nullETag = ETag::Null();
+  auto star = ETag("*");
+  auto weakStar = ETag("W\"*\"");
+  auto quotedStar = ETag("\"*\"");
+
   auto strongETag
       = ETag("\"#$%&'()*+,-./"
              "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"");
 
+  EXPECT_TRUE(anyETag == anyETag);
   EXPECT_TRUE(anyETag == ETag::Any());
-  EXPECT_TRUE(nullETag == ETag::Null());
-
-  EXPECT_FALSE(anyETag == nullETag);
   EXPECT_FALSE(anyETag == strongETag);
-  EXPECT_FALSE(nullETag == strongETag);
+
+  EXPECT_TRUE(star == star);
+  EXPECT_TRUE(star == ETag::Any());
+  EXPECT_TRUE(star == anyETag);
+
+  EXPECT_FALSE(star == weakStar);
+  EXPECT_FALSE(weakStar == anyETag);
+  EXPECT_FALSE(quotedStar == weakStar);
+
+  EXPECT_FALSE(star == quotedStar);
+  EXPECT_TRUE(anyETag == star);
+
 }
 
-TEST(ETag, CompareStrong)
+TEST(ETag, EqualsStrong)
 {
   // W/""
   auto weakTag = ETag("W/\"\"");
@@ -132,38 +153,38 @@ TEST(ETag, CompareStrong)
   // "two"
   auto strongTagtwo = ETag("\"two\"");
 
-  EXPECT_FALSE(ETag::Compare(weakTag, weakTag, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTag1, weakTag1, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTagTwo, weakTagTwo, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTagtwo, weakTagtwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag, weakTag, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag1, weakTag1, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagtwo, ETag::ETagComparison::Strong));
 
-  EXPECT_TRUE(ETag::Compare(strongTag1, strongTag1, ETag::ETagComparison::Strong));
-  EXPECT_TRUE(ETag::Compare(strongTagTwo, strongTagTwo, ETag::ETagComparison::Strong));
-  EXPECT_TRUE(ETag::Compare(strongTagtwo, strongTagtwo, ETag::ETagComparison::Strong));
+  EXPECT_TRUE(ETag::Equals(strongTag1, strongTag1, ETag::ETagComparison::Strong));
+  EXPECT_TRUE(ETag::Equals(strongTagTwo, strongTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_TRUE(ETag::Equals(strongTagtwo, strongTagtwo, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(weakTag, weakTag1, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTag1, weakTag, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag, weakTag1, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag1, weakTag, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(weakTag1, weakTagTwo, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTagTwo, weakTag1, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag1, weakTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTag1, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(weakTag1, strongTag1, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(strongTag1, weakTag1, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag1, strongTag1, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(strongTag1, weakTag1, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(weakTagTwo, strongTagTwo, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(strongTagTwo, weakTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTagTwo, strongTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(strongTagTwo, weakTagTwo, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(strongTagTwo, weakTag1, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTag1, strongTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(strongTagTwo, weakTag1, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTag1, strongTagTwo, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(strongTagTwo, strongTagtwo, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(strongTagtwo, strongTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(strongTagTwo, strongTagtwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(strongTagtwo, strongTagTwo, ETag::ETagComparison::Strong));
 
-  EXPECT_FALSE(ETag::Compare(weakTagTwo, weakTagtwo, ETag::ETagComparison::Strong));
-  EXPECT_FALSE(ETag::Compare(weakTagtwo, weakTagTwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTagtwo, ETag::ETagComparison::Strong));
+  EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagTwo, ETag::ETagComparison::Strong));
 }
 
-TEST(ETag, CompareWeak)
+TEST(ETag, EqualsWeak)
 {
   // W/""
   auto weakTag = ETag("W/\"\"");
@@ -180,35 +201,35 @@ TEST(ETag, CompareWeak)
   // "two"
   auto strongTagtwo = ETag("\"two\"");
 
-  EXPECT_TRUE(ETag::Compare(weakTag, weakTag, ETag::ETagComparison::Weak));
-  EXPECT_TRUE(ETag::Compare(weakTag1, weakTag1, ETag::ETagComparison::Weak));
-  EXPECT_TRUE(ETag::Compare(weakTagTwo, weakTagTwo, ETag::ETagComparison::Weak));
-  EXPECT_TRUE(ETag::Compare(weakTagtwo, weakTagtwo, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(weakTag, weakTag, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(weakTag1, weakTag1, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(weakTagTwo, weakTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(weakTagtwo, weakTagtwo, ETag::ETagComparison::Weak));
 
-  EXPECT_TRUE(ETag::Compare(strongTag1, strongTag1, ETag::ETagComparison::Weak));
-  EXPECT_TRUE(ETag::Compare(strongTagTwo, strongTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(strongTag1, strongTag1, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(strongTagTwo, strongTagTwo, ETag::ETagComparison::Weak));
 
-  EXPECT_FALSE(ETag::Compare(weakTag, weakTag1, ETag::ETagComparison::Weak));
-  EXPECT_FALSE(ETag::Compare(weakTag1, weakTag, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTag, weakTag1, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTag1, weakTag, ETag::ETagComparison::Weak));
 
-  EXPECT_FALSE(ETag::Compare(weakTag1, weakTagTwo, ETag::ETagComparison::Weak));
-  EXPECT_FALSE(ETag::Compare(weakTagTwo, weakTag1, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTag1, weakTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTag1, ETag::ETagComparison::Weak));
 
-  EXPECT_TRUE(ETag::Compare(weakTag1, strongTag1, ETag::ETagComparison::Weak));
-  EXPECT_TRUE(ETag::Compare(strongTag1, weakTag1, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(weakTag1, strongTag1, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(strongTag1, weakTag1, ETag::ETagComparison::Weak));
 
-  EXPECT_TRUE(ETag::Compare(weakTagTwo, strongTagTwo, ETag::ETagComparison::Weak));
-  EXPECT_TRUE(ETag::Compare(strongTagTwo, weakTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(weakTagTwo, strongTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_TRUE(ETag::Equals(strongTagTwo, weakTagTwo, ETag::ETagComparison::Weak));
 
-  EXPECT_FALSE(ETag::Compare(strongTagTwo, weakTag1, ETag::ETagComparison::Weak));
-  EXPECT_FALSE(ETag::Compare(weakTag1, strongTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(strongTagTwo, weakTag1, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTag1, strongTagTwo, ETag::ETagComparison::Weak));
 
-  EXPECT_FALSE(ETag::Compare(strongTagTwo, weakTagtwo, ETag::ETagComparison::Weak));
-  EXPECT_FALSE(ETag::Compare(weakTagtwo, strongTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(strongTagTwo, weakTagtwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTagtwo, strongTagTwo, ETag::ETagComparison::Weak));
 
-  EXPECT_FALSE(ETag::Compare(strongTagTwo, strongTagtwo, ETag::ETagComparison::Weak));
-  EXPECT_FALSE(ETag::Compare(strongTagtwo, strongTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(strongTagTwo, strongTagtwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(strongTagtwo, strongTagTwo, ETag::ETagComparison::Weak));
 
-  EXPECT_FALSE(ETag::Compare(weakTagTwo, weakTagtwo, ETag::ETagComparison::Weak));
-  EXPECT_FALSE(ETag::Compare(weakTagtwo, weakTagTwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTagtwo, ETag::ETagComparison::Weak));
+  EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagTwo, ETag::ETagComparison::Weak));
 }
