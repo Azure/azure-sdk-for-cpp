@@ -12,6 +12,7 @@
 - `AccessType` in `CreateBlobContainerOptions` was changed to non-nullable.
 - `ListType` in `GetBlockListOptions` was changed to non-nullable.
 - Added `BlobLeaseClient`, all lease related APIs are moved to `BlobLeaseClient`.
+- Used `std::chrono::seconds` for lease duration types.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
