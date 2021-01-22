@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::AcquireBlobLeaseResult> BlobLeaseClient::Acquire(
-      int32_t duration,
+      std::chrono::seconds duration,
       const AcquireBlobLeaseOptions& options)
   {
     if (m_blobClient.HasValue())

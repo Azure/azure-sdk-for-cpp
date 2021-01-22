@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "azure/storage/blobs/dll_import_export.hpp"
-
 #include <cstring>
 #include <limits>
 #include <map>
@@ -25,6 +23,8 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 #include <azure/storage/common/xml_wrapper.hpp>
+
+#include "azure/storage/blobs/dll_import_export.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -740,7 +740,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       PublicAccessType AccessType = PublicAccessType::Private;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
-      Azure::Core::Nullable<std::string> LeaseDuration;
+      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
@@ -800,7 +800,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       PublicAccessType AccessType = PublicAccessType::Private;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
-      Azure::Core::Nullable<std::string> LeaseDuration;
+      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
@@ -1017,7 +1017,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
-      Azure::Core::Nullable<std::string> LeaseDuration;
+      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
       bool IsServerEncrypted = false;
       Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       Azure::Core::Nullable<std::string> EncryptionScope;
@@ -1045,7 +1045,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IsSealed; // only for append blob
       Models::BlobType BlobType;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
-      Azure::Core::Nullable<std::string> LeaseDuration;
+      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
       bool IsServerEncrypted = false;
@@ -1068,7 +1068,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Storage::Metadata Metadata;
       Models::BlobType BlobType;
-      Azure::Core::Nullable<std::string> LeaseDuration;
+      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
       int64_t ContentLength = 0;
@@ -2238,7 +2238,8 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseDuration)
               {
-                ret.LeaseDuration = node.Value;
+                ret.LeaseDuration = std::chrono::seconds(
+                    strcmp(node.Value, "infinite") == 0 ? -1 : std::stoi(node.Value));
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -3297,7 +3298,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = x_ms_lease_duration__iterator->second;
+            response.LeaseDuration = std::chrono::seconds(
+                x_ms_lease_duration__iterator->second == "infinite"
+                    ? -1
+                    : std::stoi(x_ms_lease_duration__iterator->second));
           }
           response.DefaultEncryptionScope
               = httpResponse.GetHeaders().at("x-ms-default-encryption-scope");
@@ -3644,7 +3648,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct AcquireBlobContainerLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          int32_t LeaseDuration = -1;
+          std::chrono::seconds LeaseDuration;
           Azure::Core::Nullable<std::string> ProposedLeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
@@ -3668,7 +3672,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "lease");
           request.AddHeader("x-ms-lease-action", "acquire");
-          request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
+          request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.count()));
           if (options.ProposedLeaseId.HasValue())
           {
             request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.GetValue());
@@ -3894,7 +3898,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct BreakBlobContainerLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<int32_t> BreakPeriod;
+          Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
         }; // struct BreakBlobContainerLeaseOptions
@@ -3920,7 +3924,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.BreakPeriod.HasValue())
           {
             request.AddHeader(
-                "x-ms-lease-break-period", std::to_string(options.BreakPeriod.GetValue()));
+                "x-ms-lease-break-period", std::to_string(options.BreakPeriod.GetValue().count()));
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -4579,7 +4583,8 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseDuration)
               {
-                ret.LeaseDuration = node.Value;
+                ret.LeaseDuration = std::chrono::seconds(
+                    strcmp(node.Value, "infinite") == 0 ? -1 : std::stoi(node.Value));
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5083,7 +5088,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = x_ms_lease_duration__iterator->second;
+            response.LeaseDuration = std::chrono::seconds(
+                x_ms_lease_duration__iterator->second == "infinite"
+                    ? -1
+                    : std::stoi(x_ms_lease_duration__iterator->second));
           }
           response.CreatedOn = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("x-ms-creation-time"),
@@ -5489,7 +5497,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = x_ms_lease_duration__iterator->second;
+            response.LeaseDuration = std::chrono::seconds(
+                x_ms_lease_duration__iterator->second == "infinite"
+                    ? -1
+                    : std::stoi(x_ms_lease_duration__iterator->second));
           }
           response.ContentLength = std::stoll(httpResponse.GetHeaders().at("content-length"));
           auto content_type__iterator = httpResponse.GetHeaders().find("content-type");
@@ -6353,7 +6364,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct AcquireBlobLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          int32_t LeaseDuration = -1;
+          std::chrono::seconds LeaseDuration;
           Azure::Core::Nullable<std::string> ProposedLeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
@@ -6379,7 +6390,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("comp", "lease");
           request.AddHeader("x-ms-lease-action", "acquire");
-          request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
+          request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.count()));
           if (options.ProposedLeaseId.HasValue())
           {
             request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.GetValue());
@@ -6665,7 +6676,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct BreakBlobLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<int32_t> BreakPeriod;
+          Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
           Azure::Core::Nullable<std::string> IfMatch;
@@ -6693,7 +6704,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.BreakPeriod.HasValue())
           {
             request.AddHeader(
-                "x-ms-lease-break-period", std::to_string(options.BreakPeriod.GetValue()));
+                "x-ms-lease-break-period", std::to_string(options.BreakPeriod.GetValue().count()));
           }
           if (options.IfModifiedSince.HasValue())
           {

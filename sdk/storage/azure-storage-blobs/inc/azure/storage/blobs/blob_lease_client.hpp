@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <chrono>
+
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 
@@ -46,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A value representing infinite lease duration.
      */
-    constexpr static int32_t InfiniteLeaseDuration = -1;
+    constexpr static std::chrono::seconds InfiniteLeaseDuration = std::chrono::seconds(-1);
 
     /**
      * @brief Get lease id of this lease client.
@@ -67,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A AcquireBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<Models::AcquireBlobLeaseResult> Acquire(
-        int32_t duration,
+        std::chrono::seconds duration,
         const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions());
 
     /**

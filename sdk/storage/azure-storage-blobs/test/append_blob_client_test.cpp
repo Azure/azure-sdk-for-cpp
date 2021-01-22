@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     Blobs::BlobLeaseClient leaseClient(appendBlobClient, leaseId);
-    leaseClient.Acquire(30);
+    leaseClient.Acquire(std::chrono::seconds(30));
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
     Blobs::DeleteBlobOptions options;
     options.AccessConditions.LeaseId = leaseId;

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -774,7 +775,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * available before the break period has expired, but the lease may be held for longer than the
      * break period.
      */
-    Azure::Core::Nullable<int32_t> BreakPeriod;
+    Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

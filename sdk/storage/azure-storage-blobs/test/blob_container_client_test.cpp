@@ -420,7 +420,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.Create();
 
     std::string leaseId1 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-    int32_t leaseDuration = 20;
+    auto leaseDuration = std::chrono::seconds(20);
     Blobs::BlobLeaseClient leaseClient(containerClient, leaseId1);
     auto aLease = *leaseClient.Acquire(leaseDuration);
     EXPECT_FALSE(aLease.RequestId.empty());
@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties = *containerClient.GetProperties();
     EXPECT_EQ(properties.LeaseState, Blobs::Models::BlobLeaseState::Leased);
     EXPECT_EQ(properties.LeaseStatus, Blobs::Models::BlobLeaseStatus::Locked);
-    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    EXPECT_GT(properties.LeaseDuration.GetValue().count(), 0);
 
     auto rLease = *leaseClient.Renew();
     EXPECT_FALSE(rLease.RequestId.empty());
@@ -463,7 +463,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobLeaseClient(containerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
     properties = *containerClient.GetProperties();
-    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::BlobLeaseClient::InfiniteLeaseDuration);
     auto brokenLease = *leaseClient.Break();
     EXPECT_FALSE(brokenLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
@@ -478,7 +478,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakBlobLeaseOptions options;
-    options.BreakPeriod = 0;
+    options.BreakPeriod = std::chrono::seconds(0);
     leaseClient.Break(options);
     containerClient.Delete();
   }
@@ -716,7 +716,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     auto leaseClient = Blobs::BlobLeaseClient(containerClient, leaseId);
-    leaseClient.Acquire(30);
+    leaseClient.Acquire(std::chrono::seconds(30));
     EXPECT_THROW(containerClient.Delete(), StorageException);
     Blobs::DeleteBlobContainerOptions options;
     options.AccessConditions.LeaseId = leaseId;
@@ -918,9 +918,9 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::AcquireBlobLeaseOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       auto leaseClient = Blobs::BlobLeaseClient(appendBlobClient, leaseId);
-      EXPECT_THROW(leaseClient.Acquire(60, options), StorageException);
+      EXPECT_THROW(leaseClient.Acquire(std::chrono::seconds(60), options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
-      EXPECT_NO_THROW(leaseClient.Acquire(60, options));
+      EXPECT_NO_THROW(leaseClient.Acquire(std::chrono::seconds(60), options));
 
       Blobs::BreakBlobLeaseOptions options2;
       options2.AccessConditions.TagConditions = failWhereExpression;
