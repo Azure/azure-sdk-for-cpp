@@ -6,6 +6,7 @@
 #include <future>
 #include <vector>
 
+#include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
 

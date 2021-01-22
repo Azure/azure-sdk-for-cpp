@@ -3,6 +3,8 @@
 
 #include "append_blob_client_test.hpp"
 
+#include <azure/storage/blobs/blob_lease_client.hpp>
+
 namespace Azure { namespace Storage { namespace Test {
 
   std::shared_ptr<Azure::Storage::Blobs::AppendBlobClient> AppendBlobClientTest::m_appendBlobClient;
