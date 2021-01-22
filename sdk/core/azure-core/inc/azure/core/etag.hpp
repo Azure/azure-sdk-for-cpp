@@ -21,7 +21,13 @@ namespace Azure { namespace Core {
   private:
     Nullable<std::string> m_value;
 
-  private:
+  public:
+    enum class ETagComparison
+    {
+      Strong,
+      Weak
+    };
+
     /*
     2.3.2.  Comparison
 
@@ -55,47 +61,52 @@ namespace Azure { namespace Core {
     //
 
     */
-    bool ETagComparison(const ETag& left, const ETag& right) const
+    static bool Compare(const ETag& left, const ETag& right, const ETagComparison comparisonKind = ETagComparison::Strong)
     {
-
-      // If both values are empty then we consider the ETag equal
-      if (!left.m_value && !right.m_value)
-        return true;
-
+      // ETags are != if one of the values is null
       if (!left.m_value || !right.m_value)
-        return false;
-
-      // Previous comparison checked that both are Weak or both are strong
-      //  Thuse we can decide which comparison to do based on one of them
-      if (!left.IsWeak())
       {
-        // Strong ETag so comparison is that the values match character for character
-        return left.m_value.GetValue().compare(right.m_value.GetValue()) == 0;
+        // Caveat, If both values are null then we consider the ETag equal
+        return !left.m_value && !right.m_value;
       }
-      else
-      {
-        // Left side is weak ETag
-        if (right.IsWeak())
-        {
-          return left.m_value.GetValue().compare(right.m_value.GetValue()) == 0;
-        }
-        // Trim the weak tag
-        auto leftLength = left.m_value.GetValue().length();
 
-        if (leftLength - 2 != right.m_value.GetValue().length())
-        {
-          return false;
-        }
-        return left.m_value.GetValue().compare(2, leftLength - 2, right.m_value.GetValue()) == 0;
+      switch (comparisonKind)
+      {
+        case ETagComparison::Strong:
+          // Strong comparison
+          // If either is weak then there is no match
+          //  else tags must match character for character
+          return !left.IsWeak() && !right.IsWeak()
+              && (left.m_value.GetValue().compare(right.m_value.GetValue()) == 0);
+          break;
+
+        case ETagComparison::Weak:
+
+          if (left.IsWeak() && right.IsWeak())
+          {
+            return left.m_value.GetValue().compare(right.m_value.GetValue()) == 0;
+          }
+          auto leftStart = left.IsWeak() ? 2 : 0;
+          auto rightStart = right.IsWeak() ? 2 : 0;
+
+          auto leftVal = left.m_value.GetValue();
+          auto rightVal = right.m_value.GetValue();
+
+          // Compare is lengths are equal
+          return ((leftVal.length() - leftStart) == (rightVal.length() - rightStart))
+              && (leftVal.compare(leftStart, leftVal.length() - leftStart, &rightVal[rightStart])
+                  == 0);
+          break;
       }
-      return false;
+      // Unknown comparison
+      abort();
     }
 
   protected:
     /**
      * @brief Construct an empty (null) #ETag.
      */
-    ETag() {}
+    ETag() = default;
 
   public:
     /**
@@ -112,13 +123,13 @@ namespace Azure { namespace Core {
      * @brief Whether @Tag is present.
      * @return `true` if @ETag has a value, `false` otherwise.
      */
-    const bool HasValue() { return m_value.HasValue(); }
+    bool HasValue() const { return m_value.HasValue(); }
 
     /*
-     * @brief Return the contained string value
+     * @brief Returns the resource metadata represented as a string
      * @return #std::string
      */
-    const std::string& ToString()
+    const std::string& ToString() const
     {
       if (!m_value.HasValue())
       {
@@ -132,7 +143,10 @@ namespace Azure { namespace Core {
      * @param other Other @ETag to compare with.
      * @return `true` if @ETag instances are equal, `false` otherwise.
      */
-    bool operator==(const ETag& other) const { return ETagComparison(*this, other); }
+    bool operator==(const ETag& other) const
+    {
+      return Compare(*this, other, ETagComparison::Strong);
+    }
 
     /**
      * @brief Compare with \p other @ETag for inequality.
@@ -142,34 +156,22 @@ namespace Azure { namespace Core {
     bool operator!=(const ETag& other) const { return !(*this == other); }
 
     /**
-     * @brief Compare with \p other @ETag for inequality.
-     * @param other Other @ETag to compare with.
-     * @return `true` if @ETag instances are not equal, `false` otherwise.
+     * @brief Specifies whether the @ETag is strong or weak
+     * @return `true` if @ETag is a weak validator, `false` otherwise.
      */
     bool IsWeak() const
     {
-      // A null eTag is considered strong
-      if (!m_value)
-      {
-        return false;
-      }
-
-      auto& val = m_value.GetValue();
-      // Shortest valid weak etag is 4
+      // Null ETag is considered Strong
+      // Shortest valid weak etag has length of 4
       //  W/""
-      if (val.length() < 4)
-      {
-        return false;
-      }
+      // Valid weak format must start with W/"
+      //   Must end with a /"
+      const bool weak = m_value && (m_value.GetValue().length() >= 4)
+          && ((m_value.GetValue()[0] == 'W') && (m_value.GetValue()[1] == '/')
+              && (m_value.GetValue()[2] == '"')
+              && (m_value.GetValue()[m_value.GetValue().size() - 1] == '"'));
 
-      // Valid format is W/""
-      //   Must end with a " in the string
-      if (val[0] == 'W' && val[1] == '/' && val[2] == '"' && val[val.size() - 1] == '"')
-      {
-        return true;
-      }
-
-      return false;
+      return weak;
     }
 
     /**
