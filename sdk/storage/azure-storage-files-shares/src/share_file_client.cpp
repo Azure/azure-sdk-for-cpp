@@ -679,9 +679,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ret.Metadata = std::move(response->Metadata);
             ret.IsServerEncrypted = response->IsServerEncrypted;
             return Azure::Core::Response<Models::DownloadShareFileToResult>(
-                std::move(ret),
-                std::make_unique<Azure::Core::Http::RawResponse>(
-                    std::move(response.GetRawResponse())));
+                std::move(ret), response.ExtractRawResponse());
           };
     auto ret = returnTypeConverter(firstChunk);
 
@@ -815,9 +813,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ret.Metadata = std::move(response->Metadata);
             ret.IsServerEncrypted = response->IsServerEncrypted;
             return Azure::Core::Response<Models::DownloadShareFileToResult>(
-                std::move(ret),
-                std::make_unique<Azure::Core::Http::RawResponse>(
-                    std::move(response.GetRawResponse())));
+                std::move(ret), response.ExtractRawResponse());
           };
     auto ret = returnTypeConverter(firstChunk);
 
@@ -960,8 +956,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Core::Response<Models::UploadShareFileFromResult>(
-        std::move(result),
-        std::make_unique<Azure::Core::Http::RawResponse>(std::move(createResult.GetRawResponse())));
+        std::move(result), createResult.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
@@ -1061,7 +1056,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Core::Response<Models::UploadShareFileFromResult>(
-        std::move(result),
-        std::make_unique<Azure::Core::Http::RawResponse>(std::move(createResult.GetRawResponse())));
+        std::move(result), createResult.ExtractRawResponse());
   }
 }}}} // namespace Azure::Storage::Files::Shares
