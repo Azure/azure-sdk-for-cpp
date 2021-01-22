@@ -29,6 +29,7 @@ endif()
 set(
   AZURE_STORAGE_FILES_SHARES_HEADER
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
+    inc/azure/storage/files/shares/dll_import_export.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp
@@ -69,7 +70,11 @@ target_link_libraries(azure-storage-files-shares PUBLIC Azure::azure-storage-com
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/version.hpp")
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-storage-files-shares)
+az_vcpkg_export(
+    azure-storage-files-shares
+    STORAGE_FILES_SHARES
+    "azure/storage/files/shares/dll_import_export.hpp"
+  )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-shares azure-storage-test)

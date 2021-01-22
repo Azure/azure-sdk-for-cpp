@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/identity/dll_import_export.hpp"
+
 #include <string>
 
 #define AZURE_IDENTITY_VERSION_MAJOR 1
@@ -32,7 +34,7 @@ namespace Azure { namespace Identity { namespace Details {
     static constexpr int Patch = AZURE_IDENTITY_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static std::string const PreRelease;
+    AZ_IDENTITY_DLLEXPORT static std::string const PreRelease;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard

@@ -36,6 +36,7 @@ set(
     inc/azure/storage/common/concurrent_transfer.hpp
     inc/azure/storage/common/constants.hpp
     inc/azure/storage/common/crypt.hpp
+    inc/azure/storage/common/dll_import_export.hpp
     inc/azure/storage/common/file_io.hpp
     inc/azure/storage/common/reliable_stream.hpp
     inc/azure/storage/common/shared_key_policy.hpp
@@ -91,7 +92,11 @@ endif()
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
 generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-storage-common)
+az_vcpkg_export(
+    azure-storage-common
+    STORAGE_COMMON
+    "azure/storage/common/dll_import_export.hpp"
+  )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # excluding json from coverage report
