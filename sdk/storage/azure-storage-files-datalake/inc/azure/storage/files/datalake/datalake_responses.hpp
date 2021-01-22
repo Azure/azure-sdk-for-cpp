@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string ETag;
     Core::DateTime LastModified;
     Core::DateTime CreatedOn;
-    int64_t ContentLength;
+    int64_t FileSize;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
-    Azure::Core::Nullable<int64_t> ContentLength;
+    Azure::Core::Nullable<int64_t> FileSize;
   };
 
   using SetDataLakePathAccessControlListResult = PathSetAccessControlResult;
@@ -173,7 +173,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<std::string> ContentRange;
+    int64_t FileSize = int64_t();
+    Azure::Core::Http::Range ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     std::string ETag;
     Core::DateTime LastModified;

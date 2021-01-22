@@ -772,9 +772,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
       Core::DateTime LastModified;
       Storage::Metadata Metadata;
-      int64_t ContentLength = int64_t();
       ShareFileHttpHeaders HttpHeaders;
-      Azure::Core::Nullable<std::string> ContentRange;
+      Azure::Core::Http::Range ContentRange;
+      int64_t FileSize;
       std::string ETag;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       std::string AcceptRanges;
@@ -6099,13 +6099,36 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ContentLength
-                = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
+
+            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            if (content_range_iterator != response.GetHeaders().end())
             {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
+              const std::string& content_range = content_range_iterator->second;
+              auto bytes_pos = content_range.find("bytes ");
+              auto dash_pos = content_range.find("-", bytes_pos + 6);
+              auto slash_pos = content_range.find("/", dash_pos + 1);
+              int64_t range_start_offset = std::stoll(std::string(
+                  content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
+              int64_t range_end_offset = std::stoll(std::string(
+                  content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
+              result.ContentRange = Azure::Core::Http::Range{
+                  range_start_offset, range_end_offset - range_start_offset + 1};
+            }
+            else
+            {
+              result.ContentRange = Azure::Core::Http::Range{
+                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+            }
+            if (content_range_iterator != response.GetHeaders().end())
+            {
+              const std::string& content_range = content_range_iterator->second;
+              auto slash_pos = content_range.find("/");
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
@@ -6235,13 +6258,36 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ContentLength
-                = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
+
+            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            if (content_range_iterator != response.GetHeaders().end())
             {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
+              const std::string& content_range = content_range_iterator->second;
+              auto bytes_pos = content_range.find("bytes ");
+              auto dash_pos = content_range.find("-", bytes_pos + 6);
+              auto slash_pos = content_range.find("/", dash_pos + 1);
+              int64_t range_start_offset = std::stoll(std::string(
+                  content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
+              int64_t range_end_offset = std::stoll(std::string(
+                  content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
+              result.ContentRange = Azure::Core::Http::Range{
+                  range_start_offset, range_end_offset - range_start_offset + 1};
+            }
+            else
+            {
+              result.ContentRange = Azure::Core::Http::Range{
+                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+            }
+            if (content_range_iterator != response.GetHeaders().end())
+            {
+              const std::string& content_range = content_range_iterator->second;
+              auto slash_pos = content_range.find("/");
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)

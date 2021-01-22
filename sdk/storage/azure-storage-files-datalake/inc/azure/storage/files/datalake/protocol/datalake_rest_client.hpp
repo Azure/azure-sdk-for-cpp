@@ -92,7 +92,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderXMsLeaseBreakPeriod = "x-ms-lease-break-period";
     constexpr static const char* HeaderLeaseTime = "x-ms-lease-time";
     constexpr static const char* HeaderAcceptRanges = "accept-ranges";
-    constexpr static const char* HeaderContentRange = "content-range";
     constexpr static const char* HeaderResourceType = "x-ms-resource-type";
     constexpr static const char* HeaderLeaseState = "x-ms-lease-state";
     constexpr static const char* HeaderLeaseStatus = "x-ms-lease-status";
@@ -421,8 +420,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::Core::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
-      int64_t ContentLength = int64_t();
-      Azure::Core::Nullable<std::string> ContentRange;
       std::string ETag;
       Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> ResourceType;
@@ -1930,17 +1927,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find("content-language") != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
-            }
-            if (response.GetHeaders().find(Details::HeaderContentLength)
-                != response.GetHeaders().end())
-            {
-              result.ContentLength
-                  = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
-            }
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
-            {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
             }
             if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
             {
