@@ -7,8 +7,6 @@
 
 #pragma once
 
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
@@ -166,5 +164,3 @@ namespace Azure { namespace Core { namespace Http {
   };
 
 }}} // namespace Azure::Core::Http
-
-#endif

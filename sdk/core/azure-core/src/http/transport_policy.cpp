@@ -3,6 +3,14 @@
 
 #include "azure/core/http/policy.hpp"
 
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#include "azure/core/http/curl/curl.hpp"
+#endif
+
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#include "azure/core/http/winhttp/win_http_client.hpp"
+#endif
+
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
@@ -14,8 +22,10 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
   return ::AzureSdkGetCustomHttpTransport();
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   return std::make_shared<Azure::Core::Http::WinHttpTransport>();
-#else
+#elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   return std::make_shared<Azure::Core::Http::CurlTransport>();
+#else
+  return std::shared_ptr<HttpTransport>();
 #endif
 }
 

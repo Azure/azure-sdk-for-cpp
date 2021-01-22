@@ -29,6 +29,7 @@ az_vcpkg_integrate()
 
 set(
   AZURE_TEMPLATE_HEADER
+    inc/azure/template/dll_import_export.hpp
     inc/azure/template/template_client.hpp
     inc/azure/template/version.hpp
     inc/azure/template.hpp
@@ -63,7 +64,11 @@ create_code_coverage(template azure-template azure-template-test)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
 generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-template)
+az_vcpkg_export(
+    azure-template
+    TEMPLATE
+    "azure/template/dll_import_export.hpp"
+  )
 
 if(BUILD_TESTING)
     # tests
