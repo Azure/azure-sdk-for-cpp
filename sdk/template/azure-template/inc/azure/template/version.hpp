@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "azure/template/dll_import_export.hpp"
+
 #include <string>
 
 #define AZURE_TEMPLATE_VERSION_MAJOR 1
@@ -27,7 +29,7 @@ namespace Azure { namespace Template { namespace Details {
     static constexpr int Patch = AZURE_TEMPLATE_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static std::string const PreRelease;
+    AZ_TEMPLATE_DLLEXPORT static std::string const PreRelease;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
