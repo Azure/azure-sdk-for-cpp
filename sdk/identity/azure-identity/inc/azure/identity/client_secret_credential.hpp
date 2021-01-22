@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/identity/dll_import_export.hpp"
+
 #include <azure/core/credentials.hpp>
 
 #include <string>
@@ -21,7 +23,7 @@ namespace Azure { namespace Identity {
    */
   class ClientSecretCredential : public Core::TokenCredential {
   private:
-    static std::string const g_aadGlobalAuthority;
+    AZ_IDENTITY_DLLEXPORT static std::string const g_aadGlobalAuthority;
 
     std::string m_tenantId;
     std::string m_clientId;

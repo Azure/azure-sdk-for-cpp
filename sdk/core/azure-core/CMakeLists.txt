@@ -69,6 +69,7 @@ set(
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
+    inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/nullable.hpp
@@ -143,4 +144,8 @@ endif()
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-core)
+az_vcpkg_export(
+    azure-core
+    CORE
+    "azure/core/dll_import_export.hpp"
+  )

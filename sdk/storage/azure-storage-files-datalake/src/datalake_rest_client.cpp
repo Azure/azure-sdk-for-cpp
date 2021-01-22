@@ -16,6 +16,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   const PathExpiryOptions PathExpiryOptions::RelativeToNow("RelativeToNow");
   const PathExpiryOptions PathExpiryOptions::Absolute("Absolute");
 
+  const PublicAccessType PublicAccessType::FileSystem("FileSystem");
+  const PublicAccessType PublicAccessType::Path("Path");
+  const PublicAccessType PublicAccessType::None("None");
+
   const AccountResourceType AccountResourceType::Account("account");
 
   const PathResourceType PathResourceType::Directory("directory");
