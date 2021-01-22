@@ -14,8 +14,6 @@
 #include <string>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
@@ -25,6 +23,8 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 #include <azure/storage/common/xml_wrapper.hpp>
+
+#include <azure/core/internal/json.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -2877,7 +2877,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           std::string json_body;
           {
-            nlohmann::json json;
+            Azure::Core::Internal::Json::json json;
             SharePermissionToJson(json, createPermissionOptions.Permission);
             json_body = json.dump();
           }
@@ -3461,7 +3461,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void SharePermissionToJson(
-            nlohmann::json& node,
+            Azure::Core::Internal::Json::json& node,
             const Models::SharePermission& object)
         {
           node["permission"] = object.Permission;
@@ -3479,7 +3479,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Models::ShareGetPermissionResult result = bodyBuffer.empty()
                 ? Models::ShareGetPermissionResult()
                 : ShareGetPermissionResultFromSharePermission(
-                    SharePermissionFromJson(nlohmann::json::parse(bodyBuffer)));
+                    SharePermissionFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             return Azure::Core::Response<Models::ShareGetPermissionResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3490,7 +3490,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Models::SharePermission SharePermissionFromJson(const nlohmann::json& node)
+        static Models::SharePermission SharePermissionFromJson(
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::SharePermission result;
           result.Permission = node["permission"].get<std::string>();

@@ -3,7 +3,7 @@
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
-#include <nlohmann/json.hpp>
+#include <azure/core/internal/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
 
@@ -24,7 +24,7 @@ KeyVaultKey Details::KeyVaultKeyDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto body = rawResponse.GetBody();
-  auto jsonParser = nlohmann::json::parse(body);
+  auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
 
   KeyVaultKey key(name);
   auto const& jsonKey = jsonParser["key"];
