@@ -152,6 +152,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlobGeoReplicationStatus
 
+    class BlobLeaseDurationType {
+    public:
+      BlobLeaseDurationType() = default;
+      explicit BlobLeaseDurationType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobLeaseDurationType& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlobLeaseDurationType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseDurationType Infinite;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseDurationType Fixed;
+
+    private:
+      std::string m_value;
+    }; // extensible enum BlobLeaseDurationType
+
     class BlobLeaseState {
     public:
       BlobLeaseState() = default;
@@ -740,7 +754,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       PublicAccessType AccessType = PublicAccessType::Private;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
-      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
+      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
@@ -800,7 +814,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       PublicAccessType AccessType = PublicAccessType::Private;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
-      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
+      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
@@ -1017,7 +1031,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
-      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
+      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       bool IsServerEncrypted = false;
       Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       Azure::Core::Nullable<std::string> EncryptionScope;
@@ -1045,7 +1059,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IsSealed; // only for append blob
       Models::BlobType BlobType;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
-      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
+      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
       bool IsServerEncrypted = false;
@@ -1068,7 +1082,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Storage::Metadata Metadata;
       Models::BlobType BlobType;
-      Azure::Core::Nullable<std::chrono::seconds> LeaseDuration;
+      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
       int64_t ContentLength = 0;
@@ -2238,8 +2252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseDuration)
               {
-                ret.LeaseDuration = std::chrono::seconds(
-                    strcmp(node.Value, "infinite") == 0 ? -1 : std::stoi(node.Value));
+                ret.LeaseDuration = BlobLeaseDurationType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -3298,10 +3311,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = std::chrono::seconds(
-                x_ms_lease_duration__iterator->second == "infinite"
-                    ? -1
-                    : std::stoi(x_ms_lease_duration__iterator->second));
+            response.LeaseDuration = BlobLeaseDurationType(x_ms_lease_duration__iterator->second);
           }
           response.DefaultEncryptionScope
               = httpResponse.GetHeaders().at("x-ms-default-encryption-scope");
@@ -4583,8 +4593,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseDuration)
               {
-                ret.LeaseDuration = std::chrono::seconds(
-                    strcmp(node.Value, "infinite") == 0 ? -1 : std::stoi(node.Value));
+                ret.LeaseDuration = BlobLeaseDurationType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5088,10 +5097,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = std::chrono::seconds(
-                x_ms_lease_duration__iterator->second == "infinite"
-                    ? -1
-                    : std::stoi(x_ms_lease_duration__iterator->second));
+            response.LeaseDuration = BlobLeaseDurationType(x_ms_lease_duration__iterator->second);
           }
           response.CreatedOn = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("x-ms-creation-time"),
@@ -5497,10 +5503,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = std::chrono::seconds(
-                x_ms_lease_duration__iterator->second == "infinite"
-                    ? -1
-                    : std::stoi(x_ms_lease_duration__iterator->second));
+            response.LeaseDuration = BlobLeaseDurationType(x_ms_lease_duration__iterator->second);
           }
           response.ContentLength = std::stoll(httpResponse.GetHeaders().at("content-length"));
           auto content_type__iterator = httpResponse.GetHeaders().find("content-type");

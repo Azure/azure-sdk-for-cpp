@@ -360,9 +360,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CreatedOn = std::move(result->CreatedOn);
     ret.Metadata = std::move(result->Metadata);
     // FIXME
-    ret.LeaseDuration = result->LeaseDuration.GetValue().count() == -1
-        ? "infinite"
-        : std::to_string(result->LeaseDuration.GetValue().count());
+    if (result->LeaseDuration.HasValue())
+    {
+      ret.LeaseDuration = result->LeaseDuration.GetValue().Get();
+    }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())
         : ret.LeaseState;
