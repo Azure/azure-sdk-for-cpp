@@ -331,7 +331,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.LeaseDuration = std::move(result->LeaseDuration);
+    // FIXME
+    if (result->LeaseDuration.HasValue())
+    {
+      ret.LeaseDuration = result->LeaseDuration.GetValue().Get();
+    }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())
         : ret.LeaseState;

@@ -6,6 +6,7 @@
 #include <future>
 #include <vector>
 
+#include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
 
@@ -161,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(PageBlobClientTest, Lease)
   {
     std::string leaseId1 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-    int32_t leaseDuration = 20;
+    auto leaseDuration = std::chrono::seconds(20);
     auto leaseClient = Blobs::BlobLeaseClient(*m_pageBlobClient, leaseId1);
     auto aLease = *leaseClient.Acquire(leaseDuration);
     EXPECT_FALSE(aLease.RequestId.empty());
@@ -177,7 +178,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties = *m_pageBlobClient->GetProperties();
     EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::Models::BlobLeaseState::Leased);
     EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::Models::BlobLeaseStatus::Locked);
-    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Fixed);
 
     auto rLease = *leaseClient.Renew();
     EXPECT_FALSE(rLease.RequestId.empty());
@@ -203,7 +204,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobLeaseClient(*m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
     properties = *m_pageBlobClient->GetProperties();
-    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Infinite);
     auto brokenLease = *leaseClient.Break();
     EXPECT_FALSE(brokenLease.ETag.empty());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
@@ -218,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakBlobLeaseOptions options;
-    options.BreakPeriod = 0;
+    options.BreakPeriod = std::chrono::seconds(0);
     leaseClient.Break(options);
   }
 

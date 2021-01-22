@@ -7,13 +7,15 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  const std::chrono::seconds BlobLeaseClient::InfiniteLeaseDuration{-1};
+
   std::string BlobLeaseClient::CreateUniqueLeaseId()
   {
     return Azure::Core::Uuid::CreateUuid().GetUuidString();
   }
 
   Azure::Core::Response<Models::AcquireBlobLeaseResult> BlobLeaseClient::Acquire(
-      int32_t duration,
+      std::chrono::seconds duration,
       const AcquireBlobLeaseOptions& options)
   {
     if (m_blobClient.HasValue())

@@ -3,6 +3,8 @@
 
 #include "append_blob_client_test.hpp"
 
+#include <azure/storage/blobs/blob_lease_client.hpp>
+
 namespace Azure { namespace Storage { namespace Test {
 
   std::shared_ptr<Azure::Storage::Blobs::AppendBlobClient> AppendBlobClientTest::m_appendBlobClient;
@@ -194,7 +196,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     Blobs::BlobLeaseClient leaseClient(appendBlobClient, leaseId);
-    leaseClient.Acquire(30);
+    leaseClient.Acquire(std::chrono::seconds(30));
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
     Blobs::DeleteBlobOptions options;
     options.AccessConditions.LeaseId = leaseId;
