@@ -8,7 +8,6 @@
 #include <sstream>
 
 #if defined(AZ_PLATFORM_WINDOWS)
-
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -17,13 +16,18 @@
 #endif
 
 #include <windows.h>
+#elif defined(AZ_PLATFORM_POSIX)
+#include <sys/utsname.h>
+#endif
 
 namespace {
-
 std::string GetOSVersion()
 {
   std::ostringstream osVersionInfo;
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
     HKEY regKey{};
     auto regKeyOpened = false;
@@ -72,22 +76,12 @@ std::string GetOSVersion()
       throw;
     }
   }
-
-  return osVersionInfo.str();
-}
-
-} // namespace
-
+#else
+  {
+    osVersionInfo << "UWP";
+  }
+#endif
 #elif defined(AZ_PLATFORM_POSIX)
-
-#include <sys/utsname.h>
-
-namespace {
-
-std::string GetOSVersion()
-{
-  std::ostringstream osVersionInfo;
-
   {
     utsname sysInfo{};
     if (uname(&sysInfo) == 0)
@@ -96,15 +90,11 @@ std::string GetOSVersion()
                     << sysInfo.version;
     }
   }
+#endif
 
   return osVersionInfo.str();
 }
 
-} // namespace
-
-#endif
-
-namespace {
 std::string TrimString(std::string s)
 {
   auto const isSpace = [](int c) { return !std::isspace(c); };

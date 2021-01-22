@@ -5,6 +5,7 @@
 ### New Features
 
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
+- Added support for `GetAccessPolicy` and `SetAccessPolicy` in `DataLakeFileSystemClient`.
 
 ### Breaking Changes
 

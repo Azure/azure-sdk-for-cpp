@@ -4,12 +4,27 @@
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
 
+#include "azure/core/platform.hpp"
+
 #include <cstdlib>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
 
 using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 #if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
@@ -58,6 +73,7 @@ EnvironmentCredential::EnvironmentCredential()
     //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
     //}
   }
+#endif
 }
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(

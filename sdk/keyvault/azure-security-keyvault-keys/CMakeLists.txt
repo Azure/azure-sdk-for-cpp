@@ -49,17 +49,16 @@ set(
 add_library(azure-security-keyvault-keys
   ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
 )
-add_library(Azure::keyvault::keys ALIAS azure-security-keyvault-keys)
+add_library(Azure::azure-security-keyvault-keys ALIAS azure-security-keyvault-keys)
 
 target_include_directories(
   azure-security-keyvault-keys
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<INSTALL_INTERFACE:include/azure-security-keyvault-keys>
-      ${azure-core-cpp_INCLUDE_DIRS}
+      $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::keyvault::common)
+target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-security-keyvault-common)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test)
@@ -75,4 +74,8 @@ if(BUILD_SAMPLES)
   add_subdirectory(sample)
 endif()
 
-az_vcpkg_export(azure-security-keyvault-keys)
+az_vcpkg_export(
+    azure-security-keyvault-keys
+    SECURITY_KEYVAULT_KEYS
+    "azure/keyvault/keys/dll_import_export.hpp"
+  )
