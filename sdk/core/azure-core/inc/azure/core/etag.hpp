@@ -18,6 +18,7 @@ namespace Azure { namespace Core {
    * @brief Represents an HTTP validator.
    */
   class ETag {
+    // ETag is a validator based on https://tools.ietf.org/html/rfc7232#section-2.3.2
   private:
     Nullable<std::string> m_value;
 
@@ -53,7 +54,7 @@ namespace Azure { namespace Core {
        | "1"    | "1"    | match             | match           |
        +--------+--------+-------------------+-----------------+
 
-    // etag:                            //This is possible and means no etag is present
+       // etag:                            //This is possible and means no etag is present
     // etag:""
     // etag:"*"                         //This means the etag is value '*'
     // etag:"some value"                //This means the etag is value 'some value'
@@ -61,18 +62,21 @@ namespace Azure { namespace Core {
     // etag:*                           //This is special, means any etag
     // If-Match header can do this
     // If-Match:"value1","value2","value3"  // Do this if any of these match
-    //
 
     */
 
     /*
-    * @brief Indicates whether two @ETag values are equal
-    * @param left @ETag to compare
-    * @param right @ETag to compare
-    * @param comparisonKind Determines what @ETagComparison to perform, default is #ETagComparison Strong
-    * @return `true` if @ETag matches, `false` otherwise. 
-    */
-    static bool Equals(const ETag& left, const ETag& right, const ETagComparison comparisonKind = ETagComparison::Strong)
+     * @brief Indicates whether two #ETag values are equal
+     * @param left #ETag to compare
+     * @param right #ETag to compare
+     * @param comparisonKind Determines what #ETagComparison to perform, default is
+     * #ETagComparison Strong
+     * @return `true` if #ETag matches, `false` otherwise.
+     */
+    static bool Equals(
+        const ETag& left,
+        const ETag& right,
+        const ETagComparison comparisonKind = ETagComparison::Strong)
     {
       // ETags are != if one of the values is null
       if (!left.m_value || !right.m_value)
@@ -93,17 +97,14 @@ namespace Azure { namespace Core {
 
         case ETagComparison::Weak:
 
-          if (left.IsWeak() && right.IsWeak())
-          {
-            return left.m_value.GetValue().compare(right.m_value.GetValue()) == 0;
-          }
           auto leftStart = left.IsWeak() ? 2 : 0;
           auto rightStart = right.IsWeak() ? 2 : 0;
 
           auto leftVal = left.m_value.GetValue();
           auto rightVal = right.m_value.GetValue();
 
-          // Compare is lengths are equal
+          // Compare if lengths are equal
+          //   Compare the strings character by character
           return ((leftVal.length() - leftStart) == (rightVal.length() - rightStart))
               && (leftVal.compare(leftStart, leftVal.length() - leftStart, &rightVal[rightStart])
                   == 0);
@@ -120,6 +121,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Construct a #ETag.
+     * @param etag The string value representation.
      */
     explicit ETag(std::string etag) : m_value(std::move(etag)) {}
 
@@ -129,8 +131,8 @@ namespace Azure { namespace Core {
     ETag& operator=(const ETag&) = default;
 
     /**
-     * @brief Whether @Tag is present.
-     * @return `true` if @ETag has a value, `false` otherwise.
+     * @brief Whether #ETag is present.
+     * @return `true` if #ETag has a value, `false` otherwise.
      */
     bool HasValue() const { return m_value.HasValue(); }
 
@@ -148,9 +150,10 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Compare with \p other @ETag for equality.
-     * @param other Other @ETag to compare with.
-     * @return `true` if @ETag instances are equal, `false` otherwise.
+     * @brief Compare with \p other #ETag for equality.
+     * @param other Other #ETag to compare with.
+     * @return `true` if #ETag instances are equal according to strong validation, `false`
+     * otherwise.
      */
     bool operator==(const ETag& other) const
     {
@@ -158,15 +161,16 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Compare with \p other @ETag for inequality.
-     * @param other Other @ETag to compare with.
-     * @return `true` if @ETag instances are not equal, `false` otherwise.
+     * @brief Compare with \p other #ETag for inequality.
+     * @param other Other #ETag to compare with.
+     * @return `true` if #ETag instances are not equal according to strong validation, `false`
+     * otherwise.
      */
     bool operator!=(const ETag& other) const { return !(*this == other); }
 
     /**
-     * @brief Specifies whether the @ETag is strong or weak
-     * @return `true` if @ETag is a weak validator, `false` otherwise.
+     * @brief Specifies whether the #ETag is strong or weak.
+     * @return `true` if #ETag is a weak validator, `false` otherwise.
      */
     bool IsWeak() const
     {
@@ -184,8 +188,8 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief @ETag representing everything
-     * @notes The any ETag is *, (unquoted).  It is NOT the same as "*"
+     * @brief #ETag representing everything.
+     * @notes The any #ETag is *, (unquoted).  It is NOT the same as "*".
      */
     static const ETag& Any()
     {
