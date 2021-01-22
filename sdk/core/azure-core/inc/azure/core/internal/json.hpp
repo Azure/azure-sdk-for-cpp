@@ -1405,9 +1405,9 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     || JSON_HEDLEY_GCC_VERSION_CHECK(9, 0, 0)
 #define JSON_HEDLEY_PREDICT(expr, value, probability) \
   __builtin_expect_with_probability((expr), (value), (probability))
-#define JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
+#define AZ_JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
   __builtin_expect_with_probability(!!(expr), 1, (probability))
-#define JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
+#define AZ_JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
   __builtin_expect_with_probability(!!(expr), 0, (probability))
 #define JSON_HEDLEY_LIKELY(expr) __builtin_expect(!!(expr), 1)
 #define JSON_HEDLEY_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
@@ -1423,14 +1423,14 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #define JSON_HEDLEY_PREDICT(expr, expected, probability) \
   (((probability) >= 0.9) ? __builtin_expect((expr), (expected)) \
                           : (JSON_HEDLEY_STATIC_CAST(void, expected), (expr)))
-#define JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
+#define AZ_JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
   (__extension__({ \
     double hedley_probability_ = (probability); \
     ((hedley_probability_ >= 0.9) \
          ? __builtin_expect(!!(expr), 1) \
          : ((hedley_probability_ <= 0.1) ? __builtin_expect(!!(expr), 0) : !!(expr))); \
   }))
-#define JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
+#define AZ_JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
   (__extension__({ \
     double hedley_probability_ = (probability); \
     ((hedley_probability_ >= 0.9) \
@@ -1442,8 +1442,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #else
 #define JSON_HEDLEY_PREDICT(expr, expected, probability) \
   (JSON_HEDLEY_STATIC_CAST(void, expected), (expr))
-#define JSON_HEDLEY_PREDICT_TRUE(expr, probability) (!!(expr))
-#define JSON_HEDLEY_PREDICT_FALSE(expr, probability) (!!(expr))
+#define AZ_JSON_HEDLEY_PREDICT_TRUE(expr, probability) (!!(expr))
+#define AZ_JSON_HEDLEY_PREDICT_FALSE(expr, probability) (!!(expr))
 #define JSON_HEDLEY_LIKELY(expr) (!!(expr))
 #define JSON_HEDLEY_UNLIKELY(expr) (!!(expr))
 #endif
@@ -2043,37 +2043,6 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #undef JSON_INTERNAL_CATCH
 #define JSON_INTERNAL_CATCH JSON_INTERNAL_CATCH_USER
 #endif
-
-/*!
-@brief macro to briefly define a mapping between an enum and JSON
-@def NLOHMANN_JSON_SERIALIZE_ENUM
-@since version 3.4.0
-*/
-#define NLOHMANN_JSON_SERIALIZE_ENUM(ENUM_TYPE, ...) \
-  template <typename BasicJsonType> inline void to_json(BasicJsonType& j, const ENUM_TYPE& e) \
-  { \
-    static_assert(std::is_enum<ENUM_TYPE>::value, #ENUM_TYPE " must be an enum!"); \
-    static const std::pair<ENUM_TYPE, BasicJsonType> m[] = __VA_ARGS__; \
-    auto it = std::find_if( \
-        std::begin(m), \
-        std::end(m), \
-        [e](const std::pair<ENUM_TYPE, BasicJsonType>& ej_pair) -> bool { \
-          return ej_pair.first == e; \
-        }); \
-    j = ((it != std::end(m)) ? it : std::begin(m))->second; \
-  } \
-  template <typename BasicJsonType> inline void from_json(const BasicJsonType& j, ENUM_TYPE& e) \
-  { \
-    static_assert(std::is_enum<ENUM_TYPE>::value, #ENUM_TYPE " must be an enum!"); \
-    static const std::pair<ENUM_TYPE, BasicJsonType> m[] = __VA_ARGS__; \
-    auto it = std::find_if( \
-        std::begin(m), \
-        std::end(m), \
-        [&j](const std::pair<ENUM_TYPE, BasicJsonType>& ej_pair) -> bool { \
-          return ej_pair.second == j; \
-        }); \
-    e = ((it != std::end(m)) ? it : std::begin(m))->first; \
-  }
 
 // Ugly macros to avoid uglier copy-paste when specializing basic_json. They
 // may be removed in the future once the class is split.
@@ -2698,9 +2667,6 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   using is_detected_convertible = std::is_convertible<detected_t<Op, Args...>, To>;
 }}}}} // namespace Azure::Core::Internal::Json::detail
 
-// #include <nlohmann/json_fwd.hpp>
-#ifndef INCLUDE_NLOHMANN_JSON_FWD_HPP_
-#define INCLUDE_NLOHMANN_JSON_FWD_HPP_
 
 #include <cstdint> // int64_t, uint64_t
 #include <map> // map
@@ -2759,8 +2725,6 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   */
   using json = basic_json<>;
 }}}} // namespace Azure::Core::Internal::Json
-
-#endif // INCLUDE_NLOHMANN_JSON_FWD_HPP_
 
 namespace Azure { namespace Core { namespace Internal { namespace Json {
   /*!
@@ -24327,11 +24291,11 @@ if no parse error occurred.
 
 @since version 1.0.0
 */
-JSON_HEDLEY_NON_NULL(1)
-inline Azure::Core::Internal::Json::json operator"" _json(const char* s, std::size_t n)
-{
-  return Azure::Core::Internal::Json::json::parse(s, s + n);
-}
+// JSON_HEDLEY_NON_NULL(1)
+// inline Azure::Core::Internal::Json::json operator"" _json(const char* s, std::size_t n)
+// {
+//   return Azure::Core::Internal::Json::json::parse(s, s + n);
+// }
 
 /*!
 @brief user-defined string literal for JSON pointer
@@ -24346,13 +24310,13 @@ object if no parse error occurred.
 
 @since version 2.0.0
 */
-JSON_HEDLEY_NON_NULL(1)
-inline Azure::Core::Internal::Json::json::json_pointer operator"" _json_pointer(
-    const char* s,
-    std::size_t n)
-{
-  return Azure::Core::Internal::Json::json::json_pointer(std::string(s, n));
-}
+// JSON_HEDLEY_NON_NULL(1)
+// inline Azure::Core::Internal::Json::json::json_pointer operator"" _json_pointer(
+//     const char* s,
+//     std::size_t n)
+// {
+//   return Azure::Core::Internal::Json::json::json_pointer(std::string(s, n));
+// }
 
 // #include <nlohmann/detail/macro_unscope.hpp>
 
