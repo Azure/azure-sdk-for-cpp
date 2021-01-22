@@ -138,6 +138,7 @@ jobs:
       echo "Check clang-formatting"
       brew install clang-format
       clang-format --version
+      pwd
       find sdk/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \;
 
       if [[ `git status | grep modified | awk '{print $2}'` ]]; then
