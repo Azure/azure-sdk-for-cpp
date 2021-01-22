@@ -85,21 +85,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum AccountKind
 
-    struct AcquireBlobContainerLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string LeaseId;
-    }; // struct AcquireBlobContainerLeaseResult
+    namespace Details {
+      struct AcquireBlobContainerLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct AcquireBlobContainerLeaseResult
+    } // namespace Details
 
-    struct AcquireBlobLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string LeaseId;
-    }; // struct AcquireBlobLeaseResult
+    namespace Details {
+      struct AcquireBlobLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct AcquireBlobLeaseResult
+    } // namespace Details
 
     class BlobArchiveStatus {
     public:
@@ -251,37 +255,45 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlockType
 
-    struct BreakBlobContainerLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      int32_t LeaseTime = 0;
-    }; // struct BreakBlobContainerLeaseResult
+    namespace Details {
+      struct BreakBlobContainerLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        int32_t LeaseTime = 0;
+      }; // struct BreakBlobContainerLeaseResult
+    } // namespace Details
 
-    struct BreakBlobLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      int32_t LeaseTime = 0;
-    }; // struct BreakBlobLeaseResult
+    namespace Details {
+      struct BreakBlobLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        int32_t LeaseTime = 0;
+      }; // struct BreakBlobLeaseResult
+    } // namespace Details
 
-    struct ChangeBlobContainerLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string LeaseId;
-    }; // struct ChangeBlobContainerLeaseResult
+    namespace Details {
+      struct ChangeBlobContainerLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct ChangeBlobContainerLeaseResult
+    } // namespace Details
 
-    struct ChangeBlobLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string LeaseId;
-    }; // struct ChangeBlobLeaseResult
+    namespace Details {
+      struct ChangeBlobLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct ChangeBlobLeaseResult
+    } // namespace Details
 
     struct ClearPageBlobPagesResult
     {
@@ -537,36 +549,44 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum RehydratePriority
 
-    struct ReleaseBlobContainerLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-    }; // struct ReleaseBlobContainerLeaseResult
+    namespace Details {
+      struct ReleaseBlobContainerLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+      }; // struct ReleaseBlobContainerLeaseResult
+    } // namespace Details
 
-    struct ReleaseBlobLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      Azure::Core::Nullable<int64_t> SequenceNumber;
-    }; // struct ReleaseBlobLeaseResult
+    namespace Details {
+      struct ReleaseBlobLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        Azure::Core::Nullable<int64_t> SequenceNumber;
+      }; // struct ReleaseBlobLeaseResult
+    } // namespace Details
 
-    struct RenewBlobContainerLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string LeaseId;
-    }; // struct RenewBlobContainerLeaseResult
+    namespace Details {
+      struct RenewBlobContainerLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct RenewBlobContainerLeaseResult
+    } // namespace Details
 
-    struct RenewBlobLeaseResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string LeaseId;
-    }; // struct RenewBlobLeaseResult
+    namespace Details {
+      struct RenewBlobLeaseResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct RenewBlobLeaseResult
+    } // namespace Details
 
     struct ResizePageBlobResult
     {
@@ -673,11 +693,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum SkuName
 
-    struct SubmitBlobBatchResultInternal
-    {
-      std::string RequestId;
-      std::string ContentType;
-    }; // struct SubmitBlobBatchResultInternal
+    namespace Details {
+      struct SubmitBlobBatchResult
+      {
+        std::string RequestId;
+        std::string ContentType;
+      }; // struct SubmitBlobBatchResult
+    } // namespace Details
 
     struct UndeleteBlobContainerResult
     {
@@ -3628,7 +3650,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
         }; // struct AcquireBlobContainerLeaseOptions
 
-        static Azure::Core::Response<AcquireBlobContainerLeaseResult> AcquireLease(
+        static Azure::Core::Response<Models::Details::AcquireBlobContainerLeaseResult> AcquireLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -3667,7 +3689,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          AcquireBlobContainerLeaseResult response;
+          Models::Details::AcquireBlobContainerLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3681,7 +3703,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
-          return Azure::Core::Response<AcquireBlobContainerLeaseResult>(
+          return Azure::Core::Response<Models::Details::AcquireBlobContainerLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -3693,7 +3715,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
         }; // struct RenewBlobContainerLeaseOptions
 
-        static Azure::Core::Response<RenewBlobContainerLeaseResult> RenewLease(
+        static Azure::Core::Response<Models::Details::RenewBlobContainerLeaseResult> RenewLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -3728,7 +3750,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          RenewBlobContainerLeaseResult response;
+          Models::Details::RenewBlobContainerLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3742,7 +3764,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
-          return Azure::Core::Response<RenewBlobContainerLeaseResult>(
+          return Azure::Core::Response<Models::Details::RenewBlobContainerLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -3755,7 +3777,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
         }; // struct ChangeBlobContainerLeaseOptions
 
-        static Azure::Core::Response<ChangeBlobContainerLeaseResult> ChangeLease(
+        static Azure::Core::Response<Models::Details::ChangeBlobContainerLeaseResult> ChangeLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -3791,7 +3813,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ChangeBlobContainerLeaseResult response;
+          Models::Details::ChangeBlobContainerLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3805,7 +3827,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
-          return Azure::Core::Response<ChangeBlobContainerLeaseResult>(
+          return Azure::Core::Response<Models::Details::ChangeBlobContainerLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -3817,7 +3839,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
         }; // struct ReleaseBlobContainerLeaseOptions
 
-        static Azure::Core::Response<ReleaseBlobContainerLeaseResult> ReleaseLease(
+        static Azure::Core::Response<Models::Details::ReleaseBlobContainerLeaseResult> ReleaseLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -3852,7 +3874,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ReleaseBlobContainerLeaseResult response;
+          Models::Details::ReleaseBlobContainerLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3865,7 +3887,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
-          return Azure::Core::Response<ReleaseBlobContainerLeaseResult>(
+          return Azure::Core::Response<Models::Details::ReleaseBlobContainerLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -3877,7 +3899,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
         }; // struct BreakBlobContainerLeaseOptions
 
-        static Azure::Core::Response<BreakBlobContainerLeaseResult> BreakLease(
+        static Azure::Core::Response<Models::Details::BreakBlobContainerLeaseResult> BreakLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -3916,7 +3938,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          BreakBlobContainerLeaseResult response;
+          Models::Details::BreakBlobContainerLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3930,7 +3952,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseTime = std::stoi(httpResponse.GetHeaders().at("x-ms-lease-time"));
-          return Azure::Core::Response<BreakBlobContainerLeaseResult>(
+          return Azure::Core::Response<Models::Details::BreakBlobContainerLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -6340,7 +6362,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct AcquireBlobLeaseOptions
 
-        static Azure::Core::Response<AcquireBlobLeaseResult> AcquireLease(
+        static Azure::Core::Response<Models::Details::AcquireBlobLeaseResult> AcquireLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -6390,7 +6412,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          AcquireBlobLeaseResult response;
+          Models::Details::AcquireBlobLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -6404,7 +6426,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
-          return Azure::Core::Response<AcquireBlobLeaseResult>(
+          return Azure::Core::Response<Models::Details::AcquireBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -6419,7 +6441,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct RenewBlobLeaseOptions
 
-        static Azure::Core::Response<RenewBlobLeaseResult> RenewLease(
+        static Azure::Core::Response<Models::Details::RenewBlobLeaseResult> RenewLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -6465,7 +6487,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          RenewBlobLeaseResult response;
+          Models::Details::RenewBlobLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -6479,7 +6501,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
-          return Azure::Core::Response<RenewBlobLeaseResult>(
+          return Azure::Core::Response<Models::Details::RenewBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -6495,7 +6517,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct ChangeBlobLeaseOptions
 
-        static Azure::Core::Response<ChangeBlobLeaseResult> ChangeLease(
+        static Azure::Core::Response<Models::Details::ChangeBlobLeaseResult> ChangeLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -6542,7 +6564,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ChangeBlobLeaseResult response;
+          Models::Details::ChangeBlobLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -6556,7 +6578,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
-          return Azure::Core::Response<ChangeBlobLeaseResult>(
+          return Azure::Core::Response<Models::Details::ChangeBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -6571,7 +6593,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct ReleaseBlobLeaseOptions
 
-        static Azure::Core::Response<ReleaseBlobLeaseResult> ReleaseLease(
+        static Azure::Core::Response<Models::Details::ReleaseBlobLeaseResult> ReleaseLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -6617,7 +6639,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ReleaseBlobLeaseResult response;
+          Models::Details::ReleaseBlobLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -6636,7 +6658,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
           }
-          return Azure::Core::Response<ReleaseBlobLeaseResult>(
+          return Azure::Core::Response<Models::Details::ReleaseBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -6651,7 +6673,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct BreakBlobLeaseOptions
 
-        static Azure::Core::Response<BreakBlobLeaseResult> BreakLease(
+        static Azure::Core::Response<Models::Details::BreakBlobLeaseResult> BreakLease(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -6701,7 +6723,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          BreakBlobLeaseResult response;
+          Models::Details::BreakBlobLeaseResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -6715,7 +6737,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.LeaseTime = std::stoi(httpResponse.GetHeaders().at("x-ms-lease-time"));
-          return Azure::Core::Response<BreakBlobLeaseResult>(
+          return Azure::Core::Response<Models::Details::BreakBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -9470,7 +9492,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string ContentType;
         }; // struct SubmitBlobBatchOptions
 
-        static Azure::Core::Response<SubmitBlobBatchResultInternal> SubmitBatch(
+        static Azure::Core::Response<Models::Details::SubmitBlobBatchResult> SubmitBatch(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -9491,7 +9513,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("Content-Type", options.ContentType);
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          SubmitBlobBatchResultInternal response;
+          Models::Details::SubmitBlobBatchResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -9501,7 +9523,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
           response.ContentType = httpResponse.GetHeaders().at("content-type");
-          return Azure::Core::Response<SubmitBlobBatchResultInternal>(
+          return Azure::Core::Response<Models::Details::SubmitBlobBatchResult>(
               std::move(response), std::move(pHttpResponse));
         }
 

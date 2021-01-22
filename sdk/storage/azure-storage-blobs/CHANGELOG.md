@@ -11,6 +11,7 @@
 - `UserDelegationKey` was changed to a member of `GetUserDelegationKeyResult` rather than a typedef like before.
 - `AccessType` in `CreateBlobContainerOptions` was changed to non-nullable.
 - `ListType` in `GetBlockListOptions` was changed to non-nullable.
+- Added `BlobLeaseClient`, all lease related APIs are moved to `BlobLeaseClient`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

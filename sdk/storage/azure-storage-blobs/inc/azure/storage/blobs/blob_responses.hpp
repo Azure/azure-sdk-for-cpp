@@ -25,4 +25,43 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
+  struct AcquireBlobLeaseResult
+  {
+    std::string RequestId;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    std::string LeaseId;
+  };
+
+  struct BreakBlobLeaseResult
+  {
+    std::string RequestId;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    int32_t LeaseTime = 0;
+  };
+
+  struct ChangeBlobLeaseResult
+  {
+    std::string RequestId;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    std::string LeaseId;
+  };
+
+  struct ReleaseBlobLeaseResult
+  {
+    std::string RequestId;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+  };
+
+  struct RenewBlobLeaseResult
+  {
+    std::string RequestId;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    std::string LeaseId;
+  };
+
 }}}} // namespace Azure::Storage::Blobs::Models
