@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/core/dll_import_export.hpp"
+
 #include <chrono>
 #include <string>
 
@@ -48,7 +50,7 @@ namespace Azure { namespace Core {
    * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
    */
   class DateTime : public Details::Clock::time_point {
-    static DateTime const SystemClockEpoch;
+    AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
 
   public:
     /**

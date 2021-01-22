@@ -18,7 +18,7 @@ macro(az_vcpkg_integrate)
   endif()
 endmacro()
 
-macro(az_vcpkg_export targetName)
+macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
   # Produce the files to help with the VcPkg release.
   # Go to the /out/build/<cfg>/vcpkg directory, and copy (merge) "ports" folder to the vcpkg repo.
   # Then, update portfile.cmake's SHA512 from "1" to the actual hash (a good way to do it is to uninstall a package,
@@ -44,6 +44,27 @@ macro(az_vcpkg_export targetName)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # .lib files for DLL build
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # headers
     )
+
+  # If building a Windows DLL, patch the dll_import_export.hpp
+  if(WIN32 AND BUILD_SHARED_LIBS)
+    add_compile_definitions(AZ_${macroNamePart}_BEING_BUILT)
+    target_compile_definitions(${targetName} PUBLIC AZ_${macroNamePart}_DLL)
+
+    set(AZ_${macroNamePart}_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
+    configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/inc/${dllImportExportHeaderPath}"
+      "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/${dllImportExportHeaderPath}"
+      @ONLY
+    )
+    unset(AZ_${macroNamePart}_DLL_INSTALLED_AS_PACKAGE)
+
+    get_filename_component(dllImportExportHeaderDir ${dllImportExportHeaderPath} DIRECTORY)
+    install(
+        FILES "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/${dllImportExportHeaderPath}"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${dllImportExportHeaderDir}"
+    )
+    unset(dllImportExportHeaderDir)
+  endif()
 
   # Export the targets file itself.
   install(
