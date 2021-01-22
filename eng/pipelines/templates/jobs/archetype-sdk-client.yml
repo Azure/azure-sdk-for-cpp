@@ -138,7 +138,7 @@ jobs:
       echo "Check clang-formatting"
       brew install clang-format
       clang-format --version
-      find . -regex '.*\.\(cpp\|hpp\)' -exec clang-format --verbose -style=file -i {} \;
+      find . \( -iname '*.hpp' -o -iname '*.cpp' \) -exec clang-format --verbose -i {} \;
 
       if [[ `git status | grep modified | awk '{print $2}'` ]]; then
         echo Some files were not formatted correctly according to the .clang-format file.
