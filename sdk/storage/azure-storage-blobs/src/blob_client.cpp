@@ -284,8 +284,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
-          std::move(ret),
-          std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
+          std::move(ret), response.ExtractRawResponse());
     };
     auto ret = returnTypeConverter(firstChunk);
 
@@ -425,8 +424,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
-          std::move(ret),
-          std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
+          std::move(ret), response.ExtractRawResponse());
     };
     auto ret = returnTypeConverter(firstChunk);
 

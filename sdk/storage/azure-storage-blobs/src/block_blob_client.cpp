@@ -175,9 +175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
     ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
     return Azure::Core::Response<Models::UploadBlockBlobFromResult>(
-        std::move(ret),
-        std::make_unique<Azure::Core::Http::RawResponse>(
-            std::move(commitBlockListResponse.GetRawResponse())));
+        std::move(ret), commitBlockListResponse.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -256,9 +254,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
     result.EncryptionScope = commitBlockListResponse->EncryptionScope;
     return Azure::Core::Response<Models::UploadBlockBlobFromResult>(
-        std::move(result),
-        std::make_unique<Azure::Core::Http::RawResponse>(
-            std::move(commitBlockListResponse.GetRawResponse())));
+        std::move(result), commitBlockListResponse.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
