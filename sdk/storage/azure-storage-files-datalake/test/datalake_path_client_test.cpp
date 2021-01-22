@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions, options1));
     }
   }
-  #if 0
+#if 0
   TEST_F(DataLakePathClientTest, LeaseRelated)
   {
     std::string leaseId1 = CreateUniqueLeaseId();
@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.BreakPeriod = 0;
     m_pathClient->BreakLease(options);
   }
-  #endif
+#endif
   TEST_F(DataLakePathClientTest, ConstructorsWorks)
   {
     {
