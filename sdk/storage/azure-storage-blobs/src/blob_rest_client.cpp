@@ -36,6 +36,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   const BlobGeoReplicationStatus BlobGeoReplicationStatus::Bootstrap("bootstrap");
   const BlobGeoReplicationStatus BlobGeoReplicationStatus::Unavailable("unavailable");
 
+  const BlobLeaseDurationType BlobLeaseDurationType::Infinite("infinite");
+  const BlobLeaseDurationType BlobLeaseDurationType::Fixed("fixed");
+
   const BlobLeaseState BlobLeaseState::Available("available");
   const BlobLeaseState BlobLeaseState::Leased("leased");
   const BlobLeaseState BlobLeaseState::Expired("expired");

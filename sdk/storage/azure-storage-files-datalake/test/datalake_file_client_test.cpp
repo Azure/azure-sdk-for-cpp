@@ -378,6 +378,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto result = newFileClient->Read();
     auto downloaded = ReadBodyStream(result->Body);
     EXPECT_EQ(buffer, downloaded);
+    EXPECT_EQ(bufferSize, result->FileSize);
+    EXPECT_EQ(bufferSize, result->ContentRange.Length.GetValue());
+    EXPECT_EQ(0, result->ContentRange.Offset);
 
     // Read Range
     {
@@ -390,6 +393,9 @@ namespace Azure { namespace Storage { namespace Test {
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(firstHalf.size(), downloaded.size());
       EXPECT_EQ(firstHalf, downloaded);
+      EXPECT_EQ(bufferSize, result->FileSize);
+      EXPECT_EQ(bufferSize / 2, result->ContentRange.Length.GetValue());
+      EXPECT_EQ(0, result->ContentRange.Offset);
     }
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
@@ -400,6 +406,9 @@ namespace Azure { namespace Storage { namespace Test {
       result = newFileClient->Read(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(secondHalf, downloaded);
+      EXPECT_EQ(bufferSize, result->FileSize);
+      EXPECT_EQ(bufferSize / 2, result->ContentRange.Length.GetValue());
+      EXPECT_EQ(bufferSize / 2, result->ContentRange.Offset);
     }
     {
       // Read with last modified access condition.
@@ -491,7 +500,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
-      EXPECT_EQ(properties.ContentLength, fileSize);
+      EXPECT_EQ(properties.FileSize, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
       EXPECT_EQ(properties.ETag, res->ETag);
@@ -525,7 +534,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
-      EXPECT_EQ(properties.ContentLength, fileSize);
+      EXPECT_EQ(properties.FileSize, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
       EXPECT_EQ(properties.ETag, res->ETag);

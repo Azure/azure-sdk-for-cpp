@@ -274,7 +274,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::CreateDataLakePathResult ret;
     ret.ETag = std::move(result->ETag.GetValue());
     ret.LastModified = std::move(result->LastModified.GetValue());
-    ret.ContentLength = std::move(result->ContentLength);
+    ret.FileSize = std::move(result->ContentLength);
     return Azure::Core::Response<Models::CreateDataLakePathResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -359,7 +359,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     ret.CreatedOn = std::move(result->CreatedOn);
     ret.Metadata = std::move(result->Metadata);
-    ret.LeaseDuration = std::move(result->LeaseDuration);
+    // FIXME
+    if (result->LeaseDuration.HasValue())
+    {
+      ret.LeaseDuration = result->LeaseDuration.GetValue().Get();
+    }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())
         : ret.LeaseState;
@@ -382,7 +386,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
     ret.ExpiresOn = std::move(result->ExpiriesOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
-    ret.ContentLength = result->ContentLength;
+    ret.FileSize = result->ContentLength;
     return Azure::Core::Response<Models::GetDataLakePathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }

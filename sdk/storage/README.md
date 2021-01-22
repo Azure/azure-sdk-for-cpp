@@ -47,7 +47,7 @@ For general suggestions about Azure, use our [Azure feedback forum](https://feed
 On Windows, dependencies are managed by [vcpkg](https://github.com/microsoft/vcpkg). You can reference the [Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) to quickly set yourself up.
 After Vcpkg is initialized and bootstrapped, you can install the dependencies:
 ```BatchFile
-vcpkg.exe install libxml2:x64-windows-static curl:x64-windows-static nlohmann-json:x64-windows-static
+vcpkg.exe install libxml2:x64-windows-static curl:x64-windows-static
 ```
 
 #### Unix Platforms
@@ -58,7 +58,6 @@ You can use the package manager on different Unix platforms to install the depen
   - libxml2.
   - OpenSSL.
   - libcurl.
-  - nlohmann-json.
 
 ### Build from Source
 
@@ -109,7 +108,6 @@ TODO when ready.
 ## Dependencies
 
   - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/master/README.md)
-  - [nlohmann/json](https://github.com/nlohmann/json)
   - libxml2
 
 ## Code Samples

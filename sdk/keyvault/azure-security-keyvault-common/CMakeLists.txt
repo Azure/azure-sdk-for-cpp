@@ -55,6 +55,11 @@ target_include_directories(
 
 target_link_libraries(azure-security-keyvault-common PUBLIC Azure::azure-core)
 
+if(MSVC)
+    # C28020 and C28204 are introduced by nlohmann/json
+    target_compile_options(azure-security-keyvault-common PUBLIC /wd28204 /wd28020)
+endif()
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test)
 
