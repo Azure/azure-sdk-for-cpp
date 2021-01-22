@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "azure/storage/files/shares/dll_import_export.hpp"
+
 #include <functional>
 #include <iostream>
 #include <map>
@@ -11,8 +13,6 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <nlohmann/json.hpp>
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
@@ -23,6 +23,8 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 #include <azure/storage/common/xml_wrapper.hpp>
+
+#include <azure/core/internal/json.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -149,8 +151,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const PermissionCopyModeType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static PermissionCopyModeType Source;
-      const static PermissionCopyModeType Override;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyModeType Source;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyModeType Override;
 
     private:
       std::string m_value;
@@ -168,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const DeleteSnapshotsOptionType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static DeleteSnapshotsOptionType Include;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOptionType Include;
 
     private:
       std::string m_value;
@@ -187,7 +189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const FileRangeWriteFromUrlType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static FileRangeWriteFromUrlType Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteFromUrlType Update;
 
     private:
       std::string m_value;
@@ -276,8 +278,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static LeaseDurationType Infinite;
-      const static LeaseDurationType Fixed;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
 
     private:
       std::string m_value;
@@ -292,11 +294,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static LeaseStateType Available;
-      const static LeaseStateType Leased;
-      const static LeaseStateType Expired;
-      const static LeaseStateType Breaking;
-      const static LeaseStateType Broken;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Available;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Leased;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Expired;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Breaking;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Broken;
 
     private:
       std::string m_value;
@@ -311,8 +313,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static LeaseStatusType Locked;
-      const static LeaseStatusType Unlocked;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatusType Locked;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatusType Unlocked;
 
     private:
       std::string m_value;
@@ -481,11 +483,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const LeaseAction& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static LeaseAction Acquire;
-      const static LeaseAction Release;
-      const static LeaseAction Change;
-      const static LeaseAction Renew;
-      const static LeaseAction Break;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Acquire;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Release;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Change;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Renew;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Break;
 
     private:
       std::string m_value;
@@ -500,10 +502,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const CopyStatusType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static CopyStatusType Pending;
-      const static CopyStatusType Success;
-      const static CopyStatusType Aborted;
-      const static CopyStatusType Failed;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Pending;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Success;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Aborted;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Failed;
 
     private:
       std::string m_value;
@@ -522,8 +524,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static FileRangeWriteType Update;
-      const static FileRangeWriteType Clear;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Clear;
 
     private:
       std::string m_value;
@@ -770,9 +772,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
       Core::DateTime LastModified;
       Storage::Metadata Metadata;
-      int64_t ContentLength = int64_t();
       ShareFileHttpHeaders HttpHeaders;
-      Azure::Core::Nullable<std::string> ContentRange;
+      Azure::Core::Http::Range ContentRange;
+      int64_t FileSize;
       std::string ETag;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       std::string AcceptRanges;
@@ -2875,7 +2877,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           std::string json_body;
           {
-            nlohmann::json json;
+            Azure::Core::Internal::Json::json json;
             SharePermissionToJson(json, createPermissionOptions.Permission);
             json_body = json.dump();
           }
@@ -3459,7 +3461,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void SharePermissionToJson(
-            nlohmann::json& node,
+            Azure::Core::Internal::Json::json& node,
             const Models::SharePermission& object)
         {
           node["permission"] = object.Permission;
@@ -3477,7 +3479,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Models::ShareGetPermissionResult result = bodyBuffer.empty()
                 ? Models::ShareGetPermissionResult()
                 : ShareGetPermissionResultFromSharePermission(
-                    SharePermissionFromJson(nlohmann::json::parse(bodyBuffer)));
+                    SharePermissionFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             return Azure::Core::Response<Models::ShareGetPermissionResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3488,7 +3490,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Models::SharePermission SharePermissionFromJson(const nlohmann::json& node)
+        static Models::SharePermission SharePermissionFromJson(
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::SharePermission result;
           result.Permission = node["permission"].get<std::string>();
@@ -6097,13 +6100,36 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ContentLength
-                = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
+
+            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            if (content_range_iterator != response.GetHeaders().end())
             {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
+              const std::string& content_range = content_range_iterator->second;
+              auto bytes_pos = content_range.find("bytes ");
+              auto dash_pos = content_range.find("-", bytes_pos + 6);
+              auto slash_pos = content_range.find("/", dash_pos + 1);
+              int64_t range_start_offset = std::stoll(std::string(
+                  content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
+              int64_t range_end_offset = std::stoll(std::string(
+                  content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
+              result.ContentRange = Azure::Core::Http::Range{
+                  range_start_offset, range_end_offset - range_start_offset + 1};
+            }
+            else
+            {
+              result.ContentRange = Azure::Core::Http::Range{
+                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+            }
+            if (content_range_iterator != response.GetHeaders().end())
+            {
+              const std::string& content_range = content_range_iterator->second;
+              auto slash_pos = content_range.find("/");
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
@@ -6233,13 +6259,36 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ContentLength
-                = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
+
+            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            if (content_range_iterator != response.GetHeaders().end())
             {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
+              const std::string& content_range = content_range_iterator->second;
+              auto bytes_pos = content_range.find("bytes ");
+              auto dash_pos = content_range.find("-", bytes_pos + 6);
+              auto slash_pos = content_range.find("/", dash_pos + 1);
+              int64_t range_start_offset = std::stoll(std::string(
+                  content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
+              int64_t range_end_offset = std::stoll(std::string(
+                  content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
+              result.ContentRange = Azure::Core::Http::Range{
+                  range_start_offset, range_end_offset - range_start_offset + 1};
+            }
+            else
+            {
+              result.ContentRange = Azure::Core::Http::Range{
+                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+            }
+            if (content_range_iterator != response.GetHeaders().end())
+            {
+              const std::string& content_range = content_range_iterator->second;
+              auto slash_pos = content_range.find("/");
+              result.FileSize = std::stoll(content_range.substr(slash_pos + 1));
+            }
+            else
+            {
+              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)

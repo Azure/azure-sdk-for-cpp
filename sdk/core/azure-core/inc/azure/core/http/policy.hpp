@@ -15,11 +15,6 @@
 #include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
-// Need to include the transport adapters offered by the SDK here so anyone can use them by just
-// including policy.hpp
-#include "azure/core/http/curl/curl.hpp"
-#include "azure/core/http/winhttp/win_http_client.hpp"
-
 #include <chrono>
 #include <utility>
 

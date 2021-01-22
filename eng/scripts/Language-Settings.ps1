@@ -1,4 +1,5 @@
 $Language = "cpp"
+$LanguageDisplayName = "C++"
 $PackageRepository = "CPP"
 $packagePattern = "*.json"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/cpp-packages.csv"
@@ -8,6 +9,13 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 
 function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory, $pkgName) 
 {
+  # Test if the package path ends with the package name (e.g. sdk/storage/azure-storage-common)
+  # This function runs in a loop where $pkgPath might be the path to the package and must return 
+  # $null in cases where $pkgPath is not the path to the package specified by $pkgName
+  if ($pkgName -ne (Split-Path -Leaf $pkgPath)) { 
+    return $null
+  }
+
   $packageVersion = & $PSScriptRoot/Get-PkgVersion.ps1 -ServiceDirectory $serviceDirectory -PackageName $pkgName
   return [PackageProps]::new($pkgName, $packageVersion, $pkgPath, $serviceDirectory)
 }

@@ -32,17 +32,6 @@ if(BUILD_TRANSPORT_CURL)
   message("Libcurl version ${CURL_VERSION_STRING}")
 endif()
 
-# Storage requires 3.6.0 version for using `contains` feature
-set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
-# Try to find the config cmake file. Typically for when the integration is made at CMake level
-# (CMake project available with a configuration file to consume)
-find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG QUIET)
-if(NOT nlohmann_json_FOUND)
-  # If CMake project/config is not found, last option is to find the library installed. The integration is done by the linker directly. 
-  find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} REQUIRED)
-endif()
-message("nlohmann json version ${nlohmann_json_VERSION}")
-
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
   SET(CURL_TRANSPORT_ADAPTER_INC inc/azure/core/http/curl/curl.hpp)
@@ -62,6 +51,7 @@ set(
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/logging/logging.hpp
@@ -69,6 +59,7 @@ set(
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
+    inc/azure/core/dll_import_export.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
@@ -121,8 +112,7 @@ create_code_coverage(core azure-core azure-core-test)
 
 # ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
-target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
-target_link_libraries(azure-core INTERFACE Threads::Threads nlohmann_json::nlohmann_json)
+target_link_libraries(azure-core INTERFACE Threads::Threads)
 
 if(MSVC)
     target_link_libraries(azure-core PRIVATE crypt32)
@@ -142,4 +132,8 @@ endif()
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(azure-core)
+az_vcpkg_export(
+    azure-core
+    CORE
+    "azure/core/dll_import_export.hpp"
+  )

@@ -12,8 +12,6 @@
 #include <string>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
@@ -22,6 +20,9 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
+#include <azure/storage/files/datalake/dll_import_export.hpp>
+
+#include <azure/core/internal/json.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -91,7 +92,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderXMsLeaseBreakPeriod = "x-ms-lease-break-period";
     constexpr static const char* HeaderLeaseTime = "x-ms-lease-time";
     constexpr static const char* HeaderAcceptRanges = "accept-ranges";
-    constexpr static const char* HeaderContentRange = "content-range";
     constexpr static const char* HeaderResourceType = "x-ms-resource-type";
     constexpr static const char* HeaderLeaseState = "x-ms-lease-state";
     constexpr static const char* HeaderLeaseStatus = "x-ms-lease-status";
@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const FileSystemResourceType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static FileSystemResourceType Filesystem;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static FileSystemResourceType Filesystem;
 
     private:
       std::string m_value;
@@ -144,9 +144,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       const std::string& Get() const { return m_value; }
 
-      const static PathSetAccessControlRecursiveMode Set;
-      const static PathSetAccessControlRecursiveMode Modify;
-      const static PathSetAccessControlRecursiveMode Remove;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlRecursiveMode Set;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlRecursiveMode Modify;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlRecursiveMode Remove;
 
     private:
       std::string m_value;
@@ -161,10 +161,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const PathExpiryOptions& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static PathExpiryOptions NeverExpire;
-      const static PathExpiryOptions RelativeToCreation;
-      const static PathExpiryOptions RelativeToNow;
-      const static PathExpiryOptions Absolute;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions NeverExpire;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToCreation;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToNow;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions Absolute;
 
     private:
       std::string m_value;
@@ -214,6 +214,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<Models::FileSystem> Filesystems;
     };
 
+    class PublicAccessType {
+    public:
+      PublicAccessType() = default;
+      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PublicAccessType FileSystem;
+      const static PublicAccessType Path;
+      const static PublicAccessType None;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PublicAccessType
+
     // The value must be "account" for all account operations.
     class AccountResourceType {
     public:
@@ -223,7 +239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const AccountResourceType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static AccountResourceType Account;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static AccountResourceType Account;
 
     private:
       std::string m_value;
@@ -238,8 +254,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const PathResourceType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static PathResourceType Directory;
-      const static PathResourceType File;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
 
     private:
       std::string m_value;
@@ -256,8 +272,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const PathRenameMode& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static PathRenameMode Legacy;
-      const static PathRenameMode Posix;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Posix;
 
     private:
       std::string m_value;
@@ -280,11 +296,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const PathLeaseAction& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static PathLeaseAction Acquire;
-      const static PathLeaseAction Break;
-      const static PathLeaseAction Change;
-      const static PathLeaseAction Renew;
-      const static PathLeaseAction Release;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathLeaseAction Acquire;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathLeaseAction Break;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathLeaseAction Change;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathLeaseAction Renew;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathLeaseAction Release;
 
     private:
       std::string m_value;
@@ -305,8 +321,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const PathGetPropertiesAction& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static PathGetPropertiesAction GetAccessControl;
-      const static PathGetPropertiesAction GetStatus;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathGetPropertiesAction GetAccessControl;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathGetPropertiesAction GetStatus;
 
     private:
       std::string m_value;
@@ -321,11 +337,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static LeaseStateType Available;
-      const static LeaseStateType Leased;
-      const static LeaseStateType Expired;
-      const static LeaseStateType Breaking;
-      const static LeaseStateType Broken;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Available;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Leased;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Expired;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Breaking;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Broken;
 
     private:
       std::string m_value;
@@ -340,8 +356,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
 
-      const static LeaseStatusType Locked;
-      const static LeaseStatusType Unlocked;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatusType Locked;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatusType Unlocked;
 
     private:
       std::string m_value;
@@ -404,8 +420,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::Core::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
-      int64_t ContentLength = int64_t();
-      Azure::Core::Nullable<std::string> ContentRange;
       std::string ETag;
       Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> ResourceType;
@@ -534,7 +548,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::ServiceListFileSystemsResult result = bodyBuffer.empty()
                 ? Models::ServiceListFileSystemsResult()
                 : ServiceListFileSystemsResultFromFileSystemList(
-                    FileSystemListFromJson(nlohmann::json::parse(bodyBuffer)));
+                    FileSystemListFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -550,7 +564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Models::FileSystem FileSystemFromJson(const nlohmann::json& node)
+        static Models::FileSystem FileSystemFromJson(const Azure::Core::Internal::Json::json& node)
         {
           Models::FileSystem result;
           result.Name = node["name"].get<std::string>();
@@ -560,7 +574,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static Models::FileSystemList FileSystemListFromJson(const nlohmann::json& node)
+        static Models::FileSystemList FileSystemListFromJson(
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::FileSystemList result;
           for (const auto& element : node["filesystems"])
@@ -936,7 +951,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::FileSystemListPathsResult result = bodyBuffer.empty()
                 ? Models::FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
-                    PathListFromJson(nlohmann::json::parse(bodyBuffer)));
+                    PathListFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -952,7 +967,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Models::Path PathFromJson(const nlohmann::json& node)
+        static Models::Path PathFromJson(const Azure::Core::Internal::Json::json& node)
         {
           Models::Path result;
           result.Name = node["name"].get<std::string>();
@@ -973,7 +988,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static Models::PathList PathListFromJson(const nlohmann::json& node)
+        static Models::PathList PathListFromJson(const Azure::Core::Internal::Json::json& node)
         {
           Models::PathList result;
           for (const auto& element : node["paths"])
@@ -1914,17 +1929,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
             }
-            if (response.GetHeaders().find(Details::HeaderContentLength)
-                != response.GetHeaders().end())
-            {
-              result.ContentLength
-                  = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
-            }
-            if (response.GetHeaders().find(Details::HeaderContentRange)
-                != response.GetHeaders().end())
-            {
-              result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
-            }
             if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
@@ -2054,7 +2058,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::PathSetAccessControlRecursiveResult result = bodyBuffer.empty()
                 ? Models::PathSetAccessControlRecursiveResult()
                 : PathSetAccessControlRecursiveResultFromSetAccessControlRecursiveResponse(
-                    SetAccessControlRecursiveResponseFromJson(nlohmann::json::parse(bodyBuffer)));
+                    SetAccessControlRecursiveResponseFromJson(
+                        Azure::Core::Internal::Json::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -2070,7 +2075,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Models::AclFailedEntry AclFailedEntryFromJson(const nlohmann::json& node)
+        static Models::AclFailedEntry AclFailedEntryFromJson(
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::AclFailedEntry result;
           result.Name = node["name"].get<std::string>();
@@ -2080,7 +2086,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
         static Models::SetAccessControlRecursiveResponse SetAccessControlRecursiveResponseFromJson(
-            const nlohmann::json& node)
+            const Azure::Core::Internal::Json::json& node)
         {
           Models::SetAccessControlRecursiveResponse result;
           result.DirectoriesSuccessful = node["directoriesSuccessful"].get<int32_t>();

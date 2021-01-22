@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/internal/json.hpp>
 #include <gtest/gtest.h>
-#include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
+using json = Azure::Core::Internal::Json::json;
 
-// Just a simple test to ensure that Azure Core is bringing nlohmann header
+// Just a simple test to ensure that Azure Core internal is wrapping nlohmann json
 TEST(Json, create)
 {
   json j;

@@ -177,6 +177,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         bool recursive,
         const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions()) const;
 
+    /**
+     * @brief Gets the permissions for this file system. The permissions indicate whether
+     * file system data may be accessed publicly.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A GetDataLakeFileSystemAccessPolicyResult describing the container's access policy.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult> GetAccessPolicy(
+        const GetDataLakeFileSystemAccessPolicyOptions& options
+        = GetDataLakeFileSystemAccessPolicyOptions()) const;
+
+    /**
+     * @brief Sets the permissions for the specified file system. The permissions indicate
+     * whether file system's data may be accessed publicly.
+     *
+     * @param options Optional
+     * parameters to execute this function.
+     * @return A SetDataLakeFileSystemAccessPolicyResult describing the updated file system.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult> SetAccessPolicy(
+        const SetDataLakeFileSystemAccessPolicyOptions& options
+        = SetDataLakeFileSystemAccessPolicyOptions()) const;
+
   private:
     Azure::Core::Http::Url m_dfsUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
