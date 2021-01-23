@@ -149,13 +149,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileProperty Properties;
     };
 
-    // Abstract for entries that can be listed from Directory.
-    struct FilesAndDirectoriesListSinglePage
-    {
-      std::vector<DirectoryItem> DirectoryItems;
-      std::vector<FileItem> FileItems;
-    };
-
     // A listed Azure Storage handle item.
     struct HandleItem
     {
@@ -221,27 +214,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum LeaseStatusType
 
-    // An enumeration of directories and files.
-    struct ListFilesAndDirectoriesSinglePageResponse
-    {
-      std::string ServiceEndpoint;
-      std::string ShareName;
-      std::string ShareSnapshot;
-      std::string DirectoryPath;
-      std::string Prefix;
-      std::string PreviousContinuationToken;
-      int32_t PageSizeHint = int32_t();
-      FilesAndDirectoriesListSinglePage SinglePage;
-      std::string ContinuationToken;
-    };
-
-    // An enumeration of handles.
-    struct ListHandlesResponse
-    {
-      std::vector<HandleItem> HandleList;
-      std::string ContinuationToken;
-    };
-
     // Properties of a share.
     struct ShareProperties
     {
@@ -268,17 +240,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Version;
       ShareProperties Properties;
       Storage::Metadata ShareMetadata;
-    };
-
-    // An enumeration of shares.
-    struct ListSharesResponse
-    {
-      std::string ServiceEndpoint;
-      std::string Prefix;
-      std::string PreviousContinuationToken;
-      int32_t PageSizeHint = int32_t();
-      std::vector<ShareItem> Items;
-      std::string ContinuationToken;
     };
 
     // The retention policy.
@@ -589,6 +550,45 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderFileRangeWrite = "x-ms-write";
     constexpr static const char* HeaderFileRangeWriteTypeDefault = "update";
     constexpr static const char* HeaderTransactionalContentHashCrc64 = "x-ms-content-crc64";
+
+    // Abstract for entries that can be listed from Directory.
+    struct FilesAndDirectoriesListSinglePage
+    {
+      std::vector<DirectoryItem> DirectoryItems;
+      std::vector<FileItem> FileItems;
+    };
+
+    // An enumeration of directories and files.
+    struct ListFilesAndDirectoriesSinglePageResponse
+    {
+      std::string ServiceEndpoint;
+      std::string ShareName;
+      std::string ShareSnapshot;
+      std::string DirectoryPath;
+      std::string Prefix;
+      std::string PreviousContinuationToken;
+      int32_t PageSizeHint = int32_t();
+      FilesAndDirectoriesListSinglePage SinglePage;
+      std::string ContinuationToken;
+    };
+
+    // An enumeration of handles.
+    struct ListHandlesResponse
+    {
+      std::vector<HandleItem> HandleList;
+      std::string ContinuationToken;
+    };
+
+    // An enumeration of shares.
+    struct ListSharesResponse
+    {
+      std::string ServiceEndpoint;
+      std::string Prefix;
+      std::string PreviousContinuationToken;
+      int32_t PageSizeHint = int32_t();
+      std::vector<ShareItem> Items;
+      std::string ContinuationToken;
+    };
 
     struct ServiceSetPropertiesResult
     {

@@ -106,14 +106,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string ErrorMessage;
     };
 
-    struct SetAccessControlRecursiveResponse
-    {
-      int32_t DirectoriesSuccessful = int32_t();
-      int32_t FilesSuccessful = int32_t();
-      int32_t FailureCount = int32_t();
-      std::vector<AclFailedEntry> FailedEntries;
-    };
-
     struct PathItem
     {
       std::string Name;
@@ -126,21 +118,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string Permissions;
     };
 
-    struct PathList
-    {
-      std::vector<PathItem> Items;
-    };
-
     struct FileSystemItem
     {
       std::string Name;
       Core::DateTime LastModified;
       std::string ETag;
-    };
-
-    struct FileSystemList
-    {
-      std::vector<FileSystemItem> Items;
     };
 
     class PublicAccessType {
@@ -364,6 +346,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderLeaseState = "x-ms-lease-state";
     constexpr static const char* HeaderLeaseStatus = "x-ms-lease-status";
     constexpr static const char* HeaderRequestIsServerEncrypted = "x-ms-request-server-encrypted";
+
+    struct SetAccessControlRecursiveResponse
+    {
+      int32_t DirectoriesSuccessful = int32_t();
+      int32_t FilesSuccessful = int32_t();
+      int32_t FailureCount = int32_t();
+      std::vector<AclFailedEntry> FailedEntries;
+    };
+
+    struct PathList
+    {
+      std::vector<PathItem> Items;
+    };
+
+    struct FileSystemList
+    {
+      std::vector<FileSystemItem> Items;
+    };
 
     struct ServiceListFileSystemsResult
     {
