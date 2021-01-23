@@ -788,10 +788,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ExpiresOn;
   };
 
-  using AcquireDataLakePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;
-  using BreakDataLakePathLeaseOptions = Blobs::BreakBlobLeaseOptions;
-  using RenewDataLakePathLeaseOptions = Blobs::RenewBlobLeaseOptions;
-  using ReleaseDataLakePathLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
-  using ChangeDataLakePathLeaseOptions = Blobs::ChangeBlobLeaseOptions;
+  using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;
+  using BreakDataLakeLeaseOptions = Blobs::BreakBlobLeaseOptions;
+  using RenewDataLakeLeaseOptions = Blobs::RenewBlobLeaseOptions;
+  using ReleaseDataLakeLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
+  using ChangeDataLakeLeaseOptions = Blobs::ChangeBlobLeaseOptions;
 
 }}}} // namespace Azure::Storage::Files::DataLake

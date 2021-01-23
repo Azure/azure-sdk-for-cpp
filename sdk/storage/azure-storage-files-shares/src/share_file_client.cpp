@@ -567,47 +567,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::AcquireShareFileLeaseResult> ShareFileClient::AcquireLease(
-      const std::string& proposedLeaseId,
-      const AcquireShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
-    protocolLayerOptions.LeaseDuration = -1;
-    return Details::ShareRestClient::File::AcquireLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::ChangeShareFileLeaseResult> ShareFileClient::ChangeLease(
-      const std::string& leaseId,
-      const std::string& proposedLeaseId,
-      const ChangeShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
-    return Details::ShareRestClient::File::ChangeLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::ReleaseShareFileLeaseResult> ShareFileClient::ReleaseLease(
-      const std::string& leaseId,
-      const ReleaseShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    return Details::ShareRestClient::File::ReleaseLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::BreakShareFileLeaseResult> ShareFileClient::BreakLease(
-      const BreakShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
-    return Details::ShareRestClient::File::BreakLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
   Azure::Core::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,

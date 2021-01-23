@@ -229,6 +229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         : m_shareUrl(std::move(shareUri)), m_pipeline(std::move(pipeline))
     {
     }
+    friend class ShareLeaseClient;
     friend class ShareServiceClient;
   };
 }}}} // namespace Azure::Storage::Files::Shares

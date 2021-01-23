@@ -63,11 +63,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<std::string> ContinuationToken;
   };
 
-  using AcquireDataLakePathLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
-  using RenewDataLakePathLeaseResult = Blobs::Models::RenewBlobLeaseResult;
-  using ReleaseDataLakePathLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
-  using ChangeDataLakePathLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
-  using BreakDataLakePathLeaseResult = Blobs::Models::BreakBlobLeaseResult;
+  using AcquireDataLakeLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
+  using RenewDataLakeLeaseResult = Blobs::Models::RenewBlobLeaseResult;
+  using ReleaseDataLakeLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
+  using ChangeDataLakeLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
+  using BreakDataLakeLeaseResult = Blobs::Models::BreakBlobLeaseResult;
 
   struct Acl
   {
