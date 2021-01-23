@@ -88,7 +88,7 @@ void DataLakeGettingStarted()
 
     // List all file systems.
     std::string continuation;
-    std::vector<Models::FileSystem> fileSystems;
+    std::vector<Models::FileSystemItem> fileSystems;
     do
     {
       auto response = serviceClient.ListFileSystemsSinglePage();

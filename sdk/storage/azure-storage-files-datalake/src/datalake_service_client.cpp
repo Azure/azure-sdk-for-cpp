@@ -35,13 +35,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return blobOptions;
     }
 
-    std::vector<Models::FileSystem> FileSystemsFromContainerItems(
+    std::vector<Models::FileSystemItem> FileSystemsFromContainerItems(
         const std::vector<Blobs::Models::BlobContainerItem>& items)
     {
-      std::vector<Models::FileSystem> fileSystems;
+      std::vector<Models::FileSystemItem> fileSystems;
       for (const auto& item : items)
       {
-        Models::FileSystem fileSystem;
+        Models::FileSystemItem fileSystem;
         fileSystem.ETag = item.ETag;
         fileSystem.Name = item.Name;
         fileSystem.LastModified = item.LastModified;

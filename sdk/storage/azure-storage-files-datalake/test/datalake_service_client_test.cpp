@@ -53,10 +53,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<Files::DataLake::Models::FileSystem> DataLakeServiceClientTest::ListAllFileSystems(
-      const std::string& prefix)
+  std::vector<Files::DataLake::Models::FileSystemItem>
+  DataLakeServiceClientTest::ListAllFileSystems(const std::string& prefix)
   {
-    std::vector<Files::DataLake::Models::FileSystem> result;
+    std::vector<Files::DataLake::Models::FileSystemItem> result;
     std::string continuation;
     Files::DataLake::ListFileSystemsSinglePageOptions options;
     if (!prefix.empty())
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixB.size()), m_fileSystemPrefixB);
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(result.end(), iter);

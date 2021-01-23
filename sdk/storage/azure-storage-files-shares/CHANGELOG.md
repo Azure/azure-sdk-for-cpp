@@ -8,6 +8,7 @@
 - `ContentRange` in `FileDownloadResult` is now `Azure::Core::Http::Range`.
 - `ContentLength` in `FileDownloadResult` is renamed to `FileSize`.
 - Renamed `GetUri` to `GetUrl`.
+- Moved all protocol layer generated result types to `Details` namespace.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
