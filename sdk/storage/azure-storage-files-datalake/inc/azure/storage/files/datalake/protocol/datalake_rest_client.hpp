@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathList
     {
-      std::vector<PathItem> Paths;
+      std::vector<PathItem> Items;
     };
 
     struct FileSystemItem
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct FileSystemList
     {
-      std::vector<FileSystemItem> Filesystems;
+      std::vector<FileSystemItem> Items;
     };
 
     class PublicAccessType {
@@ -367,7 +367,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct ServiceListFileSystemsResult
     {
-      std::vector<FileSystemItem> Filesystems;
+      std::vector<FileSystemItem> Items;
       Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct FileSystemListPathsResult
     {
-      std::vector<PathItem> Paths;
+      std::vector<PathItem> Items;
       Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
@@ -577,7 +577,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           FileSystemList result;
           for (const auto& element : node["filesystems"])
           {
-            result.Filesystems.emplace_back(FileSystemItemFromJson(element));
+            result.Items.emplace_back(FileSystemItemFromJson(element));
           }
           return result;
         }
@@ -586,7 +586,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             FileSystemList object)
         {
           ServiceListFileSystemsResult result;
-          result.Filesystems = std::move(object.Filesystems);
+          result.Items = std::move(object.Items);
 
           return result;
         }
@@ -988,7 +988,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           PathList result;
           for (const auto& element : node["paths"])
           {
-            result.Paths.emplace_back(PathItemFromJson(element));
+            result.Items.emplace_back(PathItemFromJson(element));
           }
           return result;
         }
@@ -996,7 +996,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         static FileSystemListPathsResult FileSystemListPathsResultFromPathList(PathList object)
         {
           FileSystemListPathsResult result;
-          result.Paths = std::move(object.Paths);
+          result.Items = std::move(object.Items);
 
           return result;
         }

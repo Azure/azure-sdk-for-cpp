@@ -96,8 +96,7 @@ void DataLakeGettingStarted()
       {
         continuation = response->ContinuationToken.GetValue();
       }
-      fileSystems.insert(
-          fileSystems.end(), response->Filesystems.begin(), response->Filesystems.end());
+      fileSystems.insert(fileSystems.end(), response->Items.begin(), response->Items.end());
     } while (!continuation.empty());
 
     // Delete file system.

@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Prefix;
       std::string PreviousContinuationToken;
       int32_t PageSizeHint = int32_t();
-      std::vector<ShareItem> ShareItems;
+      std::vector<ShareItem> Items;
       std::string ContinuationToken;
     };
 
@@ -438,7 +438,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Snapshots = 1,
       Metadata = 2,
       Deleted = 4,
-
     };
 
     inline ListSharesIncludeType operator|(ListSharesIncludeType lhs, ListSharesIncludeType rhs)
@@ -609,7 +608,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Prefix;
       std::string PreviousContinuationToken;
       int32_t PageSizeHint = int32_t();
-      std::vector<ShareItem> ShareItems;
+      std::vector<ShareItem> Items;
       std::string ContinuationToken;
     };
 
@@ -2394,7 +2393,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               if (path.size() == 3 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::Shares && path[2] == XmlTagName::Share)
               {
-                result.ShareItems.emplace_back(ShareItemFromXml(reader));
+                result.Items.emplace_back(ShareItemFromXml(reader));
                 path.pop_back();
               }
             }
@@ -2444,7 +2443,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.Prefix = std::move(object.Prefix);
           result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
           result.PageSizeHint = object.PageSizeHint;
-          result.ShareItems = std::move(object.ShareItems);
+          result.Items = std::move(object.Items);
           result.ContinuationToken = std::move(object.ContinuationToken);
 
           return result;

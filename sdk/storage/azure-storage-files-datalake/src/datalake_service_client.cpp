@@ -184,7 +184,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions);
     auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = std::move(result->ContinuationToken);
-    response.Filesystems = FileSystemsFromContainerItems(result->Items);
+    response.Items = FileSystemsFromContainerItems(result->Items);
     return Azure::Core::Response<Models::ListFileSystemsSinglePageResult>(
         std::move(response), result.ExtractRawResponse());
   }

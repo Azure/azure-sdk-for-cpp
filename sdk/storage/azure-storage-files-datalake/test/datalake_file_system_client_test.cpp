@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
-      result.insert(result.end(), response->Paths.begin(), response->Paths.end());
+      result.insert(result.end(), response->Items.begin(), response->Items.end());
       if (response->ContinuationToken.HasValue())
       {
         continuation = response->ContinuationToken.GetValue();
@@ -284,7 +284,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListPathsSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileSystemClient->ListPathsSinglePage(true, options);
-      EXPECT_LE(2U, response->Paths.size());
+      EXPECT_LE(2U, response->Items.size());
     }
   }
 
