@@ -35,13 +35,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return blobOptions;
     }
 
-    std::vector<Models::FileSystem> FileSystemsFromContainerItems(
+    std::vector<Models::FileSystemItem> FileSystemsFromContainerItems(
         const std::vector<Blobs::Models::BlobContainerItem>& items)
     {
-      std::vector<Models::FileSystem> fileSystems;
+      std::vector<Models::FileSystemItem> fileSystems;
       for (const auto& item : items)
       {
-        Models::FileSystem fileSystem;
+        Models::FileSystemItem fileSystem;
         fileSystem.ETag = item.ETag;
         fileSystem.Name = item.Name;
         fileSystem.LastModified = item.LastModified;
@@ -184,7 +184,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions);
     auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = std::move(result->ContinuationToken);
-    response.Filesystems = FileSystemsFromContainerItems(result->Items);
+    response.Items = FileSystemsFromContainerItems(result->Items);
     return Azure::Core::Response<Models::ListFileSystemsSinglePageResult>(
         std::move(response), result.ExtractRawResponse());
   }

@@ -17,11 +17,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
-  using ListFileSystemsSinglePageResult = ServiceListFileSystemsResult;
+  using ListFileSystemsSinglePageResult = Details::ServiceListFileSystemsResult;
 
   // FileSystemClient models:
 
-  using ListPathsSinglePageResult = FileSystemListPathsResult;
+  using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
 
   struct GetDataLakeFileSystemAccessPolicyResult
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     bool Deleted = true;
   };
 
-  using SetDataLakeFileSystemMetadataResult = FileSystemCreateResult;
+  using SetDataLakeFileSystemMetadataResult = Details::FileSystemCreateResult;
 
   // PathClient models:
 
@@ -159,14 +159,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<int64_t> FileSize;
   };
 
-  using SetDataLakePathAccessControlListResult = PathSetAccessControlResult;
-  using SetDataLakePathPermissionsResult = PathSetAccessControlResult;
+  using SetDataLakePathAccessControlListResult = Details::PathSetAccessControlResult;
+  using SetDataLakePathPermissionsResult = Details::PathSetAccessControlResult;
 
   // FileClient models:
 
   using UploadDataLakeFileFromResult = Blobs::Models::UploadBlockBlobResult;
-  using AppendDataLakeFileResult = PathAppendDataResult;
-  using FlushDataLakeFileResult = PathFlushDataResult;
+  using AppendDataLakeFileResult = Details::PathAppendDataResult;
+  using FlushDataLakeFileResult = Details::PathFlushDataResult;
   using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
 
   struct ReadDataLakeFileResult
@@ -216,7 +216,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<std::string> ContinuationToken;
   };
 
-  using SetDataLakeDirectoryAccessControlRecursiveResult = PathSetAccessControlRecursiveResult;
+  using SetDataLakeDirectoryAccessControlRecursiveResult
+      = Details::PathSetAccessControlRecursiveResult;
   using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
   using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
 

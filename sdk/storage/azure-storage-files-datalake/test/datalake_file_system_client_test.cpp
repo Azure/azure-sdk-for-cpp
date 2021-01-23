@@ -50,11 +50,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileSystemClientTest::TearDownTestSuite() { m_fileSystemClient->Delete(); }
 
-  std::vector<Files::DataLake::Models::Path> DataLakeFileSystemClientTest::ListAllPaths(
+  std::vector<Files::DataLake::Models::PathItem> DataLakeFileSystemClientTest::ListAllPaths(
       bool recursive,
       const std::string& directory)
   {
-    std::vector<Files::DataLake::Models::Path> result;
+    std::vector<Files::DataLake::Models::PathItem> result;
     std::string continuation;
     Files::DataLake::ListPathsSinglePageOptions options;
     if (!directory.empty())
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
-      result.insert(result.end(), response->Paths.begin(), response->Paths.end());
+      result.insert(result.end(), response->Items.begin(), response->Items.end());
       if (response->ContinuationToken.HasValue())
       {
         continuation = response->ContinuationToken.GetValue();
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
               return path.Name == name;
             });
         EXPECT_NE(result.end(), iter);
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
               return path.Name == name;
             });
         EXPECT_NE(result.end(), iter);
@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
               return path.Name == name;
             });
         EXPECT_NE(result.end(), iter);
@@ -273,7 +273,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
               return path.Name == name;
             });
         EXPECT_EQ(result.end(), iter);
@@ -284,7 +284,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListPathsSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileSystemClient->ListPathsSinglePage(true, options);
-      EXPECT_LE(2U, response->Paths.size());
+      EXPECT_LE(2U, response->Items.size());
     }
   }
 

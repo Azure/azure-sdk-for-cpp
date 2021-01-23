@@ -7,6 +7,9 @@
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
 - `ReadDataLakeFileResult` now has a new field `FileSize`.
 - Added support for `GetAccessPolicy` and `SetAccessPolicy` in `DataLakeFileSystemClient`.
+- Moved all protocol layer generated result types to `Details` namespace.
+- Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
+- Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
 
 ### Breaking Changes
 
