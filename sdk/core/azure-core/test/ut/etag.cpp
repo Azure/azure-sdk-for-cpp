@@ -40,7 +40,7 @@ TEST(ETag, IsWeak)
 
   auto et3 = ETag("W/\"weakETag\"");
   EXPECT_TRUE(et3.IsWeak());
-  
+
   auto et4 = ETag("W/\"\"");
   EXPECT_TRUE(et4.IsWeak());
 
@@ -133,7 +133,6 @@ TEST(ETag, Any)
 
   EXPECT_FALSE(star == quotedStar);
   EXPECT_TRUE(anyETag == star);
-
 }
 
 TEST(ETag, EqualsStrong)
