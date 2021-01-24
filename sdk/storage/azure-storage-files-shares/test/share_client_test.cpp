@@ -227,112 +227,115 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(expectedPermission, ret2->Permission);
   }
 
-  TEST_F(FileShareClientTest, Lease)
-  {
-    std::string leaseId1 = CreateUniqueLeaseId();
-    std::chrono::seconds leaseDuration(20);
-    auto leaseClient = Files::Shares::ShareLeaseClient(*m_shareClient, leaseId1);
+  // TEST_F(FileShareClientTest, Lease)
+  //{
+  //  std::string leaseId1 = CreateUniqueLeaseId();
+  //  std::chrono::seconds leaseDuration(20);
+  //  auto leaseClient = Files::Shares::ShareLeaseClient(*m_shareClient, leaseId1);
 
-    auto aLease = *leaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
-    aLease = *leaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
+  //  auto aLease = *leaseClient.Acquire(leaseDuration);
+  //  EXPECT_FALSE(aLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
+  //  EXPECT_EQ(aLease.LeaseId, leaseId1);
+  //  aLease = *leaseClient.Acquire(leaseDuration);
+  //  EXPECT_FALSE(aLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
+  //  EXPECT_EQ(aLease.LeaseId, leaseId1);
 
-    auto properties = *m_shareClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
-    EXPECT_EQ(Files::Shares::Models::LeaseDurationType::Fixed, properties.LeaseDuration.GetValue());
+  //  auto properties = *m_shareClient->GetProperties();
+  //  EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
+  //  EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
+  //  EXPECT_EQ(Files::Shares::Models::LeaseDurationType::Fixed,
+  //  properties.LeaseDuration.GetValue());
 
-    auto rLease = *leaseClient.Renew();
-    EXPECT_FALSE(rLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), rLease.LastModified);
-    EXPECT_EQ(rLease.LeaseId, leaseId1);
+  //  auto rLease = *leaseClient.Renew();
+  //  EXPECT_FALSE(rLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), rLease.LastModified);
+  //  EXPECT_EQ(rLease.LeaseId, leaseId1);
 
-    std::string leaseId2 = CreateUniqueLeaseId();
-    EXPECT_NE(leaseId1, leaseId2);
-    auto cLease = *leaseClient.Change(leaseId2);
-    EXPECT_FALSE(cLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), cLease.LastModified);
-    EXPECT_EQ(cLease.LeaseId, leaseId2);
+  //  std::string leaseId2 = CreateUniqueLeaseId();
+  //  EXPECT_NE(leaseId1, leaseId2);
+  //  auto cLease = *leaseClient.Change(leaseId2);
+  //  EXPECT_FALSE(cLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), cLease.LastModified);
+  //  EXPECT_EQ(cLease.LeaseId, leaseId2);
 
-    auto relLease = *leaseClient.Release();
-    EXPECT_FALSE(relLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), relLease.LastModified);
+  //  auto relLease = *leaseClient.Release();
+  //  EXPECT_FALSE(relLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), relLease.LastModified);
 
-    leaseClient = Files::Shares::ShareLeaseClient(*m_shareClient, CreateUniqueLeaseId());
-    aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
-    properties = *m_shareClient->GetProperties();
-    EXPECT_EQ(
-        Files::Shares::Models::LeaseDurationType::Infinite, properties.LeaseDuration.GetValue());
-    auto brokenLease = *leaseClient.Break();
-    EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), brokenLease.LastModified);
-    EXPECT_EQ(brokenLease.LeaseTime, 0);
+  //  leaseClient = Files::Shares::ShareLeaseClient(*m_shareClient, CreateUniqueLeaseId());
+  //  aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
+  //  properties = *m_shareClient->GetProperties();
+  //  EXPECT_EQ(
+  //      Files::Shares::Models::LeaseDurationType::Infinite, properties.LeaseDuration.GetValue());
+  //  auto brokenLease = *leaseClient.Break();
+  //  EXPECT_FALSE(brokenLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), brokenLease.LastModified);
+  //  EXPECT_EQ(brokenLease.LeaseTime, 0);
 
-    Files::Shares::BreakShareLeaseOptions options;
-    options.BreakPeriod = 0;
-    leaseClient.Break(options);
-  }
+  //  Files::Shares::BreakShareLeaseOptions options;
+  //  options.BreakPeriod = 0;
+  //  leaseClient.Break(options);
+  //}
 
-  TEST_F(FileShareClientTest, SnapshotLease)
-  {
-    std::string leaseId1 = CreateUniqueLeaseId();
-    std::chrono::seconds leaseDuration(20);
-    auto snapshotResult = m_shareClient->CreateSnapshot();
-    auto shareSnapshot = m_shareClient->WithSnapshot(snapshotResult->Snapshot);
-    auto shareSnapshotLeaseClient = Files::Shares::ShareLeaseClient(shareSnapshot, leaseId1);
-    auto aLease = *shareSnapshotLeaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
-    aLease = *shareSnapshotLeaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
+  // TEST_F(FileShareClientTest, SnapshotLease)
+  //{
+  //  std::string leaseId1 = CreateUniqueLeaseId();
+  //  std::chrono::seconds leaseDuration(20);
+  //  auto snapshotResult = m_shareClient->CreateSnapshot();
+  //  auto shareSnapshot = m_shareClient->WithSnapshot(snapshotResult->Snapshot);
+  //  auto shareSnapshotLeaseClient = Files::Shares::ShareLeaseClient(shareSnapshot, leaseId1);
+  //  auto aLease = *shareSnapshotLeaseClient.Acquire(leaseDuration);
+  //  EXPECT_FALSE(aLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
+  //  EXPECT_EQ(aLease.LeaseId, leaseId1);
+  //  aLease = *shareSnapshotLeaseClient.Acquire(leaseDuration);
+  //  EXPECT_FALSE(aLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), aLease.LastModified);
+  //  EXPECT_EQ(aLease.LeaseId, leaseId1);
 
-    auto properties = *shareSnapshot.GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
-    EXPECT_EQ(Files::Shares::Models::LeaseDurationType::Fixed, properties.LeaseDuration.GetValue());
+  //  auto properties = *shareSnapshot.GetProperties();
+  //  EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
+  //  EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
+  //  EXPECT_EQ(Files::Shares::Models::LeaseDurationType::Fixed,
+  //  properties.LeaseDuration.GetValue());
 
-    auto rLease = *shareSnapshotLeaseClient.Renew();
-    EXPECT_FALSE(rLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), rLease.LastModified);
-    EXPECT_EQ(rLease.LeaseId, leaseId1);
+  //  auto rLease = *shareSnapshotLeaseClient.Renew();
+  //  EXPECT_FALSE(rLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), rLease.LastModified);
+  //  EXPECT_EQ(rLease.LeaseId, leaseId1);
 
-    std::string leaseId2 = CreateUniqueLeaseId();
-    EXPECT_NE(leaseId1, leaseId2);
-    auto cLease = *shareSnapshotLeaseClient.Change(leaseId2);
-    EXPECT_FALSE(cLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), cLease.LastModified);
-    EXPECT_EQ(cLease.LeaseId, leaseId2);
+  //  std::string leaseId2 = CreateUniqueLeaseId();
+  //  EXPECT_NE(leaseId1, leaseId2);
+  //  auto cLease = *shareSnapshotLeaseClient.Change(leaseId2);
+  //  EXPECT_FALSE(cLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), cLease.LastModified);
+  //  EXPECT_EQ(cLease.LeaseId, leaseId2);
 
-    auto relLease = *shareSnapshotLeaseClient.Release();
-    EXPECT_FALSE(relLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), relLease.LastModified);
+  //  auto relLease = *shareSnapshotLeaseClient.Release();
+  //  EXPECT_FALSE(relLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), relLease.LastModified);
 
-    shareSnapshotLeaseClient
-        = Files::Shares::ShareLeaseClient(shareSnapshot, CreateUniqueLeaseId());
-    aLease
-        = *shareSnapshotLeaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
-    properties = *shareSnapshot.GetProperties();
-    EXPECT_EQ(
-        Files::Shares::Models::LeaseDurationType::Infinite, properties.LeaseDuration.GetValue());
-    auto brokenLease = *shareSnapshotLeaseClient.Break();
-    EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_NE(Azure::Core::DateTime(), brokenLease.LastModified);
-    EXPECT_EQ(brokenLease.LeaseTime, 0);
+  //  shareSnapshotLeaseClient
+  //      = Files::Shares::ShareLeaseClient(shareSnapshot, CreateUniqueLeaseId());
+  //  aLease
+  //      =
+  //      *shareSnapshotLeaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
+  //  properties = *shareSnapshot.GetProperties();
+  //  EXPECT_EQ(
+  //      Files::Shares::Models::LeaseDurationType::Infinite, properties.LeaseDuration.GetValue());
+  //  auto brokenLease = *shareSnapshotLeaseClient.Break();
+  //  EXPECT_FALSE(brokenLease.ETag.empty());
+  //  EXPECT_NE(Azure::Core::DateTime(), brokenLease.LastModified);
+  //  EXPECT_EQ(brokenLease.LeaseTime, 0);
 
-    Files::Shares::BreakShareLeaseOptions options;
-    options.BreakPeriod = 0;
-    shareSnapshotLeaseClient.Break(options);
+  //  Files::Shares::BreakShareLeaseOptions options;
+  //  options.BreakPeriod = 0;
+  //  shareSnapshotLeaseClient.Break(options);
 
-    EXPECT_THROW(m_shareClient->Delete(), StorageException);
-  }
+  //  EXPECT_THROW(m_shareClient->Delete(), StorageException);
+  //}
 
   TEST_F(FileShareClientTest, UnencodedDirectoryFileNameWorks)
   {

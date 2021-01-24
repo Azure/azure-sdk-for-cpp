@@ -27,17 +27,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     /**
-     * @brief Initializes a new instance of the ShareLeaseClient.
-     *
-     * @param shareClient A ShareClient representing the share being leased.
-     * @param leaseId A lease ID. This is not required for break operation.
-     */
-    explicit ShareLeaseClient(ShareClient shareClient, std::string leaseId)
-        : m_shareClient(std::move(shareClient)), m_leaseId(std::move(leaseId))
-    {
-    }
-
-    /**
      * @brief Gets a unique lease ID.
      *
      * @return A unique lease ID.
@@ -112,6 +101,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const BreakShareLeaseOptions& options = BreakShareLeaseOptions());
 
   private:
+    /**
+     * @brief Initializes a new instance of the ShareLeaseClient.
+     *
+     * @param shareClient A ShareClient representing the share being leased.
+     * @param leaseId A lease ID. This is not required for break operation.
+     */
+    explicit ShareLeaseClient(ShareClient shareClient, std::string leaseId)
+        : m_shareClient(std::move(shareClient)), m_leaseId(std::move(leaseId))
+    {
+    }
+
     Azure::Core::Nullable<ShareFileClient> m_fileClient;
     Azure::Core::Nullable<ShareClient> m_shareClient;
     std::string m_leaseId;
