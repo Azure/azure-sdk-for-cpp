@@ -60,16 +60,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions());
 
     /**
-     * @brief Renews the file or share's previously-acquired lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to execute this function.
-     * @return A RenewShareLeaseResult describing the lease.
-     */
-    Azure::Core::Response<Models::RenewShareLeaseResult> Renew(
-        const RenewShareLeaseOptions& options = RenewShareLeaseOptions());
-
-    /**
      * @brief Releases the file or share's previously-acquired lease.
      *
      * @param leaseId ID of the previously-acquired lease.
@@ -111,6 +101,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         : m_shareClient(std::move(shareClient)), m_leaseId(std::move(leaseId))
     {
     }
+
+    /**
+     * @brief Renews the file or share's previously-acquired lease.
+     *
+     * @param leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to execute this function.
+     * @return A RenewShareLeaseResult describing the lease.
+     */
+    Azure::Core::Response<Models::RenewShareLeaseResult> Renew(
+        const RenewShareLeaseOptions& options = RenewShareLeaseOptions());
 
     Azure::Core::Nullable<ShareFileClient> m_fileClient;
     Azure::Core::Nullable<ShareClient> m_shareClient;
