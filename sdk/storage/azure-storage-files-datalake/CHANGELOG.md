@@ -10,6 +10,7 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
 - Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
+- Added support for specifying public access type when creating a file system.
 
 ### Breaking Changes
 

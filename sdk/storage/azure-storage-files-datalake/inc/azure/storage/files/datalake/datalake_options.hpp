@@ -114,6 +114,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        ISO-8859-1 character set.
      */
     Storage::Metadata Metadata;
+
+    /**
+     * @brief The public access type of the file system.
+     */
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
   };
 
   /**
