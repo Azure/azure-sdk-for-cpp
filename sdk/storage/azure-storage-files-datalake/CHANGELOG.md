@@ -10,6 +10,7 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
 - Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
+- Added `DataLakeDirectoryClient::ListPathsSinglePage` API to list DataLake Paths under certain directory.
 
 ### Breaking Changes
 
@@ -22,6 +23,7 @@
 - Renamed `GetUri` to `GetUrl`.
 - Added `DataLakeLeaseClient`, all lease related APIs are moved to `DataLakeLeaseClient`.
 - Changed lease duration to be `std::chrono::seconds`.
+- Removed `Directory` in `ListPathsSinglePageOptions`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

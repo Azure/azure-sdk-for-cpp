@@ -201,12 +201,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        include up to 5,000 items.
      */
     Azure::Core::Nullable<int32_t> PageSizeHint;
-
-    /**
-     * @brief Filters results to paths within the specified directory. An error occurs
-     *        if the directory does not exist.
-     */
-    Azure::Core::Nullable<std::string> Directory;
   };
 
   /**
