@@ -250,12 +250,13 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string leaseId1 = CreateUniqueLeaseId();
     auto lastModified = m_fileClient->GetProperties()->LastModified;
-    auto aLease = *m_fileClient->AcquireLease(leaseId1);
+    auto leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, leaseId1);
+    auto aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
     EXPECT_FALSE(aLease.ETag.empty());
     EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     lastModified = m_fileClient->GetProperties()->LastModified;
-    aLease = *m_fileClient->AcquireLease(leaseId1);
+    aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
     EXPECT_FALSE(aLease.ETag.empty());
     EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
@@ -267,28 +268,22 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     lastModified = m_fileClient->GetProperties()->LastModified;
-    auto cLease = *m_fileClient->ChangeLease(leaseId1, leaseId2);
+    auto cLease = *leaseClient.Change(leaseId2);
     EXPECT_FALSE(cLease.ETag.empty());
     EXPECT_TRUE(cLease.LastModified >= lastModified);
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     lastModified = m_fileClient->GetProperties()->LastModified;
-    auto fileInfo = *m_fileClient->ReleaseLease(leaseId2);
+    auto fileInfo = *leaseClient.Release();
     EXPECT_FALSE(fileInfo.ETag.empty());
     EXPECT_TRUE(fileInfo.LastModified >= lastModified);
 
-    aLease = *m_fileClient->AcquireLease(CreateUniqueLeaseId());
+    leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, CreateUniqueLeaseId());
+    aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
     lastModified = m_fileClient->GetProperties()->LastModified;
-    auto brokenLease = *m_fileClient->BreakLease();
+    auto brokenLease = *leaseClient.Break();
     EXPECT_FALSE(brokenLease.ETag.empty());
     EXPECT_TRUE(brokenLease.LastModified >= lastModified);
-
-    aLease = *m_fileClient->AcquireLease(CreateUniqueLeaseId());
-    lastModified = m_fileClient->GetProperties()->LastModified;
-    brokenLease = *m_fileClient->BreakLease();
-    EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_TRUE(brokenLease.LastModified >= lastModified);
-    m_fileClient->BreakLease();
   }
 
   TEST_F(FileShareFileClientTest, ConcurrentUpload)

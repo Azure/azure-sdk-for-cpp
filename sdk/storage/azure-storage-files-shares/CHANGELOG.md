@@ -11,6 +11,8 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `ShareItems` in `ListSharesResponse` to `Items`.
 - Renamed `ShareItems` in `ServiceListSharesSinglePageResult` to `Items`.
+- Added `ShareLeaseClient`, all lease related APIs are moved to `ShareLeaseClient`.
+- Changed lease duration to be `std::chrono::seconds`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

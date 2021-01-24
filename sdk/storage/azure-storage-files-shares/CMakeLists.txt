@@ -35,6 +35,7 @@ set(
     inc/azure/storage/files/shares/share_directory_client.hpp
     inc/azure/storage/files/shares/share_file_attribute.hpp
     inc/azure/storage/files/shares/share_file_client.hpp
+    inc/azure/storage/files/shares/share_lease_client.hpp
     inc/azure/storage/files/shares/share_options.hpp
     inc/azure/storage/files/shares/share_responses.hpp
     inc/azure/storage/files/shares/share_sas_builder.hpp
@@ -48,6 +49,7 @@ set(
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_client.cpp
+    src/share_lease_client.cpp
     src/share_rest_client.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp

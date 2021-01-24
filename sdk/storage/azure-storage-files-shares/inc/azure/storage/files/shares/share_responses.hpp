@@ -151,10 +151,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using GetShareFileRangeListResult = Details::FileGetRangeListResult;
   using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
   using ForceCloseAllShareFileHandlesResult = Details::FileForceCloseHandlesResult;
-  using AcquireShareFileLeaseResult = Details::FileAcquireLeaseResult;
-  using ReleaseShareFileLeaseResult = Details::FileReleaseLeaseResult;
-  using BreakShareFileLeaseResult = Details::FileBreakLeaseResult;
-  using ChangeShareFileLeaseResult = Details::FileChangeLeaseResult;
 
   struct DownloadShareFileToResult
   {

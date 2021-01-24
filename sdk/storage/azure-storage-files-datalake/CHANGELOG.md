@@ -20,6 +20,8 @@
 - Removed `ContentRange` in `PathGetPropertiesResult`.
 - Renamed `ContentLength` in `GetDataLakePathPropertiesResult` and `CreateDataLakePathResult` to `FileSize` to be more accurate.
 - Renamed `GetUri` to `GetUrl`.
+- Added `DataLakeLeaseClient`, all lease related APIs are moved to `DataLakeLeaseClient`.
+- Changed lease duration to be `std::chrono::seconds`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

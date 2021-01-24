@@ -769,50 +769,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
-   * @brief Optional parameters for FileClient::AcquireLease.
-   */
-  struct AcquireShareFileLeaseOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-  };
-
-  /**
-   * @brief Optional parameters for FileClient::ChangeLease.
-   */
-  struct ChangeShareFileLeaseOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-  };
-
-  /**
-   * @brief Optional parameters for FileClient::ReleaseLease.
-   */
-  struct ReleaseShareFileLeaseOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-  };
-
-  /**
-   * @brief Optional parameters for FileClient::BreakLease.
-   */
-  struct BreakShareFileLeaseOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-  };
-
-  /**
    * @brief Optional parameters for FileClient::UploadFrom.
    */
   struct UploadShareFileFromOptions
