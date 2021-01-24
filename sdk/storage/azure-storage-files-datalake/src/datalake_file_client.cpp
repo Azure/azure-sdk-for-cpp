@@ -222,11 +222,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::FlushDataLakeFileResult> DataLakeFileClient::Flush(
-      int64_t endingOffset,
+      int64_t position,
       const FlushDataLakeFileOptions& options) const
   {
     Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
-    protocolLayerOptions.Position = endingOffset;
+    protocolLayerOptions.Position = position;
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
