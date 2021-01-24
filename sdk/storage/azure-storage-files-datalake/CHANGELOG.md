@@ -22,6 +22,7 @@
 - Renamed `GetUri` to `GetUrl`.
 - Added `DataLakeLeaseClient`, all lease related APIs are moved to `DataLakeLeaseClient`.
 - Changed lease duration to be `std::chrono::seconds`.
+- Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControl`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

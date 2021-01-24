@@ -392,7 +392,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::GetDataLakePathAccessControlResult>
-  DataLakePathClient::GetAccessControls(const GetDataLakePathAccessControlOptions& options) const
+  DataLakePathClient::GetAccessControl(const GetDataLakePathAccessControlOptions& options) const
   {
     Details::DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.Action = Models::PathGetPropertiesAction::GetAccessControl;

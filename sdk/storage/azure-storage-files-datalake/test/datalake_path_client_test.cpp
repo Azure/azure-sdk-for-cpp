@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls;
-      EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControls()->Acls);
+      EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControl()->Acls);
       EXPECT_EQ(resultAcls.size(), acls.size() + 1); // Always append mask::rwx
       for (const auto& acl : acls)
       {
@@ -245,16 +245,16 @@ namespace Azure { namespace Storage { namespace Test {
       pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       std::string pathPermissions = "rwxrw-rw-";
       EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
-      auto result = pathClient.GetAccessControls();
+      auto result = pathClient.GetAccessControl();
       EXPECT_EQ(pathPermissions, result->Permissions);
 
       pathPermissions = "rw-rw-rw-";
       EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
-      result = pathClient.GetAccessControls();
+      result = pathClient.GetAccessControl();
       EXPECT_EQ(pathPermissions, result->Permissions);
 
       EXPECT_NO_THROW(pathClient.SetPermissions("0766"));
-      result = pathClient.GetAccessControls();
+      result = pathClient.GetAccessControl();
       EXPECT_EQ("rwxrw-rw-", result->Permissions);
     }
     {
