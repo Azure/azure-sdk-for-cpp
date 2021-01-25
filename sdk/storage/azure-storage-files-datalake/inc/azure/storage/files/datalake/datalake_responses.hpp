@@ -81,7 +81,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  using SetDataLakeFileSystemMetadataResult = Details::FileSystemCreateResult;
+  struct SetDataLakeFileSystemMetadataResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    std::string RequestId;
+    std::string NamespaceEnabled;
+  };
 
   // PathClient models:
 
