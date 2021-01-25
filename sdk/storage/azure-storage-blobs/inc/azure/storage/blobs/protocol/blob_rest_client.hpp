@@ -543,7 +543,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& Get() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Private;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
 
     private:
       std::string m_value;
@@ -751,7 +751,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Storage::Metadata Metadata;
-      PublicAccessType AccessType = PublicAccessType::Private;
+      PublicAccessType AccessType = PublicAccessType::None;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
       Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
@@ -799,7 +799,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct GetBlobContainerAccessPolicyResult
     {
       std::string RequestId;
-      PublicAccessType AccessType = PublicAccessType::Private;
+      PublicAccessType AccessType = PublicAccessType::None;
       std::string ETag;
       Azure::Core::DateTime LastModified;
       std::vector<BlobSignedIdentifier> SignedIdentifiers;
@@ -811,7 +811,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Storage::Metadata Metadata;
-      PublicAccessType AccessType = PublicAccessType::Private;
+      PublicAccessType AccessType = PublicAccessType::None;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
       Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
@@ -3093,7 +3093,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct CreateBlobContainerOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          PublicAccessType AccessType = PublicAccessType::Private;
+          PublicAccessType AccessType = PublicAccessType::None;
           Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> DefaultEncryptionScope;
           Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
@@ -3580,7 +3580,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct SetBlobContainerAccessPolicyOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          PublicAccessType AccessType = PublicAccessType::Private;
+          PublicAccessType AccessType = PublicAccessType::None;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
