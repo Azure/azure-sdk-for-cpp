@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
 
     /**
      * @brief Name-value pairs to associate with the container as metadata.
@@ -445,7 +445,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
 
     /**
      * @brief Stored access policies that you can use to provide fine grained control over
