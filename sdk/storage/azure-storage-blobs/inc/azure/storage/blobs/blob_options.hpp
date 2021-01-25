@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Context Context;
 
-     /**
+    /**
      * @brief Start time for the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      */
