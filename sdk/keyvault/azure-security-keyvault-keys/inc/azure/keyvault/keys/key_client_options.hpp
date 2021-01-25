@@ -5,7 +5,6 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/response.hpp>
-#include <azure/keyvault/common/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
@@ -24,7 +23,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Core::Http::RetryOptions RetryOptions;
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
 
-    KeyClientOptions(ServiceVersion version = ServiceVersion::V7_1) : Version(version) {}
+    KeyClientOptions(ServiceVersion version = ServiceVersion::V7_2) : Version(version) {}
 
     std::string GetVersionString()
     {
@@ -34,6 +33,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
           return "7.0";
         case ServiceVersion::V7_1:
           return "7.1";
+        case ServiceVersion::V7_2:
+          return "7.2";
         default:
           throw std::runtime_error("Version not found");
       }

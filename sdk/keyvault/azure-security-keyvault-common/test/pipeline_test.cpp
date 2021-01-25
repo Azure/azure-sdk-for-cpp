@@ -5,7 +5,7 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policy.hpp>
-#include <azure/keyvault/common/keyvault_pipeline.hpp>
+#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include <memory>
 

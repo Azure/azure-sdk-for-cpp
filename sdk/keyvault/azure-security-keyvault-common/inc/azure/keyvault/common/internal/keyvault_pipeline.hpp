@@ -6,6 +6,8 @@
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json_serializable.hpp>
 #include <azure/core/response.hpp>
 
 #include <functional>
@@ -32,6 +34,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      */
     Azure::Core::Http::Request CreateRequest(
         Azure::Core::Http::HttpMethod method,
+        std::vector<std::string> const& path) const;
+
+    Azure::Core::Http::Request CreateRequest(
+        Azure::Core::Http::HttpMethod method,
+        Azure::Core::Http::BodyStream * content,
         std::vector<std::string> const& path) const;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
@@ -72,6 +79,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         std::vector<std::string> const& path)
     {
       auto request = CreateRequest(method, path);
+      auto response = SendRequest(context, request);
+      return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
+    }
+
+    template <class T>
+    Azure::Core::Response<T> SendRequest(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::HttpMethod method,
+        Azure::Core::Internal::Json::JsonSerializable const& content,
+        std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
+        std::vector<std::string> const& path)
+    {
+      auto serialContent = content.Serialize();
+      auto p = reinterpret_cast<const uint8_t*>(serialContent.data());
+      auto streamContent = Azure::Core::Http::MemoryBodyStream(p, serialContent.size());
+
+      auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
       return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
     }

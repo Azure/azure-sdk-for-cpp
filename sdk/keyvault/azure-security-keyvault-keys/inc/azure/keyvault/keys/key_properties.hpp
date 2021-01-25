@@ -13,13 +13,6 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  namespace Details {
-    constexpr static const char* ManagedPropertyName = "managed";
-    constexpr static const char* AttributesPropertyName = "attributes";
-    constexpr static const char* TagsPropertyName = "tags";
-    constexpr static const char* ReleasePolicyPropertyName = "release_policy";
-  } // namespace Details
-
   struct KeyProperties
   {
     std::string Name;

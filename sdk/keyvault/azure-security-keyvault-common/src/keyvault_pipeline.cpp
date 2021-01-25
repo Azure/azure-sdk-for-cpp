@@ -1,17 +1,33 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/common/keyvault_pipeline.hpp"
+#include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "azure/keyvault/common/keyvault_constants.hpp"
 #include "azure/keyvault/common/keyvault_exception.hpp"
 
 using namespace Azure::Security::KeyVault::Common;
 
+namespace {
+inline Azure::Core::Http::Request InitRequest(
+    Azure::Core::Http::HttpMethod method,
+    Azure::Core::Http::BodyStream* content,
+    Azure::Core::Http::Url const& url)
+{
+  if (content == nullptr)
+  {
+    return Azure::Core::Http::Request(method, url);
+  }
+  return Azure::Core::Http::Request(method, url, content);
+}
+} // namespace
+
 Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
     Azure::Core::Http::HttpMethod method,
+    Azure::Core::Http::BodyStream* content,
     std::vector<std::string> const& path) const
 {
-  Azure::Core::Http::Request request(method, m_vaultUrl);
+
+  auto request = ::InitRequest(method, content, m_vaultUrl);
 
   request.AddHeader(Details::ContentType, Details::ApplicationJson);
   request.AddHeader(Details::Accept, Details::ApplicationJson);
@@ -26,6 +42,13 @@ Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
     }
   }
   return request;
+}
+
+Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
+    Azure::Core::Http::HttpMethod method,
+    std::vector<std::string> const& path) const
+{
+  return CreateRequest(method, nullptr, path);
 }
 
 std::unique_ptr<Azure::Core::Http::RawResponse> Internal::KeyVaultPipeline::SendRequest(
