@@ -34,6 +34,7 @@ namespace Azure { namespace Storage {
 
     std::string errorCode;
     std::string message;
+    std::map<std::string, std::string> additionalInformation;
 
     if (response->GetHeaders().find(Details::HttpHeaderContentType) != response->GetHeaders().end())
     {
@@ -48,8 +49,10 @@ namespace Azure { namespace Storage {
           XmlTagError,
           XmlTagCode,
           XmlTagMessage,
+          XmlTagUnknown,
         };
         std::vector<XmlTagName> path;
+        std::string startTagName;
 
         while (true)
         {
@@ -60,6 +63,7 @@ namespace Azure { namespace Storage {
           }
           else if (node.Type == Details::XmlNodeType::EndTag)
           {
+            startTagName.clear();
             if (path.size() > 0)
             {
               path.pop_back();
@@ -71,6 +75,7 @@ namespace Azure { namespace Storage {
           }
           else if (node.Type == Details::XmlNodeType::StartTag)
           {
+            startTagName = node.Name;
             if (std::strcmp(node.Name, "Error") == 0)
             {
               path.emplace_back(XmlTagName::XmlTagError);
@@ -82,6 +87,10 @@ namespace Azure { namespace Storage {
             else if (std::strcmp(node.Name, "Message") == 0)
             {
               path.emplace_back(XmlTagName::XmlTagMessage);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::XmlTagUnknown);
             }
           }
           else if (node.Type == Details::XmlNodeType::Text)
@@ -96,6 +105,15 @@ namespace Azure { namespace Storage {
                 && path[1] == XmlTagName::XmlTagMessage)
             {
               message = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::XmlTagError
+                && path[1] == XmlTagName::XmlTagUnknown)
+            {
+              if (!startTagName.empty())
+              {
+                additionalInformation.emplace(std::move(startTagName), node.Value);
+              }
             }
           }
         }
@@ -129,9 +147,11 @@ namespace Azure { namespace Storage {
     result.StatusCode = httpStatusCode;
     result.ReasonPhrase = std::move(reasonPhrase);
     result.RequestId = std::move(requestId);
+    result.ClientRequestId = std::move(clientRequestId);
     result.ErrorCode = std::move(errorCode);
     result.Message = std::move(message);
     result.RawResponse = std::move(response);
+    result.AdditionalInformation = std::move(additionalInformation);
     return result;
   }
 }} // namespace Azure::Storage

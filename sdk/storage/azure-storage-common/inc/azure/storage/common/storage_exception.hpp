@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -21,6 +22,7 @@ namespace Azure { namespace Storage {
     std::string RequestId;
     std::string ErrorCode;
     std::string Message;
+    std::map<std::string, std::string> AdditionalInformation;
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     static StorageException CreateFromResponse(
