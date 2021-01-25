@@ -223,4 +223,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
+  Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeDirectoryClient::
+      ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
+  {
+    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
+    protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
+    protocolLayerOptions.Upn = options.UserPrincipalName;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.RecursiveRequired = recursive;
+    auto currentPath = m_dfsUrl.GetPath();
+    // Remove the filesystem name and get directory name.
+    auto firstSlashPos = currentPath.find_first_of("/");
+
+    if (firstSlashPos == 0 || (firstSlashPos == currentPath.size() + 1U))
+    {
+      return Details::DataLakeRestClient::FileSystem::ListPaths(
+          m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    }
+    else
+    {
+      protocolLayerOptions.Directory
+          = currentPath.substr(firstSlashPos + 1U, currentPath.size() - firstSlashPos - 1U);
+      auto fileSystemUrl = m_dfsUrl;
+      fileSystemUrl.SetPath(currentPath.substr(
+          0U, currentPath.size() - protocolLayerOptions.Directory.GetValue().size() - 1U));
+      return Details::DataLakeRestClient::FileSystem::ListPaths(
+          fileSystemUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    }
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

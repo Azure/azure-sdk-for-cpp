@@ -179,6 +179,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const SetDataLakeDirectoryAccessControlRecursiveOptions& options
         = SetDataLakeDirectoryAccessControlRecursiveOptions()) const;
 
+    /**
+     * @brief List the paths in this file system.
+     * @param recursive If "true", all paths are listed; otherwise, the list will only
+     *                  include paths that share the same root.
+     * @param options Optional parameters to list the paths in file system.
+     * @return Azure::Core::Response<Models::ListPathsSinglePageResult> containing the
+     * results when listing the paths under a file system.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
+        bool recursive,
+        const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions()) const;
+
   private:
     explicit DataLakeDirectoryClient(
         Azure::Core::Http::Url dfsUrl,
