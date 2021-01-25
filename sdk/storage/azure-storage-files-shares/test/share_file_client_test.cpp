@@ -750,8 +750,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, StorageExceptionAdditionalInfo)
   {
     Azure::Storage::Files::Shares::ShareClientOptions options;
-    class InvalidQueryParameterPolicy
-        : public Azure::Core::Http::HttpPolicy {
+    class InvalidQueryParameterPolicy : public Azure::Core::Http::HttpPolicy {
     public:
       ~InvalidQueryParameterPolicy() override {}
 
@@ -761,9 +760,9 @@ namespace Azure { namespace Storage { namespace Test {
       }
 
       std::unique_ptr<Core::Http::RawResponse> Send(
-        Core::Context const& ctx,
-        Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override
+          Core::Context const& ctx,
+          Core::Http::Request& request,
+          Core::Http::NextHttpPolicy nextHttpPolicy) const override
       {
         request.GetUrl().AppendQueryParameter("comp", "lease1");
         return nextHttpPolicy.Send(ctx, request);
@@ -776,7 +775,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       fileClient.Create(1024);
     }
-    catch(StorageException& e)
+    catch (StorageException& e)
     {
       EXPECT_NE(e.StatusCode, Azure::Core::Http::HttpStatusCode::None);
       EXPECT_FALSE(e.ReasonPhrase.empty());
