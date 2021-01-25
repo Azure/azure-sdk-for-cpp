@@ -2,9 +2,17 @@
 
 ## 12.0.0-beta.7 (Unreleased)
 
+### New Features
+
+- Added additional information in `StorageException`.
+
 ### Breaking Changes
 
 - `AccountSasResource::BlobContainer` was renamed to `AccountSasResource::Container`.
+
+### Bug Fixes
+
+- Fixed `ClientRequestId` wasn't filled in `StorageException`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
