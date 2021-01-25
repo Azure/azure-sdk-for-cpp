@@ -57,24 +57,42 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<Files::DataLake::Models::PathItem> result;
     std::string continuation;
     Files::DataLake::ListPathsSinglePageOptions options;
-    if (!directory.empty())
+    if (directory.empty())
     {
-      options.Directory = directory;
+      do
+      {
+        auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
+        result.insert(result.end(), response->Items.begin(), response->Items.end());
+        if (response->ContinuationToken.HasValue())
+        {
+          continuation = response->ContinuationToken.GetValue();
+          options.ContinuationToken = continuation;
+        }
+        else
+        {
+          continuation.clear();
+        }
+      } while (!continuation.empty());
     }
-    do
+    else
     {
-      auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
-      result.insert(result.end(), response->Items.begin(), response->Items.end());
-      if (response->ContinuationToken.HasValue())
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(directory);
+      do
       {
-        continuation = response->ContinuationToken.GetValue();
-        options.ContinuationToken = continuation;
-      }
-      else
-      {
-        continuation.clear();
-      }
-    } while (!continuation.empty());
+        auto response = directoryClient.ListPathsSinglePage(recursive, options);
+        result.insert(result.end(), response->Items.begin(), response->Items.end());
+        if (response->ContinuationToken.HasValue())
+        {
+          continuation = response->ContinuationToken.GetValue();
+          options.ContinuationToken = continuation;
+        }
+        else
+        {
+          continuation.clear();
+        }
+      } while (!continuation.empty());
+    }
+
     return result;
   }
 

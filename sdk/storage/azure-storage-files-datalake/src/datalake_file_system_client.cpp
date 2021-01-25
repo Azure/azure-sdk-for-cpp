@@ -314,7 +314,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
