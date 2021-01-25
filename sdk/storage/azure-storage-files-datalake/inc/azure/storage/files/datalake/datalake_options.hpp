@@ -96,6 +96,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        include up to 5,000 items.
      */
     Azure::Core::Nullable<int32_t> PageSizeHint;
+
+    /**
+     * @brief Specifies that the filesystem's metadata be returned.
+     */
+    Models::ListDataLakeFileSystemsIncludeItem Include
+        = Models::ListDataLakeFileSystemsIncludeItem::None;
   };
 
   /**
