@@ -214,6 +214,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Created = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::CreateDataLakeFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -249,6 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobContainerClient.Delete(blobOptions);
     Models::DeleteDataLakeFileSystemResult ret;
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -285,6 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Metadata = std::move(result->Metadata);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -302,6 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetDataLakeFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -347,6 +351,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.SignedIdentifiers = std::move(result->SignedIdentifiers);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -382,6 +387,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }

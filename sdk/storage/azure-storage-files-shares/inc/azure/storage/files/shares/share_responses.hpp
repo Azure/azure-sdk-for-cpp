@@ -21,11 +21,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
+    std::string RequestId;
   };
 
   struct DeleteShareResult
   {
     bool Deleted = true;
+    std::string RequestId;
   };
   using CreateShareSnapshotResult = Details::ShareCreateSnapshotResult;
   using GetSharePropertiesResult = Details::ShareGetPropertiesResult;
@@ -56,11 +58,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Core::DateTime FileChangedOn;
     std::string FileId;
     std::string FileParentId;
+    std::string RequestId;
   };
 
   struct DeleteShareDirectoryResult
   {
     bool Deleted = true;
+    std::string RequestId;
   };
 
   using GetShareDirectoryPropertiesResult = Details::DirectoryGetPropertiesResult;
@@ -84,12 +88,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ContinuationToken;
     std::vector<DirectoryItem> DirectoryItems;
     std::vector<FileItem> FileItems;
+    std::string RequestId;
   };
 
   struct ListShareDirectoryHandlesSinglePageResult
   {
     std::vector<HandleItem> Handles;
     std::string ContinuationToken;
+    std::string RequestId;
   };
 
   // FileClient models:
@@ -106,11 +112,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Core::DateTime FileChangedOn;
     std::string FileId;
     std::string FileParentId;
+    std::string RequestId;
   };
 
   struct DeleteShareFileResult
   {
     bool Deleted = true;
+    std::string RequestId;
   };
 
   struct FileShareSmbProperties
@@ -160,15 +168,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     ShareFileHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     bool IsServerEncrypted = false;
+    std::string RequestId;
   };
 
   struct ForceCloseShareFileHandleResult
   {
+    std::string RequestId;
   };
 
   struct UploadShareFileFromResult
   {
     bool IsServerEncrypted = false;
+    std::string RequestId;
   };
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models

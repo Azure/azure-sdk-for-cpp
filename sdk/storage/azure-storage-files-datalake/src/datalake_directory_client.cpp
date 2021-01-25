@@ -180,6 +180,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // At this point, there is not more exception thrown, meaning the rename is successful.
     Models::RenameDataLakeDirectoryResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::RenameDataLakeDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
   }
