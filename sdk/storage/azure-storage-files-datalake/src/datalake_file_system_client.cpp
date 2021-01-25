@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     else if (options.AccessType == Models::PublicAccessType::None)
     {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::None;
     }
     else
     {
