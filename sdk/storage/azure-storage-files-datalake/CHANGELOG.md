@@ -10,8 +10,8 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
 - Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
-- Added `Storage::Metadata Metadata`, `PublicAccessType AccessType`, `bool HasImmutabilityPolicy`, `bool HasLegalHold`, `Azure::Core::Nullable<LeaseDurationType>`, `LeaseStateType LeaseState` and `LeaseStatusType LeaseStatus` to `FileSystemItem`.
-- Added new type `LeaseDurationType` to indicate if a lease duration is fixed or Infinite.
+- Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
+- Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 
 ### Breaking Changes
 
