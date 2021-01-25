@@ -10,6 +10,8 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
 - Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
+- Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
+- Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 
 ### Breaking Changes
 
@@ -22,6 +24,8 @@
 - Renamed `GetUri` to `GetUrl`.
 - Added `DataLakeLeaseClient`, all lease related APIs are moved to `DataLakeLeaseClient`.
 - Changed lease duration to be `std::chrono::seconds`.
+- Removed unused type `AccountResourceType` and `PathLeaseAction`.
+- Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

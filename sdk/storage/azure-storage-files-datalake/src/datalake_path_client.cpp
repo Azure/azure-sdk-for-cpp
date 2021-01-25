@@ -359,10 +359,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     ret.CreatedOn = std::move(result->CreatedOn);
     ret.Metadata = std::move(result->Metadata);
-    // FIXME
     if (result->LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = result->LeaseDuration.GetValue().Get();
+      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().Get());
     }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())
