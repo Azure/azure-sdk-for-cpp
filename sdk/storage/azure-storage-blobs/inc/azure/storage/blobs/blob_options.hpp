@@ -203,6 +203,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+     /**
+     * @brief Start time for the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
+     */
+    Azure::Core::DateTime startsOn = std::chrono::system_clock::now();
   };
 
   /**
