@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* QueryMaxRecords = "maxrecords";
     constexpr static const char* QueryComp = "comp";
     constexpr static const char* HeaderVersion = "x-ms-version";
-    constexpr static const char* HeaderRequestId = "x-ms-client-request-id";
+    constexpr static const char* HeaderClientRequestId = "x-ms-client-request-id";
     constexpr static const char* HeaderIfMatch = "if-match";
     constexpr static const char* HeaderIfModifiedSince = "if-modified-since";
     constexpr static const char* HeaderIfNoneMatch = "if-none-match";
@@ -299,7 +299,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderDate = "date";
     constexpr static const char* HeaderETag = "etag";
     constexpr static const char* HeaderLastModified = "last-modified";
-    constexpr static const char* HeaderClientRequestId = "x-ms-client-request-id";
+    constexpr static const char* HeaderRequestId = "x-ms-request-id";
     constexpr static const char* HeaderNamespaceEnabled = "x-ms-namespace-enabled";
     constexpr static const char* HeaderErrorCode = "x-ms-error-code";
     constexpr static const char* HeaderContinuationToken = "x-ms-continuation";
@@ -327,6 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::string ETag;
       Core::DateTime LastModified;
+      std::string RequestId;
       std::string NamespaceEnabled;
     };
 
@@ -334,23 +335,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::string ETag;
       Core::DateTime LastModified;
+      std::string RequestId;
     };
 
     struct FileSystemGetPropertiesResult
     {
       std::string ETag;
       Core::DateTime LastModified;
+      std::string RequestId;
       std::string Properties;
       std::string NamespaceEnabled;
     };
 
     struct FileSystemDeleteResult
     {
+      std::string RequestId;
     };
 
     struct FileSystemListPathsResult
     {
       std::vector<PathItem> Items;
+      std::string RequestId;
       Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
@@ -358,6 +363,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::Core::Nullable<std::string> ETag;
       Azure::Core::Nullable<Core::DateTime> LastModified;
+      std::string RequestId;
       Azure::Core::Nullable<std::string> ContinuationToken;
       Azure::Core::Nullable<int64_t> ContentLength;
     };
@@ -368,6 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       PathHttpHeaders HttpHeaders;
       std::string ETag;
       Core::DateTime LastModified;
+      std::string RequestId;
       Azure::Core::Nullable<std::string> ResourceType;
       Azure::Core::Nullable<std::string> Properties;
       Azure::Core::Nullable<std::string> Owner;
@@ -381,6 +388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathDeleteResult
     {
+      std::string RequestId;
       Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
@@ -388,6 +396,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::string ETag;
       Core::DateTime LastModified;
+      std::string RequestId;
     };
 
     struct PathSetAccessControlRecursiveResult
@@ -397,6 +406,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int32_t FailureCount = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
       Azure::Core::Nullable<std::string> ContinuationToken;
+      std::string RequestId;
     };
 
     struct PathFlushDataResult
@@ -404,10 +414,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string ETag;
       Core::DateTime LastModified;
       int64_t ContentLength = int64_t();
+      std::string RequestId;
     };
 
     struct PathAppendDataResult
     {
+      std::string RequestId;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       bool IsServerEncrypted = bool();
     };
@@ -416,6 +428,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::string ETag;
       Core::DateTime LastModified;
+      std::string RequestId;
     };
 
     class DataLakeRestClient {
@@ -444,7 +457,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Storage::Details::UrlEncodeQueryParameter((createOptions.Resource.Get())));
           if (createOptions.ClientRequestId.HasValue())
           {
-            request.AddHeader(Details::HeaderRequestId, createOptions.ClientRequestId.GetValue());
+            request.AddHeader(
+                Details::HeaderClientRequestId, createOptions.ClientRequestId.GetValue());
           }
           if (createOptions.Timeout.HasValue())
           {
@@ -485,7 +499,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (setPropertiesOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, setPropertiesOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, setPropertiesOptions.ClientRequestId.GetValue());
           }
           if (setPropertiesOptions.Timeout.HasValue())
           {
@@ -538,7 +552,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (getPropertiesOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, getPropertiesOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, getPropertiesOptions.ClientRequestId.GetValue());
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
@@ -573,7 +587,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Storage::Details::UrlEncodeQueryParameter((deleteOptions.Resource.Get())));
           if (deleteOptions.ClientRequestId.HasValue())
           {
-            request.AddHeader(Details::HeaderRequestId, deleteOptions.ClientRequestId.GetValue());
+            request.AddHeader(
+                Details::HeaderClientRequestId, deleteOptions.ClientRequestId.GetValue());
           }
           if (deleteOptions.Timeout.HasValue())
           {
@@ -626,7 +641,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (listPathsOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, listPathsOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, listPathsOptions.ClientRequestId.GetValue());
           }
           if (listPathsOptions.Timeout.HasValue())
           {
@@ -684,6 +699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             result.NamespaceEnabled = response.GetHeaders().at(Details::HeaderNamespaceEnabled);
             return Azure::Core::Response<FileSystemCreateResult>(
                 std::move(result), std::move(responsePtr));
@@ -708,6 +724,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Core::Response<FileSystemSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -731,6 +748,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             result.Properties = response.GetHeaders().at(Details::HeaderProperties);
             result.NamespaceEnabled = response.GetHeaders().at(Details::HeaderNamespaceEnabled);
             return Azure::Core::Response<FileSystemGetPropertiesResult>(
@@ -752,6 +770,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // Accepted
             FileSystemDeleteResult result;
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Core::Response<FileSystemDeleteResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -775,6 +794,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 ? FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
                     PathListFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -871,7 +891,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(Details::HeaderContentLength, "0");
           if (createOptions.ClientRequestId.HasValue())
           {
-            request.AddHeader(Details::HeaderRequestId, createOptions.ClientRequestId.GetValue());
+            request.AddHeader(
+                Details::HeaderClientRequestId, createOptions.ClientRequestId.GetValue());
           }
           if (createOptions.Timeout.HasValue())
           {
@@ -1020,7 +1041,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (getPropertiesOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, getPropertiesOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, getPropertiesOptions.ClientRequestId.GetValue());
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
@@ -1098,7 +1119,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
           if (deleteOptions.ClientRequestId.HasValue())
           {
-            request.AddHeader(Details::HeaderRequestId, deleteOptions.ClientRequestId.GetValue());
+            request.AddHeader(
+                Details::HeaderClientRequestId, deleteOptions.ClientRequestId.GetValue());
           }
           if (deleteOptions.Timeout.HasValue())
           {
@@ -1230,7 +1252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (setAccessControlOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, setAccessControlOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, setAccessControlOptions.ClientRequestId.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, setAccessControlOptions.ApiVersionParameter);
           return SetAccessControlParseResult(context, pipeline.Send(context, request));
@@ -1295,7 +1317,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (setAccessControlRecursiveOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId,
+                Details::HeaderClientRequestId,
                 setAccessControlRecursiveOptions.ClientRequestId.GetValue());
           }
           request.AddHeader(
@@ -1426,7 +1448,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (flushDataOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, flushDataOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, flushDataOptions.ClientRequestId.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, flushDataOptions.ApiVersionParameter);
           return FlushDataParseResult(context, pipeline.Send(context, request));
@@ -1495,7 +1517,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (appendDataOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, appendDataOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, appendDataOptions.ClientRequestId.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, appendDataOptions.ApiVersionParameter);
           return AppendDataParseResult(context, pipeline.Send(context, request));
@@ -1530,7 +1552,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (setExpiryOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
-                Details::HeaderRequestId, setExpiryOptions.ClientRequestId.GetValue());
+                Details::HeaderClientRequestId, setExpiryOptions.ClientRequestId.GetValue());
           }
           request.AddHeader(Details::HeaderExpiryOptions, (setExpiryOptions.XMsExpiryOption.Get()));
           if (setExpiryOptions.PathExpiryTime.HasValue())
@@ -1561,6 +1583,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   response.GetHeaders().at(Details::HeaderLastModified),
                   Core::DateTime::DateFormat::Rfc1123);
             }
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -1627,6 +1650,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             if (response.GetHeaders().find(Details::HeaderResourceType)
                 != response.GetHeaders().end())
             {
@@ -1691,6 +1715,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // The file was deleted.
             PathDeleteResult result;
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             if (response.GetHeaders().find(Details::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -1719,6 +1744,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Core::Response<PathSetAccessControlResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1749,6 +1775,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.ContinuationToken = response.GetHeaders().at(Details::HeaderContinuationToken);
             }
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Core::Response<PathSetAccessControlRecursiveResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1813,6 +1840,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.ContentLength
                   = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
             }
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Core::Response<PathFlushDataResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1832,6 +1860,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // Append data to file control response.
             PathAppendDataResult result;
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
@@ -1870,6 +1899,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Core::Response<PathSetExpiryResult>(
                 std::move(result), std::move(responsePtr));
           }

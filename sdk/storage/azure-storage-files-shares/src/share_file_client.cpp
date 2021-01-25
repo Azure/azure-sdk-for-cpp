@@ -199,6 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileParentId = std::move(result->FileParentId);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
 
     return Azure::Core::Response<Models::CreateShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -213,6 +214,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteShareFileResult ret;
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -231,6 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::DeleteShareFileResult ret;
         ret.Deleted = false;
+        ret.RequestId = std::move(e.RequestId);
         return Azure::Core::Response<Models::DeleteShareFileResult>(
             std::move(ret), std::move(e.RawResponse));
       }
