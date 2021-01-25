@@ -34,6 +34,7 @@
 ### Other Changes and Improvements
 
 - Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
+- Removed unused parameters, options, results and functions in protocol layer.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
