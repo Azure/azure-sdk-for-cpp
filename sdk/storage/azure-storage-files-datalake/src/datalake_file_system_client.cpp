@@ -193,6 +193,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::CreateBlobContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
+    if (options.AccessType == Models::PublicAccessType::FileSystem)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
+    }
+    else if (options.AccessType == Models::PublicAccessType::Path)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
+    }
+    else if (options.AccessType == Models::PublicAccessType::None)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
+    }
+    else
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
+    }
     auto result = m_blobContainerClient.Create(blobOptions);
     Models::CreateDataLakeFileSystemResult ret;
     ret.ETag = std::move(result->ETag);
@@ -298,7 +314,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);

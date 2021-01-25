@@ -57,24 +57,42 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<Files::DataLake::Models::PathItem> result;
     std::string continuation;
     Files::DataLake::ListPathsSinglePageOptions options;
-    if (!directory.empty())
+    if (directory.empty())
     {
-      options.Directory = directory;
+      do
+      {
+        auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
+        result.insert(result.end(), response->Items.begin(), response->Items.end());
+        if (response->ContinuationToken.HasValue())
+        {
+          continuation = response->ContinuationToken.GetValue();
+          options.ContinuationToken = continuation;
+        }
+        else
+        {
+          continuation.clear();
+        }
+      } while (!continuation.empty());
     }
-    do
+    else
     {
-      auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
-      result.insert(result.end(), response->Items.begin(), response->Items.end());
-      if (response->ContinuationToken.HasValue())
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(directory);
+      do
       {
-        continuation = response->ContinuationToken.GetValue();
-        options.ContinuationToken = continuation;
-      }
-      else
-      {
-        continuation.clear();
-      }
-    } while (!continuation.empty());
+        auto response = directoryClient.ListPathsSinglePage(recursive, options);
+        result.insert(result.end(), response->Items.begin(), response->Items.end());
+        if (response->ContinuationToken.HasValue())
+        {
+          continuation = response->ContinuationToken.GetValue();
+          options.ContinuationToken = continuation;
+        }
+        else
+        {
+          continuation.clear();
+        }
+      } while (!continuation.empty());
+    }
+
     return result;
   }
 
@@ -350,50 +368,79 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy)
   {
-    auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-        AdlsGen2ConnectionString(), LowercaseRandomString());
-    fileSystem.Create();
-
-    Files::DataLake::SetDataLakeFileSystemAccessPolicyOptions options;
-    options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-    Files::DataLake::Models::DataLakeSignedIdentifier identifier;
-    identifier.Id = RandomString(64);
-    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
-    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
-    identifier.Permissions = "r";
-    options.SignedIdentifiers.emplace_back(identifier);
-    identifier.Id = RandomString(64);
-    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
-    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
-    identifier.Permissions = "racwdxlt";
-    options.SignedIdentifiers.emplace_back(identifier);
-
-    auto ret = fileSystem.SetAccessPolicy(options);
-    EXPECT_FALSE(ret->ETag.empty());
-    EXPECT_TRUE(IsValidTime(ret->LastModified));
-
-    auto ret2 = fileSystem.GetAccessPolicy();
-    EXPECT_EQ(ret2->ETag, ret->ETag);
-    EXPECT_EQ(ret2->LastModified, ret->LastModified);
-    EXPECT_EQ(ret2->AccessType, options.AccessType);
-    for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
     {
-      EXPECT_EQ(ret2->SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
-      EXPECT_EQ(ret2->SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
-      EXPECT_EQ(ret2->SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
-      EXPECT_EQ(ret2->SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), LowercaseRandomString());
+      fileSystem.Create();
+
+      Files::DataLake::SetDataLakeFileSystemAccessPolicyOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+      Files::DataLake::Models::DataLakeSignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+      identifier.Permissions = "r";
+      options.SignedIdentifiers.emplace_back(identifier);
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
+      identifier.Permissions = "racwdxlt";
+      options.SignedIdentifiers.emplace_back(identifier);
+
+      auto ret = fileSystem.SetAccessPolicy(options);
+      EXPECT_FALSE(ret->ETag.empty());
+      EXPECT_TRUE(IsValidTime(ret->LastModified));
+
+      auto ret2 = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(ret2->ETag, ret->ETag);
+      EXPECT_EQ(ret2->LastModified, ret->LastModified);
+      EXPECT_EQ(ret2->AccessType, options.AccessType);
+      for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
+      {
+        EXPECT_EQ(ret2->SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
+        EXPECT_EQ(ret2->SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
+        EXPECT_EQ(ret2->SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
+        EXPECT_EQ(ret2->SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
+      }
+
+      options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
+      EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
+      ret2 = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(ret2->AccessType, options.AccessType);
+
+      options.AccessType = Files::DataLake::Models::PublicAccessType::None;
+      EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
+      ret2 = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(ret2->AccessType, options.AccessType);
+
+      fileSystem.Delete();
     }
-
-    options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
-    EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
-    ret2 = fileSystem.GetAccessPolicy();
-    EXPECT_EQ(ret2->AccessType, options.AccessType);
-
-    // options.AccessType = Files::DataLake::Models::PublicAccessType::Private;
-    // EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
-    // ret2 = fileSystem.GetAccessPolicy();
-    // EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
-
-    fileSystem.Delete();
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), LowercaseRandomString());
+      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
+      fileSystem.Create(options);
+      auto ret = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::FileSystem, ret->AccessType);
+    }
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), LowercaseRandomString());
+      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+      fileSystem.Create(options);
+      auto ret = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret->AccessType);
+    }
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), LowercaseRandomString());
+      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+      fileSystem.Create(options);
+      auto ret = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret->AccessType);
+    }
   }
 }}} // namespace Azure::Storage::Test

@@ -17,12 +17,36 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
-  using ListFileSystemsSinglePageResult = Details::ServiceListFileSystemsResult;
+
+  struct FileSystemItem
+  {
+    std::string Name;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    Storage::Metadata Metadata;
+    PublicAccessType AccessType = PublicAccessType::None;
+    bool HasImmutabilityPolicy = false;
+    bool HasLegalHold = false;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    LeaseStateType LeaseState = LeaseStateType::Available;
+    LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
+  }; // struct BlobContainerItem
+
+  struct ListFileSystemsSinglePageResult
+  {
+    std::string RequestId;
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    Azure::Core::Nullable<std::string> PreviousContinuationToken;
+    Azure::Core::Nullable<std::string> ContinuationToken;
+    std::vector<FileSystemItem> Items;
+  }; // struct ListFileSystemsSinglePageResult
 
   // FileSystemClient models:
 
   using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
+  using ListDataLakeFileSystemsIncludeItem = Blobs::Models::ListBlobContainersIncludeItem;
 
   struct GetDataLakeFileSystemAccessPolicyResult
   {
@@ -112,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Core::DateTime CreatedOn;
     int64_t FileSize;
     Storage::Metadata Metadata;
-    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     PathHttpHeaders HttpHeaders;
@@ -178,7 +202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     std::string ETag;
     Core::DateTime LastModified;
-    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
     Storage::Metadata Metadata;
