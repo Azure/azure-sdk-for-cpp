@@ -31,6 +31,10 @@
 - Removed unused type `AccountResourceType` and `PathLeaseAction`.
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 
+### Other Changes and Improvements
+
+- Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
+
 ## 12.0.0-beta.6 (2020-01-14)
 
 ### New Features
