@@ -10,7 +10,6 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
 - Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
-- Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
 - Added support for specifying public access type when creating a file system.
 - Added `DataLakeDirectoryClient::ListPathsSinglePage` API to list DataLake paths under certain directory.
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
@@ -30,6 +29,10 @@
 - Removed `Directory` in `ListPathsSinglePageOptions`.
 - Removed unused type `AccountResourceType` and `PathLeaseAction`.
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
+
+### Other Changes and Improvements
+
+- Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
