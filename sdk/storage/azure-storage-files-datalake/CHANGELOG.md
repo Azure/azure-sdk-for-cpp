@@ -14,7 +14,7 @@
 - Added `DataLakeDirectoryClient::ListPathsSinglePage` API to list DataLake paths under certain directory.
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
-- Added `RequestId` in each return types for REST API calls, except for concurrent APIs.
+- Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
 
 ### Breaking Changes
 
