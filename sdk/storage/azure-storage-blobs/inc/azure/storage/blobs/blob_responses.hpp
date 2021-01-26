@@ -72,8 +72,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LeaseId;
     };
 
-    class StartCopyBlobResult : public Azure::Core::Operation<GetBlobPropertiesResult>
-    {
+    class StartCopyBlobResult : public Azure::Core::Operation<GetBlobPropertiesResult> {
     public:
       std::string RequestId;
       std::string ETag;
