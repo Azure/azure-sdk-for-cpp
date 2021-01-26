@@ -4,6 +4,9 @@
 #pragma once
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Details {
+  /***************** KeyVault Key *****************/
+  constexpr static const char KeyPropertyName[] = "key";
+
   /***************** Key Client *****************/
   constexpr static const char KeysPath[] = "keys";
   constexpr static const char DeletedKeysPath[] = "deletedkeys";

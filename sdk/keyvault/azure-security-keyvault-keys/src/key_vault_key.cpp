@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/key_constants.hpp"
 
 #include <azure/core/internal/json.hpp>
 
@@ -26,17 +27,30 @@ KeyVaultKey Details::KeyVaultKeyDeserialize(
   auto body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
 
+  // "Key"
   KeyVaultKey key(name);
-  auto const& jsonKey = jsonParser["key"];
+  auto const& jsonKey = jsonParser[Details::KeyPropertyName];
   {
-    auto keyOperationVector = jsonKey["key_ops"].get<std::vector<std::string>>();
+    // key_ops
+    auto keyOperationVector = jsonKey[Details::KeyOpsPropertyName].get<std::vector<std::string>>();
     std::vector<KeyOperation> keyOperations;
     ParseStringOperationsToKeyOperations(keyOperations, keyOperationVector);
     key.Key.SetKeyOperations(keyOperations);
   }
+  key.Key.Id = jsonKey[Details::KeyIdPropertyName].get<std::string>();
+  key.Key.KeyType
+      = Details::KeyTypeFromString(jsonKey[Details::KeyTypePropertyName].get<std::string>());
 
-  key.Key.Id = jsonKey["kid"].get<std::string>();
-  key.Key.KeyType = Details::KeyTypeFromString(jsonKey["kty"].get<std::string>());
+  // "Attributes"
+
+  // "Tags"
+  auto const& tags = jsonParser[Details::TagsPropertyName];
+  {
+    for (auto tag = tags.begin(); tag != tags.end(); ++tag)
+    {
+      key.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
+    }
+  }
 
   return key;
 }

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/keyvault/keys/json_web_key.hpp"
+#include "azure/keyvault/keys/key_constants.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 #include "azure/keyvault/keys/key_properties.hpp"
 
@@ -12,10 +13,6 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
-  namespace Details {
-    constexpr static const char* KeyPropertyName = "key";
-  } // namespace Details
 
   struct KeyVaultKey
   {
