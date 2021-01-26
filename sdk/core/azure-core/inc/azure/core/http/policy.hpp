@@ -12,6 +12,7 @@
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/strings.hpp"
 #include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
@@ -227,26 +228,20 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_headerValues;
     std::map<std::string, std::string> m_queryValues;
 
-    static void AppendToMapOverwritingExistingValues(
-        std::map<std::string, std::string>& destination,
-        std::map<std::string, std::string> const& source)
-    {
-      for (auto const& srcPair : source)
-      {
-        destination[srcPair.first] = srcPair.second;
-      }
-    }
-
   public:
     /**
      * @brief Add values (key-value pairs) that shall be applied to HTTP request headers.
      * @detail If a value with the a key from \p headerValues already exists in this @ValuePolicy,
      * the new value from \p headerValues will be taken.
+     * @note Header keys are case-insensitive.
      * @param headerValues Values that shall be applied.
      */
     void AddHeaderValues(std::map<std::string, std::string> const& headerValues)
     {
-      AppendToMapOverwritingExistingValues(m_headerValues, headerValues);
+      for (auto const& hdrPair : headerValues)
+      {
+        m_headerValues[Azure::Core::Internal::Strings::ToLower(hdrPair.first)] = hdrPair.second;
+      }
     }
 
     /**
@@ -259,7 +254,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     void AddQueryValues(std::map<std::string, std::string> const& queryValues)
     {
-      AppendToMapOverwritingExistingValues(m_queryValues, queryValues);
+      for (auto const& qryPair : queryValues)
+      {
+        m_queryValues[qryPair.first] = qryPair.second;
+      }
     }
   };
 

@@ -89,7 +89,7 @@ TEST(Policy, ValuePolicy)
 
   ASSERT_EQ(
       headers,
-      decltype(headers)({{"HdrKey1", "HdrVal1"}, {"HdrKey2", "HdrVal2"}, {"HdrKey3", "HdrVal3"}}));
+      decltype(headers)({{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}, {"hdrkey3", "HdrVal3"}}));
 
   ASSERT_EQ(
       queryParams,
