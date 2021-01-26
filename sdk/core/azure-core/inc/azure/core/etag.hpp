@@ -66,11 +66,11 @@ namespace Azure { namespace Core {
     */
 
     /*
-     * @brief Indicates whether two #ETag values are equal
-     * @param left #ETag to compare
-     * @param right #ETag to compare
+     * @brief Indicates whether two #ETag values are equal.
+     * @param left #ETag to compare.
+     * @param right #ETag to compare.
      * @param comparisonKind Determines what #ETagComparison to perform, default is
-     * #ETagComparison Strong
+     * #ETagComparison Strong.
      * @return `true` if #ETag matches, `false` otherwise.
      */
     static bool Equals(
@@ -126,18 +126,13 @@ namespace Azure { namespace Core {
     explicit ETag(std::string etag) : m_value(std::move(etag)) {}
 
     /**
-     * @brief Copy assignment.
-     */
-    ETag& operator=(const ETag&) = default;
-
-    /**
      * @brief Whether #ETag is present.
      * @return `true` if #ETag has a value, `false` otherwise.
      */
     bool HasValue() const { return m_value.HasValue(); }
 
     /*
-     * @brief Returns the resource metadata represented as a string
+     * @brief Returns the resource metadata represented as a string.
      * @return #std::string
      */
     const std::string& ToString() const
@@ -193,8 +188,8 @@ namespace Azure { namespace Core {
      */
     static const ETag& Any()
     {
-      static ETag Any = ETag("*");
-      return Any;
+      static ETag any = ETag("*");
+      return any;
     }
   };
 }} // namespace Azure::Core
