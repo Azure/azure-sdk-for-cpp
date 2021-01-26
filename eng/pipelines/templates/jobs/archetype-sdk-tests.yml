@@ -17,10 +17,14 @@ parameters:
 - name: CoverageReportPath
   type: string
   default: sdk/*/*/*cov_xml.xml
+- name: TimeoutInMinutes
+  type: number
+  default: 60
 
 jobs:
 - job: Validate
   condition: and(succeededOrFailed(), ne(variables['Skip.LiveTest'], 'true'))
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   strategy:
     matrix:
       Linux_x64_with_unit_test:
