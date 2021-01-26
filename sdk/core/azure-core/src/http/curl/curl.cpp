@@ -496,8 +496,8 @@ void CurlSession::ParseChunkSize(Context const& context)
         {
           /*
            * index + 1 represents the next position to Read. If that's NOT equal to the inner
-           * buffer size, it means that there is chunk data in the inner buffer. So, we set the start
-           * to the next position to read.
+           * buffer size, it means that there is chunk data in the inner buffer. So, we set the
+           * start to the next position to read.
            */
           this->m_bodyStartInBuffer = index + 1;
         }
