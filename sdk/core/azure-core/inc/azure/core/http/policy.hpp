@@ -476,5 +476,4 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
   } // namespace Details
-
 }}} // namespace Azure::Core::Http
