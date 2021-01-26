@@ -121,6 +121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::CreateShareResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -138,6 +139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::CreateShareResult ret;
         ret.Created = false;
+        ret.RequestId = std::move(e.RequestId);
         return Azure::Core::Response<Models::CreateShareResult>(
             std::move(ret), std::move(e.RawResponse));
       }
@@ -157,6 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteShareResult ret;
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteShareResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -174,6 +177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::DeleteShareResult ret;
         ret.Deleted = false;
+        ret.RequestId = std::move(e.RequestId);
         return Azure::Core::Response<Models::DeleteShareResult>(
             std::move(ret), std::move(e.RawResponse));
       }
@@ -286,6 +290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);
     ret.FileItems = std::move(result->SinglePage.FileItems);
+    ret.RequestId = std::move(result->RequestId);
 
     return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());

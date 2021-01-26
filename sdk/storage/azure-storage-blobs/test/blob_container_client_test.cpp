@@ -681,7 +681,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto timeAfter = lastModifiedTime + std::chrono::seconds(1);
 
         Blobs::SetBlobContainerAccessPolicyOptions options;
-        options.AccessType = Blobs::Models::PublicAccessType::Private;
+        options.AccessType = Blobs::Models::PublicAccessType::None;
         if (condition == Condition::ModifiedSince)
         {
           options.AccessConditions.IfModifiedSince

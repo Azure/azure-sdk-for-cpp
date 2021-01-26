@@ -33,6 +33,7 @@ set(
     inc/azure/storage/files/datalake/datalake_directory_client.hpp
     inc/azure/storage/files/datalake/datalake_file_client.hpp
     inc/azure/storage/files/datalake/datalake_file_system_client.hpp
+    inc/azure/storage/files/datalake/datalake_lease_client.hpp
     inc/azure/storage/files/datalake/datalake_options.hpp
     inc/azure/storage/files/datalake/datalake_path_client.hpp
     inc/azure/storage/files/datalake/datalake_responses.hpp
@@ -49,6 +50,7 @@ set(
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
+    src/datalake_lease_client.cpp
     src/datalake_path_client.cpp
     src/datalake_responses.cpp
     src/datalake_rest_client.cpp

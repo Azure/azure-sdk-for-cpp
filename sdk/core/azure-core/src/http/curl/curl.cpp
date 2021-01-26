@@ -463,25 +463,42 @@ void CurlSession::ParseChunkSize(Context const& context)
           (void)err;
           // Server can return something like `\n\r\n` for a chunk of zero length data. This is
           // allowed by RFC. `stoull` will throw invalid_argument if there is not at least one hex
-          // digit to be parsed. For those cases, we consider the response as zero-lenght.
+          // digit to be parsed. For those cases, we consider the response as zero-length.
           this->m_chunkSize = 0;
         }
 
         if (this->m_chunkSize == 0)
         { // Response with no content. end of chunk
           keepPolling = false;
+          /*
+           * The index represents the current position while reading.
+           * When the chunkSize is 0, the index should have already read up to the next CRLF.
+           * When reading again, we want to start reading from the next position, so we need to add
+           * 1 to the index.
+           */
           this->m_bodyStartInBuffer = index + 1;
           break;
         }
 
         if (index + 1 == this->m_innerBufferSize)
-        { // on last index. Whatever we read is the BodyStart here
+        {
+          /*
+           * index + 1 represents the next possition to Read. If that's equal to the inner buffer
+           * size it means that there is no more data and we need to fetch more from network. And
+           * whatever we fetch will be the start of the chunk data. The bodyStart is set to 0 to
+           * indicate the the next read call should read from the inner buffer start.
+           */
           this->m_innerBufferSize = m_connection->ReadFromSocket(
               context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
-        { // not at the end, buffer like [999 \r\nBody...]
+        {
+          /*
+           * index + 1 represents the next position to Read. If that's NOT equal to the inner
+           * buffer size, it means that there is chunk data in the inner buffer. So, we set the
+           * start to the next position to read.
+           */
           this->m_bodyStartInBuffer = index + 1;
         }
 
@@ -651,7 +668,9 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
 
     if (this->IsEOF())
     {
-      // Final CRLF after end of chunk
+      /* For a chunk response, EOF means that the last chunk was found.
+       *  As per RFC, after the last chunk, there should be one last CRLF
+       */
       ReadCRLF(context);
       // after parsing next chunk, check if it is zero
       return 0;
@@ -704,16 +723,17 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
   this->m_sessionTotalRead += totalRead;
 
   // Reading 0 bytes means closed connection.
-  // For known content length and chunked response, this means there is nothing else to read from
-  // server or lost connection before getting full response.
-  // For unknown response size, it means the end of response and it's fine.
+  // For known content length and chunked response, this means there is nothing else to read
+  // from server or lost connection before getting full response. For unknown response size,
+  // it means the end of response and it's fine.
   if (totalRead == 0 && (this->m_contentLength > 0 || this->m_isChunkedResponseType))
   {
     auto expectedToRead = this->m_isChunkedResponseType ? this->m_chunkSize : this->m_contentLength;
     if (this->m_sessionTotalRead < expectedToRead)
     {
       throw TransportException(
-          "Connection closed before getting full response or response is less than expected. "
+          "Connection closed before getting full response or response is less than "
+          "expected. "
           "Expected response length = "
           + std::to_string(expectedToRead)
           + ". Read until now = " + std::to_string(this->m_sessionTotalRead));
@@ -732,10 +752,10 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
   // `pollSocketUntilEventOrTimeout` and wait for socket to be ready to read.
   // `pollSocketUntilEventOrTimeout` will then handle cancelation token.
   // If socket is not ready before the timeout, Exception is thrown.
-  // When socket is ready, it calls curl_easy_recv() again (second loop iteration). It is not
-  // expected to return CURLE_AGAIN (since socket is ready), so, a chuck of data will be downloaded
-  // and result will be CURLE_OK which breaks the loop. Also, getting other than CURLE_OK or
-  // CURLE_AGAIN throws.
+  // When socket is ready, it calls curl_easy_recv() again (second loop iteration). It is
+  // not expected to return CURLE_AGAIN (since socket is ready), so, a chuck of data will be
+  // downloaded and result will be CURLE_OK which breaks the loop. Also, getting other than
+  // CURLE_OK or CURLE_AGAIN throws.
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
@@ -829,8 +849,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else
         {
-          // Should never happen that parser is not statusLIne or Headers and we still try to parse
-          // more.
+          // Should never happen that parser is not statusLIne or Headers and we still try
+          // to parse more.
           throw;
         }
         // clean internal buffer
@@ -866,8 +886,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else
         {
-          // Should never happen that parser is not statusLIne or Headers and we still try to parse
-          // more.
+          // Should never happen that parser is not statusLIne or Headers and we still try
+          // to parse more.
           throw;
         }
       }
@@ -964,14 +984,15 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 
   if (bufferSize == 1 && buffer[0] == '\n')
   {
-    // rare case of using buffer of size 1 to read. In this case, if the char is next value after
-    // headers or previous header, just consider it as read and return
+    // rare case of using buffer of size 1 to read. In this case, if the char is next value
+    // after headers or previous header, just consider it as read and return
     return bufferSize;
   }
-  else if (bufferSize > 1 && this->m_internalBuffer.size() == 0) // only if nothing in buffer,
-                                                                 // advance
+  else if (bufferSize > 1 && this->m_internalBuffer.size() == 0) // only if nothing in
+                                                                 // buffer, advance
   {
-    // move offset one possition. This is because readStatusLine and readHeader will read up to
+    // move offset one possition. This is because readStatusLine and readHeader will read up
+    // to
     // '\r' then next delimiter is '\n' and we don't care
     start = buffer + 1;
   }
@@ -984,8 +1005,8 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
     // \r found at the start means the end of headers
     this->m_internalBuffer.clear();
     this->m_parseCompleted = true;
-    return 1; // can't return more than the found delimiter. On read remaining we need to also
-              // remove first char
+    return 1; // can't return more than the found delimiter. On read remaining we need to
+              // also remove first char
   }
 
   if (indexOfEndOfStatusLine == endOfBuffer)
@@ -1203,8 +1224,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   return std::make_unique<CurlConnection>(newHandle, std::move(connectionKey));
 }
 
-// Move the connection back to the connection pool. Push it to the front so it becomes the first
-// connection to be picked next time some one ask for a connection to the pool (LIFO)
+// Move the connection back to the connection pool. Push it to the front so it becomes the
+// first connection to be picked next time some one ask for a connection to the pool (LIFO)
 void CurlConnectionPool::MoveConnectionBackToPool(
     std::unique_ptr<CurlNetworkConnection> connection,
     HttpStatusCode lastStatusCode)
@@ -1270,13 +1291,14 @@ void CurlConnectionPool::CleanUp()
           // a connection that is not expired is found or until all connections are removed.
           for (auto connection = index->second.end();;)
           {
-            // loop starts at end(), go back to previous possition. We know the list is size() > 0
-            // so we are safe to go end() - 1 and find the last element in the list
+            // loop starts at end(), go back to previous possition. We know the list is
+            // size() > 0 so we are safe to go end() - 1 and find the last element in the
+            // list
             connection--;
             if (connection->get()->isExpired())
             {
-              // remove connection from the pool and update the connection to the next one which
-              // is going to be list.end()
+              // remove connection from the pool and update the connection to the next one
+              // which is going to be list.end()
               connection = index->second.erase(connection);
               CurlConnectionPool::s_connectionCounter -= 1;
 
@@ -1288,8 +1310,8 @@ void CurlConnectionPool::CleanUp()
             }
             else
             {
-              // Got a non-expired connection, all connections before this one are not expired.
-              // Break the loop and continue looping the Pool index
+              // Got a non-expired connection, all connections before this one are not
+              // expired. Break the loop and continue looping the Pool index
               break;
             }
           }

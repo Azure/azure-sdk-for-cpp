@@ -61,6 +61,7 @@ set(
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
+    inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp

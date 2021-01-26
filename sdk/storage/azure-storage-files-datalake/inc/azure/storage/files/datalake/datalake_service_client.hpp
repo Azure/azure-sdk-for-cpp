@@ -92,8 +92,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
      * shared access signatures.
      *
-     * @param startsOn Start time for the key's validity. The time should be specified in UTC, and
-     * will be truncated to second.
      * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      * @param options Optional parameters to execute
@@ -103,11 +101,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
-        const Azure::Core::DateTime& startsOn,
         const Azure::Core::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const
     {
-      return m_blobServiceClient.GetUserDelegationKey(startsOn, expiresOn, options);
+      return m_blobServiceClient.GetUserDelegationKey(expiresOn, options);
     }
 
   private:

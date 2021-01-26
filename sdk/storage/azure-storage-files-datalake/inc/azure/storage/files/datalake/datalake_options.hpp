@@ -96,6 +96,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        include up to 5,000 items.
      */
     Azure::Core::Nullable<int32_t> PageSizeHint;
+
+    /**
+     * @brief Specifies that the filesystem's metadata be returned.
+     */
+    Models::ListDataLakeFileSystemsIncludeItem Include
+        = Models::ListDataLakeFileSystemsIncludeItem::None;
   };
 
   /**
@@ -114,6 +120,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        ISO-8859-1 character set.
      */
     Storage::Metadata Metadata;
+
+    /**
+     * @brief The public access type of the file system.
+     */
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
   };
 
   /**
@@ -201,12 +212,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        include up to 5,000 items.
      */
     Azure::Core::Nullable<int32_t> PageSizeHint;
-
-    /**
-     * @brief Filters results to paths within the specified directory. An error occurs
-     *        if the directory does not exist.
-     */
-    Azure::Core::Nullable<std::string> Directory;
   };
 
   /**
@@ -788,10 +793,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ExpiresOn;
   };
 
-  using AcquireDataLakePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;
-  using BreakDataLakePathLeaseOptions = Blobs::BreakBlobLeaseOptions;
-  using RenewDataLakePathLeaseOptions = Blobs::RenewBlobLeaseOptions;
-  using ReleaseDataLakePathLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
-  using ChangeDataLakePathLeaseOptions = Blobs::ChangeBlobLeaseOptions;
+  using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;
+  using BreakDataLakeLeaseOptions = Blobs::BreakBlobLeaseOptions;
+  using RenewDataLakeLeaseOptions = Blobs::RenewBlobLeaseOptions;
+  using ReleaseDataLakeLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
+  using ChangeDataLakeLeaseOptions = Blobs::ChangeBlobLeaseOptions;
 
 }}}} // namespace Azure::Storage::Files::DataLake

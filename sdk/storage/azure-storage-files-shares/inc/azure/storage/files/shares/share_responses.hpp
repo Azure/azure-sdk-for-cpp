@@ -11,8 +11,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   // ServiceClient models:
 
-  using ListSharesSinglePageResult = ServiceListSharesSinglePageResult;
-  using SetServicePropertiesResult = ServiceSetPropertiesResult;
+  using ListSharesSinglePageResult = Details::ServiceListSharesSinglePageResult;
+  using SetServicePropertiesResult = Details::ServiceSetPropertiesResult;
   using GetServicePropertiesResult = StorageServiceProperties;
 
   // ShareClient models:
@@ -21,26 +21,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
+    std::string RequestId;
   };
 
   struct DeleteShareResult
   {
     bool Deleted = true;
+    std::string RequestId;
   };
-  using CreateShareSnapshotResult = ShareCreateSnapshotResult;
-  using GetSharePropertiesResult = ShareGetPropertiesResult;
-  using SetShareQuotaResult = ShareSetQuotaResult;
-  using SetShareMetadataResult = ShareSetMetadataResult;
-  using SetShareAccessPolicyResult = ShareSetAccessPolicyResult;
-  using GetShareStatisticsResult = ShareGetStatisticsResult;
-  using CreateSharePermissionResult = ShareCreatePermissionResult;
-  using GetShareAccessPolicyResult = ShareGetAccessPolicyResult;
-  using GetSharePermissionResult = ShareGetPermissionResult;
-  using AcquireShareLeaseResult = ShareAcquireLeaseResult;
-  using RenewShareLeaseResult = ShareRenewLeaseResult;
-  using ReleaseShareLeaseResult = ShareReleaseLeaseResult;
-  using BreakShareLeaseResult = ShareBreakLeaseResult;
-  using ChangeShareLeaseResult = ShareChangeLeaseResult;
+  using CreateShareSnapshotResult = Details::ShareCreateSnapshotResult;
+  using GetSharePropertiesResult = Details::ShareGetPropertiesResult;
+  using SetShareQuotaResult = Details::ShareSetQuotaResult;
+  using SetShareMetadataResult = Details::ShareSetMetadataResult;
+  using SetShareAccessPolicyResult = Details::ShareSetAccessPolicyResult;
+  using GetShareStatisticsResult = Details::ShareGetStatisticsResult;
+  using CreateSharePermissionResult = Details::ShareCreatePermissionResult;
+  using GetShareAccessPolicyResult = Details::ShareGetAccessPolicyResult;
+  using GetSharePermissionResult = Details::ShareGetPermissionResult;
+  using AcquireShareLeaseResult = Details::ShareAcquireLeaseResult;
+  using RenewShareLeaseResult = Details::ShareRenewLeaseResult;
+  using ReleaseShareLeaseResult = Details::ShareReleaseLeaseResult;
+  using BreakShareLeaseResult = Details::ShareBreakLeaseResult;
+  using ChangeShareLeaseResult = Details::ShareChangeLeaseResult;
 
   // DirectoryClient models:
   struct CreateShareDirectoryResult
@@ -56,17 +58,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Core::DateTime FileChangedOn;
     std::string FileId;
     std::string FileParentId;
+    std::string RequestId;
   };
 
   struct DeleteShareDirectoryResult
   {
     bool Deleted = true;
+    std::string RequestId;
   };
 
-  using GetShareDirectoryPropertiesResult = DirectoryGetPropertiesResult;
-  using SetShareDirectoryPropertiesResult = DirectorySetPropertiesResult;
-  using SetShareDirectoryMetadataResult = DirectorySetMetadataResult;
-  using ForceCloseAllShareDirectoryHandlesResult = DirectoryForceCloseHandlesResult;
+  using GetShareDirectoryPropertiesResult = Details::DirectoryGetPropertiesResult;
+  using SetShareDirectoryPropertiesResult = Details::DirectorySetPropertiesResult;
+  using SetShareDirectoryMetadataResult = Details::DirectorySetMetadataResult;
+  using ForceCloseAllShareDirectoryHandlesResult = Details::DirectoryForceCloseHandlesResult;
 
   struct ForceCloseShareDirectoryHandleResult
   {
@@ -84,12 +88,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ContinuationToken;
     std::vector<DirectoryItem> DirectoryItems;
     std::vector<FileItem> FileItems;
+    std::string RequestId;
   };
 
   struct ListShareDirectoryHandlesSinglePageResult
   {
     std::vector<HandleItem> Handles;
     std::string ContinuationToken;
+    std::string RequestId;
   };
 
   // FileClient models:
@@ -106,11 +112,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Core::DateTime FileChangedOn;
     std::string FileId;
     std::string FileParentId;
+    std::string RequestId;
   };
 
   struct DeleteShareFileResult
   {
     bool Deleted = true;
+    std::string RequestId;
   };
 
   struct FileShareSmbProperties
@@ -138,23 +146,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
   };
 
-  using DownloadShareFileResult = FileDownloadResult;
-  using StartCopyShareFileResult = FileStartCopyResult;
-  using AbortCopyShareFileResult = FileAbortCopyResult;
-  using GetShareFilePropertiesResult = FileGetPropertiesResult;
-  using SetShareFilePropertiesResult = FileSetHttpHeadersResult;
-  using ResizeFileResult = FileSetHttpHeadersResult;
-  using SetShareFileMetadataResult = FileSetMetadataResult;
-  using UploadShareFileRangeResult = FileUploadRangeResult;
-  using ClearShareFileRangeResult = FileUploadRangeResult;
-  using UploadFileRangeFromUrlResult = FileUploadRangeFromUrlResult;
-  using GetShareFileRangeListResult = FileGetRangeListResult;
+  using DownloadShareFileResult = Details::FileDownloadResult;
+  using StartCopyShareFileResult = Details::FileStartCopyResult;
+  using AbortCopyShareFileResult = Details::FileAbortCopyResult;
+  using GetShareFilePropertiesResult = Details::FileGetPropertiesResult;
+  using SetShareFilePropertiesResult = Details::FileSetHttpHeadersResult;
+  using ResizeFileResult = Details::FileSetHttpHeadersResult;
+  using SetShareFileMetadataResult = Details::FileSetMetadataResult;
+  using UploadShareFileRangeResult = Details::FileUploadRangeResult;
+  using ClearShareFileRangeResult = Details::FileUploadRangeResult;
+  using UploadFileRangeFromUrlResult = Details::FileUploadRangeFromUrlResult;
+  using GetShareFileRangeListResult = Details::FileGetRangeListResult;
   using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
-  using ForceCloseAllShareFileHandlesResult = FileForceCloseHandlesResult;
-  using AcquireShareFileLeaseResult = FileAcquireLeaseResult;
-  using ReleaseShareFileLeaseResult = FileReleaseLeaseResult;
-  using BreakShareFileLeaseResult = FileBreakLeaseResult;
-  using ChangeShareFileLeaseResult = FileChangeLeaseResult;
+  using ForceCloseAllShareFileHandlesResult = Details::FileForceCloseHandlesResult;
 
   struct DownloadShareFileToResult
   {
@@ -164,15 +168,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     ShareFileHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     bool IsServerEncrypted = false;
+    std::string RequestId;
   };
 
   struct ForceCloseShareFileHandleResult
   {
+    std::string RequestId;
   };
 
   struct UploadShareFileFromResult
   {
     bool IsServerEncrypted = false;
+    std::string RequestId;
   };
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models

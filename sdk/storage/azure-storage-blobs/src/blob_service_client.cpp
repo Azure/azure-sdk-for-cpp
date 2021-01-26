@@ -134,12 +134,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
-      const Azure::Core::DateTime& startsOn,
       const Azure::Core::DateTime& expiresOn,
       const GetUserDelegationKeyOptions& options) const
   {
     Details::BlobRestClient::Service::GetUserDelegationKeyOptions protocolLayerOptions;
-    protocolLayerOptions.StartsOn = startsOn;
+    protocolLayerOptions.StartsOn = options.startsOn;
     protocolLayerOptions.ExpiresOn = expiresOn;
     return Details::BlobRestClient::Service::GetUserDelegationKey(
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
