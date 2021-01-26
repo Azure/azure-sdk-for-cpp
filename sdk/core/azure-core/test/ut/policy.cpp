@@ -20,6 +20,7 @@ public:
       Azure::Core::Http::Request&,
       Azure::Core::Http::NextHttpPolicy) const override
   {
+    return nullptr;
   }
 };
 } // namespace
