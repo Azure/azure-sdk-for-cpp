@@ -471,9 +471,9 @@ void CurlSession::ParseChunkSize(Context const& context)
         { // Response with no content. end of chunk
           keepPolling = false;
           /*
-           * The index represents the current possition while reading.
-           * Then the chunkSize is 0, the index should have already read up to the next CRLF.
-           * When reading again, we want to start reading from the next possition, so we need to add
+           * The index represents the current position while reading.
+           * When the chunkSize is 0, the index should have already read up to the next CRLF.
+           * When reading again, we want to start reading from the next position, so we need to add
            * 1 to the index.
            */
           this->m_bodyStartInBuffer = index + 1;
@@ -495,9 +495,9 @@ void CurlSession::ParseChunkSize(Context const& context)
         else
         {
           /*
-           * index + 1 represents the next possition to Read. If that's equal NOT to the inner
-           * buffer size it means that there is chunk data in the inner buffer. So, we set the start
-           * to the next possition to read.
+           * index + 1 represents the next position to Read. If that's NOT equal to the inner
+           * buffer size, it means that there is chunk data in the inner buffer. So, we set the start
+           * to the next position to read.
            */
           this->m_bodyStartInBuffer = index + 1;
         }
@@ -668,8 +668,8 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
 
     if (this->IsEOF())
     {
-      /* For a chunk response, EOF means that the last chunk 0 was found.
-       *  As per RFC, after the last chiunk, there should be one last CRLF
+      /* For a chunk response, EOF means that the last chunk was found.
+       *  As per RFC, after the last chunk, there should be one last CRLF
        */
       ReadCRLF(context);
       // after parsing next chunk, check if it is zero
