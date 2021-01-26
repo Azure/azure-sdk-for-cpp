@@ -47,11 +47,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {
-        throw StorageException("Operation failed");
+        throw Azure::Core::RequestFailedException("Operation failed");
       }
       else if (m_status == Azure::Core::OperationStatus::Cancelled)
       {
-        throw StorageException("Operation was cancelled");
+        throw Azure::Core::RequestFailedException("Operation was cancelled");
       }
 
       std::this_thread::sleep_for(period);
