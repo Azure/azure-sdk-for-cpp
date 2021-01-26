@@ -104,8 +104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::shared_ptr<BlobClient> m_blobClient;
       Models::GetBlobPropertiesResult m_pollResult;
 
-      friend class BlobClient;
-      friend class PageBlobClient;
+      friend class Blobs::BlobClient;
+      friend class Blobs::PageBlobClient;
     };
 
   } // namespace Models
