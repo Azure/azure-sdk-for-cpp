@@ -31,7 +31,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: core
-      # CI has static code analisys disabled, while LiveTest will have it enabled
+      # CI has static code analysis disabled, while LiveTest will have it enabled
       CtestRegex: azure-core.
       LiveTestCtestRegex: '"azure-core.|json-test"'
       Artifacts:
