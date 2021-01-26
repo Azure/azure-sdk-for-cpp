@@ -48,6 +48,7 @@ if(BUILD_TESTING)
     include(AddGoogleTest)
     enable_testing ()
     add_subdirectory(sdk/core/azure-core/test/ut)
+    add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
 endif()
 
 # compiler warning flags globally
