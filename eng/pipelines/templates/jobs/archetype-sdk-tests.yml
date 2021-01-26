@@ -21,6 +21,7 @@ parameters:
 jobs:
 - job: Validate
   condition: and(succeededOrFailed(), ne(variables['Skip.LiveTest'], 'true'))
+  timeoutInMinutes: 90
   strategy:
     matrix:
       Linux_x64_with_unit_test:
