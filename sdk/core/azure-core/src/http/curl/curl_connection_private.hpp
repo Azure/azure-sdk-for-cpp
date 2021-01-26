@@ -20,16 +20,16 @@ namespace Azure { namespace Core { namespace Http {
   namespace Details {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
-    constexpr static int64_t c_DefaultUploadChunkSize = 1024 * 64;
-    constexpr static auto c_DefaultLibcurlReaderSize = 1024;
+    constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
+    constexpr static auto DefaultLibcurlReaderSize = 1024;
     // Run time error template
-    constexpr static const char* c_DefaultFailedToGetNewConnectionTemplate
+    constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
-    constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
+    constexpr static int DefaultMaxOpenNewConnectionIntentsAllowed = 10;
     // 90 sec -> cleaner wait time before next clean routine
-    constexpr static int c_DefaultCleanerIntervalMilliseconds = 1000 * 90;
+    constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
-    constexpr static int c_DefaultConnectionExpiredMilliseconds = 1000 * 60;
+    constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
   } // namespace Details
 
   /**
@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= Details::c_DefaultConnectionExpiredMilliseconds;
+        return connectionOnWaitingTimeMs.count() >= Details::DefaultConnectionExpiredMilliseconds;
       }
 
       /**
