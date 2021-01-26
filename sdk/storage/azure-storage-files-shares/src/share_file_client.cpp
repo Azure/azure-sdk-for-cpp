@@ -289,7 +289,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto newResponse = Download(newOptions);
         if (eTag != newResponse->ETag)
         {
-          throw std::runtime_error("File was changed during the download process.");
+          throw Azure::Core::RequestFailedException(
+              "File was changed during the download process.");
         }
         return std::move(Download(newOptions)->BodyStream);
       };
@@ -619,7 +620,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (static_cast<std::size_t>(fileRangeSize) > bufferSize)
     {
-      throw std::runtime_error(
+      throw Azure::Core::RequestFailedException(
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
     }
 
@@ -627,7 +628,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         firstChunkOptions.Context, *(firstChunk->BodyStream), buffer, firstChunkLength);
     if (bytesRead != firstChunkLength)
     {
-      throw std::runtime_error("error when reading body stream");
+      throw Azure::Core::RequestFailedException("error when reading body stream");
     }
     firstChunk->BodyStream.reset();
 
@@ -660,7 +661,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 chunkOptions.Range.GetValue().Length.GetValue());
             if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
             {
-              throw std::runtime_error("error when reading body stream");
+              throw Azure::Core::RequestFailedException("error when reading body stream");
             }
 
             if (chunkId == numChunks - 1)
@@ -752,7 +753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             = Azure::Core::Http::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
         if (bytesRead != readSize)
         {
-          throw std::runtime_error("error when reading body stream");
+          throw Azure::Core::RequestFailedException("error when reading body stream");
         }
         fileWriter.Write(buffer.data(), bytesRead, offset);
         length -= bytesRead;

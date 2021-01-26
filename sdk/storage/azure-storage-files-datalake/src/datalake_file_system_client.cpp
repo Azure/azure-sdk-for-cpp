@@ -300,7 +300,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    if (options.AccessConditions.IfUnmodifiedSince.HasValue())
+    {
+      std::abort();
+    }
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions);
     Models::SetDataLakeFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);

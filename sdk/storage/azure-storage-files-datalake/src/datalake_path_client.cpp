@@ -416,7 +416,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     if (!acl.HasValue())
     {
-      throw std::runtime_error("Got null value returned when getting access control.");
+      throw Azure::Core::RequestFailedException(
+          "Got null value returned when getting access control.");
     }
     ret.Acls = std::move(acl.GetValue());
     if (result->Owner.HasValue())
