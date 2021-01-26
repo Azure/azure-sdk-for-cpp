@@ -34,6 +34,7 @@ stages:
       # CI has static code analisys disabled, while LiveTest will have it enabled
       CtestRegex: azure-core.
       LiveTestCtestRegex: azure-core.
+      LiveTestTimeoutInMinutes: 90
       Artifacts:
         - Name: azure-core
           Path: azure-core
