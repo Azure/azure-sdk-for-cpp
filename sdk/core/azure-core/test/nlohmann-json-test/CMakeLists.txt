@@ -93,28 +93,29 @@ endif()
 
 set(files
     src/unit-algorithms.cpp
-    #src/unit-allocator.cpp
-    #src/unit-alt-string.cpp
-    #src/unit-bson.cpp
-    #src/unit-capacity.cpp
-    #src/unit-cbor.cpp
-    #src/unit-class_const_iterator.cpp
-    #src/unit-class_iterator.cpp
-    #src/unit-class_lexer.cpp
+    src/unit-allocator.cpp
+    src/unit-alt-string.cpp
+    src/unit-bson.cpp
+    src/unit-capacity.cpp
+    src/unit-cbor.cpp
+    src/unit-class_const_iterator.cpp
+    src/unit-class_iterator.cpp
+    src/unit-class_lexer.cpp
+    # class parser '_json' removed for Azure::Core version
     #src/unit-class_parser.cpp
-    #src/unit-comparison.cpp
-    #src/unit-concepts.cpp
-    #src/unit-constructor1.cpp
-    #src/unit-constructor2.cpp
-    #src/unit-convenience.cpp
+    src/unit-comparison.cpp
+    src/unit-concepts.cpp
+    src/unit-constructor1.cpp
+    src/unit-constructor2.cpp
+    src/unit-convenience.cpp
     #src/unit-conversions.cpp
-    #src/unit-deserialization.cpp
-    #src/unit-element_access1.cpp
+    src/unit-deserialization.cpp
+    src/unit-element_access1.cpp
     #src/unit-element_access2.cpp
-    #src/unit-inspection.cpp
-    #src/unit-items.cpp
-    #src/unit-iterators1.cpp
-    #src/unit-iterators2.cpp
+    src/unit-inspection.cpp
+    src/unit-items.cpp
+    src/unit-iterators1.cpp
+    src/unit-iterators2.cpp
     #src/unit-json_patch.cpp
     #src/unit-json_pointer.cpp
     #src/unit-large_json.cpp
