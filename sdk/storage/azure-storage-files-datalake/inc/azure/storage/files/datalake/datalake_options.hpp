@@ -697,9 +697,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControlRecursive
+   * @brief Optional parameters for DirectoryClient::SetAccessControlRecursiveSinglePage
    */
-  struct SetDataLakeDirectoryAccessControlRecursiveOptions
+  struct SetDataLakeDirectoryAccessControlRecursiveSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -721,17 +721,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
      *        items.
      */
-    Azure::Core::Nullable<int32_t> MaxRecords;
+    Azure::Core::Nullable<int32_t> MaxEntries;
 
     /**
-     * @brief  Optional. Valid for "SetAccessControlRecursive" operation. If set to false, the
-     * operation will terminate quickly on encountering user errors (4XX). If true, the operation
-     * will ignore user errors and proceed with the operation on other sub-entities of the
-     * directory. Continuation token will only be returned when forceFlag is true in case of user
-     * errors. If not set the default value is false for this.
+     * @brief  Optional. If set to false, the operation will terminate quickly on encountering user
+     * errors (4XX). If true, the operation will ignore user errors and proceed with the operation
+     * on other sub-entities of the directory. Continuation token will only be returned when
+     * ContinueOnFailure is true in case of user errors. If not set the default value is false for
+     * this.
      */
-    Azure::Core::Nullable<bool> ForceFlag;
+    Azure::Core::Nullable<bool> ContinueOnFailure;
   };
+
+  using UpdateDataLakeDirectoryAccessControlRecursiveSinglePageOptions
+      = SetDataLakeDirectoryAccessControlRecursiveSinglePageOptions;
+
+  using RemoveDataLakeDirectoryAccessControlRecursiveSinglePageOptions
+      = SetDataLakeDirectoryAccessControlRecursiveSinglePageOptions;
 
   using CreateDataLakeFileOptions = CreateDataLakePathOptions;
   using CreateDataLakeDirectoryOptions = CreateDataLakePathOptions;
