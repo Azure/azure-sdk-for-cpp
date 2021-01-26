@@ -297,52 +297,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ForceCloseAllShareFileHandlesOptions& options
         = ForceCloseAllShareFileHandlesOptions()) const;
 
-    /**
-     * @brief Acquires an infinite lease on the file.
-     *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::AcquireShareFileLeaseResult> describing the lease.
-     */
-    Azure::Core::Response<Models::AcquireShareFileLeaseResult> AcquireLease(
-        const std::string& proposedLeaseId,
-        const AcquireShareFileLeaseOptions& options = AcquireShareFileLeaseOptions()) const;
-
-    /**
-     * @brief Releases the file's previously-acquired lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ReleaseShareFileLeaseResult> describing the updated
-     * container.
-     */
-    Azure::Core::Response<Models::ReleaseShareFileLeaseResult> ReleaseLease(
-        const std::string& leaseId,
-        const ReleaseShareFileLeaseOptions& options = ReleaseShareFileLeaseOptions()) const;
-
-    /**
-     * @brief Changes the lease of an active lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ChangeShareFileLeaseResult> describing the changed
-     * lease.
-     */
-    Azure::Core::Response<Models::ChangeShareFileLeaseResult> ChangeLease(
-        const std::string& leaseId,
-        const std::string& proposedLeaseId,
-        const ChangeShareFileLeaseOptions& options = ChangeShareFileLeaseOptions()) const;
-
-    /**
-     * @brief Breaks the previously-acquired lease.
-     *
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::BreakShareFileLeaseResult> describing the broken lease.
-     */
-    Azure::Core::Response<Models::BreakShareFileLeaseResult> BreakLease(
-        const BreakShareFileLeaseOptions& options = BreakShareFileLeaseOptions()) const;
-
   private:
     Azure::Core::Http::Url m_shareFileUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
@@ -356,5 +310,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareClient;
     friend class ShareDirectoryClient;
+    friend class ShareLeaseClient;
   };
 }}}} // namespace Azure::Storage::Files::Shares

@@ -53,10 +53,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<Files::DataLake::Models::FileSystem> DataLakeServiceClientTest::ListAllFileSystems(
-      const std::string& prefix)
+  std::vector<Files::DataLake::Models::FileSystemItem>
+  DataLakeServiceClientTest::ListAllFileSystems(const std::string& prefix)
   {
-    std::vector<Files::DataLake::Models::FileSystem> result;
+    std::vector<Files::DataLake::Models::FileSystemItem> result;
     std::string continuation;
     Files::DataLake::ListFileSystemsSinglePageOptions options;
     if (!prefix.empty())
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
-      result.insert(result.end(), response->Filesystems.begin(), response->Filesystems.end());
+      result.insert(result.end(), response->Items.begin(), response->Items.end());
       if (response->ContinuationToken.HasValue())
       {
         continuation = response->ContinuationToken.GetValue();
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixB.size()), m_fileSystemPrefixB);
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.begin(),
             result.end(),
-            [&name](const Files::DataLake::Models::FileSystem& fileSystem) {
+            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(result.end(), iter);
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListFileSystemsSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
-      EXPECT_LE(2U, response->Filesystems.size());
+      EXPECT_LE(2U, response->Items.size());
     }
   }
 

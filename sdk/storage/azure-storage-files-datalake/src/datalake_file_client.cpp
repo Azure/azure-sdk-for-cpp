@@ -222,11 +222,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::FlushDataLakeFileResult> DataLakeFileClient::Flush(
-      int64_t endingOffset,
+      int64_t position,
       const FlushDataLakeFileOptions& options) const
   {
     Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
-    protocolLayerOptions.Position = endingOffset;
+    protocolLayerOptions.Position = position;
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
@@ -281,6 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     Models::RenameDataLakeFileResult ret;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::RenameDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -294,6 +295,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakePathClient::Delete(deleteOptions);
     Models::DeleteDataLakeFileResult ret;
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -307,6 +309,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakePathClient::DeleteIfExists(deleteOptions);
     Models::DeleteDataLakeFileResult ret;
     ret.Deleted = result->Deleted;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -331,10 +334,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    // FIXME
     if (result->LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = result->LeaseDuration.GetValue().Get();
+      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().Get());
     }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())
@@ -346,6 +348,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CreatedOn = std::move(result->CreatedOn);
     ret.ExpiresOn = std::move(result->ExpiriesOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::ReadDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }

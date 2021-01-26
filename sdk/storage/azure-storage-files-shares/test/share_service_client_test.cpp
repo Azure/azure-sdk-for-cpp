@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      result.insert(result.end(), response->ShareItems.begin(), response->ShareItems.end());
+      result.insert(result.end(), response->Items.begin(), response->Items.end());
       continuation = response->ContinuationToken;
       options.ContinuationToken = continuation;
     } while (!continuation.empty());
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ListSharesSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      EXPECT_LE(2U, response->ShareItems.size());
+      EXPECT_LE(2U, response->Items.size());
     }
   }
 

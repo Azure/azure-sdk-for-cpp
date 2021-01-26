@@ -88,7 +88,7 @@ void DataLakeGettingStarted()
 
     // List all file systems.
     std::string continuation;
-    std::vector<Models::FileSystem> fileSystems;
+    std::vector<Models::FileSystemItem> fileSystems;
     do
     {
       auto response = serviceClient.ListFileSystemsSinglePage();
@@ -96,8 +96,7 @@ void DataLakeGettingStarted()
       {
         continuation = response->ContinuationToken.GetValue();
       }
-      fileSystems.insert(
-          fileSystems.end(), response->Filesystems.begin(), response->Filesystems.end());
+      fileSystems.insert(fileSystems.end(), response->Items.begin(), response->Items.end());
     } while (!continuation.empty());
 
     // Delete file system.
