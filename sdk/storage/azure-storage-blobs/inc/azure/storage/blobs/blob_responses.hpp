@@ -85,6 +85,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       GetBlobPropertiesResult Value() const override { return m_pollResult; }
 
+      ~StartCopyBlobResult() override {}
+
     private:
       std::string GetResumeToken() const override
       {
