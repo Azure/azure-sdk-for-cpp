@@ -3,7 +3,7 @@
 
 /**
  * @brief General purpose header for Key Vault keys functionaly.
- * 
+ *
  */
 
 #pragma once

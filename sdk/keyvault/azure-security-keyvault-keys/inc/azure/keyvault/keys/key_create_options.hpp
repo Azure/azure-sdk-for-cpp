@@ -3,7 +3,7 @@
 
 /**
  * @brief Defines the supported options to create a Key Vault Key.
- * 
+ *
  */
 
 #pragma once

@@ -3,7 +3,7 @@
 
 /**
  * @brief Defines the JsonWebKey.
- * 
+ *
  */
 
 #pragma once

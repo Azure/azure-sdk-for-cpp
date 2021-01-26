@@ -3,7 +3,7 @@
 
 /**
  * @brief Defines a general exception for Key Vault service clients.
- * 
+ *
  */
 
 #pragma once

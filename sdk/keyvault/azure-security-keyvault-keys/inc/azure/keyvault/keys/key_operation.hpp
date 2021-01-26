@@ -3,7 +3,7 @@
 
 /**
  * @brief Defines the Key Vault KeyOperation.
- * 
+ *
  */
 
 #pragma once
