@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <azure/core/operation.hpp>
