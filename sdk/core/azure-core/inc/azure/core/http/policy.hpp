@@ -282,7 +282,7 @@ namespace Azure { namespace Core { namespace Http {
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<RequestIdPolicy>(*this);
+      return std::make_unique<ValuePolicy>(*this);
     }
 
     std::unique_ptr<RawResponse> Send(
