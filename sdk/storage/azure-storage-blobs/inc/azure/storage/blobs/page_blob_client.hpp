@@ -248,9 +248,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param sourceUri Specifies the to the source page blob as a uri up to 2 KB in length. The
      * source blob must either be public or must be authenticated via a shared access signature.
      * @param options Optional parameters to execute this function.
-     * @return A StartCopyPageBlobIncrementalResult describing the state of the copy operation.
+     * @return A StartCopyBlobResult describing the state of the copy operation.
      */
-    Azure::Core::Response<Models::StartCopyPageBlobIncrementalResult> StartCopyIncremental(
+    Azure::Core::Response<Models::StartCopyBlobResult> StartCopyIncremental(
         const std::string& sourceUri,
         const StartCopyPageBlobIncrementalOptions& options
         = StartCopyPageBlobIncrementalOptions()) const;

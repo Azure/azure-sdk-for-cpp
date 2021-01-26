@@ -50,6 +50,7 @@ set(
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_lease_client.cpp
+    src/blob_responses.cpp
     src/blob_rest_client.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp

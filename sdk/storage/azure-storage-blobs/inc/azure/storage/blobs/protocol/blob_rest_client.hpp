@@ -844,25 +844,29 @@ namespace Azure { namespace Storage { namespace Blobs {
       ObjectReplicationStatus ReplicationStatus;
     }; // struct ObjectReplicationRule
 
-    struct StartCopyBlobFromUriResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string CopyId;
-      Models::CopyStatus CopyStatus;
-      Azure::Core::Nullable<std::string> VersionId;
-    }; // struct StartCopyBlobFromUriResult
+    namespace Details {
+      struct StartCopyBlobFromUriResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string CopyId;
+        Models::CopyStatus CopyStatus;
+        Azure::Core::Nullable<std::string> VersionId;
+      }; // struct StartCopyBlobFromUriResult
+    } // namespace Details
 
-    struct StartCopyPageBlobIncrementalResult
-    {
-      std::string RequestId;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::string CopyId;
-      Models::CopyStatus CopyStatus;
-      Azure::Core::Nullable<std::string> VersionId;
-    }; // struct StartCopyPageBlobIncrementalResult
+    namespace Details {
+      struct StartCopyPageBlobIncrementalResult
+      {
+        std::string RequestId;
+        std::string ETag;
+        Azure::Core::DateTime LastModified;
+        std::string CopyId;
+        Models::CopyStatus CopyStatus;
+        Azure::Core::Nullable<std::string> VersionId;
+      }; // struct StartCopyPageBlobIncrementalResult
+    } // namespace Details
 
     struct AppendBlockFromUriResult
     {
@@ -5975,7 +5979,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<bool> ShouldSealDestination;
         }; // struct StartCopyBlobFromUriOptions
 
-        static Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
+        static Azure::Core::Response<Models::Details::StartCopyBlobFromUriResult> StartCopyFromUri(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -6071,7 +6075,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          StartCopyBlobFromUriResult response;
+          Models::Details::StartCopyBlobFromUriResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -6091,7 +6095,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.VersionId = x_ms_version_id__iterator->second;
           }
-          return Azure::Core::Response<StartCopyBlobFromUriResult>(
+          return Azure::Core::Response<Models::Details::StartCopyBlobFromUriResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -8661,7 +8665,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct StartCopyPageBlobIncrementalOptions
 
-        static Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
+        static Azure::Core::Response<Models::Details::StartCopyPageBlobIncrementalResult>
+        StartCopyIncremental(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -8706,7 +8711,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          StartCopyPageBlobIncrementalResult response;
+          Models::Details::StartCopyPageBlobIncrementalResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -8726,7 +8731,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.VersionId = x_ms_version_id__iterator->second;
           }
-          return Azure::Core::Response<StartCopyPageBlobIncrementalResult>(
+          return Azure::Core::Response<Models::Details::StartCopyPageBlobIncrementalResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
