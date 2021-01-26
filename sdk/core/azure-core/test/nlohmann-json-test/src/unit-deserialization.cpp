@@ -288,11 +288,13 @@ TEST_CASE("deserialization")
       CHECK(j == json({"foo", 1, 2, 3, false, {{"one", 1}}}));
     }
 
-    SECTION("user-defined string literal")
-    {
-      CHECK(
-          "[\"foo\",1,2,3,false,{\"one\":1}]"_json == json({"foo", 1, 2, 3, false, {{"one", 1}}}));
-    }
+    // No `_json` support
+    // SECTION("user-defined string literal")
+    // {
+    //   CHECK(
+    //       "[\"foo\",1,2,3,false,{\"one\":1}]"_json == json({"foo", 1, 2, 3, false, {{"one",
+    //       1}}}));
+    // }
   }
 
   SECTION("unsuccessful deserialization")
@@ -397,14 +399,15 @@ TEST_CASE("deserialization")
           "parsing array - unexpected end of input; expected ']'");
     }
 
-    SECTION("user-defined string literal")
-    {
-      CHECK_THROWS_AS("[\"foo\",1,2,3,false,{\"one\":1}"_json, json::parse_error&);
-      CHECK_THROWS_WITH(
-          "[\"foo\",1,2,3,false,{\"one\":1}"_json,
-          "[json.exception.parse_error.101] parse error at line 1, column 29: syntax error while "
-          "parsing array - unexpected end of input; expected ']'");
-    }
+    // No `_json` support
+    // SECTION("user-defined string literal")
+    // {
+    //   CHECK_THROWS_AS("[\"foo\",1,2,3,false,{\"one\":1}"_json, json::parse_error&);
+    //   CHECK_THROWS_WITH(
+    //       "[\"foo\",1,2,3,false,{\"one\":1}"_json,
+    //       "[json.exception.parse_error.101] parse error at line 1, column 29: syntax error while
+    //       " "parsing array - unexpected end of input; expected ']'");
+    // }
   }
 
   SECTION("contiguous containers")
