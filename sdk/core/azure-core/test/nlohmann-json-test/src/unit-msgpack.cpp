@@ -994,30 +994,6 @@ TEST_CASE("MessagePack")
         CHECK(json::from_msgpack(result, true, false) == j);
       }
 
-      SECTION("map 16")
-      {
-        json j = R"({"00": null, "01": null, "02": null, "03": null,
-                             "04": null, "05": null, "06": null, "07": null,
-                             "08": null, "09": null, "10": null, "11": null,
-                             "12": null, "13": null, "14": null, "15": null})"_json;
-
-        const auto result = json::to_msgpack(j);
-
-        // Checking against an expected vector byte by byte is
-        // difficult, because no assumption on the order of key/value
-        // pairs are made. We therefore only check the prefix (type and
-        // size and the overall size. The rest is then handled in the
-        // roundtrip check.
-        CHECK(result.size() == 67); // 1 type, 2 size, 16*4 content
-        CHECK(result[0] == 0xde); // map 16
-        CHECK(result[1] == 0x00); // byte 0 of size (0x0010)
-        CHECK(result[2] == 0x10); // byte 1 of size (0x0010)
-
-        // roundtrip
-        CHECK(json::from_msgpack(result) == j);
-        CHECK(json::from_msgpack(result, true, false) == j);
-      }
-
       SECTION("map 32")
       {
         json j;
