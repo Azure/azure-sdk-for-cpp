@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the supported options to create a Key Vault Keys client.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/http/http.hpp>

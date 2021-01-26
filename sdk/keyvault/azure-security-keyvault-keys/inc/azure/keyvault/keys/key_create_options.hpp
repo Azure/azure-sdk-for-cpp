@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the supported options to create a Key Vault Key.
+ * 
+ */
+
 #pragma once
 
 #include <azure/core/context.hpp>

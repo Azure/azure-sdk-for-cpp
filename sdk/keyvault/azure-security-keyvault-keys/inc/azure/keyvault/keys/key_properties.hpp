@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the Key Vault Key properties.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/datetime.hpp>

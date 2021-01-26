@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Provide string constants used for all the Key Vault services.
+ *
+ */
+
 #pragma once
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace Details {

@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Internal implementation for sending the HTTP request.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/internal/json_serializable.hpp>

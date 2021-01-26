@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the Key Vault Keys client.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/credentials.hpp>
@@ -82,6 +87,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
           {Details::KeysPath, name, options.Version});
     }
 
+    /**
+     * @brief Creates and stores a new key in Key Vault. The create key operation can be used to
+     * create any key type in Azure Key Vault. If the named key already exists, Azure Key Vault
+     * creates a new version of the key. It requires the keys/create permission.
+     *
+     * @param name The name of the key.
+     * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::KeyTypeEnum.
+     * @param options Optional parameters for this operation. See
+     * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
+     * @return The Key wrapped in the Response.
+     */
     Azure::Core::Response<KeyVaultKey> CreateKey(
         std::string const& name,
         KeyTypeEnum keyType,

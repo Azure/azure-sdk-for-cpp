@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the JsonWebKey.
+ * 
+ */
+
 #pragma once
 
 #include "azure/keyvault/keys/key_constants.hpp"
