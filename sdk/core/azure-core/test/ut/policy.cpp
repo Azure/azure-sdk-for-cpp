@@ -74,7 +74,11 @@ TEST(Policy, ValuePolicy)
   options.AddHeaderValues({{"HdrKey2", "HdrVal2"}, {"HdrKey3", "HdrVal3"}});
   options.AddQueryValues({{"QryKey1", "QryVal1"}, {"QryKey3", "QryVal3"}});
 
-  HttpPipeline pipeline({std::make_unique<ValuePolicy>(options), std::make_unique<NoOpPolicy>()});
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+  policies.emplace_back(std::make_unique<ValuePolicy>(options));
+  policies.emplace_back(std::make_unique<NoOpPolicy>());
+  HttpPipeline pipeline(policies);
+
   Request request(HttpMethod::Get, Url("https:://www.example.com"));
 
   pipeline.Send(GetApplicationContext(), request);
