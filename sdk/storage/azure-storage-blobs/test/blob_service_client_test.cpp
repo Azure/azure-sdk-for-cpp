@@ -425,7 +425,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, UserDelegationKey)
   {
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto blobServiceClient1 = Blobs::BlobServiceClient(
@@ -433,8 +432,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
 
-    auto getUserDelegationKeyResult
-        = blobServiceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn);
+    auto getUserDelegationKeyResult = blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
 
     EXPECT_FALSE(getUserDelegationKeyResult->RequestId.empty());
 

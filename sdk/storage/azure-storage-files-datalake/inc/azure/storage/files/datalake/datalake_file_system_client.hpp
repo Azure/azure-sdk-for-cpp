@@ -166,8 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the paths in this file system.
      * @param recursive If "true", all paths are listed; otherwise, only paths at the root of the
-     *                  filesystem are listed. If "directory" is specified, the list will only
-     *                  include paths that share the same root.
+     *                  filesystem are listed.
      * @param options Optional parameters to list the paths in file system.
      * @return Azure::Core::Response<Models::ListPathsSinglePageResult> containing the
      * results when listing the paths under a file system.
@@ -215,6 +214,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           m_pipeline(std::move(pipeline))
     {
     }
+    friend class DataLakeLeaseClient;
     friend class DataLakeServiceClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

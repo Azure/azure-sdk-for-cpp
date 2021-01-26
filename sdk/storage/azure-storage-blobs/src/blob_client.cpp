@@ -545,7 +545,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::StartCopyBlobFromUriResult> BlobClient::StartCopyFromUri(
+  Azure::Core::Response<Models::StartCopyBlobResult> BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartCopyBlobFromUriOptions& options) const
   {
@@ -567,8 +567,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
-    return Details::BlobRestClient::Blob::StartCopyFromUri(
+
+    auto response = Details::BlobRestClient::Blob::StartCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+    Models::StartCopyBlobResult res;
+    res.RequestId = std::move(response->RequestId);
+    res.ETag = std::move(response->ETag);
+    res.LastModified = std::move(response->LastModified);
+    res.CopyId = std::move(response->CopyId);
+    res.CopyStatus = std::move(response->CopyStatus);
+    res.VersionId = std::move(response->VersionId);
+    res.m_blobClient = std::make_shared<BlobClient>(*this);
+    return Azure::Core::Response<Models::StartCopyBlobResult>(
+        std::move(res), response.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(

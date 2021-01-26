@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::vector<Files::DataLake::Models::Path> ListAllPaths(
+    static std::vector<Files::DataLake::Models::PathItem> ListAllPaths(
         bool recursive,
         const std::string& directory = std::string());
 

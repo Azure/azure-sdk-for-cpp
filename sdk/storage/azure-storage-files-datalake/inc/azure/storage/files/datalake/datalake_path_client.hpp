@@ -219,5 +219,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     friend class DataLakeFileSystemClient;
+    friend class DataLakeLeaseClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

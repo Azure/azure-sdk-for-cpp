@@ -199,6 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileParentId = std::move(result->FileParentId);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
 
     return Azure::Core::Response<Models::CreateShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -213,6 +214,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteShareFileResult ret;
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -231,6 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::DeleteShareFileResult ret;
         ret.Deleted = false;
+        ret.RequestId = std::move(e.RequestId);
         return Azure::Core::Response<Models::DeleteShareFileResult>(
             std::move(ret), std::move(e.RawResponse));
       }
@@ -564,47 +567,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.HandleId = c_FileAllHandles;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     return Details::ShareRestClient::File::ForceCloseHandles(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::AcquireShareFileLeaseResult> ShareFileClient::AcquireLease(
-      const std::string& proposedLeaseId,
-      const AcquireShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
-    protocolLayerOptions.LeaseDuration = -1;
-    return Details::ShareRestClient::File::AcquireLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::ChangeShareFileLeaseResult> ShareFileClient::ChangeLease(
-      const std::string& leaseId,
-      const std::string& proposedLeaseId,
-      const ChangeShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
-    return Details::ShareRestClient::File::ChangeLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::ReleaseShareFileLeaseResult> ShareFileClient::ReleaseLease(
-      const std::string& leaseId,
-      const ReleaseShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    return Details::ShareRestClient::File::ReleaseLease(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::BreakShareFileLeaseResult> ShareFileClient::BreakLease(
-      const BreakShareFileLeaseOptions& options) const
-  {
-    Details::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
-    return Details::ShareRestClient::File::BreakLease(
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 

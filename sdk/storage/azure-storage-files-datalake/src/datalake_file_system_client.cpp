@@ -193,11 +193,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::CreateBlobContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
+    if (options.AccessType == Models::PublicAccessType::FileSystem)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
+    }
+    else if (options.AccessType == Models::PublicAccessType::Path)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
+    }
+    else if (options.AccessType == Models::PublicAccessType::None)
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::None;
+    }
+    else
+    {
+      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
+    }
     auto result = m_blobContainerClient.Create(blobOptions);
     Models::CreateDataLakeFileSystemResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Created = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::CreateDataLakeFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -233,6 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobContainerClient.Delete(blobOptions);
     Models::DeleteDataLakeFileSystemResult ret;
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -269,6 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Metadata = std::move(result->Metadata);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -286,6 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetDataLakeFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -298,7 +318,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
@@ -321,7 +340,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.AccessType = Models::PublicAccessType::Path;
     }
-    else if (result->AccessType == Blobs::Models::PublicAccessType::Private)
+    else if (result->AccessType == Blobs::Models::PublicAccessType::None)
     {
       ret.AccessType = Models::PublicAccessType::None;
     }
@@ -332,6 +351,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.SignedIdentifiers = std::move(result->SignedIdentifiers);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -356,7 +376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     else if (options.AccessType == Models::PublicAccessType::None)
     {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::Private;
+      blobOptions.AccessType = Blobs::Models::PublicAccessType::None;
     }
     else
     {
@@ -367,6 +387,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }

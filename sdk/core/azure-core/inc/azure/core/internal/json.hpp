@@ -207,7 +207,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   _az_JSON_HEDLEY_VERSION_ENCODE( \
       _MSC_FULL_VER / 1000000, (_MSC_FULL_VER % 1000000) / 10000, (_MSC_FULL_VER % 10000) / 10)
 #elif defined(_MSC_VER)
-#define _az_JSON_HEDLEY_MSVC_VERSION _az_JSON_HEDLEY_VERSION_ENCODE(_MSC_VER / 100, _MSC_VER % 100, 0)
+#define _az_JSON_HEDLEY_MSVC_VERSION \
+  _az_JSON_HEDLEY_VERSION_ENCODE(_MSC_VER / 100, _MSC_VER % 100, 0)
 #endif
 
 #if defined(_az_JSON_HEDLEY_MSVC_VERSION_CHECK)
@@ -222,7 +223,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #define _az_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) \
   (_MSC_FULL_VER >= ((major * 1000000) + (minor * 10000) + (patch)))
 #else
-#define _az_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) (_MSC_VER >= ((major * 100) + (minor)))
+#define _az_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) \
+  (_MSC_VER >= ((major * 100) + (minor)))
 #endif
 
 #if defined(_az_JSON_HEDLEY_INTEL_VERSION)
@@ -285,7 +287,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       (__SUNPRO_CC & 0xf) * 10)
 #elif defined(__SUNPRO_CC)
 #define _az_JSON_HEDLEY_SUNPRO_VERSION \
-  _az_JSON_HEDLEY_VERSION_ENCODE((__SUNPRO_CC >> 8) & 0xf, (__SUNPRO_CC >> 4) & 0xf, (__SUNPRO_CC)&0xf)
+  _az_JSON_HEDLEY_VERSION_ENCODE( \
+      (__SUNPRO_CC >> 8) & 0xf, (__SUNPRO_CC >> 4) & 0xf, (__SUNPRO_CC)&0xf)
 #endif
 
 #if defined(_az_JSON_HEDLEY_SUNPRO_VERSION_CHECK)
@@ -525,7 +528,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #define _az_JSON_HEDLEY_CRAY_VERSION \
   _az_JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, _RELEASE_PATCHLEVEL)
 #else
-#define _az_JSON_HEDLEY_CRAY_VERSION _az_JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, 0)
+#define _az_JSON_HEDLEY_CRAY_VERSION \
+  _az_JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, 0)
 #endif
 #endif
 
@@ -622,7 +626,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #undef _az_JSON_HEDLEY_PELLES_VERSION
 #endif
 #if defined(__POCC__)
-#define _az_JSON_HEDLEY_PELLES_VERSION _az_JSON_HEDLEY_VERSION_ENCODE(__POCC__ / 100, __POCC__ % 100, 0)
+#define _az_JSON_HEDLEY_PELLES_VERSION \
+  _az_JSON_HEDLEY_VERSION_ENCODE(__POCC__ / 100, __POCC__ % 100, 0)
 #endif
 
 #if defined(_az_JSON_HEDLEY_PELLES_VERSION_CHECK)
@@ -671,7 +676,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #undef _az_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE
 #endif
 #if defined(__has_attribute)
-#define _az_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) __has_attribute(attribute)
+#define _az_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
+  __has_attribute(attribute)
 #else
 #define _az_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
   _az_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
@@ -691,7 +697,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #undef _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE
 #endif
 #if defined(__has_cpp_attribute) && defined(__cplusplus) \
-    && (!defined(_az_JSON_HEDLEY_SUNPRO_VERSION) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0))
+    && (!defined(_az_JSON_HEDLEY_SUNPRO_VERSION) \
+        || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0))
 #define _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
 #else
 #define _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute) (0)
@@ -703,9 +710,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #if !defined(__cplusplus) || !defined(__has_cpp_attribute)
 #define _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) (0)
 #elif !defined(_az_JSON_HEDLEY_PGI_VERSION) && !defined(_az_JSON_HEDLEY_IAR_VERSION) \
-    && (!defined(_az_JSON_HEDLEY_SUNPRO_VERSION) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0)) \
+    && (!defined(_az_JSON_HEDLEY_SUNPRO_VERSION) \
+        || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0)) \
     && (!defined(_az_JSON_HEDLEY_MSVC_VERSION) || _az_JSON_HEDLEY_MSVC_VERSION_CHECK(19, 20, 0))
-#define _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(ns::attribute)
+#define _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) \
+  _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(ns::attribute)
 #else
 #define _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) (0)
 #endif
@@ -803,7 +812,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #undef _az_JSON_HEDLEY_GNUC_HAS_EXTENSION
 #endif
 #if defined(__has_extension)
-#define _az_JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) __has_extension(extension)
+#define _az_JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) \
+  __has_extension(extension)
 #else
 #define _az_JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) \
   _az_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
@@ -888,13 +898,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wc++98-compat")
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wc++17-extensions")
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") \
-      _Pragma("clang diagnostic ignored \"-Wc++17-extensions\"") xpr _az_JSON_HEDLEY_DIAGNOSTIC_POP
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") \
+      _Pragma("clang diagnostic ignored \"-Wc++17-extensions\"") \
+          xpr _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #else
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") xpr _az_JSON_HEDLEY_DIAGNOSTIC_POP
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") \
+      xpr _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #endif
 #endif
@@ -911,8 +921,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
 #define _az_JSON_HEDLEY_CONST_CAST(T, expr) \
   (__extension__({ \
-    _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-    _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL((T)(expr)); \
+    _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL((T)(expr)); \
     _az_JSON_HEDLEY_DIAGNOSTIC_POP \
   }))
 #else
@@ -943,12 +952,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #if defined(__cplusplus)
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wold-style-cast")
 #define _az_JSON_HEDLEY_CPP_CAST(T, expr) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wold-style-cast\"")((T)(expr)) _az_JSON_HEDLEY_DIAGNOSTIC_POP
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic ignored \"-Wold-style-cast\"")( \
+      (T)(expr)) _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #elif _az_JSON_HEDLEY_IAR_VERSION_CHECK(8, 3, 0)
 #define _az_JSON_HEDLEY_CPP_CAST(T, expr) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("diag_suppress=Pe137") _az_JSON_HEDLEY_DIAGNOSTIC_POP #else
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("diag_suppress=Pe137") \
+      _az_JSON_HEDLEY_DIAGNOSTIC_POP #else
 #define _az_JSON_HEDLEY_CPP_CAST(T, expr) ((T)(expr))
 #endif
 #else
@@ -959,10 +968,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
     || _az_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0) || _az_JSON_HEDLEY_PGI_VERSION_CHECK(18, 4, 0) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) \
-    || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 0, 0) \
-    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || _az_JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0) || _az_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 17) \
+    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) \
+    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) \
+    || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 0, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _az_JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0) \
+    || _az_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 17) \
     || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(8, 0, 0) \
     || (_az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) && defined(__C99_PRAGMA_OPERATOR))
 #define _az_JSON_HEDLEY_PRAGMA(value) _Pragma(#value)
@@ -993,9 +1006,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #elif _az_JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("push")
 #define _az_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("pop")
-#elif _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 4, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
-    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
+#elif _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 4, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("diag_push")
 #define _az_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("diag_pop")
 #elif _az_JSON_HEDLEY_PELLES_VERSION_CHECK(2, 90, 0)
@@ -1029,7 +1045,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1291,1718")
 #elif _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) && !defined(__cplusplus)
@@ -1062,7 +1079,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #elif _az_JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS __pragma(warning(disable : 4068))
 #elif _az_JSON_HEDLEY_TI_VERSION_CHECK(16, 9, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) \
-    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0)
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 163")
 #elif _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 163")
@@ -1103,11 +1121,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #undef _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
 #endif
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wcast-qual")
-#define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
+#define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL \
+  _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
 #elif _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("warning(disable:2203 2331)")
 #elif _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0)
-#define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("GCC diagnostic ignored \"-Wcast-qual\"")
+#define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL \
+  _Pragma("GCC diagnostic ignored \"-Wcast-qual\"")
 #else
 #define _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
 #endif
@@ -1130,10 +1150,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       [[deprecated("Since " #since "; use " #replacement)]])
 #elif _az_JSON_HEDLEY_HAS_EXTENSION(attribute_deprecated_with_message) \
     || _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 5, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || _az_JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) \
+    || _az_JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) \
     || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || _az_JSON_HEDLEY_TI_VERSION_CHECK(18, 1, 0) \
-    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(18, 1, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 3, 0) \
-    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0)
+    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(18, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 3, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0)
 #define _az_JSON_HEDLEY_DEPRECATED(since) __attribute__((__deprecated__("Since " #since)))
 #define _az_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
   __attribute__((__deprecated__("Since " #since "; use " #replacement)))
@@ -1146,11 +1169,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_DEPRECATED(since) __attribute__((__deprecated__))
 #define _az_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) __attribute__((__deprecated__))
-#elif _az_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || _az_JSON_HEDLEY_PELLES_VERSION_CHECK(6, 50, 0)
+#elif _az_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) \
+    || _az_JSON_HEDLEY_PELLES_VERSION_CHECK(6, 50, 0)
 #define _az_JSON_HEDLEY_DEPRECATED(since) __declspec(deprecated)
 #define _az_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) __declspec(deprecated)
 #elif _az_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
@@ -1188,8 +1213,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
 #define _az_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) \
   _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
-#elif _az_JSON_HEDLEY_HAS_ATTRIBUTE(warn_unused_result) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+#elif _az_JSON_HEDLEY_HAS_ATTRIBUTE(warn_unused_result) \
+    || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
     || (_az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1197,7 +1223,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
     || (_az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0) && defined(__cplusplus)) \
     || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
@@ -1231,10 +1258,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 #define _az_JSON_HEDLEY_NO_RETURN _Noreturn
 #elif defined(__cplusplus) && (__cplusplus >= 201103L)
-#define _az_JSON_HEDLEY_NO_RETURN _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[noreturn]])
+#define _az_JSON_HEDLEY_NO_RETURN \
+  _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[noreturn]])
 #elif _az_JSON_HEDLEY_HAS_ATTRIBUTE(noreturn) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 2, 0) \
-    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
-    || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
     || (_az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1242,7 +1271,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_NO_RETURN __attribute__((__noreturn__))
 #elif _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
@@ -1281,16 +1311,19 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #define _az_JSON_HEDLEY_ASSUME(expr) __assume(expr)
 #elif _az_JSON_HEDLEY_HAS_BUILTIN(__builtin_assume)
 #define _az_JSON_HEDLEY_ASSUME(expr) __builtin_assume(expr)
-#elif _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
+#elif _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
 #if defined(__cplusplus)
 #define _az_JSON_HEDLEY_ASSUME(expr) std::_nassert(expr)
 #else
 #define _az_JSON_HEDLEY_ASSUME(expr) _nassert(expr)
 #endif
 #endif
-#if (_az_JSON_HEDLEY_HAS_BUILTIN(__builtin_unreachable) && (!defined(_az_JSON_HEDLEY_ARM_VERSION))) \
+#if ( \
+    _az_JSON_HEDLEY_HAS_BUILTIN(__builtin_unreachable) && (!defined(_az_JSON_HEDLEY_ARM_VERSION))) \
     || _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 5, 0) || _az_JSON_HEDLEY_PGI_VERSION_CHECK(18, 10, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 5)
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 5)
 #define _az_JSON_HEDLEY_UNREACHABLE() __builtin_unreachable()
 #elif defined(_az_JSON_HEDLEY_ASSUME)
 #define _az_JSON_HEDLEY_UNREACHABLE() _az_JSON_HEDLEY_ASSUME(0)
@@ -1304,7 +1337,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #endif
 #endif
 #if defined(_az_JSON_HEDLEY_UNREACHABLE)
-#if _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
+#if _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
 #define _az_JSON_HEDLEY_UNREACHABLE_RETURN(value) \
   return (_az_JSON_HEDLEY_STATIC_CAST(void, _az_JSON_HEDLEY_ASSUME(0)), (value))
 #else
@@ -1340,7 +1374,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
 #else
 #define _az_JSON_HEDLEY_NON_NULL(...)
 #endif
-_az_JSON_HEDLEY_DIAGNOSTIC_POP
+    _az_JSON_HEDLEY_DIAGNOSTIC_POP
 
 #if defined(_az_JSON_HEDLEY_PRINTF_FORMAT)
 #undef _az_JSON_HEDLEY_PRINTF_FORMAT
@@ -1363,7 +1397,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
   __attribute__((__format__(__printf__, string_idx, first_to_check)))
@@ -1415,10 +1450,14 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
     || (_az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0) && defined(__cplusplus)) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) \
-    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _az_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 27) \
+    || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) \
+    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _az_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 27) \
     || _az_JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0)
 #define _az_JSON_HEDLEY_PREDICT(expr, expected, probability) \
   (((probability) >= 0.9) ? __builtin_expect((expr), (expected)) \
@@ -1455,7 +1494,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #undef _az_JSON_HEDLEY_MALLOC
 #endif
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(malloc) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) \
     || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1465,7 +1505,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_MALLOC __attribute__((__malloc__))
 #elif _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
@@ -1480,7 +1521,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #undef _az_JSON_HEDLEY_PURE
 #endif
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(pure) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(2, 96, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
     || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1490,13 +1532,16 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
 #define _az_JSON_HEDLEY_PURE __attribute__((__pure__))
 #elif _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
 #define _az_JSON_HEDLEY_PURE _Pragma("does_not_write_global_data")
 #elif defined(__cplusplus) \
-    && (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0) \
+    && (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) \
+        || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0) \
         || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0))
 #define _az_JSON_HEDLEY_PURE _Pragma("FUNC_IS_PURE;")
 #else
@@ -1507,7 +1552,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #undef _az_JSON_HEDLEY_CONST
 #endif
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(const) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(2, 5, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
     || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1517,8 +1563,10 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
 #define _az_JSON_HEDLEY_CONST __attribute__((__const__))
 #elif _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
 #define _az_JSON_HEDLEY_CONST _Pragma("no_side_effect")
@@ -1534,8 +1582,10 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #elif _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) || _az_JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) \
     || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
     || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) || _az_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) \
-    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 4) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 4) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || (_az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 14, 0) && defined(__cplusplus)) \
     || _az_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0) || defined(__clang__)
 #define _az_JSON_HEDLEY_RESTRICT __restrict
@@ -1554,9 +1604,12 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #elif defined(_az_JSON_HEDLEY_GCC_VERSION) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(6, 2, 0)
 #define _az_JSON_HEDLEY_INLINE __inline__
 #elif _az_JSON_HEDLEY_MSVC_VERSION_CHECK(12, 0, 0) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
-    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 1, 0) || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) \
-    || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) \
-    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
+    || _az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) \
+    || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_INLINE __inline
 #else
 #define _az_JSON_HEDLEY_INLINE
@@ -1566,7 +1619,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #undef _az_JSON_HEDLEY_ALWAYS_INLINE
 #endif
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(always_inline) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
     || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1576,13 +1630,15 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_ALWAYS_INLINE __attribute__((__always_inline__)) _az_JSON_HEDLEY_INLINE
 #elif _az_JSON_HEDLEY_MSVC_VERSION_CHECK(12, 0, 0)
 #define _az_JSON_HEDLEY_ALWAYS_INLINE __forceinline
 #elif defined(__cplusplus) \
-    && (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    && (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+        || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
         || _az_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
         || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
         || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
@@ -1598,7 +1654,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #undef _az_JSON_HEDLEY_NEVER_INLINE
 #endif
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(noinline) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
     || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
     || _az_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
     || (_az_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
@@ -1608,7 +1665,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     || (_az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
     || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
     || (_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) \
+    || _az_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
     || _az_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
 #define _az_JSON_HEDLEY_NEVER_INLINE __attribute__((__noinline__))
 #elif _az_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0)
@@ -1642,10 +1700,12 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #define _az_JSON_HEDLEY_IMPORT __declspec(dllimport)
 #else
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(visibility) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
-    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
+    || _az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
+    || _az_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
     || (defined(__TI_EABI__) \
-        && ((_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+        && ((_az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) \
+             && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
             || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0)))
 #define _az_JSON_HEDLEY_PRIVATE __attribute__((__visibility__("hidden")))
 #define _az_JSON_HEDLEY_PUBLIC __attribute__((__visibility__("default")))
@@ -1677,7 +1737,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #define _az_JSON_HEDLEY_FALL_THROUGH \
   _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[clang::fallthrough]])
 #elif _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough)
-#define _az_JSON_HEDLEY_FALL_THROUGH _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[fallthrough]])
+#define _az_JSON_HEDLEY_FALL_THROUGH \
+  _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[fallthrough]])
 #elif defined(__fallthrough) /* SAL */
 #define _az_JSON_HEDLEY_FALL_THROUGH __fallthrough
 #else
@@ -1717,9 +1778,10 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #if defined(_az_JSON_HEDLEY_IS_CONSTEXPR_)
 #undef _az_JSON_HEDLEY_IS_CONSTEXPR_
 #endif
-#if _az_JSON_HEDLEY_HAS_BUILTIN(__builtin_constant_p) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _az_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 19) \
-    || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
+#if _az_JSON_HEDLEY_HAS_BUILTIN(__builtin_constant_p) \
+    || _az_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _az_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 19) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
+    || _az_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
     || _az_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
     || (_az_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0) && !defined(__cplusplus)) \
     || _az_JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0)
@@ -1743,9 +1805,9 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
     defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) \
     && !defined(_az_JSON_HEDLEY_SUNPRO_VERSION) && !defined(_az_JSON_HEDLEY_PGI_VERSION) \
     && !defined(_az_JSON_HEDLEY_IAR_VERSION)) \
-    || _az_JSON_HEDLEY_HAS_EXTENSION(c_generic_selections) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0) \
-    || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(17, 0, 0) || _az_JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) \
-    || _az_JSON_HEDLEY_ARM_VERSION_CHECK(5, 3, 0)
+    || _az_JSON_HEDLEY_HAS_EXTENSION(c_generic_selections) \
+    || _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(17, 0, 0) \
+    || _az_JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) || _az_JSON_HEDLEY_ARM_VERSION_CHECK(5, 3, 0)
 #if defined(__INTPTR_TYPE__)
 #define _az_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   _Generic((1 ? (void*)((__INTPTR_TYPE__)((expr)*0)) : (int*)0), int* : 1, void* : 0)
@@ -1756,9 +1818,10 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #elif defined(_az_JSON_HEDLEY_GCC_VERSION) || defined(_az_JSON_HEDLEY_INTEL_VERSION) \
     || defined(_az_JSON_HEDLEY_TINYC_VERSION) || defined(_az_JSON_HEDLEY_TI_ARMCL_VERSION) \
-    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(18, 12, 0) || defined(_az_JSON_HEDLEY_TI_CL2000_VERSION) \
-    || defined(_az_JSON_HEDLEY_TI_CL6X_VERSION) || defined(_az_JSON_HEDLEY_TI_CL7X_VERSION) \
-    || defined(_az_JSON_HEDLEY_TI_CLPRU_VERSION) || defined(__clang__)
+    || _az_JSON_HEDLEY_TI_CL430_VERSION_CHECK(18, 12, 0) \
+    || defined(_az_JSON_HEDLEY_TI_CL2000_VERSION) || defined(_az_JSON_HEDLEY_TI_CL6X_VERSION) \
+    || defined(_az_JSON_HEDLEY_TI_CL7X_VERSION) || defined(_az_JSON_HEDLEY_TI_CLPRU_VERSION) \
+    || defined(__clang__)
 #define _az_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   (sizeof(void) != sizeof(*(1 ? ((void*)((expr)*0L)) : ((struct { char v[sizeof(void) * 2]; }*)1))))
 #endif
@@ -1767,7 +1830,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #if !defined(_az_JSON_HEDLEY_IS_CONSTANT)
 #define _az_JSON_HEDLEY_IS_CONSTANT(expr) _az_JSON_HEDLEY_IS_CONSTEXPR_(expr)
 #endif
-#define _az_JSON_HEDLEY_REQUIRE_CONSTEXPR(expr) (_az_JSON_HEDLEY_IS_CONSTEXPR_(expr) ? (expr) : (-1))
+#define _az_JSON_HEDLEY_REQUIRE_CONSTEXPR(expr) \
+  (_az_JSON_HEDLEY_IS_CONSTEXPR_(expr) ? (expr) : (-1))
 #else
 #if !defined(_az_JSON_HEDLEY_IS_CONSTANT)
 #define _az_JSON_HEDLEY_IS_CONSTANT(expr) (0)
@@ -1801,10 +1865,12 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #if !defined(__cplusplus) \
     && ((defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)) \
-        || _az_JSON_HEDLEY_HAS_FEATURE(c_static_assert) || _az_JSON_HEDLEY_GCC_VERSION_CHECK(6, 0, 0) \
+        || _az_JSON_HEDLEY_HAS_FEATURE(c_static_assert) \
+        || _az_JSON_HEDLEY_GCC_VERSION_CHECK(6, 0, 0) \
         || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || defined(_Static_assert))
 #define _az_JSON_HEDLEY_STATIC_ASSERT(expr, message) _Static_assert(expr, message)
-#elif (defined(__cplusplus) && (__cplusplus >= 201103L)) || _az_JSON_HEDLEY_MSVC_VERSION_CHECK(16, 0, 0)
+#elif (defined(__cplusplus) && (__cplusplus >= 201103L)) \
+    || _az_JSON_HEDLEY_MSVC_VERSION_CHECK(16, 0, 0)
 #define _az_JSON_HEDLEY_STATIC_ASSERT(expr, message) \
   _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(static_assert(expr, message))
 #else
@@ -1833,10 +1899,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
 #define _az_JSON_HEDLEY_MESSAGE(msg) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
-  _az_JSON_HEDLEY_PRAGMA(message msg) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_POP
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
+  _az_JSON_HEDLEY_PRAGMA(message msg) _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #elif _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 4, 0) || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
 #define _az_JSON_HEDLEY_MESSAGE(msg) _az_JSON_HEDLEY_PRAGMA(message msg)
 #elif _az_JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0)
@@ -1854,10 +1918,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
 #define _az_JSON_HEDLEY_WARNING(msg) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
-  _az_JSON_HEDLEY_PRAGMA(clang warning msg) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_POP
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _az_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
+  _az_JSON_HEDLEY_PRAGMA(clang warning msg) _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #elif _az_JSON_HEDLEY_GCC_VERSION_CHECK(4, 8, 0) || _az_JSON_HEDLEY_PGI_VERSION_CHECK(18, 4, 0) \
     || _az_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
 #define _az_JSON_HEDLEY_WARNING(msg) _az_JSON_HEDLEY_PRAGMA(GCC warning msg)
@@ -1876,12 +1938,10 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #if _az_JSON_HEDLEY_HAS_ATTRIBUTE(diagnose_if)
 #if _az_JSON_HEDLEY_HAS_WARNING("-Wgcc-compat")
 #define _az_JSON_HEDLEY_REQUIRE(expr) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wgcc-compat\"") \
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic ignored \"-Wgcc-compat\"") \
       __attribute__((diagnose_if(!(expr), #expr, "error"))) _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #define _az_JSON_HEDLEY_REQUIRE_MSG(expr, msg) \
-  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wgcc-compat\"") \
+  _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic ignored \"-Wgcc-compat\"") \
       __attribute__((diagnose_if(!(expr), msg, "error"))) _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #else
 #define _az_JSON_HEDLEY_REQUIRE(expr) __attribute__((diagnose_if(!(expr), #expr, "error")))
@@ -1905,8 +1965,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #if _az_JSON_HEDLEY_INTEL_VERSION_CHECK(19, 0, 0)
 #define _az_JSON_HEDLEY_FLAGS_CAST(T, expr) \
   (__extension__({ \
-    _az_JSON_HEDLEY_DIAGNOSTIC_PUSH \
-    _Pragma("warning(disable:188)")((T)(expr)); \
+    _az_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("warning(disable:188)")((T)(expr)); \
     _az_JSON_HEDLEY_DIAGNOSTIC_POP \
   }))
 #else
@@ -1916,7 +1975,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #if defined(_az_JSON_HEDLEY_EMPTY_BASES)
 #undef _az_JSON_HEDLEY_EMPTY_BASES
 #endif
-#if _az_JSON_HEDLEY_MSVC_VERSION_CHECK(19, 0, 23918) && !_az_JSON_HEDLEY_MSVC_VERSION_CHECK(20, 0, 0)
+#if _az_JSON_HEDLEY_MSVC_VERSION_CHECK(19, 0, 23918) \
+    && !_az_JSON_HEDLEY_MSVC_VERSION_CHECK(20, 0, 0)
 #define _az_JSON_HEDLEY_EMPTY_BASES __declspec(empty_bases)
 #else
 #define _az_JSON_HEDLEY_EMPTY_BASES
@@ -1942,7 +2002,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
 #if defined(_az_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE)
 #undef _az_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE
 #endif
-#define _az_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE(attribute) _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute)
+#define _az_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE(attribute) \
+  _az_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute)
 
 #if defined(_az_JSON_HEDLEY_CLANG_HAS_BUILTIN)
 #undef _az_JSON_HEDLEY_CLANG_HAS_BUILTIN
@@ -2077,407 +2138,421 @@ _az_JSON_HEDLEY_DIAGNOSTIC_POP
       JSONSerializer, \
       BinaryType>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
-  ////////////////
-  // exceptions //
-  ////////////////
-
-  /*!
-  @brief general exception of the @ref basic_json class
-
-  This class is an extension of `std::exception` objects with a member @a id for
-  exception ids. It is used as the base class for all exceptions thrown by the
-  @ref basic_json class. This class can hence be used as "wildcard" to catch
-  exceptions.
-
-  Subclasses:
-  - @ref parse_error for exceptions indicating a parse error
-  - @ref invalid_iterator for exceptions indicating errors with iterators
-  - @ref type_error for exceptions indicating executing a member function with
-                    a wrong type
-  - @ref out_of_range for exceptions indicating access out of the defined range
-  - @ref other_error for exceptions indicating other library errors
-
-  @internal
-  @note To have nothrow-copy-constructible exceptions, we internally use
-        `std::runtime_error` which can cope with arbitrary-length error messages.
-        Intermediate strings are built with static functions and then passed to
-        the actual constructor.
-  @endinternal
-
-  @liveexample{The following code shows how arbitrary library exceptions can be
-  caught.,exception}
-
-  @since version 3.0.0
-  */
-  class exception : public std::exception {
-  public:
-    /// returns the explanatory string
-    _az_JSON_HEDLEY_RETURNS_NON_NULL
-    const char* what() const noexcept override { return m.what(); }
-
-    /// the id of the exception
-    const int id;
-
-  protected:
-    _az_JSON_HEDLEY_NON_NULL(3)
-    exception(int id_, const char* what_arg) : id(id_), m(what_arg) {}
-
-    static std::string name(const std::string& ename, int id_)
-    {
-      return "[json.exception." + ename + "." + std::to_string(id_) + "] ";
-    }
-
-  private:
-    /// an exception object as storage for error messages
-    std::runtime_error m;
-  };
-
-  /*!
-  @brief exception indicating a parse error
-
-  This exception is thrown by the library when a parse error occurs. Parse errors
-  can occur during the deserialization of JSON text, CBOR, MessagePack, as well
-  as when using JSON Patch.
-
-  Member @a byte holds the byte index of the last read character in the input
-  file.
-
-  Exceptions have ids 1xx.
-
-  name / id                      | example message | description
-  ------------------------------ | --------------- | -------------------------
-  json.exception.parse_error.101 | parse error at 2: unexpected end of input; expected string
-  literal | This error indicates a syntax error while deserializing a JSON text. The error message
-  describes that an unexpected token (character) was encountered, and the member @a byte indicates
-  the error position. json.exception.parse_error.102 | parse error at 14: missing or wrong low
-  surrogate | JSON uses the `\uxxxx` format to describe Unicode characters. Code points above above
-  0xFFFF are split into two `\uxxxx` entries ("surrogate pairs"). This error indicates that the
-  surrogate pair is incomplete or contains an invalid code point. json.exception.parse_error.103 |
-  parse error: code points above 0x10FFFF are invalid | Unicode supports code points up to 0x10FFFF.
-  Code points above 0x10FFFF are invalid. json.exception.parse_error.104 | parse error: JSON patch
-  must be an array of objects | [RFC 6902](https://tools.ietf.org/html/rfc6902) requires a JSON
-  Patch document to be a JSON document that represents an array of objects.
-  json.exception.parse_error.105 | parse error: operation must have string member 'op' | An
-  operation of a JSON Patch document must contain exactly one "op" member, whose value indicates the
-  operation to perform. Its value must be one of "add", "remove", "replace", "move", "copy", or
-  "test"; other values are errors. json.exception.parse_error.106 | parse error: array index '01'
-  must not begin with '0' | An array index in a JSON Pointer ([RFC
-  6901](https://tools.ietf.org/html/rfc6901)) may be `0` or any number without a leading `0`.
-  json.exception.parse_error.107 | parse error: JSON pointer must be empty or begin with '/' - was:
-  'foo' | A JSON Pointer must be a Unicode string containing a sequence of zero or more reference
-  tokens, each prefixed by a `/` character. json.exception.parse_error.108 | parse error: escape
-  character '~' must be followed with '0' or '1' | In a JSON Pointer, only `~0` and `~1` are valid
-  escape sequences. json.exception.parse_error.109 | parse error: array index 'one' is not a number
-  | A JSON Pointer array index must be a number. json.exception.parse_error.110 | parse error at 1:
-  cannot read 2 bytes from vector | When parsing CBOR or MessagePack, the byte vector ends before
-  the complete value has been read. json.exception.parse_error.112 | parse error at 1: error reading
-  CBOR; last byte: 0xF8 | Not all types of CBOR or MessagePack are supported. This exception occurs
-  if an unsupported byte was read. json.exception.parse_error.113 | parse error at 2: expected a
-  CBOR string; last byte: 0x98 | While parsing a map key, a value that is not a string has been
-  read. json.exception.parse_error.114 | parse error: Unsupported BSON record type 0x0F | The
-  parsing of the corresponding BSON record type is not implemented (yet).
-
-  @note For an input with n bytes, 1 is the index of the first character and n+1
-        is the index of the terminating null byte or the end of file. This also
-        holds true when reading a byte vector (CBOR or MessagePack).
-
-  @liveexample{The following code shows how a `parse_error` exception can be
-  caught.,parse_error}
-
-  @sa - @ref exception for the base class of the library exceptions
-  @sa - @ref invalid_iterator for exceptions indicating errors with iterators
-  @sa - @ref type_error for exceptions indicating executing a member function with
-                      a wrong type
-  @sa - @ref out_of_range for exceptions indicating access out of the defined range
-  @sa - @ref other_error for exceptions indicating other library errors
-
-  @since version 3.0.0
-  */
-  class parse_error : public exception {
-  public:
-    /*!
-    @brief create a parse error exception
-    @param[in] id_       the id of the exception
-    @param[in] pos       the position where the error occurred (or with
-                         chars_read_total=0 if the position cannot be
-                         determined)
-    @param[in] what_arg  the explanatory string
-    @return parse_error object
-    */
-    static parse_error create(int id_, const position_t& pos, const std::string& what_arg)
-    {
-      std::string w = exception::name("parse_error", id_) + "parse error" + position_string(pos)
-          + ": " + what_arg;
-      return parse_error(id_, pos.chars_read_total, w.c_str());
-    }
-
-    static parse_error create(int id_, std::size_t byte_, const std::string& what_arg)
-    {
-      std::string w = exception::name("parse_error", id_) + "parse error"
-          + (byte_ != 0 ? (" at byte " + std::to_string(byte_)) : "") + ": " + what_arg;
-      return parse_error(id_, byte_, w.c_str());
-    }
+    namespace Azure
+{
+  namespace Core { namespace Internal { namespace Json { namespace detail {
+    ////////////////
+    // exceptions //
+    ////////////////
 
     /*!
-    @brief byte index of the parse error
+    @brief general exception of the @ref basic_json class
 
-    The byte index of the last read character in the input file.
+    This class is an extension of `std::exception` objects with a member @a id for
+    exception ids. It is used as the base class for all exceptions thrown by the
+    @ref basic_json class. This class can hence be used as "wildcard" to catch
+    exceptions.
 
-    @note For an input with n bytes, 1 is the index of the first character and
-          n+1 is the index of the terminating null byte or the end of file.
-          This also holds true when reading a byte vector (CBOR or MessagePack).
+    Subclasses:
+    - @ref parse_error for exceptions indicating a parse error
+    - @ref invalid_iterator for exceptions indicating errors with iterators
+    - @ref type_error for exceptions indicating executing a member function with
+                      a wrong type
+    - @ref out_of_range for exceptions indicating access out of the defined range
+    - @ref other_error for exceptions indicating other library errors
+
+    @internal
+    @note To have nothrow-copy-constructible exceptions, we internally use
+          `std::runtime_error` which can cope with arbitrary-length error messages.
+          Intermediate strings are built with static functions and then passed to
+          the actual constructor.
+    @endinternal
+
+    @liveexample{The following code shows how arbitrary library exceptions can be
+    caught.,exception}
+
+    @since version 3.0.0
     */
-    const std::size_t byte;
+    class exception : public std::exception {
+    public:
+      /// returns the explanatory string
+      _az_JSON_HEDLEY_RETURNS_NON_NULL const char* what() const noexcept override
+      {
+        return m.what();
+      }
 
-  private:
-    parse_error(int id_, std::size_t byte_, const char* what_arg)
-        : exception(id_, what_arg), byte(byte_)
-    {
-    }
+      /// the id of the exception
+      const int id;
 
-    static std::string position_string(const position_t& pos)
-    {
-      return " at line " + std::to_string(pos.lines_read + 1) + ", column "
-          + std::to_string(pos.chars_read_current_line);
-    }
-  };
+    protected:
+      _az_JSON_HEDLEY_NON_NULL(3) exception(int id_, const char* what_arg) : id(id_), m(what_arg) {}
 
-  /*!
-  @brief exception indicating errors with iterators
+      static std::string name(const std::string& ename, int id_)
+      {
+        return "[json.exception." + ename + "." + std::to_string(id_) + "] ";
+      }
 
-  This exception is thrown if iterators passed to a library function do not match
-  the expected semantics.
+    private:
+      /// an exception object as storage for error messages
+      std::runtime_error m;
+    };
 
-  Exceptions have ids 2xx.
+    /*!
+    @brief exception indicating a parse error
 
-  name / id                           | example message | description
-  ----------------------------------- | --------------- | -------------------------
-  json.exception.invalid_iterator.201 | iterators are not compatible | The iterators passed to
-  constructor @ref basic_json(InputIT first, InputIT last) are not compatible, meaning they do not
-  belong to the same container. Therefore, the range (@a first, @a last) is invalid.
-  json.exception.invalid_iterator.202 | iterator does not fit current value | In an erase or insert
-  function, the passed iterator @a pos does not belong to the JSON value for which the function was
-  called. It hence does not define a valid position for the deletion/insertion.
-  json.exception.invalid_iterator.203 | iterators do not fit current value | Either iterator passed
-  to function @ref erase(IteratorType first, IteratorType last) does not belong to the JSON value
-  from which values shall be erased. It hence does not define a valid range to delete values from.
-  json.exception.invalid_iterator.204 | iterators out of range | When an iterator range for a
-  primitive type (number, boolean, or string) is passed to a constructor or an erase function, this
-  range has to be exactly (@ref begin(), @ref end()), because this is the only way the single stored
-  value is expressed. All other ranges are invalid. json.exception.invalid_iterator.205 | iterator
-  out of range | When an iterator for a primitive type (number, boolean, or string) is passed to an
-  erase function, the iterator has to be the @ref begin() iterator, because it is the only way to
-  address the stored value. All other iterators are invalid. json.exception.invalid_iterator.206 |
-  cannot construct with iterators from null | The iterators passed to constructor @ref
-  basic_json(InputIT first, InputIT last) belong to a JSON null value and hence to not define a
-  valid range. json.exception.invalid_iterator.207 | cannot use key() for non-object iterators | The
-  key() member function can only be used on iterators belonging to a JSON object, because other
-  types do not have a concept of a key. json.exception.invalid_iterator.208 | cannot use operator[]
-  for object iterators | The operator[] to specify a concrete offset cannot be used on iterators
-  belonging to a JSON object, because JSON objects are unordered.
-  json.exception.invalid_iterator.209 | cannot use offsets with object iterators | The offset
-  operators (+, -, +=, -=) cannot be used on iterators belonging to a JSON object, because JSON
-  objects are unordered. json.exception.invalid_iterator.210 | iterators do not fit | The iterator
-  range passed to the insert function are not compatible, meaning they do not belong to the same
-  container. Therefore, the range (@a first, @a last) is invalid.
-  json.exception.invalid_iterator.211 | passed iterators may not belong to container | The iterator
-  range passed to the insert function must not be a subrange of the container to insert to.
-  json.exception.invalid_iterator.212 | cannot compare iterators of different containers | When two
-  iterators are compared, they must belong to the same container.
-  json.exception.invalid_iterator.213 | cannot compare order of object iterators | The order of
-  object iterators cannot be compared, because JSON objects are unordered.
-  json.exception.invalid_iterator.214 | cannot get value | Cannot get value for iterator: Either the
-  iterator belongs to a null value or it is an iterator to a primitive type (number, boolean, or
-  string), but the iterator is different to @ref begin().
+    This exception is thrown by the library when a parse error occurs. Parse errors
+    can occur during the deserialization of JSON text, CBOR, MessagePack, as well
+    as when using JSON Patch.
 
-  @liveexample{The following code shows how an `invalid_iterator` exception can be
-  caught.,invalid_iterator}
+    Member @a byte holds the byte index of the last read character in the input
+    file.
 
-  @sa - @ref exception for the base class of the library exceptions
-  @sa - @ref parse_error for exceptions indicating a parse error
-  @sa - @ref type_error for exceptions indicating executing a member function with
-                      a wrong type
-  @sa - @ref out_of_range for exceptions indicating access out of the defined range
-  @sa - @ref other_error for exceptions indicating other library errors
+    Exceptions have ids 1xx.
 
-  @since version 3.0.0
-  */
-  class invalid_iterator : public exception {
-  public:
-    static invalid_iterator create(int id_, const std::string& what_arg)
-    {
-      std::string w = exception::name("invalid_iterator", id_) + what_arg;
-      return invalid_iterator(id_, w.c_str());
-    }
+    name / id                      | example message | description
+    ------------------------------ | --------------- | -------------------------
+    json.exception.parse_error.101 | parse error at 2: unexpected end of input; expected string
+    literal | This error indicates a syntax error while deserializing a JSON text. The error message
+    describes that an unexpected token (character) was encountered, and the member @a byte indicates
+    the error position. json.exception.parse_error.102 | parse error at 14: missing or wrong low
+    surrogate | JSON uses the `\uxxxx` format to describe Unicode characters. Code points above
+    above 0xFFFF are split into two `\uxxxx` entries ("surrogate pairs"). This error indicates that
+    the surrogate pair is incomplete or contains an invalid code point.
+    json.exception.parse_error.103 | parse error: code points above 0x10FFFF are invalid | Unicode
+    supports code points up to 0x10FFFF. Code points above 0x10FFFF are invalid.
+    json.exception.parse_error.104 | parse error: JSON patch must be an array of objects | [RFC
+    6902](https://tools.ietf.org/html/rfc6902) requires a JSON Patch document to be a JSON document
+    that represents an array of objects. json.exception.parse_error.105 | parse error: operation
+    must have string member 'op' | An operation of a JSON Patch document must contain exactly one
+    "op" member, whose value indicates the operation to perform. Its value must be one of "add",
+    "remove", "replace", "move", "copy", or "test"; other values are errors.
+    json.exception.parse_error.106 | parse error: array index '01' must not begin with '0' | An
+    array index in a JSON Pointer ([RFC 6901](https://tools.ietf.org/html/rfc6901)) may be `0` or
+    any number without a leading `0`. json.exception.parse_error.107 | parse error: JSON pointer
+    must be empty or begin with '/' - was: 'foo' | A JSON Pointer must be a Unicode string
+    containing a sequence of zero or more reference tokens, each prefixed by a `/` character.
+    json.exception.parse_error.108 | parse error: escape character '~' must be followed with '0' or
+    '1' | In a JSON Pointer, only `~0` and `~1` are valid escape sequences.
+    json.exception.parse_error.109 | parse error: array index 'one' is not a number | A JSON Pointer
+    array index must be a number. json.exception.parse_error.110 | parse error at 1: cannot read 2
+    bytes from vector | When parsing CBOR or MessagePack, the byte vector ends before the complete
+    value has been read. json.exception.parse_error.112 | parse error at 1: error reading CBOR; last
+    byte: 0xF8 | Not all types of CBOR or MessagePack are supported. This exception occurs if an
+    unsupported byte was read. json.exception.parse_error.113 | parse error at 2: expected a CBOR
+    string; last byte: 0x98 | While parsing a map key, a value that is not a string has been read.
+    json.exception.parse_error.114 | parse error: Unsupported BSON record type 0x0F | The parsing of
+    the corresponding BSON record type is not implemented (yet).
 
-  private:
-    _az_JSON_HEDLEY_NON_NULL(3)
-    invalid_iterator(int id_, const char* what_arg) : exception(id_, what_arg) {}
-  };
+    @note For an input with n bytes, 1 is the index of the first character and n+1
+          is the index of the terminating null byte or the end of file. This also
+          holds true when reading a byte vector (CBOR or MessagePack).
 
-  /*!
-  @brief exception indicating executing a member function with a wrong type
+    @liveexample{The following code shows how a `parse_error` exception can be
+    caught.,parse_error}
 
-  This exception is thrown in case of a type error; that is, a library function is
-  executed on a JSON value whose type does not match the expected semantics.
+    @sa - @ref exception for the base class of the library exceptions
+    @sa - @ref invalid_iterator for exceptions indicating errors with iterators
+    @sa - @ref type_error for exceptions indicating executing a member function with
+                        a wrong type
+    @sa - @ref out_of_range for exceptions indicating access out of the defined range
+    @sa - @ref other_error for exceptions indicating other library errors
 
-  Exceptions have ids 3xx.
+    @since version 3.0.0
+    */
+    class parse_error : public exception {
+    public:
+      /*!
+      @brief create a parse error exception
+      @param[in] id_       the id of the exception
+      @param[in] pos       the position where the error occurred (or with
+                           chars_read_total=0 if the position cannot be
+                           determined)
+      @param[in] what_arg  the explanatory string
+      @return parse_error object
+      */
+      static parse_error create(int id_, const position_t& pos, const std::string& what_arg)
+      {
+        std::string w = exception::name("parse_error", id_) + "parse error" + position_string(pos)
+            + ": " + what_arg;
+        return parse_error(id_, pos.chars_read_total, w.c_str());
+      }
 
-  name / id                     | example message | description
-  ----------------------------- | --------------- | -------------------------
-  json.exception.type_error.301 | cannot create object from initializer list | To create an object
-  from an initializer list, the initializer list must consist only of a list of pairs whose first
-  element is a string. When this constraint is violated, an array is created instead.
-  json.exception.type_error.302 | type must be object, but is array | During implicit or explicit
-  value conversion, the JSON type must be compatible to the target type. For instance, a JSON string
-  can only be converted into string types, but not into numbers or boolean types.
-  json.exception.type_error.303 | incompatible ReferenceType for get_ref, actual type is object | To
-  retrieve a reference to a value stored in a @ref basic_json object with @ref get_ref, the type of
-  the reference must match the value type. For instance, for a JSON array, the @a ReferenceType must
-  be @ref array_t &. json.exception.type_error.304 | cannot use at() with string | The @ref at()
-  member functions can only be executed for certain JSON types. json.exception.type_error.305 |
-  cannot use operator[] with string | The @ref operator[] member functions can only be executed for
-  certain JSON types. json.exception.type_error.306 | cannot use value() with string | The @ref
-  value() member functions can only be executed for certain JSON types.
-  json.exception.type_error.307 | cannot use erase() with string | The @ref erase() member functions
-  can only be executed for certain JSON types. json.exception.type_error.308 | cannot use
-  push_back() with string | The @ref push_back() and @ref operator+= member functions can only be
-  executed for certain JSON types. json.exception.type_error.309 | cannot use insert() with | The
-  @ref insert() member functions can only be executed for certain JSON types.
-  json.exception.type_error.310 | cannot use swap() with number | The @ref swap() member functions
-  can only be executed for certain JSON types. json.exception.type_error.311 | cannot use
-  emplace_back() with string | The @ref emplace_back() member function can only be executed for
-  certain JSON types. json.exception.type_error.312 | cannot use update() with string | The @ref
-  update() member functions can only be executed for certain JSON types.
-  json.exception.type_error.313 | invalid value to unflatten | The @ref unflatten function converts
-  an object whose keys are JSON Pointers back into an arbitrary nested JSON value. The JSON Pointers
-  must not overlap, because then the resulting value would not be well defined.
-  json.exception.type_error.314 | only objects can be unflattened | The @ref unflatten function only
-  works for an object whose keys are JSON Pointers. json.exception.type_error.315 | values in object
-  must be primitive | The @ref unflatten function only works for an object whose keys are JSON
-  Pointers and whose values are primitive. json.exception.type_error.316 | invalid UTF-8 byte at
-  index 10: 0x7E | The @ref dump function only works with UTF-8 encoded strings; that is, if you
-  assign a `std::string` to a JSON value, make sure it is UTF-8 encoded. |
-  json.exception.type_error.317 | JSON value cannot be serialized to requested format | The dynamic
-  type of the object cannot be represented in the requested serialization format (e.g. a raw `true`
-  or `null` JSON object cannot be serialized to BSON) |
+      static parse_error create(int id_, std::size_t byte_, const std::string& what_arg)
+      {
+        std::string w = exception::name("parse_error", id_) + "parse error"
+            + (byte_ != 0 ? (" at byte " + std::to_string(byte_)) : "") + ": " + what_arg;
+        return parse_error(id_, byte_, w.c_str());
+      }
 
-  @liveexample{The following code shows how a `type_error` exception can be
-  caught.,type_error}
+      /*!
+      @brief byte index of the parse error
 
-  @sa - @ref exception for the base class of the library exceptions
-  @sa - @ref parse_error for exceptions indicating a parse error
-  @sa - @ref invalid_iterator for exceptions indicating errors with iterators
-  @sa - @ref out_of_range for exceptions indicating access out of the defined range
-  @sa - @ref other_error for exceptions indicating other library errors
+      The byte index of the last read character in the input file.
 
-  @since version 3.0.0
-  */
-  class type_error : public exception {
-  public:
-    static type_error create(int id_, const std::string& what_arg)
-    {
-      std::string w = exception::name("type_error", id_) + what_arg;
-      return type_error(id_, w.c_str());
-    }
+      @note For an input with n bytes, 1 is the index of the first character and
+            n+1 is the index of the terminating null byte or the end of file.
+            This also holds true when reading a byte vector (CBOR or MessagePack).
+      */
+      const std::size_t byte;
 
-  private:
-    _az_JSON_HEDLEY_NON_NULL(3)
-    type_error(int id_, const char* what_arg) : exception(id_, what_arg) {}
-  };
+    private:
+      parse_error(int id_, std::size_t byte_, const char* what_arg)
+          : exception(id_, what_arg), byte(byte_)
+      {
+      }
 
-  /*!
-  @brief exception indicating access out of the defined range
+      static std::string position_string(const position_t& pos)
+      {
+        return " at line " + std::to_string(pos.lines_read + 1) + ", column "
+            + std::to_string(pos.chars_read_current_line);
+      }
+    };
 
-  This exception is thrown in case a library function is called on an input
-  parameter that exceeds the expected range, for instance in case of array
-  indices or nonexisting object keys.
+    /*!
+    @brief exception indicating errors with iterators
 
-  Exceptions have ids 4xx.
+    This exception is thrown if iterators passed to a library function do not match
+    the expected semantics.
 
-  name / id                       | example message | description
-  ------------------------------- | --------------- | -------------------------
-  json.exception.out_of_range.401 | array index 3 is out of range | The provided array index @a i is
-  larger than @a size-1. json.exception.out_of_range.402 | array index '-' (3) is out of range | The
-  special array index `-` in a JSON Pointer never describes a valid element of the array, but the
-  index past the end. That is, it can only be used to add elements at this position, but not to read
-  it. json.exception.out_of_range.403 | key 'foo' not found | The provided key was not found in the
-  JSON object. json.exception.out_of_range.404 | unresolved reference token 'foo' | A reference
-  token in a JSON Pointer could not be resolved. json.exception.out_of_range.405 | JSON pointer has
-  no parent | The JSON Patch operations 'remove' and 'add' can not be applied to the root element of
-  the JSON value. json.exception.out_of_range.406 | number overflow parsing '10E1000' | A parsed
-  number could not be stored as without changing it to NaN or INF. json.exception.out_of_range.407 |
-  number overflow serializing '9223372036854775808' | UBJSON and BSON only support integer numbers
-  up to 9223372036854775807. | json.exception.out_of_range.408 | excessive array size:
-  8658170730974374167 | The size (following `#`) of an UBJSON array or object exceeds the maximal
-  capacity. | json.exception.out_of_range.409 | BSON key cannot contain code point U+0000 (at byte
-  2) | Key identifiers to be serialized to BSON cannot contain code point U+0000, since the key is
-  stored as zero-terminated c-string |
+    Exceptions have ids 2xx.
 
-  @liveexample{The following code shows how an `out_of_range` exception can be
-  caught.,out_of_range}
+    name / id                           | example message | description
+    ----------------------------------- | --------------- | -------------------------
+    json.exception.invalid_iterator.201 | iterators are not compatible | The iterators passed to
+    constructor @ref basic_json(InputIT first, InputIT last) are not compatible, meaning they do not
+    belong to the same container. Therefore, the range (@a first, @a last) is invalid.
+    json.exception.invalid_iterator.202 | iterator does not fit current value | In an erase or
+    insert function, the passed iterator @a pos does not belong to the JSON value for which the
+    function was called. It hence does not define a valid position for the deletion/insertion.
+    json.exception.invalid_iterator.203 | iterators do not fit current value | Either iterator
+    passed to function @ref erase(IteratorType first, IteratorType last) does not belong to the JSON
+    value from which values shall be erased. It hence does not define a valid range to delete values
+    from. json.exception.invalid_iterator.204 | iterators out of range | When an iterator range for
+    a primitive type (number, boolean, or string) is passed to a constructor or an erase function,
+    this range has to be exactly (@ref begin(), @ref end()), because this is the only way the single
+    stored value is expressed. All other ranges are invalid. json.exception.invalid_iterator.205 |
+    iterator out of range | When an iterator for a primitive type (number, boolean, or string) is
+    passed to an erase function, the iterator has to be the @ref begin() iterator, because it is the
+    only way to address the stored value. All other iterators are invalid.
+    json.exception.invalid_iterator.206 | cannot construct with iterators from null | The iterators
+    passed to constructor @ref basic_json(InputIT first, InputIT last) belong to a JSON null value
+    and hence to not define a valid range. json.exception.invalid_iterator.207 | cannot use key()
+    for non-object iterators | The key() member function can only be used on iterators belonging to
+    a JSON object, because other types do not have a concept of a key.
+    json.exception.invalid_iterator.208 | cannot use operator[] for object iterators | The
+    operator[] to specify a concrete offset cannot be used on iterators belonging to a JSON object,
+    because JSON objects are unordered. json.exception.invalid_iterator.209 | cannot use offsets
+    with object iterators | The offset operators (+, -, +=, -=) cannot be used on iterators
+    belonging to a JSON object, because JSON objects are unordered.
+    json.exception.invalid_iterator.210 | iterators do not fit | The iterator range passed to the
+    insert function are not compatible, meaning they do not belong to the same container. Therefore,
+    the range (@a first, @a last) is invalid. json.exception.invalid_iterator.211 | passed iterators
+    may not belong to container | The iterator range passed to the insert function must not be a
+    subrange of the container to insert to. json.exception.invalid_iterator.212 | cannot compare
+    iterators of different containers | When two iterators are compared, they must belong to the
+    same container. json.exception.invalid_iterator.213 | cannot compare order of object iterators |
+    The order of object iterators cannot be compared, because JSON objects are unordered.
+    json.exception.invalid_iterator.214 | cannot get value | Cannot get value for iterator: Either
+    the iterator belongs to a null value or it is an iterator to a primitive type (number, boolean,
+    or string), but the iterator is different to @ref begin().
 
-  @sa - @ref exception for the base class of the library exceptions
-  @sa - @ref parse_error for exceptions indicating a parse error
-  @sa - @ref invalid_iterator for exceptions indicating errors with iterators
-  @sa - @ref type_error for exceptions indicating executing a member function with
-                      a wrong type
-  @sa - @ref other_error for exceptions indicating other library errors
+    @liveexample{The following code shows how an `invalid_iterator` exception can be
+    caught.,invalid_iterator}
 
-  @since version 3.0.0
-  */
-  class out_of_range : public exception {
-  public:
-    static out_of_range create(int id_, const std::string& what_arg)
-    {
-      std::string w = exception::name("out_of_range", id_) + what_arg;
-      return out_of_range(id_, w.c_str());
-    }
+    @sa - @ref exception for the base class of the library exceptions
+    @sa - @ref parse_error for exceptions indicating a parse error
+    @sa - @ref type_error for exceptions indicating executing a member function with
+                        a wrong type
+    @sa - @ref out_of_range for exceptions indicating access out of the defined range
+    @sa - @ref other_error for exceptions indicating other library errors
 
-  private:
-    _az_JSON_HEDLEY_NON_NULL(3)
-    out_of_range(int id_, const char* what_arg) : exception(id_, what_arg) {}
-  };
+    @since version 3.0.0
+    */
+    class invalid_iterator : public exception {
+    public:
+      static invalid_iterator create(int id_, const std::string& what_arg)
+      {
+        std::string w = exception::name("invalid_iterator", id_) + what_arg;
+        return invalid_iterator(id_, w.c_str());
+      }
 
-  /*!
-  @brief exception indicating other library errors
+    private:
+      _az_JSON_HEDLEY_NON_NULL(3) invalid_iterator(int id_, const char* what_arg)
+          : exception(id_, what_arg)
+      {
+      }
+    };
 
-  This exception is thrown in case of errors that cannot be classified with the
-  other exception types.
+    /*!
+    @brief exception indicating executing a member function with a wrong type
 
-  Exceptions have ids 5xx.
+    This exception is thrown in case of a type error; that is, a library function is
+    executed on a JSON value whose type does not match the expected semantics.
 
-  name / id                      | example message | description
-  ------------------------------ | --------------- | -------------------------
-  json.exception.other_error.501 | unsuccessful: {"op":"test","path":"/baz", "value":"bar"} | A JSON
-  Patch operation 'test' failed. The unsuccessful operation is also printed.
+    Exceptions have ids 3xx.
 
-  @sa - @ref exception for the base class of the library exceptions
-  @sa - @ref parse_error for exceptions indicating a parse error
-  @sa - @ref invalid_iterator for exceptions indicating errors with iterators
-  @sa - @ref type_error for exceptions indicating executing a member function with
-                      a wrong type
-  @sa - @ref out_of_range for exceptions indicating access out of the defined range
+    name / id                     | example message | description
+    ----------------------------- | --------------- | -------------------------
+    json.exception.type_error.301 | cannot create object from initializer list | To create an object
+    from an initializer list, the initializer list must consist only of a list of pairs whose first
+    element is a string. When this constraint is violated, an array is created instead.
+    json.exception.type_error.302 | type must be object, but is array | During implicit or explicit
+    value conversion, the JSON type must be compatible to the target type. For instance, a JSON
+    string can only be converted into string types, but not into numbers or boolean types.
+    json.exception.type_error.303 | incompatible ReferenceType for get_ref, actual type is object |
+    To retrieve a reference to a value stored in a @ref basic_json object with @ref get_ref, the
+    type of the reference must match the value type. For instance, for a JSON array, the @a
+    ReferenceType must be @ref array_t &. json.exception.type_error.304 | cannot use at() with
+    string | The @ref at() member functions can only be executed for certain JSON types.
+    json.exception.type_error.305 | cannot use operator[] with string | The @ref operator[] member
+    functions can only be executed for certain JSON types. json.exception.type_error.306 | cannot
+    use value() with string | The @ref value() member functions can only be executed for certain
+    JSON types. json.exception.type_error.307 | cannot use erase() with string | The @ref erase()
+    member functions can only be executed for certain JSON types. json.exception.type_error.308 |
+    cannot use push_back() with string | The @ref push_back() and @ref operator+= member functions
+    can only be executed for certain JSON types. json.exception.type_error.309 | cannot use insert()
+    with | The
+    @ref insert() member functions can only be executed for certain JSON types.
+    json.exception.type_error.310 | cannot use swap() with number | The @ref swap() member functions
+    can only be executed for certain JSON types. json.exception.type_error.311 | cannot use
+    emplace_back() with string | The @ref emplace_back() member function can only be executed for
+    certain JSON types. json.exception.type_error.312 | cannot use update() with string | The @ref
+    update() member functions can only be executed for certain JSON types.
+    json.exception.type_error.313 | invalid value to unflatten | The @ref unflatten function
+    converts an object whose keys are JSON Pointers back into an arbitrary nested JSON value. The
+    JSON Pointers must not overlap, because then the resulting value would not be well defined.
+    json.exception.type_error.314 | only objects can be unflattened | The @ref unflatten function
+    only works for an object whose keys are JSON Pointers. json.exception.type_error.315 | values in
+    object must be primitive | The @ref unflatten function only works for an object whose keys are
+    JSON Pointers and whose values are primitive. json.exception.type_error.316 | invalid UTF-8 byte
+    at index 10: 0x7E | The @ref dump function only works with UTF-8 encoded strings; that is, if
+    you assign a `std::string` to a JSON value, make sure it is UTF-8 encoded. |
+    json.exception.type_error.317 | JSON value cannot be serialized to requested format | The
+    dynamic type of the object cannot be represented in the requested serialization format (e.g. a
+    raw `true` or `null` JSON object cannot be serialized to BSON) |
 
-  @liveexample{The following code shows how an `other_error` exception can be
-  caught.,other_error}
+    @liveexample{The following code shows how a `type_error` exception can be
+    caught.,type_error}
 
-  @since version 3.0.0
-  */
-  class other_error : public exception {
-  public:
-    static other_error create(int id_, const std::string& what_arg)
-    {
-      std::string w = exception::name("other_error", id_) + what_arg;
-      return other_error(id_, w.c_str());
-    }
+    @sa - @ref exception for the base class of the library exceptions
+    @sa - @ref parse_error for exceptions indicating a parse error
+    @sa - @ref invalid_iterator for exceptions indicating errors with iterators
+    @sa - @ref out_of_range for exceptions indicating access out of the defined range
+    @sa - @ref other_error for exceptions indicating other library errors
 
-  private:
-    _az_JSON_HEDLEY_NON_NULL(3)
-    other_error(int id_, const char* what_arg) : exception(id_, what_arg) {}
-  };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+    @since version 3.0.0
+    */
+    class type_error : public exception {
+    public:
+      static type_error create(int id_, const std::string& what_arg)
+      {
+        std::string w = exception::name("type_error", id_) + what_arg;
+        return type_error(id_, w.c_str());
+      }
+
+    private:
+      _az_JSON_HEDLEY_NON_NULL(3) type_error(int id_, const char* what_arg)
+          : exception(id_, what_arg)
+      {
+      }
+    };
+
+    /*!
+    @brief exception indicating access out of the defined range
+
+    This exception is thrown in case a library function is called on an input
+    parameter that exceeds the expected range, for instance in case of array
+    indices or nonexisting object keys.
+
+    Exceptions have ids 4xx.
+
+    name / id                       | example message | description
+    ------------------------------- | --------------- | -------------------------
+    json.exception.out_of_range.401 | array index 3 is out of range | The provided array index @a i
+    is larger than @a size-1. json.exception.out_of_range.402 | array index '-' (3) is out of range
+    | The special array index `-` in a JSON Pointer never describes a valid element of the array,
+    but the index past the end. That is, it can only be used to add elements at this position, but
+    not to read it. json.exception.out_of_range.403 | key 'foo' not found | The provided key was not
+    found in the JSON object. json.exception.out_of_range.404 | unresolved reference token 'foo' | A
+    reference token in a JSON Pointer could not be resolved. json.exception.out_of_range.405 | JSON
+    pointer has no parent | The JSON Patch operations 'remove' and 'add' can not be applied to the
+    root element of the JSON value. json.exception.out_of_range.406 | number overflow parsing
+    '10E1000' | A parsed number could not be stored as without changing it to NaN or INF.
+    json.exception.out_of_range.407 | number overflow serializing '9223372036854775808' | UBJSON and
+    BSON only support integer numbers up to 9223372036854775807. | json.exception.out_of_range.408 |
+    excessive array size: 8658170730974374167 | The size (following `#`) of an UBJSON array or
+    object exceeds the maximal capacity. | json.exception.out_of_range.409 | BSON key cannot contain
+    code point U+0000 (at byte 2) | Key identifiers to be serialized to BSON cannot contain code
+    point U+0000, since the key is stored as zero-terminated c-string |
+
+    @liveexample{The following code shows how an `out_of_range` exception can be
+    caught.,out_of_range}
+
+    @sa - @ref exception for the base class of the library exceptions
+    @sa - @ref parse_error for exceptions indicating a parse error
+    @sa - @ref invalid_iterator for exceptions indicating errors with iterators
+    @sa - @ref type_error for exceptions indicating executing a member function with
+                        a wrong type
+    @sa - @ref other_error for exceptions indicating other library errors
+
+    @since version 3.0.0
+    */
+    class out_of_range : public exception {
+    public:
+      static out_of_range create(int id_, const std::string& what_arg)
+      {
+        std::string w = exception::name("out_of_range", id_) + what_arg;
+        return out_of_range(id_, w.c_str());
+      }
+
+    private:
+      _az_JSON_HEDLEY_NON_NULL(3) out_of_range(int id_, const char* what_arg)
+          : exception(id_, what_arg)
+      {
+      }
+    };
+
+    /*!
+    @brief exception indicating other library errors
+
+    This exception is thrown in case of errors that cannot be classified with the
+    other exception types.
+
+    Exceptions have ids 5xx.
+
+    name / id                      | example message | description
+    ------------------------------ | --------------- | -------------------------
+    json.exception.other_error.501 | unsuccessful: {"op":"test","path":"/baz", "value":"bar"} | A
+    JSON Patch operation 'test' failed. The unsuccessful operation is also printed.
+
+    @sa - @ref exception for the base class of the library exceptions
+    @sa - @ref parse_error for exceptions indicating a parse error
+    @sa - @ref invalid_iterator for exceptions indicating errors with iterators
+    @sa - @ref type_error for exceptions indicating executing a member function with
+                        a wrong type
+    @sa - @ref out_of_range for exceptions indicating access out of the defined range
+
+    @liveexample{The following code shows how an `other_error` exception can be
+    caught.,other_error}
+
+    @since version 3.0.0
+    */
+    class other_error : public exception {
+    public:
+      static other_error create(int id_, const std::string& what_arg)
+      {
+        std::string w = exception::name("other_error", id_) + what_arg;
+        return other_error(id_, w.c_str());
+      }
+
+    private:
+      _az_JSON_HEDLEY_NON_NULL(3) other_error(int id_, const char* what_arg)
+          : exception(id_, what_arg)
+      {
+      }
+    };
+  }}}} // namespace Core::Internal::Json::detail
+} // namespace Azure
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
@@ -2667,7 +2742,6 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   using is_detected_convertible = std::is_convertible<detected_t<Op, Args...>, To>;
 }}}}} // namespace Azure::Core::Internal::Json::detail
 
-
 #include <cstdint> // int64_t, uint64_t
 #include <map> // map
 #include <memory> // allocator
@@ -2753,8 +2827,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     {
     };
 
-    _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION
-    struct is_basic_json<_az_NLOHMANN_BASIC_JSON_TPL> : std::true_type
+    _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION struct is_basic_json<_az_NLOHMANN_BASIC_JSON_TPL>
+        : std::true_type
     {
     };
 
@@ -4506,8 +4580,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   public:
     using char_type = char;
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    explicit file_input_adapter(std::FILE* f) noexcept : m_file(f) {}
+    _az_JSON_HEDLEY_NON_NULL(2) explicit file_input_adapter(std::FILE* f) noexcept : m_file(f) {}
 
     // make class move-only
     file_input_adapter(const file_input_adapter&) = delete;
@@ -5149,7 +5222,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
         if (_az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) and len > ref_stack.back()->max_size()))
         {
-          _az_JSON_THROW(out_of_range::create(408, "excessive object size: " + std::to_string(len)));
+          _az_JSON_THROW(
+              out_of_range::create(408, "excessive object size: " + std::to_string(len)));
         }
 
         return true;
@@ -5225,7 +5299,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       @invariant If the ref stack contains a value, then it is an array or an
                  object to which we can add elements
       */
-      template <typename Value> _az_JSON_HEDLEY_RETURNS_NON_NULL BasicJsonType* handle_value(Value&& v)
+      template <typename Value>
+      _az_JSON_HEDLEY_RETURNS_NON_NULL BasicJsonType* handle_value(Value&& v)
       {
         if (ref_stack.empty())
         {
@@ -5339,9 +5414,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
         // check object limit
         if (ref_stack.back()
-            and _az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) and len > ref_stack.back()->max_size()))
+            and _az_JSON_HEDLEY_UNLIKELY(
+                len != std::size_t(-1) and len > ref_stack.back()->max_size()))
         {
-          _az_JSON_THROW(out_of_range::create(408, "excessive object size: " + std::to_string(len)));
+          _az_JSON_THROW(
+              out_of_range::create(408, "excessive object size: " + std::to_string(len)));
         }
 
         return true;
@@ -5408,7 +5485,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
         // check array limit
         if (ref_stack.back()
-            and _az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) and len > ref_stack.back()->max_size()))
+            and _az_JSON_HEDLEY_UNLIKELY(
+                len != std::size_t(-1) and len > ref_stack.back()->max_size()))
         {
           _az_JSON_THROW(out_of_range::create(408, "excessive array size: " + std::to_string(len)));
         }
@@ -5823,8 +5901,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     @return
     */
-    _az_JSON_HEDLEY_NON_NULL(3)
-    bool sax_parse(const input_format_t format, json_sax_t* sax_, const bool strict = true)
+    _az_JSON_HEDLEY_NON_NULL(
+        3) bool sax_parse(const input_format_t format, json_sax_t* sax_, const bool strict = true)
     {
       sax = sax_;
       bool result = false;
@@ -8121,8 +8199,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     @param[in] context  further context information (for diagnostics)
     @return whether the last read character is not EOF
     */
-    _az_JSON_HEDLEY_NON_NULL(3)
-    bool unexpect_eof(const input_format_t format, const char* context) const
+    _az_JSON_HEDLEY_NON_NULL(
+        3) bool unexpect_eof(const input_format_t format, const char* context) const
     {
       if (_az_JSON_HEDLEY_UNLIKELY(current == std::char_traits<char_type>::eof()))
       {
@@ -8251,9 +8329,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     };
 
     /// return name of values of type token_type (only used for errors)
-    _az_JSON_HEDLEY_RETURNS_NON_NULL
-    _az_JSON_HEDLEY_CONST
-    static const char* token_type_name(const token_type t) noexcept
+    _az_JSON_HEDLEY_RETURNS_NON_NULL _az_JSON_HEDLEY_CONST static const char* token_type_name(
+        const token_type t) noexcept
     {
       switch (t)
       {
@@ -8332,8 +8409,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /////////////////////
 
     /// return the locale-dependent decimal point
-    _az_JSON_HEDLEY_PURE
-    static char get_decimal_point() noexcept
+    _az_JSON_HEDLEY_PURE static char get_decimal_point() noexcept
     {
       const auto loc = localeconv();
       assert(loc != nullptr);
@@ -8993,7 +9069,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
           // U+10000..U+3FFFF F0 90..BF 80..BF 80..BF
           case 0xF0: {
-            if (_az_JSON_HEDLEY_UNLIKELY(not(next_byte_in_range({0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
+            if (_az_JSON_HEDLEY_UNLIKELY(
+                    not(next_byte_in_range({0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9004,7 +9081,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           case 0xF1:
           case 0xF2:
           case 0xF3: {
-            if (_az_JSON_HEDLEY_UNLIKELY(not(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
+            if (_az_JSON_HEDLEY_UNLIKELY(
+                    not(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9013,7 +9091,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
           // U+100000..U+10FFFF F4 80..8F 80..BF 80..BF
           case 0xF4: {
-            if (_az_JSON_HEDLEY_UNLIKELY(not(next_byte_in_range({0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF}))))
+            if (_az_JSON_HEDLEY_UNLIKELY(
+                    not(next_byte_in_range({0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9029,20 +9108,20 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
     }
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    static void strtof(float& f, const char* str, char** endptr) noexcept
+    _az_JSON_HEDLEY_NON_NULL(
+        2) static void strtof(float& f, const char* str, char** endptr) noexcept
     {
       f = std::strtof(str, endptr);
     }
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    static void strtof(double& f, const char* str, char** endptr) noexcept
+    _az_JSON_HEDLEY_NON_NULL(
+        2) static void strtof(double& f, const char* str, char** endptr) noexcept
     {
       f = std::strtod(str, endptr);
     }
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    static void strtof(long double& f, const char* str, char** endptr) noexcept
+    _az_JSON_HEDLEY_NON_NULL(
+        2) static void strtof(long double& f, const char* str, char** endptr) noexcept
     {
       f = std::strtold(str, endptr);
     }
@@ -9395,8 +9474,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     @param[in] length        the length of the passed literal text
     @param[in] return_type   the token type to return on success
     */
-    _az_JSON_HEDLEY_NON_NULL(2)
-    token_type scan_literal(
+    _az_JSON_HEDLEY_NON_NULL(2) token_type scan_literal(
         const char_type* literal_text,
         const std::size_t length,
         token_type return_type)
@@ -9556,8 +9634,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     }
 
     /// return syntax error message
-    _az_JSON_HEDLEY_RETURNS_NON_NULL
-    constexpr const char* get_error_message() const noexcept { return error_message; }
+    _az_JSON_HEDLEY_RETURNS_NON_NULL constexpr const char* get_error_message() const noexcept
+    {
+      return error_message;
+    }
 
     /////////////////////
     // actual scanner
@@ -9848,8 +9928,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     }
 
     template <typename SAX>
-    _az_JSON_HEDLEY_NON_NULL(2)
-    bool sax_parse(SAX* sax, const bool strict = true)
+    _az_JSON_HEDLEY_NON_NULL(2) bool sax_parse(SAX* sax, const bool strict = true)
     {
       (void)detail::is_sax_static_asserts<SAX, BasicJsonType>{};
       const bool result = sax_parse_internal(sax);
@@ -10889,7 +10968,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       switch (m_object->m_type)
       {
         case value_t::object:
-          _az_JSON_THROW(invalid_iterator::create(208, "cannot use operator[] for object iterators"));
+          _az_JSON_THROW(
+              invalid_iterator::create(208, "cannot use operator[] for object iterators"));
 
         case value_t::array:
           return *std::next(m_it.array_iterator, n);
@@ -11074,8 +11154,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 namespace Azure { namespace Core { namespace Internal { namespace Json {
   template <typename BasicJsonType> class json_pointer {
     // allow basic_json to access private members
-    _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION
-    friend class basic_json;
+    _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION friend class basic_json;
 
   public:
     /*!
@@ -11377,7 +11456,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // error condition (cf. RFC 6901, Sect. 4)
       if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 and not(s[0] >= '1' and s[0] <= '9')))
       {
-        _az_JSON_THROW(detail::parse_error::create(109, 0, "array index '" + s + "' is not a number"));
+        _az_JSON_THROW(
+            detail::parse_error::create(109, 0, "array index '" + s + "' is not a number"));
       }
 
       std::size_t processed_chars = 0;
@@ -12108,8 +12188,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     void write_character(CharType c) override { v.push_back(c); }
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    void write_characters(const CharType* s, std::size_t length) override
+    _az_JSON_HEDLEY_NON_NULL(
+        2) void write_characters(const CharType* s, std::size_t length) override
     {
       std::copy(s, s + length, std::back_inserter(v));
     }
@@ -12126,8 +12206,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     void write_character(CharType c) override { stream.put(c); }
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    void write_characters(const CharType* s, std::size_t length) override
+    _az_JSON_HEDLEY_NON_NULL(
+        2) void write_characters(const CharType* s, std::size_t length) override
     {
       stream.write(s, static_cast<std::streamsize>(length));
     }
@@ -12144,8 +12224,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     void write_character(CharType c) override { str.push_back(c); }
 
-    _az_JSON_HEDLEY_NON_NULL(2)
-    void write_characters(const CharType* s, std::size_t length) override { str.append(s, length); }
+    _az_JSON_HEDLEY_NON_NULL(
+        2) void write_characters(const CharType* s, std::size_t length) override
+    {
+      str.append(s, length);
+    }
 
   private:
     StringType& str;
@@ -14529,9 +14612,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     len is the length of the buffer (number of decimal digits)
     The buffer must be large enough, i.e. >= max_digits10.
     */
-    _az_JSON_HEDLEY_NON_NULL(1)
-    inline void
-    grisu2(char* buf, int& len, int& decimal_exponent, diyfp m_minus, diyfp v, diyfp m_plus)
+    _az_JSON_HEDLEY_NON_NULL(1) inline void grisu2(
+        char* buf,
+        int& len,
+        int& decimal_exponent,
+        diyfp m_minus,
+        diyfp v,
+        diyfp m_plus)
     {
       assert(m_plus.e == m_minus.e);
       assert(m_plus.e == v.e);
@@ -14589,8 +14676,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     The buffer must be large enough, i.e. >= max_digits10.
     */
     template <typename FloatType>
-    _az_JSON_HEDLEY_NON_NULL(1)
-    void grisu2(char* buf, int& len, int& decimal_exponent, FloatType value)
+    _az_JSON_HEDLEY_NON_NULL(
+        1) void grisu2(char* buf, int& len, int& decimal_exponent, FloatType value)
     {
       static_assert(
           diyfp::kPrecision >= std::numeric_limits<FloatType>::digits + 3,
@@ -14628,9 +14715,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     @return a pointer to the element following the exponent.
     @pre -1000 < e < 1000
     */
-    _az_JSON_HEDLEY_NON_NULL(1)
-    _az_JSON_HEDLEY_RETURNS_NON_NULL
-    inline char* append_exponent(char* buf, int e)
+    _az_JSON_HEDLEY_NON_NULL(1) _az_JSON_HEDLEY_RETURNS_NON_NULL
+        inline char* append_exponent(char* buf, int e)
     {
       assert(e > -1000);
       assert(e < 1000);
@@ -14680,9 +14766,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     @pre min_exp < 0
     @pre max_exp > 0
     */
-    _az_JSON_HEDLEY_NON_NULL(1)
-    _az_JSON_HEDLEY_RETURNS_NON_NULL
-    inline char* format_buffer(char* buf, int len, int decimal_exponent, int min_exp, int max_exp)
+    _az_JSON_HEDLEY_NON_NULL(1) _az_JSON_HEDLEY_RETURNS_NON_NULL inline char* format_buffer(
+        char* buf,
+        int len,
+        int decimal_exponent,
+        int min_exp,
+        int max_exp)
     {
       assert(min_exp < 0);
       assert(max_exp > 0);
@@ -14767,8 +14856,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   @note The result is NOT null-terminated.
   */
   template <typename FloatType>
-  _az_JSON_HEDLEY_NON_NULL(1, 2)
-  _az_JSON_HEDLEY_RETURNS_NON_NULL char* to_chars(char* first, const char* last, FloatType value)
+  _az_JSON_HEDLEY_NON_NULL(1, 2) _az_JSON_HEDLEY_RETURNS_NON_NULL
+      char* to_chars(char* first, const char* last, FloatType value)
   {
     static_cast<void>(last); // maybe unused - fix warning
     assert(std::isfinite(value));
@@ -15853,8 +15942,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
   @nosubgrouping
   */
-  _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION
-  class basic_json {
+  _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION class basic_json {
   private:
     template <detail::value_t> friend struct detail::external_constructor;
     friend ::Azure::Core::Internal::Json::json_pointer<basic_json>;
@@ -17335,8 +17423,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 3.8.0
     */
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json binary(const typename binary_t::container_type& init)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json binary(
+        const typename binary_t::container_type& init)
     {
       auto res = basic_json();
       res.m_type = value_t::binary;
@@ -17372,8 +17460,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 3.8.0
     */
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json binary(const typename binary_t::container_type& init, std::uint8_t subtype)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json binary(
+        const typename binary_t::container_type& init,
+        std::uint8_t subtype)
     {
       auto res = basic_json();
       res.m_type = value_t::binary;
@@ -17382,8 +17471,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /// @copydoc binary(const typename binary_t::container_type&)
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json binary(typename binary_t::container_type&& init)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json binary(
+        typename binary_t::container_type&& init)
     {
       auto res = basic_json();
       res.m_type = value_t::binary;
@@ -17392,8 +17481,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /// @copydoc binary(const typename binary_t::container_type&, std::uint8_t)
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json binary(typename binary_t::container_type&& init, std::uint8_t subtype)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json binary(
+        typename binary_t::container_type&& init,
+        std::uint8_t subtype)
     {
       auto res = basic_json();
       res.m_type = value_t::binary;
@@ -17438,8 +17528,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 1.0.0
     */
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json array(initializer_list_t init = {})
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json array(initializer_list_t init = {})
     {
       return basic_json(init, false, value_t::array);
     }
@@ -17482,8 +17571,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 1.0.0
     */
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json object(initializer_list_t init = {})
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json object(initializer_list_t init = {})
     {
       return basic_json(init, false, value_t::object);
     }
@@ -19439,7 +19527,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         return default_value;
       }
 
-      _az_JSON_THROW(type_error::create(306, "cannot use value() with " + std::string(type_name())));
+      _az_JSON_THROW(
+          type_error::create(306, "cannot use value() with " + std::string(type_name())));
     }
 
     /*!
@@ -19507,15 +19596,16 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         _az_JSON_INTERNAL_CATCH(out_of_range&) { return default_value; }
       }
 
-      _az_JSON_THROW(type_error::create(306, "cannot use value() with " + std::string(type_name())));
+      _az_JSON_THROW(
+          type_error::create(306, "cannot use value() with " + std::string(type_name())));
     }
 
     /*!
     @brief overload for a default value of type const char*
     @copydoc basic_json::value(const json_pointer&, ValueType) const
     */
-    _az_JSON_HEDLEY_NON_NULL(3)
-    string_t value(const json_pointer& ptr, const char* default_value) const
+    _az_JSON_HEDLEY_NON_NULL(3) string_t
+        value(const json_pointer& ptr, const char* default_value) const
     {
       return value(ptr, string_t(default_value));
     }
@@ -19869,7 +19959,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         return m_value.object->erase(key);
       }
 
-      _az_JSON_THROW(type_error::create(307, "cannot use erase() with " + std::string(type_name())));
+      _az_JSON_THROW(
+          type_error::create(307, "cannot use erase() with " + std::string(type_name())));
     }
 
     /*!
@@ -19911,7 +20002,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
       else
       {
-        _az_JSON_THROW(type_error::create(307, "cannot use erase() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(307, "cannot use erase() with " + std::string(type_name())));
       }
     }
 
@@ -20383,8 +20475,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
                 future 4.0.0 of the library. Please use @ref items() instead;
                 that is, replace `json::iterator_wrapper(j)` with `j.items()`.
     */
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
-    static iteration_proxy<iterator> iterator_wrapper(reference ref) noexcept
+    _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.1.0,
+        items()) static iteration_proxy<iterator> iterator_wrapper(reference ref) noexcept
     {
       return ref.items();
     }
@@ -20392,8 +20485,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     /*!
     @copydoc iterator_wrapper(reference)
     */
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
-    static iteration_proxy<const_iterator> iterator_wrapper(const_reference ref) noexcept
+    _az_JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items()) static iteration_proxy<
+        const_iterator> iterator_wrapper(const_reference ref) noexcept
     {
       return ref.items();
     }
@@ -21126,7 +21219,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         return insert_iterator(pos, val);
       }
 
-      _az_JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name())));
+      _az_JSON_THROW(
+          type_error::create(309, "cannot use insert() with " + std::string(type_name())));
     }
 
     /*!
@@ -21174,7 +21268,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         return insert_iterator(pos, cnt, val);
       }
 
-      _az_JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name())));
+      _az_JSON_THROW(
+          type_error::create(309, "cannot use insert() with " + std::string(type_name())));
     }
 
     /*!
@@ -21212,7 +21307,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // insert only works for arrays
       if (_az_JSON_HEDLEY_UNLIKELY(not is_array()))
       {
-        _az_JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(309, "cannot use insert() with " + std::string(type_name())));
       }
 
       // check if iterator pos fits to this JSON value
@@ -21229,7 +21325,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
       if (_az_JSON_HEDLEY_UNLIKELY(first.m_object == this))
       {
-        _az_JSON_THROW(invalid_iterator::create(211, "passed iterators may not belong to container"));
+        _az_JSON_THROW(
+            invalid_iterator::create(211, "passed iterators may not belong to container"));
       }
 
       // insert to array and return iterator
@@ -21265,7 +21362,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // insert only works for arrays
       if (_az_JSON_HEDLEY_UNLIKELY(not is_array()))
       {
-        _az_JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(309, "cannot use insert() with " + std::string(type_name())));
       }
 
       // check if iterator pos fits to this JSON value
@@ -21306,7 +21404,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // insert only works for objects
       if (_az_JSON_HEDLEY_UNLIKELY(not is_object()))
       {
-        _az_JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(309, "cannot use insert() with " + std::string(type_name())));
       }
 
       // check if range iterators belong to the same JSON object
@@ -21318,7 +21417,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // passed iterators must belong to objects
       if (_az_JSON_HEDLEY_UNLIKELY(not first.m_object->is_object()))
       {
-        _az_JSON_THROW(invalid_iterator::create(202, "iterators first and last must point to objects"));
+        _az_JSON_THROW(
+            invalid_iterator::create(202, "iterators first and last must point to objects"));
       }
 
       m_value.object->insert(first.m_it.object_iterator, last.m_it.object_iterator);
@@ -21355,7 +21455,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
       if (_az_JSON_HEDLEY_UNLIKELY(not is_object()))
       {
-        _az_JSON_THROW(type_error::create(312, "cannot use update() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(312, "cannot use update() with " + std::string(type_name())));
       }
       if (_az_JSON_HEDLEY_UNLIKELY(not j.is_object()))
       {
@@ -21407,7 +21508,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
       if (_az_JSON_HEDLEY_UNLIKELY(not is_object()))
       {
-        _az_JSON_THROW(type_error::create(312, "cannot use update() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(312, "cannot use update() with " + std::string(type_name())));
       }
 
       // check if range iterators belong to the same JSON object
@@ -21417,9 +21519,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
 
       // passed iterators must belong to objects
-      if (_az_JSON_HEDLEY_UNLIKELY(not first.m_object->is_object() or not last.m_object->is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(
+              not first.m_object->is_object() or not last.m_object->is_object()))
       {
-        _az_JSON_THROW(invalid_iterator::create(202, "iterators first and last must point to objects"));
+        _az_JSON_THROW(
+            invalid_iterator::create(202, "iterators first and last must point to objects"));
       }
 
       for (auto it = first; it != last; ++it)
@@ -21484,7 +21588,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
       else
       {
-        _az_JSON_THROW(type_error::create(310, "cannot use swap() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(310, "cannot use swap() with " + std::string(type_name())));
       }
     }
 
@@ -21517,7 +21622,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
       else
       {
-        _az_JSON_THROW(type_error::create(310, "cannot use swap() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(310, "cannot use swap() with " + std::string(type_name())));
       }
     }
 
@@ -21550,7 +21656,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
       else
       {
-        _az_JSON_THROW(type_error::create(310, "cannot use swap() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(310, "cannot use swap() with " + std::string(type_name())));
       }
     }
 
@@ -21583,7 +21690,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
       else
       {
-        _az_JSON_THROW(type_error::create(310, "cannot use swap() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(310, "cannot use swap() with " + std::string(type_name())));
       }
     }
 
@@ -21597,7 +21705,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
       else
       {
-        _az_JSON_THROW(type_error::create(310, "cannot use swap() with " + std::string(type_name())));
+        _az_JSON_THROW(
+            type_error::create(310, "cannot use swap() with " + std::string(type_name())));
       }
     }
 
@@ -22140,8 +22249,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
                 instead; that is, replace calls like `j >> o;` with `o << j;`.
     @since version 1.0.0; deprecated since version 3.0.0
     */
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator<<(std::ostream&, const basic_json&))
-    friend std::ostream& operator>>(const basic_json& j, std::ostream& o) { return o << j; }
+    _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.0.0,
+        operator<<(std::ostream&, const basic_json&)) friend std::ostream&
+    operator>>(const basic_json& j, std::ostream& o)
+    {
+      return o << j;
+    }
 
     /// @}
 
@@ -22247,12 +22361,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return result;
     }
 
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, parse(ptr, ptr + len))
-    static basic_json parse(
-        detail::span_input_adapter&& i,
-        const parser_callback_t cb = nullptr,
-        const bool allow_exceptions = true)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.8.0,
+        parse(ptr, ptr + len)) static basic_json
+        parse(
+            detail::span_input_adapter&& i,
+            const parser_callback_t cb = nullptr,
+            const bool allow_exceptions = true)
     {
       basic_json result;
       parser(i.get(), cb, allow_exceptions).parse(true, result);
@@ -22296,9 +22411,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return parser(detail::input_adapter(std::move(first), std::move(last))).accept(true);
     }
 
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, accept(ptr, ptr + len))
-    static bool accept(detail::span_input_adapter&& i) { return parser(i.get()).accept(true); }
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.8.0,
+        accept(ptr, ptr + len)) static bool accept(detail::span_input_adapter&& i)
+    {
+      return parser(i.get()).accept(true);
+    }
 
     /*!
     @brief generate SAX events
@@ -22338,8 +22456,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @since version 3.2.0
     */
     template <typename InputType, typename SAX>
-    _az_JSON_HEDLEY_NON_NULL(2)
-    static bool sax_parse(
+    _az_JSON_HEDLEY_NON_NULL(2) static bool sax_parse(
         InputType&& i,
         SAX* sax,
         input_format_t format = input_format_t::json,
@@ -22353,8 +22470,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     template <class IteratorType, class SAX>
-    _az_JSON_HEDLEY_NON_NULL(3)
-    static bool sax_parse(
+    _az_JSON_HEDLEY_NON_NULL(3) static bool sax_parse(
         IteratorType first,
         IteratorType last,
         SAX* sax,
@@ -22370,11 +22486,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     template <typename SAX>
     _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, sax_parse(ptr, ptr + len, ...))
-    _az_JSON_HEDLEY_NON_NULL(2) static bool sax_parse(
-        detail::span_input_adapter&& i,
-        SAX* sax,
-        input_format_t format = input_format_t::json,
-        const bool strict = true)
+        _az_JSON_HEDLEY_NON_NULL(2) static bool sax_parse(
+            detail::span_input_adapter&& i,
+            SAX* sax,
+            input_format_t format = input_format_t::json,
+            const bool strict = true)
     {
       auto ia = i.get();
       return format == input_format_t::json
@@ -22391,8 +22507,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
                 instead; that is, replace calls like `j << i;` with `i >> j;`.
     @since version 1.0.0; deprecated since version 3.0.0
     */
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator>>(std::istream&, basic_json&))
-    friend std::istream& operator<<(basic_json& j, std::istream& i) { return operator>>(i, j); }
+    _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.0.0,
+        operator>>(std::istream&, basic_json&)) friend std::istream&
+    operator<<(basic_json& j, std::istream& i)
+    {
+      return operator>>(i, j);
+    }
 
     /*!
     @brief deserialize from stream
@@ -22462,8 +22583,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @since version 1.0.0, public since 2.1.0, `const char*` and `noexcept`
     since 3.0.0
     */
-    _az_JSON_HEDLEY_RETURNS_NON_NULL
-    const char* type_name() const noexcept
+    _az_JSON_HEDLEY_RETURNS_NON_NULL const char* type_name() const noexcept
     {
       {
         switch (m_type)
@@ -23063,12 +23183,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return from_cbor(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_cbor(ptr, ptr + len))
-    static basic_json from_cbor(
-        detail::span_input_adapter&& i,
-        const bool strict = true,
-        const bool allow_exceptions = true)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.8.0,
+        from_cbor(ptr, ptr + len)) static basic_json
+        from_cbor(
+            detail::span_input_adapter&& i,
+            const bool strict = true,
+            const bool allow_exceptions = true)
     {
       basic_json result;
       detail::json_sax_dom_parser<basic_json> sdp(result, allow_exceptions);
@@ -23209,12 +23330,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return from_msgpack(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_msgpack(ptr, ptr + len))
-    static basic_json from_msgpack(
-        detail::span_input_adapter&& i,
-        const bool strict = true,
-        const bool allow_exceptions = true)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.8.0,
+        from_msgpack(ptr, ptr + len)) static basic_json
+        from_msgpack(
+            detail::span_input_adapter&& i,
+            const bool strict = true,
+            const bool allow_exceptions = true)
     {
       basic_json result;
       detail::json_sax_dom_parser<basic_json> sdp(result, allow_exceptions);
@@ -23330,12 +23452,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return from_ubjson(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_ubjson(ptr, ptr + len))
-    static basic_json from_ubjson(
-        detail::span_input_adapter&& i,
-        const bool strict = true,
-        const bool allow_exceptions = true)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.8.0,
+        from_ubjson(ptr, ptr + len)) static basic_json
+        from_ubjson(
+            detail::span_input_adapter&& i,
+            const bool strict = true,
+            const bool allow_exceptions = true)
     {
       basic_json result;
       detail::json_sax_dom_parser<basic_json> sdp(result, allow_exceptions);
@@ -23450,12 +23573,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return from_bson(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    _az_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_bson(ptr, ptr + len))
-    static basic_json from_bson(
-        detail::span_input_adapter&& i,
-        const bool strict = true,
-        const bool allow_exceptions = true)
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT _az_JSON_HEDLEY_DEPRECATED_FOR(
+        3.8.0,
+        from_bson(ptr, ptr + len)) static basic_json
+        from_bson(
+            detail::span_input_adapter&& i,
+            const bool strict = true,
+            const bool allow_exceptions = true)
     {
       basic_json result;
       detail::json_sax_dom_parser<basic_json> sdp(result, allow_exceptions);
@@ -24024,8 +24148,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 2.0.0
     */
-    _az_JSON_HEDLEY_WARN_UNUSED_RESULT
-    static basic_json diff(
+    _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json diff(
         const basic_json& source,
         const basic_json& target,
         const std::string& path = "")
@@ -24217,8 +24340,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   @return a std::string object
   */
 
-  _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION
-  std::string to_string(const _az_NLOHMANN_BASIC_JSON_TPL& j) { return j.dump(); }
+  _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION std::string to_string(
+      const _az_NLOHMANN_BASIC_JSON_TPL& j)
+  {
+    return j.dump();
+  }
 }}}} // namespace Azure::Core::Internal::Json
 
 ///////////////////////
