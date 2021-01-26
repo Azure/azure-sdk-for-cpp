@@ -45,7 +45,6 @@ stages:
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest
-      timeoutInMinutes: 90
       dependsOn: []
       jobs:
         - template: /eng/pipelines/templates/jobs/archetype-sdk-tests.yml
