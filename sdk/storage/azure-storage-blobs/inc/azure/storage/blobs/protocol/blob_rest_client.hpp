@@ -441,48 +441,48 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<Azure::Core::Http::Range> ClearRanges;
     }; // struct GetPageBlobPageRangesResult
 
-    enum class ListBlobContainersIncludeItem
+    enum class ListBlobContainersIncludeFlags
     {
       None = 0,
       Metadata = 1,
       Deleted = 2,
-    }; // bitwise enum ListBlobContainersIncludeItem
+    }; // bitwise enum ListBlobContainersIncludeFlags
 
-    inline ListBlobContainersIncludeItem operator|(
-        ListBlobContainersIncludeItem lhs,
-        ListBlobContainersIncludeItem rhs)
+    inline ListBlobContainersIncludeFlags operator|(
+        ListBlobContainersIncludeFlags lhs,
+        ListBlobContainersIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListBlobContainersIncludeItem>;
-      return static_cast<ListBlobContainersIncludeItem>(
+      using type = std::underlying_type_t<ListBlobContainersIncludeFlags>;
+      return static_cast<ListBlobContainersIncludeFlags>(
           static_cast<type>(lhs) | static_cast<type>(rhs));
     }
 
-    inline ListBlobContainersIncludeItem& operator|=(
-        ListBlobContainersIncludeItem& lhs,
-        ListBlobContainersIncludeItem rhs)
+    inline ListBlobContainersIncludeFlags& operator|=(
+        ListBlobContainersIncludeFlags& lhs,
+        ListBlobContainersIncludeFlags rhs)
     {
       lhs = lhs | rhs;
       return lhs;
     }
 
-    inline ListBlobContainersIncludeItem operator&(
-        ListBlobContainersIncludeItem lhs,
-        ListBlobContainersIncludeItem rhs)
+    inline ListBlobContainersIncludeFlags operator&(
+        ListBlobContainersIncludeFlags lhs,
+        ListBlobContainersIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListBlobContainersIncludeItem>;
-      return static_cast<ListBlobContainersIncludeItem>(
+      using type = std::underlying_type_t<ListBlobContainersIncludeFlags>;
+      return static_cast<ListBlobContainersIncludeFlags>(
           static_cast<type>(lhs) & static_cast<type>(rhs));
     }
 
-    inline ListBlobContainersIncludeItem& operator&=(
-        ListBlobContainersIncludeItem& lhs,
-        ListBlobContainersIncludeItem rhs)
+    inline ListBlobContainersIncludeFlags& operator&=(
+        ListBlobContainersIncludeFlags& lhs,
+        ListBlobContainersIncludeFlags rhs)
     {
       lhs = lhs & rhs;
       return lhs;
     }
 
-    enum class ListBlobsIncludeItem
+    enum class ListBlobsIncludeFlags
     {
       None = 0,
       Copy = 1,
@@ -491,27 +491,27 @@ namespace Azure { namespace Storage { namespace Blobs {
       Snapshots = 8,
       Versions = 16,
       UncomittedBlobs = 32,
-    }; // bitwise enum ListBlobsIncludeItem
+    }; // bitwise enum ListBlobsIncludeFlags
 
-    inline ListBlobsIncludeItem operator|(ListBlobsIncludeItem lhs, ListBlobsIncludeItem rhs)
+    inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListBlobsIncludeItem>;
-      return static_cast<ListBlobsIncludeItem>(static_cast<type>(lhs) | static_cast<type>(rhs));
+      using type = std::underlying_type_t<ListBlobsIncludeFlags>;
+      return static_cast<ListBlobsIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
     }
 
-    inline ListBlobsIncludeItem& operator|=(ListBlobsIncludeItem& lhs, ListBlobsIncludeItem rhs)
+    inline ListBlobsIncludeFlags& operator|=(ListBlobsIncludeFlags& lhs, ListBlobsIncludeFlags rhs)
     {
       lhs = lhs | rhs;
       return lhs;
     }
 
-    inline ListBlobsIncludeItem operator&(ListBlobsIncludeItem lhs, ListBlobsIncludeItem rhs)
+    inline ListBlobsIncludeFlags operator&(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListBlobsIncludeItem>;
-      return static_cast<ListBlobsIncludeItem>(static_cast<type>(lhs) & static_cast<type>(rhs));
+      using type = std::underlying_type_t<ListBlobsIncludeFlags>;
+      return static_cast<ListBlobsIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
     }
 
-    inline ListBlobsIncludeItem& operator&=(ListBlobsIncludeItem& lhs, ListBlobsIncludeItem rhs)
+    inline ListBlobsIncludeFlags& operator&=(ListBlobsIncludeFlags& lhs, ListBlobsIncludeFlags rhs)
     {
       lhs = lhs & rhs;
       return lhs;
@@ -1140,19 +1140,19 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     using namespace Models;
 
-    inline std::string ListBlobContainersIncludeItemToString(
-        const ListBlobContainersIncludeItem& val)
+    inline std::string ListBlobContainersIncludeFlagsToString(
+        const ListBlobContainersIncludeFlags& val)
     {
-      ListBlobContainersIncludeItem value_list[] = {
-          ListBlobContainersIncludeItem::Metadata,
-          ListBlobContainersIncludeItem::Deleted,
+      ListBlobContainersIncludeFlags value_list[] = {
+          ListBlobContainersIncludeFlags::Metadata,
+          ListBlobContainersIncludeFlags::Deleted,
       };
       const char* string_list[] = {
           "metadata",
           "deleted",
       };
       std::string ret;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeItem); ++i)
+      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {
@@ -1166,15 +1166,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       return ret;
     }
 
-    inline std::string ListBlobsIncludeItemToString(const ListBlobsIncludeItem& val)
+    inline std::string ListBlobsIncludeFlagsToString(const ListBlobsIncludeFlags& val)
     {
-      ListBlobsIncludeItem value_list[] = {
-          ListBlobsIncludeItem::Copy,
-          ListBlobsIncludeItem::Deleted,
-          ListBlobsIncludeItem::Metadata,
-          ListBlobsIncludeItem::Snapshots,
-          ListBlobsIncludeItem::Versions,
-          ListBlobsIncludeItem::UncomittedBlobs,
+      ListBlobsIncludeFlags value_list[] = {
+          ListBlobsIncludeFlags::Copy,
+          ListBlobsIncludeFlags::Deleted,
+          ListBlobsIncludeFlags::Metadata,
+          ListBlobsIncludeFlags::Snapshots,
+          ListBlobsIncludeFlags::Versions,
+          ListBlobsIncludeFlags::UncomittedBlobs,
       };
       const char* string_list[] = {
           "copy",
@@ -1185,7 +1185,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "uncommittedblobs",
       };
       std::string ret;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeItem); ++i)
+      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {
@@ -1209,7 +1209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> Prefix;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
-          ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
+          ListBlobContainersIncludeFlags Include = ListBlobContainersIncludeFlags::None;
         }; // struct ListBlobContainersSinglePageOptions
 
         static Azure::Core::Response<ListBlobContainersSinglePageResult>
@@ -1244,13 +1244,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "maxresults", std::to_string(options.MaxResults.GetValue()));
           }
-          std::string list_blob_containers_include_item
-              = ListBlobContainersIncludeItemToString(options.Include);
-          if (!list_blob_containers_include_item.empty())
+          std::string list_blob_containers_include_flags
+              = ListBlobContainersIncludeFlagsToString(options.Include);
+          if (!list_blob_containers_include_flags.empty())
           {
             request.GetUrl().AppendQueryParameter(
                 "include",
-                Storage::Details::UrlEncodeQueryParameter(list_blob_containers_include_item));
+                Storage::Details::UrlEncodeQueryParameter(list_blob_containers_include_flags));
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -3376,7 +3376,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> Prefix;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
-          ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
+          ListBlobsIncludeFlags Include = ListBlobsIncludeFlags::None;
         }; // struct ListBlobsSinglePageOptions
 
         static Azure::Core::Response<ListBlobsSinglePageResult> ListBlobsSinglePage(
@@ -3411,11 +3411,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "maxresults", std::to_string(options.MaxResults.GetValue()));
           }
-          std::string list_blobs_include_item = ListBlobsIncludeItemToString(options.Include);
-          if (!list_blobs_include_item.empty())
+          std::string list_blobs_include_flags = ListBlobsIncludeFlagsToString(options.Include);
+          if (!list_blobs_include_flags.empty())
           {
             request.GetUrl().AppendQueryParameter(
-                "include", Storage::Details::UrlEncodeQueryParameter(list_blobs_include_item));
+                "include", Storage::Details::UrlEncodeQueryParameter(list_blobs_include_flags));
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -3445,7 +3445,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> Delimiter;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
-          ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
+          ListBlobsIncludeFlags Include = ListBlobsIncludeFlags::None;
         }; // struct ListBlobsByHierarchySinglePageOptions
 
         static Azure::Core::Response<ListBlobsByHierarchySinglePageResult>
@@ -3487,11 +3487,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "maxresults", std::to_string(options.MaxResults.GetValue()));
           }
-          std::string list_blobs_include_item = ListBlobsIncludeItemToString(options.Include);
-          if (!list_blobs_include_item.empty())
+          std::string list_blobs_include_flags = ListBlobsIncludeFlagsToString(options.Include);
+          if (!list_blobs_include_flags.empty())
           {
             request.GetUrl().AppendQueryParameter(
-                "include", Storage::Details::UrlEncodeQueryParameter(list_blobs_include_item));
+                "include", Storage::Details::UrlEncodeQueryParameter(list_blobs_include_flags));
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
