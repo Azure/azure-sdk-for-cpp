@@ -54,7 +54,7 @@ namespace Azure { namespace Core {
        | "1"    | "1"    | match             | match           |
        +--------+--------+-------------------+-----------------+
 
-       // etag:                            //This is possible and means no etag is present
+    // etag:                            //This is possible and means no etag is present
     // etag:""
     // etag:"*"                         //This means the etag is value '*'
     // etag:"some value"                //This means the etag is value 'some value'
