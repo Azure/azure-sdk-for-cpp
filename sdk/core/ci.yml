@@ -33,7 +33,7 @@ stages:
       ServiceDirectory: core
       # CI has static code analisys disabled, while LiveTest will have it enabled
       CtestRegex: azure-core.
-      LiveTestCtestRegex: azure-core.
+      LiveTestCtestRegex: "azure-core.|json-test"
       Artifacts:
         - Name: azure-core
           Path: azure-core
