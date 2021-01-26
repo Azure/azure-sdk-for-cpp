@@ -2,6 +2,10 @@
 
 ## 1.0.0-beta.5 (Unreleased)
 
+### New Features
+
+- Added `Azure::Core:Http::ValuePolicy`.
+
 ### Breaking Changes
 
 - Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.

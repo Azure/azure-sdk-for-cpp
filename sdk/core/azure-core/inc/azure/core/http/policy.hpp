@@ -16,7 +16,13 @@
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
+#include <cstddef>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -207,6 +213,98 @@ namespace Azure { namespace Core { namespace Http {
         Context const& ctx,
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override;
+  };
+
+  class ValuePolicy;
+
+  /**
+   * @brief @ValuePolicy options.
+   */
+  class ValuePolicyOptions {
+    friend class ValuePolicy;
+
+  private:
+    std::map<std::string, std::string> m_headerValues;
+    std::map<std::string, std::string> m_queryValues;
+
+    static void AppendToMapOverwritingExistingValues(
+        std::map<std::string, std::string>& destination,
+        std::map<std::string, std::string> const& source)
+    {
+      for (auto const& srcPair : source)
+      {
+        destination[srcPair.first] = srcPair.second;
+      }
+    }
+
+  public:
+    /**
+     * @brief Add values (key-value pairs) that shall be applied to HTTP request headers.
+     * @detail If a value with the a key from \p headerValues already exists in this @ValuePolicy,
+     * the new value from \p headerValues will be taken.
+     * @param headerValues Values that shall be applied.
+     */
+    void AddHeaderValues(std::map<std::string, std::string> const& headerValues)
+    {
+      AppendToMapOverwritingExistingValues(m_headerValues, headerValues);
+    }
+
+    /**
+     * @brief Add values (key-value pairs) that shall be applied to HTTP request query paramters.
+     * @note It is the caller's responsibility to ensure that any value from \p queryValues that
+     * needs to be URL-encoded is URL-encoded.
+     * @detail If a value with the a key from \p queryValues already exists in this @ValuePolicy,
+     * the new value from \p queryValues will be taken.
+     * @param queryValues Values that shall be applied.
+     */
+    void AddQueryValues(std::map<std::string, std::string> const& queryValues)
+    {
+      AppendToMapOverwritingExistingValues(m_queryValues, queryValues);
+    }
+  };
+
+  /**
+   * @brief Value policy.
+   *
+   * @details Applies key-value pair values to each HTTP request (either HTTP headers or query
+   * parameters).
+   */
+  class ValuePolicy : public HttpPolicy {
+  private:
+    ValuePolicyOptions m_options;
+
+  public:
+    /**
+     * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
+     * @param options @ValuePolicyOptions.
+     */
+    explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
+
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<RequestIdPolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override
+    {
+      for (auto const& hdrPair : m_options.m_headerValues)
+      {
+        request.AddHeader(hdrPair.first, hdrPair.second);
+      }
+
+      {
+        auto& url = request.GetUrl();
+        for (auto const& qryPair : m_options.m_queryValues)
+        {
+          url.AppendQueryParameter(qryPair.first, qryPair.second);
+        }
+      }
+
+      return nextHttpPolicy.Send(ctx, request);
+    }
   };
 
   /**
