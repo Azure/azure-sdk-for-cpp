@@ -68,15 +68,12 @@ TEST(Policy, ValuePolicy)
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
 
-  ValuePolicyOptions options;
-  options.AddHeaderValues({{"HdrKey1", "HdrVal1"}, {"HdrKey2", "HdrVal0"}});
-  options.AddQueryValues({{"QryKey1", "QryVal0"}, {"QryKey2", "QryVal2"}});
-
-  options.AddHeaderValues({{"HdrKey2", "HdrVal2"}, {"HdrKey3", "HdrVal3"}});
-  options.AddQueryValues({{"QryKey1", "QryVal1"}, {"QryKey3", "QryVal3"}});
+  Azure::Core::Http::Details::ValuePolicyOptions options
+      = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
+         {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}};
 
   std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(std::make_unique<ValuePolicy>(options));
+  policies.emplace_back(std::make_unique<Azure::Core::Http::Details::ValuePolicy>(options));
   policies.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline(policies);
 
@@ -87,12 +84,6 @@ TEST(Policy, ValuePolicy)
   auto headers = request.GetHeaders();
   auto queryParams = request.GetUrl().GetQueryParameters();
 
-  ASSERT_EQ(
-      headers,
-      decltype(headers)({{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}, {"hdrkey3", "HdrVal3"}}));
-
-  ASSERT_EQ(
-      queryParams,
-      decltype(queryParams)(
-          {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}, {"QryKey3", "QryVal3"}}));
+  ASSERT_EQ(headers, decltype(headers)({{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}}));
+  ASSERT_EQ(queryParams, decltype(queryParams)({{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}));
 }

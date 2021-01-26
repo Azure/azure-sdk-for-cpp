@@ -216,95 +216,6 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy nextHttpPolicy) const override;
   };
 
-  class ValuePolicy;
-
-  /**
-   * @brief @ValuePolicy options.
-   */
-  class ValuePolicyOptions {
-    friend class ValuePolicy;
-
-  private:
-    std::map<std::string, std::string> m_headerValues;
-    std::map<std::string, std::string> m_queryValues;
-
-  public:
-    /**
-     * @brief Add values (key-value pairs) that shall be applied to HTTP request headers.
-     * @detail If a value with the a key from \p headerValues already exists in this @ValuePolicy,
-     * the new value from \p headerValues will be taken.
-     * @note Header keys are case-insensitive.
-     * @param headerValues Values that shall be applied.
-     */
-    void AddHeaderValues(std::map<std::string, std::string> const& headerValues)
-    {
-      for (auto const& hdrPair : headerValues)
-      {
-        m_headerValues[Azure::Core::Internal::Strings::ToLower(hdrPair.first)] = hdrPair.second;
-      }
-    }
-
-    /**
-     * @brief Add values (key-value pairs) that shall be applied to HTTP request query paramters.
-     * @note It is the caller's responsibility to ensure that any value from \p queryValues that
-     * needs to be URL-encoded is URL-encoded.
-     * @detail If a value with the a key from \p queryValues already exists in this @ValuePolicy,
-     * the new value from \p queryValues will be taken.
-     * @param queryValues Values that shall be applied.
-     */
-    void AddQueryValues(std::map<std::string, std::string> const& queryValues)
-    {
-      for (auto const& qryPair : queryValues)
-      {
-        m_queryValues[qryPair.first] = qryPair.second;
-      }
-    }
-  };
-
-  /**
-   * @brief Value policy.
-   *
-   * @details Applies key-value pair values to each HTTP request (either HTTP headers or query
-   * parameters).
-   */
-  class ValuePolicy : public HttpPolicy {
-  private:
-    ValuePolicyOptions m_options;
-
-  public:
-    /**
-     * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
-     * @param options @ValuePolicyOptions.
-     */
-    explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
-
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<ValuePolicy>(*this);
-    }
-
-    std::unique_ptr<RawResponse> Send(
-        Context const& ctx,
-        Request& request,
-        NextHttpPolicy nextHttpPolicy) const override
-    {
-      for (auto const& hdrPair : m_options.m_headerValues)
-      {
-        request.AddHeader(hdrPair.first, hdrPair.second);
-      }
-
-      {
-        auto& url = request.GetUrl();
-        for (auto const& qryPair : m_options.m_queryValues)
-        {
-          url.AppendQueryParameter(qryPair.first, qryPair.second);
-        }
-      }
-
-      return nextHttpPolicy.Send(ctx, request);
-    }
-  };
-
   /**
    * @brief HTTP Request ID policy.
    *
@@ -510,5 +421,60 @@ namespace Azure { namespace Core { namespace Http {
     /// HTTP Transport adapter.
     static constexpr auto const HttpTransportAdapter = Classification(4);
   };
+
+  namespace Details {
+    /**
+     * @brief @ValuePolicy options.
+     */
+    struct ValuePolicyOptions
+    {
+      std::map<std::string, std::string> HeaderValues;
+      std::map<std::string, std::string> QueryValues;
+    };
+
+    /**
+     * @brief Value policy.
+     *
+     * @details Applies key-value pair values to each HTTP request (either HTTP headers or query
+     * parameters).
+     */
+    class ValuePolicy : public HttpPolicy {
+    private:
+      ValuePolicyOptions m_options;
+
+    public:
+      /**
+       * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
+       * @param options @ValuePolicyOptions.
+       */
+      explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<ValuePolicy>(*this);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Context const& ctx,
+          Request& request,
+          NextHttpPolicy nextHttpPolicy) const override
+      {
+        for (auto const& hdrPair : m_options.HeaderValues)
+        {
+          request.AddHeader(hdrPair.first, hdrPair.second);
+        }
+
+        {
+          auto& url = request.GetUrl();
+          for (auto const& qryPair : m_options.QueryValues)
+          {
+            url.AppendQueryParameter(qryPair.first, qryPair.second);
+          }
+        }
+
+        return nextHttpPolicy.Send(ctx, request);
+      }
+    };
+  } // namespace Details
 
 }}} // namespace Azure::Core::Http
