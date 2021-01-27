@@ -48,7 +48,7 @@ set(files
     src/unit-alt-string.cpp
     #src/unit-bson.cpp                      - Not required.
     src/unit-capacity.cpp
-    src/unit-cbor.cpp
+    #src/unit-cbor.cpp                      - Not required.
     src/unit-class_const_iterator.cpp
     src/unit-class_iterator.cpp
     src/unit-class_lexer.cpp
@@ -77,11 +77,11 @@ set(files
     src/unit-pointer_access.cpp
     src/unit-readme.cpp
     src/unit-reference_access.cpp
-    ###############src/unit-regression.cpp  - No need to check for regressions as this version is unique.
+    #src/unit-regression.cpp                - No need to check for regressions as this version is unique.
     src/unit-serialization.cpp
     src/unit-testsuites.cpp
-    #src/unit-to_chars.cpp                  - `reinterpret_bits` not supported.
-    src/unit-ubjson.cpp
+    src/unit-to_chars.cpp
+    #src/unit-ubjson.cpp                    - Not Required
     src/unit-udt.cpp
     #src/unit-unicode.cpp                   - Takes long time to complete.
     src/unit-user_defined_input.cpp
