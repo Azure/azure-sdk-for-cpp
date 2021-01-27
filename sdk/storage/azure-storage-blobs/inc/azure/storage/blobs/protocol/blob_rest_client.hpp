@@ -1025,7 +1025,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobHttpHeaders HttpHeaders;
       Storage::Metadata Metadata;
       Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::DateTime LastModified;
       std::string ETag;
@@ -1052,7 +1052,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::Http::Range ContentRange;
       int64_t BlobSize = 0;
@@ -1082,7 +1082,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Storage::Metadata Metadata;
       Models::BlobType BlobType;
@@ -4534,7 +4534,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ExpiryTime)
               {
-                ret.ExpiriesOn = Azure::Core::DateTime::Parse(
+                ret.ExpiresOn = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
@@ -5109,7 +5109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_expiry_time__iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
           if (x_ms_expiry_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.ExpiriesOn = Azure::Core::DateTime::Parse(
+            response.ExpiresOn = Azure::Core::DateTime::Parse(
                 x_ms_expiry_time__iterator->second, Azure::Core::DateTime::DateFormat::Rfc1123);
           }
           auto x_ms_last_access_time__iterator
@@ -5475,7 +5475,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_expiry_time__iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
           if (x_ms_expiry_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.ExpiriesOn = Azure::Core::DateTime::Parse(
+            response.ExpiresOn = Azure::Core::DateTime::Parse(
                 x_ms_expiry_time__iterator->second, Azure::Core::DateTime::DateFormat::Rfc1123);
           }
           auto x_ms_last_access_time__iterator
