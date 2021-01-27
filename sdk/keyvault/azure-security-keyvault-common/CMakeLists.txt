@@ -14,8 +14,8 @@ include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 

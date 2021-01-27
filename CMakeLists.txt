@@ -55,10 +55,10 @@ if(BUILD_TESTING)
 endif()
 
 # compiler warning flags globally
-include(global_compile_options)
+include(AzureGlobalCompileOptions)
 
 # Documentation automation function
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
+include(AzureGlobalCompileOptions)
 
 # Functions for library versions
 include(AzureVersion)
