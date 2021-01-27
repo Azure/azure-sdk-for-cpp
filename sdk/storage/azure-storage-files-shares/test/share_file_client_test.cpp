@@ -652,9 +652,6 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto destFileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
-      Files::Shares::StartCopyShareFileOptions copyOptions;
-      copyOptions.PermissionCopyMode = Files::Shares::Models::PermissionCopyModeType::Override;
-      EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUrl(), copyOptions), std::runtime_error);
     }
   }
 
