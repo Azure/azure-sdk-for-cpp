@@ -72,7 +72,7 @@ set(files
     #src/unit-merge_patch.cpp               - No `_json` and `R` literal support.
     #src/unit-meta.cpp                      - No meta() required/supported.
     src/unit-modifiers.cpp
-    src/unit-msgpack.cpp
+    #src/unit-msgpack.cpp                   - Not required.
     src/unit-noexcept.cpp
     src/unit-pointer_access.cpp
     src/unit-readme.cpp
@@ -83,7 +83,7 @@ set(files
     #src/unit-to_chars.cpp                  - `reinterpret_bits` not supported.
     src/unit-ubjson.cpp
     src/unit-udt.cpp
-    src/unit-unicode.cpp
+    #src/unit-unicode.cpp                   - Takes long time to complete.
     src/unit-user_defined_input.cpp
     src/unit-wstring.cpp
     )
