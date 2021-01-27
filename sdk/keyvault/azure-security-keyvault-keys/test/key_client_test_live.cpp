@@ -7,15 +7,19 @@
 
 #include <azure/keyvault/key_vault.hpp>
 
+#include <string>
+
 using namespace Azure::Security::KeyVault::Keys::Test;
 
 TEST_F(KeyVaultClientTest, SendRequestDefault)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
+  // Assuming and RS Key exists in the KeyVault Account.
+  std::string keyName("testKey");
 
-  auto r = keyClient.GetKey("testKey");
-  auto t = r.ExtractValue();
-  auto rr = r.ExtractRawResponse();
+  auto r = keyClient.GetKey(keyName);
+  auto key = r.ExtractValue();
 
-  EXPECT_EQ(t.Name(), "testKey");
+  EXPECT_EQ(key.Name(), keyName);
+  EXPECT_EQ(key.GetKeyType(), Azure::Security::KeyVault::Keys::KeyTypeEnum::Rsa);
 }
