@@ -566,7 +566,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ShareSnapshot;
       std::string DirectoryPath;
       std::string Prefix;
-      std::string PreviousContinuationToken;
       int32_t PageSizeHint = int32_t();
       FilesAndDirectoriesListSinglePage SinglePage;
       std::string ContinuationToken;
@@ -584,7 +583,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::string ServiceEndpoint;
       std::string Prefix;
-      std::string PreviousContinuationToken;
       int32_t PageSizeHint = int32_t();
       std::vector<ShareItem> Items;
       std::string ContinuationToken;
@@ -608,7 +606,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::string ServiceEndpoint;
       std::string Prefix;
-      std::string PreviousContinuationToken;
       int32_t PageSizeHint = int32_t();
       std::vector<ShareItem> Items;
       std::string ContinuationToken;
@@ -816,7 +813,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ShareSnapshot;
       std::string DirectoryPath;
       std::string Prefix;
-      std::string PreviousContinuationToken;
       int32_t PageSizeHint = int32_t();
       FilesAndDirectoriesListSinglePage SinglePage;
       std::string ContinuationToken;
@@ -2375,7 +2371,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           enum class XmlTagName
           {
             EnumerationResults,
-            Marker,
             MaxResults,
             NextMarker,
             Prefix,
@@ -2409,10 +2404,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
               {
                 path.emplace_back(XmlTagName::EnumerationResults);
-              }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::Marker);
               }
               else if (std::strcmp(node.Name, "MaxResults") == 0)
               {
@@ -2464,12 +2455,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               {
                 result.Prefix = node.Value;
               }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::EnumerationResults
-                  && path[1] == XmlTagName::Marker)
-              {
-                result.PreviousContinuationToken = node.Value;
-              }
             }
             else if (node.Type == Storage::Details::XmlNodeType::Attribute)
             {
@@ -2489,7 +2474,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           ServiceListSharesSinglePageResult result;
           result.ServiceEndpoint = std::move(object.ServiceEndpoint);
           result.Prefix = std::move(object.Prefix);
-          result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
           result.PageSizeHint = object.PageSizeHint;
           result.Items = std::move(object.Items);
           result.ContinuationToken = std::move(object.ContinuationToken);
@@ -4781,7 +4765,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             Entries,
             EnumerationResults,
-            Marker,
             MaxResults,
             NextMarker,
             Prefix,
@@ -4817,10 +4800,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               else if (std::strcmp(node.Name, "EnumerationResults") == 0)
               {
                 path.emplace_back(XmlTagName::EnumerationResults);
-              }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::Marker);
               }
               else if (std::strcmp(node.Name, "MaxResults") == 0)
               {
@@ -4865,12 +4844,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               {
                 result.Prefix = node.Value;
               }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::EnumerationResults
-                  && path[1] == XmlTagName::Marker)
-              {
-                result.PreviousContinuationToken = node.Value;
-              }
             }
             else if (node.Type == Storage::Details::XmlNodeType::Attribute)
             {
@@ -4912,7 +4885,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ShareSnapshot = std::move(object.ShareSnapshot);
           result.DirectoryPath = std::move(object.DirectoryPath);
           result.Prefix = std::move(object.Prefix);
-          result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
           result.PageSizeHint = object.PageSizeHint;
           result.SinglePage = std::move(object.SinglePage);
           result.ContinuationToken = std::move(object.ContinuationToken);
