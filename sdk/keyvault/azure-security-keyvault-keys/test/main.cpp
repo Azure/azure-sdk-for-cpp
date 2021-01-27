@@ -17,7 +17,8 @@ int main(int argc, char** argv)
   auto r = RUN_ALL_TESTS();
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  curl_global_cleanup();
+  // Can't call global cleanup due to: https://github.com/Azure/azure-sdk-for-cpp/issues/1499
+  // curl_global_cleanup();
 #endif
   return r;
 }
