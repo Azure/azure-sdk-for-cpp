@@ -471,10 +471,6 @@ namespace Azure { namespace Storage { namespace Test {
               Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options),
           StorageException);
       options.ExpiresOn = "Tue, 29 Sep 2100 09:53:03 GMT";
-      EXPECT_THROW(
-          client.ScheduleDeletion(
-              Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options),
-          std::runtime_error);
       options.TimeToExpireInMs = Azure::Core::Nullable<int64_t>();
       EXPECT_NO_THROW(client.ScheduleDeletion(
           Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options));
