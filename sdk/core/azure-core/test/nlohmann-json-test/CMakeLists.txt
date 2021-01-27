@@ -46,7 +46,7 @@ set(files
     src/unit-algorithms.cpp
     src/unit-allocator.cpp
     src/unit-alt-string.cpp
-    src/unit-bson.cpp
+    #src/unit-bson.cpp                      - Not required.
     src/unit-capacity.cpp
     src/unit-cbor.cpp
     src/unit-class_const_iterator.cpp

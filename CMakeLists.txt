@@ -48,7 +48,10 @@ if(BUILD_TESTING)
     include(AddGoogleTest)
     enable_testing ()
     add_subdirectory(sdk/core/azure-core/test/ut)
-    add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
+    # Set `AZURE_CORE_DISABLE_JSON_TESTS` env var to disable Json tests
+    if(NOT DEFINED ENV{AZURE_CORE_DISABLE_JSON_TESTS})
+      add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
+    endif()
 endif()
 
 # compiler warning flags globally

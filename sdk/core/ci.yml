@@ -34,7 +34,7 @@ stages:
       # CI has static code analysis disabled, while LiveTest will have it enabled
       CtestRegex: azure-core.
       LiveTestCtestRegex: '"azure-core.|json-test"'
-      LiveTestTimeoutInMinutes: 90
+      LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       Artifacts:
         - Name: azure-core
           Path: azure-core

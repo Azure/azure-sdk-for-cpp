@@ -62,6 +62,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-v --parallel 8'
+        AZURE_CORE_DISABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_test_libcurl:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -70,6 +71,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-v --parallel 8'
+        AZURE_CORE_DISABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       MacOS_x64_with_unit_test:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
