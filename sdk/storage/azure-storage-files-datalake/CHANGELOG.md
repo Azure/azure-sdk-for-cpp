@@ -35,7 +35,7 @@
 ### Other Changes and Improvements
 
 - Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
-- Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControl`.
+- Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControlList`.
 - Removed unused parameters, options, results and functions in protocol layer.
 
 ## 12.0.0-beta.6 (2020-01-14)

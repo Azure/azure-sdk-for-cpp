@@ -394,8 +394,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::GetDataLakePathAccessControlResult>
-  DataLakePathClient::GetAccessControl(const GetDataLakePathAccessControlOptions& options) const
+  Azure::Core::Response<Models::GetDataLakePathAccessControlListResult>
+  DataLakePathClient::GetAccessControlList(
+      const GetDataLakePathAccessControlListOptions& options) const
   {
     Details::DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.Action = Models::PathGetPropertiesAction::GetAccessControl;
@@ -411,7 +412,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       acl = Models::Acl::DeserializeAcls(result->Acl.GetValue());
     }
-    Models::GetDataLakePathAccessControlResult ret;
+    Models::GetDataLakePathAccessControlListResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     if (!acl.HasValue())
@@ -433,7 +434,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       ret.Permissions = result->Permissions.GetValue();
     }
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::GetDataLakePathAccessControlResult>(
+    return Azure::Core::Response<Models::GetDataLakePathAccessControlListResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 

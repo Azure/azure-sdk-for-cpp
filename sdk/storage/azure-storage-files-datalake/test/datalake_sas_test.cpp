@@ -131,19 +131,19 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_file_execute = [&](const std::string& sas) {
       fileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      EXPECT_NO_THROW(fileClient0.GetAccessControl());
+      EXPECT_NO_THROW(fileClient0.GetAccessControlList());
     };
 
     auto verify_file_ownership = [&](const std::string& sas) {
       fileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      EXPECT_NO_THROW(fileClient0.GetAccessControl());
+      EXPECT_NO_THROW(fileClient0.GetAccessControlList());
     };
 
     auto verify_file_permissions = [&](const std::string& sas) {
       fileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto acls = fileClient0.GetAccessControl()->Acls;
+      auto acls = fileClient0.GetAccessControlList()->Acls;
       EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
 

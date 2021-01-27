@@ -349,8 +349,8 @@ namespace Azure { namespace Storage { namespace Test {
           Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControl()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControl()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
