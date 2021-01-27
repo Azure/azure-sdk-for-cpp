@@ -99,6 +99,8 @@ jobs:
   - checkout: self
     submodules: recursive
 
+  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
