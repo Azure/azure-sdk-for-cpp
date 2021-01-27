@@ -80,3 +80,28 @@ gtest_discover_tests(azure-core-test
      TEST_PREFIX azure-core.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)
+
+if(BUILD_TRANSPORT_CURL)
+  ################## Azure Libcurl Core Test #################################
+  # Creating one exe file alone for this test since it requires the full control over the connection pool.
+  # This test will check that end-user can call `curl_global_cleanup()` with active handlers in the connection pool
+  # without getting errors.
+  add_executable (
+    azure-core-libcurl-test
+    azure_libcurl_core_main.cpp
+  )
+
+  if (MSVC)
+    target_compile_options(azure-core-libcurl-test PUBLIC /wd26495 /wd26812)
+  endif()
+  
+  # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
+  target_include_directories (azure-core-libcurl-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+
+  target_link_libraries(azure-core-libcurl-test PRIVATE azure-core gtest gmock)
+
+  # Use the same prefix to run this test
+  gtest_discover_tests(azure-core-libcurl-test
+        TEST_PREFIX azure-core.)
+
+endif()
