@@ -29,6 +29,9 @@ parameters:
 - name: LinuxPool
   type: string
   default: azsdk-pool-mms-ubuntu-1804-general
+- name: LiveTestTimeoutInMinutes
+  type: number
+  default: 60
 
 stages:
   - stage: Build
@@ -50,6 +53,7 @@ stages:
         - template: /eng/pipelines/templates/jobs/archetype-sdk-tests.yml
           # Code coverage is enabled by default for live tests
           parameters:
+            TimeoutInMinutes: ${{ parameters.LiveTestTimeoutInMinutes }}
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             CtestRegex: ${{ parameters.LiveTestCtestRegex }}
             Location: ${{ parameters.Location }}

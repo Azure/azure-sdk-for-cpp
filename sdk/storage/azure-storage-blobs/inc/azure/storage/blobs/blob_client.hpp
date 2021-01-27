@@ -199,9 +199,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * public or must be authenticated via a shared access signature. If the source blob is public,
      * no authentication is required to perform the copy operation.
      * @param options Optional parameters to execute this function.
-     * @return A StartCopyBlobFromUriResult describing the state of the copy operation.
+     * @return A StartCopyBlobResult describing the state of the copy operation.
      */
-    Azure::Core::Response<Models::StartCopyBlobFromUriResult> StartCopyFromUri(
+    Azure::Core::Response<Models::StartCopyBlobResult> StartCopyFromUri(
         const std::string& sourceUri,
         const StartCopyBlobFromUriOptions& options = StartCopyBlobFromUriOptions()) const;
 

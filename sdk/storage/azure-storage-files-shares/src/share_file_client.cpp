@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
       {
-        abort();
+        std::abort();
       }
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
@@ -347,9 +347,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
-          throw std::runtime_error(
-              "FilePermission or FilePermissionKey must be set if FilePermissionCopyMode is set to "
-              "PermissionCopyModeType::Override.");
+          // FilePermission or FilePermissionKey must be set if FilePermissionCopyMode is set to
+          // PermissionCopyModeType::Override.
+          std::abort();
         }
       }
     }
@@ -479,7 +479,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.TransactionalContentHash.HasValue()
         && options.TransactionalContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
     {
-      abort();
+      std::abort();
     }
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -892,7 +892,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
       {
-        abort();
+        std::abort();
       }
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
@@ -992,7 +992,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
       {
-        abort();
+        std::abort();
       }
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }

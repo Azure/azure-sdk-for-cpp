@@ -34,6 +34,8 @@ namespace Azure { namespace Core {
     OperationStatus m_status = OperationStatus::NotStarted;
 
   public:
+    virtual ~Operation() {}
+
     /**
      * @brief Final reuslt of the long-running operation.
      *
