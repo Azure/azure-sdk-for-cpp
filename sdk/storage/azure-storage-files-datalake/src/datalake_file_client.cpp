@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (options.ContentHash.HasValue()
         && options.ContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
     {
-      abort();
+      std::abort();
     }
     protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         : ret.LeaseStatus;
     ret.Metadata = std::move(result->Metadata);
     ret.CreatedOn = std::move(result->CreatedOn);
-    ret.ExpiresOn = std::move(result->ExpiriesOn);
+    ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::ReadDataLakeFileResult>(
@@ -424,7 +424,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
     if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
     {
-      throw std::runtime_error("ExpiresOn and TimeToExpireInMs should be mutually exlusive.");
+      // ExpiresOn and TimeToExpireInMs should be mutually exlusive.
+      std::abort();
     }
     if (options.ExpiresOn.HasValue())
     {

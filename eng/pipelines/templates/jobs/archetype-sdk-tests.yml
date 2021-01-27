@@ -36,6 +36,7 @@ jobs:
         CODE_COVERAGE: '${{ parameters.Coverage }}'
         # Avoid re-running tests again for code coverage since the tests were previously ran
         CODE_COVERAGE_COLLECT_ONLY: 1
+        AZURE_CORE_ENABLE_JSON_TESTS: 1
       # Not asking for any transport adapter will default to OS -> windows:winHttp or !windows:libcurl
       Win_x86_with_unit_test_winHttp:
         OSVmImage: 'windows-2019'
@@ -45,6 +46,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-v --parallel 8'
+        AZURE_CORE_ENABLE_JSON_TESTS: 1
       Win_x64_with_unit_test_winHttp:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'libxml2'
@@ -53,6 +55,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-v --parallel 8'
+        AZURE_CORE_ENABLE_JSON_TESTS: 1
       # specify libcurl to be used on Windows
       Win_x86_with_unit_test_libcurl:
         OSVmImage: 'windows-2019'
@@ -62,6 +65,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-v --parallel 8'
+        #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_test_libcurl:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -70,11 +74,13 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-v --parallel 8'
+        #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       MacOS_x64_with_unit_test:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        AZURE_CORE_ENABLE_JSON_TESTS: 1
   pool:
     vmImage: $(OSVmImage)
   variables:

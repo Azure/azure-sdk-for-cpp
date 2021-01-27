@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Sas {
       }
       else
       {
-        throw std::runtime_error("unknown ShareSasResource value");
+        throw std::invalid_argument("unknown ShareSasResource value");
       }
     }
   } // namespace

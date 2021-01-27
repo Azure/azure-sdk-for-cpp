@@ -526,9 +526,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::GetAccessControl
+   * @brief Optional parameters for PathClient::GetAccessControlList
    */
-  struct GetDataLakePathAccessControlOptions
+  struct GetDataLakePathAccessControlListOptions
   {
     /**
      * @brief Context for cancelling long running operations.

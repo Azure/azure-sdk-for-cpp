@@ -98,12 +98,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_shareUrl.RemoveQueryParameter(Details::c_ShareSnapshotQueryParameter);
+      newClient.m_shareUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareUrl.AppendQueryParameter(
-          Details::c_ShareSnapshotQueryParameter,
+          Details::ShareSnapshotQueryParameter,
           Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
@@ -285,7 +285,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
     ret.DirectoryPath = std::move(result->DirectoryPath);
     ret.Prefix = std::move(result->Prefix);
-    ret.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
     ret.PageSizeHint = result->PageSizeHint;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);

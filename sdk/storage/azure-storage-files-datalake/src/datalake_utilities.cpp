@@ -9,16 +9,16 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
 
-  const static std::string c_DfsEndPointIdentifier = ".dfs.";
-  const static std::string c_BlobEndPointIdentifier = ".blob.";
+  const static std::string DfsEndPointIdentifier = ".dfs.";
+  const static std::string BlobEndPointIdentifier = ".blob.";
 
   std::string GetBlobUrlFromUrl(const std::string& url)
   {
     std::string result = url;
-    auto pos = result.find(c_DfsEndPointIdentifier);
+    auto pos = result.find(DfsEndPointIdentifier);
     if (pos != std::string::npos)
     {
-      result.replace(pos, c_DfsEndPointIdentifier.size(), c_BlobEndPointIdentifier);
+      result.replace(pos, DfsEndPointIdentifier.size(), BlobEndPointIdentifier);
     }
     return result;
   }
@@ -26,10 +26,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   std::string GetDfsUrlFromUrl(const std::string& url)
   {
     std::string result = url;
-    auto pos = result.find(c_BlobEndPointIdentifier);
+    auto pos = result.find(BlobEndPointIdentifier);
     if (pos != std::string::npos)
     {
-      result.replace(pos, c_BlobEndPointIdentifier.size(), c_DfsEndPointIdentifier);
+      result.replace(pos, BlobEndPointIdentifier.size(), DfsEndPointIdentifier);
     }
     return result;
   }
