@@ -179,7 +179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     {
       // In case network failure during reading the body
-      std::string eTag = downloadResponse->ETag;
+      Azure::Core::ETag eTag = downloadResponse->ETag;
 
       auto retryFunction
           = [this, options, eTag](

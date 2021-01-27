@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const CreatePageBlobOptions& options) const
   {
     auto optionsCopy = options;
-    optionsCopy.AccessConditions.IfNoneMatch = ETagWildcard;
+    optionsCopy.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
     try
     {
       return Create(blobContentLength, optionsCopy);

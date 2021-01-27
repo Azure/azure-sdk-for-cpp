@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Test {
                   bodyLength);
               response->SetBodyStream(std::move(bodyStream));
               response->AddHeader("content-length", std::to_string(bodyLength));
-              response->AddHeader("etag", m_primaryETag);
+              response->AddHeader("etag", m_primaryETag.ToString());
               response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
               response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
               response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Test {
                 bodyLength);
             response->SetBodyStream(std::move(bodyStream));
             response->AddHeader("content-length", std::to_string(bodyLength));
-            response->AddHeader("etag", m_secondaryETag);
+            response->AddHeader("etag", m_secondaryETag.ToString());
             response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
             response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
             response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Test {
       if (region == Region::Primary)
       {
         if (requestHeaders.find("if-match") == requestHeaders.end()
-            || requestHeaders.at("if-match") == m_primaryETag)
+            || Azure::Core::ETag(requestHeaders.at("if-match")) == m_primaryETag)
         {
           return ConstructPrimaryResponse();
         }
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Test {
       else
       {
         if (requestHeaders.find("if-match") == requestHeaders.end()
-            || requestHeaders.at("if-match") == m_secondaryETag)
+            || Azure::Core::ETag(requestHeaders.at("if-match")) == m_secondaryETag)
         {
           return ConstructSecondaryResponse();
         }
@@ -239,8 +239,8 @@ namespace Azure { namespace Storage { namespace Test {
   private:
     std::shared_ptr<std::string> m_primaryContent;
     std::shared_ptr<std::string> m_secondaryContent;
-    std::string m_primaryETag;
-    std::string m_secondaryETag;
+    Azure::Core::ETag m_primaryETag;
+    Azure::Core::ETag m_secondaryETag;
 
     std::function<ResponseType(Region)> m_failPolicy;
   };
