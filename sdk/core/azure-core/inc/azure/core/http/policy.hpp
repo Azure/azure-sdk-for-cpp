@@ -12,7 +12,6 @@
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/internal/strings.hpp"
 #include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
