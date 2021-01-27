@@ -10,6 +10,11 @@
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
 - Renamed `Path` type returned from `ListDataLakePaths` to be `PathItem`. Member object name `Paths` is renamed to `Items`.
+- Added support for specifying public access type when creating a file system.
+- Added `DataLakeDirectoryClient::ListPathsSinglePage` API to list DataLake paths under certain directory.
+- Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
+- Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
+- Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
 
 ### Breaking Changes
 
@@ -22,7 +27,16 @@
 - Renamed `GetUri` to `GetUrl`.
 - Added `DataLakeLeaseClient`, all lease related APIs are moved to `DataLakeLeaseClient`.
 - Changed lease duration to be `std::chrono::seconds`.
+- Removed `Directory` in `ListPathsSinglePageOptions`.
+- Removed unused type `AccountResourceType` and `PathLeaseAction`.
+- Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
+- `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
+
+### Other Changes and Improvements
+
+- Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
 - Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControl`.
+- Removed unused parameters, options, results and functions in protocol layer.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

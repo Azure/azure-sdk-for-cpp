@@ -246,6 +246,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetDataLakePathHttpHeadersResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakePathHttpHeadersResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -275,6 +276,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag.GetValue());
     ret.LastModified = std::move(result->LastModified.GetValue());
     ret.FileSize = std::move(result->ContentLength);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::CreateDataLakePathResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -318,6 +320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DeleteDataLakePathResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Deleted = true;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakePathResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -359,10 +362,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     ret.CreatedOn = std::move(result->CreatedOn);
     ret.Metadata = std::move(result->Metadata);
-    // FIXME
     if (result->LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = result->LeaseDuration.GetValue().Get();
+      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().Get());
     }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())
@@ -387,6 +389,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ExpiresOn = std::move(result->ExpiriesOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.FileSize = result->ContentLength;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakePathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -413,7 +416,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     if (!acl.HasValue())
     {
-      throw std::runtime_error("Got null value returned when getting access control.");
+      throw Azure::Core::RequestFailedException(
+          "Got null value returned when getting access control.");
     }
     ret.Acls = std::move(acl.GetValue());
     if (result->Owner.HasValue())
@@ -428,6 +432,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.Permissions = result->Permissions.GetValue();
     }
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakePathAccessControlResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -447,6 +452,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetDataLakePathMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakePathMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }

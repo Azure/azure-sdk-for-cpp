@@ -652,9 +652,6 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto destFileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
-      Files::Shares::StartCopyShareFileOptions copyOptions;
-      copyOptions.PermissionCopyMode = Files::Shares::Models::PermissionCopyModeType::Override;
-      EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUrl(), copyOptions), std::runtime_error);
     }
   }
 
@@ -745,6 +742,48 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(3584, result.ClearRanges[1].Offset);
     EXPECT_TRUE(result.ClearRanges[1].Length.HasValue());
     EXPECT_EQ(1536, result.ClearRanges[1].Length.GetValue());
+  }
+
+  TEST_F(FileShareFileClientTest, StorageExceptionAdditionalInfo)
+  {
+    Azure::Storage::Files::Shares::ShareClientOptions options;
+    class InvalidQueryParameterPolicy : public Azure::Core::Http::HttpPolicy {
+    public:
+      ~InvalidQueryParameterPolicy() override {}
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<InvalidQueryParameterPolicy>(*this);
+      }
+
+      std::unique_ptr<Core::Http::RawResponse> Send(
+          Core::Context const& ctx,
+          Core::Http::Request& request,
+          Core::Http::NextHttpPolicy nextHttpPolicy) const override
+      {
+        request.GetUrl().AppendQueryParameter("comp", "lease1");
+        return nextHttpPolicy.Send(ctx, request);
+      }
+    };
+    options.PerOperationPolicies.emplace_back(std::make_unique<InvalidQueryParameterPolicy>());
+    auto fileClient = Azure::Storage::Files::Shares::ShareFileClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_shareName, RandomString(), options);
+    try
+    {
+      fileClient.Create(1024);
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_NE(e.StatusCode, Azure::Core::Http::HttpStatusCode::None);
+      EXPECT_FALSE(e.ReasonPhrase.empty());
+      EXPECT_FALSE(e.ClientRequestId.empty());
+      EXPECT_FALSE(e.RequestId.empty());
+      EXPECT_FALSE(e.ErrorCode.empty());
+      EXPECT_FALSE(e.Message.empty());
+      EXPECT_FALSE(e.AdditionalInformation.empty());
+      return;
+    }
+    FAIL();
   }
 
 }}} // namespace Azure::Storage::Test

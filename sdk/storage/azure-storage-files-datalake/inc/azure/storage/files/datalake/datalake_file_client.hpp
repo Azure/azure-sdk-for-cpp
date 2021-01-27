@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Flushes previous uploaded data to a file.
-     * @param endingOffset This parameter allows the caller to upload data in parallel and control
+     * @param position This parameter allows the caller to upload data in parallel and control
      *                 the order in which it is appended to the file.
      *                 The value must be the offset where the data is to be appended.
      *                 Uploaded data is not immediately flushed, or written, to the file. To flush,
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::FlushDataLakeFileResult> Flush(
-        int64_t endingOffset,
+        int64_t position,
         const FlushDataLakeFileOptions& options = FlushDataLakeFileOptions()) const;
 
     /**

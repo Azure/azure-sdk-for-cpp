@@ -203,6 +203,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Start time for the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
+     */
+    Azure::Core::DateTime startsOn = std::chrono::system_clock::now();
   };
 
   /**
@@ -287,7 +293,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
 
     /**
      * @brief Name-value pairs to associate with the container as metadata.
@@ -368,7 +374,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobContainerAccessConditions AccessConditions;
+    struct : public LeaseAccessConditions
+    {
+      /**
+       * @brief Specify this header to perform the operation only if the resource has been
+       * modified since the specified time. This timestamp will be truncated to second.
+       */
+      Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
+    } AccessConditions;
   };
 
   /**
@@ -439,7 +452,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Models::PublicAccessType AccessType = Models::PublicAccessType::Private;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
 
     /**
      * @brief Stored access policies that you can use to provide fine grained control over

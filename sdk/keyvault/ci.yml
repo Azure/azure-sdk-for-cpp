@@ -34,6 +34,8 @@ stages:
     parameters:
       ServiceDirectory: keyvault
       CtestRegex: azure-security-keyvault
+      LiveTestCtestRegex: live-azure-security-keyvault
+      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Artifacts:
         - Name: azure-security-keyvault-common
           Path: azure-security-keyvault-common

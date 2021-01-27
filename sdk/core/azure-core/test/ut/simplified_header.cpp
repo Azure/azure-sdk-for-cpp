@@ -17,13 +17,14 @@ class DllExportTest {
   AZ_CORE_DLLEXPORT static const bool DllExportHIncluded;
 };
 
-TEST(Logging, simplifiedHeader)
+TEST(SimplifiedHeader, core)
 {
   EXPECT_NO_THROW(Azure::Core::Context c);
   EXPECT_NO_THROW(Azure::Core::DateTime(2020, 11, 03, 15, 30, 44));
-  EXPECT_NO_THROW(Azure::Core::Nullable<int> n);
+  EXPECT_NO_THROW(Azure::Core::ETag e);
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse r(
       1, 1, Azure::Core::Http::HttpStatusCode::Accepted, "phrase"));
+  EXPECT_NO_THROW(Azure::Core::Nullable<int> n);
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
   EXPECT_NO_THROW(Azure::Core::Details::Version::VersionString());
 

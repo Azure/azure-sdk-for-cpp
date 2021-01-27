@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     if (static_cast<std::size_t>(blobRangeSize) > bufferSize)
     {
-      throw std::runtime_error(
+      throw Azure::Core::RequestFailedException(
           "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
     }
 
@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         firstChunkOptions.Context, *(firstChunk->BodyStream), buffer, firstChunkLength);
     if (bytesRead != firstChunkLength)
     {
-      throw std::runtime_error("error when reading body stream");
+      throw Azure::Core::RequestFailedException("error when reading body stream");
     }
     firstChunk->BodyStream.reset();
 
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 chunkOptions.Range.GetValue().Length.GetValue());
             if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
             {
-              throw std::runtime_error("error when reading body stream");
+              throw Azure::Core::RequestFailedException("error when reading body stream");
             }
 
             if (chunkId == numChunks - 1)
@@ -402,7 +402,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Azure::Core::Http::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
         if (bytesRead != readSize)
         {
-          throw std::runtime_error("error when reading body stream");
+          throw Azure::Core::RequestFailedException("error when reading body stream");
         }
         fileWriter.Write(buffer.data(), bytesRead, offset);
         length -= bytesRead;
@@ -545,7 +545,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::StartCopyBlobFromUriResult> BlobClient::StartCopyFromUri(
+  Azure::Core::Response<Models::StartCopyBlobResult> BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartCopyBlobFromUriOptions& options) const
   {
@@ -567,8 +567,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
-    return Details::BlobRestClient::Blob::StartCopyFromUri(
+
+    auto response = Details::BlobRestClient::Blob::StartCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+    Models::StartCopyBlobResult res;
+    res.RequestId = std::move(response->RequestId);
+    res.ETag = std::move(response->ETag);
+    res.LastModified = std::move(response->LastModified);
+    res.CopyId = std::move(response->CopyId);
+    res.CopyStatus = std::move(response->CopyStatus);
+    res.VersionId = std::move(response->VersionId);
+    res.m_blobClient = std::make_shared<BlobClient>(*this);
+    return Azure::Core::Response<Models::StartCopyBlobResult>(
+        std::move(res), response.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(

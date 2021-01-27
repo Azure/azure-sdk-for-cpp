@@ -36,15 +36,42 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     std::vector<Models::FileSystemItem> FileSystemsFromContainerItems(
-        const std::vector<Blobs::Models::BlobContainerItem>& items)
+        std::vector<Blobs::Models::BlobContainerItem> items)
     {
       std::vector<Models::FileSystemItem> fileSystems;
-      for (const auto& item : items)
+      for (auto& item : items)
       {
         Models::FileSystemItem fileSystem;
-        fileSystem.ETag = item.ETag;
-        fileSystem.Name = item.Name;
-        fileSystem.LastModified = item.LastModified;
+        fileSystem.Name = std::move(item.Name);
+        fileSystem.ETag = std::move(item.ETag);
+        fileSystem.LastModified = std::move(item.LastModified);
+        fileSystem.Metadata = std::move(item.Metadata);
+        if (item.AccessType == Blobs::Models::PublicAccessType::BlobContainer)
+        {
+          fileSystem.AccessType = Models::PublicAccessType::FileSystem;
+        }
+        else if (item.AccessType == Blobs::Models::PublicAccessType::Blob)
+        {
+          fileSystem.AccessType = Models::PublicAccessType::Path;
+        }
+        else if (item.AccessType == Blobs::Models::PublicAccessType::None)
+        {
+          fileSystem.AccessType = Models::PublicAccessType::None;
+        }
+        else
+        {
+          fileSystem.AccessType = Models::PublicAccessType(item.AccessType.Get());
+        }
+        fileSystem.HasImmutabilityPolicy = item.HasImmutabilityPolicy;
+        fileSystem.HasLegalHold = item.HasLegalHold;
+        if (item.LeaseDuration.HasValue())
+        {
+          fileSystem.LeaseDuration
+              = Models::LeaseDurationType((item.LeaseDuration.GetValue().Get()));
+        }
+        fileSystem.LeaseState = Models::LeaseStateType(item.LeaseState.Get());
+        fileSystem.LeaseStatus = Models::LeaseStatusType(item.LeaseStatus.Get());
+
         fileSystems.emplace_back(std::move(fileSystem));
       }
       return fileSystems;
@@ -177,6 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListFileSystemsSinglePageOptions& options) const
   {
     Blobs::ListBlobContainersSinglePageOptions blobOptions;
+    blobOptions.Include = options.Include;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.ContinuationToken = options.ContinuationToken;
@@ -184,7 +212,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions);
     auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = std::move(result->ContinuationToken);
-    response.Items = FileSystemsFromContainerItems(result->Items);
+    response.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
+    response.RequestId = std::move(result->RequestId);
+    response.ServiceEndpoint = std::move(result->ServiceEndpoint);
+    response.Prefix = std::move(result->Prefix);
+    response.Items = FileSystemsFromContainerItems(std::move(result->Items));
     return Azure::Core::Response<Models::ListFileSystemsSinglePageResult>(
         std::move(response), result.ExtractRawResponse());
   }
