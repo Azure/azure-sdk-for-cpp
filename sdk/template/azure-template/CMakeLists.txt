@@ -12,8 +12,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 
 include(AzureVcpkg)
 include(AzureVersion)
-include(CodeCoverage)
-include(DefineTransportAdapter)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
 include(doxygen_common)
 include(global_compile_options)
 

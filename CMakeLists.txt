@@ -18,7 +18,7 @@ option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxyge
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 
-include(DefineTransportAdapter)
+include(AzureTransportAdapters)
 
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
