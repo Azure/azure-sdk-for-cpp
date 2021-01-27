@@ -7,6 +7,24 @@
 
 #include <vector>
 
+namespace {
+class NoOpPolicy : public Azure::Core::Http::HttpPolicy {
+public:
+  std::unique_ptr<Azure::Core::Http::HttpPolicy> Clone() const override
+  {
+    return std::make_unique<NoOpPolicy>(*this);
+  }
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Azure::Core::Context const&,
+      Azure::Core::Http::Request&,
+      Azure::Core::Http::NextHttpPolicy) const override
+  {
+    return nullptr;
+  }
+};
+} // namespace
+
 TEST(Policy, throwWhenNoTransportPolicy)
 {
   // Construct pipeline without exception
@@ -43,4 +61,29 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   {
     EXPECT_STREQ("Invalid pipeline. No transport policy found. Endless policy.", err.what());
   }
+}
+
+TEST(Policy, ValuePolicy)
+{
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+
+  Azure::Core::Http::Details::ValuePolicyOptions options
+      = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
+         {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}};
+
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+  policies.emplace_back(std::make_unique<Azure::Core::Http::Details::ValuePolicy>(options));
+  policies.emplace_back(std::make_unique<NoOpPolicy>());
+  HttpPipeline pipeline(policies);
+
+  Request request(HttpMethod::Get, Url("https:://www.example.com"));
+
+  pipeline.Send(GetApplicationContext(), request);
+
+  auto headers = request.GetHeaders();
+  auto queryParams = request.GetUrl().GetQueryParameters();
+
+  ASSERT_EQ(headers, decltype(headers)({{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}}));
+  ASSERT_EQ(queryParams, decltype(queryParams)({{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}));
 }

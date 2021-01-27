@@ -16,7 +16,13 @@
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
+#include <cstddef>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -415,4 +421,58 @@ namespace Azure { namespace Core { namespace Http {
     static constexpr auto const HttpTransportAdapter = Classification(4);
   };
 
+  namespace Details {
+    /**
+     * @brief @ValuePolicy options.
+     */
+    struct ValuePolicyOptions
+    {
+      std::map<std::string, std::string> HeaderValues;
+      std::map<std::string, std::string> QueryValues;
+    };
+
+    /**
+     * @brief Value policy.
+     *
+     * @details Applies key-value pair values to each HTTP request (either HTTP headers or query
+     * parameters).
+     */
+    class ValuePolicy : public HttpPolicy {
+    private:
+      ValuePolicyOptions m_options;
+
+    public:
+      /**
+       * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
+       * @param options @ValuePolicyOptions.
+       */
+      explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<ValuePolicy>(*this);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Context const& ctx,
+          Request& request,
+          NextHttpPolicy nextHttpPolicy) const override
+      {
+        for (auto const& hdrPair : m_options.HeaderValues)
+        {
+          request.AddHeader(hdrPair.first, hdrPair.second);
+        }
+
+        {
+          auto& url = request.GetUrl();
+          for (auto const& qryPair : m_options.QueryValues)
+          {
+            url.AppendQueryParameter(qryPair.first, qryPair.second);
+          }
+        }
+
+        return nextHttpPolicy.Send(ctx, request);
+      }
+    };
+  } // namespace Details
 }}} // namespace Azure::Core::Http
