@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         : ret.LeaseStatus;
     ret.Metadata = std::move(result->Metadata);
     ret.CreatedOn = std::move(result->CreatedOn);
-    ret.ExpiresOn = std::move(result->ExpiriesOn);
+    ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::ReadDataLakeFileResult>(

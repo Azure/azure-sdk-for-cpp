@@ -386,7 +386,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyStatus = std::move(result->CopyStatus);
     ret.CopyProgress = std::move(result->CopyProgress);
     ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
-    ret.ExpiresOn = std::move(result->ExpiriesOn);
+    ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.FileSize = result->ContentLength;
     ret.RequestId = std::move(result->RequestId);
