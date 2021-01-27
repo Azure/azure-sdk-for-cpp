@@ -140,20 +140,21 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
-      std::vector<std::string> newPaths;
+      std::vector<std::unique_ptr<Files::DataLake::DataLakeDirectoryClient>> newDirectoryClients;
       for (auto& client : directoryClients)
       {
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath));
-        newPaths.push_back(newPath);
+        Files::DataLake::Models::RenameDataLakeSubdirectorySinglePageResult ret;
+        EXPECT_NO_THROW(ret = client.RenameSubdirectorySinglePage("", newPath).ExtractValue());
+        newDirectoryClients.emplace_back(std::move(ret.RenamedDirectoryClient));
       }
       for (const auto& client : directoryClients)
       {
         EXPECT_THROW(client.Delete(false), StorageException);
       }
-      for (const auto& newPath : newPaths)
+      for (const auto& client : newDirectoryClients)
       {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(client->Delete(false));
       }
     }
     {
@@ -168,15 +169,18 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::RenameDataLakeDirectoryOptions options1;
+        Files::DataLake::RenameDataLakeDirectorySinglePageOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
-        Files::DataLake::RenameDataLakeDirectoryOptions options2;
+        EXPECT_THROW(
+            client.RenameSubdirectorySinglePage("", RandomString(), options1), StorageException);
+        Files::DataLake::RenameDataLakeDirectorySinglePageOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        Files::DataLake::Models::RenameDataLakeSubdirectorySinglePageResult ret;
+        EXPECT_NO_THROW(
+            ret = client.RenameSubdirectorySinglePage("", newPath, options2).ExtractValue());
+        EXPECT_NO_THROW(ret.RenamedDirectoryClient->Delete(false));
       }
     }
     {
@@ -191,14 +195,17 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::RenameDataLakeDirectoryOptions options1;
+        Files::DataLake::RenameDataLakeDirectorySinglePageOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
-        Files::DataLake::RenameDataLakeDirectoryOptions options2;
+        EXPECT_THROW(
+            client.RenameSubdirectorySinglePage("", RandomString(), options1), StorageException);
+        Files::DataLake::RenameDataLakeDirectorySinglePageOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        Files::DataLake::Models::RenameDataLakeSubdirectorySinglePageResult ret;
+        EXPECT_NO_THROW(
+            ret = client.RenameSubdirectorySinglePage("", newPath, options2).ExtractValue());
+        EXPECT_NO_THROW(ret.RenamedDirectoryClient->Delete(false));
       }
     }
     {
@@ -212,11 +219,12 @@ namespace Azure { namespace Storage { namespace Test {
       }
       {
         // Rename to a non-existing file system will fail and source is not changed.
-        Files::DataLake::RenameDataLakeDirectoryOptions options;
+        Files::DataLake::RenameDataLakeDirectorySinglePageOptions options;
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
         {
-          EXPECT_THROW(client.Rename(RandomString(), options), StorageException);
+          EXPECT_THROW(
+              client.RenameSubdirectorySinglePage("", RandomString(), options), StorageException);
           EXPECT_NO_THROW(client.GetProperties());
         }
       }
@@ -227,13 +235,15 @@ namespace Azure { namespace Storage { namespace Test {
             Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
                 AdlsGen2ConnectionString(), newfileSystemName));
         newfileSystemClient->Create();
-        Files::DataLake::RenameDataLakeDirectoryOptions options;
+        Files::DataLake::RenameDataLakeDirectorySinglePageOptions options;
         options.DestinationFileSystem = newfileSystemName;
         for (auto& client : directoryClient)
         {
           auto newPath = RandomString();
-          EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
+          Files::DataLake::Models::RenameDataLakeSubdirectorySinglePageResult ret;
+          EXPECT_NO_THROW(
+              ret = client.RenameSubdirectorySinglePage("", newPath, options).ExtractValue());
+          EXPECT_NO_THROW(ret.RenamedDirectoryClient->Delete(false));
         }
       }
     }

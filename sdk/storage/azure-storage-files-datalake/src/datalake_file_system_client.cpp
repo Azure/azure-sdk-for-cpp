@@ -395,4 +395,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
+  Azure::Core::Response<Models::RenameDataLakeFileResult> DataLakeFileSystemClient::RenameFile(
+      const std::string& fileName,
+      const std::string& destinationFilePath,
+      const RenameDataLakeFileOptions& options) const
+  {
+    return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options);
+  }
+
+  Azure::Core::Response<Models::RenameDataLakeDirectorySinglePageResult>
+  DataLakeFileSystemClient::RenameDirectorySinglePage(
+      const std::string& directoryName,
+      const std::string& destinationDirectoryPath,
+      const RenameDataLakeDirectorySinglePageOptions& options) const
+  {
+    return this->GetDirectoryClient("").RenameSubdirectorySinglePage(
+        directoryName, destinationDirectoryPath, options);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

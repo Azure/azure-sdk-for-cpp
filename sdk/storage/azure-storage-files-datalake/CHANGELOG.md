@@ -15,6 +15,7 @@
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
+- Added clients that targets the rename destination to the result of the rename APIs.
 
 ### Breaking Changes
 
@@ -32,6 +33,7 @@
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
+- Removed `Rename` from `DataLakeDirectoryClient` and `DataLakeFileClient`. Instead, added `RenameFile` and `RenameSubdirectorySinglePage` to `DataLakeDirectoryClient` and added `RenameFile` and `RenameDirectorySinglePage` to `DataLakeFileSystemClient`.
 
 ### Other Changes and Improvements
 
