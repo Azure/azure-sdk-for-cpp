@@ -56,7 +56,8 @@ TEST(KeyClient, DISABLED_CreateKeyWithOptions)
   EXPECT_EQ(keyVaultKey.Name(), "myKeyWithOptions2");
   EXPECT_EQ(keyVaultKey.GetKeyType(), KeyTypeEnum::Ec);
   auto& keyOperations = keyVaultKey.KeyOperations();
-  EXPECT_EQ(keyOperations.size(), 2);
+  uint16_t const expected = 2;
+  EXPECT_EQ(keyOperations.size(), expected);
 
   auto findOperation = [keyOperations](KeyOperation op) {
     for (KeyOperation operation : keyOperations)
