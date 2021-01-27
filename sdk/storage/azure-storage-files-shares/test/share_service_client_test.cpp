@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
-  const size_t c_SHARE_TEST_SIZE = 5;
+  const size_t ShareTestSize = 5;
 
   std::shared_ptr<Files::Shares::ShareServiceClient>
       FileShareServiceClientTest::m_fileShareServiceClient;
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_sharePrefixB = LowercaseRandomString(10);
     m_shareNameSetA.clear();
     m_shareNameSetB.clear();
-    for (size_t i = 0; i < c_SHARE_TEST_SIZE; ++i)
+    for (size_t i = 0; i < ShareTestSize; ++i)
     {
       {
         auto name = m_sharePrefixA + LowercaseRandomString(10);

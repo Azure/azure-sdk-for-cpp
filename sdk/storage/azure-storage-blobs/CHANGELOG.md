@@ -17,6 +17,8 @@
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `IfUnmodifiedSince` from `SetBlobContainerMetadataOptions`.
 - Return types of `BlobClient::StartCopyFromUri` and `PageBlobClient::StartCopyIncremental` were changed to `StartCopyBlobResult`, supporting poll operations.
+- Fixed typo `Expiries` in model types.
+- Removed `PreviousContinuationToken` from `ListBlobContainersSinglePageResult`, `ListBlobsByHierarchySinglePageResult` and `ListBlobsSinglePageResult`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

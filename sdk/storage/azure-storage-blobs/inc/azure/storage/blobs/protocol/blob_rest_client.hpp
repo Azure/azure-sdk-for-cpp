@@ -950,7 +950,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       std::string ServiceEndpoint;
       std::string Prefix;
-      Azure::Core::Nullable<std::string> PreviousContinuationToken;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobContainerItem> Items;
     }; // struct ListBlobContainersSinglePageResult
@@ -1025,7 +1024,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobHttpHeaders HttpHeaders;
       Storage::Metadata Metadata;
       Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::DateTime LastModified;
       std::string ETag;
@@ -1052,7 +1051,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::Http::Range ContentRange;
       int64_t BlobSize = 0;
@@ -1082,7 +1081,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Storage::Metadata Metadata;
       Models::BlobType BlobType;
@@ -1120,7 +1119,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string BlobContainerName;
       std::string Prefix;
       std::string Delimiter;
-      Azure::Core::Nullable<std::string> PreviousContinuationToken;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
       std::vector<BlobPrefix> BlobPrefixes;
@@ -1132,7 +1130,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
       std::string Prefix;
-      Azure::Core::Nullable<std::string> PreviousContinuationToken;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
     }; // struct ListBlobsSinglePageResult
@@ -1900,7 +1897,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             k_EnumerationResults,
             k_Prefix,
-            k_Marker,
             k_NextMarker,
             k_Containers,
             k_Container,
@@ -1935,10 +1931,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Marker);
-              }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
@@ -1968,12 +1960,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Prefix)
               {
                 ret.Prefix = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Marker)
-              {
-                ret.PreviousContinuationToken = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
@@ -4041,7 +4027,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_EnumerationResults,
             k_Prefix,
             k_Delimiter,
-            k_Marker,
             k_NextMarker,
             k_Blobs,
             k_Blob,
@@ -4080,10 +4065,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (std::strcmp(node.Name, "Delimiter") == 0)
               {
                 path.emplace_back(XmlTagName::k_Delimiter);
-              }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Marker);
               }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
@@ -4134,12 +4115,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Marker)
-              {
-                ret.PreviousContinuationToken = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_NextMarker)
               {
                 ret.ContinuationToken = node.Value;
@@ -4171,7 +4146,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             k_EnumerationResults,
             k_Prefix,
-            k_Marker,
             k_NextMarker,
             k_Blobs,
             k_Blob,
@@ -4206,10 +4180,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Marker);
-              }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
@@ -4239,12 +4209,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Prefix)
               {
                 ret.Prefix = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Marker)
-              {
-                ret.PreviousContinuationToken = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
@@ -4534,7 +4498,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ExpiryTime)
               {
-                ret.ExpiriesOn = Azure::Core::DateTime::Parse(
+                ret.ExpiresOn = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
@@ -5109,7 +5073,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_expiry_time__iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
           if (x_ms_expiry_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.ExpiriesOn = Azure::Core::DateTime::Parse(
+            response.ExpiresOn = Azure::Core::DateTime::Parse(
                 x_ms_expiry_time__iterator->second, Azure::Core::DateTime::DateFormat::Rfc1123);
           }
           auto x_ms_last_access_time__iterator
@@ -5475,7 +5439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_expiry_time__iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
           if (x_ms_expiry_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.ExpiriesOn = Azure::Core::DateTime::Parse(
+            response.ExpiresOn = Azure::Core::DateTime::Parse(
                 x_ms_expiry_time__iterator->second, Azure::Core::DateTime::DateFormat::Rfc1123);
           }
           auto x_ms_last_access_time__iterator
