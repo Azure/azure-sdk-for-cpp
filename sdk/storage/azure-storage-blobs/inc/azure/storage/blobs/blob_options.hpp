@@ -374,7 +374,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobContainerAccessConditions AccessConditions;
+    struct : public LeaseAccessConditions
+    {
+      /**
+       * @brief Specify this header to perform the operation only if the resource has been
+       * modified since the specified time. This timestamp will be truncated to second.
+       */
+      Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
+    } AccessConditions;
   };
 
   /**
