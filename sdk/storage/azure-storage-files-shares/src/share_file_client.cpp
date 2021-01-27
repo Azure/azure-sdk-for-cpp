@@ -99,12 +99,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareFileClient newClient(*this);
     if (shareSnapshot.empty())
     {
-      newClient.m_shareFileUrl.RemoveQueryParameter(Details::c_ShareSnapshotQueryParameter);
+      newClient.m_shareFileUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareFileUrl.AppendQueryParameter(
-          Details::c_ShareSnapshotQueryParameter,
+          Details::ShareSnapshotQueryParameter,
           Storage::Details::UrlEncodeQueryParameter(shareSnapshot));
     }
     return newClient;
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
     if (options.Permission.HasValue())
     {
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
     }
     protocolLayerOptions.XMsContentLength = fileSize;
     if (!options.HttpHeaders.ContentType.empty())
@@ -320,7 +320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCopyFileCreationTime = std::string(c_FileCopySourceTime);
+      protocolLayerOptions.FileCopyFileCreationTime = std::string(FileCopySourceTime);
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCopyFileLastWriteTime = std::string(c_FileCopySourceTime);
+      protocolLayerOptions.FileCopyFileLastWriteTime = std::string(FileCopySourceTime);
     }
     if (options.PermissionCopyMode.HasValue())
     {
@@ -403,7 +403,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
@@ -413,7 +413,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
     protocolLayerOptions.XMsContentLength = options.Size;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
     }
 
     if (!httpHeaders.ContentType.empty())
@@ -565,7 +565,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareFileClient::ForceCloseAllHandles(const ForceCloseAllShareFileHandlesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
-    protocolLayerOptions.HandleId = c_FileAllHandles;
+    protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     return Details::ShareRestClient::File::ForceCloseHandles(
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
@@ -580,7 +580,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
-    int64_t firstChunkLength = Details::c_FileDownloadDefaultChunkSize;
+    int64_t firstChunkLength = Details::FileDownloadDefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -679,10 +679,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      int64_t c_grainSize = 4 * 1024;
+      int64_t GrainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, Details::c_FileDownloadDefaultChunkSize);
+      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
+      chunkSize = std::min(chunkSize, Details::FileDownloadDefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(
@@ -699,7 +699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
-    int64_t firstChunkLength = Details::c_FileDownloadDefaultChunkSize;
+    int64_t firstChunkLength = Details::FileDownloadDefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -809,10 +809,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      int64_t c_grainSize = 4 * 1024;
+      int64_t GrainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, Details::c_FileDownloadDefaultChunkSize);
+      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
+      chunkSize = std::min(chunkSize, Details::FileDownloadDefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(
@@ -843,7 +843,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
@@ -853,7 +853,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
     if (options.FilePermission.HasValue())
     {
@@ -865,7 +865,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
     }
 
     if (!options.HttpHeaders.ContentType.empty())
@@ -901,7 +901,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
 
     int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
-                                                     : Details::c_FileUploadDefaultChunkSize;
+                                                     : Details::FileUploadDefaultChunkSize;
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       unused(chunkId, numChunks);
@@ -943,7 +943,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
@@ -953,7 +953,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
     if (options.FilePermission.HasValue())
     {
@@ -965,7 +965,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
     }
 
     if (!options.HttpHeaders.ContentType.empty())
@@ -1001,7 +1001,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
 
     int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
-                                                     : Details::c_FileUploadDefaultChunkSize;
+                                                     : Details::FileUploadDefaultChunkSize;
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       unused(chunkId, numChunks);
