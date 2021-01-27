@@ -16,6 +16,7 @@
 - `PublicAccessType::Private` was renamed to `PublicAccessType::None`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Return types of `BlobClient::StartCopyFromUri` and `PageBlobClient::StartCopyIncremental` were changed to `StartCopyBlobResult`, supporting poll operations.
+- Fixed typo `Expiries` in model types.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
