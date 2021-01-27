@@ -98,12 +98,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_shareUrl.RemoveQueryParameter(Details::c_ShareSnapshotQueryParameter);
+      newClient.m_shareUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareUrl.AppendQueryParameter(
-          Details::c_ShareSnapshotQueryParameter,
+          Details::ShareSnapshotQueryParameter,
           Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
