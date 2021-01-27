@@ -83,7 +83,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ShareSnapshot;
     std::string DirectoryPath;
     std::string Prefix;
-    std::string PreviousContinuationToken;
     int32_t PageSizeHint = int32_t();
     std::string ContinuationToken;
     std::vector<DirectoryItem> DirectoryItems;

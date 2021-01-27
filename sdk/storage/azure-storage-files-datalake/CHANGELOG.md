@@ -31,6 +31,7 @@
 - Removed unused type `AccountResourceType` and `PathLeaseAction`.
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
+- Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
 
 ### Other Changes and Improvements
 

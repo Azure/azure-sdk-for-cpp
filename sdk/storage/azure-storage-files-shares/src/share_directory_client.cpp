@@ -320,7 +320,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
     ret.DirectoryPath = std::move(result->DirectoryPath);
     ret.Prefix = std::move(result->Prefix);
-    ret.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
     ret.PageSizeHint = result->PageSizeHint;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);
