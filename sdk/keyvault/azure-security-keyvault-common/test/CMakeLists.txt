@@ -24,4 +24,4 @@ target_link_libraries(azure-security-keyvault-common-test PUBLIC azure-security-
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_add_tests(TARGET azure-security-keyvault-common-test
-     TEST_PREFIX azure-security-keyvault-common-test.)
+     TEST_PREFIX unit-azure-security-keyvault-common-test.)

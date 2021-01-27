@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
+################## Unit Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test
   key_client_test.cpp  
@@ -24,4 +25,23 @@ target_link_libraries(azure-security-keyvault-keys-test PRIVATE azure-security-k
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_add_tests(TARGET azure-security-keyvault-keys-test
+     TEST_PREFIX unit-azure-security-keyvault-keys-test.)
+
+
+################## Live Tests ##########################
+add_executable (
+  azure-security-keyvault-keys-test-live
+  key_client_test_live.cpp
+  main.cpp
+)
+
+if (MSVC)
+  target_compile_options(azure-security-keyvault-keys-test-live PUBLIC /wd6326 /wd26495 /wd26812)
+endif()
+
+target_link_libraries(azure-security-keyvault-keys-test-live PRIVATE azure-security-keyvault-keys azure-identity gtest gmock)
+
+# gtest_add_tests will scan the test from azure-core-test and call add_test
+# for each test to ctest. This enables `ctest -r` to run specific tests directly.
+gtest_add_tests(TARGET azure-security-keyvault-keys-test-live
      TEST_PREFIX azure-security-keyvault-keys-test.)

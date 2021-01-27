@@ -3,22 +3,19 @@
 
 #include "gtest/gtest.h"
 
-#include <azure/core/context.hpp>
-#include <azure/identity/client_secret_credential.hpp>
+#include "key_client_base_test.hpp"
+
 #include <azure/keyvault/key_vault.hpp>
 
-#include <memory>
+using namespace Azure::Security::KeyVault::Keys::Test;
 
-using namespace Azure::Security::KeyVault::Keys;
-
-TEST(KeyClient, DISABLED_SendRequestDefault)
+TEST_F(KeyVaultClientTest, SendRequestDefault)
 {
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
-  KeyClient keyClient("vaultUrl", credential);
-  auto r = keyClient.GetKey("KeyName");
+  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
+
+  auto r = keyClient.GetKey("testKey");
   auto t = r.ExtractValue();
   auto rr = r.ExtractRawResponse();
 
-  EXPECT_EQ(t.Name(), "KeyName");
+  EXPECT_EQ(t.Name(), "testKey");
 }

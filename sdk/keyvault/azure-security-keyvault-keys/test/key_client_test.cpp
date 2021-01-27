@@ -11,14 +11,16 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 
-TEST(KeyClient, DISABLED_SendRequestDefault)
+TEST(KeyClient, initClient)
 {
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
-  KeyClient keyClient("vaultUrl", credential);
-  auto r = keyClient.GetKey("KeyName");
-  auto t = r.ExtractValue();
-  auto rr = r.ExtractRawResponse();
-
-  EXPECT_EQ(t.Name(), "KeyName");
+  {
+    EXPECT_NO_THROW(KeyClient keyClient("vaultUrl", credential));
+  }
+  {
+    KeyClientOptions options;
+    options.RetryOptions.MaxRetries = 10;
+    EXPECT_NO_THROW(KeyClient keyClient("vaultUrl", credential));
+  }
 }
