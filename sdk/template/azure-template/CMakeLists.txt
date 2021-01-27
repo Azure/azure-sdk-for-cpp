@@ -11,7 +11,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
 include(az_vcpkg)
-include(az_version)
+include(AzureVersion)
 include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)

@@ -61,7 +61,7 @@ include(global_compile_options)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # Functions for library versions
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
+include(AzureVersion)
 
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)
