@@ -950,7 +950,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       std::string ServiceEndpoint;
       std::string Prefix;
-      Azure::Core::Nullable<std::string> PreviousContinuationToken;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobContainerItem> Items;
     }; // struct ListBlobContainersSinglePageResult
@@ -1120,7 +1119,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string BlobContainerName;
       std::string Prefix;
       std::string Delimiter;
-      Azure::Core::Nullable<std::string> PreviousContinuationToken;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
       std::vector<BlobPrefix> BlobPrefixes;
@@ -1132,7 +1130,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
       std::string Prefix;
-      Azure::Core::Nullable<std::string> PreviousContinuationToken;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
     }; // struct ListBlobsSinglePageResult
@@ -1900,7 +1897,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             k_EnumerationResults,
             k_Prefix,
-            k_Marker,
             k_NextMarker,
             k_Containers,
             k_Container,
@@ -1935,10 +1931,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Marker);
-              }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
@@ -1968,12 +1960,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Prefix)
               {
                 ret.Prefix = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Marker)
-              {
-                ret.PreviousContinuationToken = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
@@ -4041,7 +4027,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_EnumerationResults,
             k_Prefix,
             k_Delimiter,
-            k_Marker,
             k_NextMarker,
             k_Blobs,
             k_Blob,
@@ -4080,10 +4065,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (std::strcmp(node.Name, "Delimiter") == 0)
               {
                 path.emplace_back(XmlTagName::k_Delimiter);
-              }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Marker);
               }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
@@ -4134,12 +4115,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Marker)
-              {
-                ret.PreviousContinuationToken = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_NextMarker)
               {
                 ret.ContinuationToken = node.Value;
@@ -4171,7 +4146,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             k_EnumerationResults,
             k_Prefix,
-            k_Marker,
             k_NextMarker,
             k_Blobs,
             k_Blob,
@@ -4206,10 +4180,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name, "Marker") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Marker);
-              }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
@@ -4239,12 +4209,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Prefix)
               {
                 ret.Prefix = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Marker)
-              {
-                ret.PreviousContinuationToken = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults

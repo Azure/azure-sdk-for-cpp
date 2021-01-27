@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  struct GetDataLakePathAccessControlResult
+  struct GetDataLakePathAccessControlListResult
   {
     std::string ETag;
     Core::DateTime LastModified;
