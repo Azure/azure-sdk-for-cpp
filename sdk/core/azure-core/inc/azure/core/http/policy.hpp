@@ -421,7 +421,7 @@ namespace Azure { namespace Core { namespace Http {
     static constexpr auto const HttpTransportAdapter = Classification(4);
   };
 
-  namespace Details {
+  namespace Internal {
     /**
      * @brief @ValuePolicy options.
      */
@@ -474,5 +474,5 @@ namespace Azure { namespace Core { namespace Http {
         return nextHttpPolicy.Send(ctx, request);
       }
     };
-  } // namespace Details
+  } // namespace Internal
 }}} // namespace Azure::Core::Http
