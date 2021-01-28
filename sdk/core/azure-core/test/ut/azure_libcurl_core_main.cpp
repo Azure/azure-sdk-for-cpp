@@ -6,6 +6,14 @@
  *
  */
 
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
 #include <gtest/gtest.h>
 
 #include <curl/curl.h>
@@ -20,11 +28,13 @@
 #include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>
 
+#include <cstdlib>
+
 namespace Azure { namespace Core { namespace Test {
   TEST(SdkWithLibcurl, globalCleanUp)
   {
     Azure::Core::Http::Request req(
-        Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("http://httpbin.org/get"));
+        Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("https://httpbin.org/get"));
 
     {
       // Creating a new connection with default options
@@ -51,8 +61,6 @@ int main(int argc, char** argv)
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
 
-  // Check that one connection is in the pool after running the test
-  EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
 
   // Call global clean up
   curl_global_cleanup();
