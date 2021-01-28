@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         = RenameDataLakeSubdirectoryOptions()) const;
 
     /**
-     * @brief Deletes the empty directory. Errors if directory is not empty.
+     * @brief Deletes the empty directory. Throws exception if directory is not empty.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
@@ -159,7 +159,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
-     * @brief Deletes the empty directory if it already exists. Errors if directory is not empty.
+     * @brief Deletes the empty directory if it already exists. Throws exception if directory is not
+     * empty.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
@@ -227,9 +228,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         bool recursive,
         const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
 
-    // Hide path functions
-    using DataLakePathClient::Delete;
-    using DataLakePathClient::DeleteIfExists;
     friend class DataLakeFileSystemClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake
