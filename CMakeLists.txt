@@ -58,7 +58,7 @@ endif()
 include(AzureGlobalCompileOptions)
 
 # Documentation automation function
-include(AzureGlobalCompileOptions)
+include(AzureDoxygen)
 
 # Functions for library versions
 include(AzureVersion)

@@ -1,5 +1,5 @@
 # download test data
-include(download_test_data)
+include(DownloadJsonTestData)
 
 # test fixture to download test data
 add_test(NAME "download_test_data" COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target download_test_data)
