@@ -32,6 +32,8 @@
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadDataLakeFileToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadDataLakeFileFromOptions::TransferOptions`.
 
 ### Other Changes and Improvements
 
