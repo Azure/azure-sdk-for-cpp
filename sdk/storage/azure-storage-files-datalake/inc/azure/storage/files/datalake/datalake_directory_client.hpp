@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
-     * @brief Deletes the directory and all its subfolders and files.
+     * @brief Deletes the directory and all its subdirectories and files.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
-     * @brief Deletes the directory and all its subfolders and files if the directory exists.
+     * @brief Deletes the directory and all its subdirectories and files if the directory exists.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
