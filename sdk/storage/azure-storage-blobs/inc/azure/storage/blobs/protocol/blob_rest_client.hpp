@@ -1093,10 +1093,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
+      Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
       Azure::Core::Nullable<Azure::Core::DateTime> AccessTierChangedOn;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopySource;
       Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Core::Nullable<std::string> CopyStatusDescription;
+      Azure::Core::Nullable<bool> IsIncrementalCopy;
+      Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
       Azure::Core::Nullable<std::string> CopyProgress;
       Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string>
@@ -1104,6 +1108,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
       Azure::Core::Nullable<int32_t> TagCount;
+      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Core::Nullable<bool> IsCurrentVersion;
     }; // struct GetBlobPropertiesResult
 
     struct ListBlobsByHierarchySinglePageResult
@@ -5493,6 +5499,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.ArchiveStatus = BlobArchiveStatus(x_ms_archive_status__iterator->second);
           }
+          auto x_ms_rehydrate_priority__iterator
+              = httpResponse.GetHeaders().find("x-ms-rehydrate-priority");
+          if (x_ms_rehydrate_priority__iterator != httpResponse.GetHeaders().end())
+          {
+            response.RehydratePriority
+                = RehydratePriority(x_ms_rehydrate_priority__iterator->second);
+          }
           auto x_ms_access_tier_change_time__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-change-time");
           if (x_ms_access_tier_change_time__iterator != httpResponse.GetHeaders().end())
@@ -5515,6 +5528,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (x_ms_copy_status__iterator != httpResponse.GetHeaders().end())
           {
             response.CopyStatus = CopyStatus(x_ms_copy_status__iterator->second);
+          }
+          auto x_ms_copy_status_description__iterator
+              = httpResponse.GetHeaders().find("x-ms-copy-status-description");
+          if (x_ms_copy_status_description__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyStatusDescription = x_ms_copy_status_description__iterator->second;
+          }
+          auto x_ms_incremental_copy__iterator
+              = httpResponse.GetHeaders().find("x-ms-incremental-copy");
+          if (x_ms_incremental_copy__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IsIncrementalCopy = x_ms_incremental_copy__iterator->second == "true";
+          }
+          auto x_ms_copy_destination_snapshot__iterator
+              = httpResponse.GetHeaders().find("x-ms-copy-destination-snapshot");
+          if (x_ms_copy_destination_snapshot__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IncrementalCopyDestinationSnapshot
+                = x_ms_copy_destination_snapshot__iterator->second;
           }
           auto x_ms_copy_progress__iterator = httpResponse.GetHeaders().find("x-ms-copy-progress");
           if (x_ms_copy_progress__iterator != httpResponse.GetHeaders().end())
@@ -5567,6 +5599,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (x_ms_tag_count__iterator != httpResponse.GetHeaders().end())
           {
             response.TagCount = std::stoi(x_ms_tag_count__iterator->second);
+          }
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
+          {
+            response.VersionId = x_ms_version_id__iterator->second;
+          }
+          auto x_ms_is_current_version__iterator
+              = httpResponse.GetHeaders().find("x-ms-is-current-version");
+          if (x_ms_is_current_version__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IsCurrentVersion = x_ms_is_current_version__iterator->second == "true";
           }
           return Azure::Core::Response<GetBlobPropertiesResult>(
               std::move(response), std::move(pHttpResponse));

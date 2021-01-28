@@ -276,16 +276,28 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.AppendBlock(&blockContent);
 
     auto downloadResult = blobClient.Download();
-    if (downloadResult->IsSealed.HasValue())
-    {
-      EXPECT_FALSE(downloadResult->IsSealed.GetValue());
-    }
+    EXPECT_TRUE(downloadResult->IsSealed.HasValue());
+    EXPECT_FALSE(downloadResult->IsSealed.GetValue());
 
     auto getPropertiesResult = blobClient.GetProperties();
-    if (getPropertiesResult->IsSealed.HasValue())
+    EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
+    EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
+
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    options.Prefix = blobName;
+    do
     {
-      EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
-    }
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
+      options.ContinuationToken = res->ContinuationToken;
+      for (const auto& blob : res->Items)
+      {
+        if (blob.Name == blobName)
+        {
+          EXPECT_TRUE(blob.IsSealed.HasValue());
+          EXPECT_FALSE(blob.IsSealed.GetValue());
+        }
+      }
+    } while (options.ContinuationToken.HasValue());
 
     Blobs::SealAppendBlobOptions sealOptions;
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size() + 1;
@@ -306,8 +318,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
-    options.Prefix = blobName;
     do
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
@@ -330,10 +340,7 @@ namespace Azure { namespace Storage { namespace Test {
     getPropertiesResult = copyResult->PollUntilDone(std::chrono::seconds(1));
     ASSERT_TRUE(getPropertiesResult->CopyStatus.HasValue());
     EXPECT_EQ(getPropertiesResult->CopyStatus.GetValue(), Blobs::Models::CopyStatus::Success);
-    if (getPropertiesResult->IsSealed.HasValue())
-    {
-      EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
-    }
+    EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
 
     copyOptions.ShouldSealDestination = true;
     copyResult = blobClient2.StartCopyFromUri(blobClient.GetUrl() + GetSas(), copyOptions);

@@ -239,9 +239,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
+      if (i.Tier.HasValue() && !i.IsAccessTierInferred.HasValue())
+      {
+        i.IsAccessTierInferred = false;
+      }
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
       {
         i.IsCurrentVersion = false;
+      }
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.IsSealed)
+      {
+        i.IsSealed = false;
       }
     }
     return response;

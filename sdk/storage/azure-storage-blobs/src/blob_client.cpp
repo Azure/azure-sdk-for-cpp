@@ -208,6 +208,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
+    if (downloadResponse->BlobType == Models::BlobType::AppendBlob
+        && !downloadResponse->IsSealed.HasValue())
+    {
+      downloadResponse->IsSealed = false;
+    }
     return downloadResponse;
   }
 
@@ -463,8 +468,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
-    return Details::BlobRestClient::Blob::GetProperties(
+    auto response = Details::BlobRestClient::Blob::GetProperties(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+    if (response->Tier.HasValue() && !response->IsAccessTierInferred.HasValue())
+    {
+      response->IsAccessTierInferred = false;
+    }
+    if (response->VersionId.HasValue() && !response->IsCurrentVersion.HasValue())
+    {
+      response->IsCurrentVersion = false;
+    }
+    if (response->CopyStatus.HasValue() && !response->IsIncrementalCopy.HasValue())
+    {
+      response->IsIncrementalCopy = false;
+    }
+    if (response->BlobType == Models::BlobType::AppendBlob && !response->IsSealed.HasValue())
+    {
+      response->IsSealed = false;
+    }
+    return response;
   }
 
   Azure::Core::Response<Models::SetBlobHttpHeadersResult> BlobClient::SetHttpHeaders(
