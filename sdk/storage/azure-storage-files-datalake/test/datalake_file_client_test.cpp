@@ -467,7 +467,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto res
           = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
       auto lastModified = fileClient.GetProperties()->LastModified;
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
@@ -501,7 +501,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
       auto lastModified = fileClient.GetProperties()->LastModified;
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();

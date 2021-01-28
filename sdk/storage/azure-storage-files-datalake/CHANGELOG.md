@@ -40,6 +40,8 @@
 - Changed `SetAccessControlRecursive` to `SetAccessControlRecursiveListSinglePage`, to mark that it is a single page operation, and removed the `mode` parameter, separated the modify/delete functionality to two new APIs.
 - Moved `SetAccessControlRecursiveListSinglePage` to `DataLakePathClient`.
 - Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.
+- Type for ETag was changed to `Azure::Core::ETag`.
+- Type for `IfMatch` and `IfNoneMatch` was changed to `Azure::Core::ETag`.
 
 ### Other Changes and Improvements
 

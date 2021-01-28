@@ -273,7 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::CreateDataLakePathResult ret;
-    ret.ETag = std::move(result->ETag.GetValue());
+    ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified.GetValue());
     ret.FileSize = std::move(result->ContentLength);
     ret.RequestId = std::move(result->RequestId);
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     try
     {
       auto createOptions = options;
-      createOptions.AccessConditions.IfNoneMatch = ETagWildcard;
+      createOptions.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
       return Create(type, createOptions);
     }
     catch (StorageException& e)

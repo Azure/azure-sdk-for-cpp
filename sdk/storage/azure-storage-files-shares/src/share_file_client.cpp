@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     {
       // In case network failure during reading the body
-      std::string eTag = downloadResponse->ETag;
+      auto eTag = downloadResponse->ETag;
 
       auto retryFunction
           = [this, options, eTag](

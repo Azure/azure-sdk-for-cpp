@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
         EXPECT_FALSE(createResult->Created);
-        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_FALSE(createResult->ETag.HasValue());
         EXPECT_EQ(Core::DateTime(), createResult->LastModified);
         auto deleted = client.Delete()->Deleted;
         EXPECT_TRUE(deleted);
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto lmt = m_shareClient->GetAccessPolicy()->LastModified;
     auto ret = m_shareClient->SetAccessPolicy(identifiers);
-    EXPECT_FALSE(ret->ETag.empty());
+    EXPECT_TRUE(ret->ETag.HasValue());
     EXPECT_FALSE(ret->LastModified < lmt);
 
     auto ret2 = m_shareClient->GetAccessPolicy();

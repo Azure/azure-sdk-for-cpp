@@ -45,6 +45,7 @@
 - `DirectoryClient` is renamed to `ShareDirectoryClient`, `FileClient` is renamed to `ShareFileClient`.
 - Directory and File related result types and options types now have a `Share` prefix. For example, `SetDirectoryPropertiesResult` is changed to `SetShareDirectoryPropertiesResult`.
 - Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Type for ETag was changed to `Azure::Core::ETag`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
