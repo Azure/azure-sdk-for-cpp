@@ -208,22 +208,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakePathClient::DeleteIfExists(deleteOptions);
   }
 
-  Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
-  DataLakeDirectoryClient::SetAccessControlRecursive(
-      Models::PathSetAccessControlRecursiveMode mode,
-      std::vector<Models::Acl> acls,
-      const SetDataLakeDirectoryAccessControlRecursiveOptions& options) const
-  {
-    Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = mode;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxRecords = options.MaxRecords;
-    protocolLayerOptions.ForceFlag = options.ForceFlag;
-    protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
-    return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
   Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeDirectoryClient::
       ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
   {

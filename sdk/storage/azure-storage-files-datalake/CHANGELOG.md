@@ -15,6 +15,8 @@
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
+- Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake path.
+- Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake path.
 
 ### Breaking Changes
 
@@ -34,6 +36,9 @@
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
 - `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadDataLakeFileToOptions::TansferOptions`.
 - `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadDataLakeFileFromOptions::TransferOptions`.
+- Changed `SetAccessControlRecursive` to `SetAccessControlRecursiveListSinglePage`, to mark that it is a single page operation, and removed the `mode` parameter, separated the modify/delete functionality to two new APIs.
+- Moved `SetAccessControlRecursiveListSinglePage` to `DataLakePathClient`.
+- Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.
 
 ### Other Changes and Improvements
 

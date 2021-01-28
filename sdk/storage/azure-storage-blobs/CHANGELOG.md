@@ -23,6 +23,7 @@
 - `ListBlobsIncludeItem` was renamed to `ListBlobsIncludeFlags`.
 - `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadBlobToOptions::TansferOptions`.
 - `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadBlockBlobFromOptions::TransferOptions`.
+- Removed `TagValue` from `FilterBlobItem`, removed `Where` from `FindBlobsByTagsSinglePageResult`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

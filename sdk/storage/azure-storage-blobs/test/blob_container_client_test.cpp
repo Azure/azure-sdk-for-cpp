@@ -778,14 +778,12 @@ namespace Azure { namespace Storage { namespace Test {
         }
         auto findBlobsRet = *blobServiceClient.FindBlobsByTagsSinglePage(whereExpression, options);
         EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
-        EXPECT_EQ(findBlobsRet.Where, whereExpression);
         options.ContinuationToken = findBlobsRet.ContinuationToken;
 
         for (auto& item : findBlobsRet.Items)
         {
           EXPECT_FALSE(item.BlobName.empty());
           EXPECT_FALSE(item.BlobContainerName.empty());
-          EXPECT_FALSE(item.TagValue.empty());
           findResults.emplace_back(std::move(item));
         }
       } while (!marker.empty());
@@ -802,7 +800,6 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_FALSE(findResults.empty());
     EXPECT_EQ(findResults[0].BlobName, blobName);
     EXPECT_EQ(findResults[0].BlobContainerName, m_containerName);
-    EXPECT_FALSE(findResults[0].TagValue.empty());
   }
 
   TEST_F(BlobContainerClientTest, DISABLED_AccessConditionTags)
