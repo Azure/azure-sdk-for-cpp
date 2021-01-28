@@ -198,11 +198,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlobLeaseStatus
 
-    struct BlobPrefix
-    {
-      std::string Name;
-    }; // struct BlobPrefix
-
     struct BlobRetentionPolicy
     {
       bool IsEnabled = false;
@@ -1120,7 +1115,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string Delimiter;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
-      std::vector<BlobPrefix> BlobPrefixes;
+      std::vector<std::string> BlobPrefixes;
     }; // struct ListBlobsByHierarchySinglePageResult
 
     struct ListBlobsSinglePageResult
@@ -4010,6 +4005,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_Blobs,
             k_Blob,
             k_BlobPrefix,
+            k_Name,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -4061,6 +4057,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_BlobPrefix);
               }
+              else if (std::strcmp(node.Name, "Name") == 0)
+              {
+                path.emplace_back(XmlTagName::k_Name);
+              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
@@ -4069,13 +4069,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
               {
                 ret.Items.emplace_back(BlobItemFromXml(reader));
-                path.pop_back();
-              }
-              else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_BlobPrefix)
-              {
-                ret.BlobPrefixes.emplace_back(BlobPrefixFromXml(reader));
                 path.pop_back();
               }
             }
@@ -4097,6 +4090,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_NextMarker)
               {
                 ret.ContinuationToken = node.Value;
+              }
+              else if (
+                  path.size() == 4 && path[0] == XmlTagName::k_EnumerationResults
+                  && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_BlobPrefix
+                  && path[3] == XmlTagName::k_Name)
+              {
+                ret.BlobPrefixes.emplace_back(node.Value);
               }
             }
             else if (node.Type == Storage::Details::XmlNodeType::Attribute)
@@ -4565,55 +4565,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_xmsblobsequencenumber)
               {
                 ret.SequenceNumber = std::stoll(node.Value);
-              }
-            }
-          }
-          return ret;
-        }
-
-        static BlobPrefix BlobPrefixFromXml(Storage::Details::XmlReader& reader)
-        {
-          BlobPrefix ret;
-          enum class XmlTagName
-          {
-            k_Name,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
-            {
-              if (std::strcmp(node.Name, "Name") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Name);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::k_Name)
-              {
-                ret.Name = node.Value;
               }
             }
           }
