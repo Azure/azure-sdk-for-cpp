@@ -757,7 +757,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * downloaded in a single request. Files larger than this limit will continue being downloaded
        * in chunks of size ChunkSize.
        */
-      int64_t InitialChunkSize = 245 * 1024 * 1024;
+      int64_t InitialChunkSize = 256 * 1024 * 1024;
 
       /**
        * @brief The maximum number of bytes in a single request.
