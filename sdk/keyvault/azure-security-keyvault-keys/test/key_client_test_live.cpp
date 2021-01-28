@@ -13,6 +13,17 @@
 
 #include <string>
 
+namespace {
+template <class T>
+void CheckValidResponse(
+    Azure::Core::Response<T>& response,
+    Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok)
+{
+  auto rawResponse = response.ExtractRawResponse();
+  EXPECT_EQ(rawResponse->GetStatusCode(), expectedCode);
+}
+} // namespace
+
 using namespace Azure::Security::KeyVault::Keys::Test;
 
 TEST_F(KeyVaultClientTest, GetKey)
@@ -21,8 +32,9 @@ TEST_F(KeyVaultClientTest, GetKey)
   // Assuming and RS Key exists in the KeyVault Account.
   std::string keyName("testKey");
 
-  auto r = keyClient.GetKey(keyName);
-  auto key = r.ExtractValue();
+  auto keyResponse = keyClient.GetKey(keyName);
+  CheckValidResponse(keyResponse);
+  auto key = keyResponse.ExtractValue();
 
   EXPECT_EQ(key.Name(), keyName);
   EXPECT_EQ(key.GetKeyType(), Azure::Security::KeyVault::Keys::KeyTypeEnum::Rsa);
@@ -34,14 +46,17 @@ TEST_F(KeyVaultClientTest, CreateKey)
   std::string keyName("createKey");
 
   {
-    auto key = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
-    auto keyVaultKey = key.ExtractValue();
+    auto keyResponse
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
-    auto key = keyClient.GetKey(keyName);
-    auto keyVaultKey = key.ExtractValue();
+    auto keyResponse = keyClient.GetKey(keyName);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -57,6 +72,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
   {
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec, options);
+    CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -91,6 +107,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
   {
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Rsa, options);
+    CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);

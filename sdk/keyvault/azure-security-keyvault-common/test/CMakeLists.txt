@@ -21,7 +21,10 @@ endif()
 
 target_link_libraries(azure-security-keyvault-common-test PUBLIC azure-security-keyvault-common gtest gmock)
 
-# gtest_add_tests will scan the test from azure-core-test and call add_test
+# gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_add_tests(TARGET azure-security-keyvault-common-test
-     TEST_PREFIX azure-security-keyvault-common-unittest.)
+gtest_discover_tests(azure-security-keyvault-common-test
+  TEST_PREFIX azure-security-keyvault-common-unittest.
+  NO_PRETTY_TYPES
+  NO_PRETTY_VALUES
+)
