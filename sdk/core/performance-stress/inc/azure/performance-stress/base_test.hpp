@@ -5,9 +5,9 @@
 
 #include <azure/core/context.hpp>
 
-namespace Azure { namespace PerfStress {
+namespace Azure { namespace PerformanceStress {
   // contract for a test
-  struct PerfStressTestBase
+  struct BaseTest
   {
     virtual void GlobalSetupAsync(){};
     virtual void SetupAsync(){};
@@ -17,4 +17,4 @@ namespace Azure { namespace PerfStress {
     virtual void CleanupAsync(){};
     virtual void GlobalCleanupAsync(){};
   };
-}} // namespace Azure::PerfStress
+}} // namespace Azure::PerformanceStress

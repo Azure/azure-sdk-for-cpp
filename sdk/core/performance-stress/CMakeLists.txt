@@ -2,25 +2,34 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-project(azure-perf-stress LANGUAGES CXX)
+project(azure-performance-stress LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_library (
-  azure-perf-stress
-    src/placeholder.cpp
+set(
+  AZURE_PERFORMANCE_HEADER
+  inc/azure/performance-stress/base_test.hpp
+  inc/azure/performance-stress/options.hpp
+  inc/azure/performance-stress/program.hpp
+  inc/azure/performance-stress/test.hpp
 )
 
+set(
+  AZURE_PERFORMANCE_SOURCE
+)
+
+add_library(azure-performance-stress ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})
+
 target_include_directories(
-  azure-perf-stress
+  azure-performance-stress
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include/az_core>
 )
 
 # make sure that users can consume the project as a library.
-add_library (Azure::PerfStress ALIAS azure-perf-stress)
-target_link_libraries(azure-perf-stress PRIVATE azure-core)
+add_library (Azure::PerfStress ALIAS azure-performance-stress)
+target_link_libraries(azure-performance-stress PRIVATE azure-core)
 
 add_subdirectory(test)

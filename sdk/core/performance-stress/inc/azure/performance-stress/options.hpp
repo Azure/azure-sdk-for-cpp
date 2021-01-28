@@ -7,10 +7,10 @@
 
 #include "azure/core/nullable.hpp"
 
-namespace Azure { namespace PerfStress {
+namespace Azure { namespace PerformanceStress {
   // options supported when running a test.
   // TODO: add defaults for command line
-  struct PerfStressOptions
+  struct Options
   {
     /* [Option('d', "duration", Default = 10, HelpText = "Duration of test in seconds")] */
     int Duration;
@@ -50,4 +50,4 @@ namespace Azure { namespace PerfStress {
     /* [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")] */
     int Warmup;
   };
-}} // namespace Azure::PerfStress
+}} // namespace Azure::PerformanceStress
