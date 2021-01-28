@@ -344,7 +344,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set Acls recursive.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursiveSinglePage(acls));
+      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursiveListSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
       newAcl.Permissions = "rw-";
       std::vector<Files::DataLake::Models::Acl> acls;
       acls.emplace_back(std::move(newAcl));
-      EXPECT_NO_THROW(rootDirectoryClient.UpdateAccessControlRecursiveSinglePage(acls));
+      EXPECT_NO_THROW(rootDirectoryClient.UpdateAccessControlRecursiveListSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
@@ -448,7 +448,7 @@ namespace Azure { namespace Storage { namespace Test {
       removeAcl.Id = "72a3f86f-271f-439e-b031-25678907d381";
       std::vector<Files::DataLake::Models::Acl> acls;
       acls.emplace_back(std::move(removeAcl));
-      EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlRecursiveSinglePage(acls));
+      EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlRecursiveListSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
@@ -524,7 +524,7 @@ namespace Azure { namespace Storage { namespace Test {
         newAcl.Permissions = "rw-";
         acls.emplace_back(std::move(newAcl));
       }
-      (rootDirectoryClient.SetAccessControlRecursiveSinglePage(acls));
+      (rootDirectoryClient.SetAccessControlRecursiveListSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
