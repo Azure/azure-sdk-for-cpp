@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfEmpty(
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteEmpty(
         const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const
     {
       return this->Delete(false, options);
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfEmptyIfExists(
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteEmptyIfExists(
         const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const
     {
       return this->DeleteIfExists(false, options);
