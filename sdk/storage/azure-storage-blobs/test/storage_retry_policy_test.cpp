@@ -433,9 +433,9 @@ namespace Azure { namespace Storage { namespace Test {
     std::string downloadBuffer;
     downloadBuffer.resize(std::max(primaryContent.size(), secondaryContent.size()));
     Blobs::DownloadBlobToOptions options;
-    options.InitialChunkSize = 2;
-    options.ChunkSize = 2;
-    options.Concurrency = 1;
+    options.TransferOptions.InitialChunkSize = 2;
+    options.TransferOptions.ChunkSize = 2;
+    options.TransferOptions.Concurrency = 1;
     blobClient.DownloadTo(
         reinterpret_cast<uint8_t*>(&downloadBuffer[0]),
         static_cast<int64_t>(downloadBuffer.size()),

@@ -750,22 +750,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Core::Nullable<Core::Http::Range> Range;
 
-    /**
-     * @brief The size of the first range request in bytes. Files smaller than this limit will be
-     * downloaded in a single request. Files larger than this limit will continue being downloaded
-     * in chunks of size ChunkSize.
-     */
-    Azure::Core::Nullable<int64_t> InitialChunkSize;
+    struct
+    {
+      /**
+       * @brief The size of the first range request in bytes. Files smaller than this limit will be
+       * downloaded in a single request. Files larger than this limit will continue being downloaded
+       * in chunks of size ChunkSize.
+       */
+      int64_t InitialChunkSize = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+      /**
+       * @brief The maximum number of bytes in a single request.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   /**
@@ -789,11 +792,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Storage::Metadata Metadata;
 
     /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
-
-    /**
      * @brief SMB properties to set for the destination file.
      */
     Models::FileShareSmbProperties SmbProperties;
@@ -806,9 +804,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Core::Nullable<std::string> FilePermission;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+    struct
+    {
+      /**
+       * @brief File smaller than this will be uploaded with a single upload operation. This value
+       * cannot be larger than 4 MiB.
+       */
+      int64_t SingleUploadThreshold = 4 * 1024 * 1024;
+
+      /**
+       * @brief The maximum number of bytes in a single request.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
+
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 }}}} // namespace Azure::Storage::Files::Shares

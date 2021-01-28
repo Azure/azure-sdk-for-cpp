@@ -107,23 +107,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::size_t bufferSize,
       const UploadBlockBlobFromOptions& options) const
   {
-    constexpr int64_t DefaultBlockSize = 8 * 1024 * 1024;
-    constexpr int64_t MaximumNumberBlocks = 50000;
-    constexpr int64_t GrainSize = 4 * 1024;
+    constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
-    int64_t chunkSize = DefaultBlockSize;
-    if (options.ChunkSize.HasValue())
-    {
-      chunkSize = options.ChunkSize.GetValue();
-    }
-    else
-    {
-      int64_t minBlockSize = (bufferSize + MaximumNumberBlocks - 1) / MaximumNumberBlocks;
-      chunkSize = std::max(chunkSize, minBlockSize);
-      chunkSize = (chunkSize + GrainSize - 1) / GrainSize * GrainSize;
-    }
+    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
 
-    if (bufferSize <= static_cast<std::size_t>(chunkSize))
+    if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
     {
       Azure::Core::Http::MemoryBodyStream contentStream(buffer, bufferSize);
       UploadBlockBlobOptions uploadBlockBlobOptions;
@@ -154,7 +142,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     Storage::Details::ConcurrentTransfer(
-        0, bufferSize, chunkSize, options.Concurrency, uploadBlockFunc);
+        0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadBlockFunc);
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {
@@ -182,26 +170,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& fileName,
       const UploadBlockBlobFromOptions& options) const
   {
-    constexpr int64_t DefaultBlockSize = 8 * 1024 * 1024;
-    constexpr int64_t MaximumNumberBlocks = 50000;
-    constexpr int64_t GrainSize = 4 * 1024;
+    constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
     Storage::Details::FileReader fileReader(fileName);
 
-    int64_t chunkSize = DefaultBlockSize;
-    if (options.ChunkSize.HasValue())
-    {
-      chunkSize = options.ChunkSize.GetValue();
-    }
-    else
-    {
-      int64_t minBlockSize
-          = (fileReader.GetFileSize() + MaximumNumberBlocks - 1) / MaximumNumberBlocks;
-      chunkSize = std::max(chunkSize, minBlockSize);
-      chunkSize = (chunkSize + GrainSize - 1) / GrainSize * GrainSize;
-    }
+    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
 
-    if (fileReader.GetFileSize() <= chunkSize)
+    if (fileReader.GetFileSize() <= options.TransferOptions.SingleUploadThreshold)
     {
       Azure::Core::Http::FileBodyStream contentStream(
           fileReader.GetHandle(), 0, fileReader.GetFileSize());
@@ -233,7 +208,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     Storage::Details::ConcurrentTransfer(
-        0, fileReader.GetFileSize(), chunkSize, options.Concurrency, uploadBlockFunc);
+        0,
+        fileReader.GetFileSize(),
+        chunkSize,
+        options.TransferOptions.Concurrency,
+        uploadBlockFunc);
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {
