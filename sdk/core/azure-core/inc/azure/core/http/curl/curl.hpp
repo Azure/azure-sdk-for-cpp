@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark Call this function before calling the libcurl function `curl_global_cleanup()`.
      *
      */
-    static void CleanUp() {}
+    static void CleanUp();
   };
 
 }}} // namespace Azure::Core::Http
