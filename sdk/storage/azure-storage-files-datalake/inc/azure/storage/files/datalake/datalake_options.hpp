@@ -272,15 +272,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief When renaming a directory, the number of paths that are renamed with each
-     *        invocation is limited. If the number of paths to be renamed exceeds this limit,
-     *        a continuation token is returned in this response header. When a continuation token
-     *        is returned in the response, it must be specified in a subsequent invocation of the
-     *        rename operation to continue renaming the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */

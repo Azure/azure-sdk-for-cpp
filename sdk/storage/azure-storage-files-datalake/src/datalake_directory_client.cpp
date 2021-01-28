@@ -212,7 +212,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         + Storage::Details::UrlEncodePath(destinationDirectoryPath));
 
     Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
