@@ -61,6 +61,9 @@ int main(int argc, char** argv)
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
 
+  // When using libcurl, we need to call the transport adapter clean up routine.
+  Azure::Core::Http::CurlTransport::CleanUp();
+
   // Call global clean up
   curl_global_cleanup();
 

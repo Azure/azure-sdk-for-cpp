@@ -1323,3 +1323,9 @@ void CurlConnectionPool::CleanUp()
   // let thread run independent. It will be done once ther is not connections in the pool
   backgroundCleanerThread.detach();
 }
+
+void Azure::Core::Http::CurlTransport::CleanUp()
+{
+  // Clean all connections. This will call each connection destructor.
+  Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+}
