@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_type.hpp"
+#include "azure/keyvault/keys/key_constants.hpp"
 
 #include <stdexcept>
 

@@ -30,10 +30,13 @@ set(
   AZURE_KEYVAULT_KEYS_HEADER
     inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
+    inc/azure/keyvault/keys/key_constants.hpp
+    inc/azure/keyvault/keys/key_create_options.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/key_operation.hpp
     inc/azure/keyvault/keys/key_properties.hpp
     inc/azure/keyvault/keys/key_release_policy.hpp
+    inc/azure/keyvault/keys/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
     inc/azure/keyvault/keys/version.hpp
@@ -42,6 +45,7 @@ set(
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/key_client.cpp
+    src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
 )
