@@ -89,6 +89,17 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     CurlTransportSSLOptions SSLOptions;
+
+    /**
+     * @brief libcurl will not use any functions that install signal handlers or any
+     * functions that cause signals to be sent to the process.
+     *
+     * @remark See more info here: https://curl.se/libcurl/c/CURLOPT_NOSIGNAL.html.
+     * The default option is false.
+     * Consider setting to true when using multi-thread.
+     *
+     */
+    bool NoSignal = false;
   };
 
   /**

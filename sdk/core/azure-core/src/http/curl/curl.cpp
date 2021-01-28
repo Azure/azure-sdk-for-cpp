@@ -1188,6 +1188,16 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     }
   }
 
+  if (options.NoSignal)
+  {
+    if (!SetLibcurlOption(newHandle, CURLOPT_NOSIGNAL, 1L, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          Details::DefaultFailedToGetNewConnectionTemplate + host + ". Failed turning NOSIGNAL on. "
+          + std::string(curl_easy_strerror(result)));
+    }
+  }
+
   long sslOption = 0;
   if (options.SSLOptions.NoRevoke)
   {
@@ -1208,8 +1218,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     {
       throw Azure::Core::Http::TransportException(
           Details::DefaultFailedToGetNewConnectionTemplate + host
-          + ". Failed to disable ssl verify peer." + ". "
-          + std::string(curl_easy_strerror(result)));
+          + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
     }
   }
 
