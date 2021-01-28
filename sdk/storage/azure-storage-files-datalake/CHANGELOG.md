@@ -34,6 +34,9 @@
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
+- Removed `Rename` from `DataLakeDirectoryClient` and `DataLakeFileClient`. Instead, added `RenameFile` and `RenameSubdirectory` to `DataLakeDirectoryClient` and added `RenameFile` and `RenameDirectory` to `DataLakeFileSystemClient`.
+- Rename APIs now return the client of the resource it is renaming to.
+- Removed `Mode` for rename operations' options, that originally controls the rename mode. Now it is fixed to legacy mode.
 - Changed `SetAccessControlRecursive` to `SetAccessControlRecursiveListSinglePage`, to mark that it is a single page operation, and removed the `mode` parameter, separated the modify/delete functionality to two new APIs.
 - Moved `SetAccessControlRecursiveListSinglePage` to `DataLakePathClient`.
 - Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.

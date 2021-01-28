@@ -227,11 +227,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  struct RenameDataLakeFileResult
-  {
-    std::string RequestId;
-  };
-
   struct DeleteDataLakeFileResult
   {
     bool Deleted = true;

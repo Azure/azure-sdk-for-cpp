@@ -333,7 +333,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Nullable<std::string> ETag;
       Azure::Core::Nullable<Core::DateTime> LastModified;
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ContinuationToken;
       Azure::Core::Nullable<int64_t> ContentLength;
     };
 
@@ -1183,11 +1182,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   Core::DateTime::DateFormat::Rfc1123);
             }
             result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            if (response.GetHeaders().find(Details::HeaderContinuationToken)
-                != response.GetHeaders().end())
-            {
-              result.ContinuationToken = response.GetHeaders().at(Details::HeaderContinuationToken);
-            }
             if (response.GetHeaders().find(Details::HeaderContentLength)
                 != response.GetHeaders().end())
             {
