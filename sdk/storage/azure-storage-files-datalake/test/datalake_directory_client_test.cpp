@@ -140,20 +140,20 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
-      std::vector<std::string> newPaths;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> newDirectoryClients;
       for (auto& client : directoryClients)
       {
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath));
-        newPaths.push_back(newPath);
+        EXPECT_NO_THROW(newDirectoryClients.emplace_back(
+            client.RenameSubdirectory("", newPath).ExtractValue()));
       }
       for (const auto& client : directoryClients)
       {
         EXPECT_THROW(client.Delete(false), StorageException);
       }
-      for (const auto& newPath : newPaths)
+      for (const auto& client : newDirectoryClients)
       {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(client.Delete(false));
       }
     }
     {
@@ -171,12 +171,12 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::RenameDataLakeDirectoryOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
+        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
         Files::DataLake::RenameDataLakeDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(
+            client.RenameSubdirectory("", newPath, options2).ExtractValue().Delete(false));
       }
     }
     {
@@ -193,12 +193,12 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameDataLakeDirectoryOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
+        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
         Files::DataLake::RenameDataLakeDirectoryOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(
+            client.RenameSubdirectory("", newPath, options2).ExtractValue().Delete(false));
       }
     }
     {
@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
         {
-          EXPECT_THROW(client.Rename(RandomString(), options), StorageException);
+          EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options), StorageException);
           EXPECT_NO_THROW(client.GetProperties());
         }
       }
@@ -232,8 +232,8 @@ namespace Azure { namespace Storage { namespace Test {
         for (auto& client : directoryClient)
         {
           auto newPath = RandomString();
-          EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
+          EXPECT_NO_THROW(
+              client.RenameSubdirectory("", newPath, options).ExtractValue().Delete(false));
         }
       }
     }

@@ -116,20 +116,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
-     * @brief Renames a directory. By default, the destination is overwritten and
+     * @brief Renames a file. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
-     * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
-     * @param options Optional parameters to rename a resource to the resource the destination
-     * directory points to.
-     * @return Azure::Core::Response<Models::RenameDataLakeDirectoryResult> containing the
-     * information returned when renaming the directory.
-     * @remark This operation will not change the URL this directory client points too, to use the
-     *         new name, customer needs to initialize a new directory client with the new name/path.
+     * @param fileName The file that gets renamed.
+     * @param destinationFilePath The path of the file the source file is renaming to.
+     * @param options Optional parameters to rename a file.
+     * @return Azure::Core::Response<DataLakeFileClient> The client targets the renamed file.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDataLakeDirectoryResult> Rename(
+    Azure::Core::Response<DataLakeFileClient> RenameFile(
+        const std::string& fileName,
+        const std::string& destinationFilePath,
+        const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions()) const;
+
+    /**
+     * @brief Renames a directory. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param subdirectoryName The subdirectory that gets renamed.
+     * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
+     * @param options Optional parameters to rename a directory.
+     * @return Azure::Core::Response<DataLakeDirectoryClient> The client targets the renamed
+     * directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<DataLakeDirectoryClient> RenameSubdirectory(
+        const std::string& subdirectoryName,
         const std::string& destinationDirectoryPath,
-        const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions()) const;
+        const RenameDataLakeSubdirectoryOptions& options
+        = RenameDataLakeSubdirectoryOptions()) const;
 
     /**
      * @brief Deletes the directory.

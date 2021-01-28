@@ -259,6 +259,36 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
+   * @brief Optional parameters for DataLakeFileSystemClient::RenameDirectory
+   * @remark Some optional parameter is mandatory in certain combination.
+   *         More details:
+   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
+   */
+  struct RenameDataLakeDirectoryOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
+     *        file system.
+     */
+    Azure::Core::Nullable<std::string> DestinationFileSystem;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+
+    /**
+     * @brief The access condition for source path.
+     */
+    PathAccessConditions SourceAccessConditions;
+  };
+
+  /**
    * @brief Optional parameters for PathClient::Append
    */
   struct AppendDataLakeFileOptions
@@ -586,13 +616,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
-
-    /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
@@ -625,51 +648,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
-  /**
-   * @brief Optional parameters for PathClient::Create
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
-   */
-  struct RenameDataLakeDirectoryOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief When renaming a directory, the number of paths that are renamed with each
-     *        invocation is limited. If the number of paths to be renamed exceeds this limit,
-     *        a continuation token is returned in this response header. When a continuation token
-     *        is returned in the response, it must be specified in a subsequent invocation of the
-     *        rename operation to continue renaming the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
-
-    /**
-     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
-     *        file system.
-     */
-    Azure::Core::Nullable<std::string> DestinationFileSystem;
-
-    /**
-     * @brief Specify the access condition for the path.
-     */
-    PathAccessConditions AccessConditions;
-
-    /**
-     * @brief The access condition for source path.
-     */
-    PathAccessConditions SourceAccessConditions;
-  };
+  using RenameDataLakeSubdirectoryOptions = RenameDataLakeDirectoryOptions;
 
   /**
    * @brief Optional parameters for DirectoryClient::Delete
