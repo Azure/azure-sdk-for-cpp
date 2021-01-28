@@ -21,6 +21,7 @@
 - Removed `PreviousContinuationToken` from `ListBlobContainersSinglePageResult`, `ListBlobsByHierarchySinglePageResult` and `ListBlobsSinglePageResult`.
 - `ListBlobContainersIncludeItem` was renamed to `ListBlobContainersIncludeFlags`.
 - `ListBlobsIncludeItem` was renamed to `ListBlobsIncludeFlags`.
+- Removed `TagValue` from `FilterBlobItem`, removed `Where` from `FindBlobsByTagsSinglePageResult`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
