@@ -5,6 +5,7 @@
 ### New Features
 
 - Added support for HTTP validators `ETag`.
+- Added option [NOSIGNAL](https://curl.se/libcurl/c/CURLOPT_NOSIGNAL.html) for the `Azure::Core::Http::CurlTransportOptions`. 
 
 ### Breaking Changes
 
