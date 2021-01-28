@@ -121,12 +121,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileName The file that gets renamed.
      * @param destinationFilePath The path of the file the source file is renaming to.
      * @param options Optional parameters to rename a file.
-     * @return Azure::Core::Response<Models::RenameDataLakeDataLakeFileResult> containing the
-     * information returned when renaming the file, including the DataLakeFileClient that's
-     * targeting the renamed file.
+     * @return Azure::Core::Response<DataLakeFileClient> The client targets the renamed file.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDataLakeFileResult> RenameFile(
+    Azure::Core::Response<DataLakeFileClient> RenameFile(
         const std::string& fileName,
         const std::string& destinationFilePath,
         const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions()) const;
@@ -137,17 +135,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param subdirectoryName The subdirectory that gets renamed.
      * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
      * @param options Optional parameters to rename a directory.
-     * @return Azure::Core::Response<Models::RenameDataLakeSubdirectorySinglePageResult> containing
-     * the information returned when renaming the directory, including the DataLakeDirectoryClient
-     * that's targeting the renamed directory.
+     * @return Azure::Core::Response<DataLakeDirectoryClient> The client targets the renamed
+     * directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDataLakeSubdirectorySinglePageResult>
-    RenameSubdirectorySinglePage(
+    Azure::Core::Response<DataLakeDirectoryClient> RenameSubdirectory(
         const std::string& subdirectoryName,
         const std::string& destinationDirectoryPath,
-        const RenameDataLakeSubdirectorySinglePageOptions& options
-        = RenameDataLakeSubdirectorySinglePageOptions()) const;
+        const RenameDataLakeSubdirectoryOptions& options
+        = RenameDataLakeSubdirectoryOptions()) const;
 
     /**
      * @brief Deletes the directory.

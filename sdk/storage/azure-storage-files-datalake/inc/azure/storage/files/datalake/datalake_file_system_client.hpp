@@ -207,12 +207,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileName The file that gets renamed.
      * @param destinationFilePath The path of the file the source file is renaming to.
      * @param options Optional parameters to rename a file
-     * @return Azure::Core::Response<Models::RenameDataLakeDataLakeFileResult> containing the
-     * information returned when renaming the file, including the DataLakeFileClient targeting the
-     * renamed file.
+     * @return Azure::Core::Response<DataLakeFileClient> The client targets the renamed file.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDataLakeFileResult> RenameFile(
+    Azure::Core::Response<DataLakeFileClient> RenameFile(
         const std::string& fileName,
         const std::string& destinationFilePath,
         const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions()) const;
@@ -223,17 +221,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param directoryName The directory that gets renamed.
      * @param destinationDirectoryPath The destinationPath the source directory is renaming to.
      * @param options Optional parameters to rename a directory.
-     * @return Azure::Core::Response<Models::RenameDataLakeDirectorySinglePageResult> containing the
-     * information returned when renaming the directory, including the DataLakeDirectoryClient
-     * targeting the renamed directory.
+     * @return Azure::Core::Response<DataLakeDirectoryClient> The client targets the renamed
+     * directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDataLakeDirectorySinglePageResult>
-    RenameDirectorySinglePage(
+    Azure::Core::Response<DataLakeDirectoryClient> RenameDirectory(
         const std::string& directoryName,
         const std::string& destinationDirectoryPath,
-        const RenameDataLakeDirectorySinglePageOptions& options
-        = RenameDataLakeDirectorySinglePageOptions()) const;
+        const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions()) const;
 
   private:
     Azure::Core::Http::Url m_dfsUrl;

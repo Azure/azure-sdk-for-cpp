@@ -259,12 +259,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DataLakeFileSystemClient::RenameDirectorySinglePage
+   * @brief Optional parameters for DataLakeFileSystemClient::RenameDirectory
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
    */
-  struct RenameDataLakeDirectorySinglePageOptions
+  struct RenameDataLakeDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -657,7 +657,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
-  using RenameDataLakeSubdirectorySinglePageOptions = RenameDataLakeDirectorySinglePageOptions;
+  using RenameDataLakeSubdirectoryOptions = RenameDataLakeDirectoryOptions;
 
   /**
    * @brief Optional parameters for DirectoryClient::Delete

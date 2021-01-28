@@ -11,269 +11,247 @@
 
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
-  class DataLakeDirectoryClient;
-  class DataLakeFileClient;
+  // ServiceClient models:
 
-  namespace Models {
+  using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
+  using UserDelegationKey = Blobs::Models::UserDelegationKey;
 
-    // ServiceClient models:
+  struct FileSystemItem
+  {
+    std::string Name;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    Storage::Metadata Metadata;
+    PublicAccessType AccessType = PublicAccessType::None;
+    bool HasImmutabilityPolicy = false;
+    bool HasLegalHold = false;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    LeaseStateType LeaseState = LeaseStateType::Available;
+    LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
+  }; // struct BlobContainerItem
 
-    using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
-    using UserDelegationKey = Blobs::Models::UserDelegationKey;
+  struct ListFileSystemsSinglePageResult
+  {
+    std::string RequestId;
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    Azure::Core::Nullable<std::string> ContinuationToken;
+    std::vector<FileSystemItem> Items;
+  }; // struct ListFileSystemsSinglePageResult
 
-    struct FileSystemItem
-    {
-      std::string Name;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      Storage::Metadata Metadata;
-      PublicAccessType AccessType = PublicAccessType::None;
-      bool HasImmutabilityPolicy = false;
-      bool HasLegalHold = false;
-      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-      LeaseStateType LeaseState = LeaseStateType::Available;
-      LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
-    }; // struct BlobContainerItem
+  // FileSystemClient models:
 
-    struct ListFileSystemsSinglePageResult
-    {
-      std::string RequestId;
-      std::string ServiceEndpoint;
-      std::string Prefix;
-      Azure::Core::Nullable<std::string> ContinuationToken;
-      std::vector<FileSystemItem> Items;
-    }; // struct ListFileSystemsSinglePageResult
+  using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
+  using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
+  using ListDataLakeFileSystemsIncludeItem = Blobs::Models::ListBlobContainersIncludeItem;
 
-    // FileSystemClient models:
+  struct GetDataLakeFileSystemAccessPolicyResult
+  {
+    PublicAccessType AccessType = PublicAccessType::None;
+    std::string ETag;
+    Azure::Core::DateTime LastModified;
+    std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
+    std::string RequestId;
+  }; // struct GetDataLakeFileSystemAccessPolicyResult
 
-    using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
-    using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
-    using ListDataLakeFileSystemsIncludeItem = Blobs::Models::ListBlobContainersIncludeItem;
+  using SetDataLakeFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 
-    struct GetDataLakeFileSystemAccessPolicyResult
-    {
-      PublicAccessType AccessType = PublicAccessType::None;
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
-      std::string RequestId;
-    }; // struct GetDataLakeFileSystemAccessPolicyResult
+  struct GetDataLakeFileSystemPropertiesResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    Storage::Metadata Metadata;
+    std::string RequestId;
+  };
 
-    using SetDataLakeFileSystemAccessPolicyResult
-        = Blobs::Models::SetBlobContainerAccessPolicyResult;
+  struct CreateDataLakeFileSystemResult
+  {
+    bool Created = true;
+    std::string ETag;
+    Core::DateTime LastModified;
+    std::string RequestId;
+  };
 
-    struct GetDataLakeFileSystemPropertiesResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      Storage::Metadata Metadata;
-      std::string RequestId;
-    };
+  struct DeleteDataLakeFileSystemResult
+  {
+    bool Deleted = true;
+    std::string RequestId;
+  };
 
-    struct CreateDataLakeFileSystemResult
-    {
-      bool Created = true;
-      std::string ETag;
-      Core::DateTime LastModified;
-      std::string RequestId;
-    };
+  struct SetDataLakeFileSystemMetadataResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    std::string RequestId;
+    std::string NamespaceEnabled;
+  };
 
-    struct DeleteDataLakeFileSystemResult
-    {
-      bool Deleted = true;
-      std::string RequestId;
-    };
+  // PathClient models:
 
-    struct SetDataLakeFileSystemMetadataResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      std::string RequestId;
-      std::string NamespaceEnabled;
-    };
+  struct DeleteDataLakePathResult
+  {
+    bool Deleted = true;
+    Azure::Core::Nullable<std::string> ContinuationToken;
+    std::string RequestId;
+  };
 
-    struct RenameDataLakeDirectorySinglePageResult
-    {
-      Azure::Core::Nullable<std::string> ContinuationToken;
-      std::string RequestId;
-      std::unique_ptr<DataLakeDirectoryClient> RenamedDirectoryClient;
-    };
+  using AcquireDataLakeLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
+  using RenewDataLakeLeaseResult = Blobs::Models::RenewBlobLeaseResult;
+  using ReleaseDataLakeLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
+  using ChangeDataLakeLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
+  using BreakDataLakeLeaseResult = Blobs::Models::BreakBlobLeaseResult;
 
-    // PathClient models:
+  struct Acl
+  {
+    std::string Scope;
+    std::string Type;
+    std::string Id;
+    std::string Permissions;
 
-    struct DeleteDataLakePathResult
-    {
-      bool Deleted = true;
-      Azure::Core::Nullable<std::string> ContinuationToken;
-      std::string RequestId;
-    };
+    /**
+     * @brief Creates an Acl based on acl input string.
+     * @param aclString the string to be parsed to Acl.
+     * @return Acl
+     */
+    static Acl FromString(const std::string& aclString);
 
-    using AcquireDataLakeLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
-    using RenewDataLakeLeaseResult = Blobs::Models::RenewBlobLeaseResult;
-    using ReleaseDataLakeLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
-    using ChangeDataLakeLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
-    using BreakDataLakeLeaseResult = Blobs::Models::BreakBlobLeaseResult;
+    /**
+     * @brief Creates a string from an Acl.
+     * @param acl the acl object to be serialized to a string.
+     * @return std::string
+     */
+    static std::string ToString(const Acl& acl);
 
-    struct Acl
-    {
-      std::string Scope;
-      std::string Type;
-      std::string Id;
-      std::string Permissions;
+    /**
+     * @brief Creates a vector of Acl from a string that indicates multiple acls.
+     * @param dataLakeAclsString the string that contains multiple acls.
+     * @return std::vector<Acl>
+     */
+    static std::vector<Acl> DeserializeAcls(const std::string& dataLakeAclsString);
 
-      /**
-       * @brief Creates an Acl based on acl input string.
-       * @param aclString the string to be parsed to Acl.
-       * @return Acl
-       */
-      static Acl FromString(const std::string& aclString);
+    /**
+     * @brief Creates a string that contains several Acls.
+     * @param dataLakeAclsArray the acls to be serialized into a string.
+     * @return std::string
+     */
+    static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
+  };
 
-      /**
-       * @brief Creates a string from an Acl.
-       * @param acl the acl object to be serialized to a string.
-       * @return std::string
-       */
-      static std::string ToString(const Acl& acl);
+  struct GetDataLakePathPropertiesResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    Core::DateTime CreatedOn;
+    int64_t FileSize;
+    Storage::Metadata Metadata;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    PathHttpHeaders HttpHeaders;
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    Azure::Core::Nullable<bool> AccessTierInferred;
+    Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
+    Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    std::string RequestId;
+  };
 
-      /**
-       * @brief Creates a vector of Acl from a string that indicates multiple acls.
-       * @param dataLakeAclsString the string that contains multiple acls.
-       * @return std::vector<Acl>
-       */
-      static std::vector<Acl> DeserializeAcls(const std::string& dataLakeAclsString);
+  struct GetDataLakePathAccessControlListResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    std::string Owner;
+    std::string Group;
+    std::string Permissions;
+    std::vector<Acl> Acls;
+    std::string RequestId;
+  };
 
-      /**
-       * @brief Creates a string that contains several Acls.
-       * @param dataLakeAclsArray the acls to be serialized into a string.
-       * @return std::string
-       */
-      static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
-    };
+  struct SetDataLakePathHttpHeadersResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    std::string RequestId;
+  };
 
-    struct GetDataLakePathPropertiesResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      Core::DateTime CreatedOn;
-      int64_t FileSize;
-      Storage::Metadata Metadata;
-      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<LeaseStateType> LeaseState;
-      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
-      PathHttpHeaders HttpHeaders;
-      Azure::Core::Nullable<bool> ServerEncrypted;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<bool> AccessTierInferred;
-      Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
-      Azure::Core::Nullable<std::string> CopyId;
-      Azure::Core::Nullable<std::string> CopySource;
-      Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
-      Azure::Core::Nullable<std::string> CopyProgress;
-      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
-      Azure::Core::Nullable<Core::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
-      std::string RequestId;
-    };
+  struct SetDataLakePathMetadataResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    std::string RequestId;
+  };
 
-    struct GetDataLakePathAccessControlListResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      std::string Owner;
-      std::string Group;
-      std::string Permissions;
-      std::vector<Acl> Acls;
-      std::string RequestId;
-    };
+  struct CreateDataLakePathResult
+  {
+    bool Created = true;
+    std::string ETag;
+    Core::DateTime LastModified;
+    Azure::Core::Nullable<int64_t> FileSize;
+    std::string RequestId;
+  };
 
-    struct SetDataLakePathHttpHeadersResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      std::string RequestId;
-    };
+  using SetDataLakePathAccessControlListResult = Details::PathSetAccessControlResult;
+  using SetDataLakePathPermissionsResult = Details::PathSetAccessControlResult;
 
-    struct SetDataLakePathMetadataResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      std::string RequestId;
-    };
+  // FileClient models:
 
-    struct CreateDataLakePathResult
-    {
-      bool Created = true;
-      std::string ETag;
-      Core::DateTime LastModified;
-      Azure::Core::Nullable<int64_t> FileSize;
-      std::string RequestId;
-    };
+  using UploadDataLakeFileFromResult = Blobs::Models::UploadBlockBlobResult;
+  using AppendDataLakeFileResult = Details::PathAppendDataResult;
+  using FlushDataLakeFileResult = Details::PathFlushDataResult;
+  using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
 
-    using SetDataLakePathAccessControlListResult = Details::PathSetAccessControlResult;
-    using SetDataLakePathPermissionsResult = Details::PathSetAccessControlResult;
+  struct ReadDataLakeFileResult
+  {
+    std::unique_ptr<Azure::Core::Http::BodyStream> Body;
+    PathHttpHeaders HttpHeaders;
+    int64_t FileSize = int64_t();
+    Azure::Core::Http::Range ContentRange;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+    std::string ETag;
+    Core::DateTime LastModified;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
+    Storage::Metadata Metadata;
+    Core::DateTime CreatedOn;
+    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
+    Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    std::string RequestId;
+  };
 
-    // FileClient models:
+  struct DeleteDataLakeFileResult
+  {
+    bool Deleted = true;
+    std::string RequestId;
+  };
 
-    using UploadDataLakeFileFromResult = Blobs::Models::UploadBlockBlobResult;
-    using AppendDataLakeFileResult = Details::PathAppendDataResult;
-    using FlushDataLakeFileResult = Details::PathFlushDataResult;
-    using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
+  struct DownloadDataLakeFileToResult
+  {
+    std::string ETag;
+    Core::DateTime LastModified;
+    int64_t ContentLength = 0;
+    PathHttpHeaders HttpHeaders;
+    Storage::Metadata Metadata;
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    std::string RequestId;
+  };
 
-    struct ReadDataLakeFileResult
-    {
-      std::unique_ptr<Azure::Core::Http::BodyStream> Body;
-      PathHttpHeaders HttpHeaders;
-      int64_t FileSize = int64_t();
-      Azure::Core::Http::Range ContentRange;
-      Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
-      std::string ETag;
-      Core::DateTime LastModified;
-      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-      LeaseStateType LeaseState;
-      LeaseStatusType LeaseStatus;
-      Storage::Metadata Metadata;
-      Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Core::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
-      std::string RequestId;
-    };
+  using CreateDataLakeFileResult = CreateDataLakePathResult;
 
-    struct RenameDataLakeFileResult
-    {
-      std::string RequestId;
-      std::unique_ptr<DataLakeFileClient> RenamedFileClient;
-    };
+  // DirectoryClient models:
 
-    struct DeleteDataLakeFileResult
-    {
-      bool Deleted = true;
-      std::string RequestId;
-    };
+  using SetDataLakeDirectoryAccessControlRecursiveResult
+      = Details::PathSetAccessControlRecursiveResult;
+  using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
+  using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
 
-    struct DownloadDataLakeFileToResult
-    {
-      std::string ETag;
-      Core::DateTime LastModified;
-      int64_t ContentLength = 0;
-      PathHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
-      Azure::Core::Nullable<bool> ServerEncrypted;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      std::string RequestId;
-    };
-
-    using CreateDataLakeFileResult = CreateDataLakePathResult;
-
-    // DirectoryClient models:
-
-    using RenameDataLakeSubdirectorySinglePageResult = RenameDataLakeDirectorySinglePageResult;
-
-    using SetDataLakeDirectoryAccessControlRecursiveResult
-        = Details::PathSetAccessControlRecursiveResult;
-    using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
-    using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
-
-  } // namespace Models
-}}}} // namespace Azure::Storage::Files::DataLake
+}}}}} // namespace Azure::Storage::Files::DataLake::Models
