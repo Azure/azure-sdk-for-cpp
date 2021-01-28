@@ -249,7 +249,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   // DirectoryClient models:
 
-  using SetDataLakeDirectoryAccessControlRecursiveResult
   struct RenameDataLakeDirectoryResult
   {
     Azure::Core::Nullable<std::string> ContinuationToken;
