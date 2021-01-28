@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
-  using ListDataLakeFileSystemsIncludeItem = Blobs::Models::ListBlobContainersIncludeFlags;
+  using ListDataLakeFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
 
   struct GetDataLakeFileSystemAccessPolicyResult
   {

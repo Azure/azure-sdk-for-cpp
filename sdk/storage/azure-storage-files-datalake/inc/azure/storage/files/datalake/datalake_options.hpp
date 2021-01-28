@@ -100,8 +100,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specifies that the filesystem's metadata be returned.
      */
-    Models::ListDataLakeFileSystemsIncludeItem Include
-        = Models::ListDataLakeFileSystemsIncludeItem::None;
+    Models::ListDataLakeFileSystemsIncludeFlags Include
+        = Models::ListDataLakeFileSystemsIncludeFlags::None;
   };
 
   /**

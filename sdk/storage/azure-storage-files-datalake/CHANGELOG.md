@@ -42,6 +42,7 @@
 - Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.
 - Type for ETag was changed to `Azure::Core::ETag`.
 - Type for `IfMatch` and `IfNoneMatch` was changed to `Azure::Core::ETag`.
+- Renamed `ListDataLakeFileSystemsIncludeItem` to `ListDataLakeFileSystemsIncludeFlags`.
 
 ### Other Changes and Improvements
 
