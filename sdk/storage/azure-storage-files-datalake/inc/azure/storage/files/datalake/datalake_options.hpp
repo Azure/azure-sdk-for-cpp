@@ -699,7 +699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for DirectoryClient::SetAccessControlRecursiveSinglePage
    */
-  struct SetDataLakeDirectoryAccessControlRecursiveSinglePageOptions
+  struct SetDataLakePathAccessControlRecursiveSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -733,11 +733,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<bool> ContinueOnFailure;
   };
 
-  using UpdateDataLakeDirectoryAccessControlRecursiveSinglePageOptions
-      = SetDataLakeDirectoryAccessControlRecursiveSinglePageOptions;
+  using UpdateDataLakePathAccessControlRecursiveSinglePageOptions
+      = SetDataLakePathAccessControlRecursiveSinglePageOptions;
 
-  using RemoveDataLakeDirectoryAccessControlRecursiveSinglePageOptions
-      = SetDataLakeDirectoryAccessControlRecursiveSinglePageOptions;
+  using RemoveDataLakePathAccessControlRecursiveSinglePageOptions
+      = SetDataLakePathAccessControlRecursiveSinglePageOptions;
 
   using CreateDataLakeFileOptions = CreateDataLakePathOptions;
   using CreateDataLakeDirectoryOptions = CreateDataLakePathOptions;
