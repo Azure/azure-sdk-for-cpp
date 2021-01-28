@@ -9,11 +9,30 @@
                 "description": "The base resource name."
             }
         },
+        "keyName": {
+            "type": "string",
+            "defaultValue": "testKey",
+            "metadata": {
+                "description": "The initial key in the keys."
+            }
+        },
         "tenantId": {
             "type": "string",
             "defaultValue": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "metadata": {
                 "description": "The tenant ID to which the application and resources belong."
+            }
+        },
+        "testApplicationId": {
+            "type": "string",
+            "metadata": {
+                "description": "The application client ID used to run tests."
+            }
+        },
+        "testApplicationSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "The application client secret used to run tests."
             }
         },
         "testApplicationOid": {
@@ -28,26 +47,6 @@
             "defaultValue": "[resourceGroup().location]",
             "metadata": {
                 "description": "The location of the resource. By default, this is the same as the resource group."
-            }
-        },
-        "hsmLocation": {
-            "type": "string",
-            "defaultValue": "southcentralus",
-            "allowedValues": [
-                "eastus2",
-                "southcentralus",
-                "northeurope",
-                "westeurope"
-            ],
-            "metadata": {
-                "description": "The location of the Managed HSM. By default, this is 'southcentralus'."
-            }
-        },
-        "enableHsm": {
-            "type": "bool",
-            "defaultValue": false,
-            "metadata": {
-                "description": "Whether to enable deployment of Managed HSM. The default is false."
             }
         },
         "enableSoftDelete": {
@@ -70,34 +69,43 @@
             "metadata": {
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
+        },
+        "keyType": {
+            "type": "string",
+            "defaultValue": "RSA",
+            "metadata": {
+                "description": "The JsonWebKeyType of the key to be created."
+            }
+        },
+        "keyOps": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "The permitted JSON web key operations of the key to be created."
+            }
+        },
+        "keySize": {
+            "type": "int",
+            "defaultValue": 2048,
+            "metadata": {
+                "description": "The size in bits of the key to be created."
+            }
+        },
+        "curveName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The JsonWebKeyCurveName of the key to be created."
+            }
         }
     },
     "variables": {
-        "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
-        "hsmApiVersion": "2020-04-01-preview",
-        "hsmName": "[concat(parameters('baseName'), 'hsm')]",
-        "mgmtApiVersion": "2019-04-01",
-        "blobContainerName": "backup",
-        "primaryAccountName": "[concat(parameters('baseName'), 'prim')]",
-        "encryption": {
-            "services": {
-                "blob": {
-                    "enabled": true
-                }
-            },
-            "keySource": "Microsoft.Storage"
-        },
-        "networkAcls": {
-            "bypass": "AzureServices",
-            "virtualNetworkRules": [],
-            "ipRules": [],
-            "defaultAction": "Allow"
-        }
+        "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]"
     },
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2016-10-01",
+            "apiVersion": "2019-09-01",
             "name": "[parameters('baseName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -167,71 +175,18 @@
             }
         },
         {
-            "type": "Microsoft.KeyVault/managedHSMs",
-            "apiVersion": "[variables('hsmApiVersion')]",
-            "name": "[variables('hsmName')]",
-            "condition": "[parameters('enableHsm')]",
-            "location": "[parameters('hsmLocation')]",
-            "sku": {
-                "family": "B",
-                "name": "Standard_B1"
-            },
-            "properties": {
-                "tenantId": "[parameters('tenantId')]",
-                "initialAdminObjectIds": [
-                    "[parameters('testApplicationOid')]"
-                ],
-                "enablePurgeProtection": false,
-                "enableSoftDelete": "[parameters('enableSoftDelete')]"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "[variables('mgmtApiVersion')]",
-            "name": "[variables('primaryAccountName')]",
+            "type": "Microsoft.KeyVault/vaults/keys",
+            "apiVersion": "2019-09-01",
+            "name": "[concat(parameters('baseName'), '/', parameters('keyName'))]",
             "location": "[parameters('location')]",
-            "sku": {
-                "name": "Standard_RAGRS",
-                "tier": "Standard"
-            },
-            "kind": "StorageV2",
-            "properties": {
-                "networkAcls": "[variables('networkAcls')]",
-                "supportsHttpsTrafficOnly": true,
-                "encryption": "[variables('encryption')]",
-                "accessTier": "Hot"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2019-06-01",
-            "name": "[concat(variables('primaryAccountName'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName'))]"
-            ],
-            "sku": {
-                "name": "Standard_RAGRS",
-                "tier": "Standard"
-            },
-            "properties": {
-                "cors": {
-                    "corsRules": []
-                },
-                "deleteRetentionPolicy": {
-                    "enabled": false
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-06-01",
-            "name": "[concat(variables('primaryAccountName'), '/default/', variables('blobContainerName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('primaryAccountName'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('baseName'))]"
             ],
             "properties": {
-                "publicAccess": "None"
+                "kty": "[parameters('keyType')]",
+                "keyOps": "[parameters('keyOps')]",
+                "keySize": "[parameters('keySize')]",
+                "curveName": "[parameters('curveName')]"
             }
         }
     ],
@@ -240,10 +195,17 @@
             "type": "string",
             "value": "[variables('azureKeyVaultUrl')]"
         },
-        "AZURE_MANAGEDHSM_URL": {
+        "AZURE_TENANT_ID": {
             "type": "string",
-            "condition": "[parameters('enableHsm')]",
-            "value": "[reference(variables('hsmName')).hsmUri]"
+            "value": "[parameters('tenantId')]"
+        },
+        "AZURE_CLIENT_ID": {
+            "type": "string",
+            "value": "[parameters('testApplicationId')]"
+        },
+        "AZURE_CLIENT_SECRET": {
+            "type": "string",
+            "value": "[parameters('testApplicationSecret')]"
         },
         "KEYVAULT_SKU": {
             "type": "string",
@@ -252,18 +214,6 @@
         "CLIENT_OBJECTID": {
             "type": "string",
             "value": "[parameters('testApplicationOid')]"
-        },
-        "BLOB_STORAGE_ACCOUNT_NAME": {
-            "type": "string",
-            "value": "[variables('primaryAccountName')]"
-        },
-        "BLOB_PRIMARY_STORAGE_ACCOUNT_KEY": {
-            "type": "string",
-            "value": "[listKeys(variables('primaryAccountName'), variables('mgmtApiVersion')).keys[0].value]"
-        },
-        "BLOB_CONTAINER_NAME": {
-            "type": "string",
-            "value": "[variables('blobContainerName')]"
         }
     }
 }

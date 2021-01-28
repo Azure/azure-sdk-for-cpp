@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
-  using ListDataLakeFileSystemsIncludeItem = Blobs::Models::ListBlobContainersIncludeItem;
+  using ListDataLakeFileSystemsIncludeItem = Blobs::Models::ListBlobContainersIncludeFlags;
 
   struct GetDataLakeFileSystemAccessPolicyResult
   {
@@ -250,7 +250,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   // DirectoryClient models:
 
   using SetDataLakeDirectoryAccessControlRecursiveResult
+  struct RenameDataLakeDirectoryResult
+  {
+    Azure::Core::Nullable<std::string> ContinuationToken;
+    std::string RequestId;
+  };
+
+  using SetDataLakePathAccessControlRecursiveListSinglePageResult
       = Details::PathSetAccessControlRecursiveResult;
+  using UpdateDataLakePathAccessControlRecursiveListSinglePageResult
+      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
+  using RemoveDataLakePathAccessControlRecursiveListSinglePageResult
+      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
   using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
   using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
 

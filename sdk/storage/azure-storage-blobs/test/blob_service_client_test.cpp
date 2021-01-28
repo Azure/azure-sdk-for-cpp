@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
       options.Prefix = containerName;
-      options.Include = Blobs::Models::ListBlobContainersIncludeItem::Deleted;
+      options.Include = Blobs::Models::ListBlobContainersIncludeFlags::Deleted;
       do
       {
         auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);

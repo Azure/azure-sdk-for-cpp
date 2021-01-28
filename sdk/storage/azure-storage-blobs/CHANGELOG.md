@@ -19,6 +19,8 @@
 - Return types of `BlobClient::StartCopyFromUri` and `PageBlobClient::StartCopyIncremental` were changed to `StartCopyBlobResult`, supporting poll operations.
 - Fixed typo `Expiries` in model types.
 - Removed `PreviousContinuationToken` from `ListBlobContainersSinglePageResult`, `ListBlobsByHierarchySinglePageResult` and `ListBlobsSinglePageResult`.
+- `ListBlobContainersIncludeItem` was renamed to `ListBlobContainersIncludeFlags`.
+- `ListBlobsIncludeItem` was renamed to `ListBlobsIncludeFlags`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

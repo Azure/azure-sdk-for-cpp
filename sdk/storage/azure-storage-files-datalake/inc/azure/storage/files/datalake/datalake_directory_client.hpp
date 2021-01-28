@@ -172,28 +172,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
 
     /**
-     * @brief Sets POSIX access control rights on files and directories under given directory
-     * recursively.
-     * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
-     * files and directories, PathSetAccessControlRecursiveMode::Modify modifies one or more POSIX
-     * access control rights  that pre-exist on files and directories,
-     * PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access control rights
-     * that were present earlier on files and directories
-     * @param acls Sets POSIX access control rights on files and directories. Each access control
-     * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     * directory points to.
-     * @return Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
-     * @remark This request is sent to dfs endpoint.
-     */
-    Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
-    SetAccessControlRecursive(
-        Models::PathSetAccessControlRecursiveMode mode,
-        std::vector<Models::Acl> acls,
-        const SetDataLakeDirectoryAccessControlRecursiveOptions& options
-        = SetDataLakeDirectoryAccessControlRecursiveOptions()) const;
-
-    /**
      * @brief List the paths in this file system.
      * @param recursive If "true", all paths are listed; otherwise, the list will only
      *                  include paths that share the same root.
@@ -214,6 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline)
     {
     }
+
     friend class DataLakeFileSystemClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

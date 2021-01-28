@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeDirectoryClientTest, DirectorySetAccessControlRecursive)
+  TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursive)
   {
     // Setup directories.
     auto rootDirectoryName = RandomString();
@@ -342,11 +342,9 @@ namespace Azure { namespace Storage { namespace Test {
     directoryClient2.Create();
 
     {
-      // Set/Get Acls recursive works.
+      // Set Acls recursive.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(directoryClient1.SetAccessControlList(acls));
-      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
-          Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
+      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursiveListSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
@@ -364,12 +362,243 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
     }
+    {
+      // Update Acls recursive.
+      std::vector<Files::DataLake::Models::Acl> originalAcls = GetValidAcls();
+      Files::DataLake::Models::Acl newAcl;
+      newAcl.Type = "group";
+      newAcl.Id = "";
+      newAcl.Permissions = "rw-";
+      std::vector<Files::DataLake::Models::Acl> acls;
+      acls.emplace_back(std::move(newAcl));
+      EXPECT_NO_THROW(rootDirectoryClient.UpdateAccessControlRecursiveListSinglePage(acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+      {
+        // verify group has changed
+        auto groupFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "group";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), groupFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), groupFinder);
+        EXPECT_TRUE(iter != resultAcls2.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+      }
+      {
+        // verify other has not changed
+        {
+          auto otherFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "other";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+        }
+        {
+          auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "user";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          if (iter->Id == originalAcls[0].Id)
+          {
+            EXPECT_EQ(originalAcls[0].Permissions, iter->Permissions);
+          }
+          else
+          {
+            EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+          }
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          if (iter->Id == originalAcls[0].Id)
+          {
+            EXPECT_EQ(originalAcls[0].Permissions, iter->Permissions);
+          }
+          else
+          {
+            EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+          }
+        }
+      }
+    }
+    {
+      // Remove Acls recursive.
+      std::vector<Files::DataLake::Models::Acl> originalAcls = GetValidAcls();
+      Files::DataLake::Models::Acl removeAcl;
+      removeAcl.Type = "user";
+      removeAcl.Id = "72a3f86f-271f-439e-b031-25678907d381";
+      std::vector<Files::DataLake::Models::Acl> acls;
+      acls.emplace_back(std::move(removeAcl));
+      EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlRecursiveListSinglePage(acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+      {
+        // verify group policy has been removed.
+        auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "user" && targetAcl.Id == "72a3f86f-271f-439e-b031-25678907d381";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls1.end());
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls2.end());
+      }
+      {
+        // verify other has not changed
+        {
+          auto otherFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "other";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+        }
+        {
+          auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "user";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_EQ(originalAcls[1].Id, iter->Id);
+          EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_EQ(originalAcls[1].Id, iter->Id);
+          EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+        }
+      }
+    }
+    {
+      // Set Acls recursive, with new set of acls
+      std::vector<Files::DataLake::Models::Acl> acls;
+      {
+        Files::DataLake::Models::Acl newAcl;
+        newAcl.Type = "user";
+        newAcl.Permissions = "rw-";
+        acls.emplace_back(std::move(newAcl));
+      }
+      {
+        Files::DataLake::Models::Acl newAcl;
+        newAcl.Type = "group";
+        newAcl.Permissions = "rw-";
+        acls.emplace_back(std::move(newAcl));
+      }
+      {
+        Files::DataLake::Models::Acl newAcl;
+        newAcl.Type = "other";
+        newAcl.Permissions = "rw-";
+        acls.emplace_back(std::move(newAcl));
+      }
+      (rootDirectoryClient.SetAccessControlRecursiveListSinglePage(acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+      {
+        // verify group has changed
+        auto groupFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "group";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), groupFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), groupFinder);
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+      }
+      {
+        // verify other has changed
+        auto otherFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "other";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+      }
+      {
+        // verify user has only one entry
+        std::vector<Files::DataLake::Models::Acl> originalAcls = GetValidAcls();
+        auto userFinder = [&originalAcls](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "user" && targetAcl.Id == originalAcls[0].Id;
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls1.end());
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls2.end());
+      }
+      {
+        // verify user has changed
+        auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "user";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+      }
+    }
   }
 
   TEST_F(DataLakeDirectoryClientTest, ConstructorsWorks)
   {
     {
-      // Create from connection string validates static creator function and shared key constructor.
+      // Create from connection string validates static creator function and shared key
+      // constructor.
       auto directoryName = RandomString(10);
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
@@ -415,5 +644,4 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(anonymousClient.GetProperties());
     }
   }
-
 }}} // namespace Azure::Storage::Test

@@ -47,7 +47,7 @@ int main() {
 
 #endif
 
-const unsigned char c_LocaleInvariantLowercaseTable[256] = {
+const unsigned char LocaleInvariantLowercaseTable[256] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
     0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Strings {
 
   unsigned char ToLower(const unsigned char symbol) noexcept
   {
-    return c_LocaleInvariantLowercaseTable[symbol];
+    return LocaleInvariantLowercaseTable[symbol];
   }
 
   std::string const ToLower(const std::string& src) noexcept
@@ -92,8 +92,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Strings {
         rhs.begin(),
         rhs.end(),
         [](const char left, const char right) noexcept {
-          return c_LocaleInvariantLowercaseTable[static_cast<unsigned char>(left)]
-              == c_LocaleInvariantLowercaseTable[static_cast<unsigned char>(right)];
+          return LocaleInvariantLowercaseTable[static_cast<unsigned char>(left)]
+              == LocaleInvariantLowercaseTable[static_cast<unsigned char>(right)];
         });
   }
 

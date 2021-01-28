@@ -457,4 +457,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return Azure::Core::Response<Models::SetDataLakePathMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
+
+  Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
+  DataLakePathClient::SetAccessControlRecursiveListSinglePageInternal(
+      Models::PathSetAccessControlRecursiveMode mode,
+      std::vector<Models::Acl> acls,
+      const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options) const
+  {
+    Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = mode;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    protocolLayerOptions.MaxRecords = options.MaxEntries;
+    protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
+    protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
+    return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake
