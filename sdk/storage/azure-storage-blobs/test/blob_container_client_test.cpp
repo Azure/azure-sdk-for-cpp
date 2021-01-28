@@ -322,10 +322,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
-    options.Include = Blobs::Models::ListBlobsIncludeItem::Snapshots
-        | Blobs::Models::ListBlobsIncludeItem::Versions
-        | Blobs::Models::ListBlobsIncludeItem::Deleted
-        | Blobs::Models::ListBlobsIncludeItem::Metadata;
+    options.Include = Blobs::Models::ListBlobsIncludeFlags::Snapshots
+        | Blobs::Models::ListBlobsIncludeFlags::Versions
+        | Blobs::Models::ListBlobsIncludeFlags::Deleted
+        | Blobs::Models::ListBlobsIncludeFlags::Metadata;
     bool foundSnapshot = false;
     bool foundVersions = false;
     bool foundCurrentVersion = false;
