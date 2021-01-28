@@ -33,6 +33,13 @@ namespace Azure { namespace Core { namespace Test {
       return TransportAdaptersTestParameter(std::move(suffix), options);
     }
 
+    static std::shared_ptr<Azure::Core::Http::HttpTransport> GetLibcurlTransportAdapterNoSignal()
+    {
+      Azure::Core::Http::CurlTransportOptions options;
+      options.NoSignal = true;
+      return std::make_shared<Azure::Core::Http::CurlTransport>(options);
+    }
+
     // When adding more than one parameter, this function should return a unique string.
     static std::string GetSuffix(const testing::TestParamInfo<TransportAdapter::ParamType>& info)
     {
@@ -54,7 +61,8 @@ namespace Azure { namespace Core { namespace Test {
       TransportAdapter,
       testing::Values(
           GetTransportOptions("winHttp", std::make_shared<Azure::Core::Http::WinHttpTransport>()),
-          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())),
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>()),
+          GetTransportOptions("libCurlNoSignal", GetLibcurlTransportAdapterNoSignal())),
       GetSuffix);
 
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
@@ -72,7 +80,8 @@ namespace Azure { namespace Core { namespace Test {
       Test,
       TransportAdapter,
       testing::Values(
-          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())),
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>()),
+          GetTransportOptions("libCurlNoSignal", GetLibcurlTransportAdapterNoSignal())),
       GetSuffix);
 #else
   /* Custom adapter. Not adding tests */
