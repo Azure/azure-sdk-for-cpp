@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 
 #include <map>
@@ -16,9 +17,9 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Common {
 
-  struct KeyVaultException : public std::runtime_error
+  struct KeyVaultException : public Azure::Core::RequestFailedException
   {
-    explicit KeyVaultException(const std::string& message) : std::runtime_error(message) {}
+    explicit KeyVaultException(const std::string& message) : RequestFailedException(message) {}
 
     Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
     std::string ReasonPhrase;
