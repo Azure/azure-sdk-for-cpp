@@ -347,8 +347,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -451,8 +451,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -527,8 +527,8 @@ namespace Azure { namespace Storage { namespace Test {
       (rootDirectoryClient.SetAccessControlRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
