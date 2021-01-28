@@ -515,15 +515,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief When deleting a directory, the number of paths that are deleted with each invocation
-     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
-     *        token is returned in this response header.  When a continuation token is returned in
-     *        the response, it must be specified in a subsequent invocation of the delete operation
-     *        to continue deleting the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
      * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
@@ -659,15 +650,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief When deleting a directory, the number of paths that are deleted with each invocation
-     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
-     *        token is returned in this response header.  When a continuation token is returned in
-     *        the response, it must be specified in a subsequent invocation of the delete operation
-     *        to continue deleting the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specify the access condition for the path.

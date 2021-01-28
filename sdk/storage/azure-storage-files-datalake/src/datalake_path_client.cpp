@@ -308,7 +308,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeleteDataLakePathOptions& options) const
   {
     Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
@@ -318,7 +317,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Delete(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteDataLakePathResult ret;
-    ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakePathResult>(

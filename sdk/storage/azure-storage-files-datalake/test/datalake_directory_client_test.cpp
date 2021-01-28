@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : directoryClient)
       {
-        EXPECT_NO_THROW(client.Delete(false));
+        EXPECT_NO_THROW(client.DeleteIfEmpty());
       }
     }
     {
@@ -61,10 +61,10 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
-        EXPECT_THROW(client.Delete(false, options1), StorageException);
+        EXPECT_THROW(client.DeleteIfEmpty(options1), StorageException);
         Files::DataLake::DeleteDataLakeDirectoryOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-        EXPECT_NO_THROW(client.Delete(false, options2));
+        EXPECT_NO_THROW(client.DeleteIfEmpty(options2));
       }
     }
     {
@@ -81,10 +81,10 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Delete(false, options1), StorageException);
+        EXPECT_THROW(client.DeleteIfEmpty(options1), StorageException);
         Files::DataLake::DeleteDataLakeDirectoryOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
-        EXPECT_NO_THROW(client.Delete(false, options2));
+        EXPECT_NO_THROW(client.DeleteIfEmpty(options2));
       }
     }
 
@@ -100,8 +100,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
-      EXPECT_THROW(rootDirClient.Delete(false), StorageException);
-      EXPECT_NO_THROW(rootDirClient.Delete(true));
+      EXPECT_THROW(rootDirClient.DeleteIfEmpty(), StorageException);
+      EXPECT_NO_THROW(rootDirClient.DeleteRecursive());
     }
   }
 
@@ -115,16 +115,16 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(created);
       EXPECT_NO_THROW(created = client.CreateIfNotExists()->Created);
       EXPECT_FALSE(created);
-      EXPECT_NO_THROW(deleted = client.Delete(false)->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteIfEmpty()->Deleted);
       EXPECT_TRUE(deleted);
-      EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteIfEmptyIfExists()->Deleted);
       EXPECT_FALSE(deleted);
     }
     {
       auto client = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), RandomString());
       bool deleted = false;
-      EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteIfEmptyIfExists()->Deleted);
       EXPECT_FALSE(deleted);
     }
   }
@@ -149,11 +149,11 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : directoryClients)
       {
-        EXPECT_THROW(client.Delete(false), StorageException);
+        EXPECT_THROW(client.DeleteIfEmpty(), StorageException);
       }
       for (const auto& client : newDirectoryClients)
       {
-        EXPECT_NO_THROW(client.Delete(false));
+        EXPECT_NO_THROW(client.DeleteIfEmpty());
       }
     }
     {
@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Test {
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
         EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).ExtractValue().Delete(false));
+            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteIfEmpty());
       }
     }
     {
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
         EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).ExtractValue().Delete(false));
+            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteIfEmpty());
       }
     }
     {
@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           auto newPath = RandomString();
           EXPECT_NO_THROW(
-              client.RenameSubdirectory("", newPath, options).ExtractValue().Delete(false));
+              client.RenameSubdirectory("", newPath, options).ExtractValue().DeleteIfEmpty());
         }
       }
     }
@@ -321,7 +321,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(httpHeader.ContentDisposition, result->HttpHeaders.ContentDisposition);
         EXPECT_EQ(httpHeader.ContentLanguage, result->HttpHeaders.ContentLanguage);
         EXPECT_EQ(httpHeader.ContentType, result->HttpHeaders.ContentType);
-        EXPECT_NO_THROW(client.Delete(false));
+        EXPECT_NO_THROW(client.DeleteIfEmpty());
       }
     }
   }
@@ -604,7 +604,7 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
       EXPECT_NO_THROW(connectionStringClient.Create());
-      EXPECT_NO_THROW(connectionStringClient.Delete(true));
+      EXPECT_NO_THROW(connectionStringClient.DeleteRecursive());
     }
 
     {
@@ -619,7 +619,7 @@ namespace Azure { namespace Storage { namespace Test {
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create());
-      EXPECT_NO_THROW(clientSecretClient.Delete(true));
+      EXPECT_NO_THROW(clientSecretClient.DeleteRecursive());
     }
 
     {

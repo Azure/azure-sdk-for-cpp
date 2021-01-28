@@ -252,6 +252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           m_blockBlobClient(std::move(blockBlobClient))
     {
     }
+
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
   };
