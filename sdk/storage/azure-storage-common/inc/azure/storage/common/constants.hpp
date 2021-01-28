@@ -6,7 +6,6 @@
 namespace Azure { namespace Storage {
 
   constexpr static const char* AccountEncryptionKey = "$account-encryption-key";
-  constexpr static const char* ETagWildcard = "*";
 
   namespace Details {
     constexpr static const char* BlobServicePackageName = "storage-blobs";

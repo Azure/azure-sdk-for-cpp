@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
         EXPECT_FALSE(createResult->Created);
-        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_FALSE(createResult->ETag.HasValue());
         EXPECT_EQ(Core::DateTime(), createResult->LastModified);
         auto deleted = client.Delete()->Deleted;
         EXPECT_TRUE(deleted);

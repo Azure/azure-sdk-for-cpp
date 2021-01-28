@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     auto blobContentInfo = blockBlobClient.Upload(&blobContent, m_blobUploadOptions);
     EXPECT_FALSE(blobContentInfo->RequestId.empty());
-    EXPECT_FALSE(blobContentInfo->ETag.empty());
+    EXPECT_TRUE(blobContentInfo->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
     EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_TRUE(IsValidTime(res->CreatedOn));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_FALSE(res->CopyId.empty());
     EXPECT_TRUE(res->VersionId.HasValue());
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_FALSE(res->Snapshot.empty());
     EXPECT_TRUE(res->VersionId.HasValue());
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_TRUE(IsValidTime(res->CreatedOn));
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
@@ -292,7 +292,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     auto blobContentInfo = blockBlobClient.CommitBlockList({blockId1}, options);
-    EXPECT_FALSE(blobContentInfo->ETag.empty());
+    EXPECT_TRUE(blobContentInfo->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
     EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
@@ -301,7 +301,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
     ASSERT_FALSE(res->CommittedBlocks.empty());
@@ -587,14 +587,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto res = blockBlobClient.DownloadTo(emptyContent.data(), 0);
     EXPECT_EQ(res->ContentLength, 0);
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->ContentLength, 0);
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
@@ -604,14 +604,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB));
     EXPECT_EQ(res->ContentLength, 0);
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->ContentLength, 0);
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
@@ -629,14 +629,14 @@ namespace Azure { namespace Storage { namespace Test {
       res = blockBlobClient.DownloadTo(
           emptyContent.data(), static_cast<std::size_t>(8_MB), options);
       EXPECT_EQ(res->ContentLength, 0);
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
       EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
       EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
       res = blockBlobClient.DownloadTo(tempFilename, options);
       EXPECT_EQ(res->ContentLength, 0);
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
       EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
@@ -690,7 +690,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.Tier = m_blobUploadOptions.Tier;
       auto res = blockBlobClient.UploadFrom(
           blobContent.data(), static_cast<std::size_t>(blobSize), options);
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       auto properties = *blockBlobClient.GetProperties();
       properties.HttpHeaders.ContentHash.Value.clear();
@@ -725,7 +725,7 @@ namespace Azure { namespace Storage { namespace Test {
         fileWriter.Write(blobContent.data(), blobSize, 0);
       }
       auto res = blockBlobClient.UploadFrom(tempFilename, options);
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       auto properties = *blockBlobClient.GetProperties();
       properties.HttpHeaders.ContentHash.Value.clear();

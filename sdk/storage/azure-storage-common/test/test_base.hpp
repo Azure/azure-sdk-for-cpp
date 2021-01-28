@@ -10,6 +10,7 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/etag.hpp>
 #include <azure/core/http/body_stream.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/storage_common.hpp>
@@ -42,8 +43,8 @@ namespace Azure { namespace Storage { namespace Test {
     return x * 1024 * 1024 * 1024 * 1024;
   }
 
-  constexpr static const char* DummyETag = "0x8D83B58BDF51D75";
-  constexpr static const char* DummyETag2 = "0x8D812645BFB0CDE";
+  const static Azure::Core::ETag DummyETag("0x8D83B58BDF51D75");
+  const static Azure::Core::ETag DummyETag2("0x8D812645BFB0CDE");
   constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
   constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
 

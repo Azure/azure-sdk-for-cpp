@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->RequestId, res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId));
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_THROW(container_client.Create(), StorageException);
 
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
 
     auto res2 = m_blobContainerClient->GetProperties();
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
     auto properties = *res2;
-    EXPECT_FALSE(properties.ETag.empty());
+    EXPECT_TRUE(properties.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(properties.LastModified));
     EXPECT_EQ(properties.Metadata, metadata);
 
@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_TRUE(IsValidTime(blob.CreatedOn));
         EXPECT_TRUE(IsValidTime(blob.LastModified));
-        EXPECT_FALSE(blob.ETag.empty());
+        EXPECT_TRUE(blob.ETag.HasValue());
         EXPECT_FALSE(blob.BlobType.Get().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
@@ -400,7 +400,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto ret = container_client.SetAccessPolicy(options);
     EXPECT_FALSE(ret->RequestId.empty());
-    EXPECT_FALSE(ret->ETag.empty());
+    EXPECT_TRUE(ret->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(ret->LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
@@ -424,13 +424,13 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobLeaseClient leaseClient(containerClient, leaseId1);
     auto aLease = *leaseClient.Acquire(leaseDuration);
     EXPECT_FALSE(aLease.RequestId.empty());
-    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId1);
     aLease = *leaseClient.Acquire(leaseDuration);
     EXPECT_FALSE(aLease.RequestId.empty());
-    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
@@ -441,7 +441,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto rLease = *leaseClient.Renew();
     EXPECT_FALSE(rLease.RequestId.empty());
-    EXPECT_FALSE(rLease.ETag.empty());
+    EXPECT_TRUE(rLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(rLease.LastModified));
     EXPECT_EQ(rLease.LeaseId, leaseId1);
 
@@ -449,14 +449,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(leaseId1, leaseId2);
     auto cLease = *leaseClient.Change(leaseId2);
     EXPECT_FALSE(cLease.RequestId.empty());
-    EXPECT_FALSE(cLease.ETag.empty());
+    EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
     auto containerInfo = *leaseClient.Release();
     EXPECT_FALSE(containerInfo.RequestId.empty());
-    EXPECT_FALSE(containerInfo.ETag.empty());
+    EXPECT_TRUE(containerInfo.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(containerInfo.LastModified));
 
     leaseClient
@@ -465,7 +465,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties = *containerClient.GetProperties();
     EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Infinite);
     auto brokenLease = *leaseClient.Break();
-    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
     EXPECT_EQ(brokenLease.LeaseTime, 0);
 
@@ -473,7 +473,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobLeaseClient(containerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(leaseDuration);
     brokenLease = *leaseClient.Break();
-    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
