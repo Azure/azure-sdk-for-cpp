@@ -891,8 +891,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       chunkSize = bufferSize;
     }
 
-    Storage::Details::ConcurrentTransfer(
-        0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    if (bufferSize > 0)
+    {
+      Storage::Details::ConcurrentTransfer(
+          0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    }
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
@@ -995,8 +998,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       chunkSize = fileSize;
     }
 
-    Storage::Details::ConcurrentTransfer(
-        0, fileSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    if (fileSize > 0)
+    {
+      Storage::Details::ConcurrentTransfer(
+          0, fileSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    }
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
