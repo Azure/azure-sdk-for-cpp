@@ -21,8 +21,6 @@ target_include_directories(
 
 # make sure that users can consume the project as a library.
 add_library (Azure::PerfStress ALIAS azure-perf-stress)
-
-# Import azure-core to get a context type
 target_link_libraries(azure-perf-stress PRIVATE azure-core)
 
 add_subdirectory(test)

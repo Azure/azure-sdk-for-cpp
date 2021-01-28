@@ -17,6 +17,7 @@ option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Require
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
+option(BUILD_PERFORMANCE_TESTS "Build the performance test library" ON)
 
 include(AzureTransportAdapters)
 
@@ -64,8 +65,10 @@ include(AzureDoxygen)
 include(AzureVersion)
 
 # sub-projects
-# add_subdirectory(sdk/core/performance-stress)
 add_subdirectory(sdk/core/azure-core)
+if (BUILD_PERFORMANCE_TESTS) 
+  add_subdirectory(sdk/core/performance-stress)
+endif()
 
 add_subdirectory(sdk/identity/azure-identity)
 
