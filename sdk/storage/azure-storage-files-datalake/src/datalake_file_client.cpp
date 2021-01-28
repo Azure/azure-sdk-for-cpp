@@ -359,10 +359,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
-    blobOptions.ChunkSize = options.ChunkSize;
+    blobOptions.TransferOptions.SingleUploadThreshold
+        = options.TransferOptions.SingleUploadThreshold;
+    blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
+    blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    blobOptions.Concurrency = options.Concurrency;
     return m_blockBlobClient.UploadFrom(fileName, blobOptions);
   }
 
@@ -373,10 +375,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
-    blobOptions.ChunkSize = options.ChunkSize;
+    blobOptions.TransferOptions.SingleUploadThreshold
+        = options.TransferOptions.SingleUploadThreshold;
+    blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
+    blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    blobOptions.Concurrency = options.Concurrency;
     return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);
   }
 

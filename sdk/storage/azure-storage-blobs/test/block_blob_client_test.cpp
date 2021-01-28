@@ -368,15 +368,21 @@ namespace Azure { namespace Storage { namespace Test {
       }
       downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Blobs::DownloadBlobToOptions options;
-      options.Concurrency = concurrency;
+      options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue() || length.HasValue())
       {
         options.Range = Core::Http::Range();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
-      options.InitialChunkSize = initialChunkSize;
-      options.ChunkSize = chunkSize;
+      if (initialChunkSize.HasValue())
+      {
+        options.TransferOptions.InitialChunkSize = initialChunkSize.GetValue();
+      }
+      if (chunkSize.HasValue())
+      {
+        options.TransferOptions.ChunkSize = chunkSize.GetValue();
+      }
       if (actualDownloadSize > 0)
       {
         auto res
@@ -432,15 +438,21 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
       Blobs::DownloadBlobToOptions options;
-      options.Concurrency = concurrency;
+      options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue() || length.HasValue())
       {
         options.Range = Core::Http::Range();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
-      options.InitialChunkSize = initialChunkSize;
-      options.ChunkSize = chunkSize;
+      if (initialChunkSize.HasValue())
+      {
+        options.TransferOptions.InitialChunkSize = initialChunkSize.GetValue();
+      }
+      if (chunkSize.HasValue())
+      {
+        options.TransferOptions.ChunkSize = chunkSize.GetValue();
+      }
       if (actualDownloadSize > 0)
       {
         auto res = m_blockBlobClient->DownloadTo(tempFilename, options);
@@ -511,7 +523,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       // buffer not big enough
       Blobs::DownloadBlobToOptions options;
-      options.Concurrency = c;
+      options.TransferOptions.Concurrency = c;
       options.Range = Core::Http::Range();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
@@ -622,9 +634,9 @@ namespace Azure { namespace Storage { namespace Test {
     for (int c : {1, 2})
     {
       Azure::Storage::Blobs::DownloadBlobToOptions options;
-      options.InitialChunkSize = 10;
-      options.ChunkSize = 10;
-      options.Concurrency = c;
+      options.TransferOptions.InitialChunkSize = 10;
+      options.TransferOptions.ChunkSize = 10;
+      options.TransferOptions.Concurrency = c;
 
       res = blockBlobClient.DownloadTo(
           emptyContent.data(), static_cast<std::size_t>(8_MB), options);
@@ -682,8 +694,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto blockBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
 
       Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
-      options.ChunkSize = 1_MB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 1_MB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
       options.HttpHeaders.ContentHash.Value.clear();
       options.Metadata = m_blobUploadOptions.Metadata;
@@ -712,8 +724,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto blockBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
 
       Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
-      options.ChunkSize = 1_MB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 1_MB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
       options.HttpHeaders.ContentHash.Value.clear();
       options.Metadata = m_blobUploadOptions.Metadata;

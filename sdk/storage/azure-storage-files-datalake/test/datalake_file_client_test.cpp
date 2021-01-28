@@ -485,8 +485,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
 
       Azure::Storage::Files::DataLake::UploadDataLakeFileFromOptions options;
-      options.ChunkSize = 1_MB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 1_MB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
       auto res
@@ -514,8 +514,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
 
       Azure::Storage::Files::DataLake::UploadDataLakeFileFromOptions options;
-      options.ChunkSize = 1_MB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 1_MB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
