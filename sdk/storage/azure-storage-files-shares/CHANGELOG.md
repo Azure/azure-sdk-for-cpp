@@ -14,6 +14,12 @@
 - Added `ShareLeaseClient`, all lease related APIs are moved to `ShareLeaseClient`.
 - Changed lease duration to be `std::chrono::seconds`.
 - Added `RequestId` in each return types for REST API calls, except for concurrent APIs.
+- Removed `PreviousContinuationToken` from `ListFilesAndDirectoriesSinglePageResult` and `ListSharesSinglePageResult`.
+- Removed `c_` for constants: `c_FileDefaultTimeValue`, `c_FileCopySourceTime`, `c_FileInheritPermission`, `FilePreserveSmbProperties` and `FileAllHandles`.
+
+### Other Changes and Improvements
+
+- Removed `c_` for constants and renamed to pascal format.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

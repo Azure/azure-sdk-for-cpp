@@ -183,13 +183,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
-     * @return Azure::Core::Response<Models::GetDataLakePathAccessControlResult> containing the
+     * @return Azure::Core::Response<Models::GetDataLakePathAccessControlListResult> containing the
      * access control list of the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::GetDataLakePathAccessControlResult> GetAccessControls(
-        const GetDataLakePathAccessControlOptions& options
-        = GetDataLakePathAccessControlOptions()) const;
+    Azure::Core::Response<Models::GetDataLakePathAccessControlListResult> GetAccessControlList(
+        const GetDataLakePathAccessControlListOptions& options
+        = GetDataLakePathAccessControlListOptions()) const;
 
     /**
      * @brief Sets the metadata of a resource the path points to.

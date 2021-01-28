@@ -112,12 +112,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareDirectoryClient newClient(*this);
     if (shareSnapshot.empty())
     {
-      newClient.m_shareDirectoryUrl.RemoveQueryParameter(Details::c_ShareSnapshotQueryParameter);
+      newClient.m_shareDirectoryUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareDirectoryUrl.AppendQueryParameter(
-          Details::c_ShareSnapshotQueryParameter,
+          Details::ShareSnapshotQueryParameter,
           Storage::Details::UrlEncodeQueryParameter(shareSnapshot));
     }
     return newClient;
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
     if (options.DirectoryPermission.HasValue())
     {
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
     }
     auto result = Details::ShareRestClient::Directory::Create(
         m_shareDirectoryUrl, *m_pipeline, options.Context, protocolLayerOptions);
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
@@ -275,7 +275,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
     if (options.FilePermission.HasValue())
     {
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
     }
     return Details::ShareRestClient::Directory::SetProperties(
         m_shareDirectoryUrl, *m_pipeline, options.Context, protocolLayerOptions);
@@ -320,7 +320,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
     ret.DirectoryPath = std::move(result->DirectoryPath);
     ret.Prefix = std::move(result->Prefix);
-    ret.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
     ret.PageSizeHint = result->PageSizeHint;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);
@@ -366,7 +365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseAllShareDirectoryHandlesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::ForceCloseHandlesOptions();
-    protocolLayerOptions.HandleId = c_FileAllHandles;
+    protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.Recursive = options.Recursive;
     return Details::ShareRestClient::Directory::ForceCloseHandles(
