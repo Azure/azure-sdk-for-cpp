@@ -34,6 +34,7 @@
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
 - Removed `Rename` from `DataLakeDirectoryClient` and `DataLakeFileClient`. Instead, added `RenameFile` and `RenameSubdirectorySinglePage` to `DataLakeDirectoryClient` and added `RenameFile` and `RenameDirectorySinglePage` to `DataLakeFileSystemClient`.
+- Removed `Mode` for rename operations' options, that originally controls the rename mode. Now it is fixed to legacy mode.
 
 ### Other Changes and Improvements
 

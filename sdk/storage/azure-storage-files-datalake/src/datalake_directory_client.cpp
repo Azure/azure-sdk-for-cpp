@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         + Storage::Details::UrlEncodePath(destinationFilePath));
 
     Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = options.Mode;
+    protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.Mode = options.Mode;
+    protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;

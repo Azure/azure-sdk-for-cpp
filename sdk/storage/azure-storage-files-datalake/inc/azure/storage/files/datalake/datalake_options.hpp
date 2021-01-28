@@ -281,13 +281,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Legacy.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Legacy;
-
-    /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
@@ -630,13 +623,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Legacy.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Legacy;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
