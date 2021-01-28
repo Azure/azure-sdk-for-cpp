@@ -108,7 +108,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobFromOptions& options) const
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
-    constexpr int64_t MaximumNumberBlocks = 50000;
 
     int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
 
@@ -172,7 +171,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobFromOptions& options) const
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
-    constexpr int64_t MaximumNumberBlocks = 50000;
 
     Storage::Details::FileReader fileReader(fileName);
 
