@@ -61,7 +61,6 @@ int main(int argc, char** argv)
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
 
-
   // Call global clean up
   curl_global_cleanup();
 
