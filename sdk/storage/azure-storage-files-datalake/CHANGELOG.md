@@ -15,8 +15,8 @@
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
-- Added `UpdateAccessControlRecursiveSinglePage` to update the access control recursively for a datalake directory.
-- Added `RemoveAccessControlRecursiveSinglePage` to remove the access control recursively for a datalake directory.
+- Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake directory.
+- Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake directory.
 
 ### Breaking Changes
 
