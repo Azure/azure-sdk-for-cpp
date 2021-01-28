@@ -422,7 +422,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string BlobName;
       std::string BlobContainerName;
-      std::string TagValue;
     }; // struct FilterBlobItem
 
     struct GetBlobTagsResult
@@ -783,7 +782,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       std::string ServiceEndpoint;
-      std::string Where;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<FilterBlobItem> Items;
     }; // struct FindBlobsByTagsSinglePageResult
@@ -1565,7 +1563,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           enum class XmlTagName
           {
             k_EnumerationResults,
-            k_Where,
             k_NextMarker,
             k_Blobs,
             k_Blob,
@@ -1596,10 +1593,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_EnumerationResults);
               }
-              else if (std::strcmp(node.Name, "Where") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Where);
-              }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
@@ -1626,12 +1619,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Where)
-              {
-                ret.Where = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_NextMarker)
               {
                 ret.ContinuationToken = node.Value;
@@ -2644,7 +2631,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             k_Name,
             k_ContainerName,
-            k_TagValue,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -2676,10 +2662,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_ContainerName);
               }
-              else if (std::strcmp(node.Name, "TagValue") == 0)
-              {
-                path.emplace_back(XmlTagName::k_TagValue);
-              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
@@ -2694,10 +2676,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (path.size() == 1 && path[0] == XmlTagName::k_ContainerName)
               {
                 ret.BlobContainerName = node.Value;
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_TagValue)
-              {
-                ret.TagValue = node.Value;
               }
             }
           }
