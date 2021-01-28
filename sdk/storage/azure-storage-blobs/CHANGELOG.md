@@ -23,6 +23,7 @@
 - `ListBlobsIncludeItem` was renamed to `ListBlobsIncludeFlags`.
 - Removed `TagValue` from `FilterBlobItem`, removed `Where` from `FindBlobsByTagsSinglePageResult`.
 - Type for ETag was changed to `Azure::Core::ETag`.
+- Removed `BlobPrefix` struct, use `std::string` instead.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

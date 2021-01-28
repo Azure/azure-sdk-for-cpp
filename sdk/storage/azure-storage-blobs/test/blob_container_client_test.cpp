@@ -265,9 +265,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(res->Delimiter, delimiter);
       EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
       EXPECT_TRUE(res->Items.empty());
-      for (const auto& i : res->BlobPrefixes)
+      for (const auto& p : res->BlobPrefixes)
       {
-        items.emplace(i.Name);
+        items.emplace(p);
       }
       if (res->ContinuationToken.HasValue())
       {
