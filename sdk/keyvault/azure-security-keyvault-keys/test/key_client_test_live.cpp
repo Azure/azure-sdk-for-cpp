@@ -78,7 +78,8 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
     auto& keyOperations = keyVaultKey.KeyOperations();
-    EXPECT_EQ(keyOperations.size(), 2);
+    uint16_t expectedSize = 2;
+    EXPECT_EQ(keyOperations.size(), expectedSize);
 
     auto findOperation = [keyOperations](Azure::Security::KeyVault::Keys::KeyOperation op) {
       for (Azure::Security::KeyVault::Keys::KeyOperation operation : keyOperations)
