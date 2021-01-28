@@ -283,9 +283,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief This parameter determines the behavior of the rename operation. The value must be
      *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
+     *        PathRenameMode::Legacy.
      */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
+    Models::PathRenameMode Mode = Models::PathRenameMode::Legacy;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
@@ -634,9 +634,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief This parameter determines the behavior of the rename operation. The value must be
      *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
+     *        PathRenameMode::Legacy.
      */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
+    Models::PathRenameMode Mode = Models::PathRenameMode::Legacy;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
