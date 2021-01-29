@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   struct CreateShareResult
   {
     bool Created = true;
-    std::string ETag;
+    Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
   };
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   struct CreateShareDirectoryResult
   {
     bool Created = true;
-    std::string ETag;
+    Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     bool IsServerEncrypted = bool();
     std::string FilePermissionKey;
@@ -83,7 +83,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ShareSnapshot;
     std::string DirectoryPath;
     std::string Prefix;
-    std::string PreviousContinuationToken;
     int32_t PageSizeHint = int32_t();
     std::string ContinuationToken;
     std::vector<DirectoryItem> DirectoryItems;
@@ -102,7 +101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   struct CreateShareFileResult
   {
     bool Created = true;
-    std::string ETag;
+    Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     bool IsServerEncrypted = bool();
     std::string FilePermissionKey;
@@ -162,7 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   struct DownloadShareFileToResult
   {
-    std::string ETag;
+    Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     int64_t ContentLength = 0;
     ShareFileHttpHeaders HttpHeaders;
@@ -179,7 +178,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   struct UploadShareFileFromResult
   {
     bool IsServerEncrypted = false;
-    std::string RequestId;
   };
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models

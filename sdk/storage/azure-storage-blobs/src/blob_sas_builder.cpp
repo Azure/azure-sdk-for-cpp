@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Sas {
       }
       else
       {
-        throw std::runtime_error("unknown BlobSasResource value");
+        throw std::invalid_argument("unknown BlobSasResource value");
       }
     }
   } // namespace

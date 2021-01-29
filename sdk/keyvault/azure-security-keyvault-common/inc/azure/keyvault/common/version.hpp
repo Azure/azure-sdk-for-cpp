@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief This file is used for automatic release operations.
+ *
+ */
+
 #pragma once
 
 #include <string>

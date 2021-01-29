@@ -15,6 +15,8 @@
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
+- Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake path.
+- Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake path.
 
 ### Breaking Changes
 
@@ -31,10 +33,25 @@
 - Removed unused type `AccountResourceType` and `PathLeaseAction`.
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
+- Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadDataLakeFileToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadDataLakeFileFromOptions::TransferOptions`.
+- Removed `Rename` from `DataLakeDirectoryClient` and `DataLakeFileClient`. Instead, added `RenameFile` and `RenameSubdirectory` to `DataLakeDirectoryClient` and added `RenameFile` and `RenameDirectory` to `DataLakeFileSystemClient`.
+- Rename APIs now return the client of the resource it is renaming to.
+- Removed `Mode` for rename operations' options, that originally controls the rename mode. Now it is fixed to legacy mode.
+- Changed `SetAccessControlRecursive` to `SetAccessControlRecursiveListSinglePage`, to mark that it is a single page operation, and removed the `mode` parameter, separated the modify/delete functionality to two new APIs.
+- Moved `SetAccessControlRecursiveListSinglePage` to `DataLakePathClient`.
+- Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.
+- Type for ETag was changed to `Azure::Core::ETag`.
+- Type for `IfMatch` and `IfNoneMatch` was changed to `Azure::Core::ETag`.
+- Renamed `ListDataLakeFileSystemsIncludeItem` to `ListDataLakeFileSystemsIncludeFlags`.
+- Removed `DataLakeDirectoryClient::Delete` and `DataLakeDirectoryClient::DeleteIfExists`. Added `DataLakeDirectoryClient::DeleteEmpty`, `DataLakeDirectoryClient::DeleteEmptyIfExists`, `DataLakeDirectoryClient::DeleteRecursive` and `DataLakeDirectoryClient::DeleteRecursiveIfExists` instead.
+- Removed `ContinuationToken` in `DeleteDataLakePathResult` and `DeleteDataLakeDirectoryResult`, as they will never be returned for HNS enabled accounts.
 
 ### Other Changes and Improvements
 
 - Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
+- Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControlList`.
 - Removed unused parameters, options, results and functions in protocol layer.
 
 ## 12.0.0-beta.6 (2020-01-14)

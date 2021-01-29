@@ -14,6 +14,14 @@
 - Added `ShareLeaseClient`, all lease related APIs are moved to `ShareLeaseClient`.
 - Changed lease duration to be `std::chrono::seconds`.
 - Added `RequestId` in each return types for REST API calls, except for concurrent APIs.
+- Removed `PreviousContinuationToken` from `ListFilesAndDirectoriesSinglePageResult` and `ListSharesSinglePageResult`.
+- Removed `c_` for constants: `c_FileDefaultTimeValue`, `c_FileCopySourceTime`, `c_FileInheritPermission`, `FilePreserveSmbProperties` and `FileAllHandles`.
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadShareFileToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadShareFileFromOptions::TransferOptions`.
+
+### Other Changes and Improvements
+
+- Removed `c_` for constants and renamed to pascal format.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
@@ -39,6 +47,7 @@
 - `DirectoryClient` is renamed to `ShareDirectoryClient`, `FileClient` is renamed to `ShareFileClient`.
 - Directory and File related result types and options types now have a `Share` prefix. For example, `SetDirectoryPropertiesResult` is changed to `SetShareDirectoryPropertiesResult`.
 - Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Type for ETag was changed to `Azure::Core::ETag`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

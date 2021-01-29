@@ -223,12 +223,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Metadata = metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    if (options.AccessConditions.IfUnmodifiedSince.HasValue())
-    {
-      // Strangely enough, this operation doesn't support If-Unmodified-Since while it does support
-      // If-Modified-Since
-      throw std::runtime_error("this operation doesn't support unmodified since access condition.");
-    }
     return Details::BlobRestClient::BlobContainer::SetMetadata(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
@@ -245,9 +239,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
+      if (i.Tier.HasValue() && !i.IsAccessTierInferred.HasValue())
+      {
+        i.IsAccessTierInferred = false;
+      }
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
       {
         i.IsCurrentVersion = false;
+      }
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.IsSealed)
+      {
+        i.IsSealed = false;
       }
     }
     return response;

@@ -300,7 +300,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    if (options.AccessConditions.IfUnmodifiedSince.HasValue())
+    {
+      std::abort();
+    }
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions);
     Models::SetDataLakeFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
@@ -390,6 +393,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<DataLakeFileClient> DataLakeFileSystemClient::RenameFile(
+      const std::string& fileName,
+      const std::string& destinationFilePath,
+      const RenameDataLakeFileOptions& options) const
+  {
+    return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options);
+  }
+
+  Azure::Core::Response<DataLakeDirectoryClient> DataLakeFileSystemClient::RenameDirectory(
+      const std::string& directoryName,
+      const std::string& destinationDirectoryPath,
+      const RenameDataLakeDirectoryOptions& options) const
+  {
+    return this->GetDirectoryClient("").RenameSubdirectory(
+        directoryName, destinationDirectoryPath, options);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

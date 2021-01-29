@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  const size_t c_PATH_TEST_SIZE = 5;
+  const size_t PathTestSize = 5;
 
   std::shared_ptr<Files::DataLake::DataLakeFileSystemClient>
       DataLakeFileSystemClientTest::m_fileSystemClient;
@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_directoryB = LowercaseRandomString();
     m_pathNameSetA.clear();
     m_pathNameSetB.clear();
-    for (size_t i = 0; i < c_PATH_TEST_SIZE; ++i)
+    for (size_t i = 0; i < PathTestSize; ++i)
     {
       {
         auto name = m_directoryA + "/" + LowercaseRandomString();
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
         EXPECT_FALSE(createResult->Created);
-        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_FALSE(createResult->ETag.HasValue());
         EXPECT_EQ(Core::DateTime(), createResult->LastModified);
         auto deleted = client.Delete()->Deleted;
         EXPECT_TRUE(deleted);
@@ -388,7 +388,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SignedIdentifiers.emplace_back(identifier);
 
       auto ret = fileSystem.SetAccessPolicy(options);
-      EXPECT_FALSE(ret->ETag.empty());
+      EXPECT_TRUE(ret->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(ret->LastModified));
 
       auto ret2 = fileSystem.GetAccessPolicy();

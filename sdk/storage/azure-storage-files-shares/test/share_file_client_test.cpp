@@ -252,12 +252,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto lastModified = m_fileClient->GetProperties()->LastModified;
     auto leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, leaseId1);
     auto aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     lastModified = m_fileClient->GetProperties()->LastModified;
     aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
@@ -269,20 +269,20 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(leaseId1, leaseId2);
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto cLease = *leaseClient.Change(leaseId2);
-    EXPECT_FALSE(cLease.ETag.empty());
+    EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(cLease.LastModified >= lastModified);
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto fileInfo = *leaseClient.Release();
-    EXPECT_FALSE(fileInfo.ETag.empty());
+    EXPECT_TRUE(fileInfo.ETag.HasValue());
     EXPECT_TRUE(fileInfo.LastModified >= lastModified);
 
     leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto brokenLease = *leaseClient.Break();
-    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(brokenLease.LastModified >= lastModified);
   }
 
@@ -294,8 +294,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileShareDirectoryClient->GetFileClient(RandomString());
 
       Files::Shares::UploadShareFileFromOptions options;
-      options.ChunkSize = 512_KB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 512_KB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
@@ -317,8 +317,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileShareDirectoryClient->GetFileClient(RandomString());
 
       Files::Shares::UploadShareFileFromOptions options;
-      options.ChunkSize = 512_KB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 512_KB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
@@ -404,7 +404,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Files::Shares::DownloadShareFileToOptions options;
-      options.Concurrency = concurrency;
+      options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
         options.Range = Core::Http::Range();
@@ -412,8 +412,14 @@ namespace Azure { namespace Storage { namespace Test {
         options.Range.GetValue().Length = length;
       }
 
-      options.InitialChunkSize = initialChunkSize;
-      options.ChunkSize = chunkSize;
+      if (initialChunkSize.HasValue())
+      {
+        options.TransferOptions.InitialChunkSize = initialChunkSize.GetValue();
+      }
+      if (chunkSize.HasValue())
+      {
+        options.TransferOptions.ChunkSize = chunkSize.GetValue();
+      }
       if (actualDownloadSize > 0)
       {
         auto res = m_fileClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options);
@@ -468,15 +474,21 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
       Files::Shares::DownloadShareFileToOptions options;
-      options.Concurrency = concurrency;
+      options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
         options.Range = Core::Http::Range();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
-      options.InitialChunkSize = initialChunkSize;
-      options.ChunkSize = chunkSize;
+      if (initialChunkSize.HasValue())
+      {
+        options.TransferOptions.InitialChunkSize = initialChunkSize.GetValue();
+      }
+      if (chunkSize.HasValue())
+      {
+        options.TransferOptions.ChunkSize = chunkSize.GetValue();
+      }
       if (actualDownloadSize > 0)
       {
         auto res = m_fileClient->DownloadTo(tempFilename, options);
@@ -547,7 +559,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       // buffer not big enough
       Files::Shares::DownloadShareFileToOptions options;
-      options.Concurrency = c;
+      options.TransferOptions.Concurrency = c;
       options.Range = Core::Http::Range();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
@@ -652,9 +664,6 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto destFileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
-      Files::Shares::StartCopyShareFileOptions copyOptions;
-      copyOptions.PermissionCopyMode = Files::Shares::Models::PermissionCopyModeType::Override;
-      EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUrl(), copyOptions), std::runtime_error);
     }
   }
 

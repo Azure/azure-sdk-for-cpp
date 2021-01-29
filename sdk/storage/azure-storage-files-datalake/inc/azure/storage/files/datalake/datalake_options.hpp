@@ -100,8 +100,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specifies that the filesystem's metadata be returned.
      */
-    Models::ListDataLakeFileSystemsIncludeItem Include
-        = Models::ListDataLakeFileSystemsIncludeItem::None;
+    Models::ListDataLakeFileSystemsIncludeFlags Include
+        = Models::ListDataLakeFileSystemsIncludeFlags::None;
   };
 
   /**
@@ -256,6 +256,36 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Optional conditions that must be met to perform this operation.
      */
     FileSystemAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for DataLakeFileSystemClient::RenameDirectory
+   * @remark Some optional parameter is mandatory in certain combination.
+   *         More details:
+   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
+   */
+  struct RenameDataLakeDirectoryOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
+     *        file system.
+     */
+    Azure::Core::Nullable<std::string> DestinationFileSystem;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+
+    /**
+     * @brief The access condition for source path.
+     */
+    PathAccessConditions SourceAccessConditions;
   };
 
   /**
@@ -485,15 +515,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief When deleting a directory, the number of paths that are deleted with each invocation
-     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
-     *        token is returned in this response header.  When a continuation token is returned in
-     *        the response, it must be specified in a subsequent invocation of the delete operation
-     *        to continue deleting the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
      * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
@@ -526,9 +547,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::GetAccessControl
+   * @brief Optional parameters for PathClient::GetAccessControlList
    */
-  struct GetDataLakePathAccessControlOptions
+  struct GetDataLakePathAccessControlListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -586,13 +607,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
-
-    /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
@@ -625,51 +639,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
-  /**
-   * @brief Optional parameters for PathClient::Create
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
-   */
-  struct RenameDataLakeDirectoryOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief When renaming a directory, the number of paths that are renamed with each
-     *        invocation is limited. If the number of paths to be renamed exceeds this limit,
-     *        a continuation token is returned in this response header. When a continuation token
-     *        is returned in the response, it must be specified in a subsequent invocation of the
-     *        rename operation to continue renaming the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
-
-    /**
-     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
-     *        file system.
-     */
-    Azure::Core::Nullable<std::string> DestinationFileSystem;
-
-    /**
-     * @brief Specify the access condition for the path.
-     */
-    PathAccessConditions AccessConditions;
-
-    /**
-     * @brief The access condition for source path.
-     */
-    PathAccessConditions SourceAccessConditions;
-  };
+  using RenameDataLakeSubdirectoryOptions = RenameDataLakeDirectoryOptions;
 
   /**
    * @brief Optional parameters for DirectoryClient::Delete
@@ -682,24 +652,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief When deleting a directory, the number of paths that are deleted with each invocation
-     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
-     *        token is returned in this response header.  When a continuation token is returned in
-     *        the response, it must be specified in a subsequent invocation of the delete operation
-     *        to continue deleting the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControlRecursive
+   * @brief Optional parameters for DirectoryClient::SetAccessControlRecursiveListSinglePage
    */
-  struct SetDataLakeDirectoryAccessControlRecursiveOptions
+  struct SetDataLakePathAccessControlRecursiveListSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -721,17 +682,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
      *        items.
      */
-    Azure::Core::Nullable<int32_t> MaxRecords;
+    Azure::Core::Nullable<int32_t> MaxEntries;
 
     /**
-     * @brief  Optional. Valid for "SetAccessControlRecursive" operation. If set to false, the
-     * operation will terminate quickly on encountering user errors (4XX). If true, the operation
-     * will ignore user errors and proceed with the operation on other sub-entities of the
-     * directory. Continuation token will only be returned when forceFlag is true in case of user
-     * errors. If not set the default value is false for this.
+     * @brief  Optional. If set to false, the operation will terminate quickly on encountering user
+     * errors (4XX). If true, the operation will ignore user errors and proceed with the operation
+     * on other sub-entities of the directory. Continuation token will only be returned when
+     * ContinueOnFailure is true in case of user errors. If not set the default value is false for
+     * this.
      */
-    Azure::Core::Nullable<bool> ForceFlag;
+    Azure::Core::Nullable<bool> ContinueOnFailure;
   };
+
+  using UpdateDataLakePathAccessControlRecursiveListSinglePageOptions
+      = SetDataLakePathAccessControlRecursiveListSinglePageOptions;
+
+  using RemoveDataLakePathAccessControlRecursiveListSinglePageOptions
+      = SetDataLakePathAccessControlRecursiveListSinglePageOptions;
 
   using CreateDataLakeFileOptions = CreateDataLakePathOptions;
   using CreateDataLakeDirectoryOptions = CreateDataLakePathOptions;
@@ -756,15 +723,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Storage::Metadata Metadata;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+    struct
+    {
+      /**
+       * @brief File smaller than this will be uploaded with a single upload operation. This value
+       * cannot be larger than 5000 MiB.
+       */
+      int64_t SingleUploadThreshold = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of bytes in a single request. This value cannot be larger than
+       * 4000 MiB.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
+
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   using ScheduleDataLakeFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;

@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines a general exception for Key Vault service clients.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/http/http.hpp>

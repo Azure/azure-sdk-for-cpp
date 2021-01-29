@@ -18,7 +18,7 @@ option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxyge
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 
-include(DefineTransportAdapter)
+include(AzureTransportAdapters)
 
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -48,16 +48,20 @@ if(BUILD_TESTING)
     include(AddGoogleTest)
     enable_testing ()
     add_subdirectory(sdk/core/azure-core/test/ut)
+    # Set `AZURE_CORE_ENABLE_JSON_TESTS` env var to run Json tests
+    if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
+      add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
+    endif()
 endif()
 
 # compiler warning flags globally
-include(global_compile_options)
+include(AzureGlobalCompileOptions)
 
 # Documentation automation function
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
+include(AzureDoxygen)
 
 # Functions for library versions
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
+include(AzureVersion)
 
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)
