@@ -7,6 +7,8 @@
 
 #include "azure/core/nullable.hpp"
 
+#include <azure/core/internal/json.hpp>
+
 namespace Azure { namespace PerformanceStress {
   // options supported when running a test.
   // TODO: add defaults for command line
@@ -50,4 +52,6 @@ namespace Azure { namespace PerformanceStress {
     /* [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")] */
     int Warmup = 5;
   };
+
+  void to_json(Azure::Core::Internal::Json::json& j, const Options& p);
 }} // namespace Azure::PerformanceStress

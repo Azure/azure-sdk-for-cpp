@@ -18,6 +18,7 @@ set(
 set(
   AZURE_PERFORMANCE_SOURCE
   src/arg_parser.cpp
+  src/options.cpp
   src/program.cpp
 )
 
