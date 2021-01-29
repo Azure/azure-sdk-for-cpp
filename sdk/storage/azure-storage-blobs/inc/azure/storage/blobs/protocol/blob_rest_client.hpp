@@ -431,7 +431,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
-      int64_t BlobContentLength = 0;
+      int64_t BlobSize = 0;
       std::vector<Azure::Core::Http::Range> PageRanges;
       std::vector<Azure::Core::Http::Range> ClearRanges;
     }; // struct GetPageBlobPageRangesResult
@@ -821,7 +821,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string ContentType;
-      int64_t ContentLength = 0;
+      int64_t BlobSize = 0;
       std::vector<BlobBlock> CommittedBlocks;
       std::vector<BlobBlock> UncommittedBlocks;
     }; // struct GetBlockListResult
@@ -1022,7 +1022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::DateTime LastModified;
       Azure::Core::ETag ETag;
-      int64_t ContentLength = 0;
+      int64_t BlobSize = 0;
       Models::BlobType BlobType;
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
@@ -1090,7 +1090,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
-      int64_t ContentLength = 0;
+      int64_t BlobSize = 0;
       BlobHttpHeaders HttpHeaders;
       Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
       Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
@@ -4518,7 +4518,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentLength)
               {
-                ret.ContentLength = std::stoll(node.Value);
+                ret.BlobSize = std::stoll(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5462,7 +5462,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.LeaseDuration = BlobLeaseDurationType(x_ms_lease_duration__iterator->second);
           }
-          response.ContentLength = std::stoll(httpResponse.GetHeaders().at("content-length"));
+          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("content-length"));
           auto content_type__iterator = httpResponse.GetHeaders().find("content-type");
           if (content_type__iterator != httpResponse.GetHeaders().end())
           {
@@ -7579,8 +7579,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.ContentType = httpResponse.GetHeaders().at("content-type");
-          response.ContentLength
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
+          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
           return Azure::Core::Response<GetBlockListResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -7738,7 +7737,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct CreatePageBlobOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          int64_t BlobContentLength = -1;
+          int64_t BlobSize = -1;
           Azure::Core::Nullable<int64_t> SequenceNumber;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
@@ -7806,7 +7805,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
           }
           request.AddHeader("x-ms-blob-type", "PageBlob");
-          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
+          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobSize));
           if (options.SequenceNumber.HasValue())
           {
             request.AddHeader(
@@ -8416,7 +8415,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct ResizePageBlobOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          int64_t BlobContentLength = -1;
+          int64_t BlobSize = -1;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -8448,7 +8447,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
+          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobSize));
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -8638,8 +8637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
-          response.BlobContentLength
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
+          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
           return Azure::Core::Response<GetPageBlobPageRangesResult>(
               std::move(response), std::move(pHttpResponse));
         }

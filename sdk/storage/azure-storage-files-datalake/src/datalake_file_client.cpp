@@ -357,7 +357,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DownloadDataLakeFileToResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.ContentLength = result->ContentLength;
+    ret.ContentLength = result->ContentRange.Length.GetValue();
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.Metadata = std::move(result->Metadata);
     ret.ServerEncrypted = result->IsServerEncrypted;
@@ -374,7 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DownloadDataLakeFileToResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.ContentLength = result->ContentLength;
+    ret.ContentLength = result->ContentRange.Length.GetValue();
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.Metadata = std::move(result->Metadata);
     ret.ServerEncrypted = result->IsServerEncrypted;

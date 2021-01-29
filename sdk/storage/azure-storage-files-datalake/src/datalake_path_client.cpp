@@ -386,7 +386,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
     ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
-    ret.FileSize = result->ContentLength;
+    ret.FileSize = result->BlobSize;
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::GetDataLakePathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
