@@ -263,7 +263,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
     // this set.
-    static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
+    const static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
   public:
     /**
