@@ -204,6 +204,19 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(properties.IsIncrementalCopy.HasValue());
     EXPECT_FALSE(properties.IsIncrementalCopy.GetValue());
     EXPECT_FALSE(properties.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto downloadResult = blobClient.Download();
+    EXPECT_EQ(downloadResult->CopyId.GetValue(), res->CopyId);
+    EXPECT_FALSE(downloadResult->CopySource.GetValue().empty());
+    EXPECT_TRUE(
+        downloadResult->CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Pending
+        || downloadResult->CopyStatus.GetValue()
+            == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult->CopyProgress.GetValue().empty());
+    if (downloadResult->CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Success)
+    {
+      EXPECT_TRUE(IsValidTime(downloadResult->CopyCompletedOn.GetValue()));
+    }
   }
 
   TEST_F(BlockBlobClientTest, SnapShotVersions)
@@ -262,7 +275,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties = *blobClient.GetProperties();
     ASSERT_TRUE(properties.VersionId.HasValue());
     ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
-    EXPECT_TRUE(properties.IsAccessTierInferred.GetValue());
+    EXPECT_TRUE(properties.IsCurrentVersion.GetValue());
+
+    auto downloadResponse = blobClient.Download();
+    ASSERT_TRUE(downloadResponse->VersionId.HasValue());
+    ASSERT_TRUE(downloadResponse->IsCurrentVersion.HasValue());
+    EXPECT_TRUE(downloadResponse->IsCurrentVersion.GetValue());
 
     std::string version1 = properties.VersionId.GetValue();
 
@@ -271,7 +289,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties = *blobClient.GetProperties();
     ASSERT_TRUE(properties.VersionId.HasValue());
     ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
-    EXPECT_TRUE(properties.IsAccessTierInferred.GetValue());
+    EXPECT_TRUE(properties.IsCurrentVersion.GetValue());
     std::string latestVersion = properties.VersionId.GetValue();
     EXPECT_NE(version1, properties.VersionId.GetValue());
 
@@ -281,6 +299,11 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
     EXPECT_FALSE(properties.IsCurrentVersion.GetValue());
     EXPECT_EQ(version1, properties.VersionId.GetValue());
+    downloadResponse = versionClient.Download();
+    ASSERT_TRUE(downloadResponse->VersionId.HasValue());
+    ASSERT_TRUE(downloadResponse->IsCurrentVersion.HasValue());
+    EXPECT_FALSE(downloadResponse->IsCurrentVersion.GetValue());
+    EXPECT_EQ(version1, downloadResponse->VersionId.GetValue());
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;

@@ -213,6 +213,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       downloadResponse->IsSealed = false;
     }
+    if (downloadResponse->VersionId.HasValue() && !downloadResponse->IsCurrentVersion.HasValue())
+    {
+      downloadResponse->IsCurrentVersion = false;
+    }
     return downloadResponse;
   }
 
