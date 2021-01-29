@@ -278,11 +278,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ReadDataLakeFileResult> DataLakeFileClient::Read(
-      const ReadDataLakeFileOptions& options) const
+  Azure::Core::Response<Models::DownloadDataLakeFileResult> DataLakeFileClient::Download(
+      const DownloadDataLakeFileOptions& options) const
   {
     Blobs::DownloadBlobOptions blobOptions;
     blobOptions.Context = options.Context;
+    blobOptions.Range = options.Range;
+    blobOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     blobOptions.Range = options.Range;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
@@ -290,7 +292,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.Download(blobOptions);
-    Models::ReadDataLakeFileResult ret;
+    Models::DownloadDataLakeFileResult ret;
     ret.Body = std::move(result->BodyStream);
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.ContentRange = std::move(result->ContentRange);
@@ -312,8 +314,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CreatedOn = std::move(result->CreatedOn);
     ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
+    ret.CopyId = std::move(result->CopyId);
+    ret.CopySource = std::move(result->CopySource);
+    ret.CopyStatus = std::move(result->CopyStatus);
+    ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
+    ret.CopyProgress = std::move(result->CopyProgress);
+    ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
+    ret.VersionId = std::move(result->VersionId);
+    ret.IsCurrentVersion = std::move(result->IsCurrentVersion);
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::ReadDataLakeFileResult>(
+    return Azure::Core::Response<Models::DownloadDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 

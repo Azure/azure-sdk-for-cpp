@@ -161,14 +161,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DeleteDataLakeFileOptions& options = DeleteDataLakeFileOptions()) const;
 
     /**
-     * @brief Read the contents of a file. For read operations, range requests are supported.
-     * @param options Optional parameters to read the content from the resource the path points to.
-     * @return Azure::Core::Response<Models::ReadDataLakeFileResult> containing the information and
-     * content returned when reading from a file.
+     * @brief Download the contents of a file. For download operations, range requests are
+     * supported.
+     * @param options Optional parameters to download the content from the resource the path points
+     * to.
+     * @return Azure::Core::Response<Models::DownloadDataLakeFileResult> containing the information
+     * and content returned when downloading from a file.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::ReadDataLakeFileResult> Read(
-        const ReadDataLakeFileOptions& options = ReadDataLakeFileOptions()) const;
+    Azure::Core::Response<Models::DownloadDataLakeFileResult> Download(
+        const DownloadDataLakeFileOptions& options = DownloadDataLakeFileOptions()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating

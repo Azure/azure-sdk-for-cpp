@@ -101,6 +101,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using ReleaseDataLakeLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
   using ChangeDataLakeLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
   using BreakDataLakeLeaseResult = Blobs::Models::BreakBlobLeaseResult;
+  using RehydratePriority = Blobs::Models::RehydratePriority;
+  using DataLakeArchiveStatus = Blobs::Models::BlobArchiveStatus;
 
   struct Acl
   {
@@ -160,6 +162,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
     Azure::Core::Nullable<Core::DateTime> ExpiresOn;
     Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    bool IsDirectory = false;
+    Azure::Core::Nullable<DataLakeArchiveStatus> ArchiveStatus;
+    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
+    Azure::Core::Nullable<std::string> CopyStatusDescription;
+    Azure::Core::Nullable<bool> IsIncrementalCopy;
+    Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Core::Nullable<bool> IsCurrentVersion;
     std::string RequestId;
   };
 
@@ -206,8 +216,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using AppendDataLakeFileResult = Details::PathAppendDataResult;
   using FlushDataLakeFileResult = Details::PathFlushDataResult;
   using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
+  using CopyStatus = Blobs::Models::CopyStatus;
 
-  struct ReadDataLakeFileResult
+  struct DownloadDataLakeFileResult
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     PathHttpHeaders HttpHeaders;
@@ -223,6 +234,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Core::DateTime CreatedOn;
     Azure::Core::Nullable<Core::DateTime> ExpiresOn;
     Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
+    Azure::Core::Nullable<std::string> CopyStatusDescription;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
+    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Core::Nullable<bool> IsCurrentVersion;
     std::string RequestId;
   };
 

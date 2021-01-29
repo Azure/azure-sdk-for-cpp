@@ -388,6 +388,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.FileSize = result->BlobSize;
     ret.RequestId = std::move(result->RequestId);
+    ret.ArchiveStatus = std::move(result->ArchiveStatus);
+    ret.RehydratePriority = std::move(result->RehydratePriority);
+    ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
+    ret.IsIncrementalCopy = std::move(result->IsIncrementalCopy);
+    ret.IncrementalCopyDestinationSnapshot = std::move(result->IncrementalCopyDestinationSnapshot);
+    ret.VersionId = std::move(result->VersionId);
+    ret.IsCurrentVersion = std::move(result->IsCurrentVersion);
+    ret.IsDirectory = Details::MetadataIncidatesIsDirectory(ret.Metadata);
     return Azure::Core::Response<Models::GetDataLakePathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }

@@ -73,6 +73,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileClient)
       {
         auto response = client.GetProperties();
+        EXPECT_FALSE(response->IsDirectory);
         Files::DataLake::DeleteDataLakeFileOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
@@ -319,7 +320,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(properties2->ETag, properties3->ETag);
 
     // Read
-    auto result = m_fileClient->Read();
+    auto result = m_fileClient->Download();
     auto downloaded = ReadBodyStream(result->Body);
     EXPECT_EQ(buffer, downloaded);
   }
@@ -350,7 +351,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(properties2->ETag, properties3->ETag);
 
     // Read
-    auto result = newFileClient->Read();
+    auto result = newFileClient->Download();
     auto downloaded = ReadBodyStream(result->Body);
     EXPECT_EQ(buffer, downloaded);
     EXPECT_EQ(bufferSize, result->FileSize);
@@ -360,11 +361,11 @@ namespace Azure { namespace Storage { namespace Test {
     // Read Range
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
-      Files::DataLake::ReadDataLakeFileOptions options;
+      Files::DataLake::DownloadDataLakeFileOptions options;
       options.Range = Azure::Core::Http::Range();
       options.Range.GetValue().Offset = 0;
       options.Range.GetValue().Length = bufferSize / 2;
-      result = newFileClient->Read(options);
+      result = newFileClient->Download(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(firstHalf.size(), downloaded.size());
       EXPECT_EQ(firstHalf, downloaded);
@@ -374,11 +375,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
-      Files::DataLake::ReadDataLakeFileOptions options;
+      Files::DataLake::DownloadDataLakeFileOptions options;
       options.Range = Azure::Core::Http::Range();
       options.Range.GetValue().Offset = bufferSize / 2;
       options.Range.GetValue().Length = bufferSize / 2;
-      result = newFileClient->Read(options);
+      result = newFileClient->Download(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(secondHalf, downloaded);
       EXPECT_EQ(bufferSize, result->FileSize);
@@ -388,25 +389,25 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Read with last modified access condition.
       auto response = newFileClient->GetProperties();
-      Files::DataLake::ReadDataLakeFileOptions options1;
+      Files::DataLake::DownloadDataLakeFileOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_TRUE(IsValidTime(response->LastModified));
-      EXPECT_THROW(newFileClient->Read(options1), StorageException);
-      Files::DataLake::ReadDataLakeFileOptions options2;
+      EXPECT_THROW(newFileClient->Download(options1), StorageException);
+      Files::DataLake::DownloadDataLakeFileOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-      EXPECT_NO_THROW(result = newFileClient->Read(options2));
+      EXPECT_NO_THROW(result = newFileClient->Download(options2));
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(buffer, downloaded);
     }
     {
       // Read with if match access condition.
       auto response = newFileClient->GetProperties();
-      Files::DataLake::ReadDataLakeFileOptions options1;
+      Files::DataLake::DownloadDataLakeFileOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(newFileClient->Read(options1), StorageException);
-      Files::DataLake::ReadDataLakeFileOptions options2;
+      EXPECT_THROW(newFileClient->Download(options1), StorageException);
+      Files::DataLake::DownloadDataLakeFileOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
-      EXPECT_NO_THROW(result = newFileClient->Read(options2));
+      EXPECT_NO_THROW(result = newFileClient->Download(options2));
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(buffer, downloaded);
     }
@@ -593,7 +594,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 
-      EXPECT_NO_THROW(anonymousClient.Read());
+      EXPECT_NO_THROW(anonymousClient.Download());
     }
   }
 }}} // namespace Azure::Storage::Test
