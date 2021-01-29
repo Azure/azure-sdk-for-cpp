@@ -109,6 +109,29 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->BlobSize, static_cast<int64_t>(m_blobContent.size()));
   }
 
+  TEST_F(BlockBlobClientTest, DownloadTransactionalHash)
+  {
+    const int64_t downloadLength = 1024;
+    Blobs::DownloadBlobOptions options;
+    options.Range.GetValue().Offset = 0;
+    options.Range.GetValue().Length = downloadLength;
+    options.RangeHashAlgorithm = HashAlgorithm::Md5;
+    auto res = m_blockBlobClient->Download(options);
+    ASSERT_TRUE(res->TransactionalContentHash.HasValue());
+    EXPECT_EQ(res->TransactionalContentHash.GetValue().Algorithm, HashAlgorithm::Md5);
+    EXPECT_EQ(
+        res->TransactionalContentHash.GetValue().Value,
+        Md5::Hash(m_blobContent.data(), downloadLength));
+
+    options.RangeHashAlgorithm = HashAlgorithm::Crc64;
+    res = m_blockBlobClient->Download(options);
+    ASSERT_TRUE(res->TransactionalContentHash.HasValue());
+    EXPECT_EQ(res->TransactionalContentHash.GetValue().Algorithm, HashAlgorithm::Crc64);
+    EXPECT_EQ(
+        res->TransactionalContentHash.GetValue().Value,
+        Crc64::Hash(m_blobContent.data(), downloadLength));
+  }
+
   TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)
   {
     {

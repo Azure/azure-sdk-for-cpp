@@ -4819,6 +4819,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<Azure::Core::Http::Range> Range;
+          Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
           Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
@@ -4899,6 +4900,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+          }
+          if (options.RangeHashAlgorithm.HasValue())
+          {
+            if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Md5)
+            {
+              request.AddHeader("x-ms-range-get-content-md5", "true");
+            }
+            else if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Crc64)
+            {
+              request.AddHeader("x-ms-range-get-content-crc64", "true");
+            }
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
