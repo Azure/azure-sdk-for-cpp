@@ -178,7 +178,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   struct UploadShareFileFromResult
   {
     bool IsServerEncrypted = false;
-    std::string RequestId;
   };
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models
