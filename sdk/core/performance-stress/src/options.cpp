@@ -5,7 +5,9 @@
 
 #include <iostream>
 
-void Azure::PerformanceStress::to_json(Azure::Core::Internal::Json::json& j, const Options& p)
+void Azure::PerformanceStress::to_json(
+    Azure::Core::Internal::Json::json& j,
+    const GlobalTestOptions& p)
 {
   j = Azure::Core::Internal::Json::json{
       {"Duration", p.Duration},
@@ -16,7 +18,6 @@ void Azure::PerformanceStress::to_json(Azure::Core::Internal::Json::json& j, con
       {"Latency", p.Latency},
       {"NoCleanup", p.NoCleanup},
       {"Parallel", p.Parallel},
-      {"Sync", p.Sync},
       {"Warmup", p.Warmup}};
   if (p.Port)
   {
@@ -24,7 +25,7 @@ void Azure::PerformanceStress::to_json(Azure::Core::Internal::Json::json& j, con
   }
   else
   {
-    j["Port"] = "Null";
+    j["Port"] = nullptr;
   }
   if (p.Rate)
   {
@@ -32,6 +33,50 @@ void Azure::PerformanceStress::to_json(Azure::Core::Internal::Json::json& j, con
   }
   else
   {
-    j["Rate"] = "Null";
+    j["Rate"] = nullptr;
   }
+}
+
+std::vector<Azure::PerformanceStress::TestOption>
+Azure::PerformanceStress::GlobalTestOptions::GetOptionMetadata()
+{
+  /*
+    [Option('d', "duration", Default = 10, HelpText = "Duration of test in seconds")]
+    [Option("host", HelpText = "Host to redirect HTTP requests")]
+    [Option("insecure", HelpText = "Allow untrusted SSL certs")]
+    [Option('i', "iterations", Default = 1, HelpText = "Number of iterations of main test loop")]
+    [Option("job-statistics", HelpText = "Print job statistics (used by automation)")]
+    [Option('l', "latency", HelpText = "Track and print per-operation latency statistics")]
+    [Option("no-cleanup", HelpText = "Disables test cleanup")]
+    [Option('p', "parallel", Default = 1, HelpText = "Number of operations to execute in parallel")]
+    [Option("port", HelpText = "Port to redirect HTTP requests")]
+    [Option('r', "rate", HelpText = "Target throughput (ops/sec)")]
+    [Option("sync", HelpText = "Runs sync version of test")]  -- Not supported
+    [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")]
+  */
+  return {
+      {"Duration",
+       {"-d", "--duration"},
+       "Duration of the test in seconds. Default to 10 seconds.",
+       1},
+      {"Host", {"--host"}, "Host to redirect HTTP requests. No redirection by default.", 1},
+      {"Insecure", {"--insecure"}, "Allow untrusted SSL certs. Default to false.", 1},
+      {"Iterations",
+       {"-i", "--iterations"},
+       "Number of iterations of main test loop. Default to 1.",
+       1},
+      {"JobStatistics", {"--statistics"}, "Print job statistics. Default to false", 1},
+      {"latency",
+       {"-l", "--latency"},
+       "Track and print per-operation latency statistics. Default to false.",
+       1},
+      {"NoCleanup", {"--noclean"}, "Disables test clean up. Default to false.", 1},
+      {"Parallel",
+       {"-p", "--parallel"},
+       "Number of operations to execute in parallel. Default to 1.",
+       1},
+      {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
+      {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
+      {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
+      {"help", {"-h", "--help"}, "Display help information.", 0}};
 }

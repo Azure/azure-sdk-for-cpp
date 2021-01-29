@@ -6,52 +6,60 @@
 #include <string>
 
 #include "azure/core/nullable.hpp"
+#include "azure/performance-stress/argagg.hpp"
+#include "azure/performance-stress/test_options.hpp"
+#include "azure/performance-stress/dynamic_test_options.hpp"
 
 #include <azure/core/internal/json.hpp>
+
+#include <iostream>
+#include <vector>
 
 namespace Azure { namespace PerformanceStress {
   // options supported when running a test.
   // TODO: add defaults for command line
-  struct Options
+  struct GlobalTestOptions
   {
-    /* [Option('d', "duration", Default = 10, HelpText = "Duration of test in seconds")] */
     int Duration = 10;
 
-    /* [Option("host", HelpText = "Host to redirect HTTP requests")] */
     std::string Host;
 
-    /* [Option("insecure", HelpText = "Allow untrusted SSL certs")] */
     bool Insecure;
 
-    /* [Option('i', "iterations", Default = 1, HelpText = "Number of iterations of main test loop")]
-     */
     int Iterations = 1;
 
-    /* [Option("job-statistics", HelpText = "Print job statistics (used by automation)")] */
     bool JobStatistics;
 
-    /* [Option('l', "latency", HelpText = "Track and print per-operation latency statistics")] */
     bool Latency;
 
-    /* [Option("no-cleanup", HelpText = "Disables test cleanup")] */
     bool NoCleanup;
 
-    /* [Option('p', "parallel", Default = 1, HelpText = "Number of operations to execute in
-     * parallel")] */
     int Parallel = 1;
 
-    /* [Option("port", HelpText = "Port to redirect HTTP requests")] */
     Azure::Core::Nullable<int> Port;
 
-    /* [Option('r', "rate", HelpText = "Target throughput (ops/sec)")] */
     Azure::Core::Nullable<int> Rate;
 
-    /* [Option("sync", HelpText = "Runs sync version of test")] */
-    bool Sync;
+    // bool Sync;  - Only sync on C++
 
-    /* [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")] */
     int Warmup = 5;
+
+    static std::vector<Azure::PerformanceStress::TestOption> GetOptionMetadata();
+
+    // template <class T> static T GetOptionOrDefault(std::string const& option, T def)
+    // {
+    //   for (auto r : argagg::Parser.ArgsResult.all_as<std::string>())
+    //   {
+    //     std::cout << r << "  " << option;
+    //   }
+
+    //   // if (argagg::ArgsResult["ExtraOption"])
+    //   // {
+    //   //   return argagg::ArgsResult[option].as<T>();
+    //   // }
+    //   return def;
+    // }
   };
 
-  void to_json(Azure::Core::Internal::Json::json& j, const Options& p);
+  void to_json(Azure::Core::Internal::Json::json& j, const GlobalTestOptions& p);
 }} // namespace Azure::PerformanceStress

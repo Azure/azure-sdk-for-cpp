@@ -4,15 +4,18 @@
 #pragma once
 
 #include "azure/performance-stress/base_test.hpp"
+#include "azure/performance-stress/dynamic_test_options.hpp"
 #include "azure/performance-stress/options.hpp"
+
+#include <memory>
 
 namespace Azure { namespace PerformanceStress {
 
   class PerformanceTest : public Azure::PerformanceStress::BaseTest {
-  private:
-    Azure::PerformanceStress::Options m_options;
+  protected:
+    Azure::PerformanceStress::TestOptions m_options;
 
   public:
-    PerformanceTest(Azure::PerformanceStress::Options options) : m_options(std::move(options)) {}
+    PerformanceTest(Azure::PerformanceStress::TestOptions options) : m_options(options) {}
   };
 }} // namespace Azure::PerformanceStress

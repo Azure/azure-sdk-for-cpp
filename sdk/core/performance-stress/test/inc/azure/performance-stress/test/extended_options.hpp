@@ -5,23 +5,27 @@
 
 #include <azure/performance-stress/options.hpp>
 #include <azure/performance-stress/test.hpp>
+#include <azure/performance-stress/test_options.hpp>
 
 #include <iostream>
+#include <vector>
 
 namespace Azure { namespace PerformanceStress { namespace Test {
-  struct ExtendedOptions : public Azure::PerformanceStress::Options
-  {
-    int extraOption = 1;
-  };
 
   class ExtendedOptionsTest : public Azure::PerformanceStress::PerformanceTest {
   public:
-    ExtendedOptionsTest(Azure::PerformanceStress::Options options) : PerformanceTest(options) {}
+    ExtendedOptionsTest(Azure::PerformanceStress::TestOptions options) : PerformanceTest(options) {}
 
     void Run(Azure::Core::Context const& ctx) override
     {
       (void)ctx;
-      std::cout << "Test No Op" << std::endl;
+      int extraOpt = m_options.GetOptionOrDefault("extraOption", 0);
+      std::cout << "Extended option:" << extraOpt << std::endl;
+    }
+
+    std::vector<Azure::PerformanceStress::TestOption> GetTestOptions() override
+    {
+      return {{"extraOption", {"-e"}, "Option only for Extended Options Tests", 1}};
     }
   };
 

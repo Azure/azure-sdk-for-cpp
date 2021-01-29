@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/performance-stress/argagg.hpp"
 #include "azure/performance-stress/test.hpp"
 
 #include <functional>
@@ -16,7 +17,13 @@ namespace Azure { namespace PerformanceStress {
   private:
     class ArgParser {
     public:
-      static Azure::PerformanceStress::Options Parse(int argc, char** argv, std::string& testName);
+      static argagg::parser_results Parse(
+          int argc,
+          char** argv,
+          std::vector<Azure::PerformanceStress::TestOption> const& testOptions);
+
+      static Azure::PerformanceStress::GlobalTestOptions Parse(
+          argagg::parser_results const& parsedArgs);
     };
 
   public:
@@ -25,7 +32,7 @@ namespace Azure { namespace PerformanceStress {
         std::map<
             std::string,
             std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-                Azure::PerformanceStress::Options)>> const& tests,
+                Azure::PerformanceStress::TestOptions)>> const& tests,
         int argc,
         char** argv);
   };

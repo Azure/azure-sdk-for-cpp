@@ -28,8 +28,6 @@
  * IN THE SOFTWARE.
  */
 #pragma once
-#ifndef ARGAGG_ARGAGG_ARGAGG_HPP
-#define ARGAGG_ARGAGG_ARGAGG_HPP
 
 #include <algorithm>
 #include <array>
@@ -615,7 +613,7 @@ struct parser
    * This method is not thread-safe and assumes that no modifications are made
    * to the definitions member field during the extent of this method call.
    */
-  parser_results parse(int argc, const char** argv) const;
+  parser_results parse(int argc, const char** argv, bool posOnly = true) const;
 
   /**
    * @brief
@@ -624,7 +622,7 @@ struct parser
    * <tt>const char**</tt> so here's an overload that performs a const_cast,
    * which is typically frowned upon but is safe here.
    */
-  parser_results parse(int argc, char** argv) const;
+  parser_results parse(int argc, char** argv, bool posOnly) const;
 };
 
 /**
@@ -1046,7 +1044,7 @@ inline parser_map validate_definitions(const std::vector<definition>& definition
   return map;
 }
 
-inline parser_results parser::parse(int argc, const char** argv) const
+inline parser_results parser::parse(int argc, const char** argv, bool posOnly) const
 {
   // Inspect each definition to see if its valid. You may wonder "why don't
   // you do this validation on construction?" I had thought about it but
@@ -1139,137 +1137,138 @@ inline parser_results parser::parse(int argc, const char** argv) const
     last_flag_expecting_args = nullptr;
     last_option_expecting_args = nullptr;
     num_option_args_to_consume = 0;
-
-    // If we're at this point then we're definitely dealing with something
-    // that is flag-like and has hyphen as the first character and has a
-    // length of at least two characters. How we handle this potential flag
-    // depends on whether or not it is a long-option so we check that first.
-    bool is_long_flag = (arg_i_cstr[1] == '-');
-
-    if (is_long_flag)
+    if (!posOnly)
     {
+      // If we're at this point then we're definitely dealing with something
+      // that is flag-like and has hyphen as the first character and has a
+      // length of at least two characters. How we handle this potential flag
+      // depends on whether or not it is a long-option so we check that first.
+      bool is_long_flag = (arg_i_cstr[1] == '-');
 
-      // Long flags have a complication: their arguments can be specified
-      // using an '=' character right inside the argument. That means an
-      // argument like "--output=foobar.txt" is actually an option with flag
-      // "--output" and argument "foobar.txt". So we look for the first
-      // instance of the '=' character and keep it in long_flag_arg. If
-      // long_flag_arg is nullptr then we didn't find '='. We need the
-      // flag_len to construct long_flag_str below.
-      auto long_flag_arg = std::strchr(arg_i_cstr, '=');
-      std::size_t flag_len = arg_i_len;
-      if (long_flag_arg != nullptr)
+      if (is_long_flag)
       {
-        flag_len = long_flag_arg - arg_i_cstr;
-      }
-      std::string long_flag_str(arg_i_cstr, flag_len);
 
-      if (!map.known_long_flag(long_flag_str))
-      {
-        std::ostringstream msg;
-        msg << "found unexpected flag: " << long_flag_str;
-        throw unexpected_option_error(msg.str());
-      }
-
-      const auto defn = map.get_definition_for_long_flag(long_flag_str);
-
-      if (long_flag_arg != nullptr && defn->num_args == 0)
-      {
-        std::ostringstream msg;
-        msg << "found argument for option not expecting an argument: " << arg_i_cstr;
-        throw unexpected_argument_error(msg.str());
-      }
-
-      // We've got a legitimate, known long flag option so we add an option
-      // result. This option result initially has an arg of nullptr, but that
-      // might change in the following block.
-      auto& opt_results = results.options[defn->name];
-      option_result opt_result{nullptr};
-      opt_results.all.push_back(std::move(opt_result));
-
-      if (defn->requires_arguments())
-      {
-        bool there_is_an_equal_delimited_arg = (long_flag_arg != nullptr);
-        if (there_is_an_equal_delimited_arg)
+        // Long flags have a complication: their arguments can be specified
+        // using an '=' character right inside the argument. That means an
+        // argument like "--output=foobar.txt" is actually an option with flag
+        // "--output" and argument "foobar.txt". So we look for the first
+        // instance of the '=' character and keep it in long_flag_arg. If
+        // long_flag_arg is nullptr then we didn't find '='. We need the
+        // flag_len to construct long_flag_str below.
+        auto long_flag_arg = std::strchr(arg_i_cstr, '=');
+        std::size_t flag_len = arg_i_len;
+        if (long_flag_arg != nullptr)
         {
-          // long_flag_arg would be "=foo" in the "--output=foo" case so we
-          // increment by 1 to get rid of the equal sign.
-          opt_results.all.back().arg = long_flag_arg + 1;
+          flag_len = long_flag_arg - arg_i_cstr;
         }
-        else
+        std::string long_flag_str(arg_i_cstr, flag_len);
+
+        if (!map.known_long_flag(long_flag_str))
         {
-          last_flag_expecting_args = arg_i_cstr;
-          last_option_expecting_args = &(opt_results.all.back());
-          num_option_args_to_consume = defn->num_args;
+          std::ostringstream msg;
+          msg << "found unexpected flag: " << long_flag_str;
+          throw unexpected_option_error(msg.str());
         }
-      }
 
-      ++arg_i;
-      continue;
-    }
+        const auto defn = map.get_definition_for_long_flag(long_flag_str);
 
-    // If we've made it here then we're looking at either a short flag or a
-    // group of short flags. Short flags can be grouped together so long as
-    // they don't require any arguments unless the option that does is the
-    // last in the group ("-o x -v" is okay, "-vo x" is okay, "-ov x" is
-    // not). So starting after the dash we're going to process each character
-    // as if it were a separate flag. Note "sf_idx" stands for "short flag
-    // index".
-    for (std::size_t sf_idx = 1; sf_idx < arg_i_len; ++sf_idx)
-    {
-      const auto short_flag = arg_i_cstr[sf_idx];
-
-      if (!std::isalnum(short_flag))
-      {
-        std::ostringstream msg;
-        msg << "found non-alphanumeric character '" << arg_i_cstr[sf_idx] << "' in flag group '"
-            << arg_i_cstr << "'";
-        throw std::domain_error(msg.str());
-      }
-
-      if (!map.known_short_flag(short_flag))
-      {
-        std::ostringstream msg;
-        msg << "found unexpected flag '" << arg_i_cstr[sf_idx] << "' in flag group '" << arg_i_cstr
-            << "'";
-        throw unexpected_option_error(msg.str());
-      }
-
-      auto defn = map.get_definition_for_short_flag(short_flag);
-      auto& opt_results = results.options[defn->name];
-
-      // Create an option result with an empty argument (for now) and add it
-      // to this option's results.
-      option_result opt_result{nullptr};
-      opt_results.all.push_back(std::move(opt_result));
-
-      if (defn->requires_arguments())
-      {
-
-        // If this short flag's option requires an argument and we're the
-        // last flag in the short flag group then just put the parser into
-        // "expecting argument for last option" state and move onto the next
-        // command line argument.
-        bool is_last_short_flag_in_group = (sf_idx == arg_i_len - 1);
-        if (is_last_short_flag_in_group)
+        if (long_flag_arg != nullptr && defn->num_args == 0)
         {
-          last_flag_expecting_args = arg_i_cstr;
-          last_option_expecting_args = &(opt_results.all.back());
-          num_option_args_to_consume = defn->num_args;
+          std::ostringstream msg;
+          msg << "found argument for option not expecting an argument: " << arg_i_cstr;
+          throw unexpected_argument_error(msg.str());
+        }
+
+        // We've got a legitimate, known long flag option so we add an option
+        // result. This option result initially has an arg of nullptr, but that
+        // might change in the following block.
+        auto& opt_results = results.options[defn->name];
+        option_result opt_result{nullptr};
+        opt_results.all.push_back(std::move(opt_result));
+
+        if (defn->requires_arguments())
+        {
+          bool there_is_an_equal_delimited_arg = (long_flag_arg != nullptr);
+          if (there_is_an_equal_delimited_arg)
+          {
+            // long_flag_arg would be "=foo" in the "--output=foo" case so we
+            // increment by 1 to get rid of the equal sign.
+            opt_results.all.back().arg = long_flag_arg + 1;
+          }
+          else
+          {
+            last_flag_expecting_args = arg_i_cstr;
+            last_option_expecting_args = &(opt_results.all.back());
+            num_option_args_to_consume = defn->num_args;
+          }
+        }
+
+        ++arg_i;
+        continue;
+      }
+
+      // If we've made it here then we're looking at either a short flag or a
+      // group of short flags. Short flags can be grouped together so long as
+      // they don't require any arguments unless the option that does is the
+      // last in the group ("-o x -v" is okay, "-vo x" is okay, "-ov x" is
+      // not). So starting after the dash we're going to process each character
+      // as if it were a separate flag. Note "sf_idx" stands for "short flag
+      // index".
+      for (std::size_t sf_idx = 1; sf_idx < arg_i_len; ++sf_idx)
+      {
+        const auto short_flag = arg_i_cstr[sf_idx];
+
+        if (!std::isalnum(short_flag))
+        {
+          std::ostringstream msg;
+          msg << "found non-alphanumeric character '" << arg_i_cstr[sf_idx] << "' in flag group '"
+              << arg_i_cstr << "'";
+          throw std::domain_error(msg.str());
+        }
+
+        if (!map.known_short_flag(short_flag))
+        {
+          std::ostringstream msg;
+          msg << "found unexpected flag '" << arg_i_cstr[sf_idx] << "' in flag group '"
+              << arg_i_cstr << "'";
+          throw unexpected_option_error(msg.str());
+        }
+
+        auto defn = map.get_definition_for_short_flag(short_flag);
+        auto& opt_results = results.options[defn->name];
+
+        // Create an option result with an empty argument (for now) and add it
+        // to this option's results.
+        option_result opt_result{nullptr};
+        opt_results.all.push_back(std::move(opt_result));
+
+        if (defn->requires_arguments())
+        {
+
+          // If this short flag's option requires an argument and we're the
+          // last flag in the short flag group then just put the parser into
+          // "expecting argument for last option" state and move onto the next
+          // command line argument.
+          bool is_last_short_flag_in_group = (sf_idx == arg_i_len - 1);
+          if (is_last_short_flag_in_group)
+          {
+            last_flag_expecting_args = arg_i_cstr;
+            last_option_expecting_args = &(opt_results.all.back());
+            num_option_args_to_consume = defn->num_args;
+            break;
+          }
+
+          // If this short flag's option requires an argument and we're NOT the
+          // last flag in the short flag group then we automatically consume
+          // the rest of the short flag group as the argument for this flag.
+          // This is how we get the POSIX behavior of being able to specify a
+          // flag's arguments without a white space delimiter (e.g.
+          // "-I/usr/local/include").
+          opt_results.all.back().arg = arg_i_cstr + sf_idx + 1;
           break;
         }
-
-        // If this short flag's option requires an argument and we're NOT the
-        // last flag in the short flag group then we automatically consume
-        // the rest of the short flag group as the argument for this flag.
-        // This is how we get the POSIX behavior of being able to specify a
-        // flag's arguments without a white space delimiter (e.g.
-        // "-I/usr/local/include").
-        opt_results.all.back().arg = arg_i_cstr + sf_idx + 1;
-        break;
       }
     }
-
     ++arg_i;
     continue;
   }
@@ -1289,9 +1288,9 @@ inline parser_results parser::parse(int argc, const char** argv) const
   return results;
 }
 
-inline parser_results parser::parse(int argc, char** argv) const
+inline parser_results parser::parse(int argc, char** argv, bool posOnly = false) const
 {
-  return parse(argc, const_cast<const char**>(argv));
+  return parse(argc, const_cast<const char**>(argv), posOnly);
 }
 
 namespace convert {
@@ -1540,5 +1539,3 @@ inline std::ostream& operator<<(std::ostream& os, const argagg::parser& x)
   }
   return os;
 }
-
-#endif // ARGAGG_ARGAGG_ARGAGG_HPP

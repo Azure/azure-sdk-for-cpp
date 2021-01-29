@@ -13,20 +13,21 @@
 
 int main(int argc, char** argv)
 {
+
   // Create the test list
   std::map<
       std::string,
       std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-          Azure::PerformanceStress::Options)>>
+          Azure::PerformanceStress::TestOptions)>>
       tests{
           {"noOp",
-           [](Azure::PerformanceStress::Options opts) {
+           [](Azure::PerformanceStress::TestOptions options) {
              // No Op
-             return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
+             return std::make_unique<Azure::PerformanceStress::Test::NoOp>(options);
            }},
-          {"extendedOptions", [](Azure::PerformanceStress::Options opts) {
+          {"extendedOptions", [](Azure::PerformanceStress::TestOptions options) {
              // Another test
-             return std::make_unique<Azure::PerformanceStress::Test::ExtendedOptionsTest>(opts);
+             return std::make_unique<Azure::PerformanceStress::Test::ExtendedOptionsTest>(options);
            }}};
 
   Azure::PerformanceStress::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
