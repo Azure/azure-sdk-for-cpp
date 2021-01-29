@@ -7,21 +7,25 @@
 
 #include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
-#include <vector>
+#include <string>
 
 namespace Azure { namespace PerformanceStress {
   class Program {
   private:
     class ArgParser {
     public:
-      static Azure::PerformanceStress::Options Parse(int argc, char** argv);
+      static Azure::PerformanceStress::Options Parse(int argc, char** argv, std::string& testName);
     };
 
   public:
     static void Run(
-        std::vector<std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::Options)>> const& tests,
+        Azure::Core::Context context,
+        std::map<
+            std::string,
+            std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
+                Azure::PerformanceStress::Options)>> const& tests,
         int argc,
         char** argv);
   };

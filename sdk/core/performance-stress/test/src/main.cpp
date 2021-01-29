@@ -8,24 +8,27 @@
 
 #include <functional>
 #include <iostream>
-#include <vector>
+#include <map>
 
 int main(int argc, char** argv)
 {
   // Create the test list
-  std::vector<std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-      Azure::PerformanceStress::Options)>>
+  std::map<
+      std::string,
+      std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
+          Azure::PerformanceStress::Options)>>
       tests{
-          [](Azure::PerformanceStress::Options opts) {
-            // No Op
-            return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
-          },
-          [](Azure::PerformanceStress::Options opts) {
-            // Another test
-            return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
-          }};
+          {"noOp",
+           [](Azure::PerformanceStress::Options opts) {
+             // No Op
+             return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
+           }},
+          {"other", [](Azure::PerformanceStress::Options opts) {
+             // Another test
+             return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
+           }}};
 
-  Azure::PerformanceStress::Program::Run(tests, argc, argv);
+  Azure::PerformanceStress::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
 
   return 0;
 }

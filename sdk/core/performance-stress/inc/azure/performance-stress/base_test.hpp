@@ -9,12 +9,17 @@ namespace Azure { namespace PerformanceStress {
   // contract for a test
   struct BaseTest
   {
-    virtual void GlobalSetupAsync(){};
-    // virtual void SetupAsync(){};
+    // Before starting test
+    virtual void GlobalSetup(){};
+    // Before running test each time
+    virtual void Setup(){};
     virtual void Run(Azure::Core::Context const& cancellationToken) = 0;
     // async not supported on Azure SDK for C++
     // virtual void RunAsync(Azure::Core::Context cancellationToken) = 0;
-    // virtual void CleanupAsync(){};
-    virtual void GlobalCleanupAsync(){};
+
+    // Run after test end
+    virtual void Cleanup(){};
+    // Run before application end
+    virtual void GlobalCleanup(){};
   };
 }} // namespace Azure::PerformanceStress
