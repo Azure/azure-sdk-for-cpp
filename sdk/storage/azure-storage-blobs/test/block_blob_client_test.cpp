@@ -201,6 +201,22 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_TRUE(IsValidTime(properties.CopyCompletedOn.GetValue()));
     }
+    ASSERT_TRUE(properties.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(properties.IsIncrementalCopy.GetValue());
+    EXPECT_FALSE(properties.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto downloadResult = blobClient.Download();
+    EXPECT_EQ(downloadResult->CopyId.GetValue(), res->CopyId);
+    EXPECT_FALSE(downloadResult->CopySource.GetValue().empty());
+    EXPECT_TRUE(
+        downloadResult->CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Pending
+        || downloadResult->CopyStatus.GetValue()
+            == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult->CopyProgress.GetValue().empty());
+    if (downloadResult->CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Success)
+    {
+      EXPECT_TRUE(IsValidTime(downloadResult->CopyCompletedOn.GetValue()));
+    }
   }
 
   TEST_F(BlockBlobClientTest, SnapShotVersions)
@@ -247,6 +263,72 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(snapshotClient.Delete());
     EXPECT_NO_THROW(versionClient.Delete());
     EXPECT_NO_THROW(m_blockBlobClient->GetProperties());
+  }
+
+  TEST_F(BlockBlobClientTest, IsCurrentVersion)
+  {
+    std::vector<uint8_t> emptyContent;
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+
+    auto properties = *blobClient.GetProperties();
+    ASSERT_TRUE(properties.VersionId.HasValue());
+    ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
+    EXPECT_TRUE(properties.IsCurrentVersion.GetValue());
+
+    auto downloadResponse = blobClient.Download();
+    ASSERT_TRUE(downloadResponse->VersionId.HasValue());
+    ASSERT_TRUE(downloadResponse->IsCurrentVersion.HasValue());
+    EXPECT_TRUE(downloadResponse->IsCurrentVersion.GetValue());
+
+    std::string version1 = properties.VersionId.GetValue();
+
+    blobClient.CreateSnapshot();
+
+    properties = *blobClient.GetProperties();
+    ASSERT_TRUE(properties.VersionId.HasValue());
+    ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
+    EXPECT_TRUE(properties.IsCurrentVersion.GetValue());
+    std::string latestVersion = properties.VersionId.GetValue();
+    EXPECT_NE(version1, properties.VersionId.GetValue());
+
+    auto versionClient = blobClient.WithVersionId(version1);
+    properties = *versionClient.GetProperties();
+    ASSERT_TRUE(properties.VersionId.HasValue());
+    ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
+    EXPECT_FALSE(properties.IsCurrentVersion.GetValue());
+    EXPECT_EQ(version1, properties.VersionId.GetValue());
+    downloadResponse = versionClient.Download();
+    ASSERT_TRUE(downloadResponse->VersionId.HasValue());
+    ASSERT_TRUE(downloadResponse->IsCurrentVersion.HasValue());
+    EXPECT_FALSE(downloadResponse->IsCurrentVersion.GetValue());
+    EXPECT_EQ(version1, downloadResponse->VersionId.GetValue());
+
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    options.Prefix = blobName;
+    options.Include = Blobs::Models::ListBlobsIncludeFlags::Versions;
+    do
+    {
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
+      options.ContinuationToken = res->ContinuationToken;
+      for (const auto& blob : res->Items)
+      {
+        if (blob.Name == blobName)
+        {
+          ASSERT_TRUE(blob.VersionId.HasValue());
+          ASSERT_TRUE(blob.IsCurrentVersion.HasValue());
+          if (blob.VersionId.GetValue() == latestVersion)
+          {
+            EXPECT_TRUE(blob.IsCurrentVersion.GetValue());
+          }
+          else
+          {
+            EXPECT_FALSE(blob.IsCurrentVersion.GetValue());
+          }
+        }
+      }
+    } while (options.ContinuationToken.HasValue());
   }
 
   TEST_F(BlockBlobClientTest, Properties)
@@ -843,6 +925,64 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
     EXPECT_THROW(blobClient.GetProperties(), StorageException);
     EXPECT_THROW(blobClient.WithSnapshot(s2).GetProperties(), StorageException);
+  }
+
+  TEST_F(BlockBlobClientTest, SetTier)
+  {
+    std::vector<uint8_t> emptyContent;
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+
+    auto properties = *blobClient.GetProperties();
+    ASSERT_TRUE(properties.Tier.HasValue());
+    ASSERT_TRUE(properties.IsAccessTierInferred.HasValue());
+    EXPECT_TRUE(properties.IsAccessTierInferred.GetValue());
+    EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
+
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    options.Prefix = blobName;
+    do
+    {
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
+      options.ContinuationToken = res->ContinuationToken;
+      for (const auto& blob : res->Items)
+      {
+        if (blob.Name == blobName)
+        {
+          ASSERT_TRUE(blob.Tier.HasValue());
+          ASSERT_TRUE(blob.IsAccessTierInferred.HasValue());
+          EXPECT_TRUE(blob.IsAccessTierInferred.GetValue());
+        }
+      }
+    } while (options.ContinuationToken.HasValue());
+
+    // choose a different tier
+    auto targetTier = properties.Tier.GetValue() == Blobs::Models::AccessTier::Hot
+        ? Blobs::Models::AccessTier::Cool
+        : Blobs::Models::AccessTier::Hot;
+    blobClient.SetAccessTier(targetTier);
+
+    properties = *blobClient.GetProperties();
+    ASSERT_TRUE(properties.Tier.HasValue());
+    ASSERT_TRUE(properties.IsAccessTierInferred.HasValue());
+    EXPECT_FALSE(properties.IsAccessTierInferred.GetValue());
+    EXPECT_TRUE(properties.AccessTierChangedOn.HasValue());
+
+    do
+    {
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
+      options.ContinuationToken = res->ContinuationToken;
+      for (const auto& blob : res->Items)
+      {
+        if (blob.Name == blobName)
+        {
+          ASSERT_TRUE(blob.Tier.HasValue());
+          ASSERT_TRUE(blob.IsAccessTierInferred.HasValue());
+          EXPECT_FALSE(blob.IsAccessTierInferred.GetValue());
+        }
+      }
+    } while (options.ContinuationToken.HasValue());
   }
 
 }}} // namespace Azure::Storage::Test

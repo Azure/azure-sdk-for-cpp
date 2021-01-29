@@ -160,6 +160,18 @@ namespace Azure { namespace Storage { namespace Test {
     auto getPropertiesResult = copyInfo->PollUntilDone(std::chrono::seconds(1));
     ASSERT_TRUE(getPropertiesResult->CopyStatus.HasValue());
     EXPECT_EQ(getPropertiesResult->CopyStatus.GetValue(), Blobs::Models::CopyStatus::Success);
+    ASSERT_TRUE(getPropertiesResult->CopyId.HasValue());
+    EXPECT_FALSE(getPropertiesResult->CopyId.GetValue().empty());
+    ASSERT_TRUE(getPropertiesResult->CopySource.HasValue());
+    EXPECT_FALSE(getPropertiesResult->CopySource.GetValue().empty());
+    ASSERT_TRUE(getPropertiesResult->IsIncrementalCopy.HasValue());
+    EXPECT_TRUE(getPropertiesResult->IsIncrementalCopy.GetValue());
+    ASSERT_TRUE(getPropertiesResult->IncrementalCopyDestinationSnapshot.HasValue());
+    EXPECT_FALSE(getPropertiesResult->IncrementalCopyDestinationSnapshot.GetValue().empty());
+    ASSERT_TRUE(getPropertiesResult->CopyCompletedOn.HasValue());
+    EXPECT_TRUE(IsValidTime(getPropertiesResult->CopyCompletedOn.GetValue()));
+    ASSERT_TRUE(getPropertiesResult->CopyProgress.HasValue());
+    EXPECT_FALSE(getPropertiesResult->CopyProgress.GetValue().empty());
   }
 
   TEST_F(PageBlobClientTest, Lease)
