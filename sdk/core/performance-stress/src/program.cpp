@@ -27,16 +27,18 @@ GetTest(
   }
   throw std::runtime_error("No test name with name: " + testName);
 }
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to)
+
+std::string ReplaceAll(std::string src, std::string const& findThis, std::string const& replaceWith)
 {
   size_t start_pos = 0;
-  while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+  while ((start_pos = src.find(findThis, start_pos)) != std::string::npos)
   {
-    str.replace(start_pos, from.length(), to);
-    start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    src.replace(start_pos, findThis.length(), replaceWith);
+    start_pos += replaceWith.length();
   }
-  return str;
+  return src;
 }
+
 } // namespace
 
 void Azure::PerformanceStress::Program::Run(

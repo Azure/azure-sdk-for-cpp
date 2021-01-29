@@ -9,9 +9,14 @@
 #include <iostream>
 
 namespace Azure { namespace PerformanceStress { namespace Test {
-  class NoOp : public Azure::PerformanceStress::PerformanceTest {
+  struct ExtendedOptions : public Azure::PerformanceStress::Options
+  {
+    int extraOption = 1;
+  };
+
+  class ExtendedOptionsTest : public Azure::PerformanceStress::PerformanceTest {
   public:
-    NoOp(Azure::PerformanceStress::Options options) : PerformanceTest(options) {}
+    ExtendedOptionsTest(Azure::PerformanceStress::Options options) : PerformanceTest(options) {}
 
     void Run(Azure::Core::Context const& ctx) override
     {

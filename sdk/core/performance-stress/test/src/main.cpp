@@ -4,6 +4,7 @@
 #include <azure/performance-stress/options.hpp>
 #include <azure/performance-stress/program.hpp>
 
+#include "azure/performance-stress/test/extended_options.hpp"
 #include "azure/performance-stress/test/no_op_test.hpp"
 
 #include <functional>
@@ -23,9 +24,9 @@ int main(int argc, char** argv)
              // No Op
              return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
            }},
-          {"other", [](Azure::PerformanceStress::Options opts) {
+          {"extendedOptions", [](Azure::PerformanceStress::Options opts) {
              // Another test
-             return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
+             return std::make_unique<Azure::PerformanceStress::Test::ExtendedOptionsTest>(opts);
            }}};
 
   Azure::PerformanceStress::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
