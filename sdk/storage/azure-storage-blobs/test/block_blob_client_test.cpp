@@ -266,21 +266,21 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string version1 = properties.VersionId.GetValue();
 
-    blobClient.Delete();
+    blobClient.CreateSnapshot();
 
     properties = *blobClient.GetProperties();
     ASSERT_TRUE(properties.VersionId.HasValue());
     ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
     EXPECT_TRUE(properties.IsAccessTierInferred.GetValue());
+    std::string latestVersion = properties.VersionId.GetValue();
     EXPECT_NE(version1, properties.VersionId.GetValue());
 
     auto versionClient = blobClient.WithVersionId(version1);
     properties = *versionClient.GetProperties();
     ASSERT_TRUE(properties.VersionId.HasValue());
     ASSERT_TRUE(properties.IsCurrentVersion.HasValue());
-    EXPECT_FALSE(properties.IsAccessTierInferred.GetValue());
-    std::string currentVersion = properties.VersionId.GetValue();
-    EXPECT_EQ(version1, currentVersion);
+    EXPECT_FALSE(properties.IsCurrentVersion.GetValue());
+    EXPECT_EQ(version1, properties.VersionId.GetValue());
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           ASSERT_TRUE(blob.VersionId.HasValue());
           ASSERT_TRUE(blob.IsCurrentVersion.HasValue());
-          if (blob.VersionId.GetValue() == currentVersion)
+          if (blob.VersionId.GetValue() == latestVersion)
           {
             EXPECT_TRUE(blob.IsCurrentVersion.GetValue());
           }
