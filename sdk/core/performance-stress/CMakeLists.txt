@@ -17,6 +17,8 @@ set(
 
 set(
   AZURE_PERFORMANCE_SOURCE
+  src/arg_parser.cpp
+  src/program.cpp
 )
 
 add_library(azure-performance-stress ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})

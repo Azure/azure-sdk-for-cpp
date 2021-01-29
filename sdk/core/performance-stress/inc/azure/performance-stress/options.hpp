@@ -13,7 +13,7 @@ namespace Azure { namespace PerformanceStress {
   struct Options
   {
     /* [Option('d', "duration", Default = 10, HelpText = "Duration of test in seconds")] */
-    int Duration;
+    int Duration = 10;
 
     /* [Option("host", HelpText = "Host to redirect HTTP requests")] */
     std::string Host;
@@ -23,7 +23,7 @@ namespace Azure { namespace PerformanceStress {
 
     /* [Option('i', "iterations", Default = 1, HelpText = "Number of iterations of main test loop")]
      */
-    int Iterations;
+    int Iterations = 1;
 
     /* [Option("job-statistics", HelpText = "Print job statistics (used by automation)")] */
     bool JobStatistics;
@@ -36,7 +36,7 @@ namespace Azure { namespace PerformanceStress {
 
     /* [Option('p', "parallel", Default = 1, HelpText = "Number of operations to execute in
      * parallel")] */
-    int Parallel;
+    int Parallel = 1;
 
     /* [Option("port", HelpText = "Port to redirect HTTP requests")] */
     Azure::Core::Nullable<int> Port;
@@ -48,6 +48,6 @@ namespace Azure { namespace PerformanceStress {
     bool Sync;
 
     /* [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")] */
-    int Warmup;
+    int Warmup = 5;
   };
 }} // namespace Azure::PerformanceStress

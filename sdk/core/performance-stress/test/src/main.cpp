@@ -12,16 +12,18 @@
 
 int main(int argc, char** argv)
 {
-  (void)argv;
-  (void)argc;
-
   // Create the test list
   std::vector<std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
       Azure::PerformanceStress::Options)>>
-      tests;
-  tests.push_back([](Azure::PerformanceStress::Options opts) {
-    return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
-  });
+      tests{
+          [](Azure::PerformanceStress::Options opts) {
+            // No Op
+            return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
+          },
+          [](Azure::PerformanceStress::Options opts) {
+            // Another test
+            return std::make_unique<Azure::PerformanceStress::Test::NoOp>(opts);
+          }};
 
   Azure::PerformanceStress::Program::Run(tests, argc, argv);
 
