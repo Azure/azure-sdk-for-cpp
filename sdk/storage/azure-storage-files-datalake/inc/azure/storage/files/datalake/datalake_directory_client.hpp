@@ -146,30 +146,57 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         = RenameDataLakeSubdirectoryOptions()) const;
 
     /**
-     * @brief Deletes the directory.
-     * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
-     *                  the directory is non-empty, an error occurs.
+     * @brief Deletes the empty directory. Throws exception if directory is not empty.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> Delete(
-        bool recursive,
-        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteEmpty(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const
+    {
+      return this->Delete(false, options);
+    }
 
     /**
-     * @brief Deletes the directory if it already exists.
-     * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
-     *                  the directory is non-empty, an error occurs.
+     * @brief Deletes the empty directory if it already exists. Throws exception if directory is not
+     * empty.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfExists(
-        bool recursive,
-        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteEmptyIfExists(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const
+    {
+      return this->DeleteIfExists(false, options);
+    }
+
+    /**
+     * @brief Deletes the directory and all its subdirectories and files.
+     * @param options Optional parameters to delete the directory the path points to.
+     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * returned when deleting the directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteRecursive(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const
+    {
+      return this->Delete(true, options);
+    }
+
+    /**
+     * @brief Deletes the directory and all its subdirectories and files if the directory exists.
+     * @param options Optional parameters to delete the directory the path points to.
+     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * returned when deleting the directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteRecursiveIfExists(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const
+    {
+      return this->DeleteIfExists(true, options);
+    }
 
     /**
      * @brief List the paths in this file system.
@@ -192,6 +219,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline)
     {
     }
+
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> Delete(
+        bool recursive,
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
+
+    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfExists(
+        bool recursive,
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
 
     friend class DataLakeFileSystemClient;
   };

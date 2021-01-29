@@ -45,6 +45,8 @@
 - Type for ETag was changed to `Azure::Core::ETag`.
 - Type for `IfMatch` and `IfNoneMatch` was changed to `Azure::Core::ETag`.
 - Renamed `ListDataLakeFileSystemsIncludeItem` to `ListDataLakeFileSystemsIncludeFlags`.
+- Removed `DataLakeDirectoryClient::Delete` and `DataLakeDirectoryClient::DeleteIfExists`. Added `DataLakeDirectoryClient::DeleteEmpty`, `DataLakeDirectoryClient::DeleteEmptyIfExists`, `DataLakeDirectoryClient::DeleteRecursive` and `DataLakeDirectoryClient::DeleteRecursiveIfExists` instead.
+- Removed `ContinuationToken` in `DeleteDataLakePathResult` and `DeleteDataLakeDirectoryResult`, as they will never be returned for HNS enabled accounts.
 
 ### Other Changes and Improvements
 

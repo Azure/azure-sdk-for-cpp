@@ -93,7 +93,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct DeleteDataLakePathResult
   {
     bool Deleted = true;
-    Azure::Core::Nullable<std::string> ContinuationToken;
     std::string RequestId;
   };
 

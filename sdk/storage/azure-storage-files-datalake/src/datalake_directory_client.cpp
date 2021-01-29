@@ -244,7 +244,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Context = options.Context;
-    deleteOptions.ContinuationToken = options.ContinuationToken;
     deleteOptions.Recursive = recursive;
     return DataLakePathClient::Delete(deleteOptions);
   }
@@ -255,7 +254,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Context = options.Context;
-    deleteOptions.ContinuationToken = options.ContinuationToken;
     deleteOptions.Recursive = recursive;
     return DataLakePathClient::DeleteIfExists(deleteOptions);
   }
