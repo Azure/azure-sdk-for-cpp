@@ -25,7 +25,7 @@ namespace Azure { namespace PerformanceStress { namespace Test {
 
     std::vector<Azure::PerformanceStress::TestOption> GetTestOptions() override
     {
-      return {{"extraOption", {"-e"}, "Option only for Extended Options Tests", 1}};
+      return {{"extraOption", {"-e"}, "Example for extended option for test.", 1}};
     }
   };
 
