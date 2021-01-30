@@ -59,5 +59,10 @@ Azure::PerformanceStress::GlobalTestOptions Azure::PerformanceStress::Program::A
   {
     options.Parallel = parsedArgs["Parallel"];
   }
+  if (parsedArgs["Iterations"])
+  {
+    options.Iterations = parsedArgs["Iterations"];
+  }
+
   return options;
 }

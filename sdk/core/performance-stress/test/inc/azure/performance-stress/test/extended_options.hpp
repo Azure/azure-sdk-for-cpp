@@ -16,12 +16,7 @@ namespace Azure { namespace PerformanceStress { namespace Test {
   public:
     ExtendedOptionsTest(Azure::PerformanceStress::TestOptions options) : PerformanceTest(options) {}
 
-    void Run(Azure::Core::Context const& ctx) override
-    {
-      (void)ctx;
-      // int extraOpt = m_options.GetOptionOrDefault("extraOption", 0);
-      // std::cout << "Extended option:" /*<< extraOpt*/ << std::endl;
-    }
+    void Run(Azure::Core::Context const& ctx) override { (void)ctx; }
 
     std::vector<Azure::PerformanceStress::TestOption> GetTestOptions() override
     {

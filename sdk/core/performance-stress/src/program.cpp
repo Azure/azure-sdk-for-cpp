@@ -90,6 +90,120 @@ void PrintOptions(
   }
 }
 
+struct Result
+{
+  int completedOperations;
+  std::chrono::nanoseconds lastCompletionTimes;
+};
+
+void RunLoop(
+    Azure::PerformanceStress::PerformanceTest& test,
+    Result& result,
+    bool latency,
+    Azure::Core::Context context)
+{
+  (void)latency;
+  auto now = std::chrono::system_clock::now();
+  while (!context.IsCancelled())
+  {
+    test.Run(context);
+    auto completedOn = std::chrono::system_clock::now() - now;
+    result.completedOperations += 1;
+    result.lastCompletionTimes = completedOn;
+  }
+}
+
+std::string FormatNumber(uint number)
+{
+  auto numberString = std::to_string(number);
+  int start = numberString.length() - 3;
+  while (start > 0)
+  {
+    numberString.insert(start, ",");
+    start -= 3;
+  }
+  return numberString;
+}
+
+void RunTests(
+    std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> const& tests,
+    int parallel,
+    Azure::Core::Nullable<int> rate,
+    int duration,
+    std::string const& title)
+{
+  (void)rate;
+  std::vector<Result> results(parallel);
+
+  auto durationTest = std::chrono::seconds(duration);
+  auto deadline = std::chrono::system_clock::now() + durationTest;
+  Azure::Core::Context context;
+  auto cancelationToken = context.WithDeadline(deadline);
+
+  /********************* Progress Reporter ******************************/
+  Azure::Core::Context progresToken;
+  auto lastCompleted = 0;
+  auto progressThread = std::thread([&title, &results, &lastCompleted, &progresToken]() {
+    std::cout << "=== " << title << " ===" << std::endl << "Current\t\tTotal" << std::endl;
+    while (!progresToken.IsCancelled())
+    {
+      using namespace std::chrono_literals;
+      std::this_thread::sleep_for(1000ms);
+      auto total = 0;
+      for (auto result : results)
+      {
+        total += result.completedOperations;
+      }
+      auto current = total - lastCompleted;
+      lastCompleted = total;
+      std::cout << current << "\t\t" << total << std::endl;
+    }
+  });
+
+  std::vector<std::thread> tasks;
+  int index = 0;
+  for (auto& result : results)
+  {
+    tasks.push_back(std::thread([index, &tests, &result, &cancelationToken]() {
+      RunLoop(*tests[index], result, false, cancelationToken);
+    }));
+    index += 1;
+  }
+  // Wait for all tests to complete setUp
+  for (auto& t : tasks)
+  {
+    t.join();
+  }
+
+  // Stop progress
+  progresToken.Cancel();
+  progressThread.join();
+
+  std::cout << std::endl << "=== Results ===";
+
+  auto totalOperations = 0;
+  for (auto result : results)
+  {
+    totalOperations += result.completedOperations;
+  }
+  auto operationsPerSecond = 0;
+  for (int index = 0; index < parallel; index++)
+  {
+    operationsPerSecond += results[index].completedOperations
+        / std::chrono::duration_cast<std::chrono::seconds>(results[index].lastCompletionTimes)
+              .count();
+  }
+  auto secondsPerOperation = 1 / operationsPerSecond;
+  auto weightedAverageSeconds = totalOperations / operationsPerSecond;
+
+  std::cout << std::endl
+            << "Completed " << FormatNumber(totalOperations)
+            << " operations in a weighted-average of " << weightedAverageSeconds << "s ("
+            << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
+            << std::endl
+            << std::endl;
+}
+
 } // namespace
 
 void Azure::PerformanceStress::Program::Run(
@@ -133,30 +247,34 @@ void Azure::PerformanceStress::Program::Run(
   {
     parallelTest.push_back(testGenerator(Azure::PerformanceStress::TestOptions(argResults)));
   }
-  (void)context;
+
   test->GlobalSetup();
-  // {
-  //   std::vector<std::thread> tasks;
-  //   for (int i = 0; i < parallelTasks; i++)
-  //   {
-  //     tasks.push_back(std::thread([&]() { parallelTest[i]->Setup(); }));
-  //   }
-  //   // Wait for all tests to complete setUp
-  //   for (auto& t : tasks)
-  //   {
-  //     t.join();
-  //   }
-  // }
+
+  /******************** Set up ******************************/
   {
     std::vector<std::thread> tasks;
     for (int i = 0; i < parallelTasks; i++)
     {
-      tasks.push_back(std::thread([&]() {}));
+      tasks.push_back(std::thread([&parallelTest, i, &context]() { parallelTest[i]->Setup(); }));
     }
     // Wait for all tests to complete setUp
     for (auto& t : tasks)
     {
       t.join();
     }
+  }
+
+  /******************** WarmUp ******************************/
+  RunTests(parallelTest, parallelTasks, options.Rate, options.Warmup, "Warmup");
+
+  /******************** Tests ******************************/
+  std::string iterationInfo;
+  for (int iteration = 0; iteration < options.Iterations; iteration++)
+  {
+    if (iteration > 0)
+    {
+      iterationInfo.append(FormatNumber(iteration));
+    }
+    RunTests(parallelTest, parallelTasks, options.Rate, options.Duration, "Test" + iterationInfo);
   }
 }

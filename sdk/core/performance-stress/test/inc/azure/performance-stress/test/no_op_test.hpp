@@ -13,11 +13,7 @@ namespace Azure { namespace PerformanceStress { namespace Test {
   public:
     NoOp(Azure::PerformanceStress::TestOptions options) : PerformanceTest(options) {}
 
-    void Run(Azure::Core::Context const& ctx) override
-    {
-      (void)ctx;
-      std::cout << "Test No Op" << std::endl;
-    }
+    void Run(Azure::Core::Context const& ctx) override { (void)ctx; }
   };
 
 }}} // namespace Azure::PerformanceStress::Test

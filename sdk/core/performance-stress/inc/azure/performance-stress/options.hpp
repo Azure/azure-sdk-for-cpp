@@ -7,8 +7,8 @@
 
 #include "azure/core/nullable.hpp"
 #include "azure/performance-stress/argagg.hpp"
-#include "azure/performance-stress/test_options.hpp"
 #include "azure/performance-stress/dynamic_test_options.hpp"
+#include "azure/performance-stress/test_options.hpp"
 
 #include <azure/core/internal/json.hpp>
 
@@ -45,20 +45,6 @@ namespace Azure { namespace PerformanceStress {
     int Warmup = 5;
 
     static std::vector<Azure::PerformanceStress::TestOption> GetOptionMetadata();
-
-    // template <class T> static T GetOptionOrDefault(std::string const& option, T def)
-    // {
-    //   for (auto r : argagg::Parser.ArgsResult.all_as<std::string>())
-    //   {
-    //     std::cout << r << "  " << option;
-    //   }
-
-    //   // if (argagg::ArgsResult["ExtraOption"])
-    //   // {
-    //   //   return argagg::ArgsResult[option].as<T>();
-    //   // }
-    //   return def;
-    // }
   };
 
   void to_json(Azure::Core::Internal::Json::json& j, const GlobalTestOptions& p);
