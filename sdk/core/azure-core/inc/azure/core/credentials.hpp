@@ -45,7 +45,14 @@ namespace Azure { namespace Core {
    */
   struct GetTokenOptions
   {
+    /**
+     * @brief Authentication scopes.
+     */
     std::vector<std::string> Scopes;
+
+    /**
+     * @brief #TransportPolicy for authentication.
+     */
     std::unique_ptr<Azure::Core::Http::TransportPolicy> TransportPolicy;
   };
 
