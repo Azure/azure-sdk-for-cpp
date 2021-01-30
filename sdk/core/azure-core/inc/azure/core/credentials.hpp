@@ -19,6 +19,7 @@
 #include <vector>
 
 namespace Azure { namespace Core {
+
   /**
    * @brief Represents an access token.
    */
