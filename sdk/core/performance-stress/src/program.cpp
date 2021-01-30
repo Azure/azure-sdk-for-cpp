@@ -7,7 +7,9 @@
 #include <azure/core/internal/json.hpp>
 #include <azure/core/internal/strings.hpp>
 
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 namespace {
 
@@ -99,8 +101,6 @@ void Azure::PerformanceStress::Program::Run(
     int argc,
     char** argv)
 {
-  (void)context;
-
   // Parse args only to get the test name first
   auto testGenerator = GetTest(tests, argc, argv);
   if (testGenerator == nullptr)
@@ -118,15 +118,45 @@ void Azure::PerformanceStress::Program::Run(
   test = testGenerator(Azure::PerformanceStress::TestOptions(argResults));
   auto options = Azure::PerformanceStress::Program::ArgParser::Parse(argResults);
 
+  if (options.JobStatistics)
+  {
+    std::cout << "Application started." << std::endl;
+  }
+
   // Print options
   PrintOptions(options, testOptions, argResults);
 
-  // auto testOptions = test->GetTestOptions();
-  // if (testOptions.size() > 0)
-  //   std::cout << "=== Global Options ===" << std::endl;
-
-  // test->GlobalSetup();
-  test->Run(context);
-  // test->GlobalCleanup();
-  // (void)tests;
+  // Create parallel pool of tests
+  int const parallelTasks = options.Parallel;
+  std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> parallelTest;
+  for (int i = 0; i < parallelTasks; i++)
+  {
+    parallelTest.push_back(testGenerator(Azure::PerformanceStress::TestOptions(argResults)));
+  }
+  (void)context;
+  test->GlobalSetup();
+  // {
+  //   std::vector<std::thread> tasks;
+  //   for (int i = 0; i < parallelTasks; i++)
+  //   {
+  //     tasks.push_back(std::thread([&]() { parallelTest[i]->Setup(); }));
+  //   }
+  //   // Wait for all tests to complete setUp
+  //   for (auto& t : tasks)
+  //   {
+  //     t.join();
+  //   }
+  // }
+  {
+    std::vector<std::thread> tasks;
+    for (int i = 0; i < parallelTasks; i++)
+    {
+      tasks.push_back(std::thread([&]() {}));
+    }
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
+  }
 }

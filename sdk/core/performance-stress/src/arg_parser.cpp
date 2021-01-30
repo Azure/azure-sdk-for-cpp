@@ -55,5 +55,9 @@ Azure::PerformanceStress::GlobalTestOptions Azure::PerformanceStress::Program::A
   {
     options.Host = parsedArgs["Host"].as<std::string>();
   }
+  if (parsedArgs["Parallel"])
+  {
+    options.Parallel = parsedArgs["Parallel"];
+  }
   return options;
 }
