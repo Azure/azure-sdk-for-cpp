@@ -54,7 +54,7 @@ namespace Azure { namespace Identity {
     {
     }
 
-    Core::AccessToken GetToken(Core::Context const& context, std::vector<std::string> const& scopes)
+    Core::AccessToken GetToken(Core::Context const& context, Core::GetTokenOptions const& options)
         const override;
   };
 

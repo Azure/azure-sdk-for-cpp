@@ -18,7 +18,7 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
 
     if (std::chrono::system_clock::now() > m_accessToken.ExpiresOn)
     {
-      m_accessToken = m_credential->GetToken(context, m_scopes);
+      m_accessToken = m_credential->GetToken(context, m_getTokenOptions);
     }
 
     request.AddHeader("authorization", "Bearer " + m_accessToken.Token);

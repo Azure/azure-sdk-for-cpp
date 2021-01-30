@@ -41,7 +41,7 @@ std::string const ClientSecretCredential::g_aadGlobalAuthority
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Context const& context,
-    std::vector<std::string> const& scopes) const
+    Azure::Core::GetTokenOptions const& options) const
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
@@ -58,6 +58,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
          << "&client_secret=" << UrlEncode(m_clientSecret);
 
+    auto const& scopes = options.Scopes;
     if (!scopes.empty())
     {
       auto scopesIter = scopes.begin();
@@ -81,12 +82,12 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
     std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.push_back(std::make_unique<RequestIdPolicy>());
+    policies.emplace_back(std::make_unique<RequestIdPolicy>());
 
     RetryOptions retryOptions;
-    policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
+    policies.emplace_back(std::make_unique<RetryPolicy>(retryOptions));
 
-    policies.push_back(std::make_unique<TransportPolicy>());
+    policies.emplace_back(options.TransportPolicy->Clone());
 
     HttpPipeline httpPipeline(policies);
 

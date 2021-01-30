@@ -78,7 +78,7 @@ EnvironmentCredential::EnvironmentCredential()
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(
     Azure::Core::Context const& context,
-    std::vector<std::string> const& scopes) const
+    Azure::Core::GetTokenOptions const& options) const
 {
   using namespace Azure::Core;
 
@@ -88,5 +88,5 @@ Azure::Core::AccessToken EnvironmentCredential::GetToken(
                                   "Environment variables are not fully configured.");
   }
 
-  return m_credentialImpl->GetToken(context, scopes);
+  return m_credentialImpl->GetToken(context, options);
 }
