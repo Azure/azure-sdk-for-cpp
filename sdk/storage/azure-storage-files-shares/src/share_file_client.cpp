@@ -1053,7 +1053,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         && options.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Algorithm
             == HashAlgorithm::Md5)
     {
-      // IfMatchContentHash now only supports Crc64 hash algorithm.
+      // IfNoneMatchContentHash now only supports Crc64 hash algorithm.
       std::abort();
     }
     protocolLayerOptions.SourceIfNoneMatchCrc64
