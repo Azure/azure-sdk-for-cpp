@@ -1009,4 +1009,60 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return Azure::Core::Response<Models::UploadShareFileFromResult>(
         std::move(result), createResult.ExtractRawResponse());
   }
+
+  Azure::Core::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
+      const std::string& sourceUri,
+      const Azure::Core::Http::Range& sourceRange,
+      const Azure::Core::Http::Range& range,
+      const UploadFileRangeFromUriOptions& options) const
+  {
+    if (!sourceRange.Length.HasValue())
+    {
+      // sourceRange must have length to perform this operation.
+      std::abort();
+    }
+    int64_t destLength = sourceRange.Length.GetValue();
+    if (range.Length.HasValue())
+    {
+      // Let server decide the behavior if the length does not match.
+      destLength = range.Length.GetValue();
+    }
+
+    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeFromUrlOptions();
+    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(range.Offset)
+        + std::string("-") + std::to_string(range.Offset + destLength - 1);
+    protocolLayerOptions.ContentLength = 0;
+    protocolLayerOptions.CopySource = sourceUri;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    if (options.SourceContentHash.HasValue()
+        && options.SourceContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
+    {
+      // SourceContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceContentCrc64 = options.SourceContentHash;
+    if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
+        && options.SourceAccessCondition.IfMatchContentHash.GetValue().Algorithm
+            == HashAlgorithm::Md5)
+    {
+      // IfMatchContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
+    if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue()
+        && options.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Algorithm
+            == HashAlgorithm::Md5)
+    {
+      // IfMatchContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceIfNoneMatchCrc64
+        = options.SourceAccessCondition.IfNoneMatchContentHash;
+    protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
+        + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.GetValue() - 1);
+    protocolLayerOptions.XMsWrite = Models::FileRangeWriteFromUrlType::Update;
+
+    return Details::ShareRestClient::File::UploadRangeFromUrl(
+        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+  }
 }}}} // namespace Azure::Storage::Files::Shares

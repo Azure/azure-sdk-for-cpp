@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.7 (Unreleased)
 
+### New Features
+
+- Added support for `UploadRangeFromUri` in file client.
+
 ### Breaking Changes
 
 - Removed `GetDirectoryClient` and `GetFileClient` from `ShareClient`. `ShareDirectoryClient` and `ShareFileClient` now initializes with the name of the resource, not path, to indicate that no path parsing is done for the API
