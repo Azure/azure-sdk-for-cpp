@@ -39,6 +39,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Storage::ContentHash ContentHash;
     };
 
+    // Specifies the access tier of the share.
+    class ShareAccessTier {
+    public:
+      ShareAccessTier() = default;
+      explicit ShareAccessTier(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ShareAccessTier& other) const { return m_value == other.m_value; }
+      bool operator!=(const ShareAccessTier& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier TransactionOptimized;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Hot;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Cool;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Premium;
+
+    private:
+      std::string m_value;
+    }; // extensible enum ShareAccessTier
+
     // Specifies the option to copy file security descriptor from source file or to set it using the
     // value which is defined by the header value of x-ms-file-permission or
     // x-ms-file-permission-key.
@@ -227,6 +245,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<Core::DateTime> NextAllowedQuotaDowngradeTime;
       Azure::Core::Nullable<Core::DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
+      Azure::Core::Nullable<ShareAccessTier> AccessTier; // The access tier of the share.
+      Azure::Core::Nullable<Core::DateTime> AccessTierChangeTime;
+      Azure::Core::Nullable<std::string> AccessTierTransitionState;
       LeaseStatusType LeaseStatus;
       LeaseStateType LeaseState;
       LeaseDurationType LeaseDuration;
@@ -467,6 +488,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* QueryRestype = "restype";
     constexpr static const char* QueryComp = "comp";
     constexpr static const char* HeaderVersion = "x-ms-version";
+    constexpr static const char* HeaderAccessTier = "x-ms-access-tier";
     constexpr static const char* HeaderContentLength = "content-length";
     constexpr static const char* HeaderContentHashMd5 = "content-md5";
     constexpr static const char* HeaderCopyActionAbortConstant = "x-ms-copy-action";
@@ -519,6 +541,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderLeaseDuration = "x-ms-lease-duration";
     constexpr static const char* HeaderLeaseState = "x-ms-lease-state";
     constexpr static const char* HeaderLeaseStatus = "x-ms-lease-status";
+    constexpr static const char* HeaderAccessTierChangeTime = "x-ms-access-tier-change-time";
+    constexpr static const char* HeaderAccessTierTransitionState
+        = "x-ms-access-tier-transition-state";
     constexpr static const char* HeaderLeaseTime = "x-ms-lease-time";
     constexpr static const char* HeaderClientRequestId = "x-ms-client-request-id";
     constexpr static const char* HeaderAction = "x-ms-lease-action";
@@ -634,6 +659,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<LeaseStateType> LeaseState;
       Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Core::Nullable<ShareAccessTier> AccessTier;
+      Azure::Core::Nullable<Core::DateTime> AccessTierChangeTime;
+      Azure::Core::Nullable<std::string> AccessTierTransitionState;
     };
 
     struct ShareDeleteResult
@@ -705,7 +733,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string RequestId;
     };
 
-    struct ShareSetQuotaResult
+    struct ShareSetPropertiesResult
     {
       Core::ETag ETag;
       Core::DateTime LastModified;
@@ -2081,6 +2109,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           auto result = ShareProperties();
           enum class XmlTagName
           {
+            AccessTier,
+            AccessTierChangeTime,
+            AccessTierTransitionState,
             DeletedTime,
             Etag,
             LastModified,
@@ -2118,7 +2149,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "DeletedTime") == 0)
+              if (std::strcmp(node.Name, "AccessTier") == 0)
+              {
+                path.emplace_back(XmlTagName::AccessTier);
+              }
+              else if (std::strcmp(node.Name, "AccessTierChangeTime") == 0)
+              {
+                path.emplace_back(XmlTagName::AccessTierChangeTime);
+              }
+              else if (std::strcmp(node.Name, "AccessTierTransitionState") == 0)
+              {
+                path.emplace_back(XmlTagName::AccessTierTransitionState);
+              }
+              else if (std::strcmp(node.Name, "DeletedTime") == 0)
               {
                 path.emplace_back(XmlTagName::DeletedTime);
               }
@@ -2189,7 +2232,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
-              if (path.size() == 1 && path[0] == XmlTagName::DeletedTime)
+              if (path.size() == 1 && path[0] == XmlTagName::AccessTier)
+              {
+                result.AccessTier = ShareAccessTier(node.Value);
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::AccessTierChangeTime)
+              {
+                result.AccessTierChangeTime
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::AccessTierTransitionState)
+              {
+                result.AccessTierTransitionState = node.Value;
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::DeletedTime)
               {
                 result.DeletedOn
                     = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
@@ -2490,6 +2546,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           Azure::Core::Nullable<int64_t> ShareQuota;
+          Azure::Core::Nullable<ShareAccessTier> XMsAccessTier;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
@@ -2517,6 +2574,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(
                 Details::HeaderQuota, std::to_string(createOptions.ShareQuota.GetValue()));
+          }
+          if (createOptions.XMsAccessTier.HasValue())
+          {
+            request.AddHeader(
+                Details::HeaderAccessTier, (createOptions.XMsAccessTier.GetValue().Get()));
           }
           request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
           return CreateParseResult(context, pipeline.Send(context, request));
@@ -2918,42 +2980,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPermissionParseResult(context, pipeline.Send(context, request));
         }
 
-        struct SetQuotaOptions
+        struct SetPropertiesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
           Azure::Core::Nullable<int64_t> ShareQuota;
+          Azure::Core::Nullable<ShareAccessTier> XMsAccessTier;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareSetQuotaResult> SetQuota(
+        static Azure::Core::Response<ShareSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
-            const SetQuotaOptions& setQuotaOptions)
+            const SetPropertiesOptions& setPropertiesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader(Details::HeaderContentLength, "0");
           request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
           request.GetUrl().AppendQueryParameter(Details::QueryComp, "properties");
-          if (setQuotaOptions.Timeout.HasValue())
+          if (setPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
                 Storage::Details::UrlEncodeQueryParameter(
-                    std::to_string(setQuotaOptions.Timeout.GetValue())));
+                    std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, setQuotaOptions.ApiVersionParameter);
-          if (setQuotaOptions.ShareQuota.HasValue())
+          request.AddHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
+          if (setPropertiesOptions.ShareQuota.HasValue())
           {
             request.AddHeader(
-                Details::HeaderQuota, std::to_string(setQuotaOptions.ShareQuota.GetValue()));
+                Details::HeaderQuota, std::to_string(setPropertiesOptions.ShareQuota.GetValue()));
           }
-          if (setQuotaOptions.LeaseIdOptional.HasValue())
+          if (setPropertiesOptions.XMsAccessTier.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, setQuotaOptions.LeaseIdOptional.GetValue());
+            request.AddHeader(
+                Details::HeaderAccessTier, (setPropertiesOptions.XMsAccessTier.GetValue().Get()));
           }
-          return SetQuotaParseResult(context, pipeline.Send(context, request));
+          if (setPropertiesOptions.LeaseIdOptional.HasValue())
+          {
+            request.AddHeader(
+                Details::HeaderLeaseId, setPropertiesOptions.LeaseIdOptional.GetValue());
+          }
+          return SetPropertiesParseResult(context, pipeline.Send(context, request));
         }
 
         struct SetMetadataOptions
@@ -3232,6 +3301,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.LeaseStatus
                   = LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
             }
+            if (response.GetHeaders().find("x-ms-access-tier") != response.GetHeaders().end())
+            {
+              result.AccessTier = ShareAccessTier(response.GetHeaders().at("x-ms-access-tier"));
+            }
+            if (response.GetHeaders().find(Details::HeaderAccessTierChangeTime)
+                != response.GetHeaders().end())
+            {
+              result.AccessTierChangeTime = Core::DateTime::Parse(
+                  response.GetHeaders().at(Details::HeaderAccessTierChangeTime),
+                  Core::DateTime::DateFormat::Rfc1123);
+            }
+            if (response.GetHeaders().find(Details::HeaderAccessTierTransitionState)
+                != response.GetHeaders().end())
+            {
+              result.AccessTierTransitionState
+                  = response.GetHeaders().at(Details::HeaderAccessTierTransitionState);
+            }
             return Azure::Core::Response<ShareGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3502,7 +3588,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<ShareSetQuotaResult> SetQuotaParseResult(
+        static Azure::Core::Response<ShareSetPropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3510,13 +3596,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success
-            ShareSetQuotaResult result;
+            ShareSetPropertiesResult result;
             result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
             result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareSetQuotaResult>(
+            return Azure::Core::Response<ShareSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
