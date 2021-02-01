@@ -113,6 +113,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int64_t downloadLength = 1024;
     Blobs::DownloadBlobOptions options;
+    options.Range = Azure::Core::Http::Range();
     options.Range.GetValue().Offset = 0;
     options.Range.GetValue().Length = downloadLength;
     options.RangeHashAlgorithm = HashAlgorithm::Md5;

@@ -4930,7 +4930,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -7050,7 +7050,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -7174,7 +7174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -7332,7 +7332,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -8058,7 +8058,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -8253,7 +8253,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -9198,7 +9198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -9378,7 +9378,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
