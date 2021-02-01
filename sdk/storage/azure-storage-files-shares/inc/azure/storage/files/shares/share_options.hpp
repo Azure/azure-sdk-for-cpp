@@ -108,6 +108,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Storage::Metadata Metadata;
 
     /**
+     * @brief Specifies the access tier of the share. This is only valid for standard file account
+     * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
+     */
+    Azure::Core::Nullable<Models::ShareAccessTier> AccessTier;
+
+    /**
      * @brief Specifies the maximum size of the share, in gigabytes.
      */
     Azure::Core::Nullable<int64_t> ShareQuotaInGiB;
@@ -147,12 +153,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct SetShareQuotaOptions
+  struct SetSharePropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Specifies the access tier of the share. This is only valid for standard file account
+     * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
+     */
+    Azure::Core::Nullable<Models::ShareAccessTier> AccessTier;
+
+    /**
+     * @brief Specifies the maximum size of the share, in gigabytes.
+     */
+    Azure::Core::Nullable<int64_t> ShareQuotaInGiB;
   };
 
   struct SetShareMetadataOptions

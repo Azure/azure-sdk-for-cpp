@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   };
   using CreateShareSnapshotResult = Details::ShareCreateSnapshotResult;
   using GetSharePropertiesResult = Details::ShareGetPropertiesResult;
-  using SetShareQuotaResult = Details::ShareSetQuotaResult;
+  using SetSharePropertiesResult = Details::ShareSetPropertiesResult;
   using SetShareMetadataResult = Details::ShareSetMetadataResult;
   using SetShareAccessPolicyResult = Details::ShareSetAccessPolicyResult;
   using GetShareStatisticsResult = Details::ShareGetStatisticsResult;

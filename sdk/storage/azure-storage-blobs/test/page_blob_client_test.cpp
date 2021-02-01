@@ -68,11 +68,11 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(0, m_blobUploadOptions);
 
-    EXPECT_EQ(pageBlobClient.GetProperties()->ContentLength, 0);
+    EXPECT_EQ(pageBlobClient.GetProperties()->BlobSize, 0);
     pageBlobClient.Resize(static_cast<int64_t>(2_KB));
-    EXPECT_EQ(static_cast<uint64_t>(pageBlobClient.GetProperties()->ContentLength), 2_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageBlobClient.GetProperties()->BlobSize), 2_KB);
     pageBlobClient.Resize(static_cast<int64_t>(1_KB));
-    EXPECT_EQ(static_cast<uint64_t>(pageBlobClient.GetProperties()->ContentLength), 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageBlobClient.GetProperties()->BlobSize), 1_KB);
   }
 
   TEST_F(PageBlobClientTest, UploadClear)

@@ -161,6 +161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::Blob::DownloadBlobOptions protocolLayerOptions;
     protocolLayerOptions.Range = options.Range;
+    protocolLayerOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -228,7 +229,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
@@ -245,11 +246,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto firstChunk = Download(firstChunkOptions);
 
-    int64_t blobSize;
+    const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -258,7 +258,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -279,13 +278,40 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
+      // Do not move ETag, we're gonna use it later
       ret.ETag = response->ETag;
       ret.LastModified = std::move(response->LastModified);
+      ret.CreatedOn = std::move(response->CreatedOn);
+      ret.ExpiresOn = std::move(response->ExpiresOn);
+      ret.LastAccessedOn = std::move(response->LastAccessedOn);
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
-      ret.BlobType = response->BlobType;
+      ret.SequenceNumber = std::move(response->SequenceNumber);
+      ret.CommittedBlockCount = std::move(response->CommittedBlockCount);
+      ret.IsSealed = std::move(response->IsSealed);
+      ret.BlobType = std::move(response->BlobType);
+      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
+      ret.LeaseDuration = std::move(response->LeaseDuration);
+      ret.LeaseState = std::move(response->LeaseState);
+      ret.LeaseStatus = std::move(response->LeaseStatus);
       ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
+      ret.EncryptionScope = std::move(response->EncryptionScope);
+      ret.ObjectReplicationDestinationPolicyId
+          = std::move(response->ObjectReplicationDestinationPolicyId);
+      ret.ObjectReplicationSourceProperties
+          = std::move(response->ObjectReplicationSourceProperties);
+      ret.TagCount = std::move(response->TagCount);
+      ret.CopyId = std::move(response->CopyId);
+      ret.CopySource = std::move(response->CopySource);
+      ret.CopyStatus = std::move(response->CopyStatus);
+      ret.CopyStatusDescription = std::move(response->CopyStatusDescription);
+      ret.CopyProgress = std::move(response->CopyProgress);
+      ret.CopyCompletedOn = std::move(response->CopyCompletedOn);
+      ret.VersionId = std::move(response->VersionId);
+      ret.IsCurrentVersion = std::move(response->IsCurrentVersion);
+      ret.BlobSize = response->BlobSize;
+      ret.ContentRange = std::move(response->ContentRange);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
@@ -329,7 +355,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.TransferOptions.ChunkSize,
         options.TransferOptions.Concurrency,
         downloadChunkFunc);
-    ret->ContentLength = blobRangeSize;
+    ret->ContentRange.Offset = firstChunkOffset;
+    ret->ContentRange.Length = blobRangeSize;
     return ret;
   }
 
@@ -340,7 +367,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
@@ -359,11 +386,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto firstChunk = Download(firstChunkOptions);
 
-    int64_t blobSize;
+    const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -372,7 +398,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -405,13 +430,40 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
+      // Do not move ETag, we're gonna use it later
       ret.ETag = response->ETag;
       ret.LastModified = std::move(response->LastModified);
+      ret.CreatedOn = std::move(response->CreatedOn);
+      ret.ExpiresOn = std::move(response->ExpiresOn);
+      ret.LastAccessedOn = std::move(response->LastAccessedOn);
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
-      ret.BlobType = response->BlobType;
+      ret.SequenceNumber = std::move(response->SequenceNumber);
+      ret.CommittedBlockCount = std::move(response->CommittedBlockCount);
+      ret.IsSealed = std::move(response->IsSealed);
+      ret.BlobType = std::move(response->BlobType);
+      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
+      ret.LeaseDuration = std::move(response->LeaseDuration);
+      ret.LeaseState = std::move(response->LeaseState);
+      ret.LeaseStatus = std::move(response->LeaseStatus);
       ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
+      ret.EncryptionScope = std::move(response->EncryptionScope);
+      ret.ObjectReplicationDestinationPolicyId
+          = std::move(response->ObjectReplicationDestinationPolicyId);
+      ret.ObjectReplicationSourceProperties
+          = std::move(response->ObjectReplicationSourceProperties);
+      ret.TagCount = std::move(response->TagCount);
+      ret.CopyId = std::move(response->CopyId);
+      ret.CopySource = std::move(response->CopySource);
+      ret.CopyStatus = std::move(response->CopyStatus);
+      ret.CopyStatusDescription = std::move(response->CopyStatusDescription);
+      ret.CopyProgress = std::move(response->CopyProgress);
+      ret.CopyCompletedOn = std::move(response->CopyCompletedOn);
+      ret.VersionId = std::move(response->VersionId);
+      ret.IsCurrentVersion = std::move(response->IsCurrentVersion);
+      ret.BlobSize = response->BlobSize;
+      ret.ContentRange = std::move(response->ContentRange);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
@@ -452,7 +504,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.TransferOptions.ChunkSize,
         options.TransferOptions.Concurrency,
         downloadChunkFunc);
-    ret->ContentLength = blobRangeSize;
+    ret->ContentRange.Offset = firstChunkOffset;
+    ret->ContentRange.Length = blobRangeSize;
     return ret;
   }
 

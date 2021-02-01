@@ -5,6 +5,8 @@
 ### New Features
 
 - Added support for `UploadRangeFromUri` in file client.
+- Added support for `SetProperties` in share client. This API supports update share tier and adjusting share's quota.
+- Added support to get share's tier status in `ListSharesSinglePage` and `GetProperties`.
 
 ### Breaking Changes
 
@@ -22,6 +24,7 @@
 - Removed `c_` for constants: `c_FileDefaultTimeValue`, `c_FileCopySourceTime`, `c_FileInheritPermission`, `FilePreserveSmbProperties` and `FileAllHandles`.
 - `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadShareFileToOptions::TansferOptions`.
 - `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadShareFileFromOptions::TransferOptions`.
+- Removed `SetQuota` related API, result and options. The functionality is moved into `SetProperties`.
 
 ### Other Changes and Improvements
 
