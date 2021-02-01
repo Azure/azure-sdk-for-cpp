@@ -17,6 +17,6 @@ namespace Azure { namespace PerformanceStress {
 
   public:
     PerformanceTest(Azure::PerformanceStress::TestOptions options) : m_options(options) {}
-    virtual ~PerformanceTest(){}
+    virtual ~PerformanceTest() {}
   };
 }} // namespace Azure::PerformanceStress
