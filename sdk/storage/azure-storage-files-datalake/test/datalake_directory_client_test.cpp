@@ -79,6 +79,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
+        EXPECT_TRUE(response->IsDirectory);
         Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
