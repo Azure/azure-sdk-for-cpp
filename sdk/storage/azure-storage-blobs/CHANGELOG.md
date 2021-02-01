@@ -5,7 +5,8 @@
 ### New Features
 
 - Added `RequestId` in API return types.
-- Added some new properties in `GetBlobPropertiesResult` and `DownloadBlobResult`.
+- Added some new properties in `GetBlobPropertiesResult`, `DownloadBlobResult` and `DownloadBlobToResult`.
+- Added `RangeHashAlgorithm` in `DownloadBlobOptions`.
 
 ### Breaking Changes
 
