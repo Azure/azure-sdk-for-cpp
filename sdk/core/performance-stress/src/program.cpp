@@ -117,7 +117,7 @@ std::string FormatNumber(double number)
 {
   auto fullString = std::to_string(number);
   auto dot = fullString.find('.');
-  auto numberString = std::string(fullString.begin(), fullString.begin() + dot); 
+  auto numberString = std::string(fullString.begin(), fullString.begin() + dot);
   int start = numberString.length() - 3;
   while (start > 0)
   {
