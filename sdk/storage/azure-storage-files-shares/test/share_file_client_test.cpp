@@ -252,12 +252,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto lastModified = m_fileClient->GetProperties()->LastModified;
     auto leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, leaseId1);
     auto aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     lastModified = m_fileClient->GetProperties()->LastModified;
     aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
@@ -269,20 +269,20 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(leaseId1, leaseId2);
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto cLease = *leaseClient.Change(leaseId2);
-    EXPECT_FALSE(cLease.ETag.empty());
+    EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(cLease.LastModified >= lastModified);
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto fileInfo = *leaseClient.Release();
-    EXPECT_FALSE(fileInfo.ETag.empty());
+    EXPECT_TRUE(fileInfo.ETag.HasValue());
     EXPECT_TRUE(fileInfo.LastModified >= lastModified);
 
     leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto brokenLease = *leaseClient.Break();
-    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(brokenLease.LastModified >= lastModified);
   }
 
@@ -294,8 +294,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileShareDirectoryClient->GetFileClient(RandomString());
 
       Files::Shares::UploadShareFileFromOptions options;
-      options.ChunkSize = 512_KB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 512_KB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
@@ -317,8 +317,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileShareDirectoryClient->GetFileClient(RandomString());
 
       Files::Shares::UploadShareFileFromOptions options;
-      options.ChunkSize = 512_KB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 512_KB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
@@ -404,7 +404,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Files::Shares::DownloadShareFileToOptions options;
-      options.Concurrency = concurrency;
+      options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
         options.Range = Core::Http::Range();
@@ -412,8 +412,14 @@ namespace Azure { namespace Storage { namespace Test {
         options.Range.GetValue().Length = length;
       }
 
-      options.InitialChunkSize = initialChunkSize;
-      options.ChunkSize = chunkSize;
+      if (initialChunkSize.HasValue())
+      {
+        options.TransferOptions.InitialChunkSize = initialChunkSize.GetValue();
+      }
+      if (chunkSize.HasValue())
+      {
+        options.TransferOptions.ChunkSize = chunkSize.GetValue();
+      }
       if (actualDownloadSize > 0)
       {
         auto res = m_fileClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options);
@@ -468,15 +474,21 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
       Files::Shares::DownloadShareFileToOptions options;
-      options.Concurrency = concurrency;
+      options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
         options.Range = Core::Http::Range();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
-      options.InitialChunkSize = initialChunkSize;
-      options.ChunkSize = chunkSize;
+      if (initialChunkSize.HasValue())
+      {
+        options.TransferOptions.InitialChunkSize = initialChunkSize.GetValue();
+      }
+      if (chunkSize.HasValue())
+      {
+        options.TransferOptions.ChunkSize = chunkSize.GetValue();
+      }
       if (actualDownloadSize > 0)
       {
         auto res = m_fileClient->DownloadTo(tempFilename, options);
@@ -547,7 +559,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       // buffer not big enough
       Files::Shares::DownloadShareFileToOptions options;
-      options.Concurrency = c;
+      options.TransferOptions.Concurrency = c;
       options.Range = Core::Http::Range();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
@@ -784,6 +796,106 @@ namespace Azure { namespace Storage { namespace Test {
       return;
     }
     FAIL();
+  }
+
+  TEST_F(FileShareFileClientTest, UploadRangeFromUri)
+  {
+    size_t fileSize = 1 * 1024 * 1024;
+    std::string fileName = RandomString();
+    auto fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::Http::MemoryBodyStream(fileContent);
+    auto sourceFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
+    sourceFileClient.Create(fileSize);
+    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, &memBodyStream));
+
+    auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString(10));
+    destFileClient.Create(fileSize * 4);
+    Azure::Core::Http::Range sourceRange;
+    Azure::Core::Http::Range destRange;
+    sourceRange.Length = fileSize;
+    destRange.Offset = fileSize;
+    destRange.Length = fileSize;
+
+    // Get the SAS of the file
+    Sas::ShareSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    fileSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+    fileSasBuilder.ShareName = m_shareName;
+    fileSasBuilder.FilePath = fileName;
+    fileSasBuilder.Resource = Sas::ShareSasResource::File;
+    fileSasBuilder.SetPermissions(Sas::ShareSasPermissions::Read);
+    std::string sourceSas = fileSasBuilder.GenerateSasToken(
+        *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+
+    Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
+    EXPECT_NO_THROW(
+        uploadResult = *destFileClient.UploadRangeFromUri(
+            sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange));
+
+    Files::Shares::Models::DownloadShareFileResult result;
+    Files::Shares::DownloadShareFileOptions downloadOptions;
+    downloadOptions.Range = destRange;
+    EXPECT_NO_THROW(result = destFileClient.Download(downloadOptions).ExtractValue());
+    auto resultBuffer = Core::Http::BodyStream::ReadToEnd(Core::Context(), *(result.BodyStream));
+    EXPECT_EQ(fileContent, resultBuffer);
+    Files::Shares::Models::GetShareFileRangeListResult getRangeResult;
+    EXPECT_NO_THROW(getRangeResult = destFileClient.GetRangeList().ExtractValue());
+    EXPECT_EQ(1U, getRangeResult.Ranges.size());
+    EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Offset);
+    EXPECT_TRUE(getRangeResult.Ranges[0].Length.HasValue());
+    EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Length.GetValue());
+
+    // source access condition works.
+    std::vector<uint8_t> invalidCrc64(
+        uploadResult.TransactionalContentHash.Value.begin(),
+        uploadResult.TransactionalContentHash.Value.begin()
+            + uploadResult.TransactionalContentHash.Value.size() / 2);
+    {
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.SourceAccessCondition.IfNoneMatchContentHash
+          = uploadResult.TransactionalContentHash;
+      EXPECT_THROW(
+          uploadResult = *destFileClient.UploadRangeFromUri(
+              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+          StorageException);
+      // Below code seems to be triggering a server bug. Uncomment when server resolves the issue.
+      // uploadRangeOptions.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Value
+      //    = invalidCrc64;
+      // EXPECT_NO_THROW(
+      //    uploadResult = *destFileClient.UploadRangeFromUri(
+      //        sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+    }
+    {
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.SourceAccessCondition.IfMatchContentHash
+          = uploadResult.TransactionalContentHash;
+      EXPECT_NO_THROW(
+          uploadResult = *destFileClient.UploadRangeFromUri(
+              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+      // Below code seems to be triggering a server high latency. Uncomment when server resolves the
+      // issue.
+      // uploadRangeOptions.SourceAccessCondition.IfMatchContentHash.GetValue().Value =
+      // invalidCrc64;
+      // EXPECT_THROW(
+      //    uploadResult = *destFileClient.UploadRangeFromUri(
+      //        sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+      //    StorageException);
+    }
+    {
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.SourceContentHash = uploadResult.TransactionalContentHash;
+      EXPECT_NO_THROW(
+          uploadResult = *destFileClient.UploadRangeFromUri(
+              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+      // Below code seems to be triggering a server high latency. Uncomment when server resolves the
+      // issue.
+      // uploadRangeOptions.SourceContentHash.GetValue().Value = invalidCrc64;
+      // EXPECT_THROW(
+      //    uploadResult = *destFileClient.UploadRangeFromUri(
+      //        sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+      //    StorageException);
+    }
   }
 
 }}} // namespace Azure::Storage::Test

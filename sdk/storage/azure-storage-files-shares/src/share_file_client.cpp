@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     {
       // In case network failure during reading the body
-      std::string eTag = downloadResponse->ETag;
+      auto eTag = downloadResponse->ETag;
 
       auto retryFunction
           = [this, options, eTag](
@@ -580,11 +580,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
-    int64_t firstChunkLength = Details::FileDownloadDefaultChunkSize;
-    if (options.InitialChunkSize.HasValue())
-    {
-      firstChunkLength = options.InitialChunkSize.GetValue();
-    }
+    int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
+
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
@@ -672,21 +669,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
-    int64_t chunkSize;
-    if (options.ChunkSize.HasValue())
-    {
-      chunkSize = options.ChunkSize.GetValue();
-    }
-    else
-    {
-      int64_t GrainSize = 4 * 1024;
-      chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
-      chunkSize = std::min(chunkSize, Details::FileDownloadDefaultChunkSize);
-    }
 
     Storage::Details::ConcurrentTransfer(
-        remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
+        remainingOffset,
+        remainingSize,
+        options.TransferOptions.ChunkSize,
+        options.TransferOptions.Concurrency,
+        downloadChunkFunc);
     ret->ContentLength = fileRangeSize;
     return ret;
   }
@@ -699,11 +688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
-    int64_t firstChunkLength = Details::FileDownloadDefaultChunkSize;
-    if (options.InitialChunkSize.HasValue())
-    {
-      firstChunkLength = options.InitialChunkSize.GetValue();
-    }
+    int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
@@ -802,21 +787,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
-    int64_t chunkSize;
-    if (options.ChunkSize.HasValue())
-    {
-      chunkSize = options.ChunkSize.GetValue();
-    }
-    else
-    {
-      int64_t GrainSize = 4 * 1024;
-      chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
-      chunkSize = std::min(chunkSize, Details::FileDownloadDefaultChunkSize);
-    }
 
     Storage::Details::ConcurrentTransfer(
-        remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
+        remainingOffset,
+        remainingSize,
+        options.TransferOptions.ChunkSize,
+        options.TransferOptions.Concurrency,
+        downloadChunkFunc);
     ret->ContentLength = fileRangeSize;
     return ret;
   }
@@ -900,9 +877,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto createResult = Details::ShareRestClient::File::Create(
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
 
-    int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
-                                                     : Details::FileUploadDefaultChunkSize;
-
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       unused(chunkId, numChunks);
       Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
@@ -911,8 +885,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       UploadRange(offset, &contentStream, uploadRangeOptions);
     };
 
-    Storage::Details::ConcurrentTransfer(
-        0, bufferSize, chunkSize, options.Concurrency, uploadPageFunc);
+    int64_t chunkSize = options.TransferOptions.ChunkSize;
+    if (bufferSize < static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
+    {
+      chunkSize = bufferSize;
+    }
+
+    if (bufferSize > 0)
+    {
+      Storage::Details::ConcurrentTransfer(
+          0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    }
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
@@ -1000,9 +983,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto createResult = Details::ShareRestClient::File::Create(
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
 
-    int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
-                                                     : Details::FileUploadDefaultChunkSize;
-
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       unused(chunkId, numChunks);
       Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
@@ -1011,12 +991,78 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       UploadRange(offset, &contentStream, uploadRangeOptions);
     };
 
-    Storage::Details::ConcurrentTransfer(
-        0, fileReader.GetFileSize(), chunkSize, options.Concurrency, uploadPageFunc);
+    const int64_t fileSize = fileReader.GetFileSize();
+    int64_t chunkSize = options.TransferOptions.ChunkSize;
+    if (fileSize < options.TransferOptions.SingleUploadThreshold)
+    {
+      chunkSize = fileSize;
+    }
+
+    if (fileSize > 0)
+    {
+      Storage::Details::ConcurrentTransfer(
+          0, fileSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    }
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Core::Response<Models::UploadShareFileFromResult>(
         std::move(result), createResult.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
+      const std::string& sourceUri,
+      const Azure::Core::Http::Range& sourceRange,
+      const Azure::Core::Http::Range& range,
+      const UploadFileRangeFromUriOptions& options) const
+  {
+    if (!sourceRange.Length.HasValue())
+    {
+      // sourceRange must have length to perform this operation.
+      std::abort();
+    }
+    int64_t destLength = sourceRange.Length.GetValue();
+    if (range.Length.HasValue())
+    {
+      // Let server decide the behavior if the length does not match.
+      destLength = range.Length.GetValue();
+    }
+
+    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeFromUrlOptions();
+    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(range.Offset)
+        + std::string("-") + std::to_string(range.Offset + destLength - 1);
+    protocolLayerOptions.ContentLength = 0;
+    protocolLayerOptions.CopySource = sourceUri;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    if (options.SourceContentHash.HasValue()
+        && options.SourceContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
+    {
+      // SourceContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceContentCrc64 = options.SourceContentHash;
+    if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
+        && options.SourceAccessCondition.IfMatchContentHash.GetValue().Algorithm
+            == HashAlgorithm::Md5)
+    {
+      // IfMatchContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
+    if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue()
+        && options.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Algorithm
+            == HashAlgorithm::Md5)
+    {
+      // IfNoneMatchContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceIfNoneMatchCrc64
+        = options.SourceAccessCondition.IfNoneMatchContentHash;
+    protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
+        + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.GetValue() - 1);
+    protocolLayerOptions.XMsWrite = Models::FileRangeWriteFromUrlType::Update;
+
+    return Details::ShareRestClient::File::UploadRangeFromUrl(
+        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 }}}} // namespace Azure::Storage::Files::Shares

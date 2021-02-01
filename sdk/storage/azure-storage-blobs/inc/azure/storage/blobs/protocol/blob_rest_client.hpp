@@ -14,6 +14,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
 #include <azure/core/internal/strings.hpp>
@@ -89,7 +90,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct AcquireBlobContainerLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string LeaseId;
       }; // struct AcquireBlobContainerLeaseResult
@@ -99,7 +100,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct AcquireBlobLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string LeaseId;
       }; // struct AcquireBlobLeaseResult
@@ -197,11 +198,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlobLeaseStatus
 
-    struct BlobPrefix
-    {
-      std::string Name;
-    }; // struct BlobPrefix
-
     struct BlobRetentionPolicy
     {
       bool IsEnabled = false;
@@ -273,7 +269,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct BreakBlobContainerLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         int32_t LeaseTime = 0;
       }; // struct BreakBlobContainerLeaseResult
@@ -283,7 +279,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct BreakBlobLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         int32_t LeaseTime = 0;
       }; // struct BreakBlobLeaseResult
@@ -293,7 +289,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ChangeBlobContainerLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string LeaseId;
       }; // struct ChangeBlobContainerLeaseResult
@@ -303,7 +299,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ChangeBlobLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string LeaseId;
       }; // struct ChangeBlobLeaseResult
@@ -312,7 +308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ClearPageBlobPagesResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       int64_t SequenceNumber = 0;
     }; // struct ClearPageBlobPagesResult
@@ -335,7 +331,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       bool Created = true;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
@@ -347,7 +343,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       bool Created = true;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
     }; // struct CreateBlobContainerResult
 
@@ -355,7 +351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       std::string Snapshot;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
@@ -367,7 +363,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       bool Created = true;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
@@ -422,7 +418,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string BlobName;
       std::string BlobContainerName;
-      std::string TagValue;
     }; // struct FilterBlobItem
 
     struct GetBlobTagsResult
@@ -434,9 +429,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct GetPageBlobPageRangesResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
-      int64_t BlobContentLength = 0;
+      int64_t BlobSize = 0;
       std::vector<Azure::Core::Http::Range> PageRanges;
       std::vector<Azure::Core::Http::Range> ClearRanges;
     }; // struct GetPageBlobPageRangesResult
@@ -567,7 +562,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ReleaseBlobContainerLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
       }; // struct ReleaseBlobContainerLeaseResult
     } // namespace Details
@@ -576,7 +571,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ReleaseBlobLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         Azure::Core::Nullable<int64_t> SequenceNumber;
       }; // struct ReleaseBlobLeaseResult
@@ -586,7 +581,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct RenewBlobContainerLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string LeaseId;
       }; // struct RenewBlobContainerLeaseResult
@@ -596,7 +591,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct RenewBlobLeaseResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string LeaseId;
       }; // struct RenewBlobLeaseResult
@@ -605,7 +600,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ResizePageBlobResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       int64_t SequenceNumber = 0;
     }; // struct ResizePageBlobResult
@@ -632,7 +627,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SealAppendBlobResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       bool IsSealed = true;
     }; // struct SealAppendBlobResult
@@ -645,14 +640,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SetBlobContainerAccessPolicyResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
     }; // struct SetBlobContainerAccessPolicyResult
 
     struct SetBlobContainerMetadataResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
     }; // struct SetBlobContainerMetadataResult
 
@@ -664,7 +659,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SetBlobHttpHeadersResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobHttpHeadersResult
@@ -672,7 +667,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SetBlobMetadataResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobMetadataResult
@@ -748,7 +743,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct BlobContainerItem
     {
       std::string Name;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Storage::Metadata Metadata;
       PublicAccessType AccessType = PublicAccessType::None;
@@ -783,7 +778,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       std::string ServiceEndpoint;
-      std::string Where;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<FilterBlobItem> Items;
     }; // struct FindBlobsByTagsSinglePageResult
@@ -800,7 +794,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       PublicAccessType AccessType = PublicAccessType::None;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::vector<BlobSignedIdentifier> SignedIdentifiers;
     }; // struct GetBlobContainerAccessPolicyResult
@@ -808,7 +802,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct GetBlobContainerPropertiesResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Storage::Metadata Metadata;
       PublicAccessType AccessType = PublicAccessType::None;
@@ -824,10 +818,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct GetBlockListResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string ContentType;
-      int64_t ContentLength = 0;
+      int64_t BlobSize = 0;
       std::vector<BlobBlock> CommittedBlocks;
       std::vector<BlobBlock> UncommittedBlocks;
     }; // struct GetBlockListResult
@@ -848,7 +842,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct StartCopyBlobFromUriResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string CopyId;
         Models::CopyStatus CopyStatus;
@@ -860,7 +854,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct StartCopyPageBlobIncrementalResult
       {
         std::string RequestId;
-        std::string ETag;
+        Azure::Core::ETag ETag;
         Azure::Core::DateTime LastModified;
         std::string CopyId;
         Models::CopyStatus CopyStatus;
@@ -871,7 +865,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct AppendBlockFromUriResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash;
       int64_t AppendOffset = 0;
@@ -884,7 +878,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct AppendBlockResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash;
       int64_t AppendOffset = 0;
@@ -918,7 +912,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct CommitBlockListResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
@@ -981,7 +975,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct UploadBlockBlobResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
@@ -993,7 +987,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct UploadPageBlobPagesFromUriResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash;
       int64_t SequenceNumber = 0;
@@ -1005,7 +999,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct UploadPageBlobPagesResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash;
       int64_t SequenceNumber = 0;
@@ -1027,8 +1021,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::DateTime LastModified;
-      std::string ETag;
-      int64_t ContentLength = 0;
+      Azure::Core::ETag ETag;
+      int64_t BlobSize = 0;
       Models::BlobType BlobType;
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
@@ -1048,7 +1042,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::DateTime CreatedOn;
       Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
@@ -1073,12 +1067,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
       Azure::Core::Nullable<int32_t> TagCount;
+      Azure::Core::Nullable<std::string> CopyId;
+      Azure::Core::Nullable<std::string> CopySource;
+      Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Core::Nullable<std::string> CopyStatusDescription;
+      Azure::Core::Nullable<std::string> CopyProgress;
+      Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Core::Nullable<bool> IsCurrentVersion;
     }; // struct DownloadBlobResult
 
     struct GetBlobPropertiesResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Azure::Core::DateTime CreatedOn;
       Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
@@ -1088,7 +1090,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
-      int64_t ContentLength = 0;
+      int64_t BlobSize = 0;
       BlobHttpHeaders HttpHeaders;
       Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
       Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
@@ -1099,10 +1101,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
+      Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
       Azure::Core::Nullable<Azure::Core::DateTime> AccessTierChangedOn;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopySource;
       Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Core::Nullable<std::string> CopyStatusDescription;
+      Azure::Core::Nullable<bool> IsIncrementalCopy;
+      Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
       Azure::Core::Nullable<std::string> CopyProgress;
       Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string>
@@ -1110,6 +1116,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
       Azure::Core::Nullable<int32_t> TagCount;
+      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Core::Nullable<bool> IsCurrentVersion;
     }; // struct GetBlobPropertiesResult
 
     struct ListBlobsByHierarchySinglePageResult
@@ -1121,7 +1129,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string Delimiter;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
-      std::vector<BlobPrefix> BlobPrefixes;
+      std::vector<std::string> BlobPrefixes;
     }; // struct ListBlobsByHierarchySinglePageResult
 
     struct ListBlobsSinglePageResult
@@ -1565,7 +1573,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           enum class XmlTagName
           {
             k_EnumerationResults,
-            k_Where,
             k_NextMarker,
             k_Blobs,
             k_Blob,
@@ -1596,10 +1603,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_EnumerationResults);
               }
-              else if (std::strcmp(node.Name, "Where") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Where);
-              }
               else if (std::strcmp(node.Name, "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
@@ -1626,12 +1629,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Where)
-              {
-                ret.Where = node.Value;
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_NextMarker)
               {
                 ret.ContinuationToken = node.Value;
@@ -2199,7 +2196,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_Etag)
               {
-                ret.ETag = node.Value;
+                ret.ETag = Azure::Core::ETag(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -2644,7 +2641,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             k_Name,
             k_ContainerName,
-            k_TagValue,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -2676,10 +2672,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_ContainerName);
               }
-              else if (std::strcmp(node.Name, "TagValue") == 0)
-              {
-                path.emplace_back(XmlTagName::k_TagValue);
-              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
@@ -2694,10 +2686,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (path.size() == 1 && path[0] == XmlTagName::k_ContainerName)
               {
                 ret.BlobContainerName = node.Value;
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_TagValue)
-              {
-                ret.TagValue = node.Value;
               }
             }
           }
@@ -3135,7 +3123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3276,7 +3264,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3362,7 +3350,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3553,7 +3541,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             response = GetBlobContainerAccessPolicyResultFromXml(reader);
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3637,7 +3625,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3702,7 +3690,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3763,7 +3751,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3826,7 +3814,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3887,7 +3875,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -3951,7 +3939,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -4031,6 +4019,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_Blobs,
             k_Blob,
             k_BlobPrefix,
+            k_Name,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -4082,6 +4071,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_BlobPrefix);
               }
+              else if (std::strcmp(node.Name, "Name") == 0)
+              {
+                path.emplace_back(XmlTagName::k_Name);
+              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
@@ -4090,13 +4083,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
               {
                 ret.Items.emplace_back(BlobItemFromXml(reader));
-                path.pop_back();
-              }
-              else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
-                  && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_BlobPrefix)
-              {
-                ret.BlobPrefixes.emplace_back(BlobPrefixFromXml(reader));
                 path.pop_back();
               }
             }
@@ -4118,6 +4104,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_NextMarker)
               {
                 ret.ContinuationToken = node.Value;
+              }
+              else if (
+                  path.size() == 4 && path[0] == XmlTagName::k_EnumerationResults
+                  && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_BlobPrefix
+                  && path[3] == XmlTagName::k_Name)
+              {
+                ret.BlobPrefixes.emplace_back(node.Value);
               }
             }
             else if (node.Type == Storage::Details::XmlNodeType::Attribute)
@@ -4519,13 +4512,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_Etag)
               {
-                ret.ETag = node.Value;
+                ret.ETag = Azure::Core::ETag(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentLength)
               {
-                ret.ContentLength = std::stoll(node.Value);
+                ret.BlobSize = std::stoll(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -4586,55 +4579,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_xmsblobsequencenumber)
               {
                 ret.SequenceNumber = std::stoll(node.Value);
-              }
-            }
-          }
-          return ret;
-        }
-
-        static BlobPrefix BlobPrefixFromXml(Storage::Details::XmlReader& reader)
-        {
-          BlobPrefix ret;
-          enum class XmlTagName
-          {
-            k_Name,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
-            {
-              if (std::strcmp(node.Name, "Name") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Name);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::k_Name)
-              {
-                ret.Name = node.Value;
               }
             }
           }
@@ -4875,14 +4819,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<Azure::Core::Http::Range> Range;
+          Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
           Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct DownloadBlobOptions
 
@@ -4940,13 +4885,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -4955,6 +4900,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+          }
+          if (options.RangeHashAlgorithm.HasValue())
+          {
+            if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Md5)
+            {
+              request.AddHeader("x-ms-range-get-content-md5", "true");
+            }
+            else if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Crc64)
+            {
+              request.AddHeader("x-ms-range-get-content-crc64", "true");
+            }
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -4968,13 +4924,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.BodyStream = httpResponse.GetBodyStream();
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -5171,6 +5127,51 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.TagCount = std::stoi(x_ms_tag_count__iterator->second);
           }
+          auto x_ms_copy_id__iterator = httpResponse.GetHeaders().find("x-ms-copy-id");
+          if (x_ms_copy_id__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyId = x_ms_copy_id__iterator->second;
+          }
+          auto x_ms_copy_source__iterator = httpResponse.GetHeaders().find("x-ms-copy-source");
+          if (x_ms_copy_source__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopySource = x_ms_copy_source__iterator->second;
+          }
+          auto x_ms_copy_status__iterator = httpResponse.GetHeaders().find("x-ms-copy-status");
+          if (x_ms_copy_status__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyStatus = CopyStatus(x_ms_copy_status__iterator->second);
+          }
+          auto x_ms_copy_status_description__iterator
+              = httpResponse.GetHeaders().find("x-ms-copy-status-description");
+          if (x_ms_copy_status_description__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyStatusDescription = x_ms_copy_status_description__iterator->second;
+          }
+          auto x_ms_copy_progress__iterator = httpResponse.GetHeaders().find("x-ms-copy-progress");
+          if (x_ms_copy_progress__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyProgress = x_ms_copy_progress__iterator->second;
+          }
+          auto x_ms_copy_completion_time__iterator
+              = httpResponse.GetHeaders().find("x-ms-copy-completion-time");
+          if (x_ms_copy_completion_time__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyCompletedOn = Azure::Core::DateTime::Parse(
+                x_ms_copy_completion_time__iterator->second,
+                Azure::Core::DateTime::DateFormat::Rfc1123);
+          }
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
+          {
+            response.VersionId = x_ms_version_id__iterator->second;
+          }
+          auto x_ms_is_current_version__iterator
+              = httpResponse.GetHeaders().find("x-ms-is-current-version");
+          if (x_ms_is_current_version__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IsCurrentVersion = x_ms_is_current_version__iterator->second == "true";
+          }
           return Azure::Core::Response<DownloadBlobResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -5182,8 +5183,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct DeleteBlobOptions
 
@@ -5221,13 +5222,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -5354,8 +5355,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct GetBlobPropertiesOptions
 
@@ -5406,13 +5407,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -5429,7 +5430,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -5473,7 +5474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.LeaseDuration = BlobLeaseDurationType(x_ms_lease_duration__iterator->second);
           }
-          response.ContentLength = std::stoll(httpResponse.GetHeaders().at("content-length"));
+          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("content-length"));
           auto content_type__iterator = httpResponse.GetHeaders().find("content-type");
           if (content_type__iterator != httpResponse.GetHeaders().end())
           {
@@ -5563,6 +5564,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.ArchiveStatus = BlobArchiveStatus(x_ms_archive_status__iterator->second);
           }
+          auto x_ms_rehydrate_priority__iterator
+              = httpResponse.GetHeaders().find("x-ms-rehydrate-priority");
+          if (x_ms_rehydrate_priority__iterator != httpResponse.GetHeaders().end())
+          {
+            response.RehydratePriority
+                = RehydratePriority(x_ms_rehydrate_priority__iterator->second);
+          }
           auto x_ms_access_tier_change_time__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-change-time");
           if (x_ms_access_tier_change_time__iterator != httpResponse.GetHeaders().end())
@@ -5585,6 +5593,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (x_ms_copy_status__iterator != httpResponse.GetHeaders().end())
           {
             response.CopyStatus = CopyStatus(x_ms_copy_status__iterator->second);
+          }
+          auto x_ms_copy_status_description__iterator
+              = httpResponse.GetHeaders().find("x-ms-copy-status-description");
+          if (x_ms_copy_status_description__iterator != httpResponse.GetHeaders().end())
+          {
+            response.CopyStatusDescription = x_ms_copy_status_description__iterator->second;
+          }
+          auto x_ms_incremental_copy__iterator
+              = httpResponse.GetHeaders().find("x-ms-incremental-copy");
+          if (x_ms_incremental_copy__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IsIncrementalCopy = x_ms_incremental_copy__iterator->second == "true";
+          }
+          auto x_ms_copy_destination_snapshot__iterator
+              = httpResponse.GetHeaders().find("x-ms-copy-destination-snapshot");
+          if (x_ms_copy_destination_snapshot__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IncrementalCopyDestinationSnapshot
+                = x_ms_copy_destination_snapshot__iterator->second;
           }
           auto x_ms_copy_progress__iterator = httpResponse.GetHeaders().find("x-ms-copy-progress");
           if (x_ms_copy_progress__iterator != httpResponse.GetHeaders().end())
@@ -5638,6 +5665,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.TagCount = std::stoi(x_ms_tag_count__iterator->second);
           }
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
+          {
+            response.VersionId = x_ms_version_id__iterator->second;
+          }
+          auto x_ms_is_current_version__iterator
+              = httpResponse.GetHeaders().find("x-ms-is-current-version");
+          if (x_ms_is_current_version__iterator != httpResponse.GetHeaders().end())
+          {
+            response.IsCurrentVersion = x_ms_is_current_version__iterator->second == "true";
+          }
           return Azure::Core::Response<GetBlobPropertiesResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -5649,8 +5687,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct SetBlobHttpHeadersOptions
 
@@ -5715,13 +5753,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -5738,7 +5776,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -5763,8 +5801,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct SetBlobMetadataOptions
 
@@ -5825,13 +5863,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -5848,7 +5886,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -5932,13 +5970,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
           Azure::Core::Nullable<Azure::Core::DateTime> SourceIfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> SourceIfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> SourceIfMatch;
-          Azure::Core::Nullable<std::string> SourceIfNoneMatch;
+          Azure::Core::ETag SourceIfMatch;
+          Azure::Core::ETag SourceIfNoneMatch;
           Azure::Core::Nullable<std::string> SourceIfTags;
           Azure::Core::Nullable<bool> ShouldSealDestination;
         }; // struct StartCopyBlobFromUriOptions
@@ -5999,13 +6037,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6025,13 +6063,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.SourceIfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.SourceIfMatch.HasValue())
+          if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
           {
-            request.AddHeader("x-ms-source-if-match", options.SourceIfMatch.GetValue());
+            request.AddHeader("x-ms-source-if-match", options.SourceIfMatch.ToString());
           }
-          if (options.SourceIfNoneMatch.HasValue())
+          if (options.SourceIfNoneMatch.HasValue() && !options.SourceIfNoneMatch.ToString().empty())
           {
-            request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.GetValue());
+            request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
           }
           if (options.SourceIfTags.HasValue())
           {
@@ -6048,7 +6086,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6119,8 +6157,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct CreateBlobSnapshotOptions
 
@@ -6181,13 +6219,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6204,7 +6242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6339,8 +6377,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> ProposedLeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct AcquireBlobLeaseOptions
 
@@ -6380,13 +6418,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6403,7 +6441,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6418,8 +6456,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct RenewBlobLeaseOptions
 
@@ -6455,13 +6493,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6478,7 +6516,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6494,8 +6532,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string ProposedLeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct ChangeBlobLeaseOptions
 
@@ -6532,13 +6570,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6555,7 +6593,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6570,8 +6608,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct ReleaseBlobLeaseOptions
 
@@ -6607,13 +6645,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6630,7 +6668,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6650,8 +6688,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct BreakBlobLeaseOptions
 
@@ -6691,13 +6729,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6714,7 +6752,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -6873,8 +6911,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct UploadBlockBlobOptions
 
@@ -6983,13 +7021,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -7006,13 +7044,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -7136,7 +7174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -7186,8 +7224,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> SourceIfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> SourceIfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> SourceIfMatch;
-          Azure::Core::Nullable<std::string> SourceIfNoneMatch;
+          Azure::Core::ETag SourceIfMatch;
+          Azure::Core::ETag SourceIfNoneMatch;
         }; // struct StageBlockFromUriOptions
 
         static Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
@@ -7273,13 +7311,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.SourceIfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.SourceIfMatch.HasValue())
+          if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
           {
-            request.AddHeader("x-ms-source-if-match", options.SourceIfMatch.GetValue());
+            request.AddHeader("x-ms-source-if-match", options.SourceIfMatch.ToString());
           }
-          if (options.SourceIfNoneMatch.HasValue())
+          if (options.SourceIfNoneMatch.HasValue() && !options.SourceIfNoneMatch.ToString().empty())
           {
-            request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.GetValue());
+            request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -7294,7 +7332,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -7343,8 +7381,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
           Azure::Core::Nullable<AccessTier> Tier;
         }; // struct CommitBlockListOptions
@@ -7447,13 +7485,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -7470,7 +7508,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -7548,13 +7586,12 @@ namespace Azure { namespace Storage { namespace Blobs {
             response = GetBlockListResultFromXml(reader);
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.ContentType = httpResponse.GetHeaders().at("content-type");
-          response.ContentLength
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
+          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
           return Azure::Core::Response<GetBlockListResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -7712,7 +7749,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct CreatePageBlobOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          int64_t BlobContentLength = -1;
+          int64_t BlobSize = -1;
           Azure::Core::Nullable<int64_t> SequenceNumber;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
@@ -7724,8 +7761,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct CreatePageBlobOptions
 
@@ -7780,7 +7817,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
           }
           request.AddHeader("x-ms-blob-type", "PageBlob");
-          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
+          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobSize));
           if (options.SequenceNumber.HasValue())
           {
             request.AddHeader(
@@ -7823,13 +7860,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -7846,7 +7883,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -7889,8 +7926,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct UploadPageBlobPagesOptions
 
@@ -7992,13 +8029,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -8015,13 +8052,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -8076,8 +8113,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct UploadPageBlobPagesFromUriOptions
 
@@ -8187,13 +8224,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -8210,13 +8247,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -8268,8 +8305,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct ClearPageBlobPagesOptions
 
@@ -8354,13 +8391,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -8377,7 +8414,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -8390,7 +8427,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct ResizePageBlobOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          int64_t BlobContentLength = -1;
+          int64_t BlobSize = -1;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -8401,8 +8438,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct ResizePageBlobOptions
 
@@ -8422,7 +8459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
+          request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobSize));
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -8478,13 +8515,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -8501,7 +8538,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -8520,8 +8557,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct GetPageBlobPageRangesOptions
 
@@ -8579,13 +8616,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -8608,12 +8645,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             response = GetPageBlobPageRangesResultFromXml(reader);
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
-          response.BlobContentLength
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
+          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
           return Azure::Core::Response<GetPageBlobPageRangesResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -8624,8 +8660,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string CopySource;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct StartCopyPageBlobIncrementalOptions
 
@@ -8661,13 +8697,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -8684,7 +8720,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -8895,8 +8931,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct CreateAppendBlobOptions
 
@@ -8984,13 +9020,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -9007,7 +9043,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
@@ -9048,8 +9084,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct AppendBlockOptions
 
@@ -9133,13 +9169,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -9156,13 +9192,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -9217,8 +9253,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> EncryptionScope;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct AppendBlockFromUriOptions
 
@@ -9313,13 +9349,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -9336,13 +9372,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           {
             const auto& headers = httpResponse.GetHeaders();
-            auto content_md5_iterator = headers.find("Content-MD5");
+            auto content_md5_iterator = headers.find("content-md5");
             if (content_md5_iterator != headers.end())
             {
               ContentHash hash;
@@ -9388,8 +9424,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-          Azure::Core::Nullable<std::string> IfMatch;
-          Azure::Core::Nullable<std::string> IfNoneMatch;
+          Azure::Core::ETag IfMatch;
+          Azure::Core::ETag IfNoneMatch;
           Azure::Core::Nullable<std::string> IfTags;
           Azure::Core::Nullable<int64_t> AppendPosition;
         }; // struct SealAppendBlobOptions
@@ -9428,13 +9464,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().GetString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          if (options.IfMatch.HasValue())
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
           {
-            request.AddHeader("If-Match", options.IfMatch.GetValue());
+            request.AddHeader("If-Match", options.IfMatch.ToString());
           }
-          if (options.IfNoneMatch.HasValue())
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
           {
-            request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+            request.AddHeader("If-None-Match", options.IfNoneMatch.ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -9456,7 +9492,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-          response.ETag = httpResponse.GetHeaders().at("etag");
+          response.ETag = Azure::Core::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::Core::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);

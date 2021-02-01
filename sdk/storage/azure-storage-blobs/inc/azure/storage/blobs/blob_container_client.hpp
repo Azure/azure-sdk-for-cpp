@@ -257,6 +257,21 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& blobName,
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
+    /**
+     * @brief Creates a new block blob under this container. For partial block blob updates and
+     * other advanced features, please see BlockBlobClient. To create or modify page or see
+     * PageBlobClient or AppendBlobClient.
+     *
+     * @param blobName The name of the blob to create.
+     * @param content A BodyStream containing the content to upload.
+     * @param options Optional parameters to execute this function.
+     * @return A BlockBlobClient referencing the newly created block blob.
+     */
+    Azure::Core::Response<BlockBlobClient> UploadBlob(
+        const std::string& blobName,
+        Azure::Core::Http::BodyStream* content,
+        const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
+
   private:
     Azure::Core::Http::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;

@@ -143,22 +143,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
-     * @brief Renames a file. By default, the destination is overwritten and
-     *        if the destination already exists and has a lease the lease is broken.
-     * @param destinationFilePath The path of the file this file is renaming to.
-     * @param options Optional parameters to rename a resource to the resource the destination path
-     * points to.
-     * @return Azure::Core::Response<Models::RenameDataLakeDataLakeFileResult> containing the
-     * information returned when renaming the file.
-     * @remark This operation will not change the URL this file client points too, to use the
-     *         new name, customer needs to initialize a new file client with the new name/path.
-     * @remark This request is sent to dfs endpoint.
-     */
-    Azure::Core::Response<Models::RenameDataLakeFileResult> Rename(
-        const std::string& destinationFilePath,
-        const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions()) const;
-
-    /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete the file the path points to.
      * @return Azure::Core::Response<Models::DeleteDataLakeFileResult>
@@ -177,14 +161,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DeleteDataLakeFileOptions& options = DeleteDataLakeFileOptions()) const;
 
     /**
-     * @brief Read the contents of a file. For read operations, range requests are supported.
-     * @param options Optional parameters to read the content from the resource the path points to.
-     * @return Azure::Core::Response<Models::ReadDataLakeFileResult> containing the information and
-     * content returned when reading from a file.
+     * @brief Download the contents of a file. For download operations, range requests are
+     * supported.
+     * @param options Optional parameters to download the content from the resource the path points
+     * to.
+     * @return Azure::Core::Response<Models::DownloadDataLakeFileResult> containing the information
+     * and content returned when downloading from a file.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::ReadDataLakeFileResult> Read(
-        const ReadDataLakeFileOptions& options = ReadDataLakeFileOptions()) const;
+    Azure::Core::Response<Models::DownloadDataLakeFileResult> Download(
+        const DownloadDataLakeFileOptions& options = DownloadDataLakeFileOptions()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
@@ -268,6 +254,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           m_blockBlobClient(std::move(blockBlobClient))
     {
     }
+
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
   };

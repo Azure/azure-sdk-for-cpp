@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "datalake_path_client_test.hpp"
@@ -107,6 +107,7 @@ namespace Azure { namespace Storage { namespace Test {
       // Last modified Etag works.
       auto properties1 = m_pathClient->GetProperties();
       auto properties2 = m_pathClient->GetProperties();
+      EXPECT_FALSE(properties1->IsDirectory);
       EXPECT_EQ(properties1->ETag, properties2->ETag);
       EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 

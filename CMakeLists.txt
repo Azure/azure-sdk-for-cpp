@@ -65,13 +65,8 @@ include(AzureDoxygen)
 include(AzureVersion)
 
 # sub-projects
-add_subdirectory(sdk/core/azure-core)
-if (BUILD_PERFORMANCE_TESTS) 
-  add_subdirectory(sdk/core/performance-stress)
-endif()
-
-add_subdirectory(sdk/identity/azure-identity)
-
-add_subdirectory(sdk/storage)
-add_subdirectory(sdk/template/azure-template)
+add_subdirectory(sdk/core)
+add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
+add_subdirectory(sdk/storage)
+add_subdirectory(sdk/template)

@@ -5,7 +5,7 @@
 ### New Features
 
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
-- `ReadDataLakeFileResult` now has a new field `FileSize`.
+- `DownloadDataLakeFileResult` now has a new field `FileSize`.
 - Added support for `GetAccessPolicy` and `SetAccessPolicy` in `DataLakeFileSystemClient`.
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
@@ -15,13 +15,16 @@
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
+- Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake path.
+- Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake path.
+- Added some new properties in `GetDataLakePathPropertiesResult` and `DownloadDataLakeFileResult`.
 
 ### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
 - `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
-- `ContentRange` in `ReadDataLakeFileResult` is now `Azure::Core::Http::Range`.
+- `ContentRange` in `DownloadDataLakeFileResult` is now `Azure::Core::Http::Range`.
 - Removed `ContentRange` in `PathGetPropertiesResult`.
 - Renamed `ContentLength` in `GetDataLakePathPropertiesResult` and `CreateDataLakePathResult` to `FileSize` to be more accurate.
 - Renamed `GetUri` to `GetUrl`.
@@ -32,6 +35,20 @@
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadDataLakeFileToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadDataLakeFileFromOptions::TransferOptions`.
+- Removed `Rename` from `DataLakeDirectoryClient` and `DataLakeFileClient`. Instead, added `RenameFile` and `RenameSubdirectory` to `DataLakeDirectoryClient` and added `RenameFile` and `RenameDirectory` to `DataLakeFileSystemClient`.
+- Rename APIs now return the client of the resource it is renaming to.
+- Removed `Mode` for rename operations' options, that originally controls the rename mode. Now it is fixed to legacy mode.
+- Changed `SetAccessControlRecursive` to `SetAccessControlRecursiveListSinglePage`, to mark that it is a single page operation, and removed the `mode` parameter, separated the modify/delete functionality to two new APIs.
+- Moved `SetAccessControlRecursiveListSinglePage` to `DataLakePathClient`.
+- Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.
+- Type for ETag was changed to `Azure::Core::ETag`.
+- Type for `IfMatch` and `IfNoneMatch` was changed to `Azure::Core::ETag`.
+- Renamed `ListDataLakeFileSystemsIncludeItem` to `ListDataLakeFileSystemsIncludeFlags`.
+- Removed `DataLakeDirectoryClient::Delete` and `DataLakeDirectoryClient::DeleteIfExists`. Added `DataLakeDirectoryClient::DeleteEmpty`, `DataLakeDirectoryClient::DeleteEmptyIfExists`, `DataLakeDirectoryClient::DeleteRecursive` and `DataLakeDirectoryClient::DeleteRecursiveIfExists` instead.
+- Removed `ContinuationToken` in `DeleteDataLakePathResult` and `DeleteDataLakeDirectoryResult`, as they will never be returned for HNS enabled accounts.
+- Renamed `DataLakeFileClient::Read` to `DataLakeFileClient::Download`. Also changed the member `Azure::Core::Nullable<bool> RangeGetContentMd5` in the option to be `Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm` instead.
 
 ### Other Changes and Improvements
 

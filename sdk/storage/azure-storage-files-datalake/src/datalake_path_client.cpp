@@ -273,7 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::CreateDataLakePathResult ret;
-    ret.ETag = std::move(result->ETag.GetValue());
+    ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified.GetValue());
     ret.FileSize = std::move(result->ContentLength);
     ret.RequestId = std::move(result->RequestId);
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     try
     {
       auto createOptions = options;
-      createOptions.AccessConditions.IfNoneMatch = ETagWildcard;
+      createOptions.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
       return Create(type, createOptions);
     }
     catch (StorageException& e)
@@ -308,7 +308,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeleteDataLakePathOptions& options) const
   {
     Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
@@ -318,7 +317,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Delete(
         m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteDataLakePathResult ret;
-    ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DeleteDataLakePathResult>(
@@ -388,8 +386,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
     ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
-    ret.FileSize = result->ContentLength;
+    ret.FileSize = result->BlobSize;
     ret.RequestId = std::move(result->RequestId);
+    ret.ArchiveStatus = std::move(result->ArchiveStatus);
+    ret.RehydratePriority = std::move(result->RehydratePriority);
+    ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
+    ret.IsIncrementalCopy = std::move(result->IsIncrementalCopy);
+    ret.IncrementalCopyDestinationSnapshot = std::move(result->IncrementalCopyDestinationSnapshot);
+    ret.VersionId = std::move(result->VersionId);
+    ret.IsCurrentVersion = std::move(result->IsCurrentVersion);
+    ret.IsDirectory = Details::MetadataIncidatesIsDirectory(ret.Metadata);
     return Azure::Core::Response<Models::GetDataLakePathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -457,4 +463,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return Azure::Core::Response<Models::SetDataLakePathMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
+
+  Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
+  DataLakePathClient::SetAccessControlRecursiveListSinglePageInternal(
+      Models::PathSetAccessControlRecursiveMode mode,
+      std::vector<Models::Acl> acls,
+      const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options) const
+  {
+    Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = mode;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    protocolLayerOptions.MaxRecords = options.MaxEntries;
+    protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
+    protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
+    return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
+        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

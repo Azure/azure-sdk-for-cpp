@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto downloadedContent = fileClient.Read();
+      auto downloadedContent = fileClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->Body).empty());
     };
 
@@ -123,9 +123,10 @@ namespace Azure { namespace Storage { namespace Test {
       std::string newFilename = RandomString();
       auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
       newFileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(
-          Files::DataLake::Details::GetDfsUrlFromUrl(newFileClient0.GetUrl()) + sas);
-      EXPECT_NO_THROW(fileClient.Rename(directory1Name + "/" + directory2Name + "/" + fileName));
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
+          Files::DataLake::Details::GetDfsUrlFromUrl(directory2Client0.GetUrl()) + sas);
+      EXPECT_NO_THROW(directoryClient.RenameFile(
+          newFilename, directory1Name + "/" + directory2Name + "/" + fileName));
     };
 
     auto verify_file_execute = [&](const std::string& sas) {

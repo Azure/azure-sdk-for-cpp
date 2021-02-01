@@ -2,6 +2,12 @@
 
 ## 12.0.0-beta.7 (Unreleased)
 
+### New Features
+
+- Added support for `UploadRangeFromUri` in file client.
+- Added support for `SetProperties` in share client. This API supports update share tier and adjusting share's quota.
+- Added support to get share's tier status in `ListSharesSinglePage` and `GetProperties`.
+
 ### Breaking Changes
 
 - Removed `GetDirectoryClient` and `GetFileClient` from `ShareClient`. `ShareDirectoryClient` and `ShareFileClient` now initializes with the name of the resource, not path, to indicate that no path parsing is done for the API
@@ -16,6 +22,9 @@
 - Added `RequestId` in each return types for REST API calls, except for concurrent APIs.
 - Removed `PreviousContinuationToken` from `ListFilesAndDirectoriesSinglePageResult` and `ListSharesSinglePageResult`.
 - Removed `c_` for constants: `c_FileDefaultTimeValue`, `c_FileCopySourceTime`, `c_FileInheritPermission`, `FilePreserveSmbProperties` and `FileAllHandles`.
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadShareFileToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadShareFileFromOptions::TransferOptions`.
+- Removed `SetQuota` related API, result and options. The functionality is moved into `SetProperties`.
 
 ### Other Changes and Improvements
 
@@ -45,6 +54,7 @@
 - `DirectoryClient` is renamed to `ShareDirectoryClient`, `FileClient` is renamed to `ShareFileClient`.
 - Directory and File related result types and options types now have a `Share` prefix. For example, `SetDirectoryPropertiesResult` is changed to `SetShareDirectoryPropertiesResult`.
 - Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Type for ETag was changed to `Azure::Core::ETag`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

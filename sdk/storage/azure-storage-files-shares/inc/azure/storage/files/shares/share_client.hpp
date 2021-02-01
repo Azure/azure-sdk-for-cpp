@@ -127,6 +127,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateShareSnapshotOptions& options = CreateShareSnapshotOptions()) const;
 
     /**
+     * @brief Sets the properties of the share.
+     * @param options Optional parameters to set the share properties.
+     * @return Azure::Core::Response<Models::SetSharePropertiesResult> containing the information
+     * including the version and modified time of a share.
+     */
+    Azure::Core::Response<Models::SetSharePropertiesResult> SetProperties(
+        const SetSharePropertiesOptions& options = SetSharePropertiesOptions()) const;
+
+    /**
      * @brief Gets the properties of the share.
      * @param options Optional parameters to get the share properties.
      * @return Azure::Core::Response<Models::GetSharePropertiesResult> containing the properties for
@@ -134,17 +143,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Core::Response<Models::GetSharePropertiesResult> GetProperties(
         const GetSharePropertiesOptions& options = GetSharePropertiesOptions()) const;
-
-    /**
-     * @brief Sets the quota of the share.
-     * @param quota Specifies the maximum size of the share, in gigabytes.
-     * @param options Optional parameters to set the share quota.
-     * @return Azure::Core::Response<Models::SetShareQuotaResult> containing the information
-     * including the version and modified time of a share.
-     */
-    Azure::Core::Response<Models::SetShareQuotaResult> SetQuota(
-        int32_t quotaInGiB,
-        const SetShareQuotaOptions& options = SetShareQuotaOptions()) const;
 
     /**
      * @brief Sets the metadata to the share.

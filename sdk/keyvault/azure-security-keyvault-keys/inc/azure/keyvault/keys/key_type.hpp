@@ -1,20 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the KeyTypeEnum.
+ *
+ */
+
 #pragma once
 
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
-  namespace Details {
-    constexpr static const char* EcValue = "EC";
-    constexpr static const char* EcHsmValue = "EC-HSM";
-    constexpr static const char* RsaValue = "RSA";
-    constexpr static const char* RsaHsmValue = "RSA-HSM";
-    constexpr static const char* OctValue = "oct";
-    constexpr static const char* OctHsmValue = "oct-HSM";
-  } // namespace Details
 
   enum class KeyTypeEnum
   {
