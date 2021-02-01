@@ -126,6 +126,7 @@ std::string FormatNumber(uint number)
 }
 
 void RunTests(
+    Azure::Core::Context const& context,
     std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> const& tests,
     int parallel,
     Azure::Core::Nullable<int> rate,
@@ -137,7 +138,6 @@ void RunTests(
 
   auto durationTest = std::chrono::seconds(duration);
   auto deadline = std::chrono::system_clock::now() + durationTest;
-  Azure::Core::Context context;
   auto cancelationToken = context.WithDeadline(deadline);
 
   /********************* Progress Reporter ******************************/
@@ -207,7 +207,7 @@ void RunTests(
 } // namespace
 
 void Azure::PerformanceStress::Program::Run(
-    Azure::Core::Context context,
+    Azure::Core::Context const& context,
     std::map<
         std::string,
         std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
@@ -255,7 +255,7 @@ void Azure::PerformanceStress::Program::Run(
     std::vector<std::thread> tasks;
     for (int i = 0; i < parallelTasks; i++)
     {
-      tasks.push_back(std::thread([&parallelTest, i, &context]() { parallelTest[i]->Setup(); }));
+      tasks.push_back(std::thread([&parallelTest, i]() { parallelTest[i]->Setup(); }));
     }
     // Wait for all tests to complete setUp
     for (auto& t : tasks)
@@ -265,7 +265,7 @@ void Azure::PerformanceStress::Program::Run(
   }
 
   /******************** WarmUp ******************************/
-  RunTests(parallelTest, parallelTasks, options.Rate, options.Warmup, "Warmup");
+  RunTests(context, parallelTest, parallelTasks, options.Rate, options.Warmup, "Warmup");
 
   /******************** Tests ******************************/
   std::string iterationInfo;
@@ -275,6 +275,12 @@ void Azure::PerformanceStress::Program::Run(
     {
       iterationInfo.append(FormatNumber(iteration));
     }
-    RunTests(parallelTest, parallelTasks, options.Rate, options.Duration, "Test" + iterationInfo);
+    RunTests(
+        context,
+        parallelTest,
+        parallelTasks,
+        options.Rate,
+        options.Duration,
+        "Test" + iterationInfo);
   }
 }

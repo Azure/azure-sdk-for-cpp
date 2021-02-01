@@ -28,7 +28,7 @@ namespace Azure { namespace PerformanceStress {
 
   public:
     static void Run(
-        Azure::Core::Context context,
+        Azure::Core::Context const& context,
         std::map<
             std::string,
             std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
