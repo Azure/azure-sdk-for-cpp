@@ -10,8 +10,8 @@
 
 #include "azure/identity/dll_import_export.hpp"
 
-#include "azure/core/credentials.hpp"
-#include "azure/core/http/policy.hpp"
+#include <azure/core/credentials.hpp>
+#include <azure/core/http/policy.hpp>
 
 #include <string>
 #include <utility>
