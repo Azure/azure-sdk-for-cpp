@@ -7,6 +7,7 @@
 - Added `RequestId` in API return types.
 - Added some new properties in `GetBlobPropertiesResult`, `DownloadBlobResult` and `DownloadBlobToResult`.
 - Added `RangeHashAlgorithm` in `DownloadBlobOptions`.
+- Added `UploadBlob` in `BlobContainerClient`.
 
 ### Breaking Changes
 
