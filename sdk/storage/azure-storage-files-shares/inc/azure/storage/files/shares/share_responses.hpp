@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using SetShareFileMetadataResult = Details::FileSetMetadataResult;
   using UploadShareFileRangeResult = Details::FileUploadRangeResult;
   using ClearShareFileRangeResult = Details::FileUploadRangeResult;
-  using UploadFileRangeFromUrlResult = Details::FileUploadRangeFromUrlResult;
+  using UploadFileRangeFromUriResult = Details::FileUploadRangeFromUrlResult;
   using GetShareFileRangeListResult = Details::FileGetRangeListResult;
   using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
   using ForceCloseAllShareFileHandlesResult = Details::FileForceCloseHandlesResult;

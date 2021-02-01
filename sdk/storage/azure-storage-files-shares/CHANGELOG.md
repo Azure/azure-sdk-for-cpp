@@ -4,6 +4,7 @@
 
 ### New Features
 
+- Added support for `UploadRangeFromUri` in file client.
 - Added support for `SetProperties` in share client. This API supports update share tier and adjusting share's quota.
 - Added support to get share's tier status in `ListSharesSinglePage` and `GetProperties`.
 

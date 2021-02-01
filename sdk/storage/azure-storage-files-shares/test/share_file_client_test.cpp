@@ -798,4 +798,104 @@ namespace Azure { namespace Storage { namespace Test {
     FAIL();
   }
 
+  TEST_F(FileShareFileClientTest, UploadRangeFromUri)
+  {
+    size_t fileSize = 1 * 1024 * 1024;
+    std::string fileName = RandomString();
+    auto fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::Http::MemoryBodyStream(fileContent);
+    auto sourceFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
+    sourceFileClient.Create(fileSize);
+    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, &memBodyStream));
+
+    auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString(10));
+    destFileClient.Create(fileSize * 4);
+    Azure::Core::Http::Range sourceRange;
+    Azure::Core::Http::Range destRange;
+    sourceRange.Length = fileSize;
+    destRange.Offset = fileSize;
+    destRange.Length = fileSize;
+
+    // Get the SAS of the file
+    Sas::ShareSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    fileSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+    fileSasBuilder.ShareName = m_shareName;
+    fileSasBuilder.FilePath = fileName;
+    fileSasBuilder.Resource = Sas::ShareSasResource::File;
+    fileSasBuilder.SetPermissions(Sas::ShareSasPermissions::Read);
+    std::string sourceSas = fileSasBuilder.GenerateSasToken(
+        *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+
+    Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
+    EXPECT_NO_THROW(
+        uploadResult = *destFileClient.UploadRangeFromUri(
+            sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange));
+
+    Files::Shares::Models::DownloadShareFileResult result;
+    Files::Shares::DownloadShareFileOptions downloadOptions;
+    downloadOptions.Range = destRange;
+    EXPECT_NO_THROW(result = destFileClient.Download(downloadOptions).ExtractValue());
+    auto resultBuffer = Core::Http::BodyStream::ReadToEnd(Core::Context(), *(result.BodyStream));
+    EXPECT_EQ(fileContent, resultBuffer);
+    Files::Shares::Models::GetShareFileRangeListResult getRangeResult;
+    EXPECT_NO_THROW(getRangeResult = destFileClient.GetRangeList().ExtractValue());
+    EXPECT_EQ(1U, getRangeResult.Ranges.size());
+    EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Offset);
+    EXPECT_TRUE(getRangeResult.Ranges[0].Length.HasValue());
+    EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Length.GetValue());
+
+    // source access condition works.
+    std::vector<uint8_t> invalidCrc64(
+        uploadResult.TransactionalContentHash.Value.begin(),
+        uploadResult.TransactionalContentHash.Value.begin()
+            + uploadResult.TransactionalContentHash.Value.size() / 2);
+    {
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.SourceAccessCondition.IfNoneMatchContentHash
+          = uploadResult.TransactionalContentHash;
+      EXPECT_THROW(
+          uploadResult = *destFileClient.UploadRangeFromUri(
+              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+          StorageException);
+      // Below code seems to be triggering a server bug. Uncomment when server resolves the issue.
+      // uploadRangeOptions.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Value
+      //    = invalidCrc64;
+      // EXPECT_NO_THROW(
+      //    uploadResult = *destFileClient.UploadRangeFromUri(
+      //        sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+    }
+    {
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.SourceAccessCondition.IfMatchContentHash
+          = uploadResult.TransactionalContentHash;
+      EXPECT_NO_THROW(
+          uploadResult = *destFileClient.UploadRangeFromUri(
+              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+      // Below code seems to be triggering a server high latency. Uncomment when server resolves the
+      // issue.
+      // uploadRangeOptions.SourceAccessCondition.IfMatchContentHash.GetValue().Value =
+      // invalidCrc64;
+      // EXPECT_THROW(
+      //    uploadResult = *destFileClient.UploadRangeFromUri(
+      //        sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+      //    StorageException);
+    }
+    {
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.SourceContentHash = uploadResult.TransactionalContentHash;
+      EXPECT_NO_THROW(
+          uploadResult = *destFileClient.UploadRangeFromUri(
+              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+      // Below code seems to be triggering a server high latency. Uncomment when server resolves the
+      // issue.
+      // uploadRangeOptions.SourceContentHash.GetValue().Value = invalidCrc64;
+      // EXPECT_THROW(
+      //    uploadResult = *destFileClient.UploadRangeFromUri(
+      //        sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+      //    StorageException);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

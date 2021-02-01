@@ -652,17 +652,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct UploadFileRangeFromUrlOptions
+  struct UploadFileRangeFromUriOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief The range of the source file.
-     */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
 
     /**
      * @brief Specify the crc64 calculated for the range of bytes that must be read from the copy
