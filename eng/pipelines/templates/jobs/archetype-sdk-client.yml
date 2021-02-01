@@ -131,8 +131,6 @@ jobs:
   - checkout: self
     submodules: recursive
 
-  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
-
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |
