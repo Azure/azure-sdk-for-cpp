@@ -13,6 +13,7 @@
 ### Bug Fixes
 
 - Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
+- Fixed reading the value from `retry-after` header in `RetryPolicy`.
 
 ## 1.0.0-beta.4 (2021-01-13)
 
