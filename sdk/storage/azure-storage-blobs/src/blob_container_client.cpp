@@ -312,4 +312,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     return Azure::Core::Response<void>(response.ExtractRawResponse());
   }
 
+  Azure::Core::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
+      const std::string& blobName,
+      Azure::Core::Http::BodyStream* content,
+      const UploadBlockBlobOptions& options) const
+  {
+    auto blockBlobClient = GetBlockBlobClient(blobName);
+    auto response = blockBlobClient.Upload(content, options);
+    return Azure::Core::Response<BlockBlobClient>(
+        std::move(blockBlobClient), response.ExtractRawResponse());
+  }
+
 }}} // namespace Azure::Storage::Blobs
