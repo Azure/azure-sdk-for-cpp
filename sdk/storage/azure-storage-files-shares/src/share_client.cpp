@@ -115,6 +115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.ShareQuota = options.ShareQuotaInGiB;
+    protocolLayerOptions.XMsAccessTier = options.AccessTier;
     auto result = Details::ShareRestClient::Share::Create(
         m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::CreateShareResult ret;
@@ -202,13 +203,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareQuotaResult> ShareClient::SetQuota(
-      int32_t quotaInGiB,
-      const SetShareQuotaOptions& options) const
+  Azure::Core::Response<Models::SetSharePropertiesResult> ShareClient::SetProperties(
+      const SetSharePropertiesOptions& options) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::SetQuotaOptions();
-    protocolLayerOptions.ShareQuota = quotaInGiB;
-    return Details::ShareRestClient::Share::SetQuota(
+    auto protocolLayerOptions = Details::ShareRestClient::Share::SetPropertiesOptions();
+    protocolLayerOptions.ShareQuota = options.ShareQuotaInGiB;
+    protocolLayerOptions.XMsAccessTier = options.AccessTier;
+    return Details::ShareRestClient::Share::SetProperties(
         m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
