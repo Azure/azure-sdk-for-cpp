@@ -53,8 +53,11 @@ EnvironmentCredential::EnvironmentCredential()
     {
       if (authority != nullptr)
       {
+        TokenCredentialOptions options;
+        options.AuthorityHost = authority;
+
         m_credentialImpl.reset(
-            new ClientSecretCredential(tenantId, clientId, clientSecret, {authority}));
+            new ClientSecretCredential(tenantId, clientId, clientSecret, options));
       }
       else
       {
