@@ -16,7 +16,6 @@
 #include <mutex>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace Azure { namespace Core {
 
@@ -37,24 +36,8 @@ namespace Azure { namespace Core {
   };
 
   namespace Http {
-    class TransportPolicy;
-  }
-
-  /**
-   * @brief Defines parameters for getting token.
-   */
-  struct GetTokenOptions
-  {
-    /**
-     * @brief Authentication scopes.
-     */
-    std::vector<std::string> Scopes;
-
-    /**
-     * @brief #TransportPolicy for authentication.
-     */
-    std::unique_ptr<Azure::Core::Http::TransportPolicy> TransportPolicy;
-  };
+    struct GetTokenOptions;
+  } // namespace Http
 
   /**
    * @brief Token credential.
@@ -65,9 +48,11 @@ namespace Azure { namespace Core {
      * @brief Get an authentication token.
      *
      * @param context #Context so that operation can be cancelled.
-     * @param options Options to get the token.
+     * @param getTokenOptions Options to get the token.
      */
-    virtual AccessToken GetToken(Context const& context, GetTokenOptions const& options) const = 0;
+    virtual AccessToken GetToken(
+        Context const& context,
+        Http::GetTokenOptions const& getTokenOptions) const = 0;
 
     /// Destructor.
     virtual ~TokenCredential() = default;

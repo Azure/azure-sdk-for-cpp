@@ -153,10 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
 
     {
-      Azure::Core::GetTokenOptions const tokenOptions
-          = {{Storage::Details::StorageScope},
-             std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions)};
-
+      Azure::Core::Http::GetTokenOptions const tokenOptions = {{Storage::Details::StorageScope}};
       policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
           credential, tokenOptions));
     }

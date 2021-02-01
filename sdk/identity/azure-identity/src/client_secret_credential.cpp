@@ -36,12 +36,12 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-std::string const ClientSecretCredential::g_aadGlobalAuthority
+std::string const TokenCredentialOptions::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Context const& context,
-    Azure::Core::GetTokenOptions const& options) const
+    Azure::Core::Http::GetTokenOptions const& getTokenOptions) const
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
@@ -49,7 +49,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    Url url(m_authority);
+    Url url(m_options.AuthorityHost);
     url.AppendPath(m_tenantId);
     url.AppendPath("oauth2/v2.0/token");
 
@@ -58,7 +58,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
          << "&client_secret=" << UrlEncode(m_clientSecret);
 
-    auto const& scopes = options.Scopes;
+    auto const& scopes = getTokenOptions.Scopes;
     if (!scopes.empty())
     {
       auto scopesIter = scopes.begin();
@@ -84,10 +84,12 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<RequestIdPolicy>());
 
-    RetryOptions retryOptions;
-    policies.emplace_back(std::make_unique<RetryPolicy>(retryOptions));
+    {
+      RetryOptions retryOptions;
+      policies.emplace_back(std::make_unique<RetryPolicy>(retryOptions));
+    }
 
-    policies.emplace_back(options.TransportPolicy->Clone());
+    policies.emplace_back(std::make_unique<TransportPolicy>(m_options.TransportPolicyOptions));
 
     HttpPipeline httpPipeline(policies);
 
@@ -177,13 +179,11 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     }
     auto const tokenEnd = responseBodyPos;
 
-    expiresInSeconds -= 2 * 60;
     auto const responseBodyBegin = responseBody.begin();
 
     return {
         std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        std::chrono::system_clock::now()
-            + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds),
+        std::chrono::system_clock::now() + std::chrono::seconds(expiresInSeconds),
     };
   }
   catch (AuthenticationException const&)

@@ -54,7 +54,7 @@ EnvironmentCredential::EnvironmentCredential()
       if (authority != nullptr)
       {
         m_credentialImpl.reset(
-            new ClientSecretCredential(tenantId, clientId, clientSecret, authority));
+            new ClientSecretCredential(tenantId, clientId, clientSecret, {authority}));
       }
       else
       {
@@ -78,7 +78,7 @@ EnvironmentCredential::EnvironmentCredential()
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(
     Azure::Core::Context const& context,
-    Azure::Core::GetTokenOptions const& options) const
+    Azure::Core::Http::GetTokenOptions const& getTokenOptions) const
 {
   using namespace Azure::Core;
 
@@ -88,5 +88,5 @@ Azure::Core::AccessToken EnvironmentCredential::GetToken(
                                   "Environment variables are not fully configured.");
   }
 
-  return m_credentialImpl->GetToken(context, options);
+  return m_credentialImpl->GetToken(context, getTokenOptions);
 }

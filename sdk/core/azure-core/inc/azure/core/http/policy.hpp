@@ -307,6 +307,17 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief Defines options for getting token.
+   */
+  struct GetTokenOptions
+  {
+    /**
+     * @brief Authentication scopes.
+     */
+    std::vector<std::string> Scopes;
+  };
+
+  /**
    * @brief Bearer Token authentication policy.
    */
   class BearerTokenAuthenticationPolicy : public HttpPolicy {
@@ -322,19 +333,16 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
+     * @brief Construct a Bearer Token authentication policy.
      *
      * @param credential A #TokenCredential to use with this policy.
      * @param getTokenOptions #GetTokenOptions.
      */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
-        GetTokenOptions const& getTokenOptions)
-        : m_credential(std::move(credential))
+        GetTokenOptions getTokenOptions)
+        : m_credential(std::move(credential)), m_getTokenOptions(std::move(getTokenOptions))
     {
-      m_getTokenOptions.Scopes = getTokenOptions.Scopes;
-      m_getTokenOptions.TransportPolicy.reset(
-          static_cast<Http::TransportPolicy*>(getTokenOptions.TransportPolicy->Clone().release()));
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
