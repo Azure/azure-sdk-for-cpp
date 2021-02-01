@@ -165,7 +165,7 @@ void RunTests(
   });
 
   std::vector<std::thread> tasks(tests.size());
-  for (int index = 0; index < tests.size(); index++)
+  for (size_t index = 0; index != tests.size(); index++)
   {
     tasks[index] = std::thread([index, &tests, &results, &context, &duration]() {
       RunLoop(
@@ -193,7 +193,7 @@ void RunTests(
     totalOperations += result.completedOperations;
   }
   auto operationsPerSecond = 0.0;
-  for (int index = 0; index < parallelTestsCount; index++)
+  for (size_t index = 0; index != tests.size(); index++)
   {
     operationsPerSecond += results[index].completedOperations
         / std::chrono::duration<double>(results[index].lastCompletionTimes).count();
