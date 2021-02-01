@@ -63,6 +63,10 @@ Azure::PerformanceStress::GlobalTestOptions Azure::PerformanceStress::Program::A
   {
     options.Iterations = parsedArgs["Iterations"];
   }
+  if (parsedArgs["Warmup"])
+  {
+    options.Warmup = parsedArgs["Warmup"];
+  }
 
   return options;
 }

@@ -107,9 +107,8 @@ void RunLoop(
   while (!context.IsCancelled())
   {
     test.Run(context);
-    auto completedOn = std::chrono::system_clock::now() - now;
     result.completedOperations += 1;
-    result.lastCompletionTimes = completedOn;
+    result.lastCompletionTimes = std::chrono::system_clock::now() - now;
   }
 }
 
@@ -118,11 +117,18 @@ std::string FormatNumber(double number)
   auto fullString = std::to_string(number);
   auto dot = fullString.find('.');
   auto numberString = std::string(fullString.begin(), fullString.begin() + dot);
-  int start = numberString.length() - 3;
+  size_t start = numberString.length() - 3;
   while (start > 0)
   {
     numberString.insert(start, ",");
-    start -= 3;
+    if (start < 3)
+    {
+      start = 0;
+    }
+    else
+    {
+      start -= 3;
+    }
   }
   return numberString + std::string(fullString.begin() + dot, fullString.end());
 }
@@ -130,17 +136,13 @@ std::string FormatNumber(double number)
 void RunTests(
     Azure::Core::Context const& context,
     std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> const& tests,
-    int parallel,
     Azure::Core::Nullable<int> rate,
     int duration,
     std::string const& title)
 {
   (void)rate;
-  std::vector<Result> results(parallel);
-
-  auto durationTest = std::chrono::seconds(duration);
-  auto deadline = std::chrono::system_clock::now() + durationTest;
-  auto cancelationToken = context.WithDeadline(deadline);
+  auto parallelTestsCount = tests.size();
+  std::vector<Result> results(parallelTestsCount);
 
   /********************* Progress Reporter ******************************/
   Azure::Core::Context progresToken;
@@ -162,14 +164,16 @@ void RunTests(
     }
   });
 
-  std::vector<std::thread> tasks;
-  int i = 0;
-  for (auto& result : results)
+  std::vector<std::thread> tasks(tests.size());
+  for (int index = 0; index < tests.size(); index++)
   {
-    tasks.push_back(std::thread([i, &tests, &result, &cancelationToken]() {
-      RunLoop(*tests[i], result, false, cancelationToken);
-    }));
-    i += 1;
+    tasks[index] = std::thread([index, &tests, &results, &context, &duration]() {
+      RunLoop(
+          *tests[index],
+          results[index],
+          false,
+          context.WithDeadline(std::chrono::system_clock::now() + std::chrono::seconds(duration)));
+    });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -189,12 +193,12 @@ void RunTests(
     totalOperations += result.completedOperations;
   }
   auto operationsPerSecond = 0.0;
-  for (int index = 0; index < parallel; index++)
+  for (int index = 0; index < parallelTestsCount; index++)
   {
     operationsPerSecond += results[index].completedOperations
-        / std::chrono::duration_cast<std::chrono::seconds>(results[index].lastCompletionTimes)
-              .count();
+        / std::chrono::duration<double>(results[index].lastCompletionTimes).count();
   }
+
   auto secondsPerOperation = 1 / operationsPerSecond;
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 
@@ -244,20 +248,21 @@ void Azure::PerformanceStress::Program::Run(
 
   // Create parallel pool of tests
   int const parallelTasks = options.Parallel;
-  std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> parallelTest;
+  std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> parallelTest(
+      parallelTasks);
   for (int i = 0; i < parallelTasks; i++)
   {
-    parallelTest.push_back(testGenerator(Azure::PerformanceStress::TestOptions(argResults)));
+    parallelTest[i] = testGenerator(Azure::PerformanceStress::TestOptions(argResults));
   }
 
   test->GlobalSetup();
 
   /******************** Set up ******************************/
   {
-    std::vector<std::thread> tasks;
+    std::vector<std::thread> tasks(parallelTasks);
     for (int i = 0; i < parallelTasks; i++)
     {
-      tasks.push_back(std::thread([&parallelTest, i]() { parallelTest[i]->Setup(); }));
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Setup(); });
     }
     // Wait for all tests to complete setUp
     for (auto& t : tasks)
@@ -267,7 +272,10 @@ void Azure::PerformanceStress::Program::Run(
   }
 
   /******************** WarmUp ******************************/
-  RunTests(context, parallelTest, parallelTasks, options.Rate, options.Warmup, "Warmup");
+  if (options.Warmup)
+  {
+    RunTests(context, parallelTest, options.Rate, options.Warmup, "Warmup");
+  }
 
   /******************** Tests ******************************/
   std::string iterationInfo;
@@ -277,12 +285,6 @@ void Azure::PerformanceStress::Program::Run(
     {
       iterationInfo.append(FormatNumber(iteration));
     }
-    RunTests(
-        context,
-        parallelTest,
-        parallelTasks,
-        options.Rate,
-        options.Duration,
-        "Test" + iterationInfo);
+    RunTests(context, parallelTest, options.Rate, options.Duration, "Test" + iterationInfo);
   }
 }
