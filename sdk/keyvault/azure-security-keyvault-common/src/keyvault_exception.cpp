@@ -14,7 +14,7 @@ using namespace Azure::Security::KeyVault::Common;
 namespace {
 
 inline std::string GetHeaderOrEmptyString(
-    std::map<std::string, std::string> const& headers,
+    Azure::Core::Http::RawResponse::HeaderMap const& headers,
     std::string const& headerName)
 {
   auto header = headers.find(headerName);

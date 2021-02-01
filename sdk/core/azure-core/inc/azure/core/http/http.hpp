@@ -11,6 +11,7 @@
 #include "azure/core/exception.hpp"
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
+#include "azure/core/internal/strings.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <algorithm>
@@ -45,7 +46,10 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if \p headerName is invalid.
      */
     void InsertHeaderWithValidation(
-        std::map<std::string, std::string>& headers,
+        std::map<
+            std::string,
+            std::string,
+            Azure::Core::Internal::Strings::CaseInsensitiveComparator>& headers,
         std::string const& headerName,
         std::string const& headerValue);
   } // namespace Details
@@ -454,12 +458,16 @@ namespace Azure { namespace Core { namespace Http {
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;
 #endif
+  public:
+    typedef std::
+        map<std::string, std::string, Azure::Core::Internal::Strings::CaseInsensitiveComparator>
+            HeaderMap;
 
   private:
     HttpMethod m_method;
     Url m_url;
-    std::map<std::string, std::string> m_headers;
-    std::map<std::string, std::string> m_retryHeaders;
+    HeaderMap m_headers;
+    HeaderMap m_retryHeaders;
 
     BodyStream* m_bodyStream;
 
@@ -559,7 +567,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP headers.
      */
-    std::map<std::string, std::string> GetHeaders() const;
+    HeaderMap GetHeaders() const;
 
     /**
      * @brief Get HTTP body as #BodyStream.
@@ -604,13 +612,17 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Raw HTTP response.
    */
   class RawResponse {
+  public:
+    typedef std::
+        map<std::string, std::string, Azure::Core::Internal::Strings::CaseInsensitiveComparator>
+            HeaderMap;
 
   private:
     int32_t m_majorVersion;
     int32_t m_minorVersion;
     HttpStatusCode m_statusCode;
     std::string m_reasonPhrase;
-    std::map<std::string, std::string> m_headers;
+    HeaderMap m_headers;
 
     std::unique_ptr<BodyStream> m_bodyStream;
     std::vector<uint8_t> m_body;
@@ -726,7 +738,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response headers.
      */
-    std::map<std::string, std::string> const& GetHeaders() const;
+    HeaderMap const& GetHeaders() const;
 
     /**
      * @brief Get HTTP response body as #BodyStream.

@@ -427,7 +427,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     struct ValuePolicyOptions
     {
-      std::map<std::string, std::string> HeaderValues;
+      Request::HeaderMap HeaderValues;
       std::map<std::string, std::string> QueryValues;
     };
 

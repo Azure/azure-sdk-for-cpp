@@ -6,7 +6,7 @@
 #include <utility>
 
 void Azure::Core::Http::Details::InsertHeaderWithValidation(
-    std::map<std::string, std::string>& headers,
+    Azure::Core::Http::Request::HeaderMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
 {
