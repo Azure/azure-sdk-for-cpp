@@ -19,3 +19,5 @@ target_include_directories(
 )
 
 target_link_libraries(azure-performance-stress-test PRIVATE azure-core azure-performance-stress)
+
+set_target_properties(azure-performance-stress-test PROPERTIES FOLDER "Tests")
