@@ -14,6 +14,6 @@ namespace Azure { namespace PerformanceStress {
     std::string Name;
     std::vector<std::string> Activators;
     std::string DisplayMessage;
-    uint expectedArgs;
+    uint16_t expectedArgs;
   };
 }} // namespace Azure::PerformanceStress

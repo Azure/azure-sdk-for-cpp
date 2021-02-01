@@ -113,16 +113,18 @@ void RunLoop(
   }
 }
 
-std::string FormatNumber(uint number)
+std::string FormatNumber(double number)
 {
-  auto numberString = std::to_string(number);
+  auto fullString = std::to_string(number);
+  auto dot = fullString.find('.');
+  auto numberString = std::string(fullString.begin(), fullString.begin() + dot); 
   int start = numberString.length() - 3;
   while (start > 0)
   {
     numberString.insert(start, ",");
     start -= 3;
   }
-  return numberString;
+  return numberString + std::string(fullString.begin() + dot, fullString.end());
 }
 
 void RunTests(
@@ -161,13 +163,13 @@ void RunTests(
   });
 
   std::vector<std::thread> tasks;
-  int index = 0;
+  int i = 0;
   for (auto& result : results)
   {
-    tasks.push_back(std::thread([index, &tests, &result, &cancelationToken]() {
-      RunLoop(*tests[index], result, false, cancelationToken);
+    tasks.push_back(std::thread([i, &tests, &result, &cancelationToken]() {
+      RunLoop(*tests[i], result, false, cancelationToken);
     }));
-    index += 1;
+    i += 1;
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -186,7 +188,7 @@ void RunTests(
   {
     totalOperations += result.completedOperations;
   }
-  auto operationsPerSecond = 0;
+  auto operationsPerSecond = 0.0;
   for (int index = 0; index < parallel; index++)
   {
     operationsPerSecond += results[index].completedOperations
