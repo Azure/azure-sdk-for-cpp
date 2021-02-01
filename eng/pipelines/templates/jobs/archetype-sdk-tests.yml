@@ -28,7 +28,8 @@ jobs:
   strategy:
     matrix:
       Linux_x64_with_unit_test:
-        OSVmImage: 'ubuntu-18.04'
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
@@ -39,7 +40,8 @@ jobs:
         AZURE_CORE_ENABLE_JSON_TESTS: 1
       # Not asking for any transport adapter will default to OS -> windows:winHttp or !windows:libcurl
       Win_x86_with_unit_test_winHttp:
-        OSVmImage: 'windows-2019'
+        Pool: azsdk-pool-mms-win-2019-general
+        OSVmImage: MMS2019
         VcpkgInstall: 'libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -48,7 +50,8 @@ jobs:
         BuildArgs: '-v --parallel 8'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
       Win_x64_with_unit_test_winHttp:
-        OSVmImage: 'windows-2019'
+        Pool: azsdk-pool-mms-win-2019-general
+        OSVmImage: MMS2019
         VcpkgInstall: 'libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -58,7 +61,8 @@ jobs:
         AZURE_CORE_ENABLE_JSON_TESTS: 1
       # specify libcurl to be used on Windows
       Win_x86_with_unit_test_libcurl:
-        OSVmImage: 'windows-2019'
+        Pool: azsdk-pool-mms-win-2019-general
+        OSVmImage: MMS2019
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -67,7 +71,8 @@ jobs:
         BuildArgs: '-v --parallel 8'
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_test_libcurl:
-        OSVmImage: 'windows-2019'
+        Pool: azsdk-pool-mms-win-2019-general
+        OSVmImage: MMS2019
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -76,12 +81,14 @@ jobs:
         BuildArgs: '-v --parallel 8'
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       MacOS_x64_with_unit_test:
+        Pool: Azure Pipelines
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
   pool:
+    name: $(Pool)
     vmImage: $(OSVmImage)
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
