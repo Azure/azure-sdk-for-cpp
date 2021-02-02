@@ -36,12 +36,12 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-std::string const TokenCredentialOptions::g_aadGlobalAuthority
+std::string const Azure::Identity::Details::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Context const& context,
-    Azure::Core::Http::GetTokenOptions const& getTokenOptions) const
+    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions) const
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
@@ -58,7 +58,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
          << "&client_secret=" << UrlEncode(m_clientSecret);
 
-    auto const& scopes = getTokenOptions.Scopes;
+    auto const& scopes = tokenRequestOptions.Scopes;
     if (!scopes.empty())
     {
       auto scopesIter = scopes.begin();

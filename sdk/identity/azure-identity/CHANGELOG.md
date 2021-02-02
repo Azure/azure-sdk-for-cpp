@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- `ClientSecretCredential ` constructor takes `TokenCredentialOptions` struct instead of authority host string. `TokenCredentialOptions` struct has authority host string as data member.
+- `ClientSecretCredential ` constructor takes `ClientSecretCredentialOptions` struct instead of authority host string. `TokenCredentialOptions` struct has authority host string as data member.
 
 ## 1.0.0-beta.2 (2021-01-13)
 
