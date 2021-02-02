@@ -87,6 +87,13 @@ jobs:
         # Make coverage report to avoid running the test exe because CI step will run it
         CODE_COVERAGE_COLLECT_ONLY: 1
         BuildArgs: '-j 10'
+      Linux_x64_with_unit_test_release:
+        Pool: $(LinuxPool)
+        OSVmImage:
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CmakeArgs: ' -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        BuildArgs: '-j 10'        
       Win_x86_with_unit_test:
         Pool: $(WindowsPool)
         OSVmImage:
