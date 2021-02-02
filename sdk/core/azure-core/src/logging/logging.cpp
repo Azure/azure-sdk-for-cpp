@@ -27,18 +27,18 @@ void Azure::Core::Logging::SetLogListener(LogListener logListener)
   g_logListener = std::move(logListener);
 }
 
-void Azure::Core::Logging::SetMaximumLogLevel(LogLevel level)
+void Azure::Core::Logging::SetLogLevel(LogLevel level)
 {
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
   g_logLevel = level;
 }
 
-bool Azure::Core::Logging::Internal::ShouldWrite(LogLevel level)
+bool Azure::Core::Logging::Internal::ShouldLog(LogLevel level)
 {
   return GetLogListener(level) != nullptr;
 }
 
-void Azure::Core::Logging::Internal::Write(LogLevel level, std::string const& message)
+void Azure::Core::Logging::Internal::Log(LogLevel level, std::string const& message)
 {
   if (auto logListener = GetLogListener(level))
   {
