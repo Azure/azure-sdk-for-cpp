@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Define the main performance framewoek program.
+ *
+ */
+
 #pragma once
 
 #include "azure/performance-stress/argagg.hpp"
@@ -13,6 +19,10 @@
 #include <string>
 
 namespace Azure { namespace PerformanceStress {
+  /**
+   * @brief Define a performance application.
+   *
+   */
   class Program {
   private:
     class ArgParser {
@@ -27,6 +37,14 @@ namespace Azure { namespace PerformanceStress {
     };
 
   public:
+    /**
+     * @brief Start the performance application.
+     *
+     * @param context The strategy for cancelling the test execution.
+     * @param tests The list of tests that the application can run.
+     * @param argc The number of command line arguments.
+     * @param argv The reference to the first null terminated command line argument.
+     */
     static void Run(
         Azure::Core::Context const& context,
         std::map<
