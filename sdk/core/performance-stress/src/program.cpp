@@ -98,12 +98,12 @@ void RunLoop(
     Azure::Core::Context context)
 {
   (void)latency;
-  auto now = std::chrono::system_clock::now();
+  auto start = std::chrono::system_clock::now();
   while (!context.IsCancelled())
   {
     test.Run(context);
     completedOperations += 1;
-    lastCompletionTimes = std::chrono::system_clock::now() - now;
+    lastCompletionTimes = std::chrono::system_clock::now() - start;
   }
 }
 
