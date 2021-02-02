@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::Range ContentRange;
       int64_t BlobSize = 0;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
-      BlobDownloadDetails Details;
+      DownloadBlobDetails Details;
     };
 
     using UploadBlockBlobFromResult = UploadBlockBlobResult;
