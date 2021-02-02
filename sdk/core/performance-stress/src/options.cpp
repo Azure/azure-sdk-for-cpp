@@ -66,7 +66,7 @@ Azure::PerformanceStress::GlobalTestOptions::GetOptionMetadata()
        "Number of iterations of main test loop. Default to 1.",
        1},
       {"JobStatistics", {"--statistics"}, "Print job statistics. Default to false", 1},
-      {"latency",
+      {"Latency",
        {"-l", "--latency"},
        "Track and print per-operation latency statistics. Default to false.",
        1},

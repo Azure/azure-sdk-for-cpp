@@ -739,8 +739,8 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
   }
 
   int16_t year = 1;
-  int8_t month;
-  int8_t day;
+  int8_t month = 1;
+  int8_t day = 1;
   int8_t hour;
   int8_t minute;
   int8_t second;

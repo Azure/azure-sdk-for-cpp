@@ -90,15 +90,10 @@ void PrintOptions(
   }
 }
 
-struct Result
-{
-  int completedOperations;
-  std::chrono::nanoseconds lastCompletionTimes;
-};
-
 void RunLoop(
     Azure::PerformanceStress::PerformanceTest& test,
-    Result& result,
+    int& completedOperations,
+    std::chrono::nanoseconds& lastCompletionTimes,
     bool latency,
     Azure::Core::Context context)
 {
@@ -107,8 +102,8 @@ void RunLoop(
   while (!context.IsCancelled())
   {
     test.Run(context);
-    result.completedOperations += 1;
-    result.lastCompletionTimes = std::chrono::system_clock::now() - now;
+    completedOperations += 1;
+    lastCompletionTimes = std::chrono::system_clock::now() - now;
   }
 }
 
@@ -133,6 +128,29 @@ std::string FormatNumber(double number)
   return numberString + std::string(fullString.begin() + dot, fullString.end());
 }
 
+template <class T> T Sum(std::vector<T> const& array)
+{
+  T s = 0;
+  for (T item : array)
+  {
+    s += item;
+  }
+  return s;
+}
+
+std::vector<double> ZipAvg(
+    std::vector<int> const& operations,
+    std::vector<std::chrono::nanoseconds> const& timeResults)
+{
+  auto size = operations.size();
+  std::vector<double> s(size);
+  for (size_t index = 0; index != operations.size(); index++)
+  {
+    s[index] = operations[index] / std::chrono::duration<double>(timeResults[index]).count();
+  }
+  return s;
+}
+
 void RunTests(
     Azure::Core::Context const& context,
     std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> const& tests,
@@ -142,38 +160,41 @@ void RunTests(
 {
   (void)rate;
   auto parallelTestsCount = tests.size();
-  std::vector<Result> results(parallelTestsCount);
+  std::vector<int> completedOperations(parallelTestsCount);
+  std::vector<std::chrono::nanoseconds> lastCompletionTimes(parallelTestsCount);
 
   /********************* Progress Reporter ******************************/
   Azure::Core::Context progresToken;
   auto lastCompleted = 0;
-  auto progressThread = std::thread([&title, &results, &lastCompleted, &progresToken]() {
-    std::cout << "=== " << title << " ===" << std::endl << "Current\t\tTotal" << std::endl;
-    while (!progresToken.IsCancelled())
-    {
-      using namespace std::chrono_literals;
-      std::this_thread::sleep_for(1000ms);
-      auto total = 0;
-      for (auto result : results)
-      {
-        total += result.completedOperations;
-      }
-      auto current = total - lastCompleted;
-      lastCompleted = total;
-      std::cout << current << "\t\t" << total << std::endl;
-    }
-  });
+  auto progressThread = std::thread(
+      [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progresToken]() {
+        std::cout << "=== " << title << " ===" << std::endl
+                  << "Current\t\tTotal\t\tAverage" << std::endl;
+        while (!progresToken.IsCancelled())
+        {
+          using namespace std::chrono_literals;
+          std::this_thread::sleep_for(1000ms);
+          auto total = Sum(completedOperations);
+          auto current = total - lastCompleted;
+          auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
+          lastCompleted = total;
+          std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
+        }
+      });
 
   std::vector<std::thread> tasks(tests.size());
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread([index, &tests, &results, &context, &duration]() {
-      RunLoop(
-          *tests[index],
-          results[index],
-          false,
-          context.WithDeadline(std::chrono::system_clock::now() + std::chrono::seconds(duration)));
-    });
+    tasks[index] = std::thread(
+        [index, &tests, &completedOperations, &lastCompletionTimes, &context, &duration]() {
+          RunLoop(
+              *tests[index],
+              completedOperations[index],
+              lastCompletionTimes[index],
+              false,
+              context.WithDeadline(
+                  std::chrono::system_clock::now() + std::chrono::seconds(duration)));
+        });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -187,18 +208,8 @@ void RunTests(
 
   std::cout << std::endl << "=== Results ===";
 
-  auto totalOperations = 0;
-  for (auto result : results)
-  {
-    totalOperations += result.completedOperations;
-  }
-  auto operationsPerSecond = 0.0;
-  for (size_t index = 0; index != tests.size(); index++)
-  {
-    operationsPerSecond += results[index].completedOperations
-        / std::chrono::duration<double>(results[index].lastCompletionTimes).count();
-  }
-
+  auto totalOperations = Sum(completedOperations);
+  auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
   auto secondsPerOperation = 1 / operationsPerSecond;
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 

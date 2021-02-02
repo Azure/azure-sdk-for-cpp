@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <vector>
 
+#define GET_ARG(Name, Is)
+
 argagg::parser_results Azure::PerformanceStress::Program::ArgParser::Parse(
     int argc,
     char** argv,
@@ -55,13 +57,37 @@ Azure::PerformanceStress::GlobalTestOptions Azure::PerformanceStress::Program::A
   {
     options.Host = parsedArgs["Host"].as<std::string>();
   }
-  if (parsedArgs["Parallel"])
+  if (parsedArgs["Insecure"])
   {
-    options.Parallel = parsedArgs["Parallel"];
+    options.Insecure = parsedArgs["Host"].as<bool>();
   }
   if (parsedArgs["Iterations"])
   {
     options.Iterations = parsedArgs["Iterations"];
+  }
+  if (parsedArgs["JobStatistics"])
+  {
+    options.JobStatistics = parsedArgs["JobStatistics"].as<bool>();
+  }
+  if (parsedArgs["Latency"])
+  {
+    options.Latency = parsedArgs["Latency"].as<bool>();
+  }
+  if (parsedArgs["NoCleanup"])
+  {
+    options.NoCleanup = parsedArgs["NoCleanup"].as<bool>();
+  }
+  if (parsedArgs["Parallel"])
+  {
+    options.Parallel = parsedArgs["Parallel"];
+  }
+  if (parsedArgs["Port"])
+  {
+    options.Port = parsedArgs["Port"];
+  }
+  if (parsedArgs["Rate"])
+  {
+    options.Rate = parsedArgs["Rate"];
   }
   if (parsedArgs["Warmup"])
   {
