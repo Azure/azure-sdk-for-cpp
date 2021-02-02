@@ -274,8 +274,8 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.AppendBlock(&blockContent);
 
     auto downloadResult = blobClient.Download();
-    EXPECT_TRUE(downloadResult->IsSealed.HasValue());
-    EXPECT_FALSE(downloadResult->IsSealed.GetValue());
+    EXPECT_TRUE(downloadResult->Details.IsSealed.HasValue());
+    EXPECT_FALSE(downloadResult->Details.IsSealed.GetValue());
 
     auto getPropertiesResult = blobClient.GetProperties();
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
@@ -309,8 +309,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(sealResult->IsSealed);
 
     downloadResult = blobClient.Download();
-    EXPECT_TRUE(downloadResult->IsSealed.HasValue());
-    EXPECT_TRUE(downloadResult->IsSealed.GetValue());
+    EXPECT_TRUE(downloadResult->Details.IsSealed.HasValue());
+    EXPECT_TRUE(downloadResult->Details.IsSealed.GetValue());
 
     getPropertiesResult = blobClient.GetProperties();
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());

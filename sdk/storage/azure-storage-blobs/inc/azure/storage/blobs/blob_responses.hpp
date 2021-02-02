@@ -21,39 +21,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DownloadBlobToResult
     {
-      Azure::Core::ETag ETag;
-      Azure::Core::DateTime LastModified;
-      Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
+      Models::BlobType BlobType;
       Azure::Core::Http::Range ContentRange;
       int64_t BlobSize = 0;
-      BlobHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
-      Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
-      Azure::Core::Nullable<bool> IsSealed; // only for append blob
-      Models::BlobType BlobType;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<BlobLeaseState> LeaseState;
-      Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<std::string>
-          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
-      Azure::Core::Nullable<int32_t> TagCount;
-      Azure::Core::Nullable<std::string> CopyId;
-      Azure::Core::Nullable<std::string> CopySource;
-      Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
-      Azure::Core::Nullable<std::string> CopyStatusDescription;
-      Azure::Core::Nullable<std::string> CopyProgress;
-      Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<bool> IsCurrentVersion;
+      DownloadBlobDetails Details;
     };
 
     using UploadBlockBlobFromResult = UploadBlockBlobResult;

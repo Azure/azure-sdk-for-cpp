@@ -88,11 +88,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_TRUE(IsValidTime(res->CreatedOn));
-    EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(res->Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+    EXPECT_TRUE(IsValidTime(res->Details.CreatedOn));
+    EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Range = {1_MB, 2_MB};
@@ -137,8 +137,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       auto res = m_blockBlobClient->Download();
-      ASSERT_TRUE(res->LastAccessedOn.HasValue());
-      EXPECT_TRUE(IsValidTime(res->LastAccessedOn.GetValue()));
+      ASSERT_TRUE(res->Details.LastAccessedOn.HasValue());
+      EXPECT_TRUE(IsValidTime(res->Details.LastAccessedOn.GetValue()));
     }
     {
       auto res = m_blockBlobClient->GetProperties();
@@ -184,10 +184,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(res->Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+    EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
@@ -230,16 +230,18 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.IncrementalCopyDestinationSnapshot.HasValue());
 
     auto downloadResult = blobClient.Download();
-    EXPECT_EQ(downloadResult->CopyId.GetValue(), res->CopyId);
-    EXPECT_FALSE(downloadResult->CopySource.GetValue().empty());
+    EXPECT_EQ(downloadResult->Details.CopyId.GetValue(), res->CopyId);
+    EXPECT_FALSE(downloadResult->Details.CopySource.GetValue().empty());
     EXPECT_TRUE(
-        downloadResult->CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Pending
-        || downloadResult->CopyStatus.GetValue()
+        downloadResult->Details.CopyStatus.GetValue()
+            == Azure::Storage::Blobs::Models::CopyStatus::Pending
+        || downloadResult->Details.CopyStatus.GetValue()
             == Azure::Storage::Blobs::Models::CopyStatus::Success);
-    EXPECT_FALSE(downloadResult->CopyProgress.GetValue().empty());
-    if (downloadResult->CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Success)
+    EXPECT_FALSE(downloadResult->Details.CopyProgress.GetValue().empty());
+    if (downloadResult->Details.CopyStatus.GetValue()
+        == Azure::Storage::Blobs::Models::CopyStatus::Success)
     {
-      EXPECT_TRUE(IsValidTime(downloadResult->CopyCompletedOn.GetValue()));
+      EXPECT_TRUE(IsValidTime(downloadResult->Details.CopyCompletedOn.GetValue()));
     }
   }
 
@@ -302,9 +304,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.IsCurrentVersion.GetValue());
 
     auto downloadResponse = blobClient.Download();
-    ASSERT_TRUE(downloadResponse->VersionId.HasValue());
-    ASSERT_TRUE(downloadResponse->IsCurrentVersion.HasValue());
-    EXPECT_TRUE(downloadResponse->IsCurrentVersion.GetValue());
+    ASSERT_TRUE(downloadResponse->Details.VersionId.HasValue());
+    ASSERT_TRUE(downloadResponse->Details.IsCurrentVersion.HasValue());
+    EXPECT_TRUE(downloadResponse->Details.IsCurrentVersion.GetValue());
 
     std::string version1 = properties.VersionId.GetValue();
 
@@ -324,10 +326,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.IsCurrentVersion.GetValue());
     EXPECT_EQ(version1, properties.VersionId.GetValue());
     downloadResponse = versionClient.Download();
-    ASSERT_TRUE(downloadResponse->VersionId.HasValue());
-    ASSERT_TRUE(downloadResponse->IsCurrentVersion.HasValue());
-    EXPECT_FALSE(downloadResponse->IsCurrentVersion.GetValue());
-    EXPECT_EQ(version1, downloadResponse->VersionId.GetValue());
+    ASSERT_TRUE(downloadResponse->Details.VersionId.HasValue());
+    ASSERT_TRUE(downloadResponse->Details.IsCurrentVersion.HasValue());
+    EXPECT_FALSE(downloadResponse->Details.IsCurrentVersion.GetValue());
+    EXPECT_EQ(version1, downloadResponse->Details.VersionId.GetValue());
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
@@ -723,18 +725,18 @@ namespace Azure { namespace Storage { namespace Test {
     auto res = blockBlobClient.DownloadTo(emptyContent.data(), 0);
     EXPECT_EQ(res->BlobSize, 0);
     EXPECT_EQ(res->ContentRange.Length.GetValue(), 0);
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(res->Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+    EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->BlobSize, 0);
     EXPECT_EQ(res->ContentRange.Length.GetValue(), 0);
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(res->Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+    EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     EXPECT_TRUE(ReadFile(tempFilename).empty());
     DeleteFile(tempFilename);
@@ -742,18 +744,18 @@ namespace Azure { namespace Storage { namespace Test {
     res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB));
     EXPECT_EQ(res->BlobSize, 0);
     EXPECT_EQ(res->ContentRange.Length.GetValue(), 0);
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(res->Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+    EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->BlobSize, 0);
     EXPECT_EQ(res->ContentRange.Length.GetValue(), 0);
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(res->Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+    EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     EXPECT_TRUE(ReadFile(tempFilename).empty());
     DeleteFile(tempFilename);
@@ -769,18 +771,18 @@ namespace Azure { namespace Storage { namespace Test {
           emptyContent.data(), static_cast<std::size_t>(8_MB), options);
       EXPECT_EQ(res->BlobSize, 0);
       EXPECT_EQ(res->ContentRange.Length.GetValue(), 0);
-      EXPECT_TRUE(res->ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(res->LastModified));
-      EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-      EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+      EXPECT_TRUE(res->Details.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+      EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+      EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
       EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
       res = blockBlobClient.DownloadTo(tempFilename, options);
       EXPECT_EQ(res->BlobSize, 0);
       EXPECT_EQ(res->ContentRange.Length.GetValue(), 0);
-      EXPECT_TRUE(res->ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(res->LastModified));
-      EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-      EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
+      EXPECT_TRUE(res->Details.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(res->Details.LastModified));
+      EXPECT_EQ(res->Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+      EXPECT_EQ(res->Details.Metadata, m_blobUploadOptions.Metadata);
       EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
       EXPECT_TRUE(ReadFile(tempFilename).empty());
       DeleteFile(tempFilename);
