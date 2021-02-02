@@ -1008,7 +1008,37 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> EncryptionScope;
     }; // struct UploadPageBlobPagesResult
 
-    struct BlobDownloadDetails
+    struct BlobItem
+    {
+      std::string Name;
+      bool IsDeleted = false;
+      std::string Snapshot;
+      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Core::Nullable<bool> IsCurrentVersion;
+      BlobHttpHeaders HttpHeaders;
+      Storage::Metadata Metadata;
+      Azure::Core::DateTime CreatedOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
+      Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
+      Azure::Core::DateTime LastModified;
+      Azure::Core::ETag ETag;
+      int64_t BlobSize = 0;
+      Models::BlobType BlobType;
+      Azure::Core::Nullable<AccessTier> Tier;
+      Azure::Core::Nullable<bool> IsAccessTierInferred;
+      BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
+      BlobLeaseState LeaseState = BlobLeaseState::Available;
+      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blobd
+      Azure::Core::Nullable<bool> IsSealed; // only for append blob
+      std::vector<ObjectReplicationPolicy>
+          ObjectReplicationSourceProperties; // only valid for replication source blob
+    }; // struct BlobItem
+
+    struct DownloadBlobDetails
     {
       Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
@@ -1039,37 +1069,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> VersionId;
       Azure::Core::Nullable<bool> IsCurrentVersion;
-    }; // struct BlobDownloadDetails
-
-    struct BlobItem
-    {
-      std::string Name;
-      bool IsDeleted = false;
-      std::string Snapshot;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<bool> IsCurrentVersion;
-      BlobHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
-      Azure::Core::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
-      Azure::Core::DateTime LastModified;
-      Azure::Core::ETag ETag;
-      int64_t BlobSize = 0;
-      Models::BlobType BlobType;
-      Azure::Core::Nullable<AccessTier> Tier;
-      Azure::Core::Nullable<bool> IsAccessTierInferred;
-      BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
-      BlobLeaseState LeaseState = BlobLeaseState::Available;
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blobd
-      Azure::Core::Nullable<bool> IsSealed; // only for append blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
-    }; // struct BlobItem
+    }; // struct DownloadBlobDetails
 
     struct GetBlobPropertiesResult
     {
@@ -1122,7 +1122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t BlobSize = 0;
       Models::BlobType BlobType;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
-      BlobDownloadDetails Details;
+      DownloadBlobDetails Details;
     }; // struct DownloadBlobResult
 
     struct ListBlobsByHierarchySinglePageResult
