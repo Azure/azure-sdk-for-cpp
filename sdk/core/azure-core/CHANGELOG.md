@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
 - Removed `LogClassification` and related functionality, added `LogLevel` instead.
 
 ### Bug Fixes
