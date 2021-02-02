@@ -12,7 +12,6 @@
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
@@ -400,25 +399,6 @@ namespace Azure { namespace Core { namespace Http {
         Context const& ctx,
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override;
-  };
-
-  /**
-   * @brief Log classigications being used to designate log messages from HTTP #LoggingPolicy.
-   */
-  class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
-                                Azure::Core::Logging::Details::Facility::Core> {
-  public:
-    /// HTTP request.
-    static constexpr auto const Request = Classification(1);
-
-    /// HTTP response.
-    static constexpr auto const Response = Classification(2);
-
-    /// HTTP retry attempt.
-    static constexpr auto const Retry = Classification(3);
-
-    /// HTTP Transport adapter.
-    static constexpr auto const HttpTransportAdapter = Classification(4);
   };
 
   namespace Internal {

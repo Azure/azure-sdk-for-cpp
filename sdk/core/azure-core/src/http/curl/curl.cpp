@@ -25,17 +25,7 @@
 #include <thread>
 
 namespace {
-// Can be used from anywhere a little simpler
-inline void LogThis(std::string const& msg)
-{
-  if (Azure::Core::Logging::Details::ShouldWrite(
-          Azure::Core::Http::LogClassification::HttpTransportAdapter))
-  {
-    Azure::Core::Logging::Details::Write(
-        Azure::Core::Http::LogClassification::HttpTransportAdapter,
-        "[CURL Transport Adapter]: " + msg);
-  }
-}
+std::string const LogMsgPrefix = "[CURL Transport Adapter]: ";
 
 template <typename T>
 #if defined(_MSC_VER)
@@ -136,9 +126,18 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-    LogThis(
-        "Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal)
-        + " result = " + std::to_string(result));
+
+    {
+      using namespace Azure::Core::Logging;
+      using namespace Azure::Core::Logging::Internal;
+      if (ShouldWrite(LogLevel::Informational))
+      {
+        Write(
+            LogLevel::Informational,
+            LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
+                + std::to_string(ideal) + " result = " + std::to_string(result));
+      }
+    }
   }
 }
 #endif

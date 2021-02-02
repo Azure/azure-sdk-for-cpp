@@ -9,10 +9,15 @@
 
 #pragma once
 
-#include <functional>
-#include <string>
+#include "azure/core/dll_import_export.hpp"
 
-namespace Azure { namespace Core { namespace Logging {
+#include <functional>
+#include <initializer_list>
+#include <set>
+#include <string>
+#include <utility>
+
+namespace Azure { namespace Core {
   /**
    * @brief Log message level.
    */
@@ -50,10 +55,9 @@ namespace Azure { namespace Core { namespace Logging {
   void SetLogListener(LogListener logListener);
 
   /**
-   * @brief Sets the maximul #LogLevel an application is interested in receiving.
-   * @detail Default is #LogLevel::Verbose
-   *
+   * @brief Sets the minimum #LogLevel an application is interested in receiving.
+   * 
    * @param logClassifications Log classification values.
    */
-  void SetMaximumLogLevel(LogLevel level);
-}}} // namespace Azure::Core::Logging
+  void SetLogLevel(LogLevel level);
+}} // namespace Azure::Core

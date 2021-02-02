@@ -5,7 +5,7 @@
 
 #include "azure/core/logging/logging.hpp"
 
-namespace Azure { namespace Core { namespace Logging { namespace Details {
-  bool ShouldWrite(LogClassification const& classification);
-  void Write(LogClassification const& classification, std::string const& message);
-}}}} // namespace Azure::Core::Logging::Details
+namespace Azure { namespace Core { namespace Logging { namespace Internal {
+  bool ShouldWrite(LogLevel level);
+  void Write(LogLevel level, std::string const& message);
+}}}} // namespace Azure::Core::Logging::Internal

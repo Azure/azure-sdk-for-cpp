@@ -77,12 +77,11 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  if (Logging::Details::ShouldWrite(LogClassification::Request))
+  if (Logging::Internal::ShouldWrite(Logging::LogLevel::Verbose))
   {
-    Logging::Details::Write(LogClassification::Request, GetRequestLogMessage(request));
+    Logging::Internal::Write(Logging::LogLevel::Verbose, GetRequestLogMessage(request));
   }
-
-  if (!Logging::Details::ShouldWrite(LogClassification::Response))
+  else
   {
     return nextHttpPolicy.Send(ctx, request);
   }
@@ -91,8 +90,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
   auto response = nextHttpPolicy.Send(ctx, request);
   auto const end = std::chrono::system_clock::now();
 
-  Logging::Details::Write(
-      LogClassification::Response, GetResponseLogMessage(request, *response, end - start));
+  Logging::Internal::Write(
+      Logging::LogLevel::Verbose, GetResponseLogMessage(request, *response, end - start));
 
   return response;
 }
