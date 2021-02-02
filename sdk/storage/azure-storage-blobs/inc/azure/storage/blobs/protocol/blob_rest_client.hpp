@@ -5028,7 +5028,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             response.Details.Metadata.emplace(i->first.substr(10), i->second);
           }
           response.Details.IsServerEncrypted
-              = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
+              = httpResponse.GetHeaders().at("x-ms-server-encrypted") == "true";
           auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
           if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
