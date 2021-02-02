@@ -734,7 +734,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.TagCount.HasValue());
 
     auto downloadRet = blobClient.Download();
-    EXPECT_FALSE(downloadRet->TagCount.HasValue());
+    EXPECT_FALSE(downloadRet->Details.TagCount.HasValue());
 
     std::map<std::string, std::string> tags;
     std::string c1 = "k" + RandomString();
@@ -758,8 +758,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
 
     downloadRet = blobClient.Download();
-    EXPECT_TRUE(downloadRet->TagCount.HasValue());
-    EXPECT_EQ(downloadRet->TagCount.GetValue(), static_cast<int64_t>(tags.size()));
+    EXPECT_TRUE(downloadRet->Details.TagCount.HasValue());
+    EXPECT_EQ(downloadRet->Details.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
 
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
