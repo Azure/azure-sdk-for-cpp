@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
 
 ### Bug Fixes
 
