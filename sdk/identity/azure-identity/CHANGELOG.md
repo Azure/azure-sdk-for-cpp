@@ -5,7 +5,7 @@
 
 ## 1.0.0-beta.2 (2021-01-13)
 
-### Breaking Changes 
+### Breaking Changes
 
 - Moved `Azure::Identity::Version`, defined in `azure/identity/version.hpp` to the `Azure::Identity::Details` namespace.
 
