@@ -246,9 +246,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
+      if (i.Tier.HasValue() && !i.IsAccessTierInferred.HasValue())
+      {
+        i.IsAccessTierInferred = false;
+      }
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
       {
         i.IsCurrentVersion = false;
+      }
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.IsSealed)
+      {
+        i.IsSealed = false;
       }
     }
     return response;
@@ -309,6 +317,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto blobClient = GetBlobClient(blobName);
     auto response = blobClient.Delete(options);
     return Azure::Core::Response<void>(response.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
+      const std::string& blobName,
+      Azure::Core::Http::BodyStream* content,
+      const UploadBlockBlobOptions& options) const
+  {
+    auto blockBlobClient = GetBlockBlobClient(blobName);
+    auto response = blockBlobClient.Upload(content, options);
+    return Azure::Core::Response<BlockBlobClient>(
+        std::move(blockBlobClient), response.ExtractRawResponse());
   }
 
 }}} // namespace Azure::Storage::Blobs

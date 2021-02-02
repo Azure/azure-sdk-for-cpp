@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    Models::ListBlobContainersIncludeItem Include = Models::ListBlobContainersIncludeItem::None;
+    Models::ListBlobContainersIncludeFlags Include = Models::ListBlobContainersIncludeFlags::None;
   };
 
   /**
@@ -419,7 +419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies one or more datasets to include in the response.
      */
-    Models::ListBlobsIncludeItem Include = Models::ListBlobsIncludeItem::None;
+    Models::ListBlobsIncludeFlags Include = Models::ListBlobsIncludeFlags::None;
   };
 
   /**
@@ -611,6 +611,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
+     * @brief When specified together with Range, service returns hash for the range as long as the
+     * range is less than or equal to 4 MiB in size.
+     */
+    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
+
+    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
@@ -631,22 +637,25 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Nullable<Core::Http::Range> Range;
 
-    /**
-     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
-     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
-     * in chunks of size ChunkSize.
-     */
-    Azure::Core::Nullable<int64_t> InitialChunkSize;
+    struct
+    {
+      /**
+       * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
+       * downloaded in a single request. Blobs larger than this limit will continue being downloaded
+       * in chunks of size ChunkSize.
+       */
+      int64_t InitialChunkSize = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+      /**
+       * @brief The maximum number of bytes in a single request.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   /**
@@ -891,15 +900,25 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Nullable<Models::AccessTier> Tier;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+    struct
+    {
+      /**
+       * @brief Blob smaller than this will be uploaded with a single upload operation. This value
+       * cannot be larger than 5000 MiB.
+       */
+      int64_t SingleUploadThreshold = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of bytes in a single request. This value cannot be larger than
+       * 4000 MiB.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
+
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   /**

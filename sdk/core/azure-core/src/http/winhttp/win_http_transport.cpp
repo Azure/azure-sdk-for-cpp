@@ -189,7 +189,8 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<Details::HandleManage
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
   handleManager->m_sessionHandle = WinHttpOpen(
-      L"WinHTTP Azure SDK",
+      NULL, // Do not use a fallback user-agent string, and only rely on the header within the
+            // request itself.
       WINHTTP_ACCESS_TYPE_NO_PROXY,
       WINHTTP_NO_PROXY_NAME,
       WINHTTP_NO_PROXY_BYPASS,

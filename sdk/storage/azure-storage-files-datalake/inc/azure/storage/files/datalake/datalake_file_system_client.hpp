@@ -201,6 +201,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const SetDataLakeFileSystemAccessPolicyOptions& options
         = SetDataLakeFileSystemAccessPolicyOptions()) const;
 
+    /**
+     * @brief Renames a file. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param fileName The file that gets renamed.
+     * @param destinationFilePath The path of the file the source file is renaming to.
+     * @param options Optional parameters to rename a file
+     * @return Azure::Core::Response<DataLakeFileClient> The client targets the renamed file.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<DataLakeFileClient> RenameFile(
+        const std::string& fileName,
+        const std::string& destinationFilePath,
+        const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions()) const;
+
+    /**
+     * @brief Renames a directory. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param directoryName The directory that gets renamed.
+     * @param destinationDirectoryPath The destinationPath the source directory is renaming to.
+     * @param options Optional parameters to rename a directory.
+     * @return Azure::Core::Response<DataLakeDirectoryClient> The client targets the renamed
+     * directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<DataLakeDirectoryClient> RenameDirectory(
+        const std::string& directoryName,
+        const std::string& destinationDirectoryPath,
+        const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions()) const;
+
   private:
     Azure::Core::Http::Url m_dfsUrl;
     Blobs::BlobContainerClient m_blobContainerClient;

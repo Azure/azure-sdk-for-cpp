@@ -5,6 +5,7 @@
 
 #include <azure/storage/common/crypt.hpp>
 
+#include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
@@ -64,5 +65,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       ++cur;
     }
     return std::string(begin, end);
+  }
+
+  bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata)
+  {
+    auto ite = metadata.find(DataLakeIsDirectoryKey);
+    return ite != metadata.end() && ite->second == "true";
   }
 }}}}} // namespace Azure::Storage::Files::DataLake::Details

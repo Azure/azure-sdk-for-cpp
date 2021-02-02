@@ -1,25 +1,29 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the Key Vault Keys client.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/response.hpp>
-#include <azure/keyvault/common/keyvault_pipeline.hpp>
+#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/key_client_options.hpp"
+#include "azure/keyvault/keys/key_constants.hpp"
+#include "azure/keyvault/keys/key_create_options.hpp"
+#include "azure/keyvault/keys/key_request_parameters.hpp"
+#include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 #include <functional>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
-  namespace Details {
-    constexpr static const char* KeysPath = "keys";
-    constexpr static const char* DeletedKeysPath = "deletedkeys";
-  } // namespace Details
 
   /**
    * @brief The KeyClient provides synchronous methods to manage a KeyVaultKe in the Azure Key
@@ -52,11 +56,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       /**
        * @brief Context for cancelling long running operations.
        */
-      Azure::Core::Context context;
+      Azure::Core::Context Context;
       /**
        * @brief Specify the key version to get.
        */
-      std::string version;
+      std::string Version;
     };
 
     /**
@@ -75,12 +79,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         GetKeyOptions const& options = GetKeyOptions()) const
     {
       return m_pipeline->SendRequest<KeyVaultKey>(
-          options.context,
+          options.Context,
           Azure::Core::Http::HttpMethod::Get,
           [name](Azure::Core::Http::RawResponse const& rawResponse) {
             return Details::KeyVaultKeyDeserialize(name, rawResponse);
           },
-          {Details::KeysPath, name, options.version});
+          {Details::KeysPath, name, options.Version});
+    }
+
+    /**
+     * @brief Creates and stores a new key in Key Vault. The create key operation can be used to
+     * create any key type in Azure Key Vault. If the named key already exists, Azure Key Vault
+     * creates a new version of the key. It requires the keys/create permission.
+     *
+     * @param name The name of the key.
+     * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::KeyTypeEnum.
+     * @param options Optional parameters for this operation. See
+     * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateKey(
+        std::string const& name,
+        KeyTypeEnum keyType,
+        CreateKeyOptions const& options = CreateKeyOptions()) const
+    {
+      return m_pipeline->SendRequest<KeyVaultKey>(
+          options.Context,
+          Azure::Core::Http::HttpMethod::Post,
+          Details::KeyRequestParameters(keyType, options),
+          [name](Azure::Core::Http::RawResponse const& rawResponse) {
+            return Details::KeyVaultKeyDeserialize(name, rawResponse);
+          },
+          {Details::KeysPath, name, "create"});
     }
   };
 

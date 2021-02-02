@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& container : res->Items)
       {
         EXPECT_FALSE(container.Name.empty());
-        EXPECT_FALSE(container.ETag.empty());
+        EXPECT_TRUE(container.ETag.HasValue());
         EXPECT_TRUE(IsValidTime(container.LastModified));
         EXPECT_FALSE(container.IsDeleted);
         EXPECT_FALSE(container.VersionId.HasValue());
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
       options.Prefix = containerName;
-      options.Include = Blobs::Models::ListBlobContainersIncludeItem::Deleted;
+      options.Include = Blobs::Models::ListBlobContainersIncludeFlags::Deleted;
       do
       {
         auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);

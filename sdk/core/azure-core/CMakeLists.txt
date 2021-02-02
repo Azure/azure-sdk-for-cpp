@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -51,6 +51,7 @@ set(
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
     inc/azure/core/internal/strings.hpp

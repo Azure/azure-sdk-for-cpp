@@ -33,9 +33,9 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: keyvault
-      CtestRegex: azure-security-keyvault
-      LiveTestCtestRegex: live-azure-security-keyvault
-      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+      CtestRegex: "azure-security-keyvault.*-unittest"
+      LiveTestCtestRegex: "azure-security-keyvault.*-livetest"
+      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       Artifacts:
         - Name: azure-security-keyvault-common
           Path: azure-security-keyvault-common

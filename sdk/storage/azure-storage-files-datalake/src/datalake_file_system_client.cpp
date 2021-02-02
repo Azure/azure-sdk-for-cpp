@@ -402,4 +402,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
+  Azure::Core::Response<DataLakeFileClient> DataLakeFileSystemClient::RenameFile(
+      const std::string& fileName,
+      const std::string& destinationFilePath,
+      const RenameDataLakeFileOptions& options) const
+  {
+    return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options);
+  }
+
+  Azure::Core::Response<DataLakeDirectoryClient> DataLakeFileSystemClient::RenameDirectory(
+      const std::string& directoryName,
+      const std::string& destinationDirectoryPath,
+      const RenameDataLakeDirectoryOptions& options) const
+  {
+    return this->GetDirectoryClient("").RenameSubdirectory(
+        directoryName, destinationDirectoryPath, options);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake
