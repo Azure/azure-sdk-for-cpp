@@ -424,9 +424,13 @@ DateTime::operator std::chrono::system_clock::time_point() const
 
 DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
 {
-  int16_t year;
-  int8_t month;
-  int8_t day;
+  // The values that are not supposed to be read before they are written are set to -123... to avoid
+  // warnings on some compilers, yet provide a clearly bad value to make it obvious if things don't
+  // work as expected.
+  int16_t year = -12345;
+  int8_t month = -123;
+  int8_t day = -123;
+
   int8_t hour = 0;
   int8_t minute = 0;
   int8_t second = 0;
@@ -739,13 +743,17 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
   }
 
   int16_t year = 1;
-  int8_t month;
-  int8_t day;
-  int8_t hour;
-  int8_t minute;
-  int8_t second;
-  int32_t fracSec;
-  int8_t dayOfWeek;
+
+  // The values that are not supposed to be read before they are written are set to -123... to avoid
+  // warnings on some compilers, yet provide a clearly bad value to make it obvious if things don't
+  // work as expected.
+  int8_t month = -123;
+  int8_t day = -123;
+  int8_t hour = -123;
+  int8_t minute = -123;
+  int8_t second = -123;
+  int32_t fracSec = -1234567890;
+  int8_t dayOfWeek = -123;
   {
     auto remainder = time_since_epoch().count();
 
