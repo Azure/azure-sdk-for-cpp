@@ -86,7 +86,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
 
     {
-      Azure::Core::Http::GetTokenOptions const tokenOptions = {{Storage::Details::StorageScope}};
+      Azure::Core::Http::TokenRequestOptions const tokenOptions
+          = {{Storage::Details::StorageScope}};
+
       policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
           credential, tokenOptions));
     }

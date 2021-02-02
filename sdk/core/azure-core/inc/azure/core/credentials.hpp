@@ -36,7 +36,7 @@ namespace Azure { namespace Core {
   };
 
   namespace Http {
-    struct GetTokenOptions;
+    struct TokenRequestOptions;
   } // namespace Http
 
   /**
@@ -48,11 +48,11 @@ namespace Azure { namespace Core {
      * @brief Get an authentication token.
      *
      * @param context #Context so that operation can be cancelled.
-     * @param getTokenOptions Options to get the token.
+     * @param tokenRequestOptions Options to get the token.
      */
     virtual AccessToken GetToken(
         Context const& context,
-        Http::GetTokenOptions const& getTokenOptions) const = 0;
+        Http::TokenRequestOptions const& tokenRequestOptions) const = 0;
 
     /// Destructor.
     virtual ~TokenCredential() = default;

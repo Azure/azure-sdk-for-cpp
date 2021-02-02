@@ -28,7 +28,9 @@ KeyClient::KeyClient(
   policies.emplace_back(std::make_unique<RetryPolicy>(options.RetryOptions));
 
   {
-    Azure::Core::Http::GetTokenOptions const tokenOptions = {{"https://vault.azure.net/.default"}};
+    Azure::Core::Http::TokenRequestOptions const tokenOptions
+        = {{"https://vault.azure.net/.default"}};
+
     policies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }

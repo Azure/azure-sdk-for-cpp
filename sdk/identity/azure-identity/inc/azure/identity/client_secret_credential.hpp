@@ -17,15 +17,15 @@
 #include <utility>
 
 namespace Azure { namespace Identity {
+  namespace Details {
+    AZ_IDENTITY_DLLEXPORT static std::string const g_aadGlobalAuthority;
+  }
 
   /**
    * @brief Defines options for token authentication.
    */
-  struct TokenCredentialOptions
+  struct ClientSecretCredentialOptions
   {
-  private:
-    AZ_IDENTITY_DLLEXPORT static std::string const g_aadGlobalAuthority;
-
   public:
     /**
      * @brief Authentication authority URL.
@@ -36,7 +36,7 @@ namespace Azure { namespace Identity {
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = g_aadGlobalAuthority;
+    std::string AuthorityHost = Details::g_aadGlobalAuthority;
 
     /**
      * @brief #TransportPolicyOptions for authentication HTTP pipeline.
@@ -53,7 +53,7 @@ namespace Azure { namespace Identity {
     std::string m_tenantId;
     std::string m_clientId;
     std::string m_clientSecret;
-    TokenCredentialOptions m_options;
+    ClientSecretCredentialOptions m_options;
 
   public:
     /**
@@ -62,13 +62,13 @@ namespace Azure { namespace Identity {
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
      * @param clientSecret Client Secret.
-     * @param options #TokenCredentialOptions.
+     * @param options #ClientSecretCredentialOptions.
      */
     explicit ClientSecretCredential(
         std::string tenantId,
         std::string clientId,
         std::string clientSecret,
-        TokenCredentialOptions options = TokenCredentialOptions())
+        ClientSecretCredentialOptions options = ClientSecretCredentialOptions())
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
           m_clientSecret(std::move(clientSecret)), m_options(std::move(options))
     {
@@ -76,7 +76,7 @@ namespace Azure { namespace Identity {
 
     Core::AccessToken GetToken(
         Core::Context const& context,
-        Core::Http::GetTokenOptions const& options) const override;
+        Core::Http::TokenRequestOptions const& tokenRequestOptions) const override;
   };
 
 }} // namespace Azure::Identity

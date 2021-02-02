@@ -309,7 +309,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Defines options for getting token.
    */
-  struct GetTokenOptions
+  struct TokenRequestOptions
   {
     /**
      * @brief Authentication scopes.
@@ -323,7 +323,7 @@ namespace Azure { namespace Core { namespace Http {
   class BearerTokenAuthenticationPolicy : public HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
-    GetTokenOptions m_getTokenOptions;
+    TokenRequestOptions m_tokenRequestOptions;
 
     mutable AccessToken m_accessToken;
     mutable std::mutex m_accessTokenMutex;
@@ -336,18 +336,18 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Construct a Bearer Token authentication policy.
      *
      * @param credential A #TokenCredential to use with this policy.
-     * @param getTokenOptions #GetTokenOptions.
+     * @param tokenRequestOptions #TokenRequestOptions.
      */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
-        GetTokenOptions getTokenOptions)
-        : m_credential(std::move(credential)), m_getTokenOptions(std::move(getTokenOptions))
+        TokenRequestOptions tokenRequestOptions)
+        : m_credential(std::move(credential)), m_tokenRequestOptions(std::move(tokenRequestOptions))
     {
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_getTokenOptions);
+      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestOptions);
     }
 
     std::unique_ptr<RawResponse> Send(
