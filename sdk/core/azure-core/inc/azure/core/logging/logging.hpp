@@ -51,9 +51,9 @@ namespace Azure { namespace Core { namespace Logging {
 
   /**
    * @brief Sets the maximul #LogLevel an application is interested in receiving.
-   * @detail Default is #LogLevel::Verbose
+   * @detail Default is #LogLevel::Verbose.
    *
-   * @param logClassifications Log classification values.
+   * @param level Maximum log level.
    */
   void SetMaximumLogLevel(LogLevel level);
 }}} // namespace Azure::Core::Logging

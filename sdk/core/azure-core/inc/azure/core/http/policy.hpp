@@ -380,7 +380,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Logs every HTTP request.
    *
-   * @detail Logs every HTTP request, response, or retry attempt (see #LogClassification)
+   * @detail Logs every HTTP request, response, or retry attempt
    * @remark See #logging.hpp
    */
   class LoggingPolicy : public HttpPolicy {
