@@ -1,7 +1,10 @@
 # Release History
 
-## 1.0.0-beta.3 (Unreleased)
+## 1.0.0-beta.3 (2021-02-02)
 
+### Breaking Changes
+
+- `ClientSecretCredential ` constructor takes `ClientSecretCredentialOptions` struct instead of authority host string. `TokenCredentialOptions` struct has authority host string as data member.
 
 ## 1.0.0-beta.2 (2021-01-13)
 

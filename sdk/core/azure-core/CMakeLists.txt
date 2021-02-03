@@ -112,8 +112,6 @@ add_library(Azure::azure-core ALIAS azure-core)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core azure-core-test)
 
-# ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
-target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
 if(MSVC)
@@ -125,7 +123,7 @@ else()
 endif()
 
 if(BUILD_TRANSPORT_CURL)
-  target_link_libraries(azure-core PRIVATE CURL::libcurl)
+  target_link_libraries(azure-core PUBLIC CURL::libcurl)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   target_link_libraries(azure-core PRIVATE winhttp)

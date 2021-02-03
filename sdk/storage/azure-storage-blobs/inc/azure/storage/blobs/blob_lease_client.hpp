@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<Models::AcquireBlobLeaseResult> Acquire(
         std::chrono::seconds duration,
-        const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions());
+        const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions()) const;
 
     /**
      * @brief Renews the blob or blob container's previously-acquired lease.
@@ -80,17 +80,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A RenewBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<Models::RenewBlobLeaseResult> Renew(
-        const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions());
+        const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions()) const;
 
     /**
      * @brief Releases the blob or blob container's previously-acquired lease.
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseBlobLeaseResult describing the updated container.
+     * @return A ReleaseBlobLeaseResult describing the updated container or blob.
      */
     Azure::Core::Response<Models::ReleaseBlobLeaseResult> Release(
-        const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions());
+        const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
 
     /**
      * @brief Changes the lease of an active lease.
@@ -98,11 +98,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return A ChangeBlobLeaseResult describing the lease.
+     * @return A ChangeBlobLeaseResult describing the changed lease.
+     * @remarks The current BlobLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<Models::ChangeBlobLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions());
+        const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
 
     /**
      * @brief Breaks the previously-acquired lease.
@@ -111,7 +112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BreakBlobLeaseResult describing the broken lease.
      */
     Azure::Core::Response<Models::BreakBlobLeaseResult> Break(
-        const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions());
+        const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
 
   private:
     Azure::Core::Nullable<BlobClient> m_blobClient;

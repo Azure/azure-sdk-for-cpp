@@ -88,8 +88,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::Http::BearerTokenAuthenticationPolicy>(
-        credential, Storage::Details::StorageScope));
+
+    {
+      Azure::Core::Http::TokenRequestOptions const tokenOptions
+          = {{Storage::Details::StorageScope}};
+
+      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+          credential, tokenOptions));
+    }
+
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -180,7 +187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     {
       // In case network failure during reading the body
-      Azure::Core::ETag eTag = downloadResponse->ETag;
+      const Azure::Core::ETag eTag = downloadResponse->Details.ETag;
 
       auto retryFunction
           = [this, options, eTag](
@@ -210,13 +217,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
     if (downloadResponse->BlobType == Models::BlobType::AppendBlob
-        && !downloadResponse->IsSealed.HasValue())
+        && !downloadResponse->Details.IsSealed.HasValue())
     {
-      downloadResponse->IsSealed = false;
+      downloadResponse->Details.IsSealed = false;
     }
-    if (downloadResponse->VersionId.HasValue() && !downloadResponse->IsCurrentVersion.HasValue())
+    if (downloadResponse->Details.VersionId.HasValue()
+        && !downloadResponse->Details.IsCurrentVersion.HasValue())
     {
-      downloadResponse->IsCurrentVersion = false;
+      downloadResponse->Details.IsCurrentVersion = false;
     }
     return downloadResponse;
   }
@@ -245,6 +253,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     auto firstChunk = Download(firstChunkOptions);
+    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
 
     const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
@@ -278,40 +287,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
-      // Do not move ETag, we're gonna use it later
-      ret.ETag = response->ETag;
-      ret.LastModified = std::move(response->LastModified);
-      ret.CreatedOn = std::move(response->CreatedOn);
-      ret.ExpiresOn = std::move(response->ExpiresOn);
-      ret.LastAccessedOn = std::move(response->LastAccessedOn);
-      ret.HttpHeaders = std::move(response->HttpHeaders);
-      ret.Metadata = std::move(response->Metadata);
-      ret.SequenceNumber = std::move(response->SequenceNumber);
-      ret.CommittedBlockCount = std::move(response->CommittedBlockCount);
-      ret.IsSealed = std::move(response->IsSealed);
       ret.BlobType = std::move(response->BlobType);
-      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
-      ret.LeaseDuration = std::move(response->LeaseDuration);
-      ret.LeaseState = std::move(response->LeaseState);
-      ret.LeaseStatus = std::move(response->LeaseStatus);
-      ret.IsServerEncrypted = response->IsServerEncrypted;
-      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
-      ret.EncryptionScope = std::move(response->EncryptionScope);
-      ret.ObjectReplicationDestinationPolicyId
-          = std::move(response->ObjectReplicationDestinationPolicyId);
-      ret.ObjectReplicationSourceProperties
-          = std::move(response->ObjectReplicationSourceProperties);
-      ret.TagCount = std::move(response->TagCount);
-      ret.CopyId = std::move(response->CopyId);
-      ret.CopySource = std::move(response->CopySource);
-      ret.CopyStatus = std::move(response->CopyStatus);
-      ret.CopyStatusDescription = std::move(response->CopyStatusDescription);
-      ret.CopyProgress = std::move(response->CopyProgress);
-      ret.CopyCompletedOn = std::move(response->CopyCompletedOn);
-      ret.VersionId = std::move(response->VersionId);
-      ret.IsCurrentVersion = std::move(response->IsCurrentVersion);
-      ret.BlobSize = response->BlobSize;
       ret.ContentRange = std::move(response->ContentRange);
+      ret.BlobSize = response->BlobSize;
+      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
+      ret.Details = std::move(response->Details);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
@@ -327,7 +307,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.GetValue().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
-              chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
+              chunkOptions.AccessConditions.IfMatch = eTag;
             }
             auto chunk = Download(chunkOptions);
             int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
@@ -343,6 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (chunkId == numChunks - 1)
             {
               ret = returnTypeConverter(chunk);
+              ret->TransactionalContentHash.Reset();
             }
           };
 
@@ -385,6 +366,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Details::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions);
+    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
 
     const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
@@ -430,40 +412,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
-      // Do not move ETag, we're gonna use it later
-      ret.ETag = response->ETag;
-      ret.LastModified = std::move(response->LastModified);
-      ret.CreatedOn = std::move(response->CreatedOn);
-      ret.ExpiresOn = std::move(response->ExpiresOn);
-      ret.LastAccessedOn = std::move(response->LastAccessedOn);
-      ret.HttpHeaders = std::move(response->HttpHeaders);
-      ret.Metadata = std::move(response->Metadata);
-      ret.SequenceNumber = std::move(response->SequenceNumber);
-      ret.CommittedBlockCount = std::move(response->CommittedBlockCount);
-      ret.IsSealed = std::move(response->IsSealed);
       ret.BlobType = std::move(response->BlobType);
-      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
-      ret.LeaseDuration = std::move(response->LeaseDuration);
-      ret.LeaseState = std::move(response->LeaseState);
-      ret.LeaseStatus = std::move(response->LeaseStatus);
-      ret.IsServerEncrypted = response->IsServerEncrypted;
-      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
-      ret.EncryptionScope = std::move(response->EncryptionScope);
-      ret.ObjectReplicationDestinationPolicyId
-          = std::move(response->ObjectReplicationDestinationPolicyId);
-      ret.ObjectReplicationSourceProperties
-          = std::move(response->ObjectReplicationSourceProperties);
-      ret.TagCount = std::move(response->TagCount);
-      ret.CopyId = std::move(response->CopyId);
-      ret.CopySource = std::move(response->CopySource);
-      ret.CopyStatus = std::move(response->CopyStatus);
-      ret.CopyStatusDescription = std::move(response->CopyStatusDescription);
-      ret.CopyProgress = std::move(response->CopyProgress);
-      ret.CopyCompletedOn = std::move(response->CopyCompletedOn);
-      ret.VersionId = std::move(response->VersionId);
-      ret.IsCurrentVersion = std::move(response->IsCurrentVersion);
-      ret.BlobSize = response->BlobSize;
       ret.ContentRange = std::move(response->ContentRange);
+      ret.BlobSize = response->BlobSize;
+      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
+      ret.Details = std::move(response->Details);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
@@ -479,7 +432,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.GetValue().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
-              chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
+              chunkOptions.AccessConditions.IfMatch = eTag;
             }
             auto chunk = Download(chunkOptions);
             bodyStreamToFile(
@@ -492,6 +445,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (chunkId == numChunks - 1)
             {
               ret = returnTypeConverter(chunk);
+              ret->TransactionalContentHash.Reset();
             }
           };
 
