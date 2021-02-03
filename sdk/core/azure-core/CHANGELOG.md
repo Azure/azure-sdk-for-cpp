@@ -16,6 +16,9 @@
 
 - Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
 - Fixed reading the value from `retry-after` header in `RetryPolicy`.
+- Fix link errors when producing a DLL and add UWP compilation support.
+- Do not pass a placeholder user-agent string as a fallback when using WinHttp.
+- Initialize local variables in implementation to fix warning within release builds on Linux.
 
 ## 1.0.0-beta.4 (2021-01-13)
 
