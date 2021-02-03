@@ -145,14 +145,14 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& container : res->Items)
       {
         EXPECT_FALSE(container.Name.empty());
-        EXPECT_TRUE(container.ETag.HasValue());
-        EXPECT_TRUE(IsValidTime(container.LastModified));
+        EXPECT_TRUE(container.Details.ETag.HasValue());
+        EXPECT_TRUE(IsValidTime(container.Details.LastModified));
         EXPECT_FALSE(container.IsDeleted);
         EXPECT_FALSE(container.VersionId.HasValue());
-        EXPECT_FALSE(container.DeletedOn.HasValue());
-        EXPECT_FALSE(container.RemainingRetentionDays.HasValue());
-        EXPECT_EQ(container.DefaultEncryptionScope, AccountEncryptionKey);
-        EXPECT_FALSE(container.PreventEncryptionScopeOverride);
+        EXPECT_FALSE(container.Details.DeletedOn.HasValue());
+        EXPECT_FALSE(container.Details.RemainingRetentionDays.HasValue());
+        EXPECT_EQ(container.Details.DefaultEncryptionScope, AccountEncryptionKey);
+        EXPECT_FALSE(container.Details.PreventEncryptionScopeOverride);
         listContainers.insert(container.Name);
       }
     } while (options.ContinuationToken.HasValue());
@@ -390,10 +390,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
     EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
     EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
-    EXPECT_TRUE(deletedContainerItem.DeletedOn.HasValue());
-    EXPECT_TRUE(IsValidTime(deletedContainerItem.DeletedOn.GetValue()));
-    EXPECT_TRUE(deletedContainerItem.RemainingRetentionDays.HasValue());
-    EXPECT_GE(deletedContainerItem.RemainingRetentionDays.GetValue(), 0);
+    EXPECT_TRUE(deletedContainerItem.Details.DeletedOn.HasValue());
+    EXPECT_TRUE(IsValidTime(deletedContainerItem.Details.DeletedOn.GetValue()));
+    EXPECT_TRUE(deletedContainerItem.Details.RemainingRetentionDays.HasValue());
+    EXPECT_GE(deletedContainerItem.Details.RemainingRetentionDays.GetValue(), 0);
 
     std::string containerName2 = LowercaseRandomString();
     for (int i = 0; i < 60; ++i)

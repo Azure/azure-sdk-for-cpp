@@ -43,34 +43,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Models::FileSystemItem fileSystem;
         fileSystem.Name = std::move(item.Name);
-        fileSystem.ETag = std::move(item.ETag);
-        fileSystem.LastModified = std::move(item.LastModified);
-        fileSystem.Metadata = std::move(item.Metadata);
-        if (item.AccessType == Blobs::Models::PublicAccessType::BlobContainer)
+        fileSystem.ETag = std::move(item.Details.ETag);
+        fileSystem.LastModified = std::move(item.Details.LastModified);
+        fileSystem.Metadata = std::move(item.Details.Metadata);
+        if (item.Details.AccessType == Blobs::Models::PublicAccessType::BlobContainer)
         {
           fileSystem.AccessType = Models::PublicAccessType::FileSystem;
         }
-        else if (item.AccessType == Blobs::Models::PublicAccessType::Blob)
+        else if (item.Details.AccessType == Blobs::Models::PublicAccessType::Blob)
         {
           fileSystem.AccessType = Models::PublicAccessType::Path;
         }
-        else if (item.AccessType == Blobs::Models::PublicAccessType::None)
+        else if (item.Details.AccessType == Blobs::Models::PublicAccessType::None)
         {
           fileSystem.AccessType = Models::PublicAccessType::None;
         }
         else
         {
-          fileSystem.AccessType = Models::PublicAccessType(item.AccessType.Get());
+          fileSystem.AccessType = Models::PublicAccessType(item.Details.AccessType.Get());
         }
-        fileSystem.HasImmutabilityPolicy = item.HasImmutabilityPolicy;
-        fileSystem.HasLegalHold = item.HasLegalHold;
-        if (item.LeaseDuration.HasValue())
+        fileSystem.HasImmutabilityPolicy = item.Details.HasImmutabilityPolicy;
+        fileSystem.HasLegalHold = item.Details.HasLegalHold;
+        if (item.Details.LeaseDuration.HasValue())
         {
           fileSystem.LeaseDuration
-              = Models::LeaseDurationType((item.LeaseDuration.GetValue().Get()));
+              = Models::LeaseDurationType((item.Details.LeaseDuration.GetValue().Get()));
         }
-        fileSystem.LeaseState = Models::LeaseStateType(item.LeaseState.Get());
-        fileSystem.LeaseStatus = Models::LeaseStatusType(item.LeaseStatus.Get());
+        fileSystem.LeaseState = Models::LeaseStateType(item.Details.LeaseState.Get());
+        fileSystem.LeaseStatus = Models::LeaseStatusType(item.Details.LeaseStatus.Get());
 
         fileSystems.emplace_back(std::move(fileSystem));
       }
