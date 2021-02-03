@@ -154,12 +154,15 @@ std::vector<double> ZipAvg(
 void RunTests(
     Azure::Core::Context const& context,
     std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> const& tests,
-    Azure::Core::Nullable<int> rate,
-    int duration,
-    std::string const& title)
+    Azure::PerformanceStress::GlobalTestOptions const& options,
+    std::string const& title,
+    bool warmup = false)
 {
-  (void)rate;
-  auto parallelTestsCount = tests.size();
+  auto parallelTestsCount = options.Parallel;
+  auto durationInSeconds = warmup ? options.Warmup : options.Duration;
+  // auto jobStatistics = warmup ? false : options.JobStatistics;
+  // auto latency = warmup ? false : options.Latency;
+
   std::vector<int> completedOperations(parallelTestsCount);
   std::vector<std::chrono::nanoseconds> lastCompletionTimes(parallelTestsCount);
 
@@ -182,19 +185,24 @@ void RunTests(
         }
       });
 
+  /********************* parallel test creation ******************************/
   std::vector<std::thread> tasks(tests.size());
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread(
-        [index, &tests, &completedOperations, &lastCompletionTimes, &context, &duration]() {
-          RunLoop(
-              *tests[index],
-              completedOperations[index],
-              lastCompletionTimes[index],
-              false,
-              context.WithDeadline(
-                  std::chrono::system_clock::now() + std::chrono::seconds(duration)));
-        });
+    tasks[index] = std::thread([index,
+                                &tests,
+                                &completedOperations,
+                                &lastCompletionTimes,
+                                &context,
+                                &durationInSeconds]() {
+      RunLoop(
+          *tests[index],
+          completedOperations[index],
+          lastCompletionTimes[index],
+          false,
+          context.WithDeadline(
+              std::chrono::system_clock::now() + std::chrono::seconds(durationInSeconds)));
+    });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -266,6 +274,7 @@ void Azure::PerformanceStress::Program::Run(
     parallelTest[i] = testGenerator(Azure::PerformanceStress::TestOptions(argResults));
   }
 
+  /******************** Global Set up ******************************/
   test->GlobalSetup();
 
   /******************** Set up ******************************/
@@ -285,7 +294,7 @@ void Azure::PerformanceStress::Program::Run(
   /******************** WarmUp ******************************/
   if (options.Warmup)
   {
-    RunTests(context, parallelTest, options.Rate, options.Warmup, "Warmup");
+    RunTests(context, parallelTest, options, "Warmup", true);
   }
 
   /******************** Tests ******************************/
@@ -296,6 +305,6 @@ void Azure::PerformanceStress::Program::Run(
     {
       iterationInfo.append(FormatNumber(iteration));
     }
-    RunTests(context, parallelTest, options.Rate, options.Duration, "Test" + iterationInfo);
+    RunTests(context, parallelTest, options, "Test" + iterationInfo);
   }
 }
