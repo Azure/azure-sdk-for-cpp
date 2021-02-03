@@ -135,10 +135,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    explicit DataLakeLeaseClient(Blobs::BlobLeaseClient blobLeaseClient)
-        : m_blobLeaseClient(std::move(blobLeaseClient))
-    {
-    }
     Blobs::BlobLeaseClient m_blobLeaseClient;
   };
 
