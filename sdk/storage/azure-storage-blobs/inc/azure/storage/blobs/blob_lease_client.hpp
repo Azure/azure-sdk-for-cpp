@@ -99,6 +99,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @return A new BlobLeaseClient referencing the new lease.
+     * @remarks The current BlobLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<BlobLeaseClient> Change(
         const std::string& proposedLeaseId,

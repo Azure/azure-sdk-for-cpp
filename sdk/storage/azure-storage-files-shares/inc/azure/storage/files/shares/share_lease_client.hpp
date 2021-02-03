@@ -76,6 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @return A ChangeShareLeaseResult describing the lease.
+     * @remarks The current ShareLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<ShareLeaseClient> Change(
         const std::string& proposedLeaseId,

@@ -113,6 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @return A new DataLakeLeaseClient referencing the new lease.
+     * @remarks The current DataLakeLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<DataLakeLeaseClient> Change(
         const std::string& proposedLeaseId,
