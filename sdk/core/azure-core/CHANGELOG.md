@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 - Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- `BearerTokenAuthenticationPolicy` constructor takes `TokenRequestOptions` struct instead of scopes vector. `TokenRequestOptions` struct has scopes vector as data member.
+- `TokenCredential::GetToken()` takes `TokenRequestOptions` instead of scopes vector.
 
 ### Bug Fixes
 
