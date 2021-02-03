@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return AChangeDataLakeLeaseResult describing the changed lease.
+     * @return A ChangeDataLakeLeaseResult describing the changed lease.
      * @remarks The current DataLakeLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<Models::ChangeDataLakeLeaseResult> Change(

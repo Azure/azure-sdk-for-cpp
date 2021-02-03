@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseBlobLeaseResult describing updated container or blob.
+     * @return A ReleaseBlobLeaseResult describing the updated container or blob.
      */
     Azure::Core::Response<Models::ReleaseBlobLeaseResult> Release(
         const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;

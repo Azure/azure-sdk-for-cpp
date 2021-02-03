@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseShareLeaseResult describing the updated container.
+     * @return A ReleaseShareLeaseResult describing the updated share or file.
      */
     Azure::Core::Response<Models::ReleaseShareLeaseResult> Release(
         const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions()) const;
