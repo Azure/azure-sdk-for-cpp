@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  Azure::Core::Response<BlobLeaseClient> BlobLeaseClient::Change(
+  Azure::Core::Response<Models::ChangeBlobLeaseResult> BlobLeaseClient::Change(
       const std::string& proposedLeaseId,
       const ChangeBlobLeaseOptions& options) const
   {
@@ -230,10 +230,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      BlobLeaseClient newClient(m_blobClient.GetValue(), ret.LeaseId);
-
-      return Azure::Core::Response<BlobLeaseClient>(
-          std::move(newClient), response.ExtractRawResponse());
+      return Azure::Core::Response<Models::ChangeBlobLeaseResult>(
+          std::move(ret), response.ExtractRawResponse());
     }
     else if (m_blobContainerClient.HasValue())
     {
@@ -262,9 +260,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      BlobLeaseClient newClient(m_blobContainerClient.GetValue(), ret.LeaseId);
-      return Azure::Core::Response<BlobLeaseClient>(
-          std::move(newClient), response.ExtractRawResponse());
+      return Azure::Core::Response<Models::ChangeBlobLeaseResult>(
+          std::move(ret), response.ExtractRawResponse());
     }
     else
     {

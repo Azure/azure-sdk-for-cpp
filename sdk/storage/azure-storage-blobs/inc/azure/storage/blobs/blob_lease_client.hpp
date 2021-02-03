@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseBlobLeaseResult describing the updated container.
+     * @return A ReleaseBlobLeaseResult describing updated container or blob.
      */
     Azure::Core::Response<Models::ReleaseBlobLeaseResult> Release(
         const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
@@ -98,10 +98,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return A new BlobLeaseClient referencing the new lease.
+     * @return A ChangeBlobLeaseResult describing the changed lease.
      * @remarks The current BlobLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Core::Response<BlobLeaseClient> Change(
+    Azure::Core::Response<Models::ChangeBlobLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
 

@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseDataLakeLeaseResult describing the updated container.
+     * @return A ReleaseDataLakeLeaseResult describing the updated container or blob.
      */
     Azure::Core::Response<Models::ReleaseDataLakeLeaseResult> Release(
         const ReleaseDataLakeLeaseOptions& options = ReleaseDataLakeLeaseOptions()) const
@@ -112,16 +112,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return A new DataLakeLeaseClient referencing the new lease.
+     * @return AChangeDataLakeLeaseResult describing the changed lease.
      * @remarks The current DataLakeLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Core::Response<DataLakeLeaseClient> Change(
+    Azure::Core::Response<Models::ChangeDataLakeLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeDataLakeLeaseOptions& options = ChangeDataLakeLeaseOptions()) const
     {
-      auto response = m_blobLeaseClient.Change(proposedLeaseId, options);
-      return Azure::Core::Response<DataLakeLeaseClient>(
-          DataLakeLeaseClient(*response), response.ExtractRawResponse());
+      return m_blobLeaseClient.Change(proposedLeaseId, options);
     }
 
     /**

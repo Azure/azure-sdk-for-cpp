@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  Azure::Core::Response<ShareLeaseClient> ShareLeaseClient::Change(
+  Azure::Core::Response<Models::ChangeShareLeaseResult> ShareLeaseClient::Change(
       const std::string& proposedLeaseId,
       const ChangeShareLeaseOptions& options) const
   {
@@ -163,10 +163,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      ShareLeaseClient newClient(m_fileClient.GetValue(), ret.LeaseId);
-
-      return Azure::Core::Response<ShareLeaseClient>(
-          std::move(newClient), response.ExtractRawResponse());
+      return Azure::Core::Response<Models::ChangeShareLeaseResult>(
+          std::move(ret), response.ExtractRawResponse());
     }
     else if (m_shareClient.HasValue())
     {
@@ -185,10 +183,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      ShareLeaseClient newClient(m_shareClient.GetValue(), ret.LeaseId);
-
-      return Azure::Core::Response<ShareLeaseClient>(
-          std::move(newClient), response.ExtractRawResponse());
+      return Azure::Core::Response<Models::ChangeShareLeaseResult>(
+          std::move(ret), response.ExtractRawResponse());
     }
     else
     {
