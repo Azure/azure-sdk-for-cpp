@@ -291,8 +291,8 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          EXPECT_TRUE(blob.IsSealed.HasValue());
-          EXPECT_FALSE(blob.IsSealed.GetValue());
+          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
+          EXPECT_FALSE(blob.Details.IsSealed.GetValue());
         }
       }
     } while (options.ContinuationToken.HasValue());
@@ -324,8 +324,8 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          EXPECT_TRUE(blob.IsSealed.HasValue());
-          EXPECT_TRUE(blob.IsSealed.GetValue());
+          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
+          EXPECT_TRUE(blob.Details.IsSealed.GetValue());
         }
       }
     } while (options.ContinuationToken.HasValue());
