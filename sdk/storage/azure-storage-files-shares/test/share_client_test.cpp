@@ -453,8 +453,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_TRUE(shareClients.find(shareItem.Name) != shareClients.end());
       properties = *shareClients.at(shareItem.Name).GetProperties();
-      EXPECT_EQ(
-          true, shareItem.Details.AccessTier.HasValue() && properties.AccessTier.HasValue());
+      EXPECT_EQ(true, shareItem.Details.AccessTier.HasValue() && properties.AccessTier.HasValue());
       EXPECT_EQ(shareItem.Details.AccessTier.GetValue(), properties.AccessTier.GetValue());
       EXPECT_EQ(
           true,
