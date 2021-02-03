@@ -305,34 +305,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
-    ret.FileDetails.ETag = std::move(result->Details.ETag);
-    ret.FileDetails.LastModified = std::move(result->Details.LastModified);
+    ret.Details.ETag = std::move(result->Details.ETag);
+    ret.Details.LastModified = std::move(result->Details.LastModified);
     if (result->Details.LeaseDuration.HasValue())
     {
-      ret.FileDetails.LeaseDuration
+      ret.Details.LeaseDuration
           = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().Get());
     }
-    ret.FileDetails.LeaseState = result->Details.LeaseState.HasValue()
+    ret.Details.LeaseState = result->Details.LeaseState.HasValue()
         ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
-        : ret.FileDetails.LeaseState;
-    ret.FileDetails.LeaseStatus = result->Details.LeaseStatus.HasValue()
+        : ret.Details.LeaseState;
+    ret.Details.LeaseStatus = result->Details.LeaseStatus.HasValue()
         ? FromBlobLeaseStatus(result->Details.LeaseStatus.GetValue())
-        : ret.FileDetails.LeaseStatus;
-    ret.FileDetails.Metadata = std::move(result->Details.Metadata);
-    ret.FileDetails.CreatedOn = std::move(result->Details.CreatedOn);
-    ret.FileDetails.ExpiresOn = std::move(result->Details.ExpiresOn);
-    ret.FileDetails.LastAccessedOn = std::move(result->Details.LastAccessedOn);
-    ret.FileDetails.CopyId = std::move(result->Details.CopyId);
-    ret.FileDetails.CopySource = std::move(result->Details.CopySource);
-    ret.FileDetails.CopyStatus = std::move(result->Details.CopyStatus);
-    ret.FileDetails.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
-    ret.FileDetails.CopyProgress = std::move(result->Details.CopyProgress);
-    ret.FileDetails.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
-    ret.FileDetails.VersionId = std::move(result->Details.VersionId);
-    ret.FileDetails.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
-    ret.FileDetails.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
-    ret.FileDetails.EncryptionScope = std::move(result->Details.EncryptionScope);
-    ret.FileDetails.IsServerEncrypted = result->Details.IsServerEncrypted;
+        : ret.Details.LeaseStatus;
+    ret.Details.Metadata = std::move(result->Details.Metadata);
+    ret.Details.CreatedOn = std::move(result->Details.CreatedOn);
+    ret.Details.ExpiresOn = std::move(result->Details.ExpiresOn);
+    ret.Details.LastAccessedOn = std::move(result->Details.LastAccessedOn);
+    ret.Details.CopyId = std::move(result->Details.CopyId);
+    ret.Details.CopySource = std::move(result->Details.CopySource);
+    ret.Details.CopyStatus = std::move(result->Details.CopyStatus);
+    ret.Details.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
+    ret.Details.CopyProgress = std::move(result->Details.CopyProgress);
+    ret.Details.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
+    ret.Details.VersionId = std::move(result->Details.VersionId);
+    ret.Details.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
+    ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
+    ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
+    ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
     ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::DownloadDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -380,34 +380,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentRange.Offset = result->ContentRange.Offset;
     ret.FileSize = result->BlobSize;
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
-    ret.FileDetails.ETag = std::move(result->Details.ETag);
-    ret.FileDetails.LastModified = std::move(result->Details.LastModified);
+    ret.Details.ETag = std::move(result->Details.ETag);
+    ret.Details.LastModified = std::move(result->Details.LastModified);
     if (result->Details.LeaseDuration.HasValue())
     {
-      ret.FileDetails.LeaseDuration
+      ret.Details.LeaseDuration
           = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().Get());
     }
-    ret.FileDetails.LeaseState = result->Details.LeaseState.HasValue()
+    ret.Details.LeaseState = result->Details.LeaseState.HasValue()
         ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
-        : ret.FileDetails.LeaseState;
-    ret.FileDetails.LeaseStatus = result->Details.LeaseStatus.HasValue()
+        : ret.Details.LeaseState;
+    ret.Details.LeaseStatus = result->Details.LeaseStatus.HasValue()
         ? FromBlobLeaseStatus(result->Details.LeaseStatus.GetValue())
-        : ret.FileDetails.LeaseStatus;
-    ret.FileDetails.Metadata = std::move(result->Details.Metadata);
-    ret.FileDetails.CreatedOn = std::move(result->Details.CreatedOn);
-    ret.FileDetails.ExpiresOn = std::move(result->Details.ExpiresOn);
-    ret.FileDetails.LastAccessedOn = std::move(result->Details.LastAccessedOn);
-    ret.FileDetails.CopyId = std::move(result->Details.CopyId);
-    ret.FileDetails.CopySource = std::move(result->Details.CopySource);
-    ret.FileDetails.CopyStatus = std::move(result->Details.CopyStatus);
-    ret.FileDetails.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
-    ret.FileDetails.CopyProgress = std::move(result->Details.CopyProgress);
-    ret.FileDetails.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
-    ret.FileDetails.VersionId = std::move(result->Details.VersionId);
-    ret.FileDetails.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
-    ret.FileDetails.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
-    ret.FileDetails.EncryptionScope = std::move(result->Details.EncryptionScope);
-    ret.FileDetails.IsServerEncrypted = result->Details.IsServerEncrypted;
+        : ret.Details.LeaseStatus;
+    ret.Details.Metadata = std::move(result->Details.Metadata);
+    ret.Details.CreatedOn = std::move(result->Details.CreatedOn);
+    ret.Details.ExpiresOn = std::move(result->Details.ExpiresOn);
+    ret.Details.LastAccessedOn = std::move(result->Details.LastAccessedOn);
+    ret.Details.CopyId = std::move(result->Details.CopyId);
+    ret.Details.CopySource = std::move(result->Details.CopySource);
+    ret.Details.CopyStatus = std::move(result->Details.CopyStatus);
+    ret.Details.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
+    ret.Details.CopyProgress = std::move(result->Details.CopyProgress);
+    ret.Details.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
+    ret.Details.VersionId = std::move(result->Details.VersionId);
+    ret.Details.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
+    ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
+    ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
+    ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
     return Azure::Core::Response<Models::DownloadDataLakeFileToResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -422,34 +422,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentRange.Offset = result->ContentRange.Offset;
     ret.FileSize = result->BlobSize;
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
-    ret.FileDetails.ETag = std::move(result->Details.ETag);
-    ret.FileDetails.LastModified = std::move(result->Details.LastModified);
+    ret.Details.ETag = std::move(result->Details.ETag);
+    ret.Details.LastModified = std::move(result->Details.LastModified);
     if (result->Details.LeaseDuration.HasValue())
     {
-      ret.FileDetails.LeaseDuration
+      ret.Details.LeaseDuration
           = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().Get());
     }
-    ret.FileDetails.LeaseState = result->Details.LeaseState.HasValue()
+    ret.Details.LeaseState = result->Details.LeaseState.HasValue()
         ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
-        : ret.FileDetails.LeaseState;
-    ret.FileDetails.LeaseStatus = result->Details.LeaseStatus.HasValue()
+        : ret.Details.LeaseState;
+    ret.Details.LeaseStatus = result->Details.LeaseStatus.HasValue()
         ? FromBlobLeaseStatus(result->Details.LeaseStatus.GetValue())
-        : ret.FileDetails.LeaseStatus;
-    ret.FileDetails.Metadata = std::move(result->Details.Metadata);
-    ret.FileDetails.CreatedOn = std::move(result->Details.CreatedOn);
-    ret.FileDetails.ExpiresOn = std::move(result->Details.ExpiresOn);
-    ret.FileDetails.LastAccessedOn = std::move(result->Details.LastAccessedOn);
-    ret.FileDetails.CopyId = std::move(result->Details.CopyId);
-    ret.FileDetails.CopySource = std::move(result->Details.CopySource);
-    ret.FileDetails.CopyStatus = std::move(result->Details.CopyStatus);
-    ret.FileDetails.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
-    ret.FileDetails.CopyProgress = std::move(result->Details.CopyProgress);
-    ret.FileDetails.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
-    ret.FileDetails.VersionId = std::move(result->Details.VersionId);
-    ret.FileDetails.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
-    ret.FileDetails.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
-    ret.FileDetails.EncryptionScope = std::move(result->Details.EncryptionScope);
-    ret.FileDetails.IsServerEncrypted = result->Details.IsServerEncrypted;
+        : ret.Details.LeaseStatus;
+    ret.Details.Metadata = std::move(result->Details.Metadata);
+    ret.Details.CreatedOn = std::move(result->Details.CreatedOn);
+    ret.Details.ExpiresOn = std::move(result->Details.ExpiresOn);
+    ret.Details.LastAccessedOn = std::move(result->Details.LastAccessedOn);
+    ret.Details.CopyId = std::move(result->Details.CopyId);
+    ret.Details.CopySource = std::move(result->Details.CopySource);
+    ret.Details.CopyStatus = std::move(result->Details.CopyStatus);
+    ret.Details.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
+    ret.Details.CopyProgress = std::move(result->Details.CopyProgress);
+    ret.Details.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
+    ret.Details.VersionId = std::move(result->Details.VersionId);
+    ret.Details.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
+    ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
+    ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
+    ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
     return Azure::Core::Response<Models::DownloadDataLakeFileToResult>(
         std::move(ret), result.ExtractRawResponse());
   }

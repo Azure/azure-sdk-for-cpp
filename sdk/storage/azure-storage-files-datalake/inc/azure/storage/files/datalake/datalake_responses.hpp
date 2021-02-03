@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
 
-  struct DataLakeFileSystemItemDetails
+  struct FileSystemItemDetails
   {
     Azure::Core::ETag ETag;
     Azure::Core::DateTime LastModified;
@@ -29,12 +29,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Available;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
-  }; // struct DataLakeFileSystemItemDetails
+  }; // struct FileSystemItemDetails
 
   struct FileSystemItem
   {
     std::string Name;
-    DataLakeFileSystemItemDetails FileSystemItemDetails;
+    FileSystemItemDetails Details;
   }; // struct BlobContainerItem
 
   struct ListFileSystemsSinglePageResult
@@ -254,7 +254,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     int64_t FileSize = int64_t();
     Azure::Core::Http::Range ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
-    DownloadDataLakeFileDetails FileDetails;
+    DownloadDataLakeFileDetails Details;
     std::string RequestId;
   };
 
@@ -269,7 +269,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     int64_t FileSize = int64_t();
     Azure::Core::Http::Range ContentRange;
     PathHttpHeaders HttpHeaders;
-    DownloadDataLakeFileDetails FileDetails;
+    DownloadDataLakeFileDetails Details;
   };
 
   using CreateDataLakeFileResult = CreateDataLakePathResult;
