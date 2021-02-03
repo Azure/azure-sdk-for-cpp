@@ -320,12 +320,35 @@ void Azure::PerformanceStress::Program::Run(
 
   /******************** Tests ******************************/
   std::string iterationInfo;
-  for (int iteration = 0; iteration < options.Iterations; iteration++)
+  try
   {
-    if (iteration > 0)
+    for (int iteration = 0; iteration < options.Iterations; iteration++)
     {
-      iterationInfo.append(FormatNumber(iteration));
+      if (iteration > 0)
+      {
+        iterationInfo.append(FormatNumber(iteration));
+      }
+      RunTests(context, parallelTest, options, "Test" + iterationInfo);
     }
-    RunTests(context, parallelTest, options, "Test" + iterationInfo);
+  }
+  catch (std::exception const& error)
+  {
+    std::cout << "Error: " << error.what();
+  }
+
+  /******************** Clean up ******************************/
+  if (!options.NoCleanup)
+  {
+    std::cout << std::endl << "=== Cleanup ===" << std::endl;
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
+    {
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Cleanup(); });
+    }
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
+    test->GlobalCleanup();
   }
 }
