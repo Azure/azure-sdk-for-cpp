@@ -1,10 +1,31 @@
 # Azure SDK performance stress C++
 
-Azure performance stress for C++ (`azure-core`) provides shared primitives, abstractions, and helpers for running performance tests for an Azure SDK Service.
+Azure performance stress for C++ (`azure-performance-stress`) provides shared primitives, abstractions, and helpers for running performance tests for an Azure SDK clients for C++. It represent the C++ version of the [.NET original version](https://github.com/Azure/azure-sdk-for-net/tree/master/common/Perf).
 
 ## Getting started
 
-TODO
+See the [pre-requisites](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pre-requisites) for building before going to the next step.
+
+### Build
+
+Use the build option `BUILD_PERFORMANCE_TESTS` to build the test framework and all the performance tests. See the next example.
+
+```bash
+#
+# Building the Performance framework and tests.
+#
+git clone https://github.com/Azure/azure-sdk-for-cpp.git
+cd azure-sdk-for-cpp
+mkdir build
+cd build
+cmake -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON ..
+cmake --build .
+```
+
+### Run
+
+Once building is completed, a performance test application will be created inside the the test folder from each service SDK. For instance, the Azure core performance test application would be inside: `build/sdk/core/azure-core/test/performance`. See next example for running the performance framework 
+
 
 ## Key concepts
 
