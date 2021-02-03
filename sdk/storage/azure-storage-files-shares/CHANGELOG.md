@@ -7,6 +7,7 @@
 - Added support for `UploadRangeFromUri` in file client.
 - Added support for `SetProperties` in share client. This API supports update share tier and adjusting share's quota.
 - Added support to get share's tier status in `ListSharesSinglePage` and `GetProperties`.
+- Added `ChangedOn`, `FileId`, `ParentId` to the `FileShareSmbProperties`.
 
 ### Breaking Changes
 
@@ -25,6 +26,9 @@
 - `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadShareFileToOptions::TansferOptions`.
 - `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadShareFileFromOptions::TransferOptions`.
 - Removed `SetQuota` related API, result and options. The functionality is moved into `SetProperties`.
+- Moved some less commonly used properties returned when downloading a file into a new structure called `DownloadShareFileDetails`. This will impact the return type of `ShareFileClient::Download` and `ShareFileClient::DownloadTo`.
+- Renamed `FileProperty` to `FileItemDetails` to align with other SDK's naming pattern for returned items for list operation.
+- Renamed `ShareProperties` to `ShareItemDetails` to align with other SDK's naming pattern for returned items for list operation.
 
 ### Other Changes and Improvements
 
