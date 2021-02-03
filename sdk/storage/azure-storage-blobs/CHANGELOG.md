@@ -1,11 +1,13 @@
 # Release History
 
-## 12.0.0-beta.7 (Unreleased)
+## 12.0.0-beta.7 (2021-02-03)
 
 ### New Features
 
 - Added `RequestId` in API return types.
-- Added some new properties in `GetBlobPropertiesResult` and `DownloadBlobResult`.
+- Added some new properties in `GetBlobPropertiesResult`, `DownloadBlobResult` and `DownloadBlobToResult`.
+- Added `RangeHashAlgorithm` in `DownloadBlobOptions`.
+- Added `UploadBlob` in `BlobContainerClient`.
 
 ### Breaking Changes
 
@@ -27,6 +29,7 @@
 - Removed `TagValue` from `FilterBlobItem`, removed `Where` from `FindBlobsByTagsSinglePageResult`.
 - Type for ETag was changed to `Azure::Core::ETag`.
 - Removed `BlobPrefix` struct, use `std::string` instead.
+- Refined `BlobContainerItem`, `BlobItem`, `DownloadBlobResult` and `DownloadBlobToResult`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

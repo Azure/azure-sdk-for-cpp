@@ -568,7 +568,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
    */
-  struct ReadDataLakeFileOptions
+  struct DownloadDataLakeFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -581,14 +581,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
-     * @brief When this header is set to "true" and specified together with the Range header,
-     *        the service returns the MD5 hash for the range, as long as the range is less than
-     *        or equal to 4MB in size. If this header is specified without the Range header,
-     *        the service returns status code 400 (Bad Request). If this header is set to true
-     *        when the range exceeds 4 MB in size, the service returns status code 400 (Bad
-     *        Request).
+     * @brief The hash algorithm used to calculate the hash for the returned content.
      */
-    Azure::Core::Nullable<bool> RangeGetContentMd5;
+    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
 
     /**
      * @brief Specify the access condition for the path.

@@ -184,37 +184,37 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& blob : res->Items)
       {
         EXPECT_FALSE(blob.Name.empty());
-        EXPECT_TRUE(IsValidTime(blob.CreatedOn));
-        EXPECT_TRUE(IsValidTime(blob.LastModified));
-        EXPECT_TRUE(blob.ETag.HasValue());
+        EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
+        EXPECT_TRUE(IsValidTime(blob.Details.LastModified));
+        EXPECT_TRUE(blob.Details.ETag.HasValue());
         EXPECT_FALSE(blob.BlobType.Get().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
-          EXPECT_TRUE(blob.Tier.HasValue());
-          EXPECT_TRUE(blob.IsAccessTierInferred.HasValue());
+          EXPECT_TRUE(blob.Details.Tier.HasValue());
+          EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
         }
-        if (blob.Tier.HasValue())
+        if (blob.Details.Tier.HasValue())
         {
-          EXPECT_FALSE(blob.Tier.GetValue().Get().empty());
+          EXPECT_FALSE(blob.Details.Tier.GetValue().Get().empty());
         }
         if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {
-          if (blob.IsSealed.HasValue())
+          if (blob.Details.IsSealed.HasValue())
           {
-            EXPECT_FALSE(blob.IsSealed.GetValue());
+            EXPECT_FALSE(blob.Details.IsSealed.GetValue());
           }
         }
         else
         {
-          EXPECT_FALSE(blob.IsSealed.HasValue());
+          EXPECT_FALSE(blob.Details.IsSealed.HasValue());
         }
         if (blob.BlobType == Blobs::Models::BlobType::PageBlob)
         {
-          EXPECT_TRUE(blob.SequenceNumber.HasValue());
+          EXPECT_TRUE(blob.Details.SequenceNumber.HasValue());
         }
         else
         {
-          EXPECT_FALSE(blob.SequenceNumber.HasValue());
+          EXPECT_FALSE(blob.Details.SequenceNumber.HasValue());
         }
         listBlobs.insert(blob.Name);
       }
@@ -363,7 +363,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           foundDeleted = true;
         }
-        if (!blob.Metadata.empty())
+        if (!blob.Details.Metadata.empty())
         {
           foundMetadata = true;
         }
@@ -452,6 +452,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
+    leaseClient = Blobs::BlobLeaseClient(containerClient, cLease.LeaseId);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
     auto containerInfo = *leaseClient.Release();
@@ -734,7 +735,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.TagCount.HasValue());
 
     auto downloadRet = blobClient.Download();
-    EXPECT_FALSE(downloadRet->TagCount.HasValue());
+    EXPECT_FALSE(downloadRet->Details.TagCount.HasValue());
 
     std::map<std::string, std::string> tags;
     std::string c1 = "k" + RandomString();
@@ -758,8 +759,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
 
     downloadRet = blobClient.Download();
-    EXPECT_TRUE(downloadRet->TagCount.HasValue());
-    EXPECT_EQ(downloadRet->TagCount.GetValue(), static_cast<int64_t>(tags.size()));
+    EXPECT_TRUE(downloadRet->Details.TagCount.HasValue());
+    EXPECT_EQ(downloadRet->Details.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
 
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());

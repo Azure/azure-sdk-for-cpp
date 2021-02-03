@@ -307,12 +307,23 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief Defines options for getting token.
+   */
+  struct TokenRequestOptions
+  {
+    /**
+     * @brief Authentication scopes.
+     */
+    std::vector<std::string> Scopes;
+  };
+
+  /**
    * @brief Bearer Token authentication policy.
    */
   class BearerTokenAuthenticationPolicy : public HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
-    std::vector<std::string> m_scopes;
+    TokenRequestOptions m_tokenRequestOptions;
 
     mutable AccessToken m_accessToken;
     mutable std::mutex m_accessTokenMutex;
@@ -322,54 +333,21 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct a Bearer Token authentication policy with single authentication scope.
+     * @brief Construct a Bearer Token authentication policy.
      *
      * @param credential A #TokenCredential to use with this policy.
-     * @param scope Authentication scope.
+     * @param tokenRequestOptions #TokenRequestOptions.
      */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
-        std::string scope)
-        : m_credential(std::move(credential))
-    {
-      m_scopes.emplace_back(std::move(scope));
-    }
-
-    /**
-     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
-     *
-     * @param credential A #TokenCredential to use with this policy.
-     * @param scopes A vector of authentication scopes.
-     */
-    explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> credential,
-        std::vector<std::string> scopes)
-        : m_credential(std::move(credential)), m_scopes(std::move(scopes))
-    {
-    }
-
-    /**
-     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
-     *
-     * @tparam A type of scopes sequence iterator.
-     *
-     * @param credential A #TokenCredential to use with this policy.
-     * @param scopesBegin An iterator pointing to begin of the sequence of scopes to use.
-     * @param scopesEnd An iterator pointing to an element after the last element in sequence of
-     * scopes to use.
-     */
-    template <typename ScopesIterator>
-    explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> credential,
-        ScopesIterator const& scopesBegin,
-        ScopesIterator const& scopesEnd)
-        : m_credential(std::move(credential)), m_scopes(scopesBegin, scopesEnd)
+        TokenRequestOptions tokenRequestOptions)
+        : m_credential(std::move(credential)), m_tokenRequestOptions(std::move(tokenRequestOptions))
     {
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_scopes);
+      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestOptions);
     }
 
     std::unique_ptr<RawResponse> Send(

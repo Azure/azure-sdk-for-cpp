@@ -76,11 +76,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::CreatePageBlobResult> PageBlobClient::Create(
-      int64_t blobContentLength,
+      int64_t blobSize,
       const CreatePageBlobOptions& options) const
   {
     Details::BlobRestClient::PageBlob::CreatePageBlobOptions protocolLayerOptions;
-    protocolLayerOptions.BlobContentLength = blobContentLength;
+    protocolLayerOptions.BlobSize = blobSize;
     protocolLayerOptions.SequenceNumber = options.SequenceNumber;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
@@ -207,11 +207,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::ResizePageBlobResult> PageBlobClient::Resize(
-      int64_t blobContentLength,
+      int64_t blobSize,
       const ResizePageBlobOptions& options) const
   {
     Details::BlobRestClient::PageBlob::ResizePageBlobOptions protocolLayerOptions;
-    protocolLayerOptions.BlobContentLength = blobContentLength;
+    protocolLayerOptions.BlobSize = blobSize;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

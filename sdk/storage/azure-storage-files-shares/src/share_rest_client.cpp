@@ -5,6 +5,11 @@
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
+  const ShareAccessTier ShareAccessTier::TransactionOptimized("TransactionOptimized");
+  const ShareAccessTier ShareAccessTier::Hot("Hot");
+  const ShareAccessTier ShareAccessTier::Cool("Cool");
+  const ShareAccessTier ShareAccessTier::Premium("Premium");
+
   const PermissionCopyModeType PermissionCopyModeType::Source("source");
   const PermissionCopyModeType PermissionCopyModeType::Override("override");
 

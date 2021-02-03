@@ -151,8 +151,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::Http::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::StorageScope));
+
+    {
+      Azure::Core::Http::TokenRequestOptions const tokenOptions
+          = {{Storage::Details::StorageScope}};
+
+      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+          credential, tokenOptions));
+    }
+
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -386,8 +393,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
     ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
-    ret.FileSize = result->ContentLength;
+    ret.FileSize = result->BlobSize;
     ret.RequestId = std::move(result->RequestId);
+    ret.ArchiveStatus = std::move(result->ArchiveStatus);
+    ret.RehydratePriority = std::move(result->RehydratePriority);
+    ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
+    ret.IsIncrementalCopy = std::move(result->IsIncrementalCopy);
+    ret.IncrementalCopyDestinationSnapshot = std::move(result->IncrementalCopyDestinationSnapshot);
+    ret.VersionId = std::move(result->VersionId);
+    ret.IsCurrentVersion = std::move(result->IsCurrentVersion);
+    ret.IsDirectory = Details::MetadataIncidatesIsDirectory(ret.Metadata);
     return Azure::Core::Response<Models::GetDataLakePathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }

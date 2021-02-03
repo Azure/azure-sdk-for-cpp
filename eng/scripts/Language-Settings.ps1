@@ -59,7 +59,7 @@ function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory)
 function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
   $packageInfo = (Get-Content (Join-Path $DocLocation 'package-info.json') | ConvertFrom-Json)
-  $releaseTag = RetrieveReleaseTag "CPP" $PublicArtifactLocation
+  $releaseTag = RetrieveReleaseTag $PublicArtifactLocation
   Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }
 

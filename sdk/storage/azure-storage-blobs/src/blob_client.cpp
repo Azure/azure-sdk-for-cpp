@@ -88,8 +88,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::Http::BearerTokenAuthenticationPolicy>(
-        credential, Storage::Details::StorageScope));
+
+    {
+      Azure::Core::Http::TokenRequestOptions const tokenOptions
+          = {{Storage::Details::StorageScope}};
+
+      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+          credential, tokenOptions));
+    }
+
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -161,6 +168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::Blob::DownloadBlobOptions protocolLayerOptions;
     protocolLayerOptions.Range = options.Range;
+    protocolLayerOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -179,7 +187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     {
       // In case network failure during reading the body
-      Azure::Core::ETag eTag = downloadResponse->ETag;
+      const Azure::Core::ETag eTag = downloadResponse->Details.ETag;
 
       auto retryFunction
           = [this, options, eTag](
@@ -209,13 +217,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
     if (downloadResponse->BlobType == Models::BlobType::AppendBlob
-        && !downloadResponse->IsSealed.HasValue())
+        && !downloadResponse->Details.IsSealed.HasValue())
     {
-      downloadResponse->IsSealed = false;
+      downloadResponse->Details.IsSealed = false;
     }
-    if (downloadResponse->VersionId.HasValue() && !downloadResponse->IsCurrentVersion.HasValue())
+    if (downloadResponse->Details.VersionId.HasValue()
+        && !downloadResponse->Details.IsCurrentVersion.HasValue())
     {
-      downloadResponse->IsCurrentVersion = false;
+      downloadResponse->Details.IsCurrentVersion = false;
     }
     return downloadResponse;
   }
@@ -228,7 +237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
@@ -244,12 +253,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     auto firstChunk = Download(firstChunkOptions);
+    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
 
-    int64_t blobSize;
+    const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -258,7 +267,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -279,13 +287,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
-      ret.ETag = response->ETag;
-      ret.LastModified = std::move(response->LastModified);
-      ret.HttpHeaders = std::move(response->HttpHeaders);
-      ret.Metadata = std::move(response->Metadata);
-      ret.BlobType = response->BlobType;
-      ret.IsServerEncrypted = response->IsServerEncrypted;
-      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
+      ret.BlobType = std::move(response->BlobType);
+      ret.ContentRange = std::move(response->ContentRange);
+      ret.BlobSize = response->BlobSize;
+      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
+      ret.Details = std::move(response->Details);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
@@ -301,7 +307,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.GetValue().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
-              chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
+              chunkOptions.AccessConditions.IfMatch = eTag;
             }
             auto chunk = Download(chunkOptions);
             int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
@@ -317,6 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (chunkId == numChunks - 1)
             {
               ret = returnTypeConverter(chunk);
+              ret->TransactionalContentHash.Reset();
             }
           };
 
@@ -329,7 +336,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.TransferOptions.ChunkSize,
         options.TransferOptions.Concurrency,
         downloadChunkFunc);
-    ret->ContentLength = blobRangeSize;
+    ret->ContentRange.Offset = firstChunkOffset;
+    ret->ContentRange.Length = blobRangeSize;
     return ret;
   }
 
@@ -340,7 +348,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
@@ -358,12 +366,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Details::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions);
+    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
 
-    int64_t blobSize;
+    const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
     if (firstChunkOptions.Range.HasValue())
     {
-      blobSize = firstChunk->BlobSize;
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
@@ -372,7 +380,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -405,13 +412,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
-      ret.ETag = response->ETag;
-      ret.LastModified = std::move(response->LastModified);
-      ret.HttpHeaders = std::move(response->HttpHeaders);
-      ret.Metadata = std::move(response->Metadata);
-      ret.BlobType = response->BlobType;
-      ret.IsServerEncrypted = response->IsServerEncrypted;
-      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
+      ret.BlobType = std::move(response->BlobType);
+      ret.ContentRange = std::move(response->ContentRange);
+      ret.BlobSize = response->BlobSize;
+      ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
+      ret.Details = std::move(response->Details);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
@@ -427,7 +432,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.GetValue().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
-              chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
+              chunkOptions.AccessConditions.IfMatch = eTag;
             }
             auto chunk = Download(chunkOptions);
             bodyStreamToFile(
@@ -440,6 +445,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (chunkId == numChunks - 1)
             {
               ret = returnTypeConverter(chunk);
+              ret->TransactionalContentHash.Reset();
             }
           };
 
@@ -452,7 +458,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.TransferOptions.ChunkSize,
         options.TransferOptions.Concurrency,
         downloadChunkFunc);
-    ret->ContentLength = blobRangeSize;
+    ret->ContentRange.Offset = firstChunkOffset;
+    ret->ContentRange.Length = blobRangeSize;
     return ret;
   }
 

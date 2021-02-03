@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto downloadedContent = fileClient.Read();
+      auto downloadedContent = fileClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->Body).empty());
     };
 

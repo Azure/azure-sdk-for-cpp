@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   };
   using CreateShareSnapshotResult = Details::ShareCreateSnapshotResult;
   using GetSharePropertiesResult = Details::ShareGetPropertiesResult;
-  using SetShareQuotaResult = Details::ShareSetQuotaResult;
+  using SetSharePropertiesResult = Details::ShareSetPropertiesResult;
   using SetShareMetadataResult = Details::ShareSetMetadataResult;
   using SetShareAccessPolicyResult = Details::ShareSetAccessPolicyResult;
   using GetShareStatisticsResult = Details::ShareGetStatisticsResult;
@@ -135,39 +135,100 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     FileAttributes Attributes = static_cast<FileAttributes>(0);
 
     /**
-     * @brief Creation time for the file/directory..
+     * @brief Creation time for the file/directory.
      */
     Azure::Core::Nullable<Core::DateTime> CreatedOn;
 
     /**
-     * @brief Last write time for the file/directory..
+     * @brief Last write time for the file/directory.
      */
     Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
+
+    /**
+     * @brief Changed time for the file/directory.
+     */
+    Azure::Core::Nullable<Core::DateTime> ChangedOn;
+
+    /**
+     * @brief The fileId of the file.
+     */
+    std::string FileId;
+
+    /**
+     * @brief The parentId of the file
+     */
+    std::string ParentId;
   };
 
-  using DownloadShareFileResult = Details::FileDownloadResult;
+  struct DownloadShareFileDetails
+  {
+    Core::DateTime LastModified;
+    Storage::Metadata Metadata;
+    Core::ETag ETag;
+    std::string AcceptRanges;
+    Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+    Azure::Core::Nullable<std::string> CopyStatusDescription;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<CopyStatusType> CopyStatus;
+    bool IsServerEncrypted = bool();
+    FileShareSmbProperties SmbProperties;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+  };
+
+  struct DownloadShareFileResult
+  {
+    std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
+    Azure::Core::Http::Range ContentRange;
+    int64_t FileSize;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+    ShareFileHttpHeaders HttpHeaders;
+    DownloadShareFileDetails Details;
+    std::string RequestId;
+  };
+
   using StartCopyShareFileResult = Details::FileStartCopyResult;
   using AbortCopyShareFileResult = Details::FileAbortCopyResult;
-  using GetShareFilePropertiesResult = Details::FileGetPropertiesResult;
+  struct GetShareFilePropertiesResult
+  {
+    Core::DateTime LastModified;
+    Storage::Metadata Metadata;
+    std::string FileType;
+    int64_t FileSize = int64_t();
+    ShareFileHttpHeaders HttpHeaders;
+    Core::ETag ETag;
+    std::string RequestId;
+    Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+    Azure::Core::Nullable<std::string> CopyStatusDescription;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<CopyStatusType> CopyStatus;
+    bool IsServerEncrypted = bool();
+    FileShareSmbProperties SmbProperties;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+  };
   using SetShareFilePropertiesResult = Details::FileSetHttpHeadersResult;
   using ResizeFileResult = Details::FileSetHttpHeadersResult;
   using SetShareFileMetadataResult = Details::FileSetMetadataResult;
   using UploadShareFileRangeResult = Details::FileUploadRangeResult;
   using ClearShareFileRangeResult = Details::FileUploadRangeResult;
-  using UploadFileRangeFromUrlResult = Details::FileUploadRangeFromUrlResult;
+  using UploadFileRangeFromUriResult = Details::FileUploadRangeFromUrlResult;
   using GetShareFileRangeListResult = Details::FileGetRangeListResult;
   using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
   using ForceCloseAllShareFileHandlesResult = Details::FileForceCloseHandlesResult;
 
   struct DownloadShareFileToResult
   {
-    Azure::Core::ETag ETag;
-    Core::DateTime LastModified;
-    int64_t ContentLength = 0;
+    int64_t FileSize;
+    Azure::Core::Http::Range ContentRange;
     ShareFileHttpHeaders HttpHeaders;
-    Storage::Metadata Metadata;
-    bool IsServerEncrypted = false;
-    std::string RequestId;
+    DownloadShareFileDetails Details;
   };
 
   struct ForceCloseShareFileHandleResult

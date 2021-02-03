@@ -31,7 +31,7 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, Delay& retryAfter)
     return true;
   }
 
-  if ((header = responseHeaders.find("Retry-After")) != responseHeadersEnd)
+  if ((header = responseHeaders.find("retry-after")) != responseHeadersEnd)
   {
     // This header is in seconds.
     retryAfter = std::chrono::seconds(std::stoi(header->second));

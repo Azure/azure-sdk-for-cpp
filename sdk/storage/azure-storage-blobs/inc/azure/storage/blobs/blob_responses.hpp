@@ -21,14 +21,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DownloadBlobToResult
     {
-      Azure::Core::ETag ETag;
-      Azure::Core::DateTime LastModified;
-      int64_t ContentLength = 0;
-      BlobHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
       Models::BlobType BlobType;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Http::Range ContentRange;
+      int64_t BlobSize = 0;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      DownloadBlobDetails Details;
     };
 
     using UploadBlockBlobFromResult = UploadBlockBlobResult;

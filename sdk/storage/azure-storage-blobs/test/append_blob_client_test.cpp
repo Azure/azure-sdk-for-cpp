@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.RequestId.empty());
     EXPECT_TRUE(properties.CommittedBlockCount.HasValue());
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 0);
-    EXPECT_EQ(properties.ContentLength, 0);
+    EXPECT_EQ(properties.BlobSize, 0);
 
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
@@ -65,33 +65,31 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(appendResponse->RequestId.empty());
     properties = *appendBlobClient.GetProperties();
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
-    EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
+    EXPECT_EQ(properties.BlobSize, static_cast<int64_t>(m_blobContent.size()));
 
     Azure::Storage::Blobs::AppendBlockOptions options;
     options.AccessConditions.IfAppendPositionEqual = 1_MB;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
-    options.AccessConditions.IfAppendPositionEqual = properties.ContentLength;
+    options.AccessConditions.IfAppendPositionEqual = properties.BlobSize;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
 
     properties = *appendBlobClient.GetProperties();
     options = Azure::Storage::Blobs::AppendBlockOptions();
     options.AccessConditions.IfMaxSizeLessThanOrEqual
-        = properties.ContentLength + m_blobContent.size() - 1;
+        = properties.BlobSize + m_blobContent.size() - 1;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
-    options.AccessConditions.IfMaxSizeLessThanOrEqual
-        = properties.ContentLength + m_blobContent.size();
+    options.AccessConditions.IfMaxSizeLessThanOrEqual = properties.BlobSize + m_blobContent.size();
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
 
     properties = *appendBlobClient.GetProperties();
-    int64_t originalLength = properties.ContentLength;
+    int64_t originalLength = properties.BlobSize;
     appendBlobClient.AppendBlockFromUri(m_appendBlobClient->GetUrl() + GetSas());
     properties = *appendBlobClient.GetProperties();
-    EXPECT_EQ(
-        properties.ContentLength, static_cast<int64_t>(originalLength + m_blobContent.size()));
+    EXPECT_EQ(properties.BlobSize, static_cast<int64_t>(originalLength + m_blobContent.size()));
 
     auto deleteResponse = appendBlobClient.Delete();
     EXPECT_TRUE(deleteResponse->Deleted);
@@ -276,8 +274,8 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.AppendBlock(&blockContent);
 
     auto downloadResult = blobClient.Download();
-    EXPECT_TRUE(downloadResult->IsSealed.HasValue());
-    EXPECT_FALSE(downloadResult->IsSealed.GetValue());
+    EXPECT_TRUE(downloadResult->Details.IsSealed.HasValue());
+    EXPECT_FALSE(downloadResult->Details.IsSealed.GetValue());
 
     auto getPropertiesResult = blobClient.GetProperties();
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
@@ -293,8 +291,8 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          EXPECT_TRUE(blob.IsSealed.HasValue());
-          EXPECT_FALSE(blob.IsSealed.GetValue());
+          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
+          EXPECT_FALSE(blob.Details.IsSealed.GetValue());
         }
       }
     } while (options.ContinuationToken.HasValue());
@@ -311,8 +309,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(sealResult->IsSealed);
 
     downloadResult = blobClient.Download();
-    EXPECT_TRUE(downloadResult->IsSealed.HasValue());
-    EXPECT_TRUE(downloadResult->IsSealed.GetValue());
+    EXPECT_TRUE(downloadResult->Details.IsSealed.HasValue());
+    EXPECT_TRUE(downloadResult->Details.IsSealed.GetValue());
 
     getPropertiesResult = blobClient.GetProperties();
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
@@ -326,8 +324,8 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          EXPECT_TRUE(blob.IsSealed.HasValue());
-          EXPECT_TRUE(blob.IsSealed.GetValue());
+          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
+          EXPECT_TRUE(blob.Details.IsSealed.GetValue());
         }
       }
     } while (options.ContinuationToken.HasValue());

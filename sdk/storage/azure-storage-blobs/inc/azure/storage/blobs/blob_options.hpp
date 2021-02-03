@@ -611,6 +611,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
+     * @brief When specified together with Range, service returns hash for the range as long as the
+     * range is less than or equal to 4 MiB in size.
+     */
+    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
+
+    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
