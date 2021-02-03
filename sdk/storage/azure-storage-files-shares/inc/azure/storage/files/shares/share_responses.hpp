@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     int64_t FileSize;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     ShareFileHttpHeaders HttpHeaders;
-    DownloadShareFileDetails ShareFileDetails;
+    DownloadShareFileDetails Details;
     std::string RequestId;
   };
 
@@ -228,7 +228,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     int64_t FileSize;
     Azure::Core::Http::Range ContentRange;
     ShareFileHttpHeaders HttpHeaders;
-    DownloadShareFileDetails ShareFileDetails;
+    DownloadShareFileDetails Details;
   };
 
   struct ForceCloseShareFileHandleResult

@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         auto newResponse = Download(newOptions);
-        if (eTag != newResponse->ShareFileDetails.ETag)
+        if (eTag != newResponse->Details.ETag)
         {
           throw Azure::Core::RequestFailedException(
               "File was changed during the download process.");
@@ -306,30 +306,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileSize = downloadResponse->FileSize;
     ret.TransactionalContentHash = std::move(downloadResponse->TransactionalContentHash);
     ret.HttpHeaders = std::move(downloadResponse->HttpHeaders);
-    ret.ShareFileDetails.LastModified = std::move(downloadResponse->LastModified);
-    ret.ShareFileDetails.Metadata = std::move(downloadResponse->Metadata);
-    ret.ShareFileDetails.ETag = std::move(downloadResponse->ETag);
-    ret.ShareFileDetails.AcceptRanges = std::move(downloadResponse->AcceptRanges);
-    ret.ShareFileDetails.CopyCompletedOn = std::move(downloadResponse->CopyCompletedOn);
-    ret.ShareFileDetails.CopyStatusDescription = std::move(downloadResponse->CopyStatusDescription);
-    ret.ShareFileDetails.CopyId = std::move(downloadResponse->CopyId);
-    ret.ShareFileDetails.CopyProgress = std::move(downloadResponse->CopyProgress);
-    ret.ShareFileDetails.CopySource = std::move(downloadResponse->CopySource);
-    ret.ShareFileDetails.CopyStatus = std::move(downloadResponse->CopyStatus);
-    ret.ShareFileDetails.IsServerEncrypted = downloadResponse->IsServerEncrypted;
-    ret.ShareFileDetails.SmbProperties.Attributes
+    ret.Details.LastModified = std::move(downloadResponse->LastModified);
+    ret.Details.Metadata = std::move(downloadResponse->Metadata);
+    ret.Details.ETag = std::move(downloadResponse->ETag);
+    ret.Details.AcceptRanges = std::move(downloadResponse->AcceptRanges);
+    ret.Details.CopyCompletedOn = std::move(downloadResponse->CopyCompletedOn);
+    ret.Details.CopyStatusDescription = std::move(downloadResponse->CopyStatusDescription);
+    ret.Details.CopyId = std::move(downloadResponse->CopyId);
+    ret.Details.CopyProgress = std::move(downloadResponse->CopyProgress);
+    ret.Details.CopySource = std::move(downloadResponse->CopySource);
+    ret.Details.CopyStatus = std::move(downloadResponse->CopyStatus);
+    ret.Details.IsServerEncrypted = downloadResponse->IsServerEncrypted;
+    ret.Details.SmbProperties.Attributes
         = Details::FileAttributesListFromString(downloadResponse->FileAttributes);
-    ret.ShareFileDetails.SmbProperties.CreatedOn = std::move(downloadResponse->FileCreatedOn);
-    ret.ShareFileDetails.SmbProperties.LastWrittenOn
-        = std::move(downloadResponse->FileLastWrittenOn);
-    ret.ShareFileDetails.SmbProperties.ChangedOn = std::move(downloadResponse->FileChangedOn);
-    ret.ShareFileDetails.SmbProperties.PermissionKey
-        = std::move(downloadResponse->FilePermissionKey);
-    ret.ShareFileDetails.SmbProperties.FileId = std::move(downloadResponse->FileId);
-    ret.ShareFileDetails.SmbProperties.ParentId = std::move(downloadResponse->FileParentId);
-    ret.ShareFileDetails.LeaseDuration = std::move(downloadResponse->LeaseDuration);
-    ret.ShareFileDetails.LeaseState = std::move(downloadResponse->LeaseState);
-    ret.ShareFileDetails.LeaseStatus = std::move(downloadResponse->LeaseStatus);
+    ret.Details.SmbProperties.CreatedOn = std::move(downloadResponse->FileCreatedOn);
+    ret.Details.SmbProperties.LastWrittenOn = std::move(downloadResponse->FileLastWrittenOn);
+    ret.Details.SmbProperties.ChangedOn = std::move(downloadResponse->FileChangedOn);
+    ret.Details.SmbProperties.PermissionKey = std::move(downloadResponse->FilePermissionKey);
+    ret.Details.SmbProperties.FileId = std::move(downloadResponse->FileId);
+    ret.Details.SmbProperties.ParentId = std::move(downloadResponse->FileParentId);
+    ret.Details.LeaseDuration = std::move(downloadResponse->LeaseDuration);
+    ret.Details.LeaseState = std::move(downloadResponse->LeaseState);
+    ret.Details.LeaseStatus = std::move(downloadResponse->LeaseStatus);
     return Azure::Core::Response<Models::DownloadShareFileResult>(
         std::move(ret), downloadResponse.ExtractRawResponse());
   }
@@ -690,7 +688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Models::DownloadShareFileToResult ret;
             ret.FileSize = response->FileSize;
             ret.HttpHeaders = std::move(response->HttpHeaders);
-            ret.ShareFileDetails = std::move(response->ShareFileDetails);
+            ret.Details = std::move(response->Details);
             return Azure::Core::Response<Models::DownloadShareFileToResult>(
                 std::move(ret), response.ExtractRawResponse());
           };
@@ -810,7 +808,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Models::DownloadShareFileToResult ret;
             ret.FileSize = response->FileSize;
             ret.HttpHeaders = std::move(response->HttpHeaders);
-            ret.ShareFileDetails = std::move(response->ShareFileDetails);
+            ret.Details = std::move(response->Details);
             return Azure::Core::Response<Models::DownloadShareFileToResult>(
                 std::move(ret), response.ExtractRawResponse());
           };

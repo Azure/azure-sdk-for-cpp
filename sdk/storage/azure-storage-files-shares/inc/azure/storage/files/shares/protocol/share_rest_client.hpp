@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileItem
     {
       std::string Name;
-      FileItemDetails FileDetails;
+      FileItemDetails Details;
     };
 
     // A listed Azure Storage handle item.
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Snapshot;
       bool Deleted = bool();
       std::string Version;
-      ShareItemDetails ShareDetails;
+      ShareItemDetails Details;
       Storage::Metadata ShareMetadata;
     };
 
@@ -2390,7 +2390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
               if (path.size() == 1 && path[0] == XmlTagName::Properties)
               {
-                result.ShareDetails = ShareItemDetailsFromXml(reader);
+                result.Details = ShareItemDetailsFromXml(reader);
                 path.pop_back();
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Metadata)
@@ -4766,7 +4766,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
               if (path.size() == 1 && path[0] == XmlTagName::Properties)
               {
-                result.FileDetails = FileItemDetailsFromXml(reader);
+                result.Details = FileItemDetailsFromXml(reader);
                 path.pop_back();
               }
             }
