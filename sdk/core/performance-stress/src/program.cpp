@@ -116,19 +116,23 @@ inline std::string FormatNumber(double const& number, bool showDecimals = true)
   auto fullString = std::to_string(number);
   auto dot = fullString.find('.');
   auto numberString = std::string(fullString.begin(), fullString.begin() + dot);
-  size_t start = numberString.length() - 3;
-  while (start > 0)
+  if (numberString.size() > 3)
   {
-    numberString.insert(start, ",");
-    if (start < 3)
+    size_t start = numberString.length() - 3;
+    while (start > 0)
     {
-      start = 0;
-    }
-    else
-    {
-      start -= 3;
+      numberString.insert(start, ",");
+      if (start < 3)
+      {
+        start = 0;
+      }
+      else
+      {
+        start -= 3;
+      }
     }
   }
+
   if (showDecimals)
   {
     return numberString + std::string(fullString.begin() + dot, fullString.end());
@@ -239,7 +243,8 @@ inline void RunTests(
 
   std::cout << std::endl
             << "Completed " << FormatNumber(totalOperations, false)
-            << " operations in a weighted-average of " << weightedAverageSeconds << "s ("
+            << " operations in a weighted-average of "
+            << FormatNumber(weightedAverageSeconds, false) << "s ("
             << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
             << std::endl
             << std::endl;
