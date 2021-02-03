@@ -15,7 +15,7 @@
 namespace Azure { namespace PerformanceStress { namespace Test {
 
   /**
-   * @brief The no op test is an empty test use to measure the performance framework alone.
+   * @brief The no op test is an empty test used to measure the performance framework alone.
    *
    */
   class NoOp : public Azure::PerformanceStress::PerformanceTest {
