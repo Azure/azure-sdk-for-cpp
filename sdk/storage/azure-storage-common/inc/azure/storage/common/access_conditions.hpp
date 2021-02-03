@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include <azure/core/etag.hpp>
 #include <azure/core/nullable.hpp>
 
 #include "azure/storage/common/storage_common.hpp"
@@ -38,14 +39,14 @@ namespace Azure { namespace Storage {
      * @brief Specify this header to perform the operation only if the resource's ETag
      * matches the value specified.
      */
-    Azure::Core::Nullable<std::string> IfMatch;
+    Azure::Core::ETag IfMatch;
 
     /**
      * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
+     * not match the value specified. Specify Azure::Core::ETag::Any() to perform the operation
      * only if the resource does not exist, and fail the operation if it does exist.
      */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    Azure::Core::ETag IfNoneMatch;
   };
 
   /**

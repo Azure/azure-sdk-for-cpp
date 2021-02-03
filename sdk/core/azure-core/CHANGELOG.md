@@ -8,13 +8,14 @@
 
 ### Breaking Changes
 
-- Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
 - `BearerTokenAuthenticationPolicy` constructor takes `TokenRequestOptions` struct instead of scopes vector. `TokenRequestOptions` struct has scopes vector as data member.
 - `TokenCredential::GetToken()` takes `TokenRequestOptions` instead of scopes vector.
 
 ### Bug Fixes
 
 - Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
+- Fixed reading the value from `retry-after` header in `RetryPolicy`.
 
 ## 1.0.0-beta.4 (2021-01-13)
 

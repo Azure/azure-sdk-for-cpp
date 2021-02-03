@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Defines the Key Vault Key properties.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/datetime.hpp>
@@ -12,13 +17,6 @@
 #include <unordered_map>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
-  namespace Details {
-    constexpr static const char* ManagedPropertyName = "managed";
-    constexpr static const char* AttributesPropertyName = "attributes";
-    constexpr static const char* TagsPropertyName = "tags";
-    constexpr static const char* ReleasePolicyPropertyName = "release_policy";
-  } // namespace Details
 
   struct KeyProperties
   {

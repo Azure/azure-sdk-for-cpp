@@ -19,4 +19,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       const std::string& string,
       std::string::const_iterator& cur);
 
+  bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata);
+
 }}}}} // namespace Azure::Storage::Files::DataLake::Details

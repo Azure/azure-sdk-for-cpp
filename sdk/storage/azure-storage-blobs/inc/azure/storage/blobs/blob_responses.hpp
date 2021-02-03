@@ -21,14 +21,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DownloadBlobToResult
     {
-      std::string ETag;
-      Azure::Core::DateTime LastModified;
-      int64_t ContentLength = 0;
-      BlobHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
       Models::BlobType BlobType;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Http::Range ContentRange;
+      int64_t BlobSize = 0;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      DownloadBlobDetails Details;
     };
 
     using UploadBlockBlobFromResult = UploadBlockBlobResult;
@@ -36,7 +33,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct AcquireBlobLeaseResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string LeaseId;
     };
@@ -44,7 +41,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct BreakBlobLeaseResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       int32_t LeaseTime = 0;
     };
@@ -52,7 +49,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ChangeBlobLeaseResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string LeaseId;
     };
@@ -60,14 +57,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ReleaseBlobLeaseResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
     };
 
     struct RenewBlobLeaseResult
     {
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string LeaseId;
     };
@@ -75,7 +72,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     class StartCopyBlobResult : public Azure::Core::Operation<GetBlobPropertiesResult> {
     public:
       std::string RequestId;
-      std::string ETag;
+      Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string CopyId;
       Models::CopyStatus CopyStatus;

@@ -68,12 +68,12 @@ TEST(Policy, ValuePolicy)
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
 
-  Azure::Core::Http::Details::ValuePolicyOptions options
+  Azure::Core::Http::Internal::ValuePolicyOptions options
       = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
          {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}};
 
   std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(std::make_unique<Azure::Core::Http::Details::ValuePolicy>(options));
+  policies.emplace_back(std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(options));
   policies.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline(policies);
 

@@ -11,5 +11,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   constexpr static const char* DataLakeFilesystemNotFound = "FilesystemNotFound";
   constexpr static const char* DataLakePathNotFound = "PathNotFound";
   constexpr static const char* DataLakePathAlreadyExists = "PathAlreadyExists";
+  constexpr static const char* DataLakeIsDirectoryKey = "hdi_isFolder";
 
 }}}}} // namespace Azure::Storage::Files::DataLake::Details

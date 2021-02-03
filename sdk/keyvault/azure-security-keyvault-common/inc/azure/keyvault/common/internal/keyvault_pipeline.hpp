@@ -1,11 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Provides a wrapper class for the Azure Core Pipeline for all Key Vault services where
+ * common functionality is set up.
+ *
+ */
+
 #pragma once
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json_serializable.hpp>
 #include <azure/core/response.hpp>
 
 #include <functional>
@@ -34,6 +42,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path) const;
 
+    /**
+     * @brief Create a Key Vault request with payload.
+     *
+     * @param method The HTTP method.
+     * @param content The HTTP payload.
+     * @param path The HTTP request path.
+     * @return A constructed request.
+     */
+    Azure::Core::Http::Request CreateRequest(
+        Azure::Core::Http::HttpMethod method,
+        Azure::Core::Http::BodyStream* content,
+        std::vector<std::string> const& path) const;
+
+    /**
+     * @brief Start the http transfer based on the \p request.
+     *
+     * @param context The context for per-operation options or cancellation.
+     * @param request The HTTP request to be sent.
+     * @return The raw response from the network.
+     */
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Context const& context,
         Azure::Core::Http::Request& request) const;
@@ -54,15 +82,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     }
 
     /**
-     * @brief Create and send the HTTP request using. Uses the result factory function to create
+     * @brief Create and send the HTTP request. Uses the \p factoryFn function to create
      * the response type.
-     *
      *
      * @param context The context for per-operation options or cancellation.
      * @param method The method for the request.
      * @param factoryFn The function to deserialize and produce T from the raw response.
      * @param path A path for the request represented as a vector of strings.
-     * @return Azure::Core::Response<TResult>
+     * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>
     Azure::Core::Response<T> SendRequest(
@@ -72,6 +99,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         std::vector<std::string> const& path)
     {
       auto request = CreateRequest(method, path);
+      auto response = SendRequest(context, request);
+      return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
+    }
+
+    /**
+     * @brief Create and send the HTTP request with payload content. Uses the \p factoryFn function
+     * to create the response type.
+     *
+     * @param context The context for per-operation options or cancellation.
+     * @param method The method for the request.
+     * @param content The HTTP payload.
+     * @param factoryFn The function to deserialize and produce T from the raw response.
+     * @param path A path for the request represented as a vector of strings.
+     * @return The object produced by the \p factoryFn and the raw response from the network.
+     */
+    template <class T>
+    Azure::Core::Response<T> SendRequest(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::HttpMethod method,
+        Azure::Core::Internal::Json::JsonSerializable const& content,
+        std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
+        std::vector<std::string> const& path)
+    {
+      auto serialContent = content.Serialize();
+      auto streamContent = Azure::Core::Http::MemoryBodyStream(
+          reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
+
+      auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
       return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
     }

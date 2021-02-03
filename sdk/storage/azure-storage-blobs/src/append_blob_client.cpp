@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const CreateAppendBlobOptions& options) const
   {
     auto optionsCopy = options;
-    optionsCopy.AccessConditions.IfNoneMatch = ETagWildcard;
+    optionsCopy.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
     try
     {
       return Create(optionsCopy);

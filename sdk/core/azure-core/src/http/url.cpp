@@ -216,7 +216,7 @@ std::string Url::GetAbsoluteUrl() const
   return full_url;
 }
 
-std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
+const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
     = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
        'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
        'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',

@@ -73,6 +73,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileClient)
       {
         auto response = client.GetProperties();
+        EXPECT_FALSE(response->IsDirectory);
         Files::DataLake::DeleteDataLakeFileOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
@@ -132,91 +133,66 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/rename/delete.
-      std::vector<Files::DataLake::DataLakeFileClient> fileClients;
-      for (int32_t i = 0; i < 5; ++i)
-      {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        fileClients.emplace_back(std::move(client));
-      }
-      std::vector<std::string> newPaths;
-      for (auto& client : fileClients)
-      {
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath));
-        newPaths.push_back(newPath);
-      }
-      for (const auto& client : fileClients)
-      {
-        EXPECT_THROW(client.Delete(), StorageException);
-      }
-      for (const auto& newPath : newPaths)
-      {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
-      }
+      auto fileName = RandomString();
+      EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(fileName).Create());
+      std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
+      EXPECT_NO_THROW(
+          ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
+              m_fileSystemClient->RenameFile(fileName, RandomString()).ExtractValue()));
+      EXPECT_THROW(m_fileSystemClient->GetFileClient(fileName).Delete(), StorageException);
+      EXPECT_NO_THROW(ret->Delete());
     }
     {
       // Normal rename with last modified access condition.
-      std::vector<Files::DataLake::DataLakeFileClient> fileClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        fileClient.emplace_back(std::move(client));
-      }
-      for (auto& client : fileClient)
-      {
-        auto response = client.GetProperties();
-        Files::DataLake::RenameDataLakeFileOptions options1;
-        options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
-        Files::DataLake::RenameDataLakeFileOptions options2;
-        options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
-      }
+      auto fileName = RandomString();
+      auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto response = fileClient.GetProperties();
+      Files::DataLake::RenameDataLakeFileOptions options1;
+      options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
+      EXPECT_THROW(
+          m_fileSystemClient->RenameFile(fileName, RandomString(), options1), StorageException);
+      Files::DataLake::RenameDataLakeFileOptions options2;
+      options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
+      std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
+      EXPECT_NO_THROW(
+          ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
+              m_fileSystemClient->RenameFile(fileName, RandomString(), options2).ExtractValue()));
+      EXPECT_THROW(m_fileSystemClient->GetFileClient(fileName).Delete(), StorageException);
+      EXPECT_NO_THROW(ret->Delete());
     }
     {
       // Normal rename with if match access condition.
-      std::vector<Files::DataLake::DataLakeFileClient> fileClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        fileClient.emplace_back(std::move(client));
-      }
-      for (auto& client : fileClient)
-      {
-        auto response = client.GetProperties();
-        Files::DataLake::RenameDataLakeFileOptions options1;
-        options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
-        Files::DataLake::RenameDataLakeFileOptions options2;
-        options2.SourceAccessConditions.IfMatch = response->ETag;
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
-      }
+      auto fileName = RandomString();
+      auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto response = fileClient.GetProperties();
+      Files::DataLake::RenameDataLakeFileOptions options1;
+      options1.SourceAccessConditions.IfNoneMatch = response->ETag;
+      EXPECT_THROW(
+          m_fileSystemClient->RenameFile(fileName, RandomString(), options1), StorageException);
+      Files::DataLake::RenameDataLakeFileOptions options2;
+      options2.SourceAccessConditions.IfMatch = response->ETag;
+      std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
+      EXPECT_NO_THROW(
+          ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
+              m_fileSystemClient->RenameFile(fileName, RandomString(), options2).ExtractValue()));
+      EXPECT_THROW(m_fileSystemClient->GetFileClient(fileName).Delete(), StorageException);
+      EXPECT_THROW(fileClient.GetProperties(), StorageException);
+      EXPECT_NO_THROW(ret->Delete());
     }
     {
       // Rename to a destination file system.
-      std::vector<Files::DataLake::DataLakeFileClient> fileClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        fileClient.emplace_back(std::move(client));
-      }
+      auto fileName = RandomString();
+      auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+      EXPECT_NO_THROW(fileClient.Create());
       {
         // Rename to a non-existing file system will fail but will not change URI.
         Files::DataLake::RenameDataLakeFileOptions options;
         options.DestinationFileSystem = LowercaseRandomString();
-        for (auto& client : fileClient)
-        {
-          EXPECT_THROW(client.Rename(RandomString(), options), StorageException);
-          EXPECT_NO_THROW(client.GetProperties());
-        }
+        EXPECT_THROW(
+            m_fileSystemClient->RenameFile(fileName, RandomString(), options), StorageException);
+        EXPECT_NO_THROW(fileClient.GetProperties());
       }
       {
         // Rename to an existing file system will succeed and changes URI.
@@ -227,12 +203,12 @@ namespace Azure { namespace Storage { namespace Test {
         newfileSystemClient->Create();
         Files::DataLake::RenameDataLakeFileOptions options;
         options.DestinationFileSystem = newfileSystemName;
-        for (auto& client : fileClient)
-        {
-          auto newPath = RandomString();
-          EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
-        }
+        std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
+        EXPECT_NO_THROW(
+            ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
+                m_fileSystemClient->RenameFile(fileName, RandomString(), options).ExtractValue()));
+        EXPECT_THROW(fileClient.GetProperties(), StorageException);
+        EXPECT_NO_THROW(ret->Delete());
       }
     }
   }
@@ -344,7 +320,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(properties2->ETag, properties3->ETag);
 
     // Read
-    auto result = m_fileClient->Read();
+    auto result = m_fileClient->Download();
     auto downloaded = ReadBodyStream(result->Body);
     EXPECT_EQ(buffer, downloaded);
   }
@@ -375,7 +351,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(properties2->ETag, properties3->ETag);
 
     // Read
-    auto result = newFileClient->Read();
+    auto result = newFileClient->Download();
     auto downloaded = ReadBodyStream(result->Body);
     EXPECT_EQ(buffer, downloaded);
     EXPECT_EQ(bufferSize, result->FileSize);
@@ -385,11 +361,11 @@ namespace Azure { namespace Storage { namespace Test {
     // Read Range
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
-      Files::DataLake::ReadDataLakeFileOptions options;
+      Files::DataLake::DownloadDataLakeFileOptions options;
       options.Range = Azure::Core::Http::Range();
       options.Range.GetValue().Offset = 0;
       options.Range.GetValue().Length = bufferSize / 2;
-      result = newFileClient->Read(options);
+      result = newFileClient->Download(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(firstHalf.size(), downloaded.size());
       EXPECT_EQ(firstHalf, downloaded);
@@ -399,11 +375,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
-      Files::DataLake::ReadDataLakeFileOptions options;
+      Files::DataLake::DownloadDataLakeFileOptions options;
       options.Range = Azure::Core::Http::Range();
       options.Range.GetValue().Offset = bufferSize / 2;
       options.Range.GetValue().Length = bufferSize / 2;
-      result = newFileClient->Read(options);
+      result = newFileClient->Download(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(secondHalf, downloaded);
       EXPECT_EQ(bufferSize, result->FileSize);
@@ -413,25 +389,25 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Read with last modified access condition.
       auto response = newFileClient->GetProperties();
-      Files::DataLake::ReadDataLakeFileOptions options1;
+      Files::DataLake::DownloadDataLakeFileOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_TRUE(IsValidTime(response->LastModified));
-      EXPECT_THROW(newFileClient->Read(options1), StorageException);
-      Files::DataLake::ReadDataLakeFileOptions options2;
+      EXPECT_THROW(newFileClient->Download(options1), StorageException);
+      Files::DataLake::DownloadDataLakeFileOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-      EXPECT_NO_THROW(result = newFileClient->Read(options2));
+      EXPECT_NO_THROW(result = newFileClient->Download(options2));
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(buffer, downloaded);
     }
     {
       // Read with if match access condition.
       auto response = newFileClient->GetProperties();
-      Files::DataLake::ReadDataLakeFileOptions options1;
+      Files::DataLake::DownloadDataLakeFileOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(newFileClient->Read(options1), StorageException);
-      Files::DataLake::ReadDataLakeFileOptions options2;
+      EXPECT_THROW(newFileClient->Download(options1), StorageException);
+      Files::DataLake::DownloadDataLakeFileOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
-      EXPECT_NO_THROW(result = newFileClient->Read(options2));
+      EXPECT_NO_THROW(result = newFileClient->Download(options2));
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(buffer, downloaded);
     }
@@ -485,14 +461,14 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
 
       Azure::Storage::Files::DataLake::UploadDataLakeFileFromOptions options;
-      options.ChunkSize = 1_MB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 1_MB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
       auto res
           = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
       auto lastModified = fileClient.GetProperties()->LastModified;
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
@@ -514,8 +490,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
 
       Azure::Storage::Files::DataLake::UploadDataLakeFileFromOptions options;
-      options.ChunkSize = 1_MB;
-      options.Concurrency = concurrency;
+      options.TransferOptions.ChunkSize = 1_MB;
+      options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
@@ -526,7 +502,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
       auto lastModified = fileClient.GetProperties()->LastModified;
-      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(res->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
@@ -570,7 +546,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, ConstructorsWorks)
   {
     {
-      // Create from connection string validates static creator function and shared key constructor.
+      // Create from connection string validates static creator function and shared key
+      // constructor.
       auto fileName = RandomString(10);
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
@@ -617,7 +594,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 
-      EXPECT_NO_THROW(anonymousClient.Read());
+      EXPECT_NO_THROW(anonymousClient.Download());
     }
   }
 }}} // namespace Azure::Storage::Test

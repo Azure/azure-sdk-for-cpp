@@ -109,13 +109,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new page blob of the specified size. The content of any existing
      * blob is overwritten with the newly initialized page blob.
      *
-     * @param blobContentLength Specifies the maximum size for the page blob. The size must be
+     * @param blobSize Specifies the maximum size for the page blob. The size must be
      * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
      * @return A CreatePageBlobResult describing the newly created page blob.
      */
     Azure::Core::Response<Models::CreatePageBlobResult> Create(
-        int64_t blobContentLength,
+        int64_t blobSize,
         const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
 
     /**
@@ -189,13 +189,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * specified value is less than the current size of the blob, then all pages above the specified
      * value are cleared.
      *
-     * @param blobContentLength Specifies the maximum size for the page blob. The size must be
+     * @param blobSize Specifies the maximum size for the page blob. The size must be
      * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
      * @return A ResizePageBlobResult describing the resized page blob.
      */
     Azure::Core::Response<Models::ResizePageBlobResult> Resize(
-        int64_t blobContentLength,
+        int64_t blobSize,
         const ResizePageBlobOptions& options = ResizePageBlobOptions()) const;
 
     /**

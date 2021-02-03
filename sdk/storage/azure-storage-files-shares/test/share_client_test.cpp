@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
         EXPECT_FALSE(createResult->Created);
-        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_FALSE(createResult->ETag.HasValue());
         EXPECT_EQ(Core::DateTime(), createResult->LastModified);
         auto deleted = client.Delete()->Deleted;
         EXPECT_TRUE(deleted);
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, ShareQuota)
+  TEST_F(FileShareClientTest, ShareProperties)
   {
     const int32_t quota32GB = 32;
     const int32_t quota64GB = 64;
@@ -153,16 +153,19 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set quota /Get properties works
-      EXPECT_NO_THROW(m_shareClient->SetQuota(quota32GB));
+      Files::Shares::SetSharePropertiesOptions options;
+      options.ShareQuotaInGiB = quota32GB;
+      EXPECT_NO_THROW(m_shareClient->SetProperties(options));
       auto result = m_shareClient->GetProperties();
       EXPECT_EQ(quota32GB, result->Quota);
-      EXPECT_NO_THROW(m_shareClient->SetQuota(quota64GB));
+      options.ShareQuotaInGiB = quota64GB;
+      EXPECT_NO_THROW(m_shareClient->SetProperties(options));
       result = m_shareClient->GetProperties();
       EXPECT_EQ(quota64GB, result->Quota);
     }
 
     {
-      // Create file system with quota works
+      // Create share with quota works
       auto client1 = Files::Shares::ShareClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
       auto client2 = Files::Shares::ShareClient::CreateFromConnectionString(
@@ -182,7 +185,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Limit/negative cases:
-      EXPECT_NO_THROW(m_shareClient->SetQuota(quota5120GB));
+      Files::Shares::SetSharePropertiesOptions options;
+      options.ShareQuotaInGiB = quota5120GB;
+      EXPECT_NO_THROW(m_shareClient->SetProperties(options));
       auto result = m_shareClient->GetProperties()->Quota;
       EXPECT_EQ(quota5120GB, result);
     }
@@ -203,7 +208,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto lmt = m_shareClient->GetAccessPolicy()->LastModified;
     auto ret = m_shareClient->SetAccessPolicy(identifiers);
-    EXPECT_FALSE(ret->ETag.empty());
+    EXPECT_TRUE(ret->ETag.HasValue());
     EXPECT_FALSE(ret->LastModified < lmt);
 
     auto ret2 = m_shareClient->GetAccessPolicy();
@@ -360,5 +365,147 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(fileUrl, m_shareClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(fileName));
     }
+  }
+
+  TEST_F(FileShareClientTest, ShareTierRelated)
+  {
+    // Create/Get properties works
+    std::unordered_map<std::string, Files::Shares::ShareClient> shareClients;
+    std::string prefix = LowercaseRandomString(5);
+    Files::Shares::Models::GetSharePropertiesResult properties;
+    {
+      auto shareName = prefix + LowercaseRandomString(5);
+      auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), shareName);
+      auto options = Files::Shares::CreateShareOptions();
+      options.AccessTier = Files::Shares::Models::ShareAccessTier::TransactionOptimized;
+      EXPECT_NO_THROW(shareClient.Create(options));
+      EXPECT_NO_THROW(properties = *shareClient.GetProperties());
+      EXPECT_EQ(
+          Files::Shares::Models::ShareAccessTier::TransactionOptimized,
+          properties.AccessTier.GetValue());
+      EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
+      EXPECT_EQ(properties.LastModified, properties.AccessTierChangeTime.GetValue());
+      shareClients.emplace(std::move(shareName), std::move(shareClient));
+    }
+    {
+      auto shareName = prefix + LowercaseRandomString(5);
+      auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), shareName);
+      auto options = Files::Shares::CreateShareOptions();
+      options.AccessTier = Files::Shares::Models::ShareAccessTier::Hot;
+      EXPECT_NO_THROW(shareClient.Create(options));
+      EXPECT_NO_THROW(properties = *shareClient.GetProperties());
+      EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Hot, properties.AccessTier.GetValue());
+      EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
+      EXPECT_EQ(properties.LastModified, properties.AccessTierChangeTime.GetValue());
+      shareClients.emplace(std::move(shareName), std::move(shareClient));
+    }
+    {
+      auto shareName = prefix + LowercaseRandomString(5);
+      auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), shareName);
+      auto options = Files::Shares::CreateShareOptions();
+      options.AccessTier = Files::Shares::Models::ShareAccessTier::Cool;
+      EXPECT_NO_THROW(shareClient.Create(options));
+      EXPECT_NO_THROW(properties = *shareClient.GetProperties());
+      EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Cool, properties.AccessTier.GetValue());
+      EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
+      EXPECT_EQ(properties.LastModified, properties.AccessTierChangeTime.GetValue());
+      shareClients.emplace(std::move(shareName), std::move(shareClient));
+    }
+
+    // Set properties works
+    {
+      auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), LowercaseRandomString(10));
+      auto options = Files::Shares::CreateShareOptions();
+      options.AccessTier = Files::Shares::Models::ShareAccessTier::Cool;
+      EXPECT_NO_THROW(shareClient.Create(options));
+      EXPECT_EQ(
+          Files::Shares::Models::ShareAccessTier::Cool,
+          shareClient.GetProperties()->AccessTier.GetValue());
+
+      auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
+      setPropertiesOptions.AccessTier = Files::Shares::Models::ShareAccessTier::Hot;
+      EXPECT_NO_THROW(shareClient.SetProperties(setPropertiesOptions));
+      properties = *shareClient.GetProperties();
+      if (properties.AccessTierTransitionState.HasValue())
+      {
+        EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Cool, properties.AccessTier.GetValue());
+      }
+      else
+      {
+        EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Hot, properties.AccessTier.GetValue());
+      }
+      EXPECT_EQ(properties.LastModified, properties.AccessTierChangeTime.GetValue());
+    }
+
+    // List shares works.
+    Files::Shares::ListSharesSinglePageOptions listOptions;
+    listOptions.Prefix = prefix;
+    auto shareItems = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+                          StandardStorageConnectionString())
+                          .ListSharesSinglePage(listOptions)
+                          ->Items;
+    EXPECT_EQ(3U, shareItems.size());
+    for (const auto& shareItem : shareItems)
+    {
+      EXPECT_TRUE(shareClients.find(shareItem.Name) != shareClients.end());
+      properties = *shareClients.at(shareItem.Name).GetProperties();
+      EXPECT_EQ(
+          true, shareItem.Properties.AccessTier.HasValue() && properties.AccessTier.HasValue());
+      EXPECT_EQ(shareItem.Properties.AccessTier.GetValue(), properties.AccessTier.GetValue());
+      EXPECT_EQ(
+          true,
+          shareItem.Properties.AccessTierChangeTime.HasValue()
+              && properties.AccessTierChangeTime.HasValue());
+      EXPECT_EQ(
+          shareItem.Properties.AccessTierChangeTime.GetValue(),
+          properties.AccessTierChangeTime.GetValue());
+      EXPECT_EQ(
+          false,
+          shareItem.Properties.AccessTierTransitionState.HasValue()
+              || properties.AccessTierTransitionState.HasValue());
+    }
+  }
+
+  TEST_F(FileShareClientTest, PremiumShare)
+  {
+    auto shareName = LowercaseRandomString(10);
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        PremiumFileConnectionString(), shareName);
+    EXPECT_NO_THROW(shareClient.Create());
+    Files::Shares::Models::GetSharePropertiesResult properties;
+    EXPECT_NO_THROW(properties = *shareClient.GetProperties());
+    EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Premium, properties.AccessTier.GetValue());
+    EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
+    EXPECT_FALSE(properties.AccessTierChangeTime.HasValue());
+
+    Files::Shares::ListSharesSinglePageOptions listOptions;
+    listOptions.Prefix = shareName;
+    auto shareItems = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+                          PremiumFileConnectionString())
+                          .ListSharesSinglePage(listOptions)
+                          ->Items;
+    EXPECT_EQ(1U, shareItems.size());
+    EXPECT_EQ(
+        Files::Shares::Models::ShareAccessTier::Premium,
+        shareItems[0].Properties.AccessTier.GetValue());
+    EXPECT_FALSE(shareItems[0].Properties.AccessTierTransitionState.HasValue());
+    EXPECT_FALSE(shareItems[0].Properties.AccessTierChangeTime.HasValue());
+
+    auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
+    setPropertiesOptions.AccessTier = Files::Shares::Models::ShareAccessTier::Hot;
+    EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
+    setPropertiesOptions.AccessTier = Files::Shares::Models::ShareAccessTier::Cool;
+    EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
+    setPropertiesOptions.AccessTier = Files::Shares::Models::ShareAccessTier::TransactionOptimized;
+    EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
+    setPropertiesOptions.AccessTier = Files::Shares::Models::ShareAccessTier::Premium;
+    EXPECT_NO_THROW(shareClient.SetProperties(setPropertiesOptions));
+    EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Premium, properties.AccessTier.GetValue());
+    EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
+    EXPECT_FALSE(properties.AccessTierChangeTime.HasValue());
   }
 }}} // namespace Azure::Storage::Test
