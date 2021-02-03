@@ -18,7 +18,7 @@
 
 namespace Azure { namespace Identity {
   namespace Details {
-    AZ_IDENTITY_DLLEXPORT static std::string const g_aadGlobalAuthority;
+    AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
   }
 
   /**

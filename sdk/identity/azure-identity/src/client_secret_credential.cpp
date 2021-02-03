@@ -36,9 +36,8 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-namespace Azure { namespace Identity { namespace Details {
-  std::string const g_aadGlobalAuthority = "https://login.microsoftonline.com/";
-}}} // namespace Azure::Identity::Details
+std::string const Azure::Identity::Details::g_aadGlobalAuthority
+    = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Context const& context,
