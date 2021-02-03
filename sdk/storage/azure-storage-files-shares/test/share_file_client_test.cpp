@@ -268,10 +268,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     lastModified = m_fileClient->GetProperties()->LastModified;
-    auto cLease = *leaseClient.Change(leaseId2);
-    EXPECT_TRUE(cLease.ETag.HasValue());
-    EXPECT_TRUE(cLease.LastModified >= lastModified);
-    EXPECT_EQ(cLease.LeaseId, leaseId2);
+    leaseClient = *leaseClient.Change(leaseId2);
+    EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto fileInfo = *leaseClient.Release();
