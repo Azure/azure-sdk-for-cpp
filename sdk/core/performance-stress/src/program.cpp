@@ -13,7 +13,7 @@
 
 namespace {
 
-std::unique_ptr<Azure::PerformanceStress::PerformanceTest> PrintAvailableTests(
+inline std::unique_ptr<Azure::PerformanceStress::PerformanceTest> PrintAvailableTests(
     std::map<
         std::string,
         std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
@@ -27,7 +27,7 @@ std::unique_ptr<Azure::PerformanceStress::PerformanceTest> PrintAvailableTests(
   return nullptr;
 }
 
-std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
+inline std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
     Azure::PerformanceStress::TestOptions)>
 GetTest(
     std::map<
@@ -56,7 +56,10 @@ GetTest(
   return nullptr;
 }
 
-std::string ReplaceAll(std::string src, std::string const& findThis, std::string const& replaceWith)
+inline std::string ReplaceAll(
+    std::string src,
+    std::string const& findThis,
+    std::string const& replaceWith)
 {
   size_t start_pos = 0;
   while ((start_pos = src.find(findThis, start_pos)) != std::string::npos)
@@ -67,7 +70,7 @@ std::string ReplaceAll(std::string src, std::string const& findThis, std::string
   return src;
 }
 
-void PrintOptions(
+inline void PrintOptions(
     Azure::PerformanceStress::GlobalTestOptions const& options,
     std::vector<Azure::PerformanceStress::TestOption> const& testOptions,
     argagg::parser_results const& parsedArgs)
@@ -90,16 +93,17 @@ void PrintOptions(
   }
 }
 
-void RunLoop(
+inline void RunLoop(
+    Azure::Core::Context const& context,
     Azure::PerformanceStress::PerformanceTest& test,
-    int& completedOperations,
+    uint64_t& completedOperations,
     std::chrono::nanoseconds& lastCompletionTimes,
     bool latency,
-    Azure::Core::Context context)
+    bool& isCancelled)
 {
   (void)latency;
   auto start = std::chrono::system_clock::now();
-  while (!context.IsCancelled())
+  while (!isCancelled)
   {
     test.Run(context);
     completedOperations += 1;
@@ -107,7 +111,7 @@ void RunLoop(
   }
 }
 
-std::string FormatNumber(double number)
+inline std::string FormatNumber(double const& number, bool showDecimals = true)
 {
   auto fullString = std::to_string(number);
   auto dot = fullString.find('.');
@@ -125,10 +129,14 @@ std::string FormatNumber(double number)
       start -= 3;
     }
   }
-  return numberString + std::string(fullString.begin() + dot, fullString.end());
+  if (showDecimals)
+  {
+    return numberString + std::string(fullString.begin() + dot, fullString.end());
+  }
+  return numberString;
 }
 
-template <class T> T Sum(std::vector<T> const& array)
+template <class T> inline T Sum(std::vector<T> const& array)
 {
   T s = 0;
   for (T item : array)
@@ -138,8 +146,8 @@ template <class T> T Sum(std::vector<T> const& array)
   return s;
 }
 
-std::vector<double> ZipAvg(
-    std::vector<int> const& operations,
+inline std::vector<double> ZipAvg(
+    std::vector<uint64_t> const& operations,
     std::vector<std::chrono::nanoseconds> const& timeResults)
 {
   auto size = operations.size();
@@ -151,24 +159,25 @@ std::vector<double> ZipAvg(
   return s;
 }
 
-void RunTests(
+inline void RunTests(
     Azure::Core::Context const& context,
     std::vector<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>> const& tests,
     Azure::PerformanceStress::GlobalTestOptions const& options,
     std::string const& title,
     bool warmup = false)
 {
+  (void)title;
   auto parallelTestsCount = options.Parallel;
   auto durationInSeconds = warmup ? options.Warmup : options.Duration;
   // auto jobStatistics = warmup ? false : options.JobStatistics;
   // auto latency = warmup ? false : options.Latency;
 
-  std::vector<int> completedOperations(parallelTestsCount);
+  std::vector<uint64_t> completedOperations(parallelTestsCount);
   std::vector<std::chrono::nanoseconds> lastCompletionTimes(parallelTestsCount);
 
   /********************* Progress Reporter ******************************/
   Azure::Core::Context progresToken;
-  auto lastCompleted = 0;
+  uint64_t lastCompleted = 0;
   auto progressThread = std::thread(
       [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progresToken]() {
         std::cout << "=== " << title << " ===" << std::endl
@@ -187,22 +196,29 @@ void RunTests(
 
   /********************* parallel test creation ******************************/
   std::vector<std::thread> tasks(tests.size());
+  auto deadLineSeconds = std::chrono::seconds(durationInSeconds);
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread([index,
-                                &tests,
-                                &completedOperations,
-                                &lastCompletionTimes,
-                                &context,
-                                &durationInSeconds]() {
-      RunLoop(
-          *tests[index],
-          completedOperations[index],
-          lastCompletionTimes[index],
-          false,
-          context.WithDeadline(
-              std::chrono::system_clock::now() + std::chrono::seconds(durationInSeconds)));
-    });
+    tasks[index] = std::thread(
+        [index, &tests, &completedOperations, &lastCompletionTimes, &deadLineSeconds, &context]() {
+          bool isCancelled = false;
+          // Azure::Context is not good performer for checking cancellation inside the test loop
+          auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(deadLineSeconds);
+            isCancelled = true;
+          });
+
+          RunLoop(
+              context,
+              *tests[index],
+              completedOperations[index],
+              lastCompletionTimes[index],
+              false,
+              isCancelled);
+
+          manualCancellation.join();
+        });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -222,7 +238,7 @@ void RunTests(
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 
   std::cout << std::endl
-            << "Completed " << FormatNumber(totalOperations)
+            << "Completed " << FormatNumber(totalOperations, false)
             << " operations in a weighted-average of " << weightedAverageSeconds << "s ("
             << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
             << std::endl
