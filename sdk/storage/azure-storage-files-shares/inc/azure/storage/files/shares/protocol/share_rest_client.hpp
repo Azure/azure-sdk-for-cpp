@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // File properties.
-    struct FileProperty
+    struct FileItemDetails
     {
       int64_t ContentLength
           = int64_t(); // Content length of the file. This value may not be up-to-date since an SMB
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileItem
     {
       std::string Name;
-      FileProperty Properties;
+      FileItemDetails FileDetails;
     };
 
     // A listed Azure Storage handle item.
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }; // extensible enum LeaseStatusType
 
     // Properties of a share.
-    struct ShareProperties
+    struct ShareItemDetails
     {
       Core::DateTime LastModified;
       Core::ETag Etag;
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Snapshot;
       bool Deleted = bool();
       std::string Version;
-      ShareProperties Properties;
+      ShareItemDetails ShareDetails;
       Storage::Metadata ShareMetadata;
     };
 
@@ -2104,9 +2104,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareProperties SharePropertiesFromXml(Storage::Details::XmlReader& reader)
+        static ShareItemDetails ShareItemDetailsFromXml(Storage::Details::XmlReader& reader)
         {
-          auto result = ShareProperties();
+          auto result = ShareItemDetails();
           enum class XmlTagName
           {
             AccessTier,
@@ -2390,7 +2390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
               if (path.size() == 1 && path[0] == XmlTagName::Properties)
               {
-                result.Properties = SharePropertiesFromXml(reader);
+                result.ShareDetails = ShareItemDetailsFromXml(reader);
                 path.pop_back();
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Metadata)
@@ -4668,9 +4668,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileProperty FilePropertyFromXml(Storage::Details::XmlReader& reader)
+        static FileItemDetails FileItemDetailsFromXml(Storage::Details::XmlReader& reader)
         {
-          auto result = FileProperty();
+          auto result = FileItemDetails();
           enum class XmlTagName
           {
             ContentLength,
@@ -4766,7 +4766,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
               if (path.size() == 1 && path[0] == XmlTagName::Properties)
               {
-                result.Properties = FilePropertyFromXml(reader);
+                result.FileDetails = FileItemDetailsFromXml(reader);
                 path.pop_back();
               }
             }

@@ -454,18 +454,18 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(shareClients.find(shareItem.Name) != shareClients.end());
       properties = *shareClients.at(shareItem.Name).GetProperties();
       EXPECT_EQ(
-          true, shareItem.Properties.AccessTier.HasValue() && properties.AccessTier.HasValue());
-      EXPECT_EQ(shareItem.Properties.AccessTier.GetValue(), properties.AccessTier.GetValue());
+          true, shareItem.ShareDetails.AccessTier.HasValue() && properties.AccessTier.HasValue());
+      EXPECT_EQ(shareItem.ShareDetails.AccessTier.GetValue(), properties.AccessTier.GetValue());
       EXPECT_EQ(
           true,
-          shareItem.Properties.AccessTierChangeTime.HasValue()
+          shareItem.ShareDetails.AccessTierChangeTime.HasValue()
               && properties.AccessTierChangeTime.HasValue());
       EXPECT_EQ(
-          shareItem.Properties.AccessTierChangeTime.GetValue(),
+          shareItem.ShareDetails.AccessTierChangeTime.GetValue(),
           properties.AccessTierChangeTime.GetValue());
       EXPECT_EQ(
           false,
-          shareItem.Properties.AccessTierTransitionState.HasValue()
+          shareItem.ShareDetails.AccessTierTransitionState.HasValue()
               || properties.AccessTierTransitionState.HasValue());
     }
   }
@@ -491,9 +491,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(1U, shareItems.size());
     EXPECT_EQ(
         Files::Shares::Models::ShareAccessTier::Premium,
-        shareItems[0].Properties.AccessTier.GetValue());
-    EXPECT_FALSE(shareItems[0].Properties.AccessTierTransitionState.HasValue());
-    EXPECT_FALSE(shareItems[0].Properties.AccessTierChangeTime.HasValue());
+        shareItems[0].ShareDetails.AccessTier.GetValue());
+    EXPECT_FALSE(shareItems[0].ShareDetails.AccessTierTransitionState.HasValue());
+    EXPECT_FALSE(shareItems[0].ShareDetails.AccessTierChangeTime.HasValue());
 
     auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
     setPropertiesOptions.AccessTier = Files::Shares::Models::ShareAccessTier::Hot;
