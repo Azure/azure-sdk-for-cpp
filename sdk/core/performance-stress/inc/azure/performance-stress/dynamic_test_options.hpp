@@ -42,9 +42,20 @@ namespace Azure { namespace PerformanceStress {
      */
     template <class T> T GetOptionOrDefault(std::string const& optionName, T defaultValue)
     {
-      if (m_results[optionName])
+      try
       {
-        return m_results[optionName].as<T>();
+        if (m_results[optionName])
+        {
+          return m_results[optionName].as<T>();
+        }
+      }
+      catch (argagg::unknown_option const& e)
+      {
+        return defaultValue;
+      }
+      catch (std::exception const& e)
+      {
+        throw;
       }
       return defaultValue;
     }

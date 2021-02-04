@@ -87,7 +87,19 @@ inline void PrintOptions(
     Azure::Core::Internal::Json::json optionsJs;
     for (auto option : testOptions)
     {
-      optionsJs[option.Name] = parsedArgs[option.Name].as<std::string>();
+      try
+      {
+        optionsJs[option.Name] = parsedArgs[option.Name].as<std::string>();
+      }
+      catch (std::out_of_range const& e)
+      {
+        // arg was not parsed
+        optionsJs[option.Name] = "default value";
+      }
+      catch (std::exception const& e)
+      {
+        throw;
+      }
     }
     std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl;
   }
