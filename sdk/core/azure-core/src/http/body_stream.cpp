@@ -106,15 +106,16 @@ int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buf
   (void)context;
   DWORD numberOfBytesRead;
   auto o = OVERLAPPED();
-  o.Offset = (DWORD)(this->m_baseOffset + this->m_offset);
-  o.OffsetHigh = (DWORD)((this->m_baseOffset + this->m_offset) >> 32);
+  o.Offset = static_cast<DWORD>(this->m_baseOffset + this->m_offset);
+  o.OffsetHigh = static_cast<DWORD>((this->m_baseOffset + this->m_offset) >> 32);
 
   auto result = ReadFile(
       this->m_hFile,
       buffer,
       // at most 4Gb to be read
-      (DWORD)std::min(
-          (uint64_t)0xFFFFFFFFUL, (uint64_t)std::min(count, (this->m_length - this->m_offset))),
+      static_cast<DWORD>(std::min(
+          static_cast<uint64_t>(0xFFFFFFFFUL),
+          static_cast<uint64_t>(std::min(count, (this->m_length - this->m_offset))))),
       &numberOfBytesRead,
       &o);
 

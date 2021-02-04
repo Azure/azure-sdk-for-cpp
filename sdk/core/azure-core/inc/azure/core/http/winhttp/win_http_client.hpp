@@ -132,8 +132,8 @@ namespace Azure { namespace Core { namespace Http {
     void CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
     void Upload(std::unique_ptr<Details::HandleManager>& handleManager);
     void SendRequest(std::unique_ptr<Details::HandleManager>& handleManager);
-    void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
-    int64_t WinHttpTransport::GetContentLength(
+    void ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
+    int64_t GetContentLength(
         std::unique_ptr<Details::HandleManager>& handleManager,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
