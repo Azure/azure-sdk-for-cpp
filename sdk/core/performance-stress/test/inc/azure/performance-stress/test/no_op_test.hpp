@@ -32,7 +32,7 @@ namespace Azure { namespace PerformanceStress { namespace Test {
      *
      * @param ctx The cancellation token.
      */
-    void Run(Azure::Core::Context const& ctx) override { (void)ctx; }
+    void Run(Azure::Core::Context const&) override {}
   };
 
 }}} // namespace Azure::PerformanceStress::Test

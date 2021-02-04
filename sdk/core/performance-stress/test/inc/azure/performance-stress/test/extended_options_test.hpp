@@ -35,11 +35,10 @@ namespace Azure { namespace PerformanceStress { namespace Test {
      *
      * @param ctx The cancellation token.
      */
-    void Run(Azure::Core::Context const& ctx) override
+    void Run(Azure::Core::Context const&) override
     {
       // Get the option or a default value of 0
       auto myTestOption = m_options.GetOptionOrDefault("extraOption", 0);
-      (void)ctx;
       (void)myTestOption;
     }
 
