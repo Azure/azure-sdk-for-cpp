@@ -34,7 +34,7 @@ Once building is completed, a performance test application will be created insid
 ./sdk/core/performance-stress/test/azure-performance-stress-test
 ```
 
->Note: When building the code with windows using Visual Studio, use the [cmake project view](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-160) to run the performance tests. Find the tests directly in the tests folder from the cmake tree next to all other test cmake projects.
+>Note: When building the code with windows using Visual Studio, use the [cmake project view](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=msvc-160) to run the performance tests. Find the tests directly in the tests folder from the cmake tree next to all other test cmake projects.
 
 #### Options for running
 
