@@ -13,6 +13,8 @@
 
 #include <azure/core/http/curl/curl.hpp>
 
+#include <curl/curl.h>
+
 namespace Azure { namespace PerformanceStress { namespace Test {
   /**
    * @brief A performance test that defines a test option.
@@ -39,8 +41,11 @@ namespace Azure { namespace PerformanceStress { namespace Test {
      */
     void GlobalSetup() override
     {
+      curl_global_init(CURL_GLOBAL_ALL);
       Details::HttpClient = std::make_unique<Azure::Core::Http::CurlTransport>();
     }
+
+    void GlobalCleanup() override { curl_global_cleanup(); }
   };
 
 }}} // namespace Azure::PerformanceStress::Test

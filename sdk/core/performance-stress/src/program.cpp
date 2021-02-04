@@ -131,12 +131,15 @@ inline void RunLoop(
   }
 }
 
-template<class T>
-inline std::string FormatNumber(T const& number, bool showDecimals = true)
+template <class T> inline std::string FormatNumber(T const& number, bool showDecimals = true)
 {
   auto fullString = std::to_string(number);
   auto dot = fullString.find('.');
-  auto numberString = std::string(fullString.begin(), fullString.begin() + dot);
+  auto numberString = fullString;
+  if (dot != std::string::npos)
+  {
+    numberString = std::string(fullString.begin(), fullString.begin() + dot);
+  }
   if (numberString.size() > 3)
   {
     size_t start = numberString.length() - 3;
@@ -154,7 +157,7 @@ inline std::string FormatNumber(T const& number, bool showDecimals = true)
     }
   }
 
-  if (showDecimals)
+  if (showDecimals && dot != std::string::npos)
   {
     return numberString + std::string(fullString.begin() + dot, fullString.end());
   }
