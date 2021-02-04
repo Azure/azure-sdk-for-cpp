@@ -854,7 +854,7 @@ inline bool cmd_line_arg_is_option_flag(const char* s)
   // The first character of the flag name must be alpha-numeric. This is to
   // prevent things like "---a" from being valid flags.
   len = std::strlen(name);
-  if (!std::isalnum(name[0]))
+  if (!std::isalnum(static_cast<unsigned char>(name[0])))
   {
     return false;
   }
@@ -883,7 +883,7 @@ inline bool cmd_line_arg_is_option_flag(const char* s)
           encountered_equal = true;
           return true;
         }
-        return std::isalnum(c) || c == '-';
+        return std::isalnum(static_cast<unsigned char>(c)) || c == '-';
       }
     });
   }
@@ -941,7 +941,7 @@ inline bool is_valid_flag_definition(const char* s)
   // The first character of the flag name must be alpha-numeric. This is to
   // prevent things like "---a" from being valid flags.
   len = std::strlen(name);
-  if (!std::isalnum(name[0]))
+  if (!std::isalnum(static_cast<unsigned char>(name[0])))
   {
     return false;
   }
@@ -955,11 +955,14 @@ inline bool is_valid_flag_definition(const char* s)
   // The rest of the characters must be alpha-numeric, but long flags are
   // allowed to have hyphens too.
   return std::all_of(name + 1, name + len, [&](const char& c) {
-    return std::isalnum(c) || (c == '-' && is_long);
+    return std::isalnum(static_cast<unsigned char>(c)) || (c == '-' && is_long);
   });
 }
 
-inline bool flag_is_short(const char* s) { return s[0] == '-' && std::isalnum(s[1]); }
+inline bool flag_is_short(const char* s)
+{
+  return s[0] == '-' && std::isalnum(static_cast<unsigned char>(s[1]));
+}
 
 inline bool parser_map::known_short_flag(const char flag) const
 {
@@ -1218,7 +1221,7 @@ inline parser_results parser::parse(int argc, const char** argv, bool posOnly) c
       {
         const auto short_flag = arg_i_cstr[sf_idx];
 
-        if (!std::isalnum(short_flag))
+        if (!std::isalnum(static_cast<unsigned char>(short_flag)))
         {
           std::ostringstream msg;
           msg << "found non-alphanumeric character '" << arg_i_cstr[sf_idx] << "' in flag group '"

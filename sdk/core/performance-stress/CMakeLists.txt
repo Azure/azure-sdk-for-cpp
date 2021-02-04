@@ -31,6 +31,11 @@ target_include_directories(
       $<INSTALL_INTERFACE:include/az_core>
 )
 
+if (MSVC)
+  #argagg warnings
+  target_compile_options(azure-performance-stress PUBLIC /wd28020 /wd28204)
+endif()
+
 # make sure that users can consume the project as a library.
 add_library (Azure::PerfStress ALIAS azure-performance-stress)
 target_link_libraries(azure-performance-stress PRIVATE azure-core)
