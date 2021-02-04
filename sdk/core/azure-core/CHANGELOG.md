@@ -6,6 +6,10 @@
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
 
+### Bug Fixes
+
+- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+
 ## 1.0.0-beta.5 (2021-02-02)
 
 ### New Features
