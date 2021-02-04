@@ -9,7 +9,6 @@
 #pragma once
 
 #include "azure/core/etag.hpp"
-#include "azure/core/nullable.hpp"
 
 #include <string>
 
@@ -18,16 +17,16 @@ namespace Azure { namespace Core {
   /**
    * @brief Specifies HTTP options for conditional requests.
    */
-  class MatchConditions {
-  public:
+  struct MatchConditions {
     /**
-     * @brief Optionally limit requests to resources that have a matching ETag.
+     * @brief Optionally limit requests to resources that match the value specified.
      */
-    Nullable<ETag> IfMatch;
+    ETag IfMatch;
 
     /**
-     * @brief Optionally limit requests that do not match the ETag.
+     * @brief Optionally limit requests to resources that do not match the value specified. Specify
+     * Azure::Core::ETag::Any() to limit requests to resources that do not exist.
      */
-    Nullable<ETag> IfNoneMatch;
+    ETag IfNoneMatch;
   };
 }} // namespace Azure::Core
