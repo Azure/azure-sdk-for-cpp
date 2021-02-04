@@ -33,7 +33,8 @@ namespace Azure { namespace PerformanceStress { namespace Test {
   private:
     std::chrono::milliseconds m_delay;
 
-    inline uint64_t Pow(uint16_t base, uint16_t exp)
+    template<class T, class V>
+    inline uint64_t Pow(T base, V exp)
     {
       uint64_t result = 1;
 
@@ -70,9 +71,8 @@ namespace Azure { namespace PerformanceStress { namespace Test {
      *
      * @param ctx The cancellation token.
      */
-    void Run(Azure::Core::Context const& ctx) override
+    void Run(Azure::Core::Context const&) override
     {
-      (void)ctx;
       std::this_thread::sleep_for(m_delay);
     }
 

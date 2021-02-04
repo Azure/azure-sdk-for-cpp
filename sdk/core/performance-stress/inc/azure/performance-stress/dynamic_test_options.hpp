@@ -49,11 +49,11 @@ namespace Azure { namespace PerformanceStress {
           return m_results[optionName].as<T>();
         }
       }
-      catch (argagg::unknown_option const& e)
+      catch (argagg::unknown_option const&)
       {
         return defaultValue;
       }
-      catch (std::exception const& e)
+      catch (std::exception const&)
       {
         throw;
       }

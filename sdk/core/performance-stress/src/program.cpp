@@ -91,12 +91,12 @@ inline void PrintOptions(
       {
         optionsJs[option.Name] = parsedArgs[option.Name].as<std::string>();
       }
-      catch (std::out_of_range const& e)
+      catch (std::out_of_range const&)
       {
         // arg was not parsed
         optionsJs[option.Name] = "default value";
       }
-      catch (std::exception const& e)
+      catch (std::exception const&)
       {
         throw;
       }
@@ -123,7 +123,8 @@ inline void RunLoop(
   }
 }
 
-inline std::string FormatNumber(double const& number, bool showDecimals = true)
+template<class T>
+inline std::string FormatNumber(T const& number, bool showDecimals = true)
 {
   auto fullString = std::to_string(number);
   auto dot = fullString.find('.');
