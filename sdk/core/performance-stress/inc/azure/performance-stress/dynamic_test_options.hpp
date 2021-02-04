@@ -59,5 +59,18 @@ namespace Azure { namespace PerformanceStress {
       }
       return defaultValue;
     }
+
+    /**
+     * @brief Get the option value from the option name.
+     *
+     * @remark The option is mandatory.
+     *
+     * @param optionName The name of the option.
+     * @return The option value.
+     */
+    template <class T> T GetMandatoryOption(std::string const& optionName)
+    {
+      return m_results[optionName].as<T>();
+    }
   };
 }} // namespace Azure::PerformanceStress

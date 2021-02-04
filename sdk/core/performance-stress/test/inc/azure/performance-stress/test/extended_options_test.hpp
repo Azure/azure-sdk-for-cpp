@@ -13,7 +13,6 @@
 #include <azure/performance-stress/test.hpp>
 #include <azure/performance-stress/test_options.hpp>
 
-#include <iostream>
 #include <vector>
 
 namespace Azure { namespace PerformanceStress { namespace Test {

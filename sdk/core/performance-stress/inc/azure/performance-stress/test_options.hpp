@@ -42,5 +42,11 @@ namespace Azure { namespace PerformanceStress {
      *
      */
     uint16_t expectedArgs;
+
+    /**
+     * @brief Make an option to be mandatory to run the test.
+     *
+     */
+    bool required = false;
   };
 }} // namespace Azure::PerformanceStress
