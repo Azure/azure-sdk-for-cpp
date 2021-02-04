@@ -93,8 +93,16 @@ inline void PrintOptions(
       }
       catch (std::out_of_range const& e)
       {
-        // arg was not parsed
-        optionsJs[option.Name] = "default value";
+        if (!option.required)
+        {
+          // arg was not parsed
+          optionsJs[option.Name] = "default value";
+        }
+        else
+        {
+          // re-throw
+          throw std::invalid_argument("Missing mandatory parameter: " + option.Name);
+        }
       }
       catch (std::exception const& e)
       {
