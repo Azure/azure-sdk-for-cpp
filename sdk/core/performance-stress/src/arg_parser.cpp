@@ -59,7 +59,7 @@ Azure::PerformanceStress::GlobalTestOptions Azure::PerformanceStress::Program::A
   }
   if (parsedArgs["Insecure"])
   {
-    options.Insecure = parsedArgs["Host"].as<bool>();
+    options.Insecure = parsedArgs["Insecure"].as<bool>();
   }
   if (parsedArgs["Iterations"])
   {

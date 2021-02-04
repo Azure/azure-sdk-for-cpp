@@ -44,7 +44,7 @@ namespace Azure { namespace PerformanceStress {
      * @brief Allow untrusted SSL certs.
      *
      */
-    bool Insecure;
+    bool Insecure = false;
 
     /**
      * @brief Number of iterations of main test loop.
@@ -58,19 +58,19 @@ namespace Azure { namespace PerformanceStress {
      * @brief Print job statistics.
      *
      */
-    bool JobStatistics;
+    bool JobStatistics = false;
 
     /**
      * @brief Track and print per-operation latency statistics.
      *
      */
-    bool Latency;
+    bool Latency = false;
 
     /**
      * @brief Disables test clean up.
      *
      */
-    bool NoCleanup;
+    bool NoCleanup = false;
 
     /**
      * @brief Number of operations to execute in parallel.
