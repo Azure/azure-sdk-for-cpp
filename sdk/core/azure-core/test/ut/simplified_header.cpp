@@ -24,8 +24,10 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::ETag e);
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse r(
       1, 1, Azure::Core::Http::HttpStatusCode::Accepted, "phrase"));
+  EXPECT_NO_THROW(Azure::Core::MatchConditions mc);
   EXPECT_NO_THROW(Azure::Core::Nullable<int> n);
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
+  EXPECT_NO_THROW(Azure::Core::RequestConditions rc);
   EXPECT_NO_THROW(Azure::Core::Details::Version::VersionString());
 
   {
