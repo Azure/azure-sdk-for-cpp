@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.6 (Unreleased)
 
+### New Features
+
+- Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
 
 ## 1.0.0-beta.5 (2021-02-02)
 
