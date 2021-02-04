@@ -14,8 +14,8 @@
 #include <azure/performance-stress/test_options.hpp>
 
 #include <azure/core/http/body_stream.hpp>
-#include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/http/transport.hpp>
 
 #include <memory>
 #include <vector>
@@ -31,7 +31,7 @@ namespace Azure { namespace PerformanceStress { namespace Test {
    *
    */
   class HttpClientGetTest : public Azure::PerformanceStress::PerformanceTest {
-  private:
+  protected:
     Azure::Core::Http::Url m_url;
 
   public:
@@ -41,15 +41,6 @@ namespace Azure { namespace PerformanceStress { namespace Test {
      * @param options The command-line parsed options.
      */
     HttpClientGetTest(Azure::PerformanceStress::TestOptions options) : PerformanceTest(options) {}
-
-    /**
-     * @brief Set up the http client
-     *
-     */
-    void GlobalSetup() override
-    {
-      Details::HttpClient = std::make_unique<Azure::Core::Http::CurlTransport>();
-    }
 
     /**
      * @brief Get and set the url option
