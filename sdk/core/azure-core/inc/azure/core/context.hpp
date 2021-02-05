@@ -290,6 +290,8 @@ namespace Azure { namespace Core {
     {
     }
 
+    time_point CancelWhen() const;
+
   public:
     /**
      * @brief Construct a new context with no expiration, and no value associated.
@@ -328,11 +330,6 @@ namespace Azure { namespace Core {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, time_point::max(), key, std::move(value))};
     }
-
-    /**
-     * @
-     */
-    time_point CancelWhen() const;
 
     /**
      * @brief Get a value associated with a \p key parameter within this context or the branch of
