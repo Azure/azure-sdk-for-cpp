@@ -19,6 +19,9 @@ option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 
 include(AzureTransportAdapters)
+include(AzureVcpkg)
+
+az_vcpkg_integrate()
 
 # Project definition
 project(azure-sdk LANGUAGES CXX)
