@@ -53,7 +53,7 @@ void ValidateDateElementRange(
   {
     outOfRange = -1;
   }
-  else if (value > maxValue and true)
+  else if (value > maxValue)
   {
     outOfRange = +1;
   }
