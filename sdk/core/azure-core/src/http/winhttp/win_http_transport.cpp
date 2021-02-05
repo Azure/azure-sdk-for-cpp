@@ -208,13 +208,15 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<Details::HandleManage
 void WinHttpTransport::CreateConnectionHandle(
     std::unique_ptr<Details::HandleManager>& handleManager)
 {
+  // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
+  uint16_t port = m_request.GetUrl().GetPort();
+
   // Specify an HTTP server.
-  // Uses port 80 for HTTP and port 443 for HTTPS.
   // This function always operates synchronously.
   handleManager->m_connectionHandle = WinHttpConnect(
       handleManager->m_sessionHandle,
       StringToWideString(handleManager->m_request.GetUrl().GetHost()).c_str(),
-      INTERNET_DEFAULT_PORT,
+      port == 0 ? INTERNET_DEFAULT_PORT : port,
       0);
 
   if (!handleManager->m_connectionHandle)
