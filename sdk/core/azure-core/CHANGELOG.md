@@ -6,6 +6,10 @@
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
 
+### Breaking Changes
+
+- Remove `Context::CancelWhen()`.
+
 ### Bug Fixes
 
 - Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
