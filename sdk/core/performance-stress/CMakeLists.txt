@@ -9,10 +9,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_PERFORMANCE_HEADER
+  inc/azure/performance-stress/argagg.hpp
   inc/azure/performance-stress/base_test.hpp
+  inc/azure/performance-stress/dynamic_test_options.hpp
   inc/azure/performance-stress/options.hpp
   inc/azure/performance-stress/program.hpp
   inc/azure/performance-stress/test.hpp
+  inc/azure/performance-stress/test_options.hpp
 )
 
 set(
@@ -39,5 +42,7 @@ endif()
 # make sure that users can consume the project as a library.
 add_library (Azure::PerfStress ALIAS azure-performance-stress)
 target_link_libraries(azure-performance-stress PRIVATE azure-core)
+
+set_target_properties(azure-performance-stress PROPERTIES FOLDER "Core")
 
 add_subdirectory(test)

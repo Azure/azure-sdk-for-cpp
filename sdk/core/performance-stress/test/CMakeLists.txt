@@ -7,10 +7,26 @@ project(azure-performance-stress-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(
+  AZURE_PERF_TEST_HEADER
+  inc/azure/performance-stress/test/curl_http_client_get_test.hpp
+  inc/azure/performance-stress/test/delay_test.hpp
+  inc/azure/performance-stress/test/exception_test.hpp
+  inc/azure/performance-stress/test/extended_options_test.hpp
+  inc/azure/performance-stress/test/http_client_get_test.hpp
+  inc/azure/performance-stress/test/no_op_test.hpp
+  inc/azure/performance-stress/test/win_http_client_get_test.hpp
+)
+
+set(
+  AZURE_PERF_TEST_SOURCE
+    src/main.cpp
+)
+
 # Name the binary to be created.
 add_executable (
   azure-performance-stress-test
-    src/main.cpp
+     ${AZURE_PERF_TEST_HEADER} ${AZURE_PERF_TEST_SOURCE}
 )
 
 # Include the headers from the project.
@@ -23,4 +39,4 @@ target_include_directories(
 # link the `azure-performance-stress` lib together with any other library which will be used for the tests. 
 target_link_libraries(azure-performance-stress-test PRIVATE azure-core azure-performance-stress)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
-set_target_properties(azure-performance-stress-test PROPERTIES FOLDER "Tests")
+set_target_properties(azure-performance-stress-test PROPERTIES FOLDER "Tests/Core")
