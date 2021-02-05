@@ -81,9 +81,35 @@ TEST(Context, BasicChar)
   EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
 }
 
+TEST(Context, ApplicationContext)
+{
+  Context appContext = GetApplicationContext();
+
+  EXPECT_FALSE(appContext.HasKey("Key"));
+  EXPECT_FALSE(appContext.HasKey("key"));
+  EXPECT_FALSE(appContext.HasKey("Value"));
+  EXPECT_FALSE(appContext.HasKey("value"));
+  EXPECT_FALSE(appContext.HasKey("1"));
+  EXPECT_FALSE(appContext.HasKey(""));
+
+  auto duration = std::chrono::milliseconds(500);
+  EXPECT_FALSE(appContext.IsCancelled());
+  std::this_thread::sleep_for(duration);
+  EXPECT_FALSE(appContext.IsCancelled());
+
+  appContext.Cancel();
+  EXPECT_TRUE(appContext.IsCancelled());
+
+  //AppContext2 is the same context as AppContext
+  //  The context should be cancelled
+  Context appContext2 = GetApplicationContext();
+  EXPECT_TRUE(appContext.IsCancelled());
+
+}
+
 TEST(Context, IsCancelled)
 {
-  auto duration = std::chrono::milliseconds(150);
+  auto duration = std::chrono::milliseconds(500);
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
@@ -91,6 +117,18 @@ TEST(Context, IsCancelled)
   EXPECT_FALSE(c2.IsCancelled());
   std::this_thread::sleep_for(duration);
   EXPECT_TRUE(c2.IsCancelled());
+}
+
+TEST(Context, ThrowIfCancelled)
+{
+  auto duration = std::chrono::milliseconds(500);
+  auto deadline = std::chrono::system_clock::now() + duration;
+
+  Context context;
+  auto c2 = context.WithDeadline(deadline);
+  EXPECT_NO_THROW(c2.ThrowIfCancelled());
+  std::this_thread::sleep_for(duration);
+  EXPECT_THROW(c2.ThrowIfCancelled(), Azure::Core::OperationCancelledException);
 }
 
 TEST(Context, Alternative)
