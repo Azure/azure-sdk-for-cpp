@@ -6,10 +6,10 @@
 #include <future>
 #include <vector>
 
+#include <azure/core/md5.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
-#include <azure/core/md5.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
