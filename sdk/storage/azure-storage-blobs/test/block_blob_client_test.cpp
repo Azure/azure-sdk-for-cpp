@@ -7,6 +7,7 @@
 #include <random>
 #include <vector>
 
+#include <azure/core/md5.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
 
@@ -122,7 +123,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->TransactionalContentHash.GetValue().Algorithm, HashAlgorithm::Md5);
     EXPECT_EQ(
         res->TransactionalContentHash.GetValue().Value,
-        Md5::Hash(m_blobContent.data(), downloadLength));
+        Azure::Core::Md5::Hash(
+            std::vector<uint8_t>(m_blobContent.data(), m_blobContent.data() + downloadLength)));
 
     options.RangeHashAlgorithm = HashAlgorithm::Crc64;
     res = m_blockBlobClient->Download(options);

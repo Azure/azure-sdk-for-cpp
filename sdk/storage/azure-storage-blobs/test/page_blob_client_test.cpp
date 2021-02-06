@@ -9,6 +9,7 @@
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
+#include <azure/core/md5.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -253,7 +254,7 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::UploadPageBlobPagesOptions options;
     ContentHash hash;
     hash.Algorithm = HashAlgorithm::Md5;
-    hash.Value = Md5::Hash(blobContent.data(), blobContent.size());
+    hash.Value = Azure::Core::Md5::Hash(blobContent);
     options.TransactionalContentHash = hash;
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 

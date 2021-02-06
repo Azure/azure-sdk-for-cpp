@@ -7,6 +7,7 @@
 #include <chrono>
 #include <future>
 
+#include <azure/core/md5.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
 #include <azure/storage/common/storage_common.hpp>
@@ -599,6 +600,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  static std::vector<uint8_t> Hash(const std::string& data)
+  {
+    const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
+    std::vector<uint8_t> v(ptr, ptr + data.length());
+    return Azure::Core::Md5::Hash(v);
+  }
+
   TEST_F(FileShareFileClientTest, RangeUploadDownload)
   {
     auto rangeSize = 1 * 1024 * 1024;
@@ -639,8 +647,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // MD5 works.
       memBodyStream.Rewind();
-      auto md5 = Md5::Hash(rangeContent.data(), rangeContent.size());
-      auto invalidMd5 = Md5::Hash(std::string("This is garbage."));
+      auto md5 = Azure::Core::Md5::Hash(rangeContent);
+      auto invalidMd5 = Hash(std::string("This is garbage."));
       auto fileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
       Files::Shares::UploadShareFileRangeOptions uploadOptions;
