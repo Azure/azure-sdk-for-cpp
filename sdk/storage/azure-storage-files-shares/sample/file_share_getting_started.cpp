@@ -39,7 +39,7 @@ void FileShareGettingStarted()
   {
     std::cout << metadata.first << ":" << metadata.second << std::endl;
   }
-  fileContent.resize(static_cast<std::size_t>(properties.ContentLength));
+  fileContent.resize(static_cast<std::size_t>(properties.FileSize));
 
   fileClient.DownloadTo(reinterpret_cast<uint8_t*>(&fileContent[0]), fileContent.size());
 

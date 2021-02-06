@@ -1,6 +1,20 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 1.0.0-beta.6 (Unreleased)
+
+### New Features
+
+- Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
+
+### Breaking Changes
+
+- Remove `Context::CancelWhen()`.
+
+### Bug Fixes
+
+- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+
+## 1.0.0-beta.5 (2021-02-02)
 
 ### New Features
 
@@ -9,11 +23,16 @@
 ### Breaking Changes
 
 - Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- `BearerTokenAuthenticationPolicy` constructor takes `TokenRequestOptions` struct instead of scopes vector. `TokenRequestOptions` struct has scopes vector as data member.
+- `TokenCredential::GetToken()` takes `TokenRequestOptions` instead of scopes vector.
 
 ### Bug Fixes
 
 - Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
 - Fixed reading the value from `retry-after` header in `RetryPolicy`.
+- Fix link errors when producing a DLL and add UWP compilation support.
+- Do not pass a placeholder user-agent string as a fallback when using WinHttp.
+- Initialize local variables in implementation to fix warning within release builds on Linux.
 
 ## 1.0.0-beta.4 (2021-01-13)
 

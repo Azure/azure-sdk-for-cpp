@@ -1,6 +1,9 @@
 # Release History
 
-## 12.0.0-beta.7 (Unreleased)
+## 12.0.0-beta.8 (Unreleased)
+
+
+## 12.0.0-beta.7 (2021-02-03)
 
 ### New Features
 
@@ -17,7 +20,6 @@
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
 - Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake path.
 - Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake path.
-- Added some new properties in `GetDataLakePathPropertiesResult` and `DownloadDataLakeFileResult`.
 
 ### Breaking Changes
 
@@ -49,7 +51,8 @@
 - Removed `DataLakeDirectoryClient::Delete` and `DataLakeDirectoryClient::DeleteIfExists`. Added `DataLakeDirectoryClient::DeleteEmpty`, `DataLakeDirectoryClient::DeleteEmptyIfExists`, `DataLakeDirectoryClient::DeleteRecursive` and `DataLakeDirectoryClient::DeleteRecursiveIfExists` instead.
 - Removed `ContinuationToken` in `DeleteDataLakePathResult` and `DeleteDataLakeDirectoryResult`, as they will never be returned for HNS enabled accounts.
 - Renamed `DataLakeFileClient::Read` to `DataLakeFileClient::Download`. Also changed the member `Azure::Core::Nullable<bool> RangeGetContentMd5` in the option to be `Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm` instead.
-
+- Moved some less commonly used properties into a details data structure for `Download`, `DownloadTo` and `ListFileSystemsSinglePage` API, and enriched the content of the mentioned details data structure.
+ 
 ### Other Changes and Improvements
 
 - Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.

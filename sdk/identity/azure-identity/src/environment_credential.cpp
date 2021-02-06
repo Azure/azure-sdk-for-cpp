@@ -53,8 +53,11 @@ EnvironmentCredential::EnvironmentCredential()
     {
       if (authority != nullptr)
       {
+        ClientSecretCredentialOptions options;
+        options.AuthorityHost = authority;
+
         m_credentialImpl.reset(
-            new ClientSecretCredential(tenantId, clientId, clientSecret, authority));
+            new ClientSecretCredential(tenantId, clientId, clientSecret, options));
       }
       else
       {
@@ -78,7 +81,7 @@ EnvironmentCredential::EnvironmentCredential()
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(
     Azure::Core::Context const& context,
-    std::vector<std::string> const& scopes) const
+    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions) const
 {
   using namespace Azure::Core;
 
@@ -88,5 +91,5 @@ Azure::Core::AccessToken EnvironmentCredential::GetToken(
                                   "Environment variables are not fully configured.");
   }
 
-  return m_credentialImpl->GetToken(context, scopes);
+  return m_credentialImpl->GetToken(context, tokenRequestOptions);
 }

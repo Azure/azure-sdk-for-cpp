@@ -84,8 +84,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::Http::BearerTokenAuthenticationPolicy>(
-        credential, Storage::Details::StorageScope));
+
+    {
+      Azure::Core::Http::TokenRequestOptions const tokenOptions
+          = {{Storage::Details::StorageScope}};
+
+      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+          credential, tokenOptions));
+    }
+
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -239,17 +246,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
-      if (i.Tier.HasValue() && !i.IsAccessTierInferred.HasValue())
+      if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
       {
-        i.IsAccessTierInferred = false;
+        i.Details.IsAccessTierInferred = false;
       }
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
       {
         i.IsCurrentVersion = false;
       }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.IsSealed)
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
       {
-        i.IsSealed = false;
+        i.Details.IsSealed = false;
       }
     }
     return response;

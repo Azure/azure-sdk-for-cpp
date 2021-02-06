@@ -158,7 +158,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           if (blob.Name == m_blobName)
           {
-            lastAccessedOn = blob.LastAccessedOn.GetValue();
+            lastAccessedOn = blob.Details.LastAccessedOn.GetValue();
             break;
           }
         }
@@ -999,9 +999,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          ASSERT_TRUE(blob.Tier.HasValue());
-          ASSERT_TRUE(blob.IsAccessTierInferred.HasValue());
-          EXPECT_TRUE(blob.IsAccessTierInferred.GetValue());
+          ASSERT_TRUE(blob.Details.Tier.HasValue());
+          ASSERT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
+          EXPECT_TRUE(blob.Details.IsAccessTierInferred.GetValue());
         }
       }
     } while (options.ContinuationToken.HasValue());
@@ -1026,9 +1026,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          ASSERT_TRUE(blob.Tier.HasValue());
-          ASSERT_TRUE(blob.IsAccessTierInferred.HasValue());
-          EXPECT_FALSE(blob.IsAccessTierInferred.GetValue());
+          ASSERT_TRUE(blob.Details.Tier.HasValue());
+          ASSERT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
+          EXPECT_FALSE(blob.Details.IsAccessTierInferred.GetValue());
         }
       }
     } while (options.ContinuationToken.HasValue());

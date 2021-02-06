@@ -1,6 +1,9 @@
 # Release History
 
-## 12.0.0-beta.7 (Unreleased)
+## 12.0.0-beta.8 (Unreleased)
+
+
+## 12.0.0-beta.7 (2021-02-03)
 
 ### New Features
 
@@ -29,7 +32,7 @@
 - Removed `TagValue` from `FilterBlobItem`, removed `Where` from `FindBlobsByTagsSinglePageResult`.
 - Type for ETag was changed to `Azure::Core::ETag`.
 - Removed `BlobPrefix` struct, use `std::string` instead.
-- Refined `DownloadBlobResult` and `DownloadBlobToResult`.
+- Refined `BlobContainerItem`, `BlobItem`, `DownloadBlobResult` and `DownloadBlobToResult`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 
