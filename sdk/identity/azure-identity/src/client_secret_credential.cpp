@@ -29,7 +29,6 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     url.AppendPath("oauth2/v2.0/token");
 
     std::ostringstream body;
-    // TODO: Use encoding from Http::Url::Encode once it becomes public
     body << "grant_type=client_credentials&client_id=" << Url::Encode(m_clientId)
          << "&client_secret=" << Url::Encode(m_clientSecret);
 
