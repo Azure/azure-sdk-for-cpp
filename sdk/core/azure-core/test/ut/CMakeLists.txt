@@ -40,6 +40,7 @@ add_executable (
     json.cpp
     logging.cpp
     main.cpp
+    md5.cpp
     nullable.cpp
     operation.cpp
     operation_status.cpp

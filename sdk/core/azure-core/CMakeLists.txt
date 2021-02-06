@@ -63,6 +63,7 @@ set(
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
+    inc/azure/core/md5.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
@@ -92,6 +93,7 @@ set(
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/md5.cpp
     src/operation_status.cpp
     src/strings.cpp
     src/version.cpp
@@ -115,7 +117,7 @@ create_code_coverage(core azure-core azure-core-test)
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
 if(MSVC)
-    target_link_libraries(azure-core PRIVATE crypt32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
     message("Find the OpenSSL package on MacOS, used for Base64 encoding.")
     find_package(OpenSSL REQUIRED)
