@@ -13,7 +13,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string::const_iterator cur = value.begin();
     while (cur != value.end())
     {
-      auto delimiter_pos = std::find_if(cur, value.end(), [](char c) { return c == ' ' || c == '|'; });
+      auto delimiter_pos
+          = std::find_if(cur, value.end(), [](char c) { return c == ' ' || c == '|'; });
       m_value.emplace_back(std::string(cur, delimiter_pos));
       while (delimiter_pos != value.end() && (*delimiter_pos == ' ' || *delimiter_pos == '|'))
       {
