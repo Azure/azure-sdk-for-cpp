@@ -33,7 +33,7 @@ set(
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp
-    inc/azure/storage/files/shares/share_file_attribute.hpp
+    inc/azure/storage/files/shares/share_file_attributes.hpp
     inc/azure/storage/files/shares/share_file_client.hpp
     inc/azure/storage/files/shares/share_lease_client.hpp
     inc/azure/storage/files/shares/share_options.hpp
@@ -48,6 +48,7 @@ set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
     src/share_client.cpp
     src/share_directory_client.cpp
+    src/share_file_attributes.cpp
     src/share_file_client.cpp
     src/share_lease_client.cpp
     src/share_rest_client.cpp

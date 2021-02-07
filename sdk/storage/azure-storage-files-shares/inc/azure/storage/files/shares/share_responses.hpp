@@ -5,7 +5,7 @@
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
-#include "azure/storage/files/shares/share_file_attribute.hpp"
+#include "azure/storage/files/shares/share_file_attributes.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 

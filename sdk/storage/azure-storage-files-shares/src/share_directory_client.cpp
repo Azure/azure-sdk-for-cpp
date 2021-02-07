@@ -128,12 +128,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::Directory);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::Directory.Get();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -172,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::CreateShareDirectoryResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.SmbProperties.Attributes = Details::FileAttributesFromString(result->FileAttributes);
+    ret.SmbProperties.Attributes = Models::FileAttributes(result->FileAttributes);
     ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
     ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
     ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
@@ -257,7 +255,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetShareDirectoryPropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::SetPropertiesOptions();
-    protocolLayerOptions.FileAttributes = Details::FileAttributesToString(smbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = smbProperties.Attributes.Get();
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().GetRfc3339String(
