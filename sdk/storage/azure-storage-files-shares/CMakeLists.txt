@@ -90,6 +90,7 @@ if(BUILD_TESTING)
         test/share_client_test.hpp
         test/share_directory_client_test.cpp
         test/share_directory_client_test.hpp
+        test/share_file_attributes_test.cpp
         test/share_file_client_test.cpp
         test/share_file_client_test.hpp
         test/share_sas_test.cpp
