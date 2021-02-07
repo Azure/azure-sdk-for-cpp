@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.8 (Unreleased)
 
+### New Features
+
+- Changed type of `FileAttributes` to extensible enum.
+
 ### Breaking Changes
 
 - `ListSharesSinglePageOptions::ListSharesInclude` was renamed to `ListSharesSinglePageOptions::ListSharesIncludeFlags`.
