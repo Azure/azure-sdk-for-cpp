@@ -1079,9 +1079,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
+      int64_t destinationOffset,
       const std::string& sourceUri,
       const Azure::Core::Http::Range& sourceRange,
-      const Azure::Core::Http::Range& range,
       const UploadFileRangeFromUriOptions& options) const
   {
     if (!sourceRange.Length.HasValue())
@@ -1089,16 +1089,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       // sourceRange must have length to perform this operation.
       std::abort();
     }
-    int64_t destLength = sourceRange.Length.GetValue();
-    if (range.Length.HasValue())
-    {
-      // Let server decide the behavior if the length does not match.
-      destLength = range.Length.GetValue();
-    }
+    int64_t rangeLength = sourceRange.Length.GetValue();
 
     auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeFromUrlOptions();
-    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(range.Offset)
-        + std::string("-") + std::to_string(range.Offset + destLength - 1);
+    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(destinationOffset)
+        + std::string("-") + std::to_string(destinationOffset + rangeLength - 1);
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;

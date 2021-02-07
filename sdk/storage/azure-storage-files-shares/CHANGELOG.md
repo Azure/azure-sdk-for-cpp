@@ -15,6 +15,7 @@
 - Removed `GetShareFilePropertiesResult::FileType`.
 - Added `RequestId` in `ForceCloseShareDirectoryHandleResult`.
 - Removed `TransactionalContentHash` from `ClearShareFileRangeResult`.
+- Changed API signature of `ShareFileClient::UploadRangeFromUri`.
 
 ## 12.0.0-beta.7 (2021-02-04)
 

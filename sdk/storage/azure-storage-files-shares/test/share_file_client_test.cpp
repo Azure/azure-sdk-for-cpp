@@ -852,7 +852,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
     EXPECT_NO_THROW(
         uploadResult = *destFileClient.UploadRangeFromUri(
-            sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange));
+            destRange.Offset, sourceFileClient.GetUrl() + sourceSas, sourceRange));
 
     Files::Shares::Models::DownloadShareFileResult result;
     Files::Shares::DownloadShareFileOptions downloadOptions;
@@ -878,7 +878,10 @@ namespace Azure { namespace Storage { namespace Test {
           = uploadResult.TransactionalContentHash;
       EXPECT_THROW(
           uploadResult = *destFileClient.UploadRangeFromUri(
-              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+              destRange.Offset,
+              sourceFileClient.GetUrl() + sourceSas,
+              sourceRange,
+              uploadRangeOptions),
           StorageException);
       // Below code seems to be triggering a server bug. Uncomment when server resolves the issue.
       // uploadRangeOptions.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Value
@@ -893,7 +896,10 @@ namespace Azure { namespace Storage { namespace Test {
           = uploadResult.TransactionalContentHash;
       EXPECT_NO_THROW(
           uploadResult = *destFileClient.UploadRangeFromUri(
-              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+              destRange.Offset,
+              sourceFileClient.GetUrl() + sourceSas,
+              sourceRange,
+              uploadRangeOptions));
       // Below code seems to be triggering a server high latency. Uncomment when server resolves the
       // issue.
       // uploadRangeOptions.SourceAccessCondition.IfMatchContentHash.GetValue().Value =
@@ -908,7 +914,10 @@ namespace Azure { namespace Storage { namespace Test {
       uploadRangeOptions.TransactionalContentHash = uploadResult.TransactionalContentHash;
       EXPECT_NO_THROW(
           uploadResult = *destFileClient.UploadRangeFromUri(
-              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+              destRange.Offset,
+              sourceFileClient.GetUrl() + sourceSas,
+              sourceRange,
+              uploadRangeOptions));
       // Below code seems to be triggering a server high latency. Uncomment when server resolves the
       // issue.
       // uploadRangeOptions.SourceContentHash.GetValue().Value = invalidCrc64;

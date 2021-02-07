@@ -299,17 +299,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Upload a range from the source URI to this file's specific range.
+     * @param destinationOffset Specifies the starting offset for the content to be written.
      * @param sourceUri The source URI of the content to be uploaded.
      * @param sourceRange The source URI's range to be uploaded to file.
-     * @param range The range of the file this source to be uploaded from.
      * @param options Optional parameters to upload a range to file.
      * @return Azure::Core::Response<Models::UploadFileRangeFromUriResult> containing the returned
      * information.
      */
     Azure::Core::Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUri(
+        int64_t destinationOffset,
         const std::string& sourceUri,
         const Azure::Core::Http::Range& sourceRange,
-        const Azure::Core::Http::Range& range,
         const UploadFileRangeFromUriOptions& options = UploadFileRangeFromUriOptions()) const;
 
   private:
