@@ -45,85 +45,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using ChangeShareLeaseResult = Details::ShareChangeLeaseResult;
 
   // DirectoryClient models:
-  struct CreateShareDirectoryResult
-  {
-    bool Created = true;
-    Azure::Core::ETag ETag;
-    Core::DateTime LastModified;
-    bool IsServerEncrypted = bool();
-    std::string FilePermissionKey;
-    std::string FileAttributes;
-    Core::DateTime FileCreatedOn;
-    Core::DateTime FileLastWrittenOn;
-    Core::DateTime FileChangedOn;
-    std::string FileId;
-    std::string FileParentId;
-    std::string RequestId;
-  };
-
-  struct DeleteShareDirectoryResult
-  {
-    bool Deleted = true;
-    std::string RequestId;
-  };
-
-  using GetShareDirectoryPropertiesResult = Details::DirectoryGetPropertiesResult;
-  using SetShareDirectoryPropertiesResult = Details::DirectorySetPropertiesResult;
-  using SetShareDirectoryMetadataResult = Details::DirectorySetMetadataResult;
-  using ForceCloseAllShareDirectoryHandlesResult = Details::DirectoryForceCloseHandlesResult;
-
-  struct ForceCloseShareDirectoryHandleResult
-  {
-  };
-
-  struct ListFilesAndDirectoriesSinglePageResult
-  {
-    std::string ServiceEndpoint;
-    std::string ShareName;
-    std::string ShareSnapshot;
-    std::string DirectoryPath;
-    std::string Prefix;
-    int32_t PageSizeHint = int32_t();
-    std::string ContinuationToken;
-    std::vector<DirectoryItem> DirectoryItems;
-    std::vector<FileItem> FileItems;
-    std::string RequestId;
-  };
-
-  struct ListShareDirectoryHandlesSinglePageResult
-  {
-    std::vector<HandleItem> Handles;
-    std::string ContinuationToken;
-    std::string RequestId;
-  };
-
-  // FileClient models:
-  struct CreateShareFileResult
-  {
-    bool Created = true;
-    Azure::Core::ETag ETag;
-    Core::DateTime LastModified;
-    bool IsServerEncrypted = bool();
-    std::string FilePermissionKey;
-    std::string FileAttributes;
-    Core::DateTime FileCreatedOn;
-    Core::DateTime FileLastWrittenOn;
-    Core::DateTime FileChangedOn;
-    std::string FileId;
-    std::string FileParentId;
-    std::string RequestId;
-  };
-
-  struct DeleteShareFileResult
-  {
-    bool Deleted = true;
-    std::string RequestId;
-  };
-
-  struct FileShareSmbProperties
+  struct FileSmbProperties
   {
     /**
-     * @brief Key of the permission to be set for the directory/file.
+     * @brief Permission key of the directory or file.
      */
     Azure::Core::Nullable<std::string> PermissionKey;
 
@@ -157,7 +82,71 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     /**
      * @brief The parentId of the file
      */
-    std::string ParentId;
+    std::string ParentFileId;
+  };
+
+  struct CreateShareDirectoryResult
+  {
+    bool Created = true;
+    Azure::Core::ETag ETag;
+    Core::DateTime LastModified;
+    bool IsServerEncrypted = bool();
+    FileSmbProperties SmbProperties;
+    std::string RequestId;
+  };
+
+  struct DeleteShareDirectoryResult
+  {
+    bool Deleted = true;
+    std::string RequestId;
+  };
+
+  using GetShareDirectoryPropertiesResult = Details::DirectoryGetPropertiesResult;
+  using SetShareDirectoryPropertiesResult = Details::DirectorySetPropertiesResult;
+  using SetShareDirectoryMetadataResult = Details::DirectorySetMetadataResult;
+  using ForceCloseAllShareDirectoryHandlesResult = Details::DirectoryForceCloseHandlesResult;
+
+  struct ForceCloseShareDirectoryHandleResult
+  {
+    std::string RequestId;
+  };
+
+  struct ListFilesAndDirectoriesSinglePageResult
+  {
+    std::string ServiceEndpoint;
+    std::string ShareName;
+    std::string ShareSnapshot;
+    std::string DirectoryPath;
+    std::string Prefix;
+    int32_t PageSizeHint = int32_t();
+    std::string ContinuationToken;
+    std::vector<DirectoryItem> DirectoryItems;
+    std::vector<FileItem> FileItems;
+    std::string RequestId;
+  };
+
+  struct ListShareDirectoryHandlesSinglePageResult
+  {
+    std::vector<HandleItem> Handles;
+    std::string ContinuationToken;
+    std::string RequestId;
+  };
+
+  // FileClient models:
+  struct CreateShareFileResult
+  {
+    bool Created = true;
+    Azure::Core::ETag ETag;
+    Core::DateTime LastModified;
+    bool IsServerEncrypted = bool();
+    FileSmbProperties SmbProperties;
+    std::string RequestId;
+  };
+
+  struct DeleteShareFileResult
+  {
+    bool Deleted = true;
+    std::string RequestId;
   };
 
   struct DownloadShareFileDetails
@@ -165,7 +154,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Core::DateTime LastModified;
     Storage::Metadata Metadata;
     Core::ETag ETag;
-    std::string AcceptRanges;
     Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
     Azure::Core::Nullable<std::string> CopyStatusDescription;
     Azure::Core::Nullable<std::string> CopyId;
@@ -173,7 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<CopyStatusType> CopyStatus;
     bool IsServerEncrypted = bool();
-    FileShareSmbProperties SmbProperties;
+    FileSmbProperties SmbProperties;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
@@ -183,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     Azure::Core::Http::Range ContentRange;
-    int64_t FileSize;
+    int64_t FileSize = 0;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     ShareFileHttpHeaders HttpHeaders;
     DownloadShareFileDetails Details;
@@ -196,7 +184,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   {
     Core::DateTime LastModified;
     Storage::Metadata Metadata;
-    std::string FileType;
     int64_t FileSize = int64_t();
     ShareFileHttpHeaders HttpHeaders;
     Core::ETag ETag;
@@ -208,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<CopyStatusType> CopyStatus;
     bool IsServerEncrypted = bool();
-    FileShareSmbProperties SmbProperties;
+    FileSmbProperties SmbProperties;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
@@ -217,7 +204,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using ResizeFileResult = Details::FileSetHttpHeadersResult;
   using SetShareFileMetadataResult = Details::FileSetMetadataResult;
   using UploadShareFileRangeResult = Details::FileUploadRangeResult;
-  using ClearShareFileRangeResult = Details::FileUploadRangeResult;
+  struct ClearShareFileRangeResult
+  {
+    Core::ETag ETag;
+    Core::DateTime LastModified;
+    std::string RequestId;
+    bool IsServerEncrypted = bool();
+  };
   using UploadFileRangeFromUriResult = Details::FileUploadRangeFromUrlResult;
   using GetShareFileRangeListResult = Details::FileGetRangeListResult;
   using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
@@ -225,7 +218,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   struct DownloadShareFileToResult
   {
-    int64_t FileSize;
+    int64_t FileSize = 0;
     Azure::Core::Http::Range ContentRange;
     ShareFileHttpHeaders HttpHeaders;
     DownloadShareFileDetails Details;

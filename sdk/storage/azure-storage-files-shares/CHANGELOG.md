@@ -2,6 +2,19 @@
 
 ## 12.0.0-beta.8 (Unreleased)
 
+### Breaking Changes
+
+- `ListSharesSinglePageOptions::ListSharesInclude` was renamed to `ListSharesSinglePageOptions::ListSharesIncludeFlags`.
+- `DeleteShareOptions::IncludeSnapshots` was renamed to `DeleteShareOptions::DeleteSnapshots`.
+- `FileShareSmbProperties` was renamed to `FileSmbProperties`.
+- `DownloadShareFileOptions::GetRangeContentMd5` was renamed to `DownloadShareFileOptions::RangeHashAlgorithm`.
+- `UploadFileRangeFromUriOptions::SourceContentHash` was renamed to `UploadFileRangeFromUriOptions::TransactionalContentHash`.
+- `GetShareFileRangeListOptions::PrevShareSnapshot` was renamed to `GetShareFileRangeListOptions::PreviousShareSnapshot`.
+- Refined `CreateShareDirectoryResult` and `CreateShareFileResult`.
+- Removed `DownloadShareFileDetails::AcceptRanges`.
+- Removed `GetShareFilePropertiesResult::FileType`.
+- Added `RequestId` in `ForceCloseShareDirectoryHandleResult`.
+- Removed `TransactionalContentHash` from `ClearShareFileRangeResult`.
 
 ## 12.0.0-beta.7 (2021-02-04)
 

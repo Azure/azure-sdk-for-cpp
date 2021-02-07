@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set permission with SetProperties works
-      Files::Shares::Models::FileShareSmbProperties properties;
+      Files::Shares::Models::FileSmbProperties properties;
       properties.Attributes = Files::Shares::Models::FileAttributes::Directory
           | Files::Shares::Models::FileAttributes::NotContentIndexed;
       properties.CreatedOn = std::chrono::system_clock::now();
@@ -253,7 +253,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::CreateShareDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
-      EXPECT_NO_THROW(permissionKey = client3.Create(options3)->FilePermissionKey);
+      EXPECT_NO_THROW(
+          permissionKey = client3.Create(options3)->SmbProperties.PermissionKey.GetValue());
       auto result3 = client3.GetProperties()->FilePermissionKey;
       EXPECT_EQ(permissionKey, result3);
     }
@@ -261,7 +262,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareDirectoryClientTest, DirectorySmbProperties)
   {
-    Files::Shares::Models::FileShareSmbProperties properties;
+    Files::Shares::Models::FileSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::Directory
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreatedOn = std::chrono::system_clock::now();

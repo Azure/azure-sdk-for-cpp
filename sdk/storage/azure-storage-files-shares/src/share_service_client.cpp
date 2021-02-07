@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareServiceClient::ListSharesSinglePage(const ListSharesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
-    protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
+    protocolLayerOptions.ListSharesInclude = options.ListSharesIncludeFlags;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;

@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
-     * @param filePath The path of a file.
+     * @param fileName The name of a file.
      * @param options Optional parameters used to initialize the client.
      * @return ShareClient The client that can be used to manage a share resource.
      */
@@ -37,23 +37,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initialize a new instance of ShareFileClient using shared key authentication.
-     * @param shareFileUri The URI of the file this client's request targets.
+     * @param shareFileUrl The URL of the file this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareFileClient(
-        const std::string& shareFileUri,
+        const std::string& shareFileUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareFileClient using anonymous access or shared access
      * signature.
-     * @param shareFileUri The URI of the file this client's request targets.
+     * @param shareFileUrl The URL of the file this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareFileClient(
-        const std::string& shareFileUri,
+        const std::string& shareFileUrl,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUrl() const { return m_shareFileUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Initializes a new instance of the ShareFileClient class with an identical uri
+     * @brief Initializes a new instance of the ShareFileClient class with an identical url
      * source but the specified share snapshot timestamp.
      *
      * @param snapshot The snapshot identifier for the share snapshot.
@@ -217,8 +217,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * of the file returned from the server.
      */
     Azure::Core::Response<Models::SetShareFilePropertiesResult> SetProperties(
-        Models::ShareFileHttpHeaders httpHeaders,
-        Models::FileShareSmbProperties smbProperties,
+        const Models::ShareFileHttpHeaders& httpHeaders,
+        const Models::FileSmbProperties& smbProperties,
         const SetShareFilePropertiesOptions& options = SetShareFilePropertiesOptions()) const;
 
     /**
@@ -317,9 +317,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareFileClient(
-        Azure::Core::Http::Url shareFileUri,
+        Azure::Core::Http::Url shareFileUrl,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareFileUrl(std::move(shareFileUri)), m_pipeline(std::move(pipeline))
+        : m_shareFileUrl(std::move(shareFileUrl)), m_pipeline(std::move(pipeline))
     {
     }
 
