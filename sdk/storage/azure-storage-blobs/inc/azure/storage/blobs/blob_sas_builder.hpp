@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Sas {
     DeleteVersion = 128,
 
     /**
-     * @breif Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Sas {
     DeleteVersion = 64,
 
     /**
-     * @breif Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };

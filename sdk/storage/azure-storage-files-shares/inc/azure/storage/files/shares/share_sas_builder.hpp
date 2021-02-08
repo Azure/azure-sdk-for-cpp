@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Sas {
     Create = 16,
 
     /**
-     * @breif Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Sas {
     Create = 8,
 
     /**
-     * @breif Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
