@@ -151,7 +151,30 @@ stages:
                           
                           Write-Host "git status"
                           git status
-                        displayName: Copy updated files into vcpkg fork for PR
+
+                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
+                          $version = $packageSpec.version
+
+                          # Commit changes
+                          Write-Host "git add -A"
+                          git add -A 
+                          Write-Host 'git commit -m "[${{ artifact.VcpkgPortName }}] Update to $version"'
+                          git commit -m "${{ artifact.VcpkgPortName }}] Update to $version"
+
+                          # Run vcpkg x-add-version to add version to vcpkg file
+                          Write-Host "./bootstrap-vcpkg.bat"
+                          ./bootstrap-vcpkg.bat
+                          Write-Host "./vcpkg.exe x-add-version ${{ artifact.VcpkgPortName }}"
+                          ./vcpkg.exe x-add-version ${{ artifact.VcpkgPortName }}
+
+                          # Amend commit to include results of x-add-version
+                          Write-Host "git status"
+                          git status
+                          Write-Host "git add -A"
+                          git add -A
+                          Write-Host "git commit --amend -C (git rev-parse HEAD)"
+                          git commit --amend -C (git rev-parse HEAD)
+                        displayName: Commit changes for PR
                         condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
                       # This template does not need to check the 
@@ -166,6 +189,7 @@ stages:
                           CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
                           PRTitle: $(PrTitle)
                           BaseBranchName: master
+                          SkipCheckingForChanges: true
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
