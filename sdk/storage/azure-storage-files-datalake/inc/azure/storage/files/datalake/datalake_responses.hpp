@@ -280,12 +280,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  using SetDataLakePathAccessControlRecursiveListSinglePageResult
+  using SetDataLakePathAccessControlListRecursiveSinglePageResult
       = Details::PathSetAccessControlRecursiveResult;
-  using UpdateDataLakePathAccessControlRecursiveListSinglePageResult
-      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
-  using RemoveDataLakePathAccessControlRecursiveListSinglePageResult
-      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
+  using UpdateDataLakePathAccessControlListRecursiveSinglePageResult
+      = SetDataLakePathAccessControlListRecursiveSinglePageResult;
+  using RemoveDataLakePathAccessControlListRecursiveSinglePageResult
+      = SetDataLakePathAccessControlListRecursiveSinglePageResult;
   using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
   using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
 
