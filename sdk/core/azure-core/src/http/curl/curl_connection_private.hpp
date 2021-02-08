@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Destructor.
-       * @detail Cleans up CURL (invokes `curl_easy_cleanup()`).
+       * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
        */
       ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
 

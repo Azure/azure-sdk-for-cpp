@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
      * sequence of policies have been applied.
      */
-    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
+    std::unique_ptr<RawResponse> Send(Context const& context, Request& request);
   };
 
   /**
@@ -359,7 +359,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Logs every HTTP request.
    *
-   * @detail Logs every HTTP request, response, or retry attempt (see #LogClassification)
+   * @details Logs every HTTP request, response, or retry attempt (see #LogClassification)
    * @remark See #logging.hpp
    */
   class LoggingPolicy : public HttpPolicy {

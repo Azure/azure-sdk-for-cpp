@@ -159,9 +159,9 @@ namespace Azure { namespace Core {
     /**
      * @brief Assignment operator from another type.
      *
-     * @tparam U
+     * @tparam U Type of \p other.
      *
-     * @param other
+     * @param other Other #Nullable.
      */
     template <
         class U = T,
@@ -198,7 +198,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct the contained value in-place.
      *
-     * @detail If this instance already contains a value before the call, the contained value is
+     * @details If this instance already contains a value before the call, the contained value is
      * destroyed by calling its destructor.
      */
     template <class... U>

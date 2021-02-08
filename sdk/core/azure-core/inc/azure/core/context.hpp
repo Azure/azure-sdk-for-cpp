@@ -44,7 +44,7 @@ namespace Azure { namespace Core {
 
   /**
    * @brief Represents a value that is associated with context.
-   * @rmark Exists as a substitute for variant which isn't available until C++17.
+   * @remark Exists as a substitute for variant which isn't available until C++17.
    */
   class ContextValue {
   public:
@@ -183,7 +183,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Get the context value.
      *
-     * @tparam Expected The type of value to get.
+     * @tparam ExpectedType The type of value to get.
      */
     template <class ExpectedType> const ExpectedType& Get() const noexcept;
 

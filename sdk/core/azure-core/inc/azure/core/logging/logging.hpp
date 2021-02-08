@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Logging {
    * order to receive Azure SDK log messages.
    *
    * @param classification The log message classification.
-   * @param classification The log message.
+   * @param message The log message.
    */
   typedef std::function<void(LogClassification const& classification, std::string const& message)>
       LogListener;

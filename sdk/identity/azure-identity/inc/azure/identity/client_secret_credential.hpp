@@ -29,7 +29,7 @@ namespace Azure { namespace Identity {
   public:
     /**
      * @brief Authentication authority URL.
-     * @detail Default value is Azure AD global authority -
+     * @details Default value is Azure AD global authority -
      * "https://login.microsoftonline.com/".
      *
      * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national

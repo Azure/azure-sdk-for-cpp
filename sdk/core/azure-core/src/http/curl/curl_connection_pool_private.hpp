@@ -50,7 +50,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
      *
-     * @detail This way getting a connection for a specific host can be done in O(1) instead of
+     * @details This way getting a connection for a specific host can be done in O(1) instead of
      * looping a single connection list to find the first connection for the required host.
      *
      * @remark There might be multiple connections for each host.

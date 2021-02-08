@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief An invalid header key name in @Request or @RawResponse.
+   * @brief An invalid header key name in #Request or #RawResponse.
    *
    */
   class InvalidHeaderException : public Azure::Core::RequestFailedException {
@@ -282,7 +282,7 @@ namespace Azure { namespace Core { namespace Http {
      * ` and `-`.
      *
      * @param value Non URL-encoded string.
-     * @param doNotEncodeSymbols
+     * @param doNotEncodeSymbols A string consisting of characters that do not need to be encoded.
      * @return std::string
      */
     static std::string Encode(const std::string& value, const std::string& doNotEncodeSymbols = "");
@@ -474,12 +474,13 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an HTTP #Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
      * @param bodyStream HTTP #BodyStream.
-     * @param downloadViaStream
+     * @param downloadViaStream A boolean value indicating whether download should happen via
+     * stream.
      */
     explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream, bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
@@ -488,7 +489,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an HTTP #Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -500,11 +501,12 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an HTTP #Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param downloadViaStream
+     * @param downloadViaStream A boolean value indicating whether download should happen via
+     * stream.
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
@@ -516,7 +518,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an HTTP #Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -582,7 +584,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
 
     /**
-     * @brief
+     * @brief A value indicating whether download is happening via stream.
      */
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
 
