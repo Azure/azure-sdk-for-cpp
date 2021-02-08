@@ -139,8 +139,8 @@ void ParseHttpVersion(
   auto minorVersionStart = majorVersionEnd + 1; // start of minor version
   auto minorVersionInt = std::stoi(std::string(minorVersionStart, httpVersionEnd));
 
-  *majorVersion = (uint16_t)majorVersionInt;
-  *minorVersion = (uint16_t)minorVersionInt;
+  *majorVersion = static_cast<uint16_t>(majorVersionInt);
+  *minorVersion = static_cast<uint16_t>(minorVersionInt);
 }
 
 /**
