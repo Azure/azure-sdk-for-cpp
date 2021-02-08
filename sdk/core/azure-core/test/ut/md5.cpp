@@ -70,15 +70,21 @@ TEST(Md5, Basic)
   auto data = RandomBuffer(static_cast<std::size_t>(16777216));
   Md5 md5Instance;
 
+  // There are two ways to get the hash value, a "single-shot" static API called `Hash()` and one
+  // where you can stream partial data blocks with multiple calls to `Update()` and then once you
+  // are done, call `Digest()` to calculate the hash of the whole set of data blocks.
+
+  // What this test is saying is, split up a 16MB block into many 0-4MB chunks, and compare the
+  // computed hash value when you have all the data with the streaming approach, and validate they
+  // are equal.
+
   std::size_t length = 0;
   while (length < data.size())
   {
     std::size_t s = static_cast<std::size_t>(RandomInt(0, 4194304));
     s = std::min(s, data.size() - length);
-    auto begin = data.begin() + length;
-    auto end = begin + s;
-    md5Instance.Update(std::vector<uint8_t>(begin, end));
-    md5Instance.Update(std::vector<uint8_t>(begin, begin));
+    md5Instance.Update(&data[length], s);
+    md5Instance.Update(&data[length], 0);
     length += s;
   }
   EXPECT_EQ(md5Instance.Digest(), Md5::Hash(data));

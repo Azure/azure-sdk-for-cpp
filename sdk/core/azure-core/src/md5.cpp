@@ -104,14 +104,14 @@ namespace Azure { namespace Core {
     delete context;
   }
 
-  void Md5::Update(const std::vector<uint8_t>& data)
+  void Md5::Update(const uint8_t* data, std::size_t length)
   {
     Details::Md5HashContext* context = static_cast<Details::Md5HashContext*>(m_context);
 
     NTSTATUS status = BCryptHashData(
         context->hashHandle,
-        reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
-        static_cast<ULONG>(data.size()),
+        reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data)),
+        static_cast<ULONG>(length),
         0);
     if (!BCRYPT_SUCCESS(status))
     {
@@ -151,10 +151,10 @@ namespace Azure { namespace Core {
     delete context;
   }
 
-  void Md5::Update(const std::vector<uint8_t>& data)
+  void Md5::Update(const uint8_t* data, std::size_t length)
   {
     MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
-    MD5_Update(context, data.data(), data.size());
+    MD5_Update(context, data, length);
   }
 
   std::vector<uint8_t> Md5::Digest() const

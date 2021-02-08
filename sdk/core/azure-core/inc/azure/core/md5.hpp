@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 namespace Azure { namespace Core {
@@ -30,11 +31,12 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Used to append parital binary input data to compute the hash in a streaming fashion.
-     * @param data The input vector that contains the current block of binary data that is used for
-     * hash calculation.
+     * @param data The pointer to the current block of binary data that is used for hash
+     * calculation.
+     * @param length The size of the data provided.
      * @remark Once all the data has been added, call #Digest() to get the computed hash value.
      */
-    void Update(const std::vector<uint8_t>& data);
+    void Update(const uint8_t* data, std::size_t length);
 
     /**
      * @brief Computes the hash value of all the binary input data appended to the instance so far.
@@ -45,14 +47,25 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Computes the hash value of the specified binary input data.
+     * @param data The pointer to binary data to compute the hash value for.
+     * @param length The size of the data provided.
+     * @return The computed MD5 hash value corresponding to the input provided.
+     */
+    static std::vector<uint8_t> Hash(const uint8_t* data, std::size_t length)
+    {
+      Md5 instance;
+      instance.Update(data, length);
+      return instance.Digest();
+    }
+
+    /**
+     * @brief Computes the hash value of the specified binary input data.
      * @param data The input vector to compute the hash value for.
      * @return The computed MD5 hash value corresponding to the input provided.
      */
     static std::vector<uint8_t> Hash(const std::vector<uint8_t>& data)
     {
-      Md5 instance;
-      instance.Update(data);
-      return instance.Digest();
+      return Hash(data.data(), data.size());
     }
 
   private:
