@@ -19,6 +19,7 @@
 #include "azure/core/etag.hpp"
 #include "azure/core/hash.hpp"
 #include "azure/core/match_conditions.hpp"
+#include "azure/core/md5.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/request_conditions.hpp"
 #include "azure/core/response.hpp"

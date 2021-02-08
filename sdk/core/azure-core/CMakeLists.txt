@@ -65,6 +65,7 @@ set(
     inc/azure/core/exception.hpp
     inc/azure/core/hash.hpp
     inc/azure/core/match_conditions.hpp
+    inc/azure/core/md5.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
