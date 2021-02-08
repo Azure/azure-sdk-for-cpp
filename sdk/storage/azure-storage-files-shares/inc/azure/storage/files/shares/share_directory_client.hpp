@@ -200,13 +200,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Closes all handles opened on a directory at the service.
      * @param options Optional parameters to close all this directory's open handles.
-     * @return Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesResult> containing
-     * the information of the closed handles
+     * @return Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+     * containing the information of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesResult> ForceCloseAllHandles(
-        const ForceCloseAllShareDirectoryHandlesOptions& options
-        = ForceCloseAllShareDirectoryHandlesOptions()) const;
+    Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+    ForceCloseAllHandlesSinglePage(
+        const ForceCloseAllShareDirectoryHandlesSinglePageOptions& options
+        = ForceCloseAllShareDirectoryHandlesSinglePageOptions()) const;
 
   private:
     Azure::Core::Http::Url m_shareDirectoryUrl;

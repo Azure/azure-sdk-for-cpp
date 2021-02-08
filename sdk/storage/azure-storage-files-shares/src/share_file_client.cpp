@@ -188,13 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::CreateShareFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.SmbProperties.Attributes = Models::FileAttributes(result->FileAttributes);
-    ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
-    ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
-    ret.SmbProperties.ChangedOn = std::move(result->FileChangedOn);
-    ret.SmbProperties.FileId = std::move(result->FileId);
-    ret.SmbProperties.ParentFileId = std::move(result->FileParentId);
+    ret.SmbProperties = std::move(result->SmbProperties);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
@@ -324,13 +318,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Details.CopySource = std::move(downloadResponse->CopySource);
     ret.Details.CopyStatus = std::move(downloadResponse->CopyStatus);
     ret.Details.IsServerEncrypted = downloadResponse->IsServerEncrypted;
-    ret.Details.SmbProperties.Attributes = Models::FileAttributes(downloadResponse->FileAttributes);
-    ret.Details.SmbProperties.CreatedOn = std::move(downloadResponse->FileCreatedOn);
-    ret.Details.SmbProperties.LastWrittenOn = std::move(downloadResponse->FileLastWrittenOn);
-    ret.Details.SmbProperties.ChangedOn = std::move(downloadResponse->FileChangedOn);
-    ret.Details.SmbProperties.PermissionKey = std::move(downloadResponse->FilePermissionKey);
-    ret.Details.SmbProperties.FileId = std::move(downloadResponse->FileId);
-    ret.Details.SmbProperties.ParentFileId = std::move(downloadResponse->FileParentId);
+    ret.Details.SmbProperties = std::move(downloadResponse->SmbProperties);
     ret.Details.LeaseDuration = std::move(downloadResponse->LeaseDuration);
     ret.Details.LeaseState = std::move(downloadResponse->LeaseState);
     ret.Details.LeaseStatus = std::move(downloadResponse->LeaseStatus);
@@ -414,37 +402,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::GetPropertiesOptions();
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto result = Details::ShareRestClient::File::GetProperties(
+    return Details::ShareRestClient::File::GetProperties(
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-    Models::GetShareFilePropertiesResult ret;
-    ret.FileSize = result->ContentLength;
-    ret.HttpHeaders = std::move(result->HttpHeaders);
-    ret.LastModified = std::move(result->LastModified);
-    ret.Metadata = std::move(result->Metadata);
-    ret.ETag = std::move(result->ETag);
-    ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
-    ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
-    ret.CopyId = std::move(result->CopyId);
-    ret.CopyProgress = std::move(result->CopyProgress);
-    ret.CopySource = std::move(result->CopySource);
-    ret.CopyStatus = std::move(result->CopyStatus);
-    ret.IsServerEncrypted = result->IsServerEncrypted;
-    ret.SmbProperties.Attributes = Models::FileAttributes(result->FileAttributes);
-    ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
-    ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.SmbProperties.ChangedOn = std::move(result->FileChangedOn);
-    ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
-    ret.SmbProperties.FileId = std::move(result->FileId);
-    ret.SmbProperties.ParentFileId = std::move(result->FileParentId);
-    ret.LeaseDuration = std::move(result->LeaseDuration);
-    ret.LeaseState = std::move(result->LeaseState);
-    ret.LeaseStatus = std::move(result->LeaseStatus);
-    return Azure::Core::Response<Models::GetShareFilePropertiesResult>(
-        std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::SetShareFilePropertiesResult> ShareFileClient::SetProperties(
-      const Models::ShareFileHttpHeaders& httpHeaders,
+      const Models::FileHttpHeaders& httpHeaders,
       const Models::FileSmbProperties& smbProperties,
       const SetShareFilePropertiesOptions& options) const
   {
@@ -626,8 +589,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Models::ForceCloseShareFileHandleResult(), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseAllShareFileHandlesResult>
-  ShareFileClient::ForceCloseAllHandles(const ForceCloseAllShareFileHandlesOptions& options) const
+  Azure::Core::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+  ShareFileClient::ForceCloseAllHandlesSinglePage(
+      const ForceCloseAllShareFileHandlesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;

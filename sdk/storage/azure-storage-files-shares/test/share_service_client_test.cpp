@@ -67,7 +67,6 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& prefix)
   {
     std::vector<Files::Shares::Models::ShareItem> result;
-    std::string continuation;
     Files::Shares::ListSharesSinglePageOptions options;
     if (!prefix.empty())
     {
@@ -77,9 +76,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
       result.insert(result.end(), response->Items.begin(), response->Items.end());
-      continuation = response->ContinuationToken;
-      options.ContinuationToken = continuation;
-    } while (!continuation.empty());
+      options.ContinuationToken = response->ContinuationToken;
+    } while (options.ContinuationToken.HasValue());
     return result;
   }
 

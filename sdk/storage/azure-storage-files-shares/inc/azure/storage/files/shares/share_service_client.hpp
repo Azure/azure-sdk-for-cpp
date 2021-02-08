@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * when setting the service properties.
      */
     Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
-        Models::StorageServiceProperties properties,
+        Models::FileServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
