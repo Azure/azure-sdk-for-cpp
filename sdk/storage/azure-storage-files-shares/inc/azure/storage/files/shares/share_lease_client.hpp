@@ -4,6 +4,7 @@
 #pragma once
 
 #include <chrono>
+#include <string>
 
 #include "azure/storage/files/shares/share_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
@@ -43,7 +44,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @return Lease id of this lease client.
      */
-    std::string GetLeaseId() const { return m_leaseId; }
+    const std::string& GetLeaseId() const { return m_leaseId; }
 
     /**
      * @brief Acquires a lease on the file or share.
