@@ -64,6 +64,8 @@ uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
 
 TEST(Md5Hash, Basic)
 {
+  Md5Hash md5empty;
+  EXPECT_EQ(Base64Encode(md5empty.Final()), "1B2M2Y8AsgTpgAmY7PhCfg==");
   EXPECT_EQ(Base64Encode(ComputeHash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
   EXPECT_EQ(Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
