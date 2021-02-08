@@ -8420,7 +8420,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /*!
     @brief get codepoint from 4 hex characters following `\\u`
 
-    For input "\u c1 c2 c3 c4" the codepoint is:
+    For input "\\u c1 c2 c3 c4" the codepoint is:
       (c1 * 0x1000) + (c2 * 0x0100) + (c3 * 0x0010) + c4
     = (c1 << 12) + (c2 << 8) + (c3 << 4) + (c4 << 0)
 
@@ -15243,12 +15243,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     Escape a string by replacing certain special characters by a sequence of an
     escape character (backslash) and another character and other control
-    characters by a sequence of "\u" followed by a four-digit hex
+    characters by a sequence of "\\u" followed by a four-digit hex
     representation. The escaped string is written to output stream @a o.
 
     @param[in] s  the string to escape
     @param[in] ensure_ascii  whether to escape non-ASCII characters with
-                             \uXXXX sequences
+                             \\uXXXX sequences
 
     \@complexity Linear in the length of string @a s.
     */
