@@ -45,27 +45,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileSystemUri = std::move(parsedConnectionString.DataLakeServiceUrl);
-    fileSystemUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
+    auto fileSystemUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
+    fileSystemUrl.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return DataLakeFileSystemClient(
-          fileSystemUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          fileSystemUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DataLakeFileSystemClient(fileSystemUri.GetAbsoluteUrl(), options);
+      return DataLakeFileSystemClient(fileSystemUrl.GetAbsoluteUrl(), options);
     }
   }
 
   DataLakeFileSystemClient::DataLakeFileSystemClient(
-      const std::string& fileSystemUri,
+      const std::string& fileSystemUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(fileSystemUri)),
+      : m_fileSystemUrl(Details::GetDfsUrlFromUrl(fileSystemUrl)),
         m_blobContainerClient(
-            Details::GetBlobUrlFromUrl(fileSystemUri),
+            Details::GetBlobUrlFromUrl(fileSystemUrl),
             credential,
             GetBlobContainerClientOptions(options))
   {
@@ -95,12 +95,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DataLakeFileSystemClient::DataLakeFileSystemClient(
-      const std::string& fileSystemUri,
+      const std::string& fileSystemUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(fileSystemUri)),
+      : m_fileSystemUrl(Details::GetDfsUrlFromUrl(fileSystemUrl)),
         m_blobContainerClient(
-            Details::GetBlobUrlFromUrl(fileSystemUri),
+            Details::GetBlobUrlFromUrl(fileSystemUrl),
             credential,
             GetBlobContainerClientOptions(options))
   {
@@ -137,11 +137,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DataLakeFileSystemClient::DataLakeFileSystemClient(
-      const std::string& fileSystemUri,
+      const std::string& fileSystemUrl,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(fileSystemUri)),
+      : m_fileSystemUrl(Details::GetDfsUrlFromUrl(fileSystemUrl)),
         m_blobContainerClient(
-            Details::GetBlobUrlFromUrl(fileSystemUri),
+            Details::GetBlobUrlFromUrl(fileSystemUrl),
             GetBlobContainerClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -167,17 +167,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  DataLakePathClient DataLakeFileSystemClient::GetPathClient(const std::string& path) const
-  {
-    auto builder = m_dfsUrl;
-    builder.AppendPath(Storage::Details::UrlEncodePath(path));
-    return DataLakePathClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
-  }
-
   DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& fileName) const
   {
 
-    auto builder = m_dfsUrl;
+    auto builder = m_fileSystemUrl;
     builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
     auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
     auto blockBlobClient = blobClient.AsBlockBlobClient();
@@ -188,7 +181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
       const std::string& directoryName) const
   {
-    auto builder = m_dfsUrl;
+    auto builder = m_fileSystemUrl;
     builder.AppendPath(Storage::Details::UrlEncodePath(directoryName));
     return DataLakeDirectoryClient(
         builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
@@ -330,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_fileSystemUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>

@@ -34,33 +34,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -108,7 +108,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    Azure::Core::Http::Url m_dfsUrl;
+    Azure::Core::Http::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };

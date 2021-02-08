@@ -39,41 +39,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param fileSystemUri The URI of the file system this client's request targets.
+     * @param fileSystemUrl The URL of the file system this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeFileSystemClient(
-        const std::string& fileSystemUri,
+        const std::string& fileSystemUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param fileSystemUri The URI of the file system this client's request targets.
+     * @param fileSystemUrl The URL of the file system this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeFileSystemClient(
-        const std::string& fileSystemUri,
+        const std::string& fileSystemUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param fileSystemUri The URI of the file system this client's request targets.
+     * @param fileSystemUrl The URL of the file system this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeFileSystemClient(
-        const std::string& fileSystemUri,
+        const std::string& fileSystemUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
-
-    /**
-     * @brief Create a DataLakePathClient from current DataLakeFileSystemClient
-     * @param path Name of path within the file system.
-     * @return DataLakePathClient
-     */
-    DataLakePathClient GetPathClient(const std::string& path) const;
 
     /**
      * @brief Create a DataLakeFileClient from current DataLakeFileSystemClient
@@ -231,16 +224,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions()) const;
 
   private:
-    Azure::Core::Http::Url m_dfsUrl;
+    Azure::Core::Http::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakeFileSystemClient(
-        Azure::Core::Http::Url dfsUrl,
+        Azure::Core::Http::Url fileSystemUrl,
         Blobs::BlobContainerClient blobContainerClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUrl(std::move(dfsUrl)), m_blobContainerClient(std::move(blobContainerClient)),
-          m_pipeline(std::move(pipeline))
+        : m_fileSystemUrl(std::move(fileSystemUrl)),
+          m_blobContainerClient(std::move(blobContainerClient)), m_pipeline(std::move(pipeline))
     {
     }
     friend class DataLakeLeaseClient;
