@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/md5.hpp"
+#include "azure/core/hash.hpp"
 #include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -74,7 +74,7 @@ namespace Azure { namespace Core {
     };
   } // namespace Details
 
-  Md5::Md5()
+  Md5Hash::Md5Hash()
   {
     static Details::AlgorithmProviderInstance AlgorithmProvider{};
 
@@ -97,14 +97,14 @@ namespace Azure { namespace Core {
     }
   }
 
-  Md5::~Md5()
+  Md5Hash::~Md5Hash()
   {
     Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
     BCryptDestroyHash(md5Context->hashHandle);
     delete md5Context;
   }
 
-  void Md5::Update(const uint8_t* data, std::size_t length)
+  void Md5Hash::OnAppend(const uint8_t* data, std::size_t length)
   {
     Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
 
@@ -119,8 +119,9 @@ namespace Azure { namespace Core {
     }
   }
 
-  std::vector<uint8_t> Md5::Digest() const
+  std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, std::size_t length)
   {
+    OnAppend(data, length);
     Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
     std::vector<uint8_t> hash;
     hash.resize(md5Context->hashLength);
@@ -138,27 +139,28 @@ namespace Azure { namespace Core {
 
 #elif defined(AZ_PLATFORM_POSIX)
 
-  Md5::Md5()
+  Md5Hash::Md5Hash()
   {
     MD5_CTX* md5Context = new MD5_CTX;
     m_md5Context = md5Context;
     MD5_Init(md5Context);
   }
 
-  Md5::~Md5()
+  Md5Hash::~Md5Hash()
   {
     MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
     delete md5Context;
   }
 
-  void Md5::Update(const uint8_t* data, std::size_t length)
+  void Md5Hash::OnAppend(const uint8_t* data, std::size_t length)
   {
     MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
     MD5_Update(md5Context, data, length);
   }
 
-  std::vector<uint8_t> Md5::Digest() const
+  std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, std::size_t length)
   {
+    OnAppend(data, length);
     MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
     unsigned char hash[MD5_DIGEST_LENGTH];
     MD5_Final(hash, md5Context);
