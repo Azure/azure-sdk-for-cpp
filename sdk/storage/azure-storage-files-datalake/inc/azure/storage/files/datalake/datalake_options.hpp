@@ -677,7 +677,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
      *        items.
      */
-    Azure::Core::Nullable<int32_t> MaxEntries;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief  Optional. If set to false, the operation will terminate quickly on encountering user

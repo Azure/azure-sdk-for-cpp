@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareClientTest::TearDownTestSuite()
   {
     auto deleteOptions = Files::Shares::DeleteShareOptions();
-    deleteOptions.IncludeSnapshots = true;
+    deleteOptions.DeleteSnapshots = true;
     m_shareClient->Delete(deleteOptions);
   }
 

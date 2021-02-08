@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return Lease id of this lease client.
      */
-    std::string GetLeaseId() const { return m_leaseId; }
+    const std::string& GetLeaseId() const { return m_leaseId; }
 
     /**
      * @brief Acquires a lease on the blob or blob container.

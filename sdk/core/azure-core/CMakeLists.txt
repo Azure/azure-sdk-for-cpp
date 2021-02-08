@@ -118,10 +118,9 @@ create_code_coverage(core azure-core azure-core-test)
 
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
-if(MSVC)
+if(WIN32)
     target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
-    message("Find the OpenSSL package on MacOS, used for Base64 encoding.")
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()

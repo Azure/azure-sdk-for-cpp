@@ -292,7 +292,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
-      ret.LeaseTime = response->LeaseTime;
 
       return Azure::Core::Response<Models::BreakBlobLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
@@ -321,7 +320,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
-      ret.LeaseTime = response->LeaseTime;
 
       return Azure::Core::Response<Models::BreakBlobLeaseResult>(
           std::move(ret), response.ExtractRawResponse());

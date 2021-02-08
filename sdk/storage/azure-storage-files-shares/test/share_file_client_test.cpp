@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareFileClientTest::TearDownTestSuite()
   {
     Files::Shares::DeleteShareOptions options;
-    options.IncludeSnapshots = true;
+    options.DeleteSnapshots = true;
     m_shareClient->Delete(options);
   }
 
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set permission with SetProperties works
-      Files::Shares::Models::FileShareSmbProperties properties;
+      Files::Shares::Models::FileSmbProperties properties;
       properties.Attributes = Files::Shares::Models::FileAttributes::System
           | Files::Shares::Models::FileAttributes::NotContentIndexed;
       properties.CreatedOn = std::chrono::system_clock::now();
@@ -195,7 +195,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::CreateShareFileOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
-      EXPECT_NO_THROW(permissionKey = client3.Create(1024, options3)->FilePermissionKey);
+      EXPECT_NO_THROW(
+          permissionKey = client3.Create(1024, options3)->SmbProperties.PermissionKey.GetValue());
       auto result3 = client3.GetProperties()->SmbProperties.PermissionKey;
       EXPECT_TRUE(result3.HasValue());
       EXPECT_EQ(permissionKey, result3.GetValue());
@@ -204,7 +205,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, FileSmbProperties)
   {
-    Files::Shares::Models::FileShareSmbProperties properties;
+    Files::Shares::Models::FileSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::System
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreatedOn = std::chrono::system_clock::now();
@@ -748,7 +749,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshot2 = m_shareClient->CreateSnapshot()->Snapshot;
     Files::Shares::Models::GetShareFileRangeListResult result;
     Files::Shares::GetShareFileRangeListOptions options;
-    options.PrevShareSnapshot = snapshot1;
+    options.PreviousShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
     EXPECT_EQ(2U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Offset);
@@ -759,7 +760,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(512, result.Ranges[1].Length.GetValue());
     EXPECT_NO_THROW(fileClient.ClearRange(3096, 2048));
     auto snapshot3 = m_shareClient->CreateSnapshot()->Snapshot;
-    options.PrevShareSnapshot = snapshot1;
+    options.PreviousShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
     EXPECT_EQ(4U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Offset);
@@ -859,7 +860,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
     EXPECT_NO_THROW(
         uploadResult = *destFileClient.UploadRangeFromUri(
-            sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange));
+            destRange.Offset, sourceFileClient.GetUrl() + sourceSas, sourceRange));
 
     Files::Shares::Models::DownloadShareFileResult result;
     Files::Shares::DownloadShareFileOptions downloadOptions;
@@ -885,7 +886,10 @@ namespace Azure { namespace Storage { namespace Test {
           = uploadResult.TransactionalContentHash;
       EXPECT_THROW(
           uploadResult = *destFileClient.UploadRangeFromUri(
-              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions),
+              destRange.Offset,
+              sourceFileClient.GetUrl() + sourceSas,
+              sourceRange,
+              uploadRangeOptions),
           StorageException);
       // Below code seems to be triggering a server bug. Uncomment when server resolves the issue.
       // uploadRangeOptions.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Value
@@ -900,7 +904,10 @@ namespace Azure { namespace Storage { namespace Test {
           = uploadResult.TransactionalContentHash;
       EXPECT_NO_THROW(
           uploadResult = *destFileClient.UploadRangeFromUri(
-              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+              destRange.Offset,
+              sourceFileClient.GetUrl() + sourceSas,
+              sourceRange,
+              uploadRangeOptions));
       // Below code seems to be triggering a server high latency. Uncomment when server resolves the
       // issue.
       // uploadRangeOptions.SourceAccessCondition.IfMatchContentHash.GetValue().Value =
@@ -912,10 +919,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
-      uploadRangeOptions.SourceContentHash = uploadResult.TransactionalContentHash;
+      uploadRangeOptions.TransactionalContentHash = uploadResult.TransactionalContentHash;
       EXPECT_NO_THROW(
           uploadResult = *destFileClient.UploadRangeFromUri(
-              sourceFileClient.GetUrl() + sourceSas, sourceRange, destRange, uploadRangeOptions));
+              destRange.Offset,
+              sourceFileClient.GetUrl() + sourceSas,
+              sourceRange,
+              uploadRangeOptions));
       // Below code seems to be triggering a server high latency. Uncomment when server resolves the
       // issue.
       // uploadRangeOptions.SourceContentHash.GetValue().Value = invalidCrc64;

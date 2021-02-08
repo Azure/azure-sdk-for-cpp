@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.8 (Unreleased)
 
+### Breaking Changes
+
+- Removed `BreakBlobLeaseResult::Leasetime`.
 
 ## 12.0.0-beta.7 (2021-02-03)
 
