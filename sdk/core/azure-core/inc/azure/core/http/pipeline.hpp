@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark \p other is expected to have at least one policy.
      *
-     * @param other
+     * @param other Another instance of #HttpPipeline to create a copy of.
      */
     HttpPipeline(const HttpPipeline& other)
     {
