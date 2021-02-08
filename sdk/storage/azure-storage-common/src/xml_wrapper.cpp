@@ -128,9 +128,9 @@ namespace Azure { namespace Storage { namespace Details {
   }
 
   namespace {
-    template <typename T> inline constexpr xmlChar* BadCast(T const* x)
+    inline constexpr xmlChar* BadCast(char const* s)
     {
-      return const_cast<xmlChar*>(reinterpret_cast<xmlChar const*>(x));
+      return const_cast<xmlChar*>(reinterpret_cast<xmlChar const*>(s));
     }
   } // namespace
 
