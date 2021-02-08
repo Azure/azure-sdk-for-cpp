@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief makes sure azure/core.hpp can be included.
+ * @brief makes sure azure/identity.hpp can be included.
  *
- * @remark This file will catch any issue while trying to use/include the core.hpp header
+ * @remark This file will catch any issue while trying to use/include the identity.hpp header
  *
  */
 
