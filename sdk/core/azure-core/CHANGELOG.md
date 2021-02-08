@@ -5,6 +5,7 @@
 ### New Features
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
+- Added MD5 hashing APIs to the `Azure::Core` namespace available from `azure/core/md5.hpp`.
 
 ### Breaking Changes
 

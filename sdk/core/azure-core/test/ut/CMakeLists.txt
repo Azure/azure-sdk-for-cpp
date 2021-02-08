@@ -41,6 +41,7 @@ add_executable (
     logging.cpp
     main.cpp
     match_conditions.cpp
+    md5.cpp
     nullable.cpp
     operation.cpp
     operation_status.cpp
