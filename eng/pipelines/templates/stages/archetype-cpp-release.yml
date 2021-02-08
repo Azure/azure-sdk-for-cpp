@@ -101,7 +101,7 @@ stages:
                         displayName: Set fork branch name
 
                       - pwsh: |
-                          $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
+                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
                           $version = $packageSpec.version
                           $title = "[${{ artifact.VcpkgPortName }}] publish version $version"
 
