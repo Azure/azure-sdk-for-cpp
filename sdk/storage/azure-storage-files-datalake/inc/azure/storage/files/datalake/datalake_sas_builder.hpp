@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Sas {
     Create = 32,
 
     /**
-     * @beirf Indicates that all permissions are set.
+     * @breif Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Sas {
     ManageAccessControl = 512,
 
     /**
-     * @beirf Indicates that all permissions are set.
+     * @breif Indicates that all permissions are set.
      */
     All = ~0,
   };

@@ -184,7 +184,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief #ETag representing everything.
-     * @notes The any #ETag is *, (unquoted).  It is NOT the same as "*".
+     * @note The any #ETag is *, (unquoted).  It is NOT the same as "*".
      */
     static const ETag& Any()
     {
