@@ -1,0 +1,75 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+cmake_minimum_required (VERSION 3.13)
+project(azure-template2 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
+
+az_vcpkg_integrate()
+
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-core-cpp CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp REQUIRED)
+  endif()
+endif()
+
+set(
+  AZURE_TEMPLATE_HEADER
+    inc/azure/template2/dll_import_export.hpp
+    inc/azure/template2/template_client.hpp
+    inc/azure/template2/version.hpp
+    inc/azure/template2.hpp
+)
+
+set(
+  AZURE_TEMPLATE_SOURCE
+    src/template_client.cpp
+    src/version.cpp
+)
+
+add_library(azure-template2 ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
+
+target_include_directories(
+  azure-template2
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include>
+      # Disable dependency on azure-core until azure-core has released to vcpkg
+      # ${azure-core-cpp_INCLUDE_DIRS}
+)
+
+# Disable dependency on azure-core until azure-core has released to vcpkg
+# target_link_libraries(azure-template2 PUBLIC Azure::azure-core)
+
+# make sure that users can consume the project as a library.
+add_library(Azure::azure-template2 ALIAS azure-template2)
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(template azure-template2 azure-template2-test)
+
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template2/version.hpp")
+generate_documentation(azure-template2 ${AZ_LIBRARY_VERSION})
+
+az_vcpkg_export(
+    azure-template2
+    TEMPLATE
+    "azure/template2/dll_import_export.hpp"
+  )
+
+if(BUILD_TESTING)
+    # tests
+    add_subdirectory(test)
+endif()
