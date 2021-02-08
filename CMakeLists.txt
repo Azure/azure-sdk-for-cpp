@@ -44,6 +44,8 @@ if(BUILD_TESTING)
     if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
       add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
     endif()
+
+    add_subdirectory(sdk/identity/azure-identity/test)
 endif()
 
 # compiler warning flags globally
