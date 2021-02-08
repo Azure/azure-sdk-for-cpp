@@ -2965,7 +2965,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         CompatibleObjectType,
         enable_if_t<
             is_detected<mapped_type_t, CompatibleObjectType>::value
-            and is_detected<key_type_t, CompatibleObjectType>::value>>
+            && is_detected<key_type_t, CompatibleObjectType>::value>>
     {
 
       using object_t = typename BasicJsonType::object_t;
@@ -2974,8 +2974,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       static constexpr bool value = std::is_constructible<
                                         typename object_t::key_type,
                                         typename CompatibleObjectType::key_type>::value
-          and std::is_constructible<typename object_t::mapped_type,
-                                    typename CompatibleObjectType::mapped_type>::value;
+          && std::is_constructible<typename object_t::mapped_type,
+                                   typename CompatibleObjectType::mapped_type>::value;
     };
 
     template <typename BasicJsonType, typename CompatibleObjectType>
@@ -2995,14 +2995,19 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         ConstructibleObjectType,
         enable_if_t<
             is_detected<mapped_type_t, ConstructibleObjectType>::value
-            and is_detected<key_type_t, ConstructibleObjectType>::value>>
+            && is_detected<key_type_t, ConstructibleObjectType>::value>>
     {
       using object_t = typename BasicJsonType::object_t;
 
-      static constexpr bool value
-          = (std::is_default_constructible<ConstructibleObjectType>::value
-             and (std::is_move_assignable<ConstructibleObjectType>::value or std::is_copy_assignable<ConstructibleObjectType>::value)
-             and (std::is_constructible<typename ConstructibleObjectType::key_type, typename object_t::key_type>::value and std::is_same<typename object_t::mapped_type, typename ConstructibleObjectType::mapped_type>::value))
+      static constexpr bool value = (std::is_default_constructible<ConstructibleObjectType>::value
+                                     && (std::is_move_assignable<ConstructibleObjectType>::value
+                                         or std::is_copy_assignable<ConstructibleObjectType>::value)
+                                     && (std::is_constructible<
+                                             typename ConstructibleObjectType::key_type,
+                                             typename object_t::key_type>::value
+                                         && std::is_same<
+                                             typename object_t::mapped_type,
+                                             typename ConstructibleObjectType::mapped_type>::value))
           or (has_from_json<BasicJsonType, typename ConstructibleObjectType::mapped_type>::value
               or has_non_default_from_json<
                   BasicJsonType,
@@ -3074,7 +3079,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         CompatibleArrayType,
         enable_if_t<
             is_detected<value_type_t, CompatibleArrayType>::value
-            and is_detected<iterator_t, CompatibleArrayType>::value and
+            && is_detected<iterator_t, CompatibleArrayType>::value &&
             // This is needed because json_reverse_iterator has a ::iterator type...
             // Therefore it is detected as a CompatibleArrayType.
             // The real fix would be to have an Iterable concept.
@@ -3111,11 +3116,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         ConstructibleArrayType,
         enable_if_t<
             not std::is_same<ConstructibleArrayType, typename BasicJsonType::value_type>::value
-            and std::is_default_constructible<ConstructibleArrayType>::value
-            and (std::is_move_assignable<ConstructibleArrayType>::value or std::is_copy_assignable<ConstructibleArrayType>::value)
-            and is_detected<value_type_t, ConstructibleArrayType>::value
-            and is_detected<iterator_t, ConstructibleArrayType>::value
-            and is_complete_type<detected_t<value_type_t, ConstructibleArrayType>>::value>>
+            && std::is_default_constructible<ConstructibleArrayType>::value
+            && (std::is_move_assignable<ConstructibleArrayType>::value
+                or std::is_copy_assignable<ConstructibleArrayType>::value)
+            && is_detected<value_type_t, ConstructibleArrayType>::value
+            && is_detected<iterator_t, ConstructibleArrayType>::value
+            && is_complete_type<detected_t<value_type_t, ConstructibleArrayType>>::value>>
     {
       static constexpr bool value =
           // This is needed because json_reverse_iterator has a ::iterator type,
@@ -3123,7 +3129,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
           // base class `iterator`... Therefore it is detected as a
           // ConstructibleArrayType. The real fix would be to have an Iterable
           // concept.
-          not is_iterator_traits<iterator_traits<ConstructibleArrayType>>::value and
+          not is_iterator_traits<iterator_traits<ConstructibleArrayType>>::value &&
 
           (std::is_same<
                typename ConstructibleArrayType::value_type,
@@ -3151,8 +3157,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         CompatibleNumberIntegerType,
         enable_if_t<
             std::is_integral<RealIntegerType>::value
-            and std::is_integral<CompatibleNumberIntegerType>::value
-            and not std::is_same<bool, CompatibleNumberIntegerType>::value>>
+            && std::is_integral<CompatibleNumberIntegerType>::value
+            && not std::is_same<bool, CompatibleNumberIntegerType>::value>>
     {
       // is there an assert somewhere on overflows?
       using RealLimits = std::numeric_limits<RealIntegerType>;
@@ -3160,7 +3166,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
       static constexpr auto value
           = std::is_constructible<RealIntegerType, CompatibleNumberIntegerType>::value
-          and CompatibleLimits::is_integer and RealLimits::is_signed == CompatibleLimits::is_signed;
+          && CompatibleLimits::is_integer && RealLimits::is_signed == CompatibleLimits::is_signed;
     };
 
     template <typename RealIntegerType, typename CompatibleNumberIntegerType>
@@ -3293,7 +3299,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     const auto l_index = static_cast<std::size_t>(lhs);
     const auto r_index = static_cast<std::size_t>(rhs);
-    return l_index < order.size() and r_index < order.size() and order[l_index] < order[r_index];
+    return l_index < order.size() && r_index < order.size() && order[l_index] < order[r_index];
   }
 }}}}} // namespace Azure::Core::Internal::Json::detail
 
@@ -3316,7 +3322,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ArithmeticType,
         enable_if_t<
             std::is_arithmetic<ArithmeticType>::value
-                and not std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value,
+                && not std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value,
             int> = 0>
     void get_arithmetic_value(const BasicJsonType& j, ArithmeticType& val)
     {
@@ -3371,8 +3377,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ConstructibleStringType,
         enable_if_t<
             is_constructible_string_type<BasicJsonType, ConstructibleStringType>::value
-                and not std::is_same<typename BasicJsonType::string_t, ConstructibleStringType>::
-                        value,
+                && not std::is_same<typename BasicJsonType::string_t, ConstructibleStringType>::
+                       value,
             int> = 0>
     void from_json(const BasicJsonType& j, ConstructibleStringType& s)
     {
@@ -3523,11 +3529,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ConstructibleArrayType,
         enable_if_t<
             is_constructible_array_type<BasicJsonType, ConstructibleArrayType>::value
-                and not is_constructible_object_type<BasicJsonType, ConstructibleArrayType>::value
-                and not is_constructible_string_type<BasicJsonType, ConstructibleArrayType>::value
-                and not std::is_same<ConstructibleArrayType, typename BasicJsonType::binary_t>::
-                        value
-                and not is_basic_json<ConstructibleArrayType>::value,
+                && not is_constructible_object_type<BasicJsonType, ConstructibleArrayType>::value
+                && not is_constructible_string_type<BasicJsonType, ConstructibleArrayType>::value
+                && not std::is_same<ConstructibleArrayType, typename BasicJsonType::binary_t>::value
+                && not is_basic_json<ConstructibleArrayType>::value,
             int> = 0>
     auto from_json(const BasicJsonType& j, ConstructibleArrayType& arr) -> decltype(
         from_json_array_impl(j, arr, priority_tag<3>{}),
@@ -3592,12 +3597,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ArithmeticType,
         enable_if_t<
             std::is_arithmetic<ArithmeticType>::value
-                and not std::is_same<ArithmeticType, typename BasicJsonType::number_unsigned_t>::
-                        value
-                and not std::is_same<ArithmeticType, typename BasicJsonType::number_integer_t>::
-                        value
-                and not std::is_same<ArithmeticType, typename BasicJsonType::number_float_t>::value
-                and not std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value,
+                && not std::is_same<ArithmeticType, typename BasicJsonType::number_unsigned_t>::
+                       value
+                && not std::is_same<ArithmeticType, typename BasicJsonType::number_integer_t>::value
+                && not std::is_same<ArithmeticType, typename BasicJsonType::number_float_t>::value
+                && not std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value,
             int> = 0>
     void from_json(const BasicJsonType& j, ArithmeticType& val)
     {
@@ -4196,10 +4200,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename CompatibleArrayType,
         enable_if_t<
             is_compatible_array_type<BasicJsonType, CompatibleArrayType>::value
-                and not is_compatible_object_type<BasicJsonType, CompatibleArrayType>::value
-                and not is_compatible_string_type<BasicJsonType, CompatibleArrayType>::value
-                and not std::is_same<typename BasicJsonType::binary_t, CompatibleArrayType>::value
-                and not is_basic_json<CompatibleArrayType>::value,
+                && not is_compatible_object_type<BasicJsonType, CompatibleArrayType>::value
+                && not is_compatible_string_type<BasicJsonType, CompatibleArrayType>::value
+                && not std::is_same<typename BasicJsonType::binary_t, CompatibleArrayType>::value
+                && not is_basic_json<CompatibleArrayType>::value,
             int> = 0>
     void to_json(BasicJsonType& j, const CompatibleArrayType& arr)
     {
@@ -4232,7 +4236,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename CompatibleObjectType,
         enable_if_t<
             is_compatible_object_type<BasicJsonType, CompatibleObjectType>::value
-                and not is_basic_json<CompatibleObjectType>::value,
+                && not is_basic_json<CompatibleObjectType>::value,
             int> = 0>
     void to_json(BasicJsonType& j, const CompatibleObjectType& obj)
     {
@@ -4947,9 +4951,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   template <
       typename CharT,
       typename std::enable_if<
-          std::is_pointer<CharT>::value and not std::is_array<CharT>::value
-              and std::is_integral<typename std::remove_pointer<CharT>::type>::value
-              and sizeof(typename std::remove_pointer<CharT>::type) == 1,
+          std::is_pointer<CharT>::value && not std::is_array<CharT>::value
+              && std::is_integral<typename std::remove_pointer<CharT>::type>::value
+              && sizeof(typename std::remove_pointer<CharT>::type) == 1,
           int>::type
       = 0>
   contiguous_bytes_input_adapter input_adapter(CharT b)
@@ -4974,8 +4978,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         typename CharT,
         typename std::enable_if<
             std::is_pointer<CharT>::value
-                and std::is_integral<typename std::remove_pointer<CharT>::type>::value
-                and sizeof(typename std::remove_pointer<CharT>::type) == 1,
+                && std::is_integral<typename std::remove_pointer<CharT>::type>::value
+                && sizeof(typename std::remove_pointer<CharT>::type) == 1,
             int>::type
         = 0>
     span_input_adapter(CharT b, std::size_t l)
@@ -5220,7 +5224,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       {
         ref_stack.push_back(handle_value(BasicJsonType::value_t::object));
 
-        if (_az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) and len > ref_stack.back()->max_size()))
+        if (_az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) && len > ref_stack.back()->max_size()))
         {
           _az_JSON_THROW(
               out_of_range::create(408, "excessive object size: " + std::to_string(len)));
@@ -5246,7 +5250,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       {
         ref_stack.push_back(handle_value(BasicJsonType::value_t::array));
 
-        if (_az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) and len > ref_stack.back()->max_size()))
+        if (_az_JSON_HEDLEY_UNLIKELY(len != std::size_t(-1) && len > ref_stack.back()->max_size()))
         {
           _az_JSON_THROW(out_of_range::create(408, "excessive array size: " + std::to_string(len)));
         }
@@ -5414,8 +5418,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
         // check object limit
         if (ref_stack.back()
-            and _az_JSON_HEDLEY_UNLIKELY(
-                len != std::size_t(-1) and len > ref_stack.back()->max_size()))
+            && _az_JSON_HEDLEY_UNLIKELY(
+                len != std::size_t(-1) && len > ref_stack.back()->max_size()))
         {
           _az_JSON_THROW(
               out_of_range::create(408, "excessive object size: " + std::to_string(len)));
@@ -5433,7 +5437,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         key_keep_stack.push_back(keep);
 
         // add discarded value at given key and store the reference for later
-        if (keep and ref_stack.back())
+        if (keep && ref_stack.back())
         {
           object_element = &(ref_stack.back()->m_value.object->operator[](val) = discarded);
         }
@@ -5444,7 +5448,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       bool end_object()
       {
         if (ref_stack.back()
-            and not callback(
+            && not callback(
                 static_cast<int>(ref_stack.size()) - 1,
                 parse_event_t::object_end,
                 *ref_stack.back()))
@@ -5458,7 +5462,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         ref_stack.pop_back();
         keep_stack.pop_back();
 
-        if (not ref_stack.empty() and ref_stack.back() and ref_stack.back()->is_structured())
+        if (not ref_stack.empty() && ref_stack.back() && ref_stack.back()->is_structured())
         {
           // remove discarded value
           for (auto it = ref_stack.back()->begin(); it != ref_stack.back()->end(); ++it)
@@ -5485,8 +5489,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
         // check array limit
         if (ref_stack.back()
-            and _az_JSON_HEDLEY_UNLIKELY(
-                len != std::size_t(-1) and len > ref_stack.back()->max_size()))
+            && _az_JSON_HEDLEY_UNLIKELY(
+                len != std::size_t(-1) && len > ref_stack.back()->max_size()))
         {
           _az_JSON_THROW(out_of_range::create(408, "excessive array size: " + std::to_string(len)));
         }
@@ -5515,7 +5519,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         keep_stack.pop_back();
 
         // remove discarded value
-        if (not keep and not ref_stack.empty() and ref_stack.back()->is_array())
+        if (not keep && not ref_stack.empty() && ref_stack.back()->is_array())
         {
           ref_stack.back()->m_value.array->pop_back();
         }
@@ -5930,7 +5934,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
 
       // strict mode: next byte must be EOF
-      if (result and strict)
+      if (result && strict)
       {
         if (format == input_format_t::ubjson)
         {
@@ -6042,7 +6046,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
 
       return get_string(input_format_t::bson, len - static_cast<NumberType>(1), result)
-          and get() != std::char_traits<char_type>::eof();
+          && get() != std::char_traits<char_type>::eof();
     }
 
     /*!
@@ -6099,7 +6103,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           double number;
           return get_number<double, true>(input_format_t::bson, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         case 0x02: // string
@@ -6107,7 +6111,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           std::int32_t len;
           string_t value;
           return get_number<std::int32_t, true>(input_format_t::bson, len)
-              and get_bson_string(len, value) and sax->string(value);
+              && get_bson_string(len, value) && sax->string(value);
         }
 
         case 0x03: // object
@@ -6125,7 +6129,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           std::int32_t len;
           binary_t value;
           return get_number<std::int32_t, true>(input_format_t::bson, len)
-              and get_bson_binary(len, value) and sax->binary(value);
+              && get_bson_binary(len, value) && sax->binary(value);
         }
 
         case 0x08: // boolean
@@ -6142,14 +6146,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::int32_t value;
           return get_number<std::int32_t, true>(input_format_t::bson, value)
-              and sax->number_integer(value);
+              && sax->number_integer(value);
         }
 
         case 0x12: // int64
         {
           std::int64_t value;
           return get_number<std::int64_t, true>(input_format_t::bson, value)
-              and sax->number_integer(value);
+              && sax->number_integer(value);
         }
 
         default: // anything else not supported (yet)
@@ -6196,7 +6200,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           return false;
         }
 
-        if (not is_array and not sax->key(key))
+        if (not is_array && not sax->key(key))
         {
           return false;
         }
@@ -6285,25 +6289,25 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 0x18: // Unsigned integer (one-byte uint8_t follows)
         {
           std::uint8_t number;
-          return get_number(input_format_t::cbor, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::cbor, number) && sax->number_unsigned(number);
         }
 
         case 0x19: // Unsigned integer (two-byte uint16_t follows)
         {
           std::uint16_t number;
-          return get_number(input_format_t::cbor, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::cbor, number) && sax->number_unsigned(number);
         }
 
         case 0x1A: // Unsigned integer (four-byte uint32_t follows)
         {
           std::uint32_t number;
-          return get_number(input_format_t::cbor, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::cbor, number) && sax->number_unsigned(number);
         }
 
         case 0x1B: // Unsigned integer (eight-byte uint64_t follows)
         {
           std::uint64_t number;
-          return get_number(input_format_t::cbor, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::cbor, number) && sax->number_unsigned(number);
         }
 
         // Negative integer -1-0x00..-1-0x17 (-1..-24)
@@ -6337,28 +6341,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t number;
           return get_number(input_format_t::cbor, number)
-              and sax->number_integer(static_cast<number_integer_t>(-1) - number);
+              && sax->number_integer(static_cast<number_integer_t>(-1) - number);
         }
 
         case 0x39: // Negative integer -1-n (two-byte uint16_t follows)
         {
           std::uint16_t number;
           return get_number(input_format_t::cbor, number)
-              and sax->number_integer(static_cast<number_integer_t>(-1) - number);
+              && sax->number_integer(static_cast<number_integer_t>(-1) - number);
         }
 
         case 0x3A: // Negative integer -1-n (four-byte uint32_t follows)
         {
           std::uint32_t number;
           return get_number(input_format_t::cbor, number)
-              and sax->number_integer(static_cast<number_integer_t>(-1) - number);
+              && sax->number_integer(static_cast<number_integer_t>(-1) - number);
         }
 
         case 0x3B: // Negative integer -1-n (eight-byte uint64_t follows)
         {
           std::uint64_t number;
           return get_number(input_format_t::cbor, number)
-              and sax->number_integer(
+              && sax->number_integer(
                   static_cast<number_integer_t>(-1) - static_cast<number_integer_t>(number));
         }
 
@@ -6394,7 +6398,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 0x5F: // Binary data (indefinite length)
         {
           binary_t b;
-          return get_cbor_binary(b) and sax->binary(b);
+          return get_cbor_binary(b) && sax->binary(b);
         }
 
         // UTF-8 string (0x00..0x17 bytes follow)
@@ -6429,7 +6433,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 0x7F: // UTF-8 string (indefinite length)
         {
           string_t s;
-          return get_cbor_string(s) and sax->string(s);
+          return get_cbor_string(s) && sax->string(s);
         }
 
         // array (0x00..0x17 data items follow)
@@ -6464,28 +6468,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_array(static_cast<std::size_t>(len));
+              && get_cbor_array(static_cast<std::size_t>(len));
         }
 
         case 0x99: // array (two-byte uint16_t for n follow)
         {
           std::uint16_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_array(static_cast<std::size_t>(len));
+              && get_cbor_array(static_cast<std::size_t>(len));
         }
 
         case 0x9A: // array (four-byte uint32_t for n follow)
         {
           std::uint32_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_array(static_cast<std::size_t>(len));
+              && get_cbor_array(static_cast<std::size_t>(len));
         }
 
         case 0x9B: // array (eight-byte uint64_t for n follow)
         {
           std::uint64_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_array(static_cast<std::size_t>(len));
+              && get_cbor_array(static_cast<std::size_t>(len));
         }
 
         case 0x9F: // array (indefinite length)
@@ -6523,28 +6527,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_object(static_cast<std::size_t>(len));
+              && get_cbor_object(static_cast<std::size_t>(len));
         }
 
         case 0xB9: // map (two-byte uint16_t for n follow)
         {
           std::uint16_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_object(static_cast<std::size_t>(len));
+              && get_cbor_object(static_cast<std::size_t>(len));
         }
 
         case 0xBA: // map (four-byte uint32_t for n follow)
         {
           std::uint32_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_object(static_cast<std::size_t>(len));
+              && get_cbor_object(static_cast<std::size_t>(len));
         }
 
         case 0xBB: // map (eight-byte uint64_t for n follow)
         {
           std::uint64_t len;
           return get_number(input_format_t::cbor, len)
-              and get_cbor_object(static_cast<std::size_t>(len));
+              && get_cbor_object(static_cast<std::size_t>(len));
         }
 
         case 0xBF: // map (indefinite length)
@@ -6587,7 +6591,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           const double val = [&half] {
             const int exp = (half >> 10u) & 0x1Fu;
             const unsigned int mant = half & 0x3FFu;
-            assert(0 <= exp and exp <= 32);
+            assert(0 <= exp && exp <= 32);
             assert(mant <= 1024);
             switch (exp)
             {
@@ -6610,14 +6614,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           float number;
           return get_number(input_format_t::cbor, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         case 0xFB: // Double-Precision Float (eight-byte IEEE 754)
         {
           double number;
           return get_number(input_format_t::cbor, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         default: // anything else (0xFF is handled inside the other types)
@@ -6688,28 +6692,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t len;
           return get_number(input_format_t::cbor, len)
-              and get_string(input_format_t::cbor, len, result);
+              && get_string(input_format_t::cbor, len, result);
         }
 
         case 0x79: // UTF-8 string (two-byte uint16_t for n follow)
         {
           std::uint16_t len;
           return get_number(input_format_t::cbor, len)
-              and get_string(input_format_t::cbor, len, result);
+              && get_string(input_format_t::cbor, len, result);
         }
 
         case 0x7A: // UTF-8 string (four-byte uint32_t for n follow)
         {
           std::uint32_t len;
           return get_number(input_format_t::cbor, len)
-              and get_string(input_format_t::cbor, len, result);
+              && get_string(input_format_t::cbor, len, result);
         }
 
         case 0x7B: // UTF-8 string (eight-byte uint64_t for n follow)
         {
           std::uint64_t len;
           return get_number(input_format_t::cbor, len)
-              and get_string(input_format_t::cbor, len, result);
+              && get_string(input_format_t::cbor, len, result);
         }
 
         case 0x7F: // UTF-8 string (indefinite length)
@@ -6797,28 +6801,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t len;
           return get_number(input_format_t::cbor, len)
-              and get_binary(input_format_t::cbor, len, result);
+              && get_binary(input_format_t::cbor, len, result);
         }
 
         case 0x59: // Binary data (two-byte uint16_t for n follow)
         {
           std::uint16_t len;
           return get_number(input_format_t::cbor, len)
-              and get_binary(input_format_t::cbor, len, result);
+              && get_binary(input_format_t::cbor, len, result);
         }
 
         case 0x5A: // Binary data (four-byte uint32_t for n follow)
         {
           std::uint32_t len;
           return get_number(input_format_t::cbor, len)
-              and get_binary(input_format_t::cbor, len, result);
+              && get_binary(input_format_t::cbor, len, result);
         }
 
         case 0x5B: // Binary data (eight-byte uint64_t for n follow)
         {
           std::uint64_t len;
           return get_number(input_format_t::cbor, len)
-              and get_binary(input_format_t::cbor, len, result);
+              && get_binary(input_format_t::cbor, len, result);
         }
 
         case 0x5F: // Binary data (indefinite length)
@@ -7163,7 +7167,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 0xDB: // str 32
         {
           string_t s;
-          return get_msgpack_string(s) and sax->string(s);
+          return get_msgpack_string(s) && sax->string(s);
         }
 
         case 0xC0: // nil
@@ -7188,97 +7192,97 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 0xD8: // fixext 16
         {
           binary_t b;
-          return get_msgpack_binary(b) and sax->binary(b);
+          return get_msgpack_binary(b) && sax->binary(b);
         }
 
         case 0xCA: // float 32
         {
           float number;
           return get_number(input_format_t::msgpack, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         case 0xCB: // float 64
         {
           double number;
           return get_number(input_format_t::msgpack, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         case 0xCC: // uint 8
         {
           std::uint8_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_unsigned(number);
         }
 
         case 0xCD: // uint 16
         {
           std::uint16_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_unsigned(number);
         }
 
         case 0xCE: // uint 32
         {
           std::uint32_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_unsigned(number);
         }
 
         case 0xCF: // uint 64
         {
           std::uint64_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_unsigned(number);
         }
 
         case 0xD0: // int 8
         {
           std::int8_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_integer(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_integer(number);
         }
 
         case 0xD1: // int 16
         {
           std::int16_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_integer(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_integer(number);
         }
 
         case 0xD2: // int 32
         {
           std::int32_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_integer(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_integer(number);
         }
 
         case 0xD3: // int 64
         {
           std::int64_t number;
-          return get_number(input_format_t::msgpack, number) and sax->number_integer(number);
+          return get_number(input_format_t::msgpack, number) && sax->number_integer(number);
         }
 
         case 0xDC: // array 16
         {
           std::uint16_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_msgpack_array(static_cast<std::size_t>(len));
+              && get_msgpack_array(static_cast<std::size_t>(len));
         }
 
         case 0xDD: // array 32
         {
           std::uint32_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_msgpack_array(static_cast<std::size_t>(len));
+              && get_msgpack_array(static_cast<std::size_t>(len));
         }
 
         case 0xDE: // map 16
         {
           std::uint16_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_msgpack_object(static_cast<std::size_t>(len));
+              && get_msgpack_object(static_cast<std::size_t>(len));
         }
 
         case 0xDF: // map 32
         {
           std::uint32_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_msgpack_object(static_cast<std::size_t>(len));
+              && get_msgpack_object(static_cast<std::size_t>(len));
         }
 
         // negative fixint
@@ -7391,21 +7395,21 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_string(input_format_t::msgpack, len, result);
+              && get_string(input_format_t::msgpack, len, result);
         }
 
         case 0xDA: // str 16
         {
           std::uint16_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_string(input_format_t::msgpack, len, result);
+              && get_string(input_format_t::msgpack, len, result);
         }
 
         case 0xDB: // str 32
         {
           std::uint32_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_string(input_format_t::msgpack, len, result);
+              && get_string(input_format_t::msgpack, len, result);
         }
 
         default: {
@@ -7449,21 +7453,21 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         {
           std::uint8_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_binary(input_format_t::msgpack, len, result);
+              && get_binary(input_format_t::msgpack, len, result);
         }
 
         case 0xC5: // bin 16
         {
           std::uint16_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_binary(input_format_t::msgpack, len, result);
+              && get_binary(input_format_t::msgpack, len, result);
         }
 
         case 0xC6: // bin 32
         {
           std::uint32_t len;
           return get_number(input_format_t::msgpack, len)
-              and get_binary(input_format_t::msgpack, len, result);
+              && get_binary(input_format_t::msgpack, len, result);
         }
 
         case 0xC7: // ext 8
@@ -7471,9 +7475,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           std::uint8_t len;
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, len)
-              and get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, len, result)
-              and assign_and_return_true(subtype);
+              && get_number(input_format_t::msgpack, subtype)
+              && get_binary(input_format_t::msgpack, len, result)
+              && assign_and_return_true(subtype);
         }
 
         case 0xC8: // ext 16
@@ -7481,9 +7485,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           std::uint16_t len;
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, len)
-              and get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, len, result)
-              and assign_and_return_true(subtype);
+              && get_number(input_format_t::msgpack, subtype)
+              && get_binary(input_format_t::msgpack, len, result)
+              && assign_and_return_true(subtype);
         }
 
         case 0xC9: // ext 32
@@ -7491,49 +7495,44 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           std::uint32_t len;
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, len)
-              and get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, len, result)
-              and assign_and_return_true(subtype);
+              && get_number(input_format_t::msgpack, subtype)
+              && get_binary(input_format_t::msgpack, len, result)
+              && assign_and_return_true(subtype);
         }
 
         case 0xD4: // fixext 1
         {
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, 1, result)
-              and assign_and_return_true(subtype);
+              && get_binary(input_format_t::msgpack, 1, result) && assign_and_return_true(subtype);
         }
 
         case 0xD5: // fixext 2
         {
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, 2, result)
-              and assign_and_return_true(subtype);
+              && get_binary(input_format_t::msgpack, 2, result) && assign_and_return_true(subtype);
         }
 
         case 0xD6: // fixext 4
         {
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, 4, result)
-              and assign_and_return_true(subtype);
+              && get_binary(input_format_t::msgpack, 4, result) && assign_and_return_true(subtype);
         }
 
         case 0xD7: // fixext 8
         {
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, 8, result)
-              and assign_and_return_true(subtype);
+              && get_binary(input_format_t::msgpack, 8, result) && assign_and_return_true(subtype);
         }
 
         case 0xD8: // fixext 16
         {
           std::int8_t subtype;
           return get_number(input_format_t::msgpack, subtype)
-              and get_binary(input_format_t::msgpack, 16, result)
-              and assign_and_return_true(subtype);
+              && get_binary(input_format_t::msgpack, 16, result) && assign_and_return_true(subtype);
         }
 
         default: // LCOV_EXCL_LINE
@@ -7640,31 +7639,31 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 'U': {
           std::uint8_t len;
           return get_number(input_format_t::ubjson, len)
-              and get_string(input_format_t::ubjson, len, result);
+              && get_string(input_format_t::ubjson, len, result);
         }
 
         case 'i': {
           std::int8_t len;
           return get_number(input_format_t::ubjson, len)
-              and get_string(input_format_t::ubjson, len, result);
+              && get_string(input_format_t::ubjson, len, result);
         }
 
         case 'I': {
           std::int16_t len;
           return get_number(input_format_t::ubjson, len)
-              and get_string(input_format_t::ubjson, len, result);
+              && get_string(input_format_t::ubjson, len, result);
         }
 
         case 'l': {
           std::int32_t len;
           return get_number(input_format_t::ubjson, len)
-              and get_string(input_format_t::ubjson, len, result);
+              && get_string(input_format_t::ubjson, len, result);
         }
 
         case 'L': {
           std::int64_t len;
           return get_number(input_format_t::ubjson, len)
-              and get_string(input_format_t::ubjson, len, result);
+              && get_string(input_format_t::ubjson, len, result);
         }
 
         default:
@@ -7835,39 +7834,39 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
         case 'U': {
           std::uint8_t number;
-          return get_number(input_format_t::ubjson, number) and sax->number_unsigned(number);
+          return get_number(input_format_t::ubjson, number) && sax->number_unsigned(number);
         }
 
         case 'i': {
           std::int8_t number;
-          return get_number(input_format_t::ubjson, number) and sax->number_integer(number);
+          return get_number(input_format_t::ubjson, number) && sax->number_integer(number);
         }
 
         case 'I': {
           std::int16_t number;
-          return get_number(input_format_t::ubjson, number) and sax->number_integer(number);
+          return get_number(input_format_t::ubjson, number) && sax->number_integer(number);
         }
 
         case 'l': {
           std::int32_t number;
-          return get_number(input_format_t::ubjson, number) and sax->number_integer(number);
+          return get_number(input_format_t::ubjson, number) && sax->number_integer(number);
         }
 
         case 'L': {
           std::int64_t number;
-          return get_number(input_format_t::ubjson, number) and sax->number_integer(number);
+          return get_number(input_format_t::ubjson, number) && sax->number_integer(number);
         }
 
         case 'd': {
           float number;
           return get_number(input_format_t::ubjson, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         case 'D': {
           double number;
           return get_number(input_format_t::ubjson, number)
-              and sax->number_float(static_cast<number_float_t>(number), "");
+              && sax->number_float(static_cast<number_float_t>(number), "");
         }
 
         case 'C': // char
@@ -7898,7 +7897,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         case 'S': // string
         {
           string_t s;
-          return get_ubjson_string(s) and sax->string(s);
+          return get_ubjson_string(s) && sax->string(s);
         }
 
         case '[': // array
@@ -8446,15 +8445,15 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       {
         get();
 
-        if (current >= '0' and current <= '9')
+        if (current >= '0' && current <= '9')
         {
           codepoint += static_cast<int>((static_cast<unsigned int>(current) - 0x30u) << factor);
         }
-        else if (current >= 'A' and current <= 'F')
+        else if (current >= 'A' && current <= 'F')
         {
           codepoint += static_cast<int>((static_cast<unsigned int>(current) - 0x37u) << factor);
         }
-        else if (current >= 'a' and current <= 'f')
+        else if (current >= 'a' && current <= 'f')
         {
           codepoint += static_cast<int>((static_cast<unsigned int>(current) - 0x57u) << factor);
         }
@@ -8464,7 +8463,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         }
       }
 
-      assert(0x0000 <= codepoint and codepoint <= 0xFFFF);
+      assert(0x0000 <= codepoint && codepoint <= 0xFFFF);
       return codepoint;
     }
 
@@ -8473,15 +8472,15 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     Adds the current byte and, for each passed range, reads a new byte and
     checks if it is inside the range. If a violation was detected, set up an
-    error message and return false. Otherwise, return true.
+    error message && return false. Otherwise, return true.
 
     @param[in] ranges  list of integers; interpreted as list of pairs of
-                       inclusive lower and upper bound, respectively
+                       inclusive lower && upper bound, respectively
 
     @pre The passed list @a ranges must have 2, 4, or 6 elements; that is,
          1, 2, or 3 pairs. This precondition is enforced by an assertion.
 
-    @return true if and only if no range violation was detected
+    @return true if && only if no range violation was detected
     */
     bool next_byte_in_range(std::initializer_list<char_int_type> ranges)
     {
@@ -8491,7 +8490,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       for (auto range = ranges.begin(); range != ranges.end(); ++range)
       {
         get();
-        if (_az_JSON_HEDLEY_LIKELY(*range <= current and current <= *(++range)))
+        if (_az_JSON_HEDLEY_LIKELY(*range <= current && current <= *(++range)))
         {
           add(current);
         }
@@ -8593,10 +8592,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
                 }
 
                 // check if code point is a high surrogate
-                if (0xD800 <= codepoint1 and codepoint1 <= 0xDBFF)
+                if (0xD800 <= codepoint1 && codepoint1 <= 0xDBFF)
                 {
                   // expect next \uxxxx entry
-                  if (_az_JSON_HEDLEY_LIKELY(get() == '\\' and get() == 'u'))
+                  if (_az_JSON_HEDLEY_LIKELY(get() == '\\' && get() == 'u'))
                   {
                     const int codepoint2 = get_codepoint();
 
@@ -8607,7 +8606,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
                     }
 
                     // check if codepoint2 is a low surrogate
-                    if (_az_JSON_HEDLEY_LIKELY(0xDC00 <= codepoint2 and codepoint2 <= 0xDFFF))
+                    if (_az_JSON_HEDLEY_LIKELY(0xDC00 <= codepoint2 && codepoint2 <= 0xDFFF))
                     {
                       // overwrite codepoint
                       codepoint = static_cast<int>(
@@ -8636,7 +8635,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
                 }
                 else
                 {
-                  if (_az_JSON_HEDLEY_UNLIKELY(0xDC00 <= codepoint1 and codepoint1 <= 0xDFFF))
+                  if (_az_JSON_HEDLEY_UNLIKELY(0xDC00 <= codepoint1 && codepoint1 <= 0xDFFF))
                   {
                     error_message
                         = "invalid string: surrogate U+DC00..U+DFFF must follow U+D800..U+DBFF";
@@ -8645,7 +8644,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
                 }
 
                 // result of the above calculation yields a proper codepoint
-                assert(0x00 <= codepoint and codepoint <= 0x10FFFF);
+                assert(0x00 <= codepoint && codepoint <= 0x10FFFF);
 
                 // translate codepoint into bytes
                 if (codepoint < 0x80)
@@ -9652,7 +9651,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       if (get() == 0xEF)
       {
         // check if we completely parse the BOM
-        return get() == 0xBB and get() == 0xBF;
+        return get() == 0xBB && get() == 0xBF;
       }
 
       // the first character is not the beginning of the BOM; unget it to
@@ -9664,7 +9663,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     token_type scan()
     {
       // initially, skip the BOM
-      if (position.chars_read_total == 0 and not skip_bom())
+      if (position.chars_read_total == 0 && not skip_bom())
       {
         error_message = "invalid BOM; must be 0xEF 0xBB 0xBF if given";
         return token_type::parse_error;
@@ -9863,7 +9862,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         result.assert_invariant();
 
         // in strict mode, input must be completely read
-        if (strict and (get_token() != token_type::end_of_input))
+        if (strict && (get_token() != token_type::end_of_input))
         {
           sdp.parse_error(
               m_lexer.get_position(),
@@ -9895,7 +9894,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         result.assert_invariant();
 
         // in strict mode, input must be completely read
-        if (strict and (get_token() != token_type::end_of_input))
+        if (strict && (get_token() != token_type::end_of_input))
         {
           sdp.parse_error(
               m_lexer.get_position(),
@@ -9934,7 +9933,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       const bool result = sax_parse_internal(sax);
 
       // strict mode: next byte must be EOF
-      if (result and strict and (get_token() != token_type::end_of_input))
+      if (result && strict && (get_token() != token_type::end_of_input))
       {
         return sax->parse_error(
             m_lexer.get_position(),
@@ -11447,14 +11446,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     static int array_index(const std::string& s)
     {
       // error condition (cf. RFC 6901, Sect. 4)
-      if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 and s[0] == '0'))
+      if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 && s[0] == '0'))
       {
         _az_JSON_THROW(
             detail::parse_error::create(106, 0, "array index '" + s + "' must not begin with '0'"));
       }
 
       // error condition (cf. RFC 6901, Sect. 4)
-      if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 and not(s[0] >= '1' and s[0] <= '9')))
+      if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 && not(s[0] >= '1' && s[0] <= '9')))
       {
         _az_JSON_THROW(
             detail::parse_error::create(109, 0, "array index '" + s + "' is not a number"));
@@ -11783,7 +11782,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             }
             if (_az_JSON_HEDLEY_UNLIKELY(
                     reference_token.size() == 1
-                    and not("0" <= reference_token and reference_token <= "9")))
+                    && not("0" <= reference_token && reference_token <= "9")))
             {
               // invalid char
               return false;
@@ -11791,7 +11790,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             if (_az_JSON_HEDLEY_UNLIKELY(reference_token.size() > 1))
             {
               if (_az_JSON_HEDLEY_UNLIKELY(
-                      not('1' <= reference_token[0] and reference_token[0] <= '9')))
+                      not('1' <= reference_token[0] && reference_token[0] <= '9')))
               {
                 // first char should be between '1' and '9'
                 return false;
@@ -11799,7 +11798,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
               for (std::size_t i = 1; i < reference_token.size(); i++)
               {
                 if (_az_JSON_HEDLEY_UNLIKELY(
-                        not('0' <= reference_token[i] and reference_token[i] <= '9')))
+                        not('0' <= reference_token[i] && reference_token[i] <= '9')))
                 {
                   // other char should be between '0' and '9'
                   return false;
@@ -11887,7 +11886,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
           // ~ must be followed by 0 or 1
           if (_az_JSON_HEDLEY_UNLIKELY(
                   pos == reference_token.size() - 1
-                  or (reference_token[pos + 1] != '0' and reference_token[pos + 1] != '1')))
+                  or (reference_token[pos + 1] != '0' && reference_token[pos + 1] != '1')))
           {
             _az_JSON_THROW(detail::parse_error::create(
                 108, 0, "escape character '~' must be followed with '0' or '1'"));
@@ -12430,9 +12429,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           {
             if (static_cast<double>(j.m_value.number_float)
                     >= static_cast<double>(std::numeric_limits<float>::lowest())
-                and static_cast<double>(j.m_value.number_float)
+                && static_cast<double>(j.m_value.number_float)
                     <= static_cast<double>((std::numeric_limits<float>::max)())
-                and static_cast<double>(static_cast<float>(j.m_value.number_float))
+                && static_cast<double>(static_cast<float>(j.m_value.number_float))
                     == static_cast<double>(j.m_value.number_float))
             {
               oa->write_character(
@@ -12667,7 +12666,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
             }
             else if (
                 j.m_value.number_integer >= (std::numeric_limits<std::int8_t>::min)()
-                and j.m_value.number_integer <= (std::numeric_limits<std::int8_t>::max)())
+                && j.m_value.number_integer <= (std::numeric_limits<std::int8_t>::max)())
             {
               // int 8
               oa->write_character(to_char_type(0xD0));
@@ -12675,7 +12674,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
             }
             else if (
                 j.m_value.number_integer >= (std::numeric_limits<std::int16_t>::min)()
-                and j.m_value.number_integer <= (std::numeric_limits<std::int16_t>::max)())
+                && j.m_value.number_integer <= (std::numeric_limits<std::int16_t>::max)())
             {
               // int 16
               oa->write_character(to_char_type(0xD1));
@@ -12683,7 +12682,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
             }
             else if (
                 j.m_value.number_integer >= (std::numeric_limits<std::int32_t>::min)()
-                and j.m_value.number_integer <= (std::numeric_limits<std::int32_t>::max)())
+                && j.m_value.number_integer <= (std::numeric_limits<std::int32_t>::max)())
             {
               // int 32
               oa->write_character(to_char_type(0xD2));
@@ -12691,7 +12690,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
             }
             else if (
                 j.m_value.number_integer >= (std::numeric_limits<std::int64_t>::min)()
-                and j.m_value.number_integer <= (std::numeric_limits<std::int64_t>::max)())
+                && j.m_value.number_integer <= (std::numeric_limits<std::int64_t>::max)())
             {
               // int 64
               oa->write_character(to_char_type(0xD3));
@@ -12993,7 +12992,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           }
 
           bool prefix_required = true;
-          if (use_type and not j.m_value.array->empty())
+          if (use_type && not j.m_value.array->empty())
           {
             assert(use_count);
             const CharType first_prefix = ubjson_prefix(j.front());
@@ -13035,7 +13034,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
             oa->write_character(to_char_type('['));
           }
 
-          if (use_type and not j.m_value.binary->empty())
+          if (use_type && not j.m_value.binary->empty())
           {
             assert(use_count);
             oa->write_character(to_char_type('$'));
@@ -13078,7 +13077,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           }
 
           bool prefix_required = true;
-          if (use_type and not j.m_value.object->empty())
+          if (use_type && not j.m_value.object->empty())
           {
             assert(use_count);
             const CharType first_prefix = ubjson_prefix(j.front());
@@ -13200,7 +13199,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     static std::size_t calc_bson_integer_size(const std::int64_t value)
     {
       return (std::numeric_limits<std::int32_t>::min)() <= value
-              and value <= (std::numeric_limits<std::int32_t>::max)()
+              && value <= (std::numeric_limits<std::int32_t>::max)()
           ? sizeof(std::int32_t)
           : sizeof(std::int64_t);
     }
@@ -13211,7 +13210,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     void write_bson_integer(const string_t& name, const std::int64_t value)
     {
       if ((std::numeric_limits<std::int32_t>::min)() <= value
-          and value <= (std::numeric_limits<std::int32_t>::max)())
+          && value <= (std::numeric_limits<std::int32_t>::max)())
       {
         write_bson_entry_header(name, 0x10); // int32
         write_number<std::int32_t, true>(static_cast<std::int32_t>(value));
@@ -13555,13 +13554,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     template <
         typename NumberType,
         typename std::enable_if<
-            std::is_signed<NumberType>::value and not std::is_floating_point<NumberType>::value,
+            std::is_signed<NumberType>::value && not std::is_floating_point<NumberType>::value,
             int>::type
         = 0>
     void write_number_with_ubjson_prefix(const NumberType n, const bool add_prefix)
     {
       if ((std::numeric_limits<std::int8_t>::min)() <= n
-          and n <= (std::numeric_limits<std::int8_t>::max)())
+          && n <= (std::numeric_limits<std::int8_t>::max)())
       {
         if (add_prefix)
         {
@@ -13571,7 +13570,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
       else if (
           static_cast<std::int64_t>((std::numeric_limits<std::uint8_t>::min)()) <= n
-          and n <= static_cast<std::int64_t>((std::numeric_limits<std::uint8_t>::max)()))
+          && n <= static_cast<std::int64_t>((std::numeric_limits<std::uint8_t>::max)()))
       {
         if (add_prefix)
         {
@@ -13581,7 +13580,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
       else if (
           (std::numeric_limits<std::int16_t>::min)() <= n
-          and n <= (std::numeric_limits<std::int16_t>::max)())
+          && n <= (std::numeric_limits<std::int16_t>::max)())
       {
         if (add_prefix)
         {
@@ -13591,7 +13590,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
       else if (
           (std::numeric_limits<std::int32_t>::min)() <= n
-          and n <= (std::numeric_limits<std::int32_t>::max)())
+          && n <= (std::numeric_limits<std::int32_t>::max)())
       {
         if (add_prefix)
         {
@@ -13601,7 +13600,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
       else if (
           (std::numeric_limits<std::int64_t>::min)() <= n
-          and n <= (std::numeric_limits<std::int64_t>::max)())
+          && n <= (std::numeric_limits<std::int64_t>::max)())
       {
         if (add_prefix)
         {
@@ -13641,22 +13640,22 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
         case value_t::number_integer: {
           if ((std::numeric_limits<std::int8_t>::min)() <= j.m_value.number_integer
-              and j.m_value.number_integer <= (std::numeric_limits<std::int8_t>::max)())
+              && j.m_value.number_integer <= (std::numeric_limits<std::int8_t>::max)())
           {
             return 'i';
           }
           if ((std::numeric_limits<std::uint8_t>::min)() <= j.m_value.number_integer
-              and j.m_value.number_integer <= (std::numeric_limits<std::uint8_t>::max)())
+              && j.m_value.number_integer <= (std::numeric_limits<std::uint8_t>::max)())
           {
             return 'U';
           }
           if ((std::numeric_limits<std::int16_t>::min)() <= j.m_value.number_integer
-              and j.m_value.number_integer <= (std::numeric_limits<std::int16_t>::max)())
+              && j.m_value.number_integer <= (std::numeric_limits<std::int16_t>::max)())
           {
             return 'I';
           }
           if ((std::numeric_limits<std::int32_t>::min)() <= j.m_value.number_integer
-              and j.m_value.number_integer <= (std::numeric_limits<std::int32_t>::max)())
+              && j.m_value.number_integer <= (std::numeric_limits<std::int32_t>::max)())
           {
             return 'l';
           }
@@ -13756,7 +13755,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     // See <https://github.com/nlohmann/json/issues/1286> for a discussion.
     template <
         typename C = CharType,
-        enable_if_t<std::is_signed<C>::value and std::is_signed<char>::value>* = nullptr>
+        enable_if_t<std::is_signed<C>::value && std::is_signed<char>::value>* = nullptr>
     static constexpr CharType to_char_type(std::uint8_t x) noexcept
     {
       return *reinterpret_cast<char*>(&x);
@@ -13764,7 +13763,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     template <
         typename C = CharType,
-        enable_if_t<std::is_signed<C>::value and std::is_unsigned<char>::value>* = nullptr>
+        enable_if_t<std::is_signed<C>::value && std::is_unsigned<char>::value>* = nullptr>
     static CharType to_char_type(std::uint8_t x) noexcept
     {
       static_assert(
@@ -13786,8 +13785,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         typename InputCharType,
         typename C = CharType,
         enable_if_t<
-            std::is_signed<C>::value and std::is_signed<char>::value
-            and std::is_same<char, typename std::remove_cv<InputCharType>::type>::value>* = nullptr>
+            std::is_signed<C>::value && std::is_signed<char>::value
+            && std::is_same<char, typename std::remove_cv<InputCharType>::type>::value>* = nullptr>
     static constexpr CharType to_char_type(InputCharType x) noexcept
     {
       return x;
@@ -14053,7 +14052,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       //      -----------------+------+------+-------------+-------------+---  (B)
       //                       v-     m-     v             m+            v+
 
-      const bool lower_boundary_is_closer = F == 0 and E > 1;
+      const bool lower_boundary_is_closer = F == 0 && E > 1;
       const diyfp m_plus = diyfp(2 * v.f + 1, v.e - 1);
       const diyfp m_minus = lower_boundary_is_closer ? diyfp(4 * v.f - 1, v.e - 2) // (B)
                                                      : diyfp(2 * v.f - 1, v.e - 1); // (A)
@@ -14350,8 +14349,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       // The tests are written in this order to avoid overflow in unsigned
       // integer arithmetic.
 
-      while (rest < dist and delta - rest >= ten_k
-             and (rest + ten_k < dist or dist - rest > rest + ten_k - dist))
+      while (rest < dist && delta - rest >= ten_k
+             && (rest + ten_k < dist or dist - rest > rest + ten_k - dist))
       {
         assert(buf[len - 1] != '0');
         buf[len - 1]--;
@@ -14783,7 +14782,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       // k is the length of the buffer (number of decimal digits)
       // n is the position of the decimal point relative to the start of the buffer.
 
-      if (k <= n and n <= max_exp)
+      if (k <= n && n <= max_exp)
       {
         // digits[000]
         // len <= max_exp + 2
@@ -14795,7 +14794,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         return buf + (static_cast<size_t>(n) + 2);
       }
 
-      if (0 < n and n <= max_exp)
+      if (0 < n && n <= max_exp)
       {
         // dig.its
         // len <= max_digits10 + 1
@@ -14810,7 +14809,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         return buf + (static_cast<size_t>(k) + 1U);
       }
 
-      if (min_exp < n and n <= 0)
+      if (min_exp < n && n <= 0)
       {
         // 0.[000]digits
         // len <= 2 + (-min_exp - 1) + max_digits10
@@ -15327,7 +15326,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
               default: {
                 // escape control characters (0x00..0x1F) or, if
                 // ensure_ascii parameter is used, non-ASCII characters
-                if ((codepoint <= 0x1F) or (ensure_ascii and (codepoint >= 0x7F)))
+                if ((codepoint <= 0x1F) or (ensure_ascii && (codepoint >= 0x7F)))
                 {
                   if (codepoint <= 0xFFFF)
                   {
@@ -15590,7 +15589,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       auto buffer_ptr = number_buffer.begin();
 
       const bool is_negative
-          = std::is_same<NumberType, number_integer_t>::value and not(x >= 0); // see issue #755
+          = std::is_same<NumberType, number_integer_t>::value && not(x >= 0); // see issue #755
       number_unsigned_t abs_value;
 
       unsigned int n_chars;
@@ -15664,11 +15663,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       // NB: The test below works if <long double> == <double>.
       static constexpr bool is_ieee_single_or_double
           = (std::numeric_limits<number_float_t>::is_iec559
-             and std::numeric_limits<number_float_t>::digits == 24
-             and std::numeric_limits<number_float_t>::max_exponent == 128)
+             && std::numeric_limits<number_float_t>::digits == 24
+             && std::numeric_limits<number_float_t>::max_exponent == 128)
           or (std::numeric_limits<number_float_t>::is_iec559
-              and std::numeric_limits<number_float_t>::digits == 53
-              and std::numeric_limits<number_float_t>::max_exponent == 1024);
+              && std::numeric_limits<number_float_t>::digits == 53
+              && std::numeric_limits<number_float_t>::max_exponent == 1024);
 
       dump_float(x, std::integral_constant<bool, is_ieee_single_or_double>());
     }
@@ -15707,7 +15706,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       }
 
       // convert decimal point to '.'
-      if (decimal_point != '\0' and decimal_point != '.')
+      if (decimal_point != '\0' && decimal_point != '.')
       {
         const auto dec_pos = std::find(number_buffer.begin(), number_buffer.end(), decimal_point);
         if (dec_pos != number_buffer.end())
@@ -15816,7 +15815,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
      */
     inline number_unsigned_t remove_sign(number_integer_t x) noexcept
     {
-      assert(x < 0 and x < (std::numeric_limits<number_integer_t>::max)());
+      assert(x < 0 && x < (std::numeric_limits<number_integer_t>::max)());
       return static_cast<number_unsigned_t>(-(x + 1)) + 1;
     }
 
@@ -17171,7 +17170,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename U = detail::uncvref_t<CompatibleType>,
         detail::enable_if_t<
             not detail::is_basic_json<U>::value
-                and detail::is_compatible_type<basic_json_t, U>::value,
+                && detail::is_compatible_type<basic_json_t, U>::value,
             int> = 0>
     basic_json(CompatibleType&& val) noexcept(noexcept(JSONSerializer<U>::to_json(
         std::declval<basic_json_t&>(),
@@ -17211,7 +17210,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename BasicJsonType,
         detail::enable_if_t<
             detail::is_basic_json<BasicJsonType>::value
-                and not std::is_same<basic_json, BasicJsonType>::value,
+                && not std::is_same<basic_json, BasicJsonType>::value,
             int> = 0>
     basic_json(const BasicJsonType& val)
     {
@@ -17352,8 +17351,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // element is a string
       bool is_an_object = std::all_of(
           init.begin(), init.end(), [](const detail::json_ref<basic_json>& element_ref) {
-            return element_ref->is_array() and element_ref->size() == 2
-                and (*element_ref)[0].is_string();
+            return element_ref->is_array() && element_ref->size() == 2
+                && (*element_ref)[0].is_string();
           });
 
       // adjust type if type deduction is not wanted
@@ -17366,7 +17365,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         }
 
         // if object is wanted but impossible, throw an exception
-        if (_az_JSON_HEDLEY_UNLIKELY(manual_type == value_t::object and not is_an_object))
+        if (_az_JSON_HEDLEY_UNLIKELY(manual_type == value_t::object && not is_an_object))
         {
           _az_JSON_THROW(type_error::create(301, "cannot create object from initializer list"));
         }
@@ -17663,7 +17662,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         class InputIT,
         typename std::enable_if<
             std::is_same<InputIT, typename basic_json_t::iterator>::value
-                or std::is_same<InputIT, typename basic_json_t::const_iterator>::value,
+                || std::is_same<InputIT, typename basic_json_t::const_iterator>::value,
             int>::type
         = 0>
     basic_json(InputIT first, InputIT last)
@@ -17690,7 +17689,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         case value_t::string: {
           if (_az_JSON_HEDLEY_UNLIKELY(
                   not first.m_it.primitive_iterator.is_begin()
-                  or not last.m_it.primitive_iterator.is_end()))
+                  || not last.m_it.primitive_iterator.is_end()))
           {
             _az_JSON_THROW(invalid_iterator::create(204, "iterators out of range"));
           }
@@ -17909,8 +17908,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @since version 1.0.0
     */
     basic_json& operator=(basic_json other) noexcept(
-        std::is_nothrow_move_constructible<value_t>::value and std::is_nothrow_move_assignable<
-            value_t>::value and std::is_nothrow_move_constructible<json_value>::value and
+        std::is_nothrow_move_constructible<value_t>::value&& std::is_nothrow_move_assignable<
+            value_t>::value&& std::is_nothrow_move_constructible<json_value>::value&&
             std::is_nothrow_move_assignable<json_value>::value)
     {
       // check that passed value is valid
@@ -18086,7 +18085,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     constexpr bool is_primitive() const noexcept
     {
-      return is_null() or is_string() or is_boolean() or is_number() or is_binary();
+      return is_null() || is_string() || is_boolean() || is_number() || is_binary();
     }
 
     /*!
@@ -18111,7 +18110,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 1.0.0
     */
-    constexpr bool is_structured() const noexcept { return is_array() or is_object(); }
+    constexpr bool is_structured() const noexcept { return is_array() || is_object(); }
 
     /*!
     @brief return whether value is null
@@ -18176,7 +18175,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 1.0.0
     */
-    constexpr bool is_number() const noexcept { return is_number_integer() or is_number_float(); }
+    constexpr bool is_number() const noexcept { return is_number_integer() || is_number_float(); }
 
     /*!
     @brief return whether value is an integer number
@@ -18204,7 +18203,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     constexpr bool is_number_integer() const noexcept
     {
-      return m_type == value_t::number_integer or m_type == value_t::number_unsigned;
+      return m_type == value_t::number_integer || m_type == value_t::number_unsigned;
     }
 
     /*!
@@ -18575,8 +18574,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <
         typename BasicJsonType,
         detail::enable_if_t<
-            not std::is_same<BasicJsonType, basic_json>::value
-                and detail::is_basic_json<BasicJsonType>::value,
+            !std::is_same<BasicJsonType, basic_json>::value
+                && detail::is_basic_json<BasicJsonType>::value,
             int> = 0>
     BasicJsonType get() const
     {
@@ -18626,9 +18625,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ValueTypeCV,
         typename ValueType = detail::uncvref_t<ValueTypeCV>,
         detail::enable_if_t<
-            not detail::is_basic_json<ValueType>::value
-                and detail::has_from_json<basic_json_t, ValueType>::value
-                and not detail::has_non_default_from_json<basic_json_t, ValueType>::value,
+            !detail::is_basic_json<ValueType>::value
+                && detail::has_from_json<basic_json_t, ValueType>::value
+                && !detail::has_non_default_from_json<basic_json_t, ValueType>::value,
             int> = 0>
     ValueType get() const noexcept(noexcept(JSONSerializer<ValueType>::from_json(
         std::declval<const basic_json_t&>(),
@@ -18638,7 +18637,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       // there is support for get<const basic_json_t>(), which is why we
       // still need the uncvref
       static_assert(
-          not std::is_reference<ValueTypeCV>::value,
+          !std::is_reference<ValueTypeCV>::value,
           "get() cannot be used with reference types, you might want to use get_ref()");
       static_assert(
           std::is_default_constructible<ValueType>::value,
@@ -18684,14 +18683,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ValueTypeCV,
         typename ValueType = detail::uncvref_t<ValueTypeCV>,
         detail::enable_if_t<
-            not std::is_same<basic_json_t, ValueType>::value
-                and detail::has_non_default_from_json<basic_json_t, ValueType>::value,
+            !std::is_same<basic_json_t, ValueType>::value
+                && detail::has_non_default_from_json<basic_json_t, ValueType>::value,
             int> = 0>
     ValueType get() const noexcept(
         noexcept(JSONSerializer<ValueType>::from_json(std::declval<const basic_json_t&>())))
     {
       static_assert(
-          not std::is_reference<ValueTypeCV>::value,
+          !std::is_reference<ValueTypeCV>::value,
           "get() cannot be used with reference types, you might want to use get_ref()");
       return JSONSerializer<ValueType>::from_json(*this);
     }
@@ -18732,8 +18731,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <
         typename ValueType,
         detail::enable_if_t<
-            not detail::is_basic_json<ValueType>::value
-                and detail::has_from_json<basic_json_t, ValueType>::value,
+            !detail::is_basic_json<ValueType>::value
+                && detail::has_from_json<basic_json_t, ValueType>::value,
             int> = 0>
     ValueType& get_to(ValueType& v) const noexcept(
         noexcept(JSONSerializer<ValueType>::from_json(std::declval<const basic_json_t&>(), v)))
@@ -18798,7 +18797,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename PointerType,
         typename std::enable_if<
             std::is_pointer<PointerType>::value
-                and std::is_const<typename std::remove_pointer<PointerType>::type>::value,
+                && std::is_const<typename std::remove_pointer<PointerType>::type>::value,
             int>::type
         = 0>
     constexpr auto get_ptr() const noexcept
@@ -18901,7 +18900,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         typename ReferenceType,
         typename std::enable_if<
             std::is_reference<ReferenceType>::value
-                and std::is_const<typename std::remove_reference<ReferenceType>::type>::value,
+                && std::is_const<typename std::remove_reference<ReferenceType>::type>::value,
             int>::type
         = 0>
     ReferenceType get_ref() const
@@ -18942,18 +18941,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <
         typename ValueType,
         typename std::enable_if<
-            not std::is_pointer<ValueType>::value
-                and not std::is_same<ValueType, detail::json_ref<basic_json>>::value
-                and not std::is_same<ValueType, typename string_t::value_type>::value
-                and not detail::is_basic_json<ValueType>::value
-                and not std::is_same<
-                    ValueType,
-                    std::initializer_list<typename string_t::value_type>>::value
+            !std::is_pointer<ValueType>::value
+                && !std::is_same<ValueType, detail::json_ref<basic_json>>::value
+                && !std::is_same<ValueType, typename string_t::value_type>::value
+                && !detail::is_basic_json<ValueType>::value
+                && !std::is_same<ValueType, std::initializer_list<typename string_t::value_type>>::
+                       value
 #if defined(_az_JSON_HAS_CPP_17) \
-    && (defined(__GNUC__) || (defined(_MSC_VER) and _MSC_VER >= 1910 and _MSC_VER <= 1914))
-                and not std::is_same<ValueType, typename std::string_view>::value
+    && (defined(__GNUC__) || (defined(_MSC_VER) && _MSC_VER >= 1910 && _MSC_VER <= 1914))
+                && !std::is_same<ValueType, typename std::string_view>::value
 #endif
-                and detail::
+                && detail::
                     is_detected<detail::get_template_function, const basic_json_t&, ValueType>::
                         value,
             int>::type
@@ -18975,7 +18973,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     binary_t& get_binary()
     {
-      if (not is_binary())
+      if (!is_binary())
       {
         _az_JSON_THROW(
             type_error::create(302, "type must be binary, but is " + std::string(type_name())));
@@ -18987,7 +18985,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     /// @copydoc get_binary()
     const binary_t& get_binary() const
     {
-      if (not is_binary())
+      if (!is_binary())
       {
         _az_JSON_THROW(
             type_error::create(302, "type must be binary, but is " + std::string(type_name())));
@@ -19509,7 +19507,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         class ValueType,
         typename std::enable_if<
             std::is_convertible<basic_json_t, ValueType>::value
-                and not std::is_same<value_t, ValueType>::value,
+                && !std::is_same<value_t, ValueType>::value,
             int>::type
         = 0>
     ValueType value(const typename object_t::key_type& key, const ValueType& default_value) const
@@ -19740,7 +19738,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         class IteratorType,
         typename std::enable_if<
             std::is_same<IteratorType, typename basic_json_t::iterator>::value
-                or std::is_same<IteratorType, typename basic_json_t::const_iterator>::value,
+                || std::is_same<IteratorType, typename basic_json_t::const_iterator>::value,
             int>::type
         = 0>
     IteratorType erase(IteratorType pos)
@@ -19761,7 +19759,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         case value_t::number_unsigned:
         case value_t::string:
         case value_t::binary: {
-          if (_az_JSON_HEDLEY_UNLIKELY(not pos.m_it.primitive_iterator.is_begin()))
+          if (_az_JSON_HEDLEY_UNLIKELY(!pos.m_it.primitive_iterator.is_begin()))
           {
             _az_JSON_THROW(invalid_iterator::create(205, "iterator out of range"));
           }
@@ -19854,13 +19852,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         class IteratorType,
         typename std::enable_if<
             std::is_same<IteratorType, typename basic_json_t::iterator>::value
-                or std::is_same<IteratorType, typename basic_json_t::const_iterator>::value,
+                || std::is_same<IteratorType, typename basic_json_t::const_iterator>::value,
             int>::type
         = 0>
     IteratorType erase(IteratorType first, IteratorType last)
     {
       // make sure iterator fits the current value
-      if (_az_JSON_HEDLEY_UNLIKELY(this != first.m_object or this != last.m_object))
+      if (_az_JSON_HEDLEY_UNLIKELY(this != first.m_object || this != last.m_object))
       {
         _az_JSON_THROW(invalid_iterator::create(203, "iterators do not fit current value"));
       }
@@ -19876,8 +19874,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         case value_t::string:
         case value_t::binary: {
           if (_az_JSON_HEDLEY_LIKELY(
-                  not first.m_it.primitive_iterator.is_begin()
-                  or not last.m_it.primitive_iterator.is_end()))
+                  !first.m_it.primitive_iterator.is_begin()
+                  || !last.m_it.primitive_iterator.is_end()))
           {
             _az_JSON_THROW(invalid_iterator::create(204, "iterators out of range"));
           }
@@ -20123,12 +20121,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <
         typename KeyT,
         typename std::enable_if<
-            not std::is_same<typename std::decay<KeyT>::type, json_pointer>::value,
+            !std::is_same<typename std::decay<KeyT>::type, json_pointer>::value,
             int>::type
         = 0>
     bool contains(KeyT&& key) const
     {
-      return is_object() and m_value.object->find(std::forward<KeyT>(key)) != m_value.object->end();
+      return is_object() && m_value.object->find(std::forward<KeyT>(key)) != m_value.object->end();
     }
 
     /*!
@@ -20895,7 +20893,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void push_back(basic_json&& val)
     {
       // push_back only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() or is_array())))
+      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_array())))
       {
         _az_JSON_THROW(
             type_error::create(308, "cannot use push_back() with " + std::string(type_name())));
@@ -20932,7 +20930,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void push_back(const basic_json& val)
     {
       // push_back only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() or is_array())))
+      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_array())))
       {
         _az_JSON_THROW(
             type_error::create(308, "cannot use push_back() with " + std::string(type_name())));
@@ -20983,7 +20981,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void push_back(const typename object_t::value_type& val)
     {
       // push_back only works for null objects or objects
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() or is_object())))
+      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_object())))
       {
         _az_JSON_THROW(
             type_error::create(308, "cannot use push_back() with " + std::string(type_name())));
@@ -21038,7 +21036,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     void push_back(initializer_list_t init)
     {
-      if (is_object() and init.size() == 2 and (*init.begin())->is_string())
+      if (is_object() && init.size() == 2 && (*init.begin())->is_string())
       {
         basic_json&& key = init.begin()->moved_or_copied();
         push_back(typename object_t::value_type(
@@ -21086,7 +21084,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <class... Args> reference emplace_back(Args&&... args)
     {
       // emplace_back only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() or is_array())))
+      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_array())))
       {
         _az_JSON_THROW(
             type_error::create(311, "cannot use emplace_back() with " + std::string(type_name())));
@@ -21139,7 +21137,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <class... Args> std::pair<iterator, bool> emplace(Args&&... args)
     {
       // emplace only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() or is_object())))
+      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_object())))
       {
         _az_JSON_THROW(
             type_error::create(311, "cannot use emplace() with " + std::string(type_name())));
@@ -21305,7 +21303,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     iterator insert(const_iterator pos, const_iterator first, const_iterator last)
     {
       // insert only works for arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not is_array()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!is_array()))
       {
         _az_JSON_THROW(
             type_error::create(309, "cannot use insert() with " + std::string(type_name())));
@@ -21360,7 +21358,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     iterator insert(const_iterator pos, initializer_list_t ilist)
     {
       // insert only works for arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not is_array()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!is_array()))
       {
         _az_JSON_THROW(
             type_error::create(309, "cannot use insert() with " + std::string(type_name())));
@@ -21402,7 +21400,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void insert(const_iterator first, const_iterator last)
     {
       // insert only works for objects
-      if (_az_JSON_HEDLEY_UNLIKELY(not is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
         _az_JSON_THROW(
             type_error::create(309, "cannot use insert() with " + std::string(type_name())));
@@ -21415,7 +21413,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
 
       // passed iterators must belong to objects
-      if (_az_JSON_HEDLEY_UNLIKELY(not first.m_object->is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
       {
         _az_JSON_THROW(
             invalid_iterator::create(202, "iterators first and last must point to objects"));
@@ -21453,12 +21451,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         assert_invariant();
       }
 
-      if (_az_JSON_HEDLEY_UNLIKELY(not is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
         _az_JSON_THROW(
             type_error::create(312, "cannot use update() with " + std::string(type_name())));
       }
-      if (_az_JSON_HEDLEY_UNLIKELY(not j.is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!j.is_object()))
       {
         _az_JSON_THROW(
             type_error::create(312, "cannot use update() with " + std::string(j.type_name())));
@@ -21506,7 +21504,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         assert_invariant();
       }
 
-      if (_az_JSON_HEDLEY_UNLIKELY(not is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
         _az_JSON_THROW(
             type_error::create(312, "cannot use update() with " + std::string(type_name())));
@@ -21519,8 +21517,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
 
       // passed iterators must belong to objects
-      if (_az_JSON_HEDLEY_UNLIKELY(
-              not first.m_object->is_object() or not last.m_object->is_object()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!first.m_object->is_object() || !last.m_object->is_object()))
       {
         _az_JSON_THROW(
             invalid_iterator::create(202, "iterators first and last must point to objects"));
@@ -21550,8 +21547,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @since version 1.0.0
     */
     void swap(reference other) noexcept(
-        std::is_nothrow_move_constructible<value_t>::value and std::is_nothrow_move_assignable<
-            value_t>::value and std::is_nothrow_move_constructible<json_value>::value and
+        std::is_nothrow_move_constructible<value_t>::value&& std::is_nothrow_move_assignable<
+            value_t>::value&& std::is_nothrow_move_constructible<json_value>::value&&
             std::is_nothrow_move_assignable<json_value>::value)
     {
       std::swap(m_type, other.m_type);
@@ -21816,28 +21813,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             return false;
         }
       }
-      else if (lhs_type == value_t::number_integer and rhs_type == value_t::number_float)
+      else if (lhs_type == value_t::number_integer && rhs_type == value_t::number_float)
       {
         return static_cast<number_float_t>(lhs.m_value.number_integer) == rhs.m_value.number_float;
       }
-      else if (lhs_type == value_t::number_float and rhs_type == value_t::number_integer)
+      else if (lhs_type == value_t::number_float && rhs_type == value_t::number_integer)
       {
         return lhs.m_value.number_float == static_cast<number_float_t>(rhs.m_value.number_integer);
       }
-      else if (lhs_type == value_t::number_unsigned and rhs_type == value_t::number_float)
+      else if (lhs_type == value_t::number_unsigned && rhs_type == value_t::number_float)
       {
         return static_cast<number_float_t>(lhs.m_value.number_unsigned) == rhs.m_value.number_float;
       }
-      else if (lhs_type == value_t::number_float and rhs_type == value_t::number_unsigned)
+      else if (lhs_type == value_t::number_float && rhs_type == value_t::number_unsigned)
       {
         return lhs.m_value.number_float == static_cast<number_float_t>(rhs.m_value.number_unsigned);
       }
-      else if (lhs_type == value_t::number_unsigned and rhs_type == value_t::number_integer)
+      else if (lhs_type == value_t::number_unsigned && rhs_type == value_t::number_integer)
       {
         return static_cast<number_integer_t>(lhs.m_value.number_unsigned)
             == rhs.m_value.number_integer;
       }
-      else if (lhs_type == value_t::number_integer and rhs_type == value_t::number_unsigned)
+      else if (lhs_type == value_t::number_integer && rhs_type == value_t::number_unsigned)
       {
         return lhs.m_value.number_integer
             == static_cast<number_integer_t>(rhs.m_value.number_unsigned);
@@ -21985,28 +21982,28 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             return false;
         }
       }
-      else if (lhs_type == value_t::number_integer and rhs_type == value_t::number_float)
+      else if (lhs_type == value_t::number_integer && rhs_type == value_t::number_float)
       {
         return static_cast<number_float_t>(lhs.m_value.number_integer) < rhs.m_value.number_float;
       }
-      else if (lhs_type == value_t::number_float and rhs_type == value_t::number_integer)
+      else if (lhs_type == value_t::number_float && rhs_type == value_t::number_integer)
       {
         return lhs.m_value.number_float < static_cast<number_float_t>(rhs.m_value.number_integer);
       }
-      else if (lhs_type == value_t::number_unsigned and rhs_type == value_t::number_float)
+      else if (lhs_type == value_t::number_unsigned && rhs_type == value_t::number_float)
       {
         return static_cast<number_float_t>(lhs.m_value.number_unsigned) < rhs.m_value.number_float;
       }
-      else if (lhs_type == value_t::number_float and rhs_type == value_t::number_unsigned)
+      else if (lhs_type == value_t::number_float && rhs_type == value_t::number_unsigned)
       {
         return lhs.m_value.number_float < static_cast<number_float_t>(rhs.m_value.number_unsigned);
       }
-      else if (lhs_type == value_t::number_integer and rhs_type == value_t::number_unsigned)
+      else if (lhs_type == value_t::number_integer && rhs_type == value_t::number_unsigned)
       {
         return lhs.m_value.number_integer
             < static_cast<number_integer_t>(rhs.m_value.number_unsigned);
       }
-      else if (lhs_type == value_t::number_unsigned and rhs_type == value_t::number_integer)
+      else if (lhs_type == value_t::number_unsigned && rhs_type == value_t::number_integer)
       {
         return static_cast<number_integer_t>(lhs.m_value.number_unsigned)
             < rhs.m_value.number_integer;
@@ -23987,7 +23984,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       };
 
       // type check: top level value must be an array
-      if (_az_JSON_HEDLEY_UNLIKELY(not json_patch.is_array()))
+      if (_az_JSON_HEDLEY_UNLIKELY(!json_patch.is_array()))
       {
         _az_JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of objects"));
       }
@@ -24013,7 +24010,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
           }
 
           // check if result is of type string
-          if (_az_JSON_HEDLEY_UNLIKELY(string_type and not it->second.is_string()))
+          if (_az_JSON_HEDLEY_UNLIKELY(string_type && !it->second.is_string()))
           {
             _az_JSON_THROW(parse_error::create(
                 105, 0, error_msg + " must have string member '" + member + "'"));
@@ -24024,7 +24021,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         };
 
         // type check: every element of the array must be an object
-        if (_az_JSON_HEDLEY_UNLIKELY(not val.is_object()))
+        if (_az_JSON_HEDLEY_UNLIKELY(!val.is_object()))
         {
           _az_JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of objects"));
         }
@@ -24096,7 +24093,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             }
 
             // throw an exception if test fails
-            if (_az_JSON_HEDLEY_UNLIKELY(not success))
+            if (_az_JSON_HEDLEY_UNLIKELY(!success))
             {
               _az_JSON_THROW(other_error::create(501, "unsuccessful: " + val.dump()));
             }
@@ -24174,7 +24171,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
         case value_t::array: {
           // first pass: traverse common elements
           std::size_t i = 0;
-          while (i < source.size() and i < target.size())
+          while (i < source.size() && i < target.size())
           {
             // recursive call to compare array values at index i
             auto temp_diff = diff(source[i], target[i], path + "/" + std::to_string(i));
@@ -24306,7 +24303,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     {
       if (apply_patch.is_object())
       {
-        if (not is_object())
+        if (!is_object())
         {
           *this = object();
         }
@@ -24396,7 +24393,7 @@ template <>
 inline void swap<Azure::Core::Internal::Json::json>(
     Azure::Core::Internal::Json::json& j1,
     Azure::Core::Internal::Json::json&
-        j2) noexcept(is_nothrow_move_constructible<Azure::Core::Internal::Json::json>::value and
+        j2) noexcept(is_nothrow_move_constructible<Azure::Core::Internal::Json::json>::value&&
                          is_nothrow_move_assignable<Azure::Core::Internal::Json::json>::value)
 {
   j1.swap(j2);

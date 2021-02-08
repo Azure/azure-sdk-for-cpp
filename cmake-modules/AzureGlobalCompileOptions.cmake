@@ -30,7 +30,7 @@ else()
     set(WARNINGS_AS_ERRORS_FLAG "-Werror")
   endif()
 
-  add_compile_options(-fno-operator-names -Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG})
+  add_compile_options(-fno-operator-names -Wold-style-cast -Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG})
 endif()
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
