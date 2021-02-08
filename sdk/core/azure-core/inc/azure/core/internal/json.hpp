@@ -9025,7 +9025,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
           // U+0800..U+0FFF: bytes E0 A0..BF 80..BF
           case 0xE0: {
-            if (_az_JSON_HEDLEY_UNLIKELY(not(next_byte_in_range({0xA0, 0xBF, 0x80, 0xBF}))))
+            if (_az_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0xA0, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9048,7 +9048,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           case 0xEC:
           case 0xEE:
           case 0xEF: {
-            if (_az_JSON_HEDLEY_UNLIKELY(not(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF}))))
+            if (_az_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9057,7 +9057,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
           // U+D000..U+D7FF: bytes ED 80..9F 80..BF
           case 0xED: {
-            if (_az_JSON_HEDLEY_UNLIKELY(not(next_byte_in_range({0x80, 0x9F, 0x80, 0xBF}))))
+            if (_az_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0x9F, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9067,7 +9067,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           // U+10000..U+3FFFF F0 90..BF 80..BF 80..BF
           case 0xF0: {
             if (_az_JSON_HEDLEY_UNLIKELY(
-                    not(next_byte_in_range({0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
+                    !(next_byte_in_range({0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9079,7 +9079,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           case 0xF2:
           case 0xF3: {
             if (_az_JSON_HEDLEY_UNLIKELY(
-                    not(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
+                    !(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -9089,7 +9089,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
           // U+100000..U+10FFFF F4 80..8F 80..BF 80..BF
           case 0xF4: {
             if (_az_JSON_HEDLEY_UNLIKELY(
-                    not(next_byte_in_range({0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF}))))
+                    !(next_byte_in_range({0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -11451,7 +11451,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
 
       // error condition (cf. RFC 6901, Sect. 4)
-      if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 && not(s[0] >= '1' && s[0] <= '9')))
+      if (_az_JSON_HEDLEY_UNLIKELY(s.size() > 1 && !(s[0] >= '1' && s[0] <= '9')))
       {
         _az_JSON_THROW(
             detail::parse_error::create(109, 0, "array index '" + s + "' is not a number"));
@@ -11780,7 +11780,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             }
             if (_az_JSON_HEDLEY_UNLIKELY(
                     reference_token.size() == 1
-                    && not("0" <= reference_token && reference_token <= "9")))
+                    && !("0" <= reference_token && reference_token <= "9")))
             {
               // invalid char
               return false;
@@ -11788,7 +11788,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             if (_az_JSON_HEDLEY_UNLIKELY(reference_token.size() > 1))
             {
               if (_az_JSON_HEDLEY_UNLIKELY(
-                      not('1' <= reference_token[0] && reference_token[0] <= '9')))
+                      !('1' <= reference_token[0] && reference_token[0] <= '9')))
               {
                 // first char should be between '1' and '9'
                 return false;
@@ -11796,7 +11796,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
               for (std::size_t i = 1; i < reference_token.size(); i++)
               {
                 if (_az_JSON_HEDLEY_UNLIKELY(
-                        not('0' <= reference_token[i] && reference_token[i] <= '9')))
+                        !('0' <= reference_token[i] && reference_token[i] <= '9')))
                 {
                   // other char should be between '0' and '9'
                   return false;
@@ -12063,7 +12063,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     friend bool operator!=(json_pointer const& lhs, json_pointer const& rhs) noexcept
     {
-      return not(lhs == rhs);
+      return !(lhs == rhs);
     }
 
     /// the reference tokens
@@ -15587,7 +15587,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       auto buffer_ptr = number_buffer.begin();
 
       const bool is_negative
-          = std::is_same<NumberType, number_integer_t>::value && not(x >= 0); // see issue #755
+          = std::is_same<NumberType, number_integer_t>::value && !(x >= 0); // see issue #755
       number_unsigned_t abs_value;
 
       unsigned int n_chars;
@@ -20890,7 +20890,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void push_back(basic_json&& val)
     {
       // push_back only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_array())))
+      if (_az_JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
       {
         _az_JSON_THROW(
             type_error::create(308, "cannot use push_back() with " + std::string(type_name())));
@@ -20927,7 +20927,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void push_back(const basic_json& val)
     {
       // push_back only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_array())))
+      if (_az_JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
       {
         _az_JSON_THROW(
             type_error::create(308, "cannot use push_back() with " + std::string(type_name())));
@@ -20978,7 +20978,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     void push_back(const typename object_t::value_type& val)
     {
       // push_back only works for null objects or objects
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_object())))
+      if (_az_JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
       {
         _az_JSON_THROW(
             type_error::create(308, "cannot use push_back() with " + std::string(type_name())));
@@ -21081,7 +21081,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <class... Args> reference emplace_back(Args&&... args)
     {
       // emplace_back only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_array())))
+      if (_az_JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
       {
         _az_JSON_THROW(
             type_error::create(311, "cannot use emplace_back() with " + std::string(type_name())));
@@ -21134,7 +21134,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     template <class... Args> std::pair<iterator, bool> emplace(Args&&... args)
     {
       // emplace only works for null objects or arrays
-      if (_az_JSON_HEDLEY_UNLIKELY(not(is_null() || is_object())))
+      if (_az_JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
       {
         _az_JSON_THROW(
             type_error::create(311, "cannot use emplace() with " + std::string(type_name())));
@@ -21884,7 +21884,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     friend bool operator!=(const_reference lhs, const_reference rhs) noexcept
     {
-      return not(lhs == rhs);
+      return !(lhs == rhs);
     }
 
     /*!
@@ -22057,7 +22057,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     friend bool operator<=(const_reference lhs, const_reference rhs) noexcept
     {
-      return not(rhs < lhs);
+      return !(rhs < lhs);
     }
 
     /*!
@@ -22105,7 +22105,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     friend bool operator>(const_reference lhs, const_reference rhs) noexcept
     {
-      return not(lhs <= rhs);
+      return !(lhs <= rhs);
     }
 
     /*!
@@ -22153,7 +22153,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     friend bool operator>=(const_reference lhs, const_reference rhs) noexcept
     {
-      return not(lhs < rhs);
+      return !(lhs < rhs);
     }
 
     /*!
