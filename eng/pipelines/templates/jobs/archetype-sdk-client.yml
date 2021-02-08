@@ -31,7 +31,7 @@ jobs:
     matrix:
       Linux_x64_gcc8:
         Pool: $(LinuxPool)
-        OSVmImage:
+        OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-8'
@@ -39,7 +39,7 @@ jobs:
         BuildArgs: '-j 10'
       Linux_x64_gcc9:
         Pool: $(LinuxPool)
-        OSVmImage:
+        OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-9'
@@ -47,13 +47,13 @@ jobs:
         BuildArgs: '-j 10'
       Linux_x64:
         Pool: $(LinuxPool)
-        OSVmImage:
+        OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         BuildArgs: '-j 10'
       Win_x86:
         Pool: $(WindowsPool)
-        OSVmImage:
+        OSVmImage: MMS2019
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -62,14 +62,14 @@ jobs:
         BuildArgs: '-v --parallel 8'
       Win_x64:
         Pool: $(WindowsPool)
-        OSVmImage:
+        OSVmImage: MMS2019
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         BuildArgs: '-v --parallel 8'
       MacOS_x64:
-        Pool:
+        Pool: Azure Pipelines
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
@@ -78,7 +78,7 @@ jobs:
       # Unit testing ON
       Linux_x64_with_unit_test:
         Pool: $(LinuxPool)
-        OSVmImage:
+        OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
@@ -89,14 +89,14 @@ jobs:
         BuildArgs: '-j 10'
       Linux_x64_with_unit_test_release:
         Pool: $(LinuxPool)
-        OSVmImage:
+        OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
         BuildArgs: '-j 10'        
       Win_x86_with_unit_test:
         Pool: $(WindowsPool)
-        OSVmImage:
+        OSVmImage: MMS2019
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -105,7 +105,7 @@ jobs:
         BuildArgs: '-v --parallel 8'
       Win_x64_with_unit_test:
         Pool: $(WindowsPool)
-        OSVmImage:
+        OSVmImage: MMS2019
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -113,7 +113,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
         BuildArgs: '-v --parallel 8'
       MacOS_x64_with_unit_test:
-        Pool:
+        Pool: Azure Pipelines
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
@@ -137,6 +137,11 @@ jobs:
   steps:
   - checkout: self
     submodules: recursive
+
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+    parameters:
+      AgentPool: $(Pool)
+      AgentImage: $(OSVmImage)
 
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
