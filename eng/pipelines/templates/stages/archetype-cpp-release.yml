@@ -100,6 +100,18 @@ stages:
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
                         displayName: Set fork branch name
 
+                      - pwsh: |
+                          $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
+                          $version = $packageSpec.version
+                          $title = "[${{ artifact.VcpkgPortName }}] publish version $version"
+
+                          if ('$(VcpkgPRTitle)') { 
+                            Write-Host "Using queue time PR title"
+                            $title = '$(VcpkgPRTitle)'
+                          }
+                          Write-Host "##vso[task.setvariable variable=PrTitle]$title"
+                        displayName: Set PR title
+
                       - task: Powershell@2
                         inputs:
                           filePath: eng/scripts/Initialize-VcpkgRelease.ps1
@@ -152,7 +164,7 @@ stages:
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
                           CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
-                          PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
+                          PRTitle: $(PrTitle)
                           BaseBranchName: master
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
