@@ -144,7 +144,7 @@ void ParseHttpVersion(
 }
 
 /**
- * @brief Add a list of HTTP headers to the @RawResponse.
+ * @brief Add a list of HTTP headers to the #RawResponse.
  *
  * @remark The \p headers must contain valid header name characters (RFC 7230).
  * @remark Header name, value and delimiter are expected to be in \p headers.

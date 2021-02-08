@@ -52,9 +52,9 @@ namespace Azure { namespace Core { namespace Http {
     void ReadExpected(Context const& context, uint8_t expected);
 
     /**
-     * @brief Read <tt>\r\n</tt> from internal buffer or from the wire.
+     * @brief Read `\\r\\n` from internal buffer or from the wire.
      *
-     * @remark throw if <tt>\r\n</tt> are not the next data read.
+     * @remark throw if `\\r\\n` are not the next data read.
      */
     void ReadCRLF(Context const& context);
 
