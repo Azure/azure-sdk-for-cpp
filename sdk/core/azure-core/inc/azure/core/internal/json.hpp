@@ -2161,14 +2161,14 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     - @ref out_of_range for exceptions indicating access out of the defined range
     - @ref other_error for exceptions indicating other library errors
 
-    @internal
+    \@internal
     @note To have nothrow-copy-constructible exceptions, we internally use
           `std::runtime_error` which can cope with arbitrary-length error messages.
           Intermediate strings are built with static functions and then passed to
           the actual constructor.
-    @endinternal
+    \@endinternal
 
-    @liveexample{The following code shows how arbitrary library exceptions can be
+    \@liveexample{The following code shows how arbitrary library exceptions can be
     caught.,exception}
 
     @since version 3.0.0
@@ -2215,8 +2215,8 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     literal | This error indicates a syntax error while deserializing a JSON text. The error message
     describes that an unexpected token (character) was encountered, and the member @a byte indicates
     the error position. json.exception.parse_error.102 | parse error at 14: missing or wrong low
-    surrogate | JSON uses the `\uxxxx` format to describe Unicode characters. Code points above
-    above 0xFFFF are split into two `\uxxxx` entries ("surrogate pairs"). This error indicates that
+    surrogate | JSON uses the `\\uxxxx` format to describe Unicode characters. Code points above
+    above 0xFFFF are split into two `\\uxxxx` entries ("surrogate pairs"). This error indicates that
     the surrogate pair is incomplete or contains an invalid code point.
     json.exception.parse_error.103 | parse error: code points above 0x10FFFF are invalid | Unicode
     supports code points up to 0x10FFFF. Code points above 0x10FFFF are invalid.
@@ -2247,7 +2247,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
           is the index of the terminating null byte or the end of file. This also
           holds true when reading a byte vector (CBOR or MessagePack).
 
-    @liveexample{The following code shows how a `parse_error` exception can be
+    \@liveexample{The following code shows how a `parse_error` exception can be
     caught.,parse_error}
 
     @sa - @ref exception for the base class of the library exceptions
@@ -2356,7 +2356,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     the iterator belongs to a null value or it is an iterator to a primitive type (number, boolean,
     or string), but the iterator is different to @ref begin().
 
-    @liveexample{The following code shows how an `invalid_iterator` exception can be
+    \@liveexample{The following code shows how an `invalid_iterator` exception can be
     caught.,invalid_iterator}
 
     @sa - @ref exception for the base class of the library exceptions
@@ -2431,7 +2431,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     dynamic type of the object cannot be represented in the requested serialization format (e.g. a
     raw `true` or `null` JSON object cannot be serialized to BSON) |
 
-    @liveexample{The following code shows how a `type_error` exception can be
+    \@liveexample{The following code shows how a `type_error` exception can be
     caught.,type_error}
 
     @sa - @ref exception for the base class of the library exceptions
@@ -2485,7 +2485,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     code point U+0000 (at byte 2) | Key identifiers to be serialized to BSON cannot contain code
     point U+0000, since the key is stored as zero-terminated c-string |
 
-    @liveexample{The following code shows how an `out_of_range` exception can be
+    \@liveexample{The following code shows how an `out_of_range` exception can be
     caught.,out_of_range}
 
     @sa - @ref exception for the base class of the library exceptions
@@ -2532,7 +2532,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
                         a wrong type
     @sa - @ref out_of_range for exceptions indicating access out of the defined range
 
-    @liveexample{The following code shows how an `other_error` exception can be
+    \@liveexample{The following code shows how an `other_error` exception can be
     caught.,other_error}
 
     @since version 3.0.0
@@ -4424,9 +4424,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     Sets the binary subtype of the value, also flags a binary JSON value as
     having a subtype, which has implications for serialization.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
     @sa @ref subtype() -- return the binary subtype
@@ -4451,9 +4451,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return the numerical subtype of the binary value
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
     @sa @ref set_subtype() -- sets the binary subtype
@@ -4470,9 +4470,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return whether the value has a subtype
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
     @sa @ref subtype() -- return the binary subtype
@@ -4490,9 +4490,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     has implications for serialization; for instance MessagePack will prefer the
     bin family over the ext family.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
     @sa @ref subtype() -- return the binary subtype
@@ -8418,7 +8418,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /////////////////////
 
     /*!
-    @brief get codepoint from 4 hex characters following `\u`
+    @brief get codepoint from 4 hex characters following `\\u`
 
     For input "\u c1 c2 c3 c4" the codepoint is:
       (c1 * 0x1000) + (c2 * 0x0100) + (c3 * 0x0010) + c4
@@ -8434,7 +8434,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     */
     int get_codepoint()
     {
-      // this function only makes sense after reading `\u`
+      // this function only makes sense after reading `\\u`
       assert(current == 'u');
       int codepoint = 0;
 
@@ -10442,7 +10442,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         been set (e.g., by a constructor or a copy assignment). If the iterator is
         default-constructed, it is *uninitialized* and most methods are undefined.
         **The library uses assertions to detect calls on uninitialized iterators.**
-  @requirement The class satisfies the following concept requirements:
+  \@requirement The class satisfies the following concept requirements:
   -
   [BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator):
     The iterator that can be moved can be moved in both directions (i.e.
@@ -11035,7 +11035,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   iterator (to create @ref reverse_iterator) and @ref const_iterator (to
   create @ref const_reverse_iterator).
 
-  @requirement The class satisfies the following concept requirements:
+  \@requirement The class satisfies the following concept requirements:
   -
   [BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator):
     The iterator that can be moved can be moved in both directions (i.e.
@@ -11170,7 +11170,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     not followed by `0` (representing `~`) or `1` (representing `/`); see
     example below
 
-    @liveexample{The example shows the construction several valid JSON pointers
+    \@liveexample{The example shows the construction several valid JSON pointers
     as well as the exceptional behavior.,json_pointer}
 
     @since version 2.0.0
@@ -11187,7 +11187,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return a string representation of the JSON pointer
 
-    @liveexample{The example shows the result of `to_string`.,json_pointer__to_string}
+    \@liveexample{The example shows the result of `to_string`.,json_pointer__to_string}
 
     @since version 2.0.0
     */
@@ -11200,7 +11200,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
           [](const std::string& a, const std::string& b) { return a + "/" + escape(b); });
     }
 
-    /// @copydoc to_string()
+    /// \@copydoc to_string()
     operator std::string() const { return to_string(); }
 
     /*!
@@ -11209,9 +11209,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] ptr  JSON pointer to append
     @return JSON pointer with @a ptr appended
 
-    @liveexample{The example shows the usage of `operator/=`.,json_pointer__operator_add}
+    \@liveexample{The example shows the usage of `operator/=`.,json_pointer__operator_add}
 
-    @complexity Linear in the length of @a ptr.
+    \@complexity Linear in the length of @a ptr.
 
     @sa @ref operator/=(std::string) to append a reference token
     @sa @ref operator/=(std::size_t) to append an array index
@@ -11232,9 +11232,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] token  reference token to append
     @return JSON pointer with @a token appended without escaping @a token
 
-    @liveexample{The example shows the usage of `operator/=`.,json_pointer__operator_add}
+    \@liveexample{The example shows the usage of `operator/=`.,json_pointer__operator_add}
 
-    @complexity Amortized constant.
+    \@complexity Amortized constant.
 
     @sa @ref operator/=(const json_pointer&) to append a JSON pointer
     @sa @ref operator/=(std::size_t) to append an array index
@@ -11254,9 +11254,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] array_idx  array index to append
     @return JSON pointer with @a array_idx appended
 
-    @liveexample{The example shows the usage of `operator/=`.,json_pointer__operator_add}
+    \@liveexample{The example shows the usage of `operator/=`.,json_pointer__operator_add}
 
-    @complexity Amortized constant.
+    \@complexity Amortized constant.
 
     @sa @ref operator/=(const json_pointer&) to append a JSON pointer
     @sa @ref operator/=(std::string) to append a reference token
@@ -11274,9 +11274,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  JSON pointer
     @return a new JSON pointer with @a rhs appended to @a lhs
 
-    @liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
+    \@liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
 
-    @complexity Linear in the length of @a lhs and @a rhs.
+    \@complexity Linear in the length of @a lhs and @a rhs.
 
     @sa @ref operator/=(const json_pointer&) to append a JSON pointer
 
@@ -11294,9 +11294,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] token  reference token
     @return a new JSON pointer with unescaped @a token appended to @a ptr
 
-    @liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
+    \@liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
 
-    @complexity Linear in the length of @a ptr.
+    \@complexity Linear in the length of @a ptr.
 
     @sa @ref operator/=(std::string) to append a reference token
 
@@ -11315,9 +11315,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] array_idx  array index
     @return a new JSON pointer with @a array_idx appended to @a ptr
 
-    @liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
+    \@liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
 
-    @complexity Linear in the length of @a ptr.
+    \@complexity Linear in the length of @a ptr.
 
     @sa @ref operator/=(std::size_t) to append an array index
 
@@ -11334,9 +11334,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return parent of this JSON pointer; in case this JSON pointer is the root,
             the root itself is returned
 
-    @complexity Linear in the length of the JSON pointer.
+    \@complexity Linear in the length of the JSON pointer.
 
-    @liveexample{The example shows the result of `parent_pointer` for different
+    \@liveexample{The example shows the result of `parent_pointer` for different
     JSON Pointers.,json_pointer__parent_pointer}
 
     @since version 3.6.0
@@ -11358,9 +11358,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @pre not `empty()`
 
-    @liveexample{The example shows the usage of `pop_back`.,json_pointer__pop_back}
+    \@liveexample{The example shows the usage of `pop_back`.,json_pointer__pop_back}
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @throw out_of_range.405 if JSON pointer has no parent
 
@@ -11382,9 +11382,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @pre not `empty()`
     @return last reference token
 
-    @liveexample{The example shows the usage of `back`.,json_pointer__back}
+    \@liveexample{The example shows the usage of `back`.,json_pointer__back}
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @throw out_of_range.405 if JSON pointer has no parent
 
@@ -11405,16 +11405,16 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] token  token to add
 
-    @complexity Amortized constant.
+    \@complexity Amortized constant.
 
-    @liveexample{The example shows the result of `push_back` for different
+    \@liveexample{The example shows the result of `push_back` for different
     JSON Pointers.,json_pointer__push_back}
 
     @since version 3.6.0
     */
     void push_back(const std::string& token) { reference_tokens.push_back(token); }
 
-    /// @copydoc push_back(const std::string&)
+    /// \@copydoc push_back(const std::string&)
     void push_back(std::string&& token) { reference_tokens.push_back(std::move(token)); }
 
     /*!
@@ -11422,11 +11422,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return true iff the JSON pointer points to the root document
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @liveexample{The example shows the result of `empty` for different JSON
+    \@liveexample{The example shows the result of `empty` for different JSON
     Pointers.,json_pointer__empty}
 
     @since version 3.6.0
@@ -11489,7 +11489,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     /*!
     @brief create and return a reference to the pointed to value
 
-    @complexity Linear in the number of reference tokens.
+    \@complexity Linear in the number of reference tokens.
 
     @throw parse_error.109 if array index is not a number
     @throw type_error.313 if value cannot be unflattened
@@ -11558,7 +11558,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return reference to the JSON value pointed to by the JSON pointer
 
-    @complexity Linear in the length of the JSON pointer.
+    \@complexity Linear in the length of the JSON pointer.
 
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
@@ -12041,9 +12041,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  JSON pointer to compare
     @return whether @a lhs is equal to @a rhs
 
-    @complexity Linear in the length of the JSON pointer
+    \@complexity Linear in the length of the JSON pointer
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
     */
     friend bool operator==(json_pointer const& lhs, json_pointer const& rhs) noexcept
     {
@@ -12057,9 +12057,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  JSON pointer to compare
     @return whether @a lhs is not equal @a rhs
 
-    @complexity Linear in the length of the JSON pointer
+    \@complexity Linear in the length of the JSON pointer
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
     */
     friend bool operator!=(json_pointer const& lhs, json_pointer const& rhs) noexcept
     {
@@ -14976,7 +14976,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     @param[in] val               value to serialize
     @param[in] pretty_print      whether the output shall be pretty-printed
     @param[in] ensure_ascii If @a ensure_ascii is true, all non-ASCII characters
-    in the output are escaped with `\uXXXX` sequences, and the result consists
+    in the output are escaped with `\\uXXXX` sequences, and the result consists
     of ASCII characters only.
     @param[in] indent_step       the indent level
     @param[in] current_indent    the current indent level (only used internally)
@@ -15250,7 +15250,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     @param[in] ensure_ascii  whether to escape non-ASCII characters with
                              \uXXXX sequences
 
-    @complexity Linear in the length of string @a s.
+    \@complexity Linear in the length of string @a s.
     */
     void dump_escaped(const string_t& s, const bool ensure_ascii)
     {
@@ -15745,7 +15745,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
     @note The function has been edited: a std::array is used.
 
-    @copyright Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
+    @copyright Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern\@hoehrmann.de>
     @sa http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
     */
     static std::uint8_t decode(
@@ -15880,7 +15880,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   @tparam JSONSerializer the serializer to resolve internal calls to `to_json()`
   and `from_json()` (@ref adl_serializer by default)
 
-  @requirement The class satisfies the following concept requirements:
+  \@requirement The class satisfies the following concept requirements:
   - Basic
    - [DefaultConstructible](https://en.cppreference.com/w/cpp/named_req/DefaultConstructible):
      JSON values can be default constructed. The result will be a JSON null
@@ -15928,9 +15928,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   - If `m_type == value_t::string`, then `m_value.string != nullptr`.
   The invariants are checked by member function assert_invariant().
 
-  @internal
+  \@internal
   @note ObjectType trick from https://stackoverflow.com/a/9860911
-  @endinternal
+  \@endinternal
 
   @see [RFC 7159: The JavaScript Object Notation (JSON) Data Interchange
   Format](http://rfc7159.net/rfc7159)
@@ -16019,17 +16019,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     /// Classes to implement user-defined exceptions.
     /// @{
 
-    /// @copydoc detail::exception
+    /// \@copydoc detail::exception
     using exception = detail::exception;
-    /// @copydoc detail::parse_error
+    /// \@copydoc detail::parse_error
     using parse_error = detail::parse_error;
-    /// @copydoc detail::invalid_iterator
+    /// \@copydoc detail::invalid_iterator
     using invalid_iterator = detail::invalid_iterator;
-    /// @copydoc detail::type_error
+    /// \@copydoc detail::type_error
     using type_error = detail::type_error;
-    /// @copydoc detail::out_of_range
+    /// \@copydoc detail::out_of_range
     using out_of_range = detail::out_of_range;
-    /// @copydoc detail::other_error
+    /// \@copydoc detail::other_error
     using other_error = detail::other_error;
 
     /// @}
@@ -16099,13 +16099,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     //   keys: `major`, `minor`, and `patch` as defined by [Semantic Versioning](http://semver.org),
     //   and `string` (the version string).
 
-    //   @liveexample{The following code shows an example output of the `meta()`
+    //   \@liveexample{The following code shows an example output of the `meta()`
     //   function.,meta}
 
-    //   @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    //   \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     //   changes to any JSON value.
 
-    //   @complexity Constant.
+    //   \@complexity Constant.
 
     //   @since 2.1.0
     //   */
@@ -16358,7 +16358,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     > sense that implementations will agree in all cases on equality or
     > inequality of two strings. For example, implementations that compare
     > strings with escaped characters unconverted may incorrectly find that
-    > `"a\\b"` and `"a\u005Cb"` are not equal.
+    > `"a\\\\b"` and `"a\\u005Cb"` are not equal.
 
     This implementation is interoperable as it does compare strings code unit
     by code unit.
@@ -16974,7 +16974,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     - `array_end`: the parser read `]` and finished processing a JSON array
     - `value`: the parser finished reading a JSON value
 
-    @image html callback_events.png "Example when certain parse events are triggered"
+    \@image html callback_events.png "Example when certain parse events are triggered"
 
     @sa @ref parser_callback_t for more information and examples
     */
@@ -17007,7 +17007,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     the parsed JSON array parse_event_t::value | the parser finished reading a JSON value | depth of
     the value | the parsed JSON value
 
-    @image html callback_events.png "Example when certain parse events are triggered"
+    \@image html callback_events.png "Example when certain parse events are triggered"
 
     Discarding a value (i.e., returning `false`) has different effects
     depending on the context in which function was called:
@@ -17062,12 +17062,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] v  the type of the value to create
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @liveexample{The following code shows the constructor for different @ref
+    \@liveexample{The following code shows the constructor for different @ref
     value_t values,basic_json__value_t}
 
     @sa @ref clear() -- restores the postcondition of this constructor
@@ -17084,12 +17084,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     The passed null pointer itself is not read -- it is only used to choose
     the right constructor.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this constructor never throws
+    \@exceptionsafety No-throw guarantee: this constructor never throws
     exceptions.
 
-    @liveexample{The following code shows the constructor with and without a
+    \@liveexample{The following code shows the constructor with and without a
     null pointer parameter.,basic_json__nullptr_t}
 
     @since version 1.0.0
@@ -17149,16 +17149,16 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] val the value to be forwarded to the respective constructor
 
-    @complexity Usually linear in the size of the passed @a val, also
+    \@complexity Usually linear in the size of the passed @a val, also
                 depending on the implementation of the called `to_json()`
                 method.
 
-    @exceptionsafety Depends on the called constructor. For types directly
+    \@exceptionsafety Depends on the called constructor. For types directly
     supported by the library (i.e., all types for which no `to_json()` function
     was provided), strong guarantee holds: if an exception is thrown, there are
     no changes to any JSON value.
 
-    @liveexample{The following code shows the constructor with several
+    \@liveexample{The following code shows the constructor with several
     compatible types.,basic_json__CompatibleType}
 
     @since version 2.1.0
@@ -17192,11 +17192,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] val the @ref basic_json value to be converted.
 
-    @complexity Usually linear in the size of the passed @a val, also
+    \@complexity Usually linear in the size of the passed @a val, also
                 depending on the implementation of the called `to_json()`
                 method.
 
-    @exceptionsafety Depends on the called constructor. For types directly
+    \@exceptionsafety Depends on the called constructor. For types directly
     supported by the library (i.e., all types for which no `to_json()` function
     was provided), strong guarantee holds: if an exception is thrown, there are
     no changes to any JSON value.
@@ -17324,12 +17324,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     would have been created. See @ref object(initializer_list_t)
     for an example.
 
-    @complexity Linear in the size of the initializer list @a init.
+    \@complexity Linear in the size of the initializer list @a init.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @liveexample{The example below shows how JSON values are created from
+    \@liveexample{The example below shows how JSON values are created from
     initializer lists.,basic_json__list_init_t}
 
     @sa @ref array(initializer_list_t) -- create a JSON array
@@ -17412,9 +17412,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return JSON binary array value
 
-    @complexity Linear in the size of @a init.
+    \@complexity Linear in the size of @a init.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
     @since version 3.8.0
@@ -17449,9 +17449,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return JSON binary array value
 
-    @complexity Linear in the size of @a init.
+    \@complexity Linear in the size of @a init.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
     @since version 3.8.0
@@ -17466,7 +17466,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return res;
     }
 
-    /// @copydoc binary(const typename binary_t::container_type&)
+    /// \@copydoc binary(const typename binary_t::container_type&)
     _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json binary(
         typename binary_t::container_type&& init)
     {
@@ -17476,7 +17476,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return res;
     }
 
-    /// @copydoc binary(const typename binary_t::container_type&, std::uint8_t)
+    /// \@copydoc binary(const typename binary_t::container_type&, std::uint8_t)
     _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json binary(
         typename binary_t::container_type&& init,
         std::uint8_t subtype)
@@ -17509,12 +17509,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return JSON array value
 
-    @complexity Linear in the size of @a init.
+    \@complexity Linear in the size of @a init.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @liveexample{The following code shows an example for the `array`
+    \@liveexample{The following code shows an example for the `array`
     function.,array}
 
     @sa @ref basic_json(initializer_list_t, bool, value_t) --
@@ -17552,12 +17552,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     an array would have been created from the passed initializer list @a init.
     See example below.
 
-    @complexity Linear in the size of @a init.
+    \@complexity Linear in the size of @a init.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @liveexample{The following code shows an example for the `object`
+    \@liveexample{The following code shows an example for the `object`
     function.,object}
 
     @sa @ref basic_json(initializer_list_t, bool, value_t) --
@@ -17583,12 +17583,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @post `std::distance(begin(),end()) == cnt` holds.
 
-    @complexity Linear in @a cnt.
+    \@complexity Linear in @a cnt.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @liveexample{The following code shows examples for the @ref
+    \@liveexample{The following code shows examples for the @ref
     basic_json(size_type\, const basic_json&)
     constructor.,basic_json__size_type_basic_json}
 
@@ -17645,12 +17645,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw invalid_iterator.206 if iterators @a first and @a last belong to a
     null value. In this case, the range `[first, last)` is undefined.
 
-    @complexity Linear in distance between @a first and @a last.
+    \@complexity Linear in distance between @a first and @a last.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @liveexample{The example below shows several ways to create JSON values by
+    \@liveexample{The example below shows several ways to create JSON values by
     specifying a subrange with iterators.,basic_json__InputIt_InputIt}
 
     @since version 1.0.0
@@ -17772,18 +17772,18 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @post `*this == other`
 
-    @complexity Linear in the size of @a other.
+    \@complexity Linear in the size of @a other.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes to any JSON value.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is linear.
     - As postcondition, it holds: `other == basic_json(other)`.
 
-    @liveexample{The following code shows an example for the copy
+    \@liveexample{The following code shows an example for the copy
     constructor.,basic_json__basic_json}
 
     @since version 1.0.0
@@ -17854,16 +17854,16 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @post `*this` has the same value as @a other before the call.
     @post @a other is a JSON null value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this constructor never throws
+    \@exceptionsafety No-throw guarantee: this constructor never throws
     exceptions.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [MoveConstructible](https://en.cppreference.com/w/cpp/named_req/MoveConstructible)
     requirements.
 
-    @liveexample{The code below shows the move constructor explicitly called
+    \@liveexample{The code below shows the move constructor explicitly called
     via std::move.,basic_json__moveconstructor}
 
     @since version 1.0.0
@@ -17890,14 +17890,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] other  value to copy from
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is linear.
 
-    @liveexample{The code below shows and example for the copy assignment. It
+    \@liveexample{The code below shows and example for the copy assignment. It
     creates a copy of value `a` which is then swapped with `b`. Finally\, the
     copy of `a` (which is the null value after the swap) is
     destroyed.,basic_json__copyassignment}
@@ -17925,9 +17925,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     Destroys the JSON value and frees all allocated memory.
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is linear.
@@ -17966,7 +17966,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] indent_char The character to use for indentation if @a indent is
     greater than `0`. The default is ` ` (space).
     @param[in] ensure_ascii If @a ensure_ascii is true, all non-ASCII characters
-    in the output are escaped with `\uXXXX` sequences, and the result consists
+    in the output are escaped with `\\uXXXX` sequences, and the result consists
     of ASCII characters only.
     @param[in] error_handler  how to react on decoding errors; there are three
     possible values: `strict` (throws and exception in case a decoding error
@@ -17982,12 +17982,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       - "bytes": an array of bytes as integers
       - "subtype": the subtype as integer or "null" if the binary has no subtype
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @liveexample{The following example shows the effect of different @a indent\,
+    \@liveexample{The following example shows the effect of different @a indent\,
     @a indent_char\, and @a ensure_ascii parameters to the result of the
     serialization.,dump}
 
@@ -18039,12 +18039,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             binary                    | value_t::binary
             discarded                 | value_t::discarded
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `type()` for all JSON
+    \@liveexample{The following code exemplifies `type()` for all JSON
     types.,type}
 
     @sa @ref operator value_t() -- return the type of the JSON value (implicit)
@@ -18063,12 +18063,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return `true` if type is primitive (string, number, boolean, or null),
     `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_primitive()` for all JSON
+    \@liveexample{The following code exemplifies `is_primitive()` for all JSON
     types.,is_primitive}
 
     @sa @ref is_structured() -- returns whether JSON value is structured
@@ -18093,12 +18093,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is structured (array or object), `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_structured()` for all JSON
+    \@liveexample{The following code exemplifies `is_structured()` for all JSON
     types.,is_structured}
 
     @sa @ref is_primitive() -- returns whether value is primitive
@@ -18116,12 +18116,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is null, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_null()` for all JSON
+    \@liveexample{The following code exemplifies `is_null()` for all JSON
     types.,is_null}
 
     @since version 1.0.0
@@ -18135,12 +18135,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is boolean, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_boolean()` for all JSON
+    \@liveexample{The following code exemplifies `is_boolean()` for all JSON
     types.,is_boolean}
 
     @since version 1.0.0
@@ -18156,12 +18156,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return `true` if type is number (regardless whether integer, unsigned
     integer or floating-type), `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_number()` for all JSON
+    \@liveexample{The following code exemplifies `is_number()` for all JSON
     types.,is_number}
 
     @sa @ref is_number_integer() -- check if value is an integer or unsigned
@@ -18183,12 +18183,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return `true` if type is an integer or unsigned integer number, `false`
     otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_number_integer()` for all
+    \@liveexample{The following code exemplifies `is_number_integer()` for all
     JSON types.,is_number_integer}
 
     @sa @ref is_number() -- check if value is a number
@@ -18211,12 +18211,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is an unsigned integer number, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_number_unsigned()` for all
+    \@liveexample{The following code exemplifies `is_number_unsigned()` for all
     JSON types.,is_number_unsigned}
 
     @sa @ref is_number() -- check if value is a number
@@ -18239,12 +18239,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is a floating-point number, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_number_float()` for all
+    \@liveexample{The following code exemplifies `is_number_float()` for all
     JSON types.,is_number_float}
 
     @sa @ref is_number() -- check if value is number
@@ -18263,12 +18263,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is object, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_object()` for all JSON
+    \@liveexample{The following code exemplifies `is_object()` for all JSON
     types.,is_object}
 
     @since version 1.0.0
@@ -18282,12 +18282,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is array, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_array()` for all JSON
+    \@liveexample{The following code exemplifies `is_array()` for all JSON
     types.,is_array}
 
     @since version 1.0.0
@@ -18301,12 +18301,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is string, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_string()` for all JSON
+    \@liveexample{The following code exemplifies `is_string()` for all JSON
     types.,is_string}
 
     @since version 1.0.0
@@ -18320,12 +18320,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is binary array, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_binary()` for all JSON
+    \@liveexample{The following code exemplifies `is_binary()` for all JSON
     types.,is_binary}
 
     @since version 3.8.0
@@ -18344,12 +18344,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return `true` if type is discarded, `false` otherwise.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies `is_discarded()` for all JSON
+    \@liveexample{The following code exemplifies `is_discarded()` for all JSON
     types.,is_discarded}
 
     @since version 1.0.0
@@ -18364,12 +18364,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return the type of the JSON value
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @exceptionsafety No-throw guarantee: this member function never throws
+    \@exceptionsafety No-throw guarantee: this member function never throws
     exceptions.
 
-    @liveexample{The following code exemplifies the @ref value_t operator for
+    \@liveexample{The following code exemplifies the @ref value_t operator for
     all JSON types.,operator__value_t}
 
     @sa @ref type() -- return the type of the JSON value (explicit)
@@ -18539,7 +18539,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return a copy of *this
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @since version 2.1.0
     */
@@ -18563,7 +18563,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return a copy of *this, converted into @tparam BasicJsonType
 
-    @complexity Depending on the implementation of the called `from_json()`
+    \@complexity Depending on the implementation of the called `from_json()`
                 method.
 
     @since version 3.2.0
@@ -18609,7 +18609,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @throw what @ref json_serializer<ValueType> `from_json()` method throws
 
-    @liveexample{The example below shows several conversions from JSON values
+    \@liveexample{The example below shows several conversions from JSON values
     to other types. There a few things to note: (1) Floating-point numbers can
     be converted to integers\, (2) A JSON array can be converted to a standard
     `std::vector<short>`\, (3) A JSON object can be converted to C++
@@ -18716,7 +18716,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @throw what @ref json_serializer<ValueType> `from_json()` method throws
 
-    @liveexample{The example below shows several conversions from JSON values
+    \@liveexample{The example below shows several conversions from JSON values
     to other types. There a few things to note: (1) Floating-point numbers can
     be converted to integers\, (2) A JSON array can be converted to a standard
     `std::vector<short>`\, (3) A JSON object can be converted to C++
@@ -18767,9 +18767,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return pointer to the internally stored JSON value if the requested
     pointer type @a PointerType fits to the JSON value; `nullptr` otherwise
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how pointers to internal values of a
+    \@liveexample{The example below shows how pointers to internal values of a
     JSON value can be requested. Note that no type conversions are made and a
     `nullptr` is returned if the value and the requested pointer type does not
     match.,get_ptr}
@@ -18788,7 +18788,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief get a pointer value (implicit)
-    @copydoc get_ptr()
+    \@copydoc get_ptr()
     */
     template <
         typename PointerType,
@@ -18820,9 +18820,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return pointer to the internally stored JSON value if the requested
     pointer type @a PointerType fits to the JSON value; `nullptr` otherwise
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how pointers to internal values of a
+    \@liveexample{The example below shows how pointers to internal values of a
     JSON value can be requested. Note that no type conversions are made and a
     `nullptr` is returned if the value and the requested pointer type does not
     match.,get__PointerType}
@@ -18842,7 +18842,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief get a pointer value (explicit)
-    @copydoc get()
+    \@copydoc get()
     */
     template <
         typename PointerType,
@@ -18874,9 +18874,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.303 in case passed type @a ReferenceType is incompatible
     with the stored JSON value; see example below
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example shows several calls to `get_ref()`.,get_ref}
+    \@liveexample{The example shows several calls to `get_ref()`.,get_ref}
 
     @since version 1.1.0
     */
@@ -18891,7 +18891,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief get a reference value (implicit)
-    @copydoc get_ref()
+    \@copydoc get_ref()
     */
     template <
         typename ReferenceType,
@@ -18924,9 +18924,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     to the JSON value type (e.g., the JSON value is of type boolean, but a
     string is requested); see example below
 
-    @complexity Linear in the size of the JSON value.
+    \@complexity Linear in the size of the JSON value.
 
-    @liveexample{The example below shows several conversions from JSON values
+    \@liveexample{The example below shows several conversions from JSON values
     to other types. There a few things to note: (1) Floating-point numbers can
     be converted to integers\, (2) A JSON array can be converted to a standard
     `std::vector<short>`\, (3) A JSON object can be converted to C++
@@ -18979,7 +18979,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       return *get_ptr<binary_t*>();
     }
 
-    /// @copydoc get_binary()
+    /// \@copydoc get_binary()
     const binary_t& get_binary() const
     {
       if (!is_binary())
@@ -19016,14 +19016,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.401 if the index @a idx is out of range of the array;
     that is, `idx >= size()`. See example below.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how array elements can be read and
+    \@liveexample{The example below shows how array elements can be read and
     written using `at()`. It also demonstrates the different exceptions that
     can be thrown.,at__size_type}
     */
@@ -19061,14 +19061,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.401 if the index @a idx is out of range of the array;
     that is, `idx >= size()`. See example below.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how array elements can be read using
+    \@liveexample{The example below shows how array elements can be read using
     `at()`. It also demonstrates the different exceptions that can be thrown.,
     at__size_type_const}
     */
@@ -19106,10 +19106,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.403 if the key @a key is is not stored in the object;
     that is, `find(key) == end()`. See example below.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
     @sa @ref operator[](const typename object_t::key_type&) for unchecked
     access by reference
@@ -19117,7 +19117,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how object elements can be read and
+    \@liveexample{The example below shows how object elements can be read and
     written using `at()`. It also demonstrates the different exceptions that
     can be thrown.,at__object_t_key_type}
     */
@@ -19154,10 +19154,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.403 if the key @a key is is not stored in the object;
     that is, `find(key) == end()`. See example below.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
     @sa @ref operator[](const typename object_t::key_type&) for unchecked
     access by reference
@@ -19165,7 +19165,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how object elements can be read using
+    \@liveexample{The example below shows how object elements can be read using
     `at()`. It also demonstrates the different exceptions that can be thrown.,
     at__object_t_key_type_const}
     */
@@ -19203,10 +19203,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.305 if the JSON value is not an array or null; in that
     cases, using the [] operator with an index makes no sense.
 
-    @complexity Constant if @a idx is in the range of the array. Otherwise
+    \@complexity Constant if @a idx is in the range of the array. Otherwise
     linear in `idx - size()`.
 
-    @liveexample{The example below shows how array elements can be read and
+    \@liveexample{The example below shows how array elements can be read and
     written using `[]` operator. Note the addition of `null`
     values.,operatorarray__size_type}
 
@@ -19251,9 +19251,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.305 if the JSON value is not an array; in that case,
     using the [] operator with an index makes no sense.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how array elements can be read using
+    \@liveexample{The example below shows how array elements can be read using
     the `[]` operator.,operatorarray__size_type_const}
 
     @since version 1.0.0
@@ -19286,9 +19286,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.305 if the JSON value is not an object or null; in that
     cases, using the [] operator with a key makes no sense.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read and
+    \@liveexample{The example below shows how object elements can be read and
     written using the `[]` operator.,operatorarray__key_type}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19336,9 +19336,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.305 if the JSON value is not an object; in that case,
     using the [] operator with a key makes no sense.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read using
+    \@liveexample{The example below shows how object elements can be read using
     the `[]` operator.,operatorarray__key_type_const}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19376,9 +19376,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.305 if the JSON value is not an object or null; in that
     cases, using the [] operator with a key makes no sense.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read and
+    \@liveexample{The example below shows how object elements can be read and
     written using the `[]` operator.,operatorarray__key_type}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19426,9 +19426,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.305 if the JSON value is not an object; in that case,
     using the [] operator with a key makes no sense.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read using
+    \@liveexample{The example below shows how object elements can be read using
     the `[]` operator.,operatorarray__key_type_const}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19488,9 +19488,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.306 if the JSON value is not an object; in that case,
     using `value()` with a key makes no sense.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be queried
+    \@liveexample{The example below shows how object elements can be queried
     with a default value.,basic_json__value}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19528,7 +19528,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief overload for a default value of type const char*
-    @copydoc basic_json::value(const typename object_t::key_type&, const ValueType&) const
+    \@copydoc basic_json::value(const typename object_t::key_type&, const ValueType&) const
     */
     string_t value(const typename object_t::key_type& key, const char* default_value) const
     {
@@ -19569,9 +19569,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.306 if the JSON value is not an object; in that case,
     using `value()` with a key makes no sense.
 
-    @complexity Logarithmic in the size of the container.
+    \@complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be queried
+    \@liveexample{The example below shows how object elements can be queried
     with a default value.,basic_json__value_ptr}
 
     @sa @ref operator[](const json_pointer&) for unchecked access by reference
@@ -19597,7 +19597,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief overload for a default value of type const char*
-    @copydoc basic_json::value(const json_pointer&, ValueType) const
+    \@copydoc basic_json::value(const json_pointer&, ValueType) const
     */
     _az_JSON_HEDLEY_NON_NULL(3) string_t
         value(const json_pointer& ptr, const char* default_value) const
@@ -19615,7 +19615,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     first element is returned. In case of number, string, boolean, or binary
     values, a reference to the value is returned.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @pre The JSON value must not be `null` (would throw `std::out_of_range`)
     or an empty array or object (undefined behavior, **guarded by
@@ -19624,7 +19624,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @throw invalid_iterator.214 when called on `null` value
 
-    @liveexample{The following code shows an example for `front()`.,front}
+    \@liveexample{The following code shows an example for `front()`.,front}
 
     @sa @ref back() -- access the last element
 
@@ -19633,7 +19633,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     reference front() { return *begin(); }
 
     /*!
-    @copydoc basic_json::front()
+    \@copydoc basic_json::front()
     */
     const_reference front() const { return *cbegin(); }
 
@@ -19652,7 +19652,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     last element is returned. In case of number, string, boolean, or binary
     values, a reference to the value is returned.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @pre The JSON value must not be `null` (would throw `std::out_of_range`)
     or an empty array or object (undefined behavior, **guarded by
@@ -19662,7 +19662,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw invalid_iterator.214 when called on a `null` value. See example
     below.
 
-    @liveexample{The following code shows an example for `back()`.,back}
+    \@liveexample{The following code shows an example for `back()`.,back}
 
     @sa @ref front() -- access the first element
 
@@ -19676,7 +19676,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc basic_json::back()
+    \@copydoc basic_json::back()
     */
     const_reference back() const
     {
@@ -19713,13 +19713,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     iterator (i.e., any iterator which is not `begin()`); example: `"iterator
     out of range"`
 
-    @complexity The complexity depends on the type:
+    \@complexity The complexity depends on the type:
     - objects: amortized constant
     - arrays: linear in distance between @a pos and the end of the container
     - strings and binary: linear in the length of the member
     - other types: constant
 
-    @liveexample{The example shows the result of `erase()` for different JSON
+    \@liveexample{The example shows the result of `erase()` for different JSON
     types.,erase__IteratorType}
 
     @sa @ref erase(IteratorType, IteratorType) -- removes the elements in
@@ -19827,14 +19827,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     iterators (i.e., if `first != begin()` and `last != end()`); example:
     `"iterators out of range"`
 
-    @complexity The complexity depends on the type:
+    \@complexity The complexity depends on the type:
     - objects: `log(size()) + std::distance(first, last)`
     - arrays: linear in the distance between @a first and @a last, plus linear
       in the distance between @a last and end of the container
     - strings and binary: linear in the length of the member
     - other types: constant
 
-    @liveexample{The example shows the result of `erase()` for different JSON
+    \@liveexample{The example shows the result of `erase()` for different JSON
     types.,erase__IteratorType_IteratorType}
 
     @sa @ref erase(IteratorType) -- removes the element at a given position
@@ -19934,9 +19934,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.307 when called on a type other than JSON object;
     example: `"cannot use erase() with null"`
 
-    @complexity `log(size()) + count(key)`
+    \@complexity `log(size()) + count(key)`
 
-    @liveexample{The example shows the effect of `erase()`.,erase__key_type}
+    \@liveexample{The example shows the effect of `erase()`.,erase__key_type}
 
     @sa @ref erase(IteratorType) -- removes the element at a given position
     @sa @ref erase(IteratorType, IteratorType) -- removes the elements in
@@ -19970,9 +19970,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.401 when `idx >= size()`; example: `"array index 17
     is out of range"`
 
-    @complexity Linear in distance between @a idx and the end of the container.
+    \@complexity Linear in distance between @a idx and the end of the container.
 
-    @liveexample{The example shows the effect of `erase()`.,erase__size_type}
+    \@liveexample{The example shows the effect of `erase()`.,erase__size_type}
 
     @sa @ref erase(IteratorType) -- removes the element at a given position
     @sa @ref erase(IteratorType, IteratorType) -- removes the elements in
@@ -20027,9 +20027,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     element is found or the JSON value is not an object, past-the-end (see
     @ref end()) iterator is returned.
 
-    @complexity Logarithmic in the size of the JSON object.
+    \@complexity Logarithmic in the size of the JSON object.
 
-    @liveexample{The example shows how `find()` is used.,find__key_type}
+    \@liveexample{The example shows how `find()` is used.,find__key_type}
 
     @sa @ref contains(KeyT&&) const -- checks whether a key exists
 
@@ -20049,7 +20049,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief find an element in a JSON object
-    @copydoc find(KeyT&&)
+    \@copydoc find(KeyT&&)
     */
     template <typename KeyT> const_iterator find(KeyT&& key) const
     {
@@ -20078,9 +20078,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return Number of elements with key @a key. If the JSON value is not an
     object, the return value will be `0`.
 
-    @complexity Logarithmic in the size of the JSON object.
+    \@complexity Logarithmic in the size of the JSON object.
 
-    @liveexample{The example shows how `count()` is used.,count}
+    \@liveexample{The example shows how `count()` is used.,count}
 
     @since version 1.0.0
     */
@@ -20106,9 +20106,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     element with such key is found or the JSON value is not an object,
     false is returned.
 
-    @complexity Logarithmic in the size of the JSON object.
+    \@complexity Logarithmic in the size of the JSON object.
 
-    @liveexample{The following code shows an example for `contains()`.,contains}
+    \@liveexample{The following code shows an example for `contains()`.,contains}
 
     @sa @ref find(KeyT&&) -- returns an iterator to an object element
     @sa @ref contains(const json_pointer&) const -- checks the existence for a JSON pointer
@@ -20144,9 +20144,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
 
-    @complexity Logarithmic in the size of the JSON object.
+    \@complexity Logarithmic in the size of the JSON object.
 
-    @liveexample{The following code shows an example for `contains()`.,contains_json_pointer}
+    \@liveexample{The following code shows an example for `contains()`.,contains_json_pointer}
 
     @sa @ref contains(KeyT &&) const -- checks the existence of a key
 
@@ -20168,18 +20168,18 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     Returns an iterator to the first element.
 
-    @image html range-begin-end.svg "Illustration from cppreference.com"
+    \@image html range-begin-end.svg "Illustration from cppreference.com"
 
     @return iterator to the first element
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
 
-    @liveexample{The following code shows an example for `begin()`.,begin}
+    \@liveexample{The following code shows an example for `begin()`.,begin}
 
     @sa @ref cbegin() -- returns a const iterator to the beginning
     @sa @ref end() -- returns an iterator to the end
@@ -20195,7 +20195,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc basic_json::cbegin()
+    \@copydoc basic_json::cbegin()
     */
     const_iterator begin() const noexcept { return cbegin(); }
 
@@ -20204,19 +20204,19 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     Returns a const iterator to the first element.
 
-    @image html range-begin-end.svg "Illustration from cppreference.com"
+    \@image html range-begin-end.svg "Illustration from cppreference.com"
 
     @return const iterator to the first element
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
     - Has the semantics of `const_cast<const basic_json&>(*this).begin()`.
 
-    @liveexample{The following code shows an example for `cbegin()`.,cbegin}
+    \@liveexample{The following code shows an example for `cbegin()`.,cbegin}
 
     @sa @ref begin() -- returns an iterator to the beginning
     @sa @ref end() -- returns an iterator to the end
@@ -20236,18 +20236,18 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     Returns an iterator to one past the last element.
 
-    @image html range-begin-end.svg "Illustration from cppreference.com"
+    \@image html range-begin-end.svg "Illustration from cppreference.com"
 
     @return iterator one past the last element
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
 
-    @liveexample{The following code shows an example for `end()`.,end}
+    \@liveexample{The following code shows an example for `end()`.,end}
 
     @sa @ref cend() -- returns a const iterator to the end
     @sa @ref begin() -- returns an iterator to the beginning
@@ -20263,7 +20263,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc basic_json::cend()
+    \@copydoc basic_json::cend()
     */
     const_iterator end() const noexcept { return cend(); }
 
@@ -20272,19 +20272,19 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     Returns a const iterator to one past the last element.
 
-    @image html range-begin-end.svg "Illustration from cppreference.com"
+    \@image html range-begin-end.svg "Illustration from cppreference.com"
 
     @return const iterator one past the last element
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
     - Has the semantics of `const_cast<const basic_json&>(*this).end()`.
 
-    @liveexample{The following code shows an example for `cend()`.,cend}
+    \@liveexample{The following code shows an example for `cend()`.,cend}
 
     @sa @ref end() -- returns an iterator to the end
     @sa @ref begin() -- returns an iterator to the beginning
@@ -20304,17 +20304,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     Returns an iterator to the reverse-beginning; that is, the last element.
 
-    @image html range-rbegin-rend.svg "Illustration from cppreference.com"
+    \@image html range-rbegin-rend.svg "Illustration from cppreference.com"
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [ReversibleContainer](https://en.cppreference.com/w/cpp/named_req/ReversibleContainer)
     requirements:
     - The complexity is constant.
     - Has the semantics of `reverse_iterator(end())`.
 
-    @liveexample{The following code shows an example for `rbegin()`.,rbegin}
+    \@liveexample{The following code shows an example for `rbegin()`.,rbegin}
 
     @sa @ref crbegin() -- returns a const reverse iterator to the beginning
     @sa @ref rend() -- returns a reverse iterator to the end
@@ -20325,7 +20325,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
 
     /*!
-    @copydoc basic_json::crbegin()
+    \@copydoc basic_json::crbegin()
     */
     const_reverse_iterator rbegin() const noexcept { return crbegin(); }
 
@@ -20335,17 +20335,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     Returns an iterator to the reverse-end; that is, one before the first
     element.
 
-    @image html range-rbegin-rend.svg "Illustration from cppreference.com"
+    \@image html range-rbegin-rend.svg "Illustration from cppreference.com"
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [ReversibleContainer](https://en.cppreference.com/w/cpp/named_req/ReversibleContainer)
     requirements:
     - The complexity is constant.
     - Has the semantics of `reverse_iterator(begin())`.
 
-    @liveexample{The following code shows an example for `rend()`.,rend}
+    \@liveexample{The following code shows an example for `rend()`.,rend}
 
     @sa @ref crend() -- returns a const reverse iterator to the end
     @sa @ref rbegin() -- returns a reverse iterator to the beginning
@@ -20356,7 +20356,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
 
     /*!
-    @copydoc basic_json::crend()
+    \@copydoc basic_json::crend()
     */
     const_reverse_iterator rend() const noexcept { return crend(); }
 
@@ -20366,17 +20366,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     Returns a const iterator to the reverse-beginning; that is, the last
     element.
 
-    @image html range-rbegin-rend.svg "Illustration from cppreference.com"
+    \@image html range-rbegin-rend.svg "Illustration from cppreference.com"
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [ReversibleContainer](https://en.cppreference.com/w/cpp/named_req/ReversibleContainer)
     requirements:
     - The complexity is constant.
     - Has the semantics of `const_cast<const basic_json&>(*this).rbegin()`.
 
-    @liveexample{The following code shows an example for `crbegin()`.,crbegin}
+    \@liveexample{The following code shows an example for `crbegin()`.,crbegin}
 
     @sa @ref rbegin() -- returns a reverse iterator to the beginning
     @sa @ref rend() -- returns a reverse iterator to the end
@@ -20392,17 +20392,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     Returns a const reverse iterator to the reverse-end; that is, one before
     the first element.
 
-    @image html range-rbegin-rend.svg "Illustration from cppreference.com"
+    \@image html range-rbegin-rend.svg "Illustration from cppreference.com"
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [ReversibleContainer](https://en.cppreference.com/w/cpp/named_req/ReversibleContainer)
     requirements:
     - The complexity is constant.
     - Has the semantics of `const_cast<const basic_json&>(*this).rend()`.
 
-    @liveexample{The following code shows an example for `crend()`.,crend}
+    \@liveexample{The following code shows an example for `crend()`.,crend}
 
     @sa @ref rend() -- returns a reverse iterator to the end
     @sa @ref rbegin() -- returns a reverse iterator to the beginning
@@ -20456,12 +20456,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return iteration proxy object wrapping @a ref with an interface to use in
             range-based for loops
 
-    @liveexample{The following code shows how the wrapper is used,iterator_wrapper}
+    \@liveexample{The following code shows how the wrapper is used,iterator_wrapper}
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @note The name of this function is not yet final and may change in the
     future.
@@ -20478,7 +20478,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc iterator_wrapper(reference)
+    \@copydoc iterator_wrapper(reference)
     */
     _az_JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items()) static iteration_proxy<
         const_iterator> iterator_wrapper(const_reference ref) noexcept
@@ -20545,19 +20545,19 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return iteration proxy object wrapping @a ref with an interface to use in
             range-based for loops
 
-    @liveexample{The following code shows how the function is used.,items}
+    \@liveexample{The following code shows how the function is used.,items}
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @since version 3.1.0, structured bindings support since 3.5.0.
     */
     iteration_proxy<iterator> items() noexcept { return iteration_proxy<iterator>(*this); }
 
     /*!
-    @copydoc items()
+    \@copydoc items()
     */
     iteration_proxy<const_iterator> items() const noexcept
     {
@@ -20590,22 +20590,22 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             object      | result of function `object_t::empty()`
             array       | result of function `array_t::empty()`
 
-    @liveexample{The following code uses `empty()` to check if a JSON
+    \@liveexample{The following code uses `empty()` to check if a JSON
     object contains any elements.,empty}
 
-    @complexity Constant, as long as @ref array_t and @ref object_t satisfy
+    \@complexity Constant, as long as @ref array_t and @ref object_t satisfy
     the Container concept; that is, their `empty()` functions have constant
     complexity.
 
-    @iterators No changes.
+    \@iterators No changes.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
     @note This function does not return whether a string stored as JSON value
     is empty - it returns whether the JSON container itself is empty which is
     false in the case of a string.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
@@ -20658,22 +20658,22 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             object      | result of function object_t::size()
             array       | result of function array_t::size()
 
-    @liveexample{The following code calls `size()` on the different value
+    \@liveexample{The following code calls `size()` on the different value
     types.,size}
 
-    @complexity Constant, as long as @ref array_t and @ref object_t satisfy
+    \@complexity Constant, as long as @ref array_t and @ref object_t satisfy
     the Container concept; that is, their size() functions have constant
     complexity.
 
-    @iterators No changes.
+    \@iterators No changes.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
     @note This function does not return the length of a string stored as JSON
     value - it returns the number of elements in the JSON value which is 1 in
     the case of a string.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
@@ -20729,18 +20729,18 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             object      | result of function `object_t::max_size()`
             array       | result of function `array_t::max_size()`
 
-    @liveexample{The following code calls `max_size()` on the different value
+    \@liveexample{The following code calls `max_size()` on the different value
     types. Note the output is implementation specific.,max_size}
 
-    @complexity Constant, as long as @ref array_t and @ref object_t satisfy
+    \@complexity Constant, as long as @ref array_t and @ref object_t satisfy
     the Container concept; that is, their `max_size()` functions have constant
     complexity.
 
-    @iterators No changes.
+    \@iterators No changes.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @requirement This function helps `basic_json` satisfying the
+    \@requirement This function helps `basic_json` satisfying the
     [Container](https://en.cppreference.com/w/cpp/named_req/Container)
     requirements:
     - The complexity is constant.
@@ -20803,15 +20803,15 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     *this = basic_json(type());
     @endcode
 
-    @liveexample{The example below shows the effect of `clear()` to different
+    \@liveexample{The example below shows the effect of `clear()` to different
     JSON types.,clear}
 
-    @complexity Linear in the size of the JSON value.
+    \@complexity Linear in the size of the JSON value.
 
-    @iterators All iterators, pointers and references related to this container
+    \@iterators All iterators, pointers and references related to this container
                are invalidated.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
     @sa @ref basic_json(value_t) -- constructor that creates an object with the
         same value than calling `clear()`
@@ -20879,9 +20879,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.308 when called on a type other than JSON array or
     null; example: `"cannot use push_back() with number"`
 
-    @complexity Amortized constant.
+    \@complexity Amortized constant.
 
-    @liveexample{The example shows how `push_back()` and `+=` can be used to
+    \@liveexample{The example shows how `push_back()` and `+=` can be used to
     add elements to a JSON array. Note how the `null` value was silently
     converted to a JSON array.,push_back}
 
@@ -20912,7 +20912,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief add an object to an array
-    @copydoc push_back(basic_json&&)
+    \@copydoc push_back(basic_json&&)
     */
     reference operator+=(basic_json&& val)
     {
@@ -20922,7 +20922,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief add an object to an array
-    @copydoc push_back(basic_json&&)
+    \@copydoc push_back(basic_json&&)
     */
     void push_back(const basic_json& val)
     {
@@ -20947,7 +20947,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief add an object to an array
-    @copydoc push_back(basic_json&&)
+    \@copydoc push_back(basic_json&&)
     */
     reference operator+=(const basic_json& val)
     {
@@ -20967,9 +20967,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.308 when called on a type other than JSON object or
     null; example: `"cannot use push_back() with number"`
 
-    @complexity Logarithmic in the size of the container, O(log(`size()`)).
+    \@complexity Logarithmic in the size of the container, O(log(`size()`)).
 
-    @liveexample{The example shows how `push_back()` and `+=` can be used to
+    \@liveexample{The example shows how `push_back()` and `+=` can be used to
     add elements to a JSON object. Note how the `null` value was silently
     converted to a JSON object.,push_back__object_t__value}
 
@@ -20998,7 +20998,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief add an object to an object
-    @copydoc push_back(const typename object_t::value_type&)
+    \@copydoc push_back(const typename object_t::value_type&)
     */
     reference operator+=(const typename object_t::value_type& val)
     {
@@ -21021,14 +21021,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] init  an initializer list
 
-    @complexity Linear in the size of the initializer list @a init.
+    \@complexity Linear in the size of the initializer list @a init.
 
     @note This function is required to resolve an ambiguous overload error,
           because pairs like `{"key", "value"}` can be both interpreted as
           `object_t::value_type` or `std::initializer_list<basic_json>`, see
           https://github.com/nlohmann/json/issues/235 for more information.
 
-    @liveexample{The example shows how initializer lists are treated as
+    \@liveexample{The example shows how initializer lists are treated as
     objects when possible.,push_back__initializer_list}
     */
     void push_back(initializer_list_t init)
@@ -21047,7 +21047,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief add an object to an object
-    @copydoc push_back(initializer_list_t)
+    \@copydoc push_back(initializer_list_t)
     */
     reference operator+=(initializer_list_t init)
     {
@@ -21070,9 +21070,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.311 when called on a type other than JSON array or
     null; example: `"cannot use emplace_back() with number"`
 
-    @complexity Amortized constant.
+    \@complexity Amortized constant.
 
-    @liveexample{The example shows how `push_back()` can be used to add
+    \@liveexample{The example shows how `push_back()` can be used to add
     elements to a JSON array. Note how the `null` value was silently converted
     to a JSON array.,emplace_back}
 
@@ -21122,9 +21122,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.311 when called on a type other than JSON object or
     null; example: `"cannot use emplace() with number"`
 
-    @complexity Logarithmic in the size of the container, O(log(`size()`)).
+    \@complexity Logarithmic in the size of the container, O(log(`size()`)).
 
-    @liveexample{The example shows how `emplace()` can be used to add elements
+    \@liveexample{The example shows how `emplace()` can be used to add elements
     to a JSON object. Note how the `null` value was silently converted to a
     JSON object. Further note how no value is added if there was already one
     value stored with the same key.,emplace}
@@ -21192,10 +21192,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw invalid_iterator.202 if @a pos is not an iterator of *this;
     example: `"iterator does not fit current value"`
 
-    @complexity Constant plus linear in the distance between @a pos and end of
+    \@complexity Constant plus linear in the distance between @a pos and end of
     the container.
 
-    @liveexample{The example shows how `insert()` is used.,insert}
+    \@liveexample{The example shows how `insert()` is used.,insert}
 
     @since version 1.0.0
     */
@@ -21220,7 +21220,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief inserts element
-    @copydoc insert(const_iterator, const basic_json&)
+    \@copydoc insert(const_iterator, const basic_json&)
     */
     iterator insert(const_iterator pos, basic_json&& val) { return insert(pos, val); }
 
@@ -21241,10 +21241,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw invalid_iterator.202 if @a pos is not an iterator of *this;
     example: `"iterator does not fit current value"`
 
-    @complexity Linear in @a cnt plus linear in the distance between @a pos
+    \@complexity Linear in @a cnt plus linear in the distance between @a pos
     and end of the container.
 
-    @liveexample{The example shows how `insert()` is used.,insert__count}
+    \@liveexample{The example shows how `insert()` is used.,insert__count}
 
     @since version 1.0.0
     */
@@ -21290,10 +21290,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return iterator pointing to the first element inserted, or @a pos if
     `first==last`
 
-    @complexity Linear in `std::distance(first, last)` plus linear in the
+    \@complexity Linear in `std::distance(first, last)` plus linear in the
     distance between @a pos and end of the container.
 
-    @liveexample{The example shows how `insert()` is used.,insert__range}
+    \@liveexample{The example shows how `insert()` is used.,insert__range}
 
     @since version 1.0.0
     */
@@ -21345,10 +21345,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @return iterator pointing to the first element inserted, or @a pos if
     `ilist` is empty
 
-    @complexity Linear in `ilist.size()` plus linear in the distance between
+    \@complexity Linear in `ilist.size()` plus linear in the distance between
     @a pos and end of the container.
 
-    @liveexample{The example shows how `insert()` is used.,insert__ilist}
+    \@liveexample{The example shows how `insert()` is used.,insert__ilist}
 
     @since version 1.0.0
     */
@@ -21387,10 +21387,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw invalid_iterator.210 if @a first and @a last do not belong to the
     same JSON value; example: `"iterators do not fit"`
 
-    @complexity Logarithmic: `O(N*log(size() + N))`, where `N` is the number
+    \@complexity Logarithmic: `O(N*log(size() + N))`, where `N` is the number
     of elements to insert.
 
-    @liveexample{The example shows how `insert()` is used.,insert__range_object}
+    \@liveexample{The example shows how `insert()` is used.,insert__range_object}
 
     @since version 3.0.0
     */
@@ -21429,10 +21429,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.312 if called on JSON values other than objects; example:
     `"cannot use update() with string"`
 
-    @complexity O(N*log(size() + N)), where N is the number of elements to
+    \@complexity O(N*log(size() + N)), where N is the number of elements to
                 insert.
 
-    @liveexample{The example shows how `update()` is used.,update}
+    \@liveexample{The example shows how `update()` is used.,update}
 
     @sa https://docs.python.org/3.6/library/stdtypes.html#dict.update
 
@@ -21482,10 +21482,10 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw invalid_iterator.210 if @a first and @a last do not belong to the
     same JSON value; example: `"iterators do not fit"`
 
-    @complexity O(N*log(size() + N)), where N is the number of elements to
+    \@complexity O(N*log(size() + N)), where N is the number of elements to
                 insert.
 
-    @liveexample{The example shows how `update()` is used__range.,update}
+    \@liveexample{The example shows how `update()` is used__range.,update}
 
     @sa https://docs.python.org/3.6/library/stdtypes.html#dict.update
 
@@ -21536,9 +21536,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in,out] other JSON value to exchange the contents with
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how JSON values can be swapped with
+    \@liveexample{The example below shows how JSON values can be swapped with
     `swap()`.,swap__reference}
 
     @since version 1.0.0
@@ -21566,9 +21566,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.310 when JSON value is not an array; example: `"cannot
     use swap() with string"`
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how arrays can be swapped with
+    \@liveexample{The example below shows how arrays can be swapped with
     `swap()`.,swap__array_t}
 
     @since version 1.0.0
@@ -21600,9 +21600,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.310 when JSON value is not an object; example:
     `"cannot use swap() with string"`
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how objects can be swapped with
+    \@liveexample{The example below shows how objects can be swapped with
     `swap()`.,swap__object_t}
 
     @since version 1.0.0
@@ -21634,9 +21634,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.310 when JSON value is not a string; example: `"cannot
     use swap() with boolean"`
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how strings can be swapped with
+    \@liveexample{The example below shows how strings can be swapped with
     `swap()`.,swap__string_t}
 
     @since version 1.0.0
@@ -21668,9 +21668,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.310 when JSON value is not a string; example: `"cannot
     use swap() with boolean"`
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The example below shows how strings can be swapped with
+    \@liveexample{The example below shows how strings can be swapped with
     `swap()`.,swap__binary_t}
 
     @since version 3.8.0
@@ -21689,7 +21689,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
       }
     }
 
-    /// @copydoc swap(binary_t)
+    /// \@copydoc swap(binary_t)
     void swap(typename binary_t::container_type& other)
     {
       // swap only works for strings
@@ -21761,11 +21761,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  second JSON value to consider
     @return whether the values @a lhs and @a rhs are equal
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @liveexample{The example demonstrates comparing several JSON
+    \@liveexample{The example demonstrates comparing several JSON
     types.,operator__equal}
 
     @since version 1.0.0
@@ -21842,7 +21842,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: equal
-    @copydoc operator==(const_reference, const_reference)
+    \@copydoc operator==(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -21854,7 +21854,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: equal
-    @copydoc operator==(const_reference, const_reference)
+    \@copydoc operator==(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -21873,11 +21873,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  second JSON value to consider
     @return whether the values @a lhs and @a rhs are not equal
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @liveexample{The example demonstrates comparing several JSON
+    \@liveexample{The example demonstrates comparing several JSON
     types.,operator__notequal}
 
     @since version 1.0.0
@@ -21889,7 +21889,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: not equal
-    @copydoc operator!=(const_reference, const_reference)
+    \@copydoc operator!=(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -21901,7 +21901,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: not equal
-    @copydoc operator!=(const_reference, const_reference)
+    \@copydoc operator!=(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -21928,11 +21928,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  second JSON value to consider
     @return whether @a lhs is less than @a rhs
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @liveexample{The example demonstrates comparing several JSON
+    \@liveexample{The example demonstrates comparing several JSON
     types.,operator__less}
 
     @since version 1.0.0
@@ -22014,7 +22014,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: less than
-    @copydoc operator<(const_reference, const_reference)
+    \@copydoc operator<(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22026,7 +22026,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: less than
-    @copydoc operator<(const_reference, const_reference)
+    \@copydoc operator<(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22046,11 +22046,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  second JSON value to consider
     @return whether @a lhs is less than or equal to @a rhs
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @liveexample{The example demonstrates comparing several JSON
+    \@liveexample{The example demonstrates comparing several JSON
     types.,operator__greater}
 
     @since version 1.0.0
@@ -22062,7 +22062,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: less than or equal
-    @copydoc operator<=(const_reference, const_reference)
+    \@copydoc operator<=(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22074,7 +22074,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: less than or equal
-    @copydoc operator<=(const_reference, const_reference)
+    \@copydoc operator<=(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22094,11 +22094,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  second JSON value to consider
     @return whether @a lhs is greater than to @a rhs
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @liveexample{The example demonstrates comparing several JSON
+    \@liveexample{The example demonstrates comparing several JSON
     types.,operator__lessequal}
 
     @since version 1.0.0
@@ -22110,7 +22110,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: greater than
-    @copydoc operator>(const_reference, const_reference)
+    \@copydoc operator>(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22122,7 +22122,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: greater than
-    @copydoc operator>(const_reference, const_reference)
+    \@copydoc operator>(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22142,11 +22142,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] rhs  second JSON value to consider
     @return whether @a lhs is greater than or equal to @a rhs
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @liveexample{The example demonstrates comparing several JSON
+    \@liveexample{The example demonstrates comparing several JSON
     types.,operator__greaterequal}
 
     @since version 1.0.0
@@ -22158,7 +22158,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: greater than or equal
-    @copydoc operator>=(const_reference, const_reference)
+    \@copydoc operator>=(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22170,7 +22170,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     /*!
     @brief comparison: greater than or equal
-    @copydoc operator>=(const_reference, const_reference)
+    \@copydoc operator>=(const_reference, const_reference)
     */
     template <
         typename ScalarType,
@@ -22213,9 +22213,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw type_error.316 if a string stored inside the JSON value is not
                           UTF-8 encoded
 
-    @complexity Linear.
+    \@complexity Linear.
 
-    @liveexample{The example below shows the serialization with different
+    \@liveexample{The example below shows the serialization with different
     parameters to `width` to adjust the indentation level.,operator_serialize}
 
     @since version 1.0.0; indentation character added in version 3.0.0
@@ -22287,22 +22287,22 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw parse_error.102 if to_unicode fails or surrogate error
     @throw parse_error.103 if to_unicode fails
 
-    @complexity Linear in the length of the input. The parser is a predictive
+    \@complexity Linear in the length of the input. The parser is a predictive
     LL(1) parser. The complexity can be higher if the parser callback function
     @a cb or reading from the input @a i has a super-linear complexity.
 
     @note A UTF-8 byte order mark is silently ignored.
 
-    @liveexample{The example below demonstrates the `parse()` function reading
+    \@liveexample{The example below demonstrates the `parse()` function reading
     from an array.,parse__array__parser_callback_t}
 
-    @liveexample{The example below demonstrates the `parse()` function with
+    \@liveexample{The example below demonstrates the `parse()` function with
     and without callback function.,parse__string__parser_callback_t}
 
-    @liveexample{The example below demonstrates the `parse()` function with
+    \@liveexample{The example below demonstrates the `parse()` function with
     and without callback function.,parse__istream__parser_callback_t}
 
-    @liveexample{The example below demonstrates the `parse()` function reading
+    \@liveexample{The example below demonstrates the `parse()` function reading
     from a contiguous container.,parse__contiguouscontainer__parser_callback_t}
 
     @since version 2.0.3 (contiguous containers)
@@ -22387,12 +22387,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return Whether the input read from @a i is valid JSON.
 
-    @complexity Linear in the length of the input. The parser is a predictive
+    \@complexity Linear in the length of the input. The parser is a predictive
     LL(1) parser.
 
     @note A UTF-8 byte order mark is silently ignored.
 
-    @liveexample{The example below demonstrates the `accept()` function reading
+    \@liveexample{The example below demonstrates the `accept()` function reading
     from a string.,accept__string}
     */
     template <typename InputType> static bool accept(InputType&& i)
@@ -22437,13 +22437,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw parse_error.102 if to_unicode fails or surrogate error
     @throw parse_error.103 if to_unicode fails
 
-    @complexity Linear in the length of the input. The parser is a predictive
+    \@complexity Linear in the length of the input. The parser is a predictive
     LL(1) parser. The complexity can be higher if the SAX consumer @a sax has
     a super-linear complexity.
 
     @note A UTF-8 byte order mark is silently ignored.
 
-    @liveexample{The example below demonstrates the `sax_parse()` function
+    \@liveexample{The example below demonstrates the `sax_parse()` function
     reading from string and processing the events with a user-defined SAX
     event consumer.,sax_parse}
 
@@ -22521,12 +22521,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw parse_error.102 if to_unicode fails or surrogate error
     @throw parse_error.103 if to_unicode fails
 
-    @complexity Linear in the length of the input. The parser is a predictive
+    \@complexity Linear in the length of the input. The parser is a predictive
     LL(1) parser.
 
     @note A UTF-8 byte order mark is silently ignored.
 
-    @liveexample{The example below shows how a JSON value is constructed by
+    \@liveexample{The example below shows how a JSON value is constructed by
     reading a serialization from a stream.,operator_deserialize}
 
     @sa parse(std::istream&, const parser_callback_t) for a variant with a
@@ -22564,11 +22564,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
             binary      | `"binary"`
             discarded   | `"discarded"`
 
-    @exceptionsafety No-throw guarantee: this function never throws exceptions.
+    \@exceptionsafety No-throw guarantee: this function never throws exceptions.
 
-    @complexity Constant.
+    \@complexity Constant.
 
-    @liveexample{The following code exemplifies `type_name()` for all JSON
+    \@liveexample{The following code exemplifies `type_name()` for all JSON
     types.,type_name}
 
     @sa @ref type() -- return the type of the JSON value
@@ -22702,9 +22702,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] j  JSON value to serialize
     @return CBOR serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    \@complexity Linear in the size of the JSON value @a j.
 
-    @liveexample{The example shows the serialization of a JSON value to a byte
+    \@liveexample{The example shows the serialization of a JSON value to a byte
     vector in CBOR format.,to_cbor}
 
     @sa http://cbor.io
@@ -22801,9 +22801,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] j  JSON value to serialize
     @return MessagePack serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    \@complexity Linear in the size of the JSON value @a j.
 
-    @liveexample{The example shows the serialization of a JSON value to a byte
+    \@liveexample{The example shows the serialization of a JSON value to a byte
     vector in MessagePack format.,to_msgpack}
 
     @sa http://msgpack.org
@@ -22904,9 +22904,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
                          (must be combined with @a use_size = true)
     @return UBJSON serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    \@complexity Linear in the size of the JSON value @a j.
 
-    @liveexample{The example shows the serialization of a JSON value to a byte
+    \@liveexample{The example shows the serialization of a JSON value to a byte
     vector in UBJSON format.,to_ubjson}
 
     @sa http://ubjson.org
@@ -22989,9 +22989,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @param[in] j  JSON value to serialize
     @return BSON serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    \@complexity Linear in the size of the JSON value @a j.
 
-    @liveexample{The example shows the serialization of a JSON value to a byte
+    \@liveexample{The example shows the serialization of a JSON value to a byte
     vector in BSON format.,to_bson}
 
     @sa http://bsonspec.org/spec.html
@@ -23023,7 +23023,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc to_bson(const basic_json&, detail::output_adapter<uint8_t>)
+    \@copydoc to_bson(const basic_json&, detail::output_adapter<uint8_t>)
     */
     static void to_bson(const basic_json& j, detail::output_adapter<char> o)
     {
@@ -23115,9 +23115,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     used in the given input @a v or if the input is not valid CBOR
     @throw parse_error.113 if a string was expected as map key, but not found
 
-    @complexity Linear in the size of the input @a i.
+    \@complexity Linear in the size of the input @a i.
 
-    @liveexample{The example shows the deserialization of a byte vector in CBOR
+    \@liveexample{The example shows the deserialization of a byte vector in CBOR
     format to a JSON value.,from_cbor}
 
     @sa http://cbor.io
@@ -23147,7 +23147,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc from_cbor(detail::input_adapter&&, const bool, const bool)
+    \@copydoc from_cbor(detail::input_adapter&&, const bool, const bool)
     */
     template <typename IteratorType>
     _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_cbor(
@@ -23260,9 +23260,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     used in the given input @a i or if the input is not valid MessagePack
     @throw parse_error.113 if a string was expected as map key, but not found
 
-    @complexity Linear in the size of the input @a i.
+    \@complexity Linear in the size of the input @a i.
 
-    @liveexample{The example shows the deserialization of a byte vector in
+    \@liveexample{The example shows the deserialization of a byte vector in
     MessagePack format to a JSON value.,from_msgpack}
 
     @sa http://msgpack.org
@@ -23294,7 +23294,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc from_msgpack(detail::input_adapter&&, const bool, const bool)
+    \@copydoc from_msgpack(detail::input_adapter&&, const bool, const bool)
     */
     template <typename IteratorType>
     _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_msgpack(
@@ -23384,9 +23384,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw parse_error.112 if a parse error occurs
     @throw parse_error.113 if a string could not be parsed successfully
 
-    @complexity Linear in the size of the input @a i.
+    \@complexity Linear in the size of the input @a i.
 
-    @liveexample{The example shows the deserialization of a byte vector in
+    \@liveexample{The example shows the deserialization of a byte vector in
     UBJSON format to a JSON value.,from_ubjson}
 
     @sa http://ubjson.org
@@ -23416,7 +23416,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc from_ubjson(detail::input_adapter&&, const bool, const bool)
+    \@copydoc from_ubjson(detail::input_adapter&&, const bool, const bool)
     */
     template <typename IteratorType>
     _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_ubjson(
@@ -23508,9 +23508,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @throw parse_error.114 if an unsupported BSON record type is encountered
 
-    @complexity Linear in the size of the input @a i.
+    \@complexity Linear in the size of the input @a i.
 
-    @liveexample{The example shows the deserialization of a byte vector in
+    \@liveexample{The example shows the deserialization of a byte vector in
     BSON format to a JSON value.,from_bson}
 
     @sa http://bsonspec.org/spec.html
@@ -23537,7 +23537,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     }
 
     /*!
-    @copydoc from_bson(detail::input_adapter&&, const bool, const bool)
+    \@copydoc from_bson(detail::input_adapter&&, const bool, const bool)
     */
     template <typename IteratorType>
     _az_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bson(
@@ -23614,13 +23614,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return reference to the element pointed to by @a ptr
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
     @throw out_of_range.404  if the JSON pointer can not be resolved
 
-    @liveexample{The behavior is shown in the example.,operatorjson_pointer}
+    \@liveexample{The behavior is shown in the example.,operatorjson_pointer}
 
     @since version 2.0.0
     */
@@ -23638,14 +23638,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return const reference to the element pointed to by @a ptr
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
     @throw out_of_range.402  if the array index '-' is used
     @throw out_of_range.404  if the JSON pointer can not be resolved
 
-    @liveexample{The behavior is shown in the example.,operatorjson_pointer_const}
+    \@liveexample{The behavior is shown in the example.,operatorjson_pointer_const}
 
     @since version 2.0.0
     */
@@ -23680,14 +23680,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.404 if the JSON pointer @a ptr can not be resolved.
     See example below.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @since version 2.0.0
 
-    @liveexample{The behavior is shown in the example.,at_json_pointer}
+    \@liveexample{The behavior is shown in the example.,at_json_pointer}
     */
     reference at(const json_pointer& ptr) { return ptr.get_checked(this); }
 
@@ -23720,14 +23720,14 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @throw out_of_range.404 if the JSON pointer @a ptr can not be resolved.
     See example below.
 
-    @exceptionsafety Strong guarantee: if an exception is thrown, there are no
+    \@exceptionsafety Strong guarantee: if an exception is thrown, there are no
     changes in the JSON value.
 
-    @complexity Constant.
+    \@complexity Constant.
 
     @since version 2.0.0
 
-    @liveexample{The behavior is shown in the example.,at_json_pointer_const}
+    \@liveexample{The behavior is shown in the example.,at_json_pointer_const}
     */
     const_reference at(const json_pointer& ptr) const { return ptr.get_checked(this); }
 
@@ -23744,9 +23744,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     @note Empty objects and arrays are flattened to `null` and will not be
           reconstructed correctly by the @ref unflatten() function.
 
-    @complexity Linear in the size the JSON value.
+    \@complexity Linear in the size the JSON value.
 
-    @liveexample{The following code shows how a JSON object is flattened to an
+    \@liveexample{The following code shows how a JSON object is flattened to an
     object whose keys consist of JSON pointers.,flatten}
 
     @sa @ref unflatten() for the reverse function
@@ -23778,12 +23778,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
           this example, for a JSON value `j`, the following is always true:
           `j == j.flatten().unflatten()`.
 
-    @complexity Linear in the size the JSON value.
+    \@complexity Linear in the size the JSON value.
 
     @throw type_error.314  if value is not an object
     @throw type_error.315  if object values are not primitive
 
-    @liveexample{The following code shows how a flattened JSON object is
+    \@liveexample{The following code shows how a flattened JSON object is
     unflattened into the original nested JSON object.,unflatten}
 
     @sa @ref flatten() for the reverse function
@@ -23834,11 +23834,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @throw other_error.501 if "test" operation was unsuccessful
 
-    @complexity Linear in the size of the JSON value and the length of the
+    \@complexity Linear in the size of the JSON value and the length of the
     JSON patch. As usually only a fraction of the JSON value is affected by
     the patch, the complexity can usually be neglected.
 
-    @liveexample{The following code shows how a JSON patch is applied to a
+    \@liveexample{The following code shows how a JSON patch is applied to a
     value.,patch}
 
     @sa @ref diff -- create a JSON patch by comparing two JSON values
@@ -24130,9 +24130,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @return a JSON patch to convert the @a source to @a target
 
-    @complexity Linear in the lengths of @a source and @a target.
+    \@complexity Linear in the lengths of @a source and @a target.
 
-    @liveexample{The following code shows how a JSON patch is created as a
+    \@liveexample{The following code shows how a JSON patch is created as a
     diff for two JSON values.,diff}
 
     @sa @ref patch -- apply a JSON patch
@@ -24286,9 +24286,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @param[in] apply_patch  the patch to apply
 
-    @complexity Linear in the lengths of @a patch.
+    \@complexity Linear in the lengths of @a patch.
 
-    @liveexample{The following code shows how a JSON Merge Patch is applied to
+    \@liveexample{The following code shows how a JSON Merge Patch is applied to
     a JSON document.,merge_patch}
 
     @sa @ref patch -- apply a JSON patch
