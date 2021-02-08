@@ -24,24 +24,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto shareUri = std::move(parsedConnectionString.FileServiceUrl);
-    shareUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    auto shareUrl = std::move(parsedConnectionString.FileServiceUrl);
+    shareUrl.AppendPath(Storage::Details::UrlEncodePath(shareName));
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ShareClient(shareUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+      return ShareClient(shareUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareClient(shareUri.GetAbsoluteUrl(), options);
+      return ShareClient(shareUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareClient::ShareClient(
-      const std::string& shareUri,
+      const std::string& shareUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareUrl(shareUri)
+      : m_shareUrl(shareUrl)
   {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -65,8 +65,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareClient::ShareClient(const std::string& shareUri, const ShareClientOptions& options)
-      : m_shareUrl(shareUri)
+  ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
+      : m_shareUrl(shareUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(

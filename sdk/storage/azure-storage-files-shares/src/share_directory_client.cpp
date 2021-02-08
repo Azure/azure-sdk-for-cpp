@@ -24,26 +24,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto directoryUri = std::move(parsedConnectionString.FileServiceUrl);
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryName));
+    auto directoryUrl = std::move(parsedConnectionString.FileServiceUrl);
+    directoryUrl.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    directoryUrl.AppendPath(Storage::Details::UrlEncodePath(directoryName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return ShareDirectoryClient(
-          directoryUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          directoryUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareDirectoryClient(directoryUri.GetAbsoluteUrl(), options);
+      return ShareDirectoryClient(directoryUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareDirectoryClient::ShareDirectoryClient(
-      const std::string& shareDirectoryUri,
+      const std::string& shareDirectoryUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUri)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -67,9 +67,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareDirectoryClient::ShareDirectoryClient(
-      const std::string& shareDirectoryUri,
+      const std::string& shareDirectoryUrl,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUri)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
