@@ -9,6 +9,7 @@
 - `GetDataLakePathPropertiesResult::ServerEncrypted` was renamed to `IsServerEncrypted`.
 - `GetDataLakePathPropertiesResult::AccessTierInferred` was renamed to `IsAccessTierInferred`.
 - `HttpHeaders` of `DownloadDataLakeFileResult` and `DownloadDataLakeFileToResult` was moved into `Details`, to align with Blob service.
+- Removed `BreakDataLakeLeaseResult::LeaseTime`.
 
 ## 12.0.0-beta.7 (2021-02-03)
 
