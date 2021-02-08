@@ -138,8 +138,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an HTTP transport policy.
      *
-     * @param transport A pointer to the #HttpTransport implementation to use when this policy gets
-     * applied (#Send).
+     * @param options #TransportPolicyOptions.
      */
     explicit TransportPolicy(TransportPolicyOptions options = TransportPolicyOptions())
         : m_options(std::move(options))
@@ -401,7 +400,7 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace Internal {
     /**
-     * @brief @ValuePolicy options.
+     * @brief #ValuePolicy options.
      */
     struct ValuePolicyOptions
     {
@@ -421,8 +420,8 @@ namespace Azure { namespace Core { namespace Http {
 
     public:
       /**
-       * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
-       * @param options @ValuePolicyOptions.
+       * @brief Construct a #ValuePolicy with the #ValuePolicyOptions provided.
+       * @param options #ValuePolicyOptions.
        */
       explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
 

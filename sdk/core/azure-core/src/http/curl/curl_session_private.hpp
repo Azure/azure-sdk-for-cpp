@@ -52,9 +52,9 @@ namespace Azure { namespace Core { namespace Http {
     void ReadExpected(Context const& context, uint8_t expected);
 
     /**
-     * @brief Read `\r\n` from internal buffer or from the wire.
+     * @brief Read <tt>\r\n</tt> from internal buffer or from the wire.
      *
-     * @remark throw if `\r\n` are not the next data read.
+     * @remark throw if <tt>\r\n</tt> are not the next data read.
      */
     void ReadCRLF(Context const& context);
 
@@ -305,8 +305,6 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param context #Context so that operation can be cancelled.
      * @param reuseInternalBuffer Indicates whether the internal buffer should be reused.
-     *
-     * @return CURL_OK when an HTTP response is created.
      */
     void ReadStatusLineAndHeadersFromRawResponse(
         Context const& context,

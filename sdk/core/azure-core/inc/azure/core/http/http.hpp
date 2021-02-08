@@ -529,7 +529,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Add HTTP header to the @Request.
+     * @brief Add HTTP header to the #Request.
      *
      * @param name The name for the header to be added.
      * @param value The value for the header to be added.
