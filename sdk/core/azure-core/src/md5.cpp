@@ -78,16 +78,16 @@ namespace Azure { namespace Core {
   {
     static Details::AlgorithmProviderInstance AlgorithmProvider{};
 
-    Details::Md5HashContext* context = new Details::Md5HashContext;
-    m_context = context;
-    context->buffer.resize(AlgorithmProvider.ContextSize);
-    context->hashLength = AlgorithmProvider.HashLength;
+    Details::Md5HashContext* md5Context = new Details::Md5HashContext;
+    m_md5Context = md5Context;
+    md5Context->buffer.resize(AlgorithmProvider.ContextSize);
+    md5Context->hashLength = AlgorithmProvider.HashLength;
 
     NTSTATUS status = BCryptCreateHash(
         AlgorithmProvider.Handle,
-        &context->hashHandle,
-        reinterpret_cast<PUCHAR>(&context->buffer[0]),
-        static_cast<ULONG>(context->buffer.size()),
+        &md5Context->hashHandle,
+        reinterpret_cast<PUCHAR>(&md5Context->buffer[0]),
+        static_cast<ULONG>(md5Context->buffer.size()),
         nullptr,
         0,
         0);
@@ -99,17 +99,17 @@ namespace Azure { namespace Core {
 
   Md5::~Md5()
   {
-    Details::Md5HashContext* context = static_cast<Details::Md5HashContext*>(m_context);
-    BCryptDestroyHash(context->hashHandle);
-    delete context;
+    Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
+    BCryptDestroyHash(md5Context->hashHandle);
+    delete md5Context;
   }
 
   void Md5::Update(const uint8_t* data, std::size_t length)
   {
-    Details::Md5HashContext* context = static_cast<Details::Md5HashContext*>(m_context);
+    Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
 
     NTSTATUS status = BCryptHashData(
-        context->hashHandle,
+        md5Context->hashHandle,
         reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data)),
         static_cast<ULONG>(length),
         0);
@@ -121,11 +121,11 @@ namespace Azure { namespace Core {
 
   std::vector<uint8_t> Md5::Digest() const
   {
-    Details::Md5HashContext* context = static_cast<Details::Md5HashContext*>(m_context);
+    Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
     std::vector<uint8_t> hash;
-    hash.resize(context->hashLength);
+    hash.resize(md5Context->hashLength);
     NTSTATUS status = BCryptFinishHash(
-        context->hashHandle,
+        md5Context->hashHandle,
         reinterpret_cast<PUCHAR>(&hash[0]),
         static_cast<ULONG>(hash.size()),
         0);
@@ -140,28 +140,28 @@ namespace Azure { namespace Core {
 
   Md5::Md5()
   {
-    MD5_CTX* context = new MD5_CTX;
-    m_context = context;
-    MD5_Init(context);
+    MD5_CTX* md5Context = new MD5_CTX;
+    m_md5Context = md5Context;
+    MD5_Init(md5Context);
   }
 
   Md5::~Md5()
   {
-    MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
-    delete context;
+    MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
+    delete md5Context;
   }
 
   void Md5::Update(const uint8_t* data, std::size_t length)
   {
-    MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
-    MD5_Update(context, data, length);
+    MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
+    MD5_Update(md5Context, data, length);
   }
 
   std::vector<uint8_t> Md5::Digest() const
   {
-    MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
+    MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
     unsigned char hash[MD5_DIGEST_LENGTH];
-    MD5_Final(hash, context);
+    MD5_Final(hash, md5Context);
     return std::vector<uint8_t>(std::begin(hash), std::end(hash));
   }
 

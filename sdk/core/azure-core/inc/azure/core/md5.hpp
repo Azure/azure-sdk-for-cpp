@@ -22,7 +22,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct a default instance of @Md5.
      */
-    Md5();
+    explicit Md5();
 
     /**
      * @brief Cleanup any state when destroying the instance of @Md5.
@@ -30,18 +30,18 @@ namespace Azure { namespace Core {
     ~Md5();
 
     /**
-     * @brief Used to append parital binary input data to compute the hash in a streaming fashion.
+     * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
+     * @remark Once all the data has been added, call #Digest() to get the computed hash value.
      * @param data The pointer to the current block of binary data that is used for hash
      * calculation.
      * @param length The size of the data provided.
-     * @remark Once all the data has been added, call #Digest() to get the computed hash value.
      */
     void Update(const uint8_t* data, std::size_t length);
 
     /**
      * @brief Computes the hash value of all the binary input data appended to the instance so far.
-     * @return The computed MD5 hash value corresponding to the input provided.
      * @remark Use #Update() to add more partial data before calling this function.
+     * @return The computed MD5 hash value corresponding to the input provided.
      */
     std::vector<uint8_t> Digest() const;
 
@@ -69,7 +69,7 @@ namespace Azure { namespace Core {
     }
 
   private:
-    void* m_context;
+    void* m_md5Context;
   };
 
 }} // namespace Azure::Core
