@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <string>
 
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
@@ -19,7 +17,6 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class ShareDirectoryClient;
-  class ShareFileClient;
 
   class ShareClient {
   public:
@@ -37,23 +34,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initialize a new instance of ShareClient using shared key authentication.
-     * @param shareUri The URI of the file share this client's request targets.
+     * @param shareUrl The URL of the file share this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareClient(
-        const std::string& shareUri,
+        const std::string& shareUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareClient using anonymous access or shared access
      * signature.
-     * @param shareUri The URI of the file share this client's request targets.
+     * @param shareUrl The URL of the file share this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareClient(
-        const std::string& shareUri,
+        const std::string& shareUrl,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -64,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUrl() const { return m_shareUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Initializes a new instance of the ShareClient class with an identical uri
+     * @brief Initializes a new instance of the ShareClient class with an identical url
      * source but the specified share snapshot timestamp.
      *
      * @param snapshot The snapshot identifier.
@@ -222,9 +219,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareClient(
-        Azure::Core::Http::Url shareUri,
+        Azure::Core::Http::Url shareUrl,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareUrl(std::move(shareUri)), m_pipeline(std::move(pipeline))
+        : m_shareUrl(std::move(shareUrl)), m_pipeline(std::move(pipeline))
     {
     }
     friend class ShareLeaseClient;

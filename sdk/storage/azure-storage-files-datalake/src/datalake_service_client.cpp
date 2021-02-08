@@ -83,27 +83,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.DataLakeServiceUrl);
+    auto serviceUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
     {
       return DataLakeServiceClient(
-          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          serviceUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DataLakeServiceClient(serviceUri.GetAbsoluteUrl(), options);
+      return DataLakeServiceClient(serviceUrl.GetAbsoluteUrl(), options);
     }
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(serviceUri)), m_blobServiceClient(
-                                                             Details::GetBlobUrlFromUrl(serviceUri),
-                                                             credential,
-                                                             GetBlobServiceClientOptions(options))
+      : m_serviceUrl(Details::GetDfsUrlFromUrl(serviceUrl)),
+        m_blobServiceClient(
+            Details::GetBlobUrlFromUrl(serviceUrl),
+            credential,
+            GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -129,13 +130,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(serviceUri)), m_blobServiceClient(
-                                                             Details::GetBlobUrlFromUrl(serviceUri),
-                                                             credential,
-                                                             GetBlobServiceClientOptions(options))
+      : m_serviceUrl(Details::GetDfsUrlFromUrl(serviceUrl)),
+        m_blobServiceClient(
+            Details::GetBlobUrlFromUrl(serviceUrl),
+            credential,
+            GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -169,11 +171,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(serviceUri)), m_blobServiceClient(
-                                                             Details::GetBlobUrlFromUrl(serviceUri),
-                                                             GetBlobServiceClientOptions(options))
+      : m_serviceUrl(Details::GetDfsUrlFromUrl(serviceUrl)),
+        m_blobServiceClient(
+            Details::GetBlobUrlFromUrl(serviceUrl),
+            GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -200,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeFileSystemClient DataLakeServiceClient::GetFileSystemClient(
       const std::string& fileSystemName) const
   {
-    auto builder = m_dfsUrl;
+    auto builder = m_serviceUrl;
     builder.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
     return DataLakeFileSystemClient(
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);

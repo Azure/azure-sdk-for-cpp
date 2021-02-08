@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return Lease id of this lease client.
      */
-    std::string GetLeaseId() const { return m_blobLeaseClient.GetLeaseId(); }
+    const std::string& GetLeaseId() const { return m_blobLeaseClient.GetLeaseId(); }
 
     /**
      * @brief Acquires a lease on the datalake path or datalake path container.

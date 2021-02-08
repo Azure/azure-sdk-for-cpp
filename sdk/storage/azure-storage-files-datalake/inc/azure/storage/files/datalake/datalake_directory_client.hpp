@@ -37,33 +37,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param directoryUri The URI of the file system this client's request targets.
+     * @param directoryUrl The URL of the file system this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeDirectoryClient(
-        const std::string& directoryUri,
+        const std::string& directoryUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param directoryUri The URI of the file system this client's request targets.
+     * @param directoryUrl The URL of the file system this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeDirectoryClient(
-        const std::string& directoryUri,
+        const std::string& directoryUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param directoryUri The URI of the file system this client's request targets.
+     * @param directoryUrl The URL of the file system this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeDirectoryClient(
-        const std::string& directoryUri,
+        const std::string& directoryUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -213,10 +213,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     explicit DataLakeDirectoryClient(
-        Azure::Core::Http::Url dfsUrl,
+        Azure::Core::Http::Url directoryUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline)
+        : DataLakePathClient(std::move(directoryUrl), std::move(blobClient), pipeline)
     {
     }
 

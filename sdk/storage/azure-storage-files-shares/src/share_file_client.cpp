@@ -27,26 +27,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileUri = std::move(parsedConnectionString.FileServiceUrl);
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(fileName));
+    auto fileUrl = std::move(parsedConnectionString.FileServiceUrl);
+    fileUrl.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    fileUrl.AppendPath(Storage::Details::UrlEncodePath(fileName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return ShareFileClient(
-          fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          fileUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareFileClient(fileUri.GetAbsoluteUrl(), options);
+      return ShareFileClient(fileUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareFileClient::ShareFileClient(
-      const std::string& shareFileUri,
+      const std::string& shareFileUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareFileUrl(shareFileUri)
+      : m_shareFileUrl(shareFileUrl)
   {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -71,9 +71,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareFileClient::ShareFileClient(
-      const std::string& shareFileUri,
+      const std::string& shareFileUrl,
       const ShareClientOptions& options)
-      : m_shareFileUrl(shareFileUri)
+      : m_shareFileUrl(shareFileUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -116,12 +116,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -190,13 +188,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::CreateShareFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.FileAttributes = result->FileAttributes;
-    ret.FileCreatedOn = std::move(result->FileCreatedOn);
-    ret.FileLastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.FilePermissionKey = std::move(result->FilePermissionKey);
-    ret.FileChangedOn = std::move(result->FileChangedOn);
-    ret.FileId = std::move(result->FileId);
-    ret.FileParentId = std::move(result->FileParentId);
+    ret.SmbProperties.Attributes = Models::FileAttributes(result->FileAttributes);
+    ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
+    ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
+    ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
+    ret.SmbProperties.ChangedOn = std::move(result->FileChangedOn);
+    ret.SmbProperties.FileId = std::move(result->FileId);
+    ret.SmbProperties.ParentFileId = std::move(result->FileParentId);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
@@ -260,7 +258,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             + std::to_string(options.Range.GetValue().Offset) + std::string("-");
       }
     }
-    protocolLayerOptions.GetRangeContentMd5 = options.GetRangeContentMd5;
+    if (options.RangeHashAlgorithm.HasValue())
+    {
+      if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.GetRangeContentMd5 = true;
+      }
+      else
+      {
+        std::abort();
+      }
+    }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
 
     auto downloadResponse = Details::ShareRestClient::File::Download(
@@ -309,7 +317,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Details.LastModified = std::move(downloadResponse->LastModified);
     ret.Details.Metadata = std::move(downloadResponse->Metadata);
     ret.Details.ETag = std::move(downloadResponse->ETag);
-    ret.Details.AcceptRanges = std::move(downloadResponse->AcceptRanges);
     ret.Details.CopyCompletedOn = std::move(downloadResponse->CopyCompletedOn);
     ret.Details.CopyStatusDescription = std::move(downloadResponse->CopyStatusDescription);
     ret.Details.CopyId = std::move(downloadResponse->CopyId);
@@ -317,14 +324,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Details.CopySource = std::move(downloadResponse->CopySource);
     ret.Details.CopyStatus = std::move(downloadResponse->CopyStatus);
     ret.Details.IsServerEncrypted = downloadResponse->IsServerEncrypted;
-    ret.Details.SmbProperties.Attributes
-        = Details::FileAttributesListFromString(downloadResponse->FileAttributes);
+    ret.Details.SmbProperties.Attributes = Models::FileAttributes(downloadResponse->FileAttributes);
     ret.Details.SmbProperties.CreatedOn = std::move(downloadResponse->FileCreatedOn);
     ret.Details.SmbProperties.LastWrittenOn = std::move(downloadResponse->FileLastWrittenOn);
     ret.Details.SmbProperties.ChangedOn = std::move(downloadResponse->FileChangedOn);
     ret.Details.SmbProperties.PermissionKey = std::move(downloadResponse->FilePermissionKey);
     ret.Details.SmbProperties.FileId = std::move(downloadResponse->FileId);
-    ret.Details.SmbProperties.ParentId = std::move(downloadResponse->FileParentId);
+    ret.Details.SmbProperties.ParentFileId = std::move(downloadResponse->FileParentId);
     ret.Details.LeaseDuration = std::move(downloadResponse->LeaseDuration);
     ret.Details.LeaseState = std::move(downloadResponse->LeaseState);
     ret.Details.LeaseStatus = std::move(downloadResponse->LeaseStatus);
@@ -339,8 +345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = Details::ShareRestClient::File::StartCopyOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.CopySource = std::move(copySource);
-    protocolLayerOptions.FileCopyFileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileCopyFileAttributes = options.SmbProperties.Attributes.Get();
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileCreationTime
@@ -424,13 +429,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.CopySource = std::move(result->CopySource);
     ret.CopyStatus = std::move(result->CopyStatus);
     ret.IsServerEncrypted = result->IsServerEncrypted;
-    ret.SmbProperties.Attributes = Details::FileAttributesListFromString(result->FileAttributes);
+    ret.SmbProperties.Attributes = Models::FileAttributes(result->FileAttributes);
     ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
     ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
     ret.SmbProperties.ChangedOn = std::move(result->FileChangedOn);
     ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
     ret.SmbProperties.FileId = std::move(result->FileId);
-    ret.SmbProperties.ParentId = std::move(result->FileParentId);
+    ret.SmbProperties.ParentFileId = std::move(result->FileParentId);
     ret.LeaseDuration = std::move(result->LeaseDuration);
     ret.LeaseState = std::move(result->LeaseState);
     ret.LeaseStatus = std::move(result->LeaseStatus);
@@ -439,16 +444,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::SetShareFilePropertiesResult> ShareFileClient::SetProperties(
-      Models::ShareFileHttpHeaders httpHeaders,
-      Models::FileShareSmbProperties smbProperties,
+      const Models::ShareFileHttpHeaders& httpHeaders,
+      const Models::FileSmbProperties& smbProperties,
       const SetShareFilePropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::SetHttpHeadersOptions();
-    protocolLayerOptions.FileAttributes = Details::FileAttributesToString(smbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = smbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
     }
     if (smbProperties.CreatedOn.HasValue())
     {
@@ -553,12 +557,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::string("-") + std::to_string(offset + length - 1);
 
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::UploadRange(
+    auto response = Details::ShareRestClient::File::UploadRange(
         m_shareFileUrl,
         *Azure::Core::Http::NullBodyStream::GetNullBodyStream(),
         *m_pipeline,
         options.Context,
         protocolLayerOptions);
+    Models::ClearShareFileRangeResult ret;
+    ret.ETag = std::move(response->ETag);
+    ret.IsServerEncrypted = response->IsServerEncrypted;
+    ret.LastModified = std::move(response->LastModified);
+    ret.RequestId = std::move(response->RequestId);
+    return Azure::Core::Response<Models::ClearShareFileRangeResult>(
+        std::move(ret), response.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
@@ -581,7 +592,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
-    protocolLayerOptions.PrevShareSnapshot = options.PrevShareSnapshot;
+    protocolLayerOptions.PrevShareSnapshot = options.PreviousShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::ShareRestClient::File::GetRangeList(
         m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
@@ -857,12 +868,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = bufferSize;
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -963,12 +972,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -1063,9 +1070,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
+      int64_t destinationOffset,
       const std::string& sourceUri,
       const Azure::Core::Http::Range& sourceRange,
-      const Azure::Core::Http::Range& range,
       const UploadFileRangeFromUriOptions& options) const
   {
     if (!sourceRange.Length.HasValue())
@@ -1073,26 +1080,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       // sourceRange must have length to perform this operation.
       std::abort();
     }
-    int64_t destLength = sourceRange.Length.GetValue();
-    if (range.Length.HasValue())
-    {
-      // Let server decide the behavior if the length does not match.
-      destLength = range.Length.GetValue();
-    }
+    int64_t rangeLength = sourceRange.Length.GetValue();
 
     auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeFromUrlOptions();
-    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(range.Offset)
-        + std::string("-") + std::to_string(range.Offset + destLength - 1);
+    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(destinationOffset)
+        + std::string("-") + std::to_string(destinationOffset + rangeLength - 1);
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    if (options.SourceContentHash.HasValue()
-        && options.SourceContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
+    if (options.TransactionalContentHash.HasValue()
+        && options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
     {
       // SourceContentHash now only supports Crc64 hash algorithm.
       std::abort();
     }
-    protocolLayerOptions.SourceContentCrc64 = options.SourceContentHash;
+    protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
     if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
         && options.SourceAccessCondition.IfMatchContentHash.GetValue().Algorithm
             == HashAlgorithm::Md5)

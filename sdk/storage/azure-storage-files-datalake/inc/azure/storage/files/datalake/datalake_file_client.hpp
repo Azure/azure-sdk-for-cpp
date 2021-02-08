@@ -38,33 +38,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param fileUri The URI of the file this client's request targets.
+     * @param fileUrl The URL of the file this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeFileClient(
-        const std::string& fileUri,
+        const std::string& fileUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param fileUri The URI of the file this client's request targets.
+     * @param fileUrl The URL of the file this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeFileClient(
-        const std::string& fileUri,
+        const std::string& fileUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param fileUri The URI of the file this client's request targets.
+     * @param fileUrl The URL of the file this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeFileClient(
-        const std::string& fileUri,
+        const std::string& fileUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -246,11 +246,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::BlockBlobClient m_blockBlobClient;
 
     explicit DataLakeFileClient(
-        Azure::Core::Http::Url dfsUrl,
+        Azure::Core::Http::Url fileUrl,
         Blobs::BlobClient blobClient,
         Blobs::BlockBlobClient blockBlobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline),
+        : DataLakePathClient(std::move(fileUrl), std::move(blobClient), pipeline),
           m_blockBlobClient(std::move(blockBlobClient))
     {
     }

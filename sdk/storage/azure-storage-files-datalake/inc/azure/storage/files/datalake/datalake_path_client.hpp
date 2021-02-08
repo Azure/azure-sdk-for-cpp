@@ -39,33 +39,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param pathUri The URI of the path this client's request targets.
+     * @param pathUrl The URL of the path this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakePathClient(
-        const std::string& pathUri,
+        const std::string& pathUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param pathUri The URI of the path this client's request targets.
+     * @param pathUrl The URL of the path this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakePathClient(
-        const std::string& pathUri,
+        const std::string& pathUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param pathUri The URI of the path this client's request targets.
+     * @param pathUrl The URL of the path this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakePathClient(
-        const std::string& pathUri,
+        const std::string& pathUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
     SetAccessControlRecursiveListSinglePage(
-        std::vector<Models::Acl> acls,
+        const std::vector<Models::Acl>& acls,
         const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options
         = SetDataLakePathAccessControlRecursiveListSinglePageOptions()) const
     {
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Core::Response<Models::UpdateDataLakePathAccessControlRecursiveListSinglePageResult>
     UpdateAccessControlRecursiveListSinglePage(
-        std::vector<Models::Acl> acls,
+        const std::vector<Models::Acl>& acls,
         const UpdateDataLakePathAccessControlRecursiveListSinglePageOptions& options
         = UpdateDataLakePathAccessControlRecursiveListSinglePageOptions()) const
     {
@@ -259,7 +259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Core::Response<Models::RemoveDataLakePathAccessControlRecursiveListSinglePageResult>
     RemoveAccessControlRecursiveListSinglePage(
-        std::vector<Models::Acl> acls,
+        const std::vector<Models::Acl>& acls,
         const RemoveDataLakePathAccessControlRecursiveListSinglePageOptions& options
         = RemoveDataLakePathAccessControlRecursiveListSinglePageOptions()) const
     {
@@ -268,15 +268,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   protected:
-    Azure::Core::Http::Url m_dfsUrl;
+    Azure::Core::Http::Url m_pathUrl;
     Blobs::BlobClient m_blobClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakePathClient(
-        Azure::Core::Http::Url dfsUrl,
+        Azure::Core::Http::Url pathUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUrl(std::move(dfsUrl)), m_blobClient(std::move(blobClient)),
+        : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
           m_pipeline(std::move(pipeline))
     {
     }
@@ -284,7 +284,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
     SetAccessControlRecursiveListSinglePageInternal(
         Models::PathSetAccessControlRecursiveMode mode,
-        std::vector<Models::Acl> acls,
+        const std::vector<Models::Acl>& acls,
         const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options
         = SetDataLakePathAccessControlRecursiveListSinglePageOptions()) const;
 
