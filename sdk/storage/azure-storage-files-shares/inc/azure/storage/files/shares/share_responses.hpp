@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
      * FileAttribute::Archive for file and FileAttribute::Directory for directory.
      * FileAttribute::None can also be specified as default.
      */
-    FileAttributes Attributes = static_cast<FileAttributes>(0);
+    FileAttributes Attributes;
 
     /**
      * @brief Creation time for the file/directory.
