@@ -19,7 +19,16 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_RECURSIVE YES)
         set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ./README.md)
         set(DOXYGEN_INLINE_SOURCES YES)
+        # Explicitly adding exception files to be skipped.
+        set(DOXYGEN_EXCLUDE_PATTERNS
+            json.hpp
+            test
+            Details
+            curl_connection_pool_private.hpp
+            curl_session_private.hpp
+            curl_connection_private.hpp)
         set(DOXYGEN_IGNORE_PREFIX az_ AZ_)
+        set(DOXYGEN_)
         set(DOXYGEN_HTML_HEADER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/header.html)
         set(DOXYGEN_HTML_FOOTER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/footer.html)
         set(DOXYGEN_HTML_STYLESHEET ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/style.css)
