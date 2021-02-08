@@ -48,7 +48,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Acquires a lease on the file or share.
      *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of the lease, in seconds, or InfiniteLeaseDuration for
      * a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
      * duration cannot be changed using renew or change.
@@ -62,7 +61,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Releases the file or share's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
      * @return A ReleaseShareLeaseResult describing the updated share or file.
      */
@@ -72,7 +70,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Changes the lease of an active lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @return A ChangeShareLeaseResult describing the updated lease.
@@ -106,7 +103,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Renews the file or share's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
      * @return A RenewShareLeaseResult describing the lease.
      */
