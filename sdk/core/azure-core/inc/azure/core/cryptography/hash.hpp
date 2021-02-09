@@ -57,10 +57,10 @@ namespace Azure { namespace Core { namespace Cryptography {
         throw std::invalid_argument(
             "Length cannot be " + std::to_string(length) + " if the data pointer is null.");
       }
-      if (m_isdone)
+      if (m_isDone)
       {
         throw std::runtime_error("Cannot call Append after calling Final().");
-      };
+      }
       OnAppend(data, length);
     }
 
@@ -80,11 +80,11 @@ namespace Azure { namespace Core { namespace Cryptography {
         throw std::invalid_argument(
             "Length cannot be " + std::to_string(length) + " if the data pointer is null.");
       }
-      if (m_isdone)
+      if (m_isDone)
       {
         throw std::runtime_error("Cannot call Final() multiple times.");
-      };
-      m_isdone = true;
+      }
+      m_isDone = true;
       return OnFinal(data, length);
     }
 
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     virtual ~Hash(){};
 
   private:
-    bool m_isdone = false;
+    bool m_isDone = false;
   };
 
   /**
@@ -124,6 +124,11 @@ namespace Azure { namespace Core { namespace Cryptography {
 
   private:
     void* m_md5Context;
+
+    // Delete the copy and move constructors, along with the assignment operator.
+    Md5Hash(Md5Hash const&) = delete;
+    Md5Hash(Md5Hash const&&) = delete;
+    void operator=(Md5Hash const&) = delete;
 
     /**
      * @brief Computes the hash value of the specified binary input data, including any previously
