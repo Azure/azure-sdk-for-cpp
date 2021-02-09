@@ -261,8 +261,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto result = m_fileClient->ListHandlesSinglePage();
     EXPECT_TRUE(result->Handles.empty());
-    EXPECT_TRUE(result->ContinuationToken.empty());
-    EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
+    EXPECT_FALSE(result->ContinuationToken.HasValue());
+    EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandlesSinglePage());
   }
 
   TEST_F(FileShareFileClientTest, LeaseRelated)

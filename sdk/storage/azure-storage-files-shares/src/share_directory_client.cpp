@@ -170,16 +170,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::CreateShareDirectoryResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.SmbProperties.Attributes = Models::FileAttributes(result->FileAttributes);
-    ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
-    ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
-    ret.SmbProperties.ChangedOn = std::move(result->FileChangedOn);
-    ret.SmbProperties.FileId = std::move(result->FileId);
-    ret.SmbProperties.ParentFileId = std::move(result->FileParentId);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
+    ret.SmbProperties = std::move(result->SmbProperties);
 
     return Azure::Core::Response<Models::CreateShareDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -360,9 +354,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesResult>
-  ShareDirectoryClient::ForceCloseAllHandles(
-      const ForceCloseAllShareDirectoryHandlesOptions& options) const
+  Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+  ShareDirectoryClient::ForceCloseAllHandlesSinglePage(
+      const ForceCloseAllShareDirectoryHandlesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;

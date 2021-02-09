@@ -20,6 +20,18 @@
 - Added `RequestId` in `ForceCloseShareDirectoryHandleResult`.
 - Removed `TransactionalContentHash` from `ClearShareFileRangeResult`.
 - Changed API signature of `ShareFileClient::UploadRangeFromUri`.
+- Renamed `ForceCloseAllHandles` to `ForceCloseAllHandlesSinglePage` and all related structs.
+- Made all `ContinuationToken` in return types nullable.
+- Renamed `ShareFileHttpHeaders` to `FileHttpHeaders`.
+- Renamed `ShareGetPropertiesResult::AccessTierChangeTime` to `AccessTierChangedOn`.
+- Renamed `ShareGetStatisticsResult::ShareUsageBytes` to `ShareUsageInBytes`.
+- Renamed `ShareGetPermissionResult::Permission` to `FilePermission`.
+- Grouped all file SMB properties into a struct and refined the APIs that return these properties.
+- Renamed `numberOfHandlesClosed` to `NumberOfHandlesClosed` and `numberOfHandlesFailedToClose` to `NumberOfHandlesFailedToClose`.
+- Renamed `FileGetRangeListResult::FileContentLength` to `FileSize`.
+- Renamed `StorageServiceProperties` to `FileServiceProperties`.
+- Removed `LeaseTime` in results returned by lease operations. Also removed `LeaseId` in `ShareBreakLeaseResult`.
+
 
 ## 12.0.0-beta.7 (2021-02-04)
 
