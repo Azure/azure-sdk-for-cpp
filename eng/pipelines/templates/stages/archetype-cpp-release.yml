@@ -158,8 +158,8 @@ stages:
                           # Commit changes
                           Write-Host "git add -A"
                           git add -A 
-                          Write-Host 'git commit -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" -m "[${{ artifact.VcpkgPortName }}] Update to $version"'
-                          git commit -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" -am "${{ artifact.VcpkgPortName }}] Update to $version"
+                          Write-Host 'git commit --author=`"azure-sdk <azuresdk@microsoft.com>`"  -m "[${{ artifact.VcpkgPortName }}] Update to $version"'
+                          git commit --author="azure-sdk <azuresdk@microsoft.com>"  -am "[${{ artifact.VcpkgPortName }}] Update to $version"
 
                           # Run vcpkg x-add-version to add version to vcpkg file
                           Write-Host "./bootstrap-vcpkg.bat"
@@ -172,8 +172,8 @@ stages:
                           git status
                           Write-Host "git add -A"
                           git add -A
-                          Write-Host "git commit --amend -C (git rev-parse HEAD)"
-                          git commit --amend -C (git rev-parse HEAD)
+                          Write-Host "git commit --author=`"azure-sdk <azuresdk@microsoft.com>`" --amend -C (git rev-parse HEAD)"
+                          git commit --author="azure-sdk <azuresdk@microsoft.com>" --amend -C (git rev-parse HEAD)
                         displayName: Commit changes for PR
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
