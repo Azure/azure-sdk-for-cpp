@@ -208,7 +208,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Models::BreakShareLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
-      ret.LeaseTime = 0; // File lease always have immediate breaks.
 
       return Azure::Core::Response<Models::BreakShareLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
@@ -226,7 +225,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Models::BreakShareLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
-      ret.LeaseTime = response->LeaseTime;
 
       return Azure::Core::Response<Models::BreakShareLeaseResult>(
           std::move(ret), response.ExtractRawResponse());

@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * of the file returned from the server.
      */
     Azure::Core::Response<Models::SetShareFilePropertiesResult> SetProperties(
-        const Models::ShareFileHttpHeaders& httpHeaders,
+        const Models::FileHttpHeaders& httpHeaders,
         const Models::FileSmbProperties& smbProperties,
         const SetShareFilePropertiesOptions& options = SetShareFilePropertiesOptions()) const;
 
@@ -289,13 +289,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Closes all handles opened on a file at the service.
      * @param options Optional parameters to close all this file's open handles.
-     * @return Azure::Core::Response<Models::ForceCloseAllShareFileHandlesResult> containing the
-     * information of the closed handles
+     * @return Azure::Core::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+     * containing the information of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<Models::ForceCloseAllShareFileHandlesResult> ForceCloseAllHandles(
-        const ForceCloseAllShareFileHandlesOptions& options
-        = ForceCloseAllShareFileHandlesOptions()) const;
+    Azure::Core::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+    ForceCloseAllHandlesSinglePage(
+        const ForceCloseAllShareFileHandlesSinglePageOptions& options
+        = ForceCloseAllShareFileHandlesSinglePageOptions()) const;
 
     /**
      * @brief Upload a range from the source URI to this file's specific range.

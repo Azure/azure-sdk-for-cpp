@@ -7,7 +7,7 @@
 
 #include <vector>
 
-TEST(Logging, createPipeline)
+TEST(Pipeline, createPipeline)
 {
   // Construct pipeline without exception
   std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -16,14 +16,14 @@ TEST(Logging, createPipeline)
   EXPECT_NO_THROW(Azure::Core::Http::HttpPipeline pipeline(policies));
 }
 
-TEST(Logging, createEmptyPipeline)
+TEST(Pipeline, createEmptyPipeline)
 {
   // throw invalid arg for empty policies
   std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
   EXPECT_THROW(Azure::Core::Http::HttpPipeline pipeline(policies), std::invalid_argument);
 }
 
-TEST(Logging, clonePipeline)
+TEST(Pipeline, clonePipeline)
 {
   // Construct pipeline without exception and clone
   std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -33,14 +33,14 @@ TEST(Logging, clonePipeline)
   EXPECT_NO_THROW(Azure::Core::Http::HttpPipeline pipeline2(pipeline));
 }
 
-TEST(Logging, refrefPipeline)
+TEST(Pipeline, refrefPipeline)
 {
   // Construct pipeline without exception
   EXPECT_NO_THROW(Azure::Core::Http::HttpPipeline pipeline(
       std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>(1)));
 }
 
-TEST(Logging, refrefEmptyPipeline)
+TEST(Pipeline, refrefEmptyPipeline)
 {
   // Construct pipeline with invalid exception with move constructor
   EXPECT_THROW(

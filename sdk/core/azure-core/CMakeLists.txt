@@ -45,6 +45,7 @@ set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
+    inc/azure/core/cryptography/hash.hpp
     inc/azure/core/http/body_stream.hpp
     inc/azure/core/http/http.hpp
     inc/azure/core/http/pipeline.hpp
@@ -64,7 +65,6 @@ set(
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/match_conditions.hpp
-    inc/azure/core/md5.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
@@ -80,6 +80,7 @@ set(
   AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
+    src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/body_stream.cpp
     src/http/http.cpp
@@ -95,7 +96,6 @@ set(
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
-    src/md5.cpp
     src/operation_status.cpp
     src/strings.cpp
     src/version.cpp

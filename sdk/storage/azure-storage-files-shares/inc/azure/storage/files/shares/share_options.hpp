@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ForceCloseAllShareDirectoryHandlesOptions
+  struct ForceCloseAllShareDirectoryHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -457,7 +457,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the HttpHeaders of the file.
      */
-    Models::ShareFileHttpHeaders HttpHeaders;
+    Models::FileHttpHeaders HttpHeaders;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -730,7 +730,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ForceCloseAllShareFileHandlesOptions
+  struct ForceCloseAllShareFileHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -795,7 +795,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    Models::ShareFileHttpHeaders HttpHeaders;
+    Models::FileHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the file as metadata.

@@ -653,9 +653,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DirectoryClient::SetAccessControlRecursiveListSinglePage
+   * @brief Optional parameters for DirectoryClient::SetAccessControlListRecursiveSinglePage
    */
-  struct SetDataLakePathAccessControlRecursiveListSinglePageOptions
+  struct SetDataLakePathAccessControlListRecursiveSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -689,11 +689,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<bool> ContinueOnFailure;
   };
 
-  using UpdateDataLakePathAccessControlRecursiveListSinglePageOptions
-      = SetDataLakePathAccessControlRecursiveListSinglePageOptions;
+  using UpdateDataLakePathAccessControlListRecursiveSinglePageOptions
+      = SetDataLakePathAccessControlListRecursiveSinglePageOptions;
 
-  using RemoveDataLakePathAccessControlRecursiveListSinglePageOptions
-      = SetDataLakePathAccessControlRecursiveListSinglePageOptions;
+  using RemoveDataLakePathAccessControlListRecursiveSinglePageOptions
+      = SetDataLakePathAccessControlListRecursiveSinglePageOptions;
 
   using CreateDataLakeFileOptions = CreateDataLakePathOptions;
   using CreateDataLakeDirectoryOptions = CreateDataLakePathOptions;
@@ -756,13 +756,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * ScheduleFileExpiryOriginType::RelativeToCreation or
      * ScheduleFileExpiryOriginType::RelativeToNow.
      */
-    Azure::Core::Nullable<int64_t> TimeToExpireInMs;
+    Azure::Core::Nullable<std::chrono::milliseconds> TimeToExpire;
 
     /**
      * @brief The expiry time in RFC1123 format. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
      */
-    Azure::Core::Nullable<std::string> ExpiresOn;
+    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
   };
 
   using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;

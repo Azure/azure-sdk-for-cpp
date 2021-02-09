@@ -3,19 +3,19 @@
 
 #include <algorithm>
 #include <azure/core/base64.hpp>
-#include <azure/core/md5.hpp>
+#include <azure/core/cryptography/hash.hpp>
 #include <gtest/gtest.h>
 #include <random>
 #include <string>
 #include <vector>
 
-using namespace Azure::Core;
+using namespace Azure::Core::Cryptography;
 
-static std::vector<uint8_t> Hash(const std::string& data)
+static std::vector<uint8_t> ComputeHash(const std::string& data)
 {
   const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
-  std::vector<uint8_t> v(ptr, ptr + data.length());
-  return Md5::Hash(v);
+  Md5Hash instance;
+  return instance.Final(ptr, data.length());
 }
 
 static thread_local std::mt19937_64 random_generator(std::random_device{}());
@@ -62,13 +62,17 @@ uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
   return distribution(random_generator);
 }
 
-TEST(Md5, Basic)
+TEST(Md5Hash, Basic)
 {
-  EXPECT_EQ(Base64Encode(Hash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
-  EXPECT_EQ(Base64Encode(Hash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
+  Md5Hash md5empty;
+  EXPECT_EQ(Azure::Core::Base64Encode(md5empty.Final()), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
   auto data = RandomBuffer(static_cast<std::size_t>(16777216));
-  Md5 md5Instance;
+
+  Md5Hash md5Single;
+  Md5Hash md5Streaming;
 
   // There are two ways to get the hash value, a "single-shot" static API called `Hash()` and one
   // where you can stream partial data blocks with multiple calls to `Update()` and then once you
@@ -83,9 +87,32 @@ TEST(Md5, Basic)
   {
     std::size_t s = static_cast<std::size_t>(RandomInt(0, 4194304));
     s = std::min(s, data.size() - length);
-    md5Instance.Update(&data[length], s);
-    md5Instance.Update(&data[length], 0);
+    md5Streaming.Append(&data[length], s);
+    md5Streaming.Append(&data[length], 0);
     length += s;
   }
-  EXPECT_EQ(md5Instance.Digest(), Md5::Hash(data));
+  EXPECT_EQ(md5Streaming.Final(), md5Single.Final(data.data(), data.size()));
+}
+
+TEST(Md5Hash, ExpectThrow)
+{
+  std::string data = "";
+  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
+  Md5Hash instance;
+
+  EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
+  EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
+
+  EXPECT_EQ(
+      Azure::Core::Base64Encode(instance.Final(ptr, data.length())), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_THROW(instance.Final(), std::runtime_error);
+  EXPECT_THROW(instance.Final(ptr, data.length()), std::runtime_error);
+  EXPECT_THROW(instance.Append(ptr, data.length()), std::runtime_error);
+}
+
+TEST(Md5Hash, CtorDtor)
+{
+  {
+    Md5Hash instance;
+  }
 }

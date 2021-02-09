@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool IsDirectory = bool();
       Core::DateTime LastModified;
       std::string ETag;
-      int64_t ContentLength = int64_t();
+      int64_t FileSize = int64_t();
       std::string Owner;
       std::string Group;
       std::string Permissions;
@@ -311,9 +311,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct SetAccessControlRecursiveResponse
     {
-      int32_t DirectoriesSuccessful = int32_t();
-      int32_t FilesSuccessful = int32_t();
-      int32_t FailureCount = int32_t();
+      int32_t NumberOfSuccessfulDirectories = int32_t();
+      int32_t NumberOfSuccessfulFiles = int32_t();
+      int32_t NumberOfFailures = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
     };
 
@@ -370,9 +370,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathSetAccessControlRecursiveResult
     {
-      int32_t DirectoriesSuccessful = int32_t();
-      int32_t FilesSuccessful = int32_t();
-      int32_t FailureCount = int32_t();
+      int32_t NumberOfSuccessfulDirectories = int32_t();
+      int32_t NumberOfSuccessfulFiles = int32_t();
+      int32_t NumberOfFailures = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
       Azure::Core::Nullable<std::string> ContinuationToken;
       std::string RequestId;
@@ -504,7 +504,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.ETag = node["etag"].get<std::string>();
           if (node.contains("contentLength"))
           {
-            result.ContentLength = std::stoll(node["contentLength"].get<std::string>());
+            result.FileSize = std::stoll(node["contentLength"].get<std::string>());
           }
           result.Owner = node["owner"].get<std::string>();
           result.Group = node["group"].get<std::string>();
@@ -1407,9 +1407,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             const Azure::Core::Internal::Json::json& node)
         {
           SetAccessControlRecursiveResponse result;
-          result.DirectoriesSuccessful = node["directoriesSuccessful"].get<int32_t>();
-          result.FilesSuccessful = node["filesSuccessful"].get<int32_t>();
-          result.FailureCount = node["failureCount"].get<int32_t>();
+          result.NumberOfSuccessfulDirectories = node["directoriesSuccessful"].get<int32_t>();
+          result.NumberOfSuccessfulFiles = node["filesSuccessful"].get<int32_t>();
+          result.NumberOfFailures = node["failureCount"].get<int32_t>();
           for (const auto& element : node["failedEntries"])
           {
             result.FailedEntries.emplace_back(AclFailedEntryFromJson(element));
@@ -1422,9 +1422,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             SetAccessControlRecursiveResponse object)
         {
           PathSetAccessControlRecursiveResult result;
-          result.DirectoriesSuccessful = object.DirectoriesSuccessful;
-          result.FilesSuccessful = object.FilesSuccessful;
-          result.FailureCount = object.FailureCount;
+          result.NumberOfSuccessfulDirectories = object.NumberOfSuccessfulDirectories;
+          result.NumberOfSuccessfulFiles = object.NumberOfSuccessfulFiles;
+          result.NumberOfFailures = object.NumberOfFailures;
           result.FailedEntries = std::move(object.FailedEntries);
 
           return result;

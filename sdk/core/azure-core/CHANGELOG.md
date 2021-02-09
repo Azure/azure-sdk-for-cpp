@@ -5,11 +5,12 @@
 ### New Features
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
-- Added MD5 hashing APIs to the `Azure::Core` namespace available from `azure/core/md5.hpp`.
+- Added the `Hash` base class and MD5 hashing APIs to the `Azure::Core::Cryptography` namespace available from `azure/core/cryptography/hash.hpp`.
 
 ### Breaking Changes
 
 - Remove `Context::CancelWhen()`.
+- Removed `LogClassification` and related functionality, added `LogLevel` instead.
 
 ### Bug Fixes
 

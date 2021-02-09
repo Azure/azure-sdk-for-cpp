@@ -254,7 +254,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const CreateSharePermissionOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreatePermissionOptions();
-    protocolLayerOptions.Permission.Permission = permission;
+    protocolLayerOptions.Permission.FilePermission = permission;
     return Details::ShareRestClient::Share::CreatePermission(
         m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
