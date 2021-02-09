@@ -455,18 +455,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::Details::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-    if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
+    if (options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue())
     {
-      // ExpiresOn and TimeToExpireInMs should be mutually exlusive.
+      // ExpiresOn and TimeToExpire should be mutually exlusive.
       std::abort();
     }
     if (options.ExpiresOn.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = options.ExpiresOn;
+      protocolLayerOptions.ExpiryTime
+          = options.ExpiresOn.GetValue().GetString(Azure::Core::DateTime::DateFormat::Rfc1123);
     }
-    else if (options.TimeToExpireInMs.HasValue())
+    else if (options.TimeToExpire.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpireInMs.GetValue());
+      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpire.GetValue().count());
     }
     return Blobs::Details::BlobRestClient::Blob::ScheduleDeletion(
         options.Context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);

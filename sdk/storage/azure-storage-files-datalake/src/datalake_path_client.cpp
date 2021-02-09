@@ -471,11 +471,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
-  DataLakePathClient::SetAccessControlRecursiveListSinglePageInternal(
+  Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+  DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
       Models::PathSetAccessControlRecursiveMode mode,
       const std::vector<Models::Acl>& acls,
-      const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options) const
+      const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
     protocolLayerOptions.Mode = mode;

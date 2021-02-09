@@ -212,16 +212,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
      * @return
-     * Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
+     * Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
-    SetAccessControlRecursiveListSinglePage(
+    Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+    SetAccessControlListRecursiveSinglePage(
         const std::vector<Models::Acl>& acls,
-        const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = SetDataLakePathAccessControlRecursiveListSinglePageOptions()) const
+        const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = SetDataLakePathAccessControlListRecursiveSinglePageOptions()) const
     {
-      return SetAccessControlRecursiveListSinglePageInternal(
+      return SetAccessControlListRecursiveSinglePageInternal(
           Models::PathSetAccessControlRecursiveMode::Set, acls, options);
     }
 
@@ -233,16 +233,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
      * @return
-     * Azure::Core::Response<Models::UpdateDataLakePathAccessControlRecursiveListSinglePageResult>
+     * Azure::Core::Response<Models::UpdateDataLakePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::UpdateDataLakePathAccessControlRecursiveListSinglePageResult>
-    UpdateAccessControlRecursiveListSinglePage(
+    Azure::Core::Response<Models::UpdateDataLakePathAccessControlListRecursiveSinglePageResult>
+    UpdateAccessControlListRecursiveSinglePage(
         const std::vector<Models::Acl>& acls,
-        const UpdateDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = UpdateDataLakePathAccessControlRecursiveListSinglePageOptions()) const
+        const UpdateDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = UpdateDataLakePathAccessControlListRecursiveSinglePageOptions()) const
     {
-      return SetAccessControlRecursiveListSinglePageInternal(
+      return SetAccessControlListRecursiveSinglePageInternal(
           Models::PathSetAccessControlRecursiveMode::Modify, acls, options);
     }
 
@@ -254,16 +254,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
      * @return
-     * Azure::Core::Response<Models::RemoveDataLakePathAccessControlRecursiveListSinglePageResult>
+     * Azure::Core::Response<Models::RemoveDataLakePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RemoveDataLakePathAccessControlRecursiveListSinglePageResult>
-    RemoveAccessControlRecursiveListSinglePage(
+    Azure::Core::Response<Models::RemoveDataLakePathAccessControlListRecursiveSinglePageResult>
+    RemoveAccessControlListRecursiveSinglePage(
         const std::vector<Models::Acl>& acls,
-        const RemoveDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = RemoveDataLakePathAccessControlRecursiveListSinglePageOptions()) const
+        const RemoveDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = RemoveDataLakePathAccessControlListRecursiveSinglePageOptions()) const
     {
-      return SetAccessControlRecursiveListSinglePageInternal(
+      return SetAccessControlListRecursiveSinglePageInternal(
           Models::PathSetAccessControlRecursiveMode::Remove, acls, options);
     }
 
@@ -281,12 +281,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
     }
 
-    Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
-    SetAccessControlRecursiveListSinglePageInternal(
+    Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+    SetAccessControlListRecursiveSinglePageInternal(
         Models::PathSetAccessControlRecursiveMode mode,
         const std::vector<Models::Acl>& acls,
-        const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = SetDataLakePathAccessControlRecursiveListSinglePageOptions()) const;
+        const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = SetDataLakePathAccessControlListRecursiveSinglePageOptions()) const;
 
     friend class DataLakeFileSystemClient;
     friend class DataLakeLeaseClient;
