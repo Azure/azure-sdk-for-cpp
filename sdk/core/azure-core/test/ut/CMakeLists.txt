@@ -40,11 +40,14 @@ add_executable (
     json.cpp
     logging.cpp
     main.cpp
+    match_conditions.cpp
+    md5.cpp
     nullable.cpp
     operation.cpp
     operation_status.cpp
     pipeline.cpp
     policy.cpp
+    request_conditions.cpp
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp

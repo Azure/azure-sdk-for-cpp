@@ -24,26 +24,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto directoryUri = std::move(parsedConnectionString.FileServiceUrl);
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
-    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryName));
+    auto directoryUrl = std::move(parsedConnectionString.FileServiceUrl);
+    directoryUrl.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    directoryUrl.AppendPath(Storage::Details::UrlEncodePath(directoryName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return ShareDirectoryClient(
-          directoryUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          directoryUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareDirectoryClient(directoryUri.GetAbsoluteUrl(), options);
+      return ShareDirectoryClient(directoryUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareDirectoryClient::ShareDirectoryClient(
-      const std::string& shareDirectoryUri,
+      const std::string& shareDirectoryUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUri)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -67,9 +67,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareDirectoryClient::ShareDirectoryClient(
-      const std::string& shareDirectoryUri,
+      const std::string& shareDirectoryUrl,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUri)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -128,12 +128,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::Directory);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::Directory.Get();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -172,16 +170,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::CreateShareDirectoryResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.FileAttributes = result->FileAttributes;
-    ret.FileCreatedOn = std::move(result->FileCreatedOn);
-    ret.FileLastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.FilePermissionKey = std::move(result->FilePermissionKey);
-    ret.FileChangedOn = std::move(result->FileChangedOn);
-    ret.FileId = std::move(result->FileId);
-    ret.FileParentId = std::move(result->FileParentId);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
+    ret.SmbProperties = std::move(result->SmbProperties);
 
     return Azure::Core::Response<Models::CreateShareDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -253,11 +245,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Core::Response<Models::SetShareDirectoryPropertiesResult>
   ShareDirectoryClient::SetProperties(
-      Models::FileShareSmbProperties smbProperties,
+      Models::FileSmbProperties smbProperties,
       const SetShareDirectoryPropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::SetPropertiesOptions();
-    protocolLayerOptions.FileAttributes = Details::FileAttributesToString(smbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = smbProperties.Attributes.Get();
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().GetRfc3339String(
@@ -356,13 +348,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.HandleId = handleId;
     auto result = Details::ShareRestClient::File::ForceCloseHandles(
         m_shareDirectoryUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::ForceCloseShareDirectoryHandleResult ret;
+    ret.RequestId = std::move(result->RequestId);
     return Azure::Core::Response<Models::ForceCloseShareDirectoryHandleResult>(
-        Models::ForceCloseShareDirectoryHandleResult(), result.ExtractRawResponse());
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesResult>
-  ShareDirectoryClient::ForceCloseAllHandles(
-      const ForceCloseAllShareDirectoryHandlesOptions& options) const
+  Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+  ShareDirectoryClient::ForceCloseAllHandlesSinglePage(
+      const ForceCloseAllShareDirectoryHandlesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;

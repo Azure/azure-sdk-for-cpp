@@ -740,9 +740,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobRetentionPolicy RetentionPolicy;
     }; // struct BlobAnalyticsLogging
 
-    struct BlobContainerItem
+    struct BlobContainerItemDetails
     {
-      std::string Name;
       Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
       Storage::Metadata Metadata;
@@ -754,11 +753,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
       bool PreventEncryptionScopeOverride = false;
-      bool IsDeleted = false;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<Azure::Core::DateTime> DeletedOn;
       Azure::Core::Nullable<int32_t> RemainingRetentionDays;
-    }; // struct BlobContainerItem
+      Azure::Core::Nullable<Azure::Core::DateTime> DeletedOn;
+    }; // struct BlobContainerItemDetails
 
     struct BlobGeoReplication
     {
@@ -888,6 +885,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> EncryptionScope;
     }; // struct AppendBlockResult
 
+    struct BlobContainerItem
+    {
+      std::string Name;
+      bool IsDeleted = false;
+      Azure::Core::Nullable<std::string> VersionId;
+      BlobContainerItemDetails Details;
+    }; // struct BlobContainerItem
+
     struct BlobHttpHeaders
     {
       std::string ContentType;
@@ -938,15 +943,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       BlobGeoReplication GeoReplication;
     }; // struct GetServiceStatisticsResult
-
-    struct ListBlobContainersSinglePageResult
-    {
-      std::string RequestId;
-      std::string ServiceEndpoint;
-      std::string Prefix;
-      Azure::Core::Nullable<std::string> ContinuationToken;
-      std::vector<BlobContainerItem> Items;
-    }; // struct ListBlobContainersSinglePageResult
 
     struct ObjectReplicationPolicy
     {
@@ -1008,13 +1004,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> EncryptionScope;
     }; // struct UploadPageBlobPagesResult
 
-    struct BlobItem
+    struct BlobItemDetails
     {
-      std::string Name;
-      bool IsDeleted = false;
-      std::string Snapshot;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<bool> IsCurrentVersion;
       BlobHttpHeaders HttpHeaders;
       Storage::Metadata Metadata;
       Azure::Core::DateTime CreatedOn;
@@ -1022,8 +1013,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Azure::Core::DateTime LastModified;
       Azure::Core::ETag ETag;
-      int64_t BlobSize = 0;
-      Models::BlobType BlobType;
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
@@ -1036,7 +1025,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IsSealed; // only for append blob
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
-    }; // struct BlobItem
+    }; // struct BlobItemDetails
 
     struct DownloadBlobDetails
     {
@@ -1113,6 +1102,27 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> VersionId;
       Azure::Core::Nullable<bool> IsCurrentVersion;
     }; // struct GetBlobPropertiesResult
+
+    struct ListBlobContainersSinglePageResult
+    {
+      std::string RequestId;
+      std::string ServiceEndpoint;
+      std::string Prefix;
+      Azure::Core::Nullable<std::string> ContinuationToken;
+      std::vector<BlobContainerItem> Items;
+    }; // struct ListBlobContainersSinglePageResult
+
+    struct BlobItem
+    {
+      std::string Name;
+      int64_t BlobSize = 0;
+      Models::BlobType BlobType;
+      bool IsDeleted = false;
+      std::string Snapshot;
+      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Core::Nullable<bool> IsCurrentVersion;
+      BlobItemDetails Details;
+    }; // struct BlobItem
 
     struct DownloadBlobResult
     {
@@ -2187,7 +2197,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
               {
-                ret.Metadata = MetadataFromXml(reader);
+                ret.Details.Metadata = MetadataFromXml(reader);
                 path.pop_back();
               }
             }
@@ -2201,62 +2211,62 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_Etag)
               {
-                ret.ETag = Azure::Core::ETag(node.Value);
+                ret.Details.ETag = Azure::Core::ETag(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LastModified)
               {
-                ret.LastModified = Azure::Core::DateTime::Parse(
+                ret.Details.LastModified = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_PublicAccess)
               {
-                ret.AccessType = PublicAccessType(node.Value);
+                ret.Details.AccessType = PublicAccessType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_HasImmutabilityPolicy)
               {
-                ret.HasImmutabilityPolicy = std::strcmp(node.Value, "true") == 0;
+                ret.Details.HasImmutabilityPolicy = std::strcmp(node.Value, "true") == 0;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_HasLegalHold)
               {
-                ret.HasLegalHold = std::strcmp(node.Value, "true") == 0;
+                ret.Details.HasLegalHold = std::strcmp(node.Value, "true") == 0;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseStatus)
               {
-                ret.LeaseStatus = BlobLeaseStatus(node.Value);
+                ret.Details.LeaseStatus = BlobLeaseStatus(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseState)
               {
-                ret.LeaseState = BlobLeaseState(node.Value);
+                ret.Details.LeaseState = BlobLeaseState(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseDuration)
               {
-                ret.LeaseDuration = BlobLeaseDurationType(node.Value);
+                ret.Details.LeaseDuration = BlobLeaseDurationType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_DefaultEncryptionScope)
               {
-                ret.DefaultEncryptionScope = node.Value;
+                ret.Details.DefaultEncryptionScope = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_DenyEncryptionScopeOverride)
               {
-                ret.PreventEncryptionScopeOverride = std::strcmp(node.Value, "true") == 0;
+                ret.Details.PreventEncryptionScopeOverride = std::strcmp(node.Value, "true") == 0;
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Deleted)
               {
@@ -2270,14 +2280,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_DeletedTime)
               {
-                ret.DeletedOn = Azure::Core::DateTime::Parse(
+                ret.Details.DeletedOn = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_RemainingRetentionDays)
               {
-                ret.RemainingRetentionDays = std::stoi(node.Value);
+                ret.Details.RemainingRetentionDays = std::stoi(node.Value);
               }
             }
           }
@@ -4417,12 +4427,12 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
               {
-                ret.Metadata = MetadataFromXml(reader);
+                ret.Details.Metadata = MetadataFromXml(reader);
                 path.pop_back();
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_OrMetadata)
               {
-                ret.ObjectReplicationSourceProperties
+                ret.Details.ObjectReplicationSourceProperties
                     = ObjectReplicationSourcePropertiesFromXml(reader);
                 path.pop_back();
               }
@@ -4453,71 +4463,71 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentType)
               {
-                ret.HttpHeaders.ContentType = node.Value;
+                ret.Details.HttpHeaders.ContentType = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentEncoding)
               {
-                ret.HttpHeaders.ContentEncoding = node.Value;
+                ret.Details.HttpHeaders.ContentEncoding = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentLanguage)
               {
-                ret.HttpHeaders.ContentLanguage = node.Value;
+                ret.Details.HttpHeaders.ContentLanguage = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentMD5)
               {
-                ret.HttpHeaders.ContentHash.Value = Azure::Core::Base64Decode(node.Value);
+                ret.Details.HttpHeaders.ContentHash.Value = Azure::Core::Base64Decode(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_CacheControl)
               {
-                ret.HttpHeaders.CacheControl = node.Value;
+                ret.Details.HttpHeaders.CacheControl = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentDisposition)
               {
-                ret.HttpHeaders.ContentDisposition = node.Value;
+                ret.Details.HttpHeaders.ContentDisposition = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_CreationTime)
               {
-                ret.CreatedOn = Azure::Core::DateTime::Parse(
+                ret.Details.CreatedOn = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ExpiryTime)
               {
-                ret.ExpiresOn = Azure::Core::DateTime::Parse(
+                ret.Details.ExpiresOn = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LastAccessTime)
               {
-                ret.LastAccessedOn = Azure::Core::DateTime::Parse(
+                ret.Details.LastAccessedOn = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LastModified)
               {
-                ret.LastModified = Azure::Core::DateTime::Parse(
+                ret.Details.LastModified = Azure::Core::DateTime::Parse(
                     node.Value, Azure::Core::DateTime::DateFormat::Rfc1123);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_Etag)
               {
-                ret.ETag = Azure::Core::ETag(node.Value);
+                ret.Details.ETag = Azure::Core::ETag(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -4535,55 +4545,55 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_AccessTier)
               {
-                ret.Tier = AccessTier(node.Value);
+                ret.Details.Tier = AccessTier(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_AccessTierInferred)
               {
-                ret.IsAccessTierInferred = std::strcmp(node.Value, "true") == 0;
+                ret.Details.IsAccessTierInferred = std::strcmp(node.Value, "true") == 0;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseStatus)
               {
-                ret.LeaseStatus = BlobLeaseStatus(node.Value);
+                ret.Details.LeaseStatus = BlobLeaseStatus(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseState)
               {
-                ret.LeaseState = BlobLeaseState(node.Value);
+                ret.Details.LeaseState = BlobLeaseState(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseDuration)
               {
-                ret.LeaseDuration = BlobLeaseDurationType(node.Value);
+                ret.Details.LeaseDuration = BlobLeaseDurationType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ServerEncrypted)
               {
-                ret.IsServerEncrypted = std::strcmp(node.Value, "true") == 0;
+                ret.Details.IsServerEncrypted = std::strcmp(node.Value, "true") == 0;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_EncryptionKeySHA256)
               {
-                ret.EncryptionKeySha256 = Azure::Core::Base64Decode(node.Value);
+                ret.Details.EncryptionKeySha256 = Azure::Core::Base64Decode(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_Sealed)
               {
-                ret.IsSealed = std::strcmp(node.Value, "true") == 0;
+                ret.Details.IsSealed = std::strcmp(node.Value, "true") == 0;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_xmsblobsequencenumber)
               {
-                ret.SequenceNumber = std::stoll(node.Value);
+                ret.Details.SequenceNumber = std::stoll(node.Value);
               }
             }
           }

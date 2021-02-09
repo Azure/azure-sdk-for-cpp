@@ -43,7 +43,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::Core::ETag ETag;
       Azure::Core::DateTime LastModified;
-      int32_t LeaseTime = 0;
     };
 
     struct ChangeBlobLeaseResult

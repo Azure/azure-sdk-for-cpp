@@ -17,20 +17,12 @@ option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Require
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
+option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
 
 include(AzureTransportAdapters)
+include(AzureVcpkg)
 
-# VCPKG Integration
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-      CACHE STRING "")
-elseif(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-      CACHE STRING "")
-endif()
-if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
-  set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
-endif()
+az_vcpkg_integrate()
 
 # Project definition
 project(azure-sdk LANGUAGES CXX)
@@ -52,6 +44,8 @@ if(BUILD_TESTING)
     if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
       add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
     endif()
+
+    add_subdirectory(sdk/identity/azure-identity/test)
 endif()
 
 # compiler warning flags globally

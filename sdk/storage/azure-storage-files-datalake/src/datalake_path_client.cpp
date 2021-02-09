@@ -80,27 +80,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto pathUri = std::move(parsedConnectionString.DataLakeServiceUrl);
-    pathUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
-    pathUri.AppendPath(Storage::Details::UrlEncodePath(path));
+    auto pathUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
+    pathUrl.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
+    pathUrl.AppendPath(Storage::Details::UrlEncodePath(path));
 
     if (parsedConnectionString.KeyCredential)
     {
       return DataLakePathClient(
-          pathUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          pathUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DataLakePathClient(pathUri.GetAbsoluteUrl(), options);
+      return DataLakePathClient(pathUrl.GetAbsoluteUrl(), options);
     }
   }
 
   DataLakePathClient::DataLakePathClient(
-      const std::string& pathUri,
+      const std::string& pathUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(pathUri)),
-        m_blobClient(Details::GetBlobUrlFromUrl(pathUri), credential, GetBlobClientOptions(options))
+      : m_pathUrl(Details::GetDfsUrlFromUrl(pathUrl)),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), credential, GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -127,11 +127,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DataLakePathClient::DataLakePathClient(
-      const std::string& pathUri,
+      const std::string& pathUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(pathUri)),
-        m_blobClient(Details::GetBlobUrlFromUrl(pathUri), credential, GetBlobClientOptions(options))
+      : m_pathUrl(Details::GetDfsUrlFromUrl(pathUrl)),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), credential, GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -151,18 +151,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::Http::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::StorageScope));
+
+    {
+      Azure::Core::Http::TokenRequestOptions const tokenOptions
+          = {{Storage::Details::StorageScope}};
+
+      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+          credential, tokenOptions));
+    }
+
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   DataLakePathClient::DataLakePathClient(
-      const std::string& pathUri,
+      const std::string& pathUrl,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(pathUri)),
-        m_blobClient(Details::GetBlobUrlFromUrl(pathUri), GetBlobClientOptions(options))
+      : m_pathUrl(Details::GetDfsUrlFromUrl(pathUrl)),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -203,7 +210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::SetAccessControl(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetDataLakePathPermissionsResult>
@@ -221,7 +228,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::SetAccessControl(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetDataLakePathHttpHeadersResult>
@@ -271,7 +278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
     auto result = Details::DataLakeRestClient::Path::Create(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::CreateDataLakePathResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified.GetValue());
@@ -315,7 +322,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = options.Recursive;
     auto result = Details::DataLakeRestClient::Path::Delete(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Models::DeleteDataLakePathResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
@@ -375,9 +382,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders.ContentEncoding = std::move(result->HttpHeaders.ContentEncoding);
     ret.HttpHeaders.ContentLanguage = std::move(result->HttpHeaders.ContentLanguage);
     ret.HttpHeaders.ContentType = std::move(result->HttpHeaders.ContentType);
-    ret.ServerEncrypted = result->IsServerEncrypted;
+    ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    ret.AccessTierInferred = std::move(result->IsAccessTierInferred);
+    ret.IsAccessTierInferred = std::move(result->IsAccessTierInferred);
     ret.AccessTierChangedOn = std::move(result->AccessTierChangedOn);
     ret.CopyId = std::move(result->CopyId);
     ret.CopySource = std::move(result->CopySource);
@@ -412,7 +419,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = Details::DataLakeRestClient::Path::GetProperties(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
     Azure::Core::Nullable<std::vector<Models::Acl>> acl;
     if (result->Acl.HasValue())
     {
@@ -464,20 +471,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
-  DataLakePathClient::SetAccessControlRecursiveListSinglePageInternal(
+  Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+  DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
       Models::PathSetAccessControlRecursiveMode mode,
-      std::vector<Models::Acl> acls,
-      const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options) const
+      const std::vector<Models::Acl>& acls,
+      const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
     protocolLayerOptions.Mode = mode;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxRecords = options.MaxEntries;
+    protocolLayerOptions.MaxRecords = options.PageSizeHint;
     protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
     protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
     return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -208,6 +208,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
+    leaseClient = Blobs::BlobLeaseClient(*m_pageBlobClient, cLease.LeaseId);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
     auto blobInfo = *leaseClient.Release();
@@ -223,7 +224,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto brokenLease = *leaseClient.Break();
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
-    EXPECT_EQ(brokenLease.LeaseTime, 0);
 
     leaseClient
         = Blobs::BlobLeaseClient(*m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
@@ -231,7 +231,6 @@ namespace Azure { namespace Storage { namespace Test {
     brokenLease = *leaseClient.Break();
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
-    EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakBlobLeaseOptions options;
     options.BreakPeriod = std::chrono::seconds(0);

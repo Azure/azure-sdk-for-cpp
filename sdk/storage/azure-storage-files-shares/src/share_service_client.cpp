@@ -21,24 +21,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.FileServiceUrl);
+    auto serviceUrl = std::move(parsedConnectionString.FileServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
     {
       return ShareServiceClient(
-          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          serviceUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareServiceClient(serviceUri.GetAbsoluteUrl(), options);
+      return ShareServiceClient(serviceUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareServiceClient::ShareServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -62,9 +62,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareServiceClient::ShareServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       const ShareClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareServiceClient::ListSharesSinglePage(const ListSharesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
-    protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
+    protocolLayerOptions.ListSharesInclude = options.ListSharesIncludeFlags;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(
-      Models::StorageServiceProperties properties,
+      Models::FileServiceProperties properties,
       const SetServicePropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
@@ -120,12 +120,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
     auto result = Details::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, options.Context, protocolLayerOptions);
-    Models::StorageServiceProperties ret;
+    Models::FileServiceProperties ret;
     ret.Cors = std::move(result->Cors);
     ret.HourMetrics = std::move(result->HourMetrics);
     ret.MinuteMetrics = std::move(result->MinuteMetrics);
     ret.Protocol = std::move(result->Protocol);
-    return Azure::Core::Response<Models::StorageServiceProperties>(
+    return Azure::Core::Response<Models::FileServiceProperties>(
         std::move(ret), result.ExtractRawResponse());
   }
 

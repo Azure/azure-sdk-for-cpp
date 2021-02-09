@@ -4,6 +4,7 @@
 #pragma once
 
 #include <chrono>
+#include <string>
 
 #include "azure/storage/files/shares/share_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
@@ -43,7 +44,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @return Lease id of this lease client.
      */
-    std::string GetLeaseId() const { return m_leaseId; }
+    const std::string& GetLeaseId() const { return m_leaseId; }
 
     /**
      * @brief Acquires a lease on the file or share.
@@ -57,17 +58,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Core::Response<Models::AcquireShareLeaseResult> Acquire(
         std::chrono::seconds duration,
-        const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions());
+        const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions()) const;
 
     /**
      * @brief Releases the file or share's previously-acquired lease.
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseShareLeaseResult describing the updated container.
+     * @return A ReleaseShareLeaseResult describing the updated share or file.
      */
     Azure::Core::Response<Models::ReleaseShareLeaseResult> Release(
-        const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions());
+        const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions()) const;
 
     /**
      * @brief Changes the lease of an active lease.
@@ -75,11 +76,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return A ChangeShareLeaseResult describing the lease.
+     * @return A ChangeShareLeaseResult describing the updated lease.
+     * @remarks The current ShareLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<Models::ChangeShareLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions());
+        const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions()) const;
 
     /**
      * @brief Breaks the previously-acquired lease.
@@ -88,7 +90,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return A BreakShareLeaseResult describing the broken lease.
      */
     Azure::Core::Response<Models::BreakShareLeaseResult> Break(
-        const BreakShareLeaseOptions& options = BreakShareLeaseOptions());
+        const BreakShareLeaseOptions& options = BreakShareLeaseOptions()) const;
 
   private:
     /**
@@ -110,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return A RenewShareLeaseResult describing the lease.
      */
     Azure::Core::Response<Models::RenewShareLeaseResult> Renew(
-        const RenewShareLeaseOptions& options = RenewShareLeaseOptions());
+        const RenewShareLeaseOptions& options = RenewShareLeaseOptions()) const;
 
     Azure::Core::Nullable<ShareFileClient> m_fileClient;
     Azure::Core::Nullable<ShareClient> m_shareClient;

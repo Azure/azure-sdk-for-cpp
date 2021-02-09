@@ -46,7 +46,7 @@ stages:
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: Publish Docs to GitHub pages
-              condition: ne(variables['Skip.PublishDocs'], 'true')
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
               # Release tag must exist for link substitution to work
               dependsOn: TagRepository
@@ -77,7 +77,7 @@ stages:
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
             - deployment: PublishVcpkg
               displayName: Publish to vcpkg
-              condition: ne(variables['Skip.PublishVcpkg'], 'true')
+              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
               environment: github
               # This step requires the tag step
               dependsOn: TagRepository

@@ -143,6 +143,11 @@ The following CMake options are available for adding/removing project features.
 <td>OFF</td>
 </tr>
 <tr>
+<td>BUILD_TRANSPORT_WINHTTP</td>
+<td>Build the WinHTTP transport adapter. When building on Windows systems, if no other transport adapter is built, this option will be automatically turned ON. This option is not supported on non-Windows OSes.</td>
+<td>OFF</td>
+</tr>
+<tr>
 <td>BUILD_DOCUMENTATION</td>
 <td>Build Doxygen documentation</td>
 <td>OFF</td>

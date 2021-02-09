@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> Prefix;
 
     /**
-     * @brief  A string value that identifies the portion of the list to be returned with the next
+     * @brief A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
      * returned was not complete. The marker value may then be used in a subsequent call to request
      * the next set of list items. The marker value is opaque to the client.
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Core::Nullable<Models::ListSharesIncludeType> ListSharesInclude;
+    Azure::Core::Nullable<Models::ListSharesIncludeType> ListSharesIncludeFlags;
   };
 
   struct SetServicePropertiesOptions
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
      */
-    Azure::Core::Nullable<bool> IncludeSnapshots;
+    Azure::Core::Nullable<bool> DeleteSnapshots;
   };
 
   struct CreateShareSnapshotOptions
@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the directory.
      */
-    Models::FileShareSmbProperties SmbProperties;
+    Models::FileSmbProperties SmbProperties;
   };
 
   struct DeleteShareDirectoryOptions
@@ -333,7 +333,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief If specified the permission (security descriptor) shall be set for the directory.
-     * This option can be used if Permission size is <= 8KB, else SmbProperties.FilePermissionKey
+     * This option can be used if Permission size is <= 8KB, else SmbProperties.PermissionKey
      * shall be used. Default value: 'inherit'. If SDDL is specified as input, it must have owner,
      * group and dacl.
      */
@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ForceCloseAllShareDirectoryHandlesOptions
+  struct ForceCloseAllShareDirectoryHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -452,12 +452,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the file.
      */
-    Models::FileShareSmbProperties SmbProperties;
+    Models::FileSmbProperties SmbProperties;
 
     /**
      * @brief Specifies the HttpHeaders of the file.
      */
-    Models::ShareFileHttpHeaders HttpHeaders;
+    Models::FileHttpHeaders HttpHeaders;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -496,11 +496,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
-     * @brief When this parameter is set to true and specified together with the Range parameter,
-     * the service returns the MD5 hash for the range, as long as the range is less than or equal to
-     * 4 MB in size.
+     * @brief When specified together with Range, service returns hash for the range as long as the
+     * range is less than or equal to 4 MiB in size. Only MD5 is supported for now.
      */
-    Azure::Core::Nullable<bool> GetRangeContentMd5;
+    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -529,7 +528,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the destination file.
      */
-    Models::FileShareSmbProperties SmbProperties;
+    Models::FileSmbProperties SmbProperties;
 
     /**
      * @brief Specifies the option to copy file security descriptor from source file or to set it
@@ -660,10 +659,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify the crc64 calculated for the range of bytes that must be read from the copy
+     * @brief Specify the hash calculated for the range of bytes that must be read from the copy
      * source.
      */
-    Azure::Core::Nullable<ContentHash> SourceContentHash;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Specify the access condition for the source. Only ContentHash with Crc64 is supported.
@@ -692,7 +691,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
      * specifies the previous snapshot.
      */
-    Azure::Core::Nullable<std::string> PrevShareSnapshot;
+    Azure::Core::Nullable<std::string> PreviousShareSnapshot;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -731,7 +730,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ForceCloseAllShareFileHandlesOptions
+  struct ForceCloseAllShareFileHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -796,7 +795,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    Models::ShareFileHttpHeaders HttpHeaders;
+    Models::FileHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the file as metadata.
@@ -806,11 +805,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the destination file.
      */
-    Models::FileShareSmbProperties SmbProperties;
+    Models::FileSmbProperties SmbProperties;
 
     /**
      * @brief If specified the permission (security descriptor) shall be set for the directory.
-     * This option can be used if Permission size is <= 8KB, else SmbProperties.FilePermissionKey
+     * This option can be used if Permission size is <= 8KB, else SmbProperties.PermissionKey
      * shall be used. Default value: 'inherit'. If SDDL is specified as input, it must have owner,
      * group and dacl.
      */

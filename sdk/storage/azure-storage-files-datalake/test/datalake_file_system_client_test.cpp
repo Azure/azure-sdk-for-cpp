@@ -313,11 +313,11 @@ namespace Azure { namespace Storage { namespace Test {
     std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
     {
       std::string pathName = baseName + RandomString();
-      auto pathClient = m_fileSystemClient->GetPathClient(pathName);
-      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
-      auto pathUrl = pathClient.GetUrl();
+      auto fileClient = m_fileSystemClient->GetFileClient(pathName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(
-          pathUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(pathName));
+          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(pathName));
     }
     {
       std::string directoryName = baseName + RandomString();

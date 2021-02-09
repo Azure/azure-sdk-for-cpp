@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 
 #include <map>
@@ -16,18 +17,68 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Common {
 
-  struct KeyVaultException : public std::runtime_error
+  /**
+   * @brief The general exception thrown by the Key Vault SDK clients.
+   *
+   */
+  struct KeyVaultException : public Azure::Core::RequestFailedException
   {
-    explicit KeyVaultException(const std::string& message) : std::runtime_error(message) {}
+    /**
+     * @brief Construct a new Key Vault Exception object.
+     *
+     * @param message
+     */
+    explicit KeyVaultException(const std::string& message) : RequestFailedException(message) {}
 
+    /**
+     * @brief The Http response code.
+     *
+     */
     Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
+
+    /**
+     * @brief The Http reason phrase from the response.
+     *
+     */
     std::string ReasonPhrase;
+
+    /**
+     * @brief The client request header from the Http response.
+     *
+     */
     std::string ClientRequestId;
+
+    /**
+     * @brief The request id header from the Http response.
+     *
+     */
     std::string RequestId;
+
+    /**
+     * @brief The error code from the Key Vault service returned in the Http response.
+     *
+     */
     std::string ErrorCode;
+
+    /**
+     * @brief The error message from the Key Vault service returned in the Http response.
+     *
+     */
     std::string Message;
+
+    /**
+     * @brief The entire Http raw response.
+     *
+     */
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
+    /**
+     * @brief Create a #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
+     * response.
+     *
+     * @param response The Http raw response from the network.
+     * @return KeyVaultException.
+     */
     static KeyVaultException CreateFromResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
   };

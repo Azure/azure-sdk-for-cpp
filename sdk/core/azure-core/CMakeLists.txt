@@ -45,6 +45,7 @@ set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
+    inc/azure/core/cryptography/hash.hpp
     inc/azure/core/http/body_stream.hpp
     inc/azure/core/http/http.hpp
     inc/azure/core/http/pipeline.hpp
@@ -63,10 +64,12 @@ set(
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
+    inc/azure/core/match_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
+    inc/azure/core/request_conditions.hpp
     inc/azure/core/response.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core/version.hpp
@@ -77,6 +80,7 @@ set(
   AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
+    src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/body_stream.cpp
     src/http/http.cpp
@@ -112,20 +116,17 @@ add_library(Azure::azure-core ALIAS azure-core)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core azure-core-test)
 
-# ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
-target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
-if(MSVC)
-    target_link_libraries(azure-core PRIVATE crypt32)
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
-    message("Find the OpenSSL package on MacOS, used for Base64 encoding.")
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()
 
 if(BUILD_TRANSPORT_CURL)
-  target_link_libraries(azure-core PRIVATE CURL::libcurl)
+  target_link_libraries(azure-core PUBLIC CURL::libcurl)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   target_link_libraries(azure-core PRIVATE winhttp)

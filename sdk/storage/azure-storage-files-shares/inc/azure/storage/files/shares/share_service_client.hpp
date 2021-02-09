@@ -33,23 +33,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initialize a new instance of ShareServiceClient using shared key authentication.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareServiceClient using anonymous access or shared
      * access signature.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * when setting the service properties.
      */
     Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
-        Models::StorageServiceProperties properties,
+        Models::FileServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**

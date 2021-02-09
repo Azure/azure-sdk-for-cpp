@@ -26,8 +26,15 @@ KeyClient::KeyClient(
   policies.emplace_back(std::make_unique<TelemetryPolicy>("KeyVault", apiVersion));
   policies.emplace_back(std::make_unique<RequestIdPolicy>());
   policies.emplace_back(std::make_unique<RetryPolicy>(options.RetryOptions));
-  policies.emplace_back(std::make_unique<BearerTokenAuthenticationPolicy>(
-      credential, "https://vault.azure.net/.default"));
+
+  {
+    Azure::Core::Http::TokenRequestOptions const tokenOptions
+        = {{"https://vault.azure.net/.default"}};
+
+    policies.emplace_back(
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
+  }
+
   policies.emplace_back(std::make_unique<LoggingPolicy>());
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));

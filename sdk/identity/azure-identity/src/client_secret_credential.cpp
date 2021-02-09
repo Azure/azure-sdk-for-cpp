@@ -3,45 +3,20 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 
+#include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
 
 #include <chrono>
-#include <iomanip>
 #include <sstream>
 
 using namespace Azure::Identity;
 
-namespace {
-std::string UrlEncode(std::string const& s)
-{
-  std::ostringstream encoded;
-  encoded << std::hex;
-
-  for (auto c : s)
-  {
-    if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
-        || (c == '-' || c == '.' || c == '_' || c == '~'))
-    {
-      encoded << c;
-    }
-    else
-    {
-      encoded << std::uppercase;
-      encoded << '%' << std::setw(2) << int((unsigned char)c);
-      encoded << std::nouppercase;
-    }
-  }
-
-  return encoded.str();
-}
-} // namespace
-
-std::string const ClientSecretCredential::g_aadGlobalAuthority
+std::string const Azure::Identity::Details::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Context const& context,
-    std::vector<std::string> const& scopes) const
+    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions) const
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
@@ -49,19 +24,19 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    Url url(m_authority);
+    Url url(m_options.AuthorityHost);
     url.AppendPath(m_tenantId);
     url.AppendPath("oauth2/v2.0/token");
 
     std::ostringstream body;
-    // TODO: Use encoding from Http::Url::Encode once it becomes public
-    body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
-         << "&client_secret=" << UrlEncode(m_clientSecret);
+    body << "grant_type=client_credentials&client_id=" << Url::Encode(m_clientId)
+         << "&client_secret=" << Url::Encode(m_clientSecret);
 
+    auto const& scopes = tokenRequestOptions.Scopes;
     if (!scopes.empty())
     {
       auto scopesIter = scopes.begin();
-      body << "&scope=" << UrlEncode(*scopesIter);
+      body << "&scope=" << Url::Encode(*scopesIter);
 
       auto const scopesEnd = scopes.end();
       for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
@@ -81,12 +56,14 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
     std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.push_back(std::make_unique<RequestIdPolicy>());
+    policies.emplace_back(std::make_unique<RequestIdPolicy>());
 
-    RetryOptions retryOptions;
-    policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
+    {
+      RetryOptions retryOptions;
+      policies.emplace_back(std::make_unique<RetryPolicy>(retryOptions));
+    }
 
-    policies.push_back(std::make_unique<TransportPolicy>());
+    policies.emplace_back(std::make_unique<TransportPolicy>(m_options.TransportPolicyOptions));
 
     HttpPipeline httpPipeline(policies);
 
@@ -176,13 +153,11 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     }
     auto const tokenEnd = responseBodyPos;
 
-    expiresInSeconds -= 2 * 60;
     auto const responseBodyBegin = responseBody.begin();
 
     return {
         std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        std::chrono::system_clock::now()
-            + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds),
+        std::chrono::system_clock::now() + std::chrono::seconds(expiresInSeconds),
     };
   }
   catch (AuthenticationException const&)

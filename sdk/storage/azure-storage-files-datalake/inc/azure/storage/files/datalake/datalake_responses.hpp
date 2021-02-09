@@ -18,9 +18,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
 
-  struct FileSystemItem
+  struct FileSystemItemDetails
   {
-    std::string Name;
     Azure::Core::ETag ETag;
     Azure::Core::DateTime LastModified;
     Storage::Metadata Metadata;
@@ -30,6 +29,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Available;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
+  }; // struct FileSystemItemDetails
+
+  struct FileSystemItem
+  {
+    std::string Name;
+    FileSystemItemDetails Details;
   }; // struct BlobContainerItem
 
   struct ListFileSystemsSinglePageResult
@@ -85,7 +90,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
-    std::string NamespaceEnabled;
   };
 
   // PathClient models:
@@ -145,15 +149,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     Core::DateTime CreatedOn;
-    int64_t FileSize;
+    int64_t FileSize = 0;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<bool> IsServerEncrypted;
     Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Core::Nullable<bool> AccessTierInferred;
+    Azure::Core::Nullable<bool> IsAccessTierInferred;
     Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
@@ -218,18 +222,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
   using CopyStatus = Blobs::Models::CopyStatus;
 
-  struct DownloadDataLakeFileResult
+  struct DownloadDataLakeFileDetails
   {
-    std::unique_ptr<Azure::Core::Http::BodyStream> Body;
-    PathHttpHeaders HttpHeaders;
-    int64_t FileSize = int64_t();
-    Azure::Core::Http::Range ContentRange;
-    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
+    PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     Core::DateTime CreatedOn;
     Azure::Core::Nullable<Core::DateTime> ExpiresOn;
@@ -242,6 +242,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> IsCurrentVersion;
+    bool IsServerEncrypted = false;
+    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
+  };
+
+  struct DownloadDataLakeFileResult
+  {
+    std::unique_ptr<Azure::Core::Http::BodyStream> Body;
+    int64_t FileSize = int64_t();
+    Azure::Core::Http::Range ContentRange;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+    DownloadDataLakeFileDetails Details;
     std::string RequestId;
   };
 
@@ -253,14 +265,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct DownloadDataLakeFileToResult
   {
-    Azure::Core::ETag ETag;
-    Core::DateTime LastModified;
-    int64_t ContentLength = 0;
-    PathHttpHeaders HttpHeaders;
-    Storage::Metadata Metadata;
-    Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    std::string RequestId;
+    int64_t FileSize = int64_t();
+    Azure::Core::Http::Range ContentRange;
+    DownloadDataLakeFileDetails Details;
   };
 
   using CreateDataLakeFileResult = CreateDataLakePathResult;
@@ -273,12 +280,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  using SetDataLakePathAccessControlRecursiveListSinglePageResult
+  using SetDataLakePathAccessControlListRecursiveSinglePageResult
       = Details::PathSetAccessControlRecursiveResult;
-  using UpdateDataLakePathAccessControlRecursiveListSinglePageResult
-      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
-  using RemoveDataLakePathAccessControlRecursiveListSinglePageResult
-      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
+  using UpdateDataLakePathAccessControlListRecursiveSinglePageResult
+      = SetDataLakePathAccessControlListRecursiveSinglePageResult;
+  using RemoveDataLakePathAccessControlListRecursiveSinglePageResult
+      = SetDataLakePathAccessControlListRecursiveSinglePageResult;
   using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
   using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
 
