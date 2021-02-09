@@ -3,13 +3,13 @@
 
 #include <algorithm>
 #include <azure/core/base64.hpp>
-#include <azure/core/hash.hpp>
+#include <azure/core/cryptography/hash.hpp>
 #include <gtest/gtest.h>
 #include <random>
 #include <string>
 #include <vector>
 
-using namespace Azure::Core;
+using namespace Azure::Core::Cryptography;
 
 static std::vector<uint8_t> ComputeHash(const std::string& data)
 {
@@ -65,9 +65,9 @@ uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
 TEST(Md5Hash, Basic)
 {
   Md5Hash md5empty;
-  EXPECT_EQ(Base64Encode(md5empty.Final()), "1B2M2Y8AsgTpgAmY7PhCfg==");
-  EXPECT_EQ(Base64Encode(ComputeHash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
-  EXPECT_EQ(Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
+  EXPECT_EQ(Azure::Core::Base64Encode(md5empty.Final()), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
   auto data = RandomBuffer(static_cast<std::size_t>(16777216));
 
@@ -103,8 +103,16 @@ TEST(Md5Hash, ExpectThrow)
   EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
   EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
 
-  EXPECT_EQ(Base64Encode(instance.Final(ptr, data.length())), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(
+      Azure::Core::Base64Encode(instance.Final(ptr, data.length())), "1B2M2Y8AsgTpgAmY7PhCfg==");
   EXPECT_THROW(instance.Final(), std::runtime_error);
   EXPECT_THROW(instance.Final(ptr, data.length()), std::runtime_error);
   EXPECT_THROW(instance.Append(ptr, data.length()), std::runtime_error);
+}
+
+TEST(Md5Hash, CtorDtor)
+{
+  {
+    Md5Hash instance;
+  }
 }

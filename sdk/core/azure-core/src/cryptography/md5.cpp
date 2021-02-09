@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/hash.hpp"
+#include "azure/core/cryptography/hash.hpp"
 #include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace Cryptography {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
@@ -168,4 +168,4 @@ namespace Azure { namespace Core {
   }
 
 #endif
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::Cryptography

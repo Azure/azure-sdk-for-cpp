@@ -11,9 +11,10 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace Cryptography {
 
   /**
    * @brief Represents the base class for hash algorithms which map binary data of an arbitrary
@@ -49,11 +50,12 @@ namespace Azure { namespace Core {
      * calculation.
      * @param length The size of the data provided.
      */
-    virtual void Append(const uint8_t* data, std::size_t length)
+    void Append(const uint8_t* data, std::size_t length)
     {
       if (!data && length != 0)
       {
-        throw std::invalid_argument("Length cannot be non-zero if the data pointer is null.");
+        throw std::invalid_argument(
+            "Length cannot be " + std::to_string(length) + " if the data pointer is null.");
       }
       if (m_isdone)
       {
@@ -71,11 +73,12 @@ namespace Azure { namespace Core {
      * @return The computed hash value corresponding to the input provided, including any previously
      * appended.
      */
-    virtual std::vector<uint8_t> Final(const uint8_t* data, std::size_t length)
+    std::vector<uint8_t> Final(const uint8_t* data, std::size_t length)
     {
       if (!data && length != 0)
       {
-        throw std::invalid_argument("Length cannot be non-zero if the data pointer is null.");
+        throw std::invalid_argument(
+            "Length cannot be " + std::to_string(length) + " if the data pointer is null.");
       }
       if (m_isdone)
       {
@@ -91,7 +94,7 @@ namespace Azure { namespace Core {
      * @remark Do not call this function multiple times.
      * @return The computed hash value corresponding to the input provided.
      */
-    virtual std::vector<uint8_t> Final() { return Final(nullptr, 0); };
+    std::vector<uint8_t> Final() { return Final(nullptr, 0); };
 
     /**
      * @brief Cleanup any state when destroying the instance of @Hash.
@@ -143,4 +146,4 @@ namespace Azure { namespace Core {
     void OnAppend(const uint8_t* data, std::size_t length) override;
   };
 
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::Cryptography
