@@ -73,7 +73,10 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
   };
 
-  // Represents the next HTTP policy in the stack sequence of policies.
+  /**
+   * @brief Represents the next HTTP policy in the stack sequence of policies.
+   *
+   */
   class NextHttpPolicy {
     const std::size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
