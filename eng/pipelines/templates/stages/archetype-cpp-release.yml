@@ -178,7 +178,7 @@ stages:
                           Write-Host "git add -A"
                           git add -A
                           Write-Host "git commit--amend -C (git rev-parse HEAD)"
-                          git commit--amend -C (git rev-parse HEAD)
+                          git commit --amend -C (git rev-parse HEAD)
                         displayName: Commit changes for PR
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
