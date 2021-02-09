@@ -9,4 +9,3 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-template)
-add_subdirectory(azure-template2)
