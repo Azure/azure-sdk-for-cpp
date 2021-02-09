@@ -13,9 +13,9 @@
 
 #include <atomic>
 #include <chrono>
+#include <memory>
 #include <thread>
 #include <vector>
-#include <memory>
 
 namespace Azure { namespace PerformanceStress { namespace Test {
 
