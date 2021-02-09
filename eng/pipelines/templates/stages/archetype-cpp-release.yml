@@ -162,11 +162,7 @@ stages:
                           Write-Host "git add -A"
                           git add -A 
                           Write-Host "git -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" commit -m `"Initial vcpkg commit for ${{ artifact.VcpkgPortName }}`""
-                          git `
-                            -c user.name="azure-sdk" `
-                            -c user.email="azuresdk@microsoft.com" `
-                            commit ` 
-                            -m "Initial vcpkg commit for ${{ artifact.VcpkgPortName }}" 
+                          git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" commit  -m "Initial vcpkg commit for ${{ artifact.VcpkgPortName }}" 
 
                           # Run vcpkg x-add-version to add version to vcpkg file
                           Write-Host "./bootstrap-vcpkg.bat"
@@ -180,12 +176,7 @@ stages:
                           Write-Host "git add -A"
                           git add -A
                           Write-Host "git -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" commit --amend -m `"[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)`""
-                          git `
-                            -c user.name="azure-sdk" `
-                            -c user.email="azuresdk@microsoft.com" `
-                            commit `
-                            --amend `
-                            -m "[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)"
+                          git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" commit --amend -m "[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)"
 
                           # Work around create-pull-request.yml logic that 
                           # checks for changes
