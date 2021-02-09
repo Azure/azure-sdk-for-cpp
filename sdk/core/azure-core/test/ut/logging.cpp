@@ -81,86 +81,113 @@ TEST(Logging, Message)
 
     SetLogLevel(LogLevel::Verbose);
     {
+      level = LogLevel::Error;
       message = "";
 
       Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Verbose);
       EXPECT_EQ(message, "Verbose");
 
       Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Informational);
       EXPECT_EQ(message, "Informational");
 
-      Log(LogLevel::Informational, "Warning");
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Informational, "Error");
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "Error");
     }
 
     SetLogLevel(LogLevel::Informational);
     {
+      level = LogLevel::Error;
       message = "";
 
       Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
       Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Informational);
       EXPECT_EQ(message, "Informational");
 
-      Log(LogLevel::Informational, "Warning");
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Informational, "Error");
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "Error");
     }
 
     SetLogLevel(LogLevel::Warning);
     {
+      level = LogLevel::Error;
       message = "";
 
       Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
       Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Warning");
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Informational, "Error");
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "Error");
     }
 
     SetLogLevel(LogLevel::Error);
     {
+      level = LogLevel::Error;
       message = "";
 
       Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
       Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Warning");
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Error");
+      level = LogLevel::Verbose;
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "Error");
     }
 
     SetLogLevel(LogLevel::Verbose);
     {
+      level = LogLevel::Error;
       message = "";
 
       Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Verbose);
       EXPECT_EQ(message, "Verbose");
 
       Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Informational);
       EXPECT_EQ(message, "Informational");
 
-      Log(LogLevel::Informational, "Warning");
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Informational, "Error");
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "Error");
     }
 
@@ -168,18 +195,25 @@ TEST(Logging, Message)
 
     SetLogLevel(LogLevel::Verbose);
     {
+      level = LogLevel::Error;
       message = "";
 
       Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
       Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Warning");
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Error");
+      level = LogLevel::Verbose;
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Verbose);
       EXPECT_EQ(message, "");
     }
   }

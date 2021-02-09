@@ -17,7 +17,7 @@ LogLevel g_logLevel = LogLevel::Verbose;
 LogListener GetLogListener(LogLevel level)
 {
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
-  return (g_logListener && g_logLevel <= level) ? g_logListener : LogListener(nullptr);
+  return level <= g_logLevel ? g_logListener : LogListener(nullptr);
 }
 } // namespace
 
