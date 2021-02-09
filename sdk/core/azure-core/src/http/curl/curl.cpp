@@ -1148,6 +1148,14 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 
+  uint16_t port = request.GetUrl().GetPort();
+  if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
+
   if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
   {
     throw Azure::Core::Http::TransportException(
