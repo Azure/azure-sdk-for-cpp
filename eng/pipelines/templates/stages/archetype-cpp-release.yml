@@ -155,11 +155,16 @@ stages:
                           $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
                           $version = $packageSpec.version
 
+                          # Set the user for the scope of this particular
+                          # repository
+                          git config user.name "azure-sdk"
+                          git config user.email "azuresdk@microsoft.com"
+
                           # Commit changes
                           Write-Host "git add -A"
                           git add -A 
-                          Write-Host 'git commit --author=`"azure-sdk <azuresdk@microsoft.com>`"  -m "[${{ artifact.VcpkgPortName }}] Update to $version"'
-                          git commit --author="azure-sdk <azuresdk@microsoft.com>"  -am "[${{ artifact.VcpkgPortName }}] Update to $version"
+                          Write-Host 'git commit -m "[${{ artifact.VcpkgPortName }}] Update to $version"'
+                          git commit -am "[${{ artifact.VcpkgPortName }}] Update to $version"
 
                           # Run vcpkg x-add-version to add version to vcpkg file
                           Write-Host "./bootstrap-vcpkg.bat"
@@ -172,8 +177,8 @@ stages:
                           git status
                           Write-Host "git add -A"
                           git add -A
-                          Write-Host "git commit --author=`"azure-sdk <azuresdk@microsoft.com>`" --amend -C (git rev-parse HEAD)"
-                          git commit --author="azure-sdk <azuresdk@microsoft.com>" --amend -C (git rev-parse HEAD)
+                          Write-Host "git commit--amend -C (git rev-parse HEAD)"
+                          git commit--amend -C (git rev-parse HEAD)
                         displayName: Commit changes for PR
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
