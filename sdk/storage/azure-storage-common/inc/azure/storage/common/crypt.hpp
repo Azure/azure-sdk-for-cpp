@@ -11,31 +11,6 @@
 
 namespace Azure { namespace Storage {
 
-  class Md5 {
-  public:
-    Md5();
-    ~Md5();
-
-    void Update(const uint8_t* data, std::size_t length);
-
-    std::vector<uint8_t> Digest() const;
-
-    static std::vector<uint8_t> Hash(const uint8_t* data, std::size_t length)
-    {
-      Md5 instance;
-      instance.Update(data, length);
-      return instance.Digest();
-    }
-
-    static std::vector<uint8_t> Hash(const std::string& data)
-    {
-      return Hash(reinterpret_cast<const uint8_t*>(data.data()), data.length());
-    }
-
-  private:
-    void* m_context;
-  };
-
   class Crc64 {
   public:
     void Update(const uint8_t* data, std::size_t length);
