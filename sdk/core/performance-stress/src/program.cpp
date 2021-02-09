@@ -14,26 +14,19 @@
 namespace {
 
 inline std::unique_ptr<Azure::PerformanceStress::PerformanceTest> PrintAvailableTests(
-    std::map<
-        std::string,
-        std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::TestOptions)>> const& tests)
+    std::vector<Azure::PerformanceStress::TestMetadata> const& tests)
 {
-  std::cout << "Available tests to run:" << std::endl;
+  std::cout << "No test name found in the input. Available tests to run:" << std::endl;
+  std::cout << std::endl << "Name\t\tDescription" << std::endl;
   for (auto test : tests)
   {
-    std::cout << "  - " << test.first << std::endl;
+    std::cout << test.Name << "\t\t" << test.Description << std::endl;
   }
   return nullptr;
 }
 
-inline std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-    Azure::PerformanceStress::TestOptions)>
-GetTest(
-    std::map<
-        std::string,
-        std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::TestOptions)>> const& tests,
+inline Azure::PerformanceStress::TestMetadata const* GetTestMetadata(
+    std::vector<Azure::PerformanceStress::TestMetadata> const& tests,
     int argc,
     char** argv)
 {
@@ -46,11 +39,11 @@ GetTest(
 
   auto testName = std::string(args.pos[0]);
 
-  for (auto test : tests)
+  for (auto& test : tests)
   {
-    if (Azure::Core::Internal::Strings::LocaleInvariantCaseInsensitiveEqual(test.first, testName))
+    if (Azure::Core::Internal::Strings::LocaleInvariantCaseInsensitiveEqual(test.Name, testName))
     {
-      return test.second;
+      return &test;
     }
   }
   return nullptr;
@@ -109,7 +102,7 @@ inline void PrintOptions(
         throw;
       }
     }
-    std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl;
+    std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl << std::endl;
   }
 }
 
@@ -278,15 +271,13 @@ inline void RunTests(
 
 void Azure::PerformanceStress::Program::Run(
     Azure::Core::Context const& context,
-    std::map<
-        std::string,
-        std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::TestOptions)>> const& tests,
+    std::vector<Azure::PerformanceStress::TestMetadata> const& tests,
     int argc,
     char** argv)
 {
   // Parse args only to get the test name first
-  auto testGenerator = GetTest(tests, argc, argv);
+  auto testMetadata = GetTestMetadata(tests, argc, argv);
+  auto const& testGenerator = testMetadata->Factory;
   if (testGenerator == nullptr)
   {
     // Wrong input. Print what are the options.
@@ -304,8 +295,12 @@ void Azure::PerformanceStress::Program::Run(
 
   if (options.JobStatistics)
   {
-    std::cout << "Application started." << std::endl;
+    std::cout << std::endl << "Application started." << std::endl;
   }
+
+  // Print test metadata
+  std::cout << std::endl << "Running test: " << testMetadata->Name;
+  std::cout << std::endl << "Description: " << testMetadata->Description << std::endl;
 
   // Print options
   PrintOptions(options, testOptions, argResults);

@@ -10,13 +10,9 @@
 #pragma once
 
 #include "azure/performance-stress/argagg.hpp"
-#include "azure/performance-stress/test.hpp"
+#include "azure/performance-stress/test_metadata.hpp"
 
-#include <functional>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <string>
+#include <vector>
 
 namespace Azure { namespace PerformanceStress {
   /**
@@ -47,10 +43,7 @@ namespace Azure { namespace PerformanceStress {
      */
     static void Run(
         Azure::Core::Context const& context,
-        std::map<
-            std::string,
-            std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-                Azure::PerformanceStress::TestOptions)>> const& tests,
+        std::vector<Azure::PerformanceStress::TestMetadata> const& tests,
         int argc,
         char** argv);
   };
