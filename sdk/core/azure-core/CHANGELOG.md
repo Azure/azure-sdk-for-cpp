@@ -2,10 +2,6 @@
 
 ## 1.0.0-beta.6 (Unreleased)
 
-### Breaking Changes
-
-- Removed `LogClassification` and related functionality, added `LogLevel` instead.
-
 ### New Features
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
@@ -14,6 +10,7 @@
 ### Breaking Changes
 
 - Remove `Context::CancelWhen()`.
+- Removed `LogClassification` and related functionality, added `LogLevel` instead.
 
 ### Bug Fixes
 
