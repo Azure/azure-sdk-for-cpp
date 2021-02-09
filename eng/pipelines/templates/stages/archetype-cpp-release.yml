@@ -179,6 +179,10 @@ stages:
                           git add -A
                           Write-Host "git commit--amend -C (git rev-parse HEAD)"
                           git commit --amend -C (git rev-parse HEAD)
+
+                          # Work around create-pull-request.yml logic that 
+                          # checks for changes
+                          Write-Host "##vso[task.setvariable variable=HasChanges]$true"
                         displayName: Commit changes for PR
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
