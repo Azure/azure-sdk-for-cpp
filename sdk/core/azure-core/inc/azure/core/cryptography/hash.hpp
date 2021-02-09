@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     std::vector<uint8_t> Final() { return Final(nullptr, 0); };
 
     /**
-     * @brief Cleanup any state when destroying the instance of @Hash.
+     * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Hash.
      */
     virtual ~Hash(){};
 
@@ -113,12 +113,12 @@ namespace Azure { namespace Core { namespace Cryptography {
 
   public:
     /**
-     * @brief Construct a default instance of @Md5Hash.
+     * @brief Construct a default instance of #Azure::Core::Cryptography::Md5Hash.
      */
     explicit Md5Hash();
 
     /**
-     * @brief Cleanup any state when destroying the instance of @Md5Hash.
+     * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Md5Hash.
      */
     ~Md5Hash();
 
