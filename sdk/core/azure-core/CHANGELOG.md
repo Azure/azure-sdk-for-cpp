@@ -10,6 +10,7 @@
 ### Breaking Changes
 
 - Remove `Context::CancelWhen()`.
+- Removed `LogClassification` and related functionality, added `LogLevel` instead.
 
 ### Bug Fixes
 
