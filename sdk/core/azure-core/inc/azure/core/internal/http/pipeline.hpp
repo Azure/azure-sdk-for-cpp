@@ -16,7 +16,7 @@
 
 #include <vector>
 
-namespace Azure { namespace Core { namespace Http {
+namespace Azure { namespace Core { namespace Internal { namespace Http {
 
   /**
    * @brief HTTP pipeline is a stack of HTTP policies that get applied sequentially.
@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class HttpPipeline {
   protected:
-    std::vector<std::unique_ptr<HttpPolicy>> m_policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> m_policies;
 
   public:
     /**
@@ -40,7 +40,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
-    explicit HttpPipeline(const std::vector<std::unique_ptr<HttpPolicy>>& policies)
+    explicit HttpPipeline(
+        const std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>& policies)
     {
       if (policies.size() == 0)
       {
@@ -62,7 +63,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
-    explicit HttpPipeline(std::vector<std::unique_ptr<HttpPolicy>>&& policies)
+    explicit HttpPipeline(std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& policies)
         : m_policies(std::move(policies))
     {
       if (m_policies.size() == 0)
@@ -95,11 +96,13 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return HTTP response after the request has been processed.
      */
-    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& request) const
+    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+        Context const& ctx,
+        Azure::Core::Http::Request& request) const
     {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
-      return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, m_policies));
+      return m_policies[0]->Send(ctx, request, Azure::Core::Http::NextHttpPolicy(0, m_policies));
     }
   };
-}}} // namespace Azure::Core::Http
+}}}} // namespace Azure::Core::Internal::Http

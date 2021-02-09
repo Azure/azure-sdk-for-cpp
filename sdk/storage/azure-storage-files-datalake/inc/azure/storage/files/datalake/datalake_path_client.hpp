@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <azure/core/credentials.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_client.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -270,12 +270,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   protected:
     Azure::Core::Http::Url m_pathUrl;
     Blobs::BlobClient m_blobClient;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakePathClient(
         Azure::Core::Http::Url pathUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline)
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
           m_pipeline(std::move(pipeline))
     {
