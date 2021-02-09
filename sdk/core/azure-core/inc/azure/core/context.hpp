@@ -19,7 +19,8 @@
 namespace Azure { namespace Core {
 
   /**
-   * @ A base abstract class for the `std::unique_ptr` value representation in #ContextValue.
+   * @brief A base abstract class for the `std::unique_ptr` value representation in #ContextValue.
+   *
    */
   struct ValueBase
   {

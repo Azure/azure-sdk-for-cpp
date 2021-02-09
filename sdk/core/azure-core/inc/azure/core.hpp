@@ -18,12 +18,14 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/etag.hpp"
 #include "azure/core/match_conditions.hpp"
-#include "azure/core/md5.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/request_conditions.hpp"
 #include "azure/core/response.hpp"
 #include "azure/core/uuid.hpp"
 #include "azure/core/version.hpp"
+
+// azure/core/cryptography
+#include "azure/core/cryptography/hash.hpp"
 
 // azure/core/http
 #include "azure/core/http/body_stream.hpp"
