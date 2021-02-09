@@ -159,7 +159,7 @@ stages:
                           Write-Host "git add -A"
                           git add -A 
                           Write-Host 'git commit -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" -m "[${{ artifact.VcpkgPortName }}] Update to $version"'
-                          git commit -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" -m "${{ artifact.VcpkgPortName }}] Update to $version"
+                          git commit -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" -am "${{ artifact.VcpkgPortName }}] Update to $version"
 
                           # Run vcpkg x-add-version to add version to vcpkg file
                           Write-Host "./bootstrap-vcpkg.bat"
@@ -175,11 +175,7 @@ stages:
                           Write-Host "git commit -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" --amend -C (git rev-parse HEAD)"
                           git commit -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" --amend -C (git rev-parse HEAD)
                         displayName: Commit changes for PR
-                        condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
-                      # This template does not need to check the 
-                      # SkipVcpkgUpdate variable, it will stop if there are no
-                      # changes in the git repo.
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoOwner: Microsoft
