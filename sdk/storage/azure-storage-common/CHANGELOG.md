@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- Remove the `Azure::Storage::Md5` class from `crypt.hpp`. Use the type from `Azure::Core` namespace instead, from `azure/core/md5.hpp`.
+- Remove the `Azure::Storage::Md5` class from `crypt.hpp`. Use the type from `Azure::Core::Cryptography` namespace instead, from `azure/core/cryptography/hash.hpp`.
 
 ## 12.0.0-beta.7 (2021-02-03)
 
