@@ -169,6 +169,7 @@ TEST(Logging, Message)
       EXPECT_EQ(message, "Error");
     }
 
+    // Verify that we can switch back to Verbose 
     SetLogLevel(LogLevel::Verbose);
     {
       level = LogLevel::Error;
