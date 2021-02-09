@@ -46,6 +46,21 @@ namespace Azure { namespace PerformanceStress { namespace Test {
     }
 
     void GlobalCleanup() override { curl_global_cleanup(); }
+
+    /**
+     * @brief Get the static Test Metadata for the test.
+     *
+     * @return Azure::PerformanceStress::TestMetadata describing the test.
+     */
+    static Azure::PerformanceStress::TestMetadata GetTestMetadata()
+    {
+      return {
+          "curlHttpClientGet",
+          "Send an Http Get request to a configurable url using libcurl.",
+          [](Azure::PerformanceStress::TestOptions options) {
+            return std::make_unique<Azure::PerformanceStress::Test::CurlHttpClientGetTest>(options);
+          }};
+    }
   };
 
 }}} // namespace Azure::PerformanceStress::Test

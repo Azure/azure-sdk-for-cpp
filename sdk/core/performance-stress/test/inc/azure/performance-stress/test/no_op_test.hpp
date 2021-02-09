@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include <azure/performance-stress/options.hpp>
-#include <azure/performance-stress/test.hpp>
+#include <azure/performance_framework.hpp>
+
+#include <memory>
 
 namespace Azure { namespace PerformanceStress { namespace Test {
 
@@ -33,6 +34,21 @@ namespace Azure { namespace PerformanceStress { namespace Test {
      * @param ctx The cancellation token.
      */
     void Run(Azure::Core::Context const&) override {}
+
+    /**
+     * @brief Get the static Test Metadata for the test.
+     *
+     * @return Azure::PerformanceStress::TestMetadata describing the test.
+     */
+    static Azure::PerformanceStress::TestMetadata GetTestMetadata()
+    {
+      return {
+          "NoOp",
+          "Simplest test to measure the performance framework speed.",
+          [](Azure::PerformanceStress::TestOptions options) {
+            return std::make_unique<Azure::PerformanceStress::Test::NoOp>(options);
+          }};
+    }
   };
 
 }}} // namespace Azure::PerformanceStress::Test

@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include <azure/performance-stress/options.hpp>
-#include <azure/performance-stress/test.hpp>
-#include <azure/performance-stress/test_options.hpp>
+#include <azure/performance_framework.hpp>
 
 #include <azure/core/http/body_stream.hpp>
 #include <azure/core/http/http.hpp>

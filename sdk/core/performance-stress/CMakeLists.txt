@@ -14,6 +14,7 @@ set(
   inc/azure/performance-stress/dynamic_test_options.hpp
   inc/azure/performance-stress/options.hpp
   inc/azure/performance-stress/program.hpp
+  inc/azure/performance-stress/test_metadata.hpp
   inc/azure/performance-stress/test.hpp
   inc/azure/performance-stress/test_options.hpp
 )

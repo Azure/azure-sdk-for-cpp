@@ -10,8 +10,9 @@
 
 #pragma once
 
-#include <azure/performance-stress/options.hpp>
-#include <azure/performance-stress/test.hpp>
+#include <azure/performance_framework.hpp>
+
+#include <memory>
 
 namespace Azure { namespace PerformanceStress { namespace Test {
 
@@ -43,6 +44,21 @@ namespace Azure { namespace PerformanceStress { namespace Test {
       {
         // just ignore
       }
+    }
+
+    /**
+     * @brief Get the static Test Metadata for the test.
+     *
+     * @return Azure::PerformanceStress::TestMetadata describing the test.
+     */
+    static Azure::PerformanceStress::TestMetadata GetTestMetadata()
+    {
+      return {
+          "exception",
+          "Measure how the impact of catching a runtime exception.",
+          [](Azure::PerformanceStress::TestOptions options) {
+            return std::make_unique<Azure::PerformanceStress::Test::ExceptionTest>(options);
+          }};
     }
   };
 
