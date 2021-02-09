@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.0-beta.28 (2020-02-09)
+
+* Validate vcpkg publishing automation with x-add-version
+* Update PR naming
+
 ## 1.0.0-beta.27 (2020-02-09)
 
 * Validate vcpkg publishing automation with x-add-version
