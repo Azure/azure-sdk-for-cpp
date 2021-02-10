@@ -158,6 +158,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
+    unused(options);
     Details::BlobRestClient::Service::SetServicePropertiesOptions protocolLayerOptions;
     protocolLayerOptions.Properties = std::move(properties);
     return Details::BlobRestClient::Service::SetProperties(
@@ -168,6 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
+    unused(options);
     Details::BlobRestClient::Service::GetServicePropertiesOptions protocolLayerOptions;
     return Details::BlobRestClient::Service::GetProperties(
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
@@ -177,6 +179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetAccountInfoOptions& options,
       const Azure::Core::Context& context) const
   {
+    unused(options);
     Details::BlobRestClient::Service::GetAccountInfoOptions protocolLayerOptions;
     return Details::BlobRestClient::Service::GetAccountInfo(
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
@@ -186,6 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetBlobServiceStatisticsOptions& options,
       const Azure::Core::Context& context) const
   {
+    unused(options);
     Details::BlobRestClient::Service::GetServiceStatisticsOptions protocolLayerOptions;
     return Details::BlobRestClient::Service::GetStatistics(
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
