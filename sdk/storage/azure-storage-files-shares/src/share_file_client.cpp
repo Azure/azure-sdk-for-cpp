@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           throw Azure::Core::RequestFailedException(
               "File was changed during the download process.");
         }
-        return std::move(Download(newOptions, context)->BodyStream);
+        return std::move(newResponse->BodyStream);
       };
 
       ReliableStreamOptions reliableStreamOptions;
