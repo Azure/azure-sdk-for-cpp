@@ -16,6 +16,8 @@ namespace Azure { namespace Storage {
   public:
     void Concatenate(const Crc64Hash& other);
 
+    ~Crc64Hash() override = default;
+
   private:
     uint64_t m_context = 0ULL;
     uint64_t m_length = 0ULL;
