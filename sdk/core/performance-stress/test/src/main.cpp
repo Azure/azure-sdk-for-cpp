@@ -14,6 +14,8 @@
 #include "azure/performance-stress/test/exception_test.hpp"
 #include "azure/performance-stress/test/no_op_test.hpp"
 
+#include <vector>
+
 int main(int argc, char** argv)
 {
 

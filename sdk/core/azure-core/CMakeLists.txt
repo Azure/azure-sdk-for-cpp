@@ -140,3 +140,7 @@ az_vcpkg_export(
     CORE
     "azure/core/dll_import_export.hpp"
   )
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/performance)
+endif()

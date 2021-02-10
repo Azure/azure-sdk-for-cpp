@@ -17,7 +17,7 @@ inline std::unique_ptr<Azure::PerformanceStress::PerformanceTest> PrintAvailable
     std::vector<Azure::PerformanceStress::TestMetadata> const& tests)
 {
   std::cout << "No test name found in the input. Available tests to run:" << std::endl;
-  std::cout << std::endl << "Name\t\tDescription" << std::endl;
+  std::cout << std::endl << "Name\t\tDescription" << std::endl << "---\t\t---" << std::endl;
   for (auto test : tests)
   {
     std::cout << test.Name << "\t\t" << test.Description << std::endl;
@@ -82,7 +82,8 @@ inline void PrintOptions(
     {
       try
       {
-        optionsJs[option.Name] = parsedArgs[option.Name].as<std::string>();
+        optionsJs[option.Name]
+            = option.sensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
       }
       catch (std::out_of_range const&)
       {
@@ -278,7 +279,7 @@ void Azure::PerformanceStress::Program::Run(
   // Parse args only to get the test name first
   auto testMetadata = GetTestMetadata(tests, argc, argv);
   auto const& testGenerator = testMetadata->Factory;
-  if (testGenerator == nullptr)
+  if (testMetadata == nullptr)
   {
     // Wrong input. Print what are the options.
     PrintAvailableTests(tests);

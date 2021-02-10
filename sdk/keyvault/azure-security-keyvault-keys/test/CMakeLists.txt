@@ -48,3 +48,7 @@ gtest_discover_tests(azure-security-keyvault-keys-test-live
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
 )
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(performance)
+endif()

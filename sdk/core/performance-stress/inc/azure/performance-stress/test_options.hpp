@@ -48,5 +48,11 @@ namespace Azure { namespace PerformanceStress {
      *
      */
     bool required = false;
+
+    /**
+     * @brief Make the option to be replaced with **** on all outputs
+     *
+     */
+    bool sensitiveData = false;
   };
 }} // namespace Azure::PerformanceStress
