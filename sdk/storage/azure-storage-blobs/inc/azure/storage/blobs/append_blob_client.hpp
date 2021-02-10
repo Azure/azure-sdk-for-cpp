@@ -107,37 +107,40 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new 0-length append blob. The content of any existing blob is
      * overwritten with the newly initialized append blob.
      *
-     * @param options Optional
-     * parameters to execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreateAppendBlobResult describing the newly created append blob.
      */
     Azure::Core::Response<Models::CreateAppendBlobResult> Create(
-        const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
+        const CreateAppendBlobOptions& options = CreateAppendBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new 0-length append blob. The content keeps unchanged if the blob already
      * exists.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreateAppendBlobResult describing the newly created append blob.
      * CreateAppendBlobResult.Created is false if the blob already exists.
      */
     Azure::Core::Response<Models::CreateAppendBlobResult> CreateIfNotExists(
-        const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
+        const CreateAppendBlobOptions& options = CreateAppendBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Commits a new block of data, represented by the content BodyStream to the end
      * of the existing append blob.
      *
-     * @param content A BodyStream containing the
-     * content of the block to append.
-     * @param options Optional parameters to execute this
-     * function.
+     * @param content A BodyStream containing the content of the block to append.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A AppendBlockResult describing the state of the updated append blob.
      */
     Azure::Core::Response<Models::AppendBlockResult> AppendBlock(
         Azure::Core::Http::BodyStream* content,
-        const AppendBlockOptions& options = AppendBlockOptions()) const;
+        const AppendBlockOptions& options = AppendBlockOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Commits a new block of data, represented by the content BodyStream to the end
@@ -147,22 +150,25 @@ namespace Azure { namespace Storage { namespace Blobs {
      * blob. The value may be a uri of up to 2 KB in length that specifies a blob. The source blob
      * must either be public or must be authenticated via a shared access signature. If the source
      * blob is public, no authentication is required to perform the operation.
-     * @param options
-     * Optional parameters to execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
     Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
-        const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
+        const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Seals the append blob, making it read only. Any subsequent appends will fail.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SealAppendBlobResult describing the state of the sealed append blob.
      */
     Azure::Core::Response<Models::SealAppendBlobResult> Seal(
-        const SealAppendBlobOptions& options = SealAppendBlobOptions()) const;
+        const SealAppendBlobOptions& options = SealAppendBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     explicit AppendBlobClient(BlobClient blobClient);

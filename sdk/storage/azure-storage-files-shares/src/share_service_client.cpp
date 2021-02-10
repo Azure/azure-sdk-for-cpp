@@ -93,7 +93,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::ListSharesSinglePageResult>
-  ShareServiceClient::ListSharesSinglePage(const ListSharesSinglePageOptions& options) const
+  ShareServiceClient::ListSharesSinglePage(
+      const ListSharesSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesIncludeFlags;
@@ -101,25 +103,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
     return Details::ShareRestClient::Service::ListSharesSinglePage(
-        m_serviceUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(
       Models::FileServiceProperties properties,
-      const SetServicePropertiesOptions& options) const
+      const SetServicePropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
     protocolLayerOptions.ServiceProperties = std::move(properties);
     return Details::ShareRestClient::Service::SetProperties(
-        m_serviceUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetServicePropertiesResult> ShareServiceClient::GetProperties(
-      const GetServicePropertiesOptions& options) const
+      const GetServicePropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
     auto result = Details::ShareRestClient::Service::GetProperties(
-        m_serviceUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
     Models::FileServiceProperties ret;
     ret.Cors = std::move(result->Cors);
     ret.HourMetrics = std::move(result->HourMetrics);

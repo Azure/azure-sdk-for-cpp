@@ -74,7 +74,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::Create(
-      const CreateAppendBlobOptions& options) const
+      const CreateAppendBlobOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
@@ -93,17 +94,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::AppendBlob::Create(
-        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
-      const CreateAppendBlobOptions& options) const
+      const CreateAppendBlobOptions& options,
+      const Azure::Core::Context& context) const
   {
     auto optionsCopy = options;
     optionsCopy.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
     try
     {
-      return Create(optionsCopy);
+      return Create(optionsCopy, context);
     }
     catch (StorageException& e)
     {
@@ -122,7 +124,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
-      const AppendBlockOptions& options) const
+      const AppendBlockOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
@@ -142,12 +145,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
-      const AppendBlockFromUriOptions& options) const
+      const AppendBlockFromUriOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
@@ -169,11 +173,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::AppendBlob::AppendBlockFromUri(
-        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
-      const SealAppendBlobOptions& options) const
+      const SealAppendBlobOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -184,7 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::AppendBlob::Seal(
-        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

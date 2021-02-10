@@ -1,10 +1,11 @@
 # Release History
 
-## 12.0.0-beta.8 (Unreleased)
+## 12.0.0-beta.8 (2021-02-12)
 
 ### Breaking Changes
 
 - Removed `BreakBlobLeaseResult::Leasetime`.
+- Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
 
 ## 12.0.0-beta.7 (2021-02-03)
 
