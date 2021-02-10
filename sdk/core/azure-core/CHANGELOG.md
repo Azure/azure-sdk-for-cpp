@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.6 (Unreleased)
+## 1.0.0-beta.6 (2021-02-09)
 
 ### New Features
 
@@ -9,12 +9,14 @@
 
 ### Breaking Changes
 
-- Remove `Context::CancelWhen()`.
+- Removed `Context::CancelWhen()`.
 - Removed `LogClassification` and related functionality, added `LogLevel` instead.
 
 ### Bug Fixes
 
 - Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+- Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.
+- Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.
 
 ## 1.0.0-beta.5 (2021-02-02)
 
