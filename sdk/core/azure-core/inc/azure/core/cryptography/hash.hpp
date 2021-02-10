@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <cstdint>
 #include <stdexcept>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
@@ -94,12 +94,12 @@ namespace Azure { namespace Core { namespace Cryptography {
      * @remark Do not call this function multiple times.
      * @return The computed hash value corresponding to the input provided.
      */
-    std::vector<uint8_t> Final() { return Final(nullptr, 0); };
+    std::vector<uint8_t> Final() { return Final(nullptr, 0); }
 
     /**
      * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Hash.
      */
-    virtual ~Hash(){};
+    virtual ~Hash() = default;
 
   private:
     bool m_isDone = false;
@@ -115,19 +115,18 @@ namespace Azure { namespace Core { namespace Cryptography {
     /**
      * @brief Construct a default instance of #Azure::Core::Cryptography::Md5Hash.
      */
-    explicit Md5Hash();
+    Md5Hash();
 
     /**
      * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Md5Hash.
      */
-    ~Md5Hash();
+    ~Md5Hash() override;
 
   private:
     void* m_md5Context;
 
-    // Delete the copy and move constructors, along with the assignment operator.
+    // Delete the copy constructor, along with the assignment operator.
     Md5Hash(Md5Hash const&) = delete;
-    Md5Hash(Md5Hash const&&) = delete;
     void operator=(Md5Hash const&) = delete;
 
     /**
