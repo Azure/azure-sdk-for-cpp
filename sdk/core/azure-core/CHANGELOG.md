@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+- Split `Azure::Core::RequestConditions` into `Azure::Core::MatchConditions` and `Azure::Core::ModifiedConditions`.
 - Removed `TransportKind` enum from `Azure::Core::Http`.
 
 ## 1.0.0-beta.6 (2021-02-09)
