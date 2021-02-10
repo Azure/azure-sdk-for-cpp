@@ -2,7 +2,7 @@
 
 ## 1.0.0-beta.7 (Unreleased)
 
-### New Features
+### Breaking Changes
 
 - Moved `Azure::Core::Http::HttpPipeline` to the internal layer `Azure::Core::Internal::Http::HttpPipeline`.
 
