@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0-beta.7 (Unreleased)
+
+### Breaking Changes
+
+- Removed `TransportKind` enum from `Azure::Core::Http`.
+
 ## 1.0.0-beta.6 (2021-02-09)
 
 ### New Features
