@@ -43,6 +43,11 @@ namespace Azure { namespace Core { namespace Cryptography {
 
   public:
     /**
+     * @brief Construct a default instance of #Azure::Core::Cryptography::Hash.
+     */
+    Hash() = default;
+
+    /**
      * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
      * @remark Once all the data has been added, call #Final() to get the computed hash value.
      * @remark Do not call this function after a call to #Final().
@@ -103,6 +108,10 @@ namespace Azure { namespace Core { namespace Cryptography {
 
   private:
     bool m_isDone = false;
+
+    // Delete the copy constructor, along with the assignment operator.
+    Hash(Hash const&) = delete;
+    void operator=(Hash const&) = delete;
   };
 
   /**
@@ -124,10 +133,6 @@ namespace Azure { namespace Core { namespace Cryptography {
 
   private:
     void* m_md5Context;
-
-    // Delete the copy constructor, along with the assignment operator.
-    Md5Hash(Md5Hash const&) = delete;
-    void operator=(Md5Hash const&) = delete;
 
     /**
      * @brief Computes the hash value of the specified binary input data, including any previously
