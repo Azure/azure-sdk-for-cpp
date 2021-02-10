@@ -65,11 +65,11 @@ set(
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/match_conditions.hpp
+    inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
-    inc/azure/core/request_conditions.hpp
     inc/azure/core/response.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core/version.hpp
