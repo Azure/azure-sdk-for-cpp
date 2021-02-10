@@ -87,6 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to append data to the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::AppendDataLakeFileResult> containing the
      * information returned when appending some data to the path.
      * @remark This request is sent to dfs endpoint.
@@ -94,7 +95,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Response<Models::AppendDataLakeFileResult> Append(
         Azure::Core::Http::BodyStream* content,
         int64_t offset,
-        const AppendDataLakeFileOptions& options = AppendDataLakeFileOptions()) const;
+        const AppendDataLakeFileOptions& options = AppendDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Flushes previous uploaded data to a file.
@@ -107,70 +109,83 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to flush data to the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::FlushDataLakeFileResult> containing the information
      * returned when flushing the data appended to the path.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::FlushDataLakeFileResult> Flush(
         int64_t position,
-        const FlushDataLakeFileOptions& options = FlushDataLakeFileOptions()) const;
+        const FlushDataLakeFileOptions& options = FlushDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Create a file. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::CreateDataLakeFileResult> containing the information
      * returned when creating the file.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::CreateDataLakeFileResult> Create(
-        const CreateDataLakeFileOptions& options = CreateDataLakeFileOptions()) const
+        const CreateDataLakeFileOptions& options = CreateDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return DataLakePathClient::Create(Models::PathResourceType::File, options);
+      return DataLakePathClient::Create(Models::PathResourceType::File, options, context);
     }
 
     /**
      * @brief Create a file. If it already exists, it will remain unchanged.
      * @param options Optional parameters to create the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::CreateDataLakeFileResult> containing the information
      * returned when creating the file.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::CreateDataLakeFileResult> CreateIfNotExists(
-        const CreateDataLakeFileOptions& options = CreateDataLakeFileOptions()) const
+        const CreateDataLakeFileOptions& options = CreateDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return DataLakePathClient::CreateIfNotExists(Models::PathResourceType::File, options);
+      return DataLakePathClient::CreateIfNotExists(
+          Models::PathResourceType::File, options, context);
     }
 
     /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete the file the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DeleteDataLakeFileResult>
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeleteDataLakeFileResult> Delete(
-        const DeleteDataLakeFileOptions& options = DeleteDataLakeFileOptions()) const;
+        const DeleteDataLakeFileOptions& options = DeleteDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the file if it already exists.
      * @param options Optional parameters to delete the file the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DeleteDataLakeFileResult>
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeleteDataLakeFileResult> DeleteIfExists(
-        const DeleteDataLakeFileOptions& options = DeleteDataLakeFileOptions()) const;
+        const DeleteDataLakeFileOptions& options = DeleteDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Download the contents of a file. For download operations, range requests are
      * supported.
      * @param options Optional parameters to download the content from the resource the path points
      * to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DownloadDataLakeFileResult> containing the information
      * and content returned when downloading from a file.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::DownloadDataLakeFileResult> Download(
-        const DownloadDataLakeFileOptions& options = DownloadDataLakeFileOptions()) const;
+        const DownloadDataLakeFileOptions& options = DownloadDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
@@ -178,6 +193,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<UploadDataLakeFileFromResult> containing the information
      * returned when uploading a file from a buffer.
      * @remark This request is sent to blob endpoint.
@@ -185,20 +201,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Response<Models::UploadDataLakeFileFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const UploadDataLakeFileFromOptions& options = UploadDataLakeFileFromOptions()) const;
+        const UploadDataLakeFileFromOptions& options = UploadDataLakeFileFromOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
      * an existing file overwrites any existing metadata on the file.
      * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::UploadDataLakeFileFromResult> containing the
      * information returned when uploading a file from a local file.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::UploadDataLakeFileFromResult> UploadFrom(
         const std::string& fileName,
-        const UploadDataLakeFileFromOptions& options = UploadDataLakeFileFromOptions()) const;
+        const UploadDataLakeFileFromOptions& options = UploadDataLakeFileFromOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Downloads a file or a file range from the service to a memory buffer using parallel
@@ -207,6 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the file
      * or file range.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DownloadDataLakeFileToResult> containing the
      * information returned when downloading a file to a local buffer.
      * @remark This request is sent to blob endpoint.
@@ -214,33 +234,37 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Response<Models::DownloadDataLakeFileToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const DownloadDataLakeFileToOptions& options = DownloadDataLakeFileToOptions()) const;
+        const DownloadDataLakeFileToOptions& options = DownloadDataLakeFileToOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Downloads a file or a file range from the service to a file using parallel
      * requests.
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DownloadDataLakeFileToResult> containing the
      * information returned when downloading a file to a local file.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::DownloadDataLakeFileToResult> DownloadTo(
         const std::string& fileName,
-        const DownloadDataLakeFileToOptions& options = DownloadDataLakeFileToOptions()) const;
+        const DownloadDataLakeFileToOptions& options = DownloadDataLakeFileToOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Schedules the file for deletion.
      * @param expiryOrigin Specify the origin of expiry.
      * @param options Optional parameters to schedule the file for deletion.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::ScheduleDataLakeFileDeletionResult> containing the
      * information and content returned when schedule the file for deletion.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::ScheduleDataLakeFileDeletionResult> ScheduleDeletion(
         ScheduleDataLakeFileExpiryOriginType expiryOrigin,
-        const ScheduleDataLakeFileDeletionOptions& options
-        = ScheduleDataLakeFileDeletionOptions()) const;
+        const ScheduleDataLakeFileDeletionOptions& options = ScheduleDataLakeFileDeletionOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     Blobs::BlockBlobClient m_blockBlobClient;

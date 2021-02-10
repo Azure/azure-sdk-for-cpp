@@ -48,11 +48,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct ListSharesSinglePageOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Filters the results to return only entries whose name begins with the specified
      * prefix.
      */
@@ -81,27 +76,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct SetServicePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct GetServicePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct CreateShareOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
@@ -122,11 +104,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct DeleteShareOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
      */
     Azure::Core::Nullable<bool> DeleteSnapshots;
@@ -135,11 +112,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct CreateShareSnapshotOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The metadata to be set on the snapshot of the share.
      */
     Storage::Metadata Metadata;
@@ -147,19 +119,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct GetSharePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct SetSharePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
@@ -174,50 +137,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct SetShareMetadataOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct GetShareAccessPolicyOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct SetShareAccessPolicyOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct GetShareStatsOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct CreateSharePermissionOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct GetSharePermissionOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -225,10 +164,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct AcquireShareLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -236,10 +171,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct ChangeShareLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -247,10 +178,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct ReleaseShareLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -258,11 +185,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct BreakShareLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Proposed duration the lease should continue before it is broken, in seconds,
      * between 0 and 60. This break period is only used if it is shorter than the time remaining on
@@ -278,19 +200,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct RenewShareLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct CreateShareDirectoryOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief A name-value pair to associate with a directory object.
      */
@@ -310,27 +223,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct DeleteShareDirectoryOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct GetShareDirectoryPropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct SetShareDirectoryPropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief If specified the permission (security descriptor) shall be set for the directory.
      * This option can be used if Permission size is <= 8KB, else SmbProperties.PermissionKey
@@ -342,19 +242,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct SetShareDirectoryMetadataOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct ListFilesAndDirectoriesSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Filters the results to return only entries whose name begins with the specified
      * prefix.
@@ -380,11 +271,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct ListShareDirectoryHandlesSinglePageOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
      * returned was not complete. The marker value may then be used in a subsequent call to request
@@ -408,19 +294,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ForceCloseShareDirectoryHandleOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct ForceCloseAllShareDirectoryHandlesSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
      * close operation. The operation returns a marker value within the response body if the force
@@ -438,11 +315,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct CreateShareFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
      * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
@@ -473,11 +345,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct DeleteShareFileOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
@@ -485,11 +352,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct DownloadShareFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Downloads only the bytes of the file from this range.
      */
@@ -509,11 +371,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct StartCopyShareFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
@@ -557,11 +414,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct AbortCopyShareFileOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
@@ -570,11 +422,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct GetShareFilePropertiesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
@@ -582,11 +429,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct SetShareFilePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
      * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
@@ -607,11 +449,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct SetShareFileMetadataOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
@@ -619,11 +456,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct UploadShareFileRangeOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief An MD5 hash of the content. This hash is used to verify the integrity of the data
      * during transport. When the TransactionalContentHash parameter is specified, the File service
@@ -641,11 +473,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct ClearShareFileRangeOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
@@ -653,11 +480,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct UploadFileRangeFromUriOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the hash calculated for the range of bytes that must be read from the copy
      * source.
@@ -678,11 +500,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct GetShareFileRangeListOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The range to be get from service.
      */
     Azure::Core::Nullable<Core::Http::Range> Range;
@@ -702,11 +519,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct ListShareFileHandlesSinglePageOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
      * returned was not complete. The marker value may then be used in a subsequent call to request
@@ -724,19 +536,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ForceCloseShareFileHandleOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   struct ForceCloseAllShareFileHandlesSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
      * close operation. The operation returns a marker value within the response body if the force
@@ -751,11 +554,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct DownloadShareFileToOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Downloads only the bytes of the file from this range.
      */
@@ -787,11 +585,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct UploadShareFileFromOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief The standard HTTP header system properties to set.
      */
