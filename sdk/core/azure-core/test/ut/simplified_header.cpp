@@ -30,6 +30,8 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::ModifiedConditions mc);
   EXPECT_NO_THROW(Azure::Core::Nullable<int> n);
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
+  EXPECT_NO_THROW(Azure::Core::RequestFailedException("foo"));
+  EXPECT_NO_THROW(Azure::Core::OperationStatus("foo"));
   EXPECT_NO_THROW(Azure::Core::Details::Version::VersionString());
 
   {
