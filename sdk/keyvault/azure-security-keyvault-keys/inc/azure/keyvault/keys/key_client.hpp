@@ -72,7 +72,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param options Optional parameters for this operation.
-     * @param context The context for the operation can be used to request cancellation.
+     * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> GetKey(
@@ -98,7 +98,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::KeyTypeEnum.
      * @param options Optional parameters for this operation. See
      * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
-     * @param context The context for the operation can be used to request cancellation.
+     * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> CreateKey(
