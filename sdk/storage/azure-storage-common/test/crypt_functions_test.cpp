@@ -37,54 +37,66 @@ namespace Azure { namespace Storage { namespace Test {
         "+SBESxQVhI53mSEdZJcCBpdBkaqwzfPaVYZMAf5LP3c=");
   }
 
-  TEST(CryptFunctionsTest, Crc64)
+  static std::vector<uint8_t> ComputeHash(const std::string& data)
   {
-    EXPECT_EQ(Azure::Core::Base64Encode(Crc64::Hash("")), "AAAAAAAAAAA=");
-    EXPECT_EQ(Azure::Core::Base64Encode(Crc64::Hash("Hello Azure!")), "DtjZpL9/o8c=");
+    const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
+    Crc64Hash instance;
+    return instance.Final(ptr, data.length());
+  }
+
+  TEST(CryptFunctionsTest, Crc64Hash_Basic)
+  {
+    Crc64Hash crc64empty;
+    EXPECT_EQ(Azure::Core::Base64Encode(crc64empty.Final()), "AAAAAAAAAAA=");
+
+    EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("")), "AAAAAAAAAAA=");
+    EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("Hello Azure!")), "DtjZpL9/o8c=");
 
     auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
-    Crc64 crc64Instance;
+    Crc64Hash crc64Single;
+    Crc64Hash crc64Streaming;
 
     std::size_t length = 0;
     while (length < data.size())
     {
       std::size_t s = static_cast<std::size_t>(RandomInt(0, 4_MB));
       s = std::min(s, data.size() - length);
-      crc64Instance.Update(&data[length], s);
-      crc64Instance.Update(&data[length], 0);
+      crc64Streaming.Append(&data[length], s);
+      crc64Streaming.Append(&data[length], 0);
       length += s;
     }
-    EXPECT_EQ(crc64Instance.Digest(), Crc64::Hash(data.data(), data.size()));
+    EXPECT_EQ(crc64Streaming.Final(), crc64Single.Final(data.data(), data.size()));
 
     // Test concatenate
-    crc64Instance = Crc64();
+    crc64Single = Crc64Hash();
+    crc64Streaming = Crc64Hash();
     std::string allData;
     while (allData.length() < 16_MB)
     {
       {
-        Crc64 instance2;
+        Crc64Hash instance2;
         for (auto i = RandomInt(0, 5); i > 0; --i)
         {
           std::size_t s = static_cast<std::size_t>(RandomInt(0, 512_KB));
           std::string data2;
           data2.resize(s);
           RandomBuffer(&data2[0], s);
-          instance2.Update(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
+          instance2.Append(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
           allData += data2;
         }
-        crc64Instance.Concatenate(instance2);
+        crc64Streaming.Concatenate(instance2);
       }
 
       switch (RandomInt(0, 2))
       {
         case 0: {
           std::string data2;
-          crc64Instance.Update(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
+          crc64Streaming.Append(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
           break;
         }
         case 1: {
-          Crc64 instance2;
-          crc64Instance.Concatenate(instance2);
+          Crc64Hash instance2;
+          crc64Streaming.Concatenate(instance2);
           break;
         }
         case 2: {
@@ -92,7 +104,7 @@ namespace Azure { namespace Storage { namespace Test {
           std::string data2;
           data2.resize(s);
           RandomBuffer(&data2[0], s);
-          crc64Instance.Update(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
+          crc64Streaming.Append(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
           allData += data2;
           break;
         }
@@ -102,8 +114,30 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     EXPECT_EQ(
-        crc64Instance.Digest(),
-        Crc64::Hash(reinterpret_cast<const uint8_t*>(allData.data()), allData.size()));
+        crc64Streaming.Final(),
+        crc64Single.Final(reinterpret_cast<const uint8_t*>(allData.data()), allData.size()));
+  }
+
+  TEST(CryptFunctionsTest, Crc64Hash_ExpectThrow)
+  {
+    std::string data = "";
+    const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
+    Crc64Hash instance;
+
+    EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
+    EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
+
+    EXPECT_EQ(Azure::Core::Base64Encode(instance.Final(ptr, data.length())), "AAAAAAAAAAA=");
+    EXPECT_THROW(instance.Final(), std::runtime_error);
+    EXPECT_THROW(instance.Final(ptr, data.length()), std::runtime_error);
+    EXPECT_THROW(instance.Append(ptr, data.length()), std::runtime_error);
+  }
+
+  TEST(CryptFunctionsTest, Crc64Hash_CtorDtor)
+  {
+    {
+      Crc64Hash instance;
+    }
   }
 
 }}} // namespace Azure::Storage::Test

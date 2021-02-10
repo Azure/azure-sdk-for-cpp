@@ -147,7 +147,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::CreateBlobContainerResult> BlobContainerClient::Create(
-      const CreateBlobContainerOptions& options) const
+      const CreateBlobContainerOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::CreateBlobContainerOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;
@@ -155,15 +156,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.DefaultEncryptionScope = options.DefaultEncryptionScope;
     protocolLayerOptions.PreventEncryptionScopeOverride = options.PreventEncryptionScopeOverride;
     return Details::BlobRestClient::BlobContainer::Create(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::CreateBlobContainerResult> BlobContainerClient::CreateIfNotExists(
-      const CreateBlobContainerOptions& options) const
+      const CreateBlobContainerOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Create(options);
+      return Create(options, context);
     }
     catch (StorageException& e)
     {
@@ -181,22 +183,24 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::Delete(
-      const DeleteBlobContainerOptions& options) const
+      const DeleteBlobContainerOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::DeleteBlobContainerOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::Delete(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::DeleteIfExists(
-      const DeleteBlobContainerOptions& options) const
+      const DeleteBlobContainerOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Delete(options);
+      return Delete(options, context);
     }
     catch (StorageException& e)
     {
@@ -214,28 +218,32 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::GetBlobContainerPropertiesResult>
-  BlobContainerClient::GetProperties(const GetBlobContainerPropertiesOptions& options) const
+  BlobContainerClient::GetProperties(
+      const GetBlobContainerPropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::GetBlobContainerPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return Details::BlobRestClient::BlobContainer::GetProperties(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
       Metadata metadata,
-      SetBlobContainerMetadataOptions options) const
+      SetBlobContainerMetadataOptions options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::SetBlobContainerMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     return Details::BlobRestClient::BlobContainer::SetMetadata(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::ListBlobsSinglePageResult> BlobContainerClient::ListBlobsSinglePage(
-      const ListBlobsSinglePageOptions& options) const
+      const ListBlobsSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
@@ -243,7 +251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
     auto response = Details::BlobRestClient::BlobContainer::ListBlobsSinglePage(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
       if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
@@ -265,7 +273,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
   BlobContainerClient::ListBlobsByHierarchySinglePage(
       const std::string& delimiter,
-      const ListBlobsSinglePageOptions& options) const
+      const ListBlobsSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePageOptions
         protocolLayerOptions;
@@ -275,7 +284,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
     auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
@@ -287,17 +296,21 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::GetBlobContainerAccessPolicyResult>
-  BlobContainerClient::GetAccessPolicy(const GetBlobContainerAccessPolicyOptions& options) const
+  BlobContainerClient::GetAccessPolicy(
+      const GetBlobContainerAccessPolicyOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::GetBlobContainerAccessPolicyOptions
         protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return Details::BlobRestClient::BlobContainer::GetAccessPolicy(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult>
-  BlobContainerClient::SetAccessPolicy(const SetBlobContainerAccessPolicyOptions& options) const
+  BlobContainerClient::SetAccessPolicy(
+      const SetBlobContainerAccessPolicyOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlobContainer::SetBlobContainerAccessPolicyOptions
         protocolLayerOptions;
@@ -307,25 +320,27 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::SetAccessPolicy(
-        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<void> BlobContainerClient::DeleteBlob(
       const std::string& blobName,
-      const DeleteBlobOptions& options) const
+      const DeleteBlobOptions& options,
+      const Azure::Core::Context& context) const
   {
     auto blobClient = GetBlobClient(blobName);
-    auto response = blobClient.Delete(options);
+    auto response = blobClient.Delete(options, context);
     return Azure::Core::Response<void>(response.ExtractRawResponse());
   }
 
   Azure::Core::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
       const std::string& blobName,
       Azure::Core::Http::BodyStream* content,
-      const UploadBlockBlobOptions& options) const
+      const UploadBlockBlobOptions& options,
+      const Azure::Core::Context& context) const
   {
     auto blockBlobClient = GetBlockBlobClient(blobName);
-    auto response = blockBlobClient.Upload(content, options);
+    auto response = blockBlobClient.Upload(content, options, context);
     return Azure::Core::Response<BlockBlobClient>(
         std::move(blockBlobClient), response.ExtractRawResponse());
   }

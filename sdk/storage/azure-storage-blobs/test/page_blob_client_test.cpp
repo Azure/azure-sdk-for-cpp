@@ -280,7 +280,11 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::UploadPageBlobPagesOptions options;
     ContentHash hash;
     hash.Algorithm = HashAlgorithm::Crc64;
-    hash.Value = Crc64::Hash(blobContent.data(), blobContent.size());
+
+    {
+      Crc64Hash instance;
+      hash.Value = instance.Final(blobContent.data(), blobContent.size());
+    }
     options.TransactionalContentHash = hash;
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 

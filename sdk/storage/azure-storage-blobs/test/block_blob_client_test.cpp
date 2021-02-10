@@ -131,9 +131,12 @@ namespace Azure { namespace Storage { namespace Test {
     res = m_blockBlobClient->Download(options);
     ASSERT_TRUE(res->TransactionalContentHash.HasValue());
     EXPECT_EQ(res->TransactionalContentHash.GetValue().Algorithm, HashAlgorithm::Crc64);
-    EXPECT_EQ(
-        res->TransactionalContentHash.GetValue().Value,
-        Crc64::Hash(m_blobContent.data(), downloadLength));
+    {
+      Crc64Hash instance;
+      EXPECT_EQ(
+          res->TransactionalContentHash.GetValue().Value,
+          instance.Final(m_blobContent.data(), downloadLength));
+    }
   }
 
   TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)

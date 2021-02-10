@@ -198,7 +198,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::SetDataLakePathAccessControlListResult>
   DataLakePathClient::SetAccessControlList(
       std::vector<Models::Acl> acls,
-      const SetDataLakePathAccessControlListOptions& options) const
+      const SetDataLakePathAccessControlListOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -210,13 +211,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::SetAccessControl(
-        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetDataLakePathPermissionsResult>
   DataLakePathClient::SetPermissions(
       std::string permissions,
-      const SetDataLakePathPermissionsOptions& options) const
+      const SetDataLakePathPermissionsOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -228,17 +230,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::SetAccessControl(
-        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetDataLakePathHttpHeadersResult>
   DataLakePathClient::SetHttpHeaders(
       Models::PathHttpHeaders httpHeaders,
-      const SetDataLakePathHttpHeadersOptions& options) const
+      const SetDataLakePathHttpHeadersOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::SetBlobHttpHeadersOptions blobOptions;
     Blobs::Models::BlobHttpHeaders blobHttpHeaders;
-    blobOptions.Context = options.Context;
     blobHttpHeaders.CacheControl = httpHeaders.CacheControl;
     blobHttpHeaders.ContentType = httpHeaders.ContentType;
     blobHttpHeaders.ContentDisposition = httpHeaders.ContentDisposition;
@@ -249,7 +251,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.SetHttpHeaders(blobHttpHeaders, blobOptions);
+    auto result = m_blobClient.SetHttpHeaders(blobHttpHeaders, blobOptions, context);
     Models::SetDataLakePathHttpHeadersResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -260,7 +262,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::CreateDataLakePathResult> DataLakePathClient::Create(
       Models::PathResourceType type,
-      const CreateDataLakePathOptions& options) const
+      const CreateDataLakePathOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Resource = type;
@@ -278,7 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
     auto result = Details::DataLakeRestClient::Path::Create(
-        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreateDataLakePathResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified.GetValue());
@@ -290,13 +293,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::CreateDataLakePathResult> DataLakePathClient::CreateIfNotExists(
       Models::PathResourceType type,
-      const CreateDataLakePathOptions& options) const
+      const CreateDataLakePathOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
       auto createOptions = options;
       createOptions.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
-      return Create(type, createOptions);
+      return Create(type, createOptions, context);
     }
     catch (StorageException& e)
     {
@@ -312,7 +316,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::DeleteDataLakePathResult> DataLakePathClient::Delete(
-      const DeleteDataLakePathOptions& options) const
+      const DeleteDataLakePathOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -322,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = options.Recursive;
     auto result = Details::DataLakeRestClient::Path::Delete(
-        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteDataLakePathResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
@@ -331,11 +336,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::DeleteDataLakePathResult> DataLakePathClient::DeleteIfExists(
-      const DeleteDataLakePathOptions& options) const
+      const DeleteDataLakePathOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Delete(options);
+      return Delete(options, context);
     }
     catch (StorageException& e)
     {
@@ -352,16 +358,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::GetDataLakePathPropertiesResult> DataLakePathClient::GetProperties(
-      const GetDataLakePathPropertiesOptions& options) const
+      const GetDataLakePathPropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::GetBlobPropertiesOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.GetProperties(blobOptions);
+    auto result = m_blobClient.GetProperties(blobOptions, context);
     Models::GetDataLakePathPropertiesResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -409,7 +415,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::GetDataLakePathAccessControlListResult>
   DataLakePathClient::GetAccessControlList(
-      const GetDataLakePathAccessControlListOptions& options) const
+      const GetDataLakePathAccessControlListOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.Action = Models::PathGetPropertiesAction::GetAccessControl;
@@ -419,7 +426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = Details::DataLakeRestClient::Path::GetProperties(
-        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     Azure::Core::Nullable<std::vector<Models::Acl>> acl;
     if (result->Acl.HasValue())
     {
@@ -453,16 +460,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::SetDataLakePathMetadataResult> DataLakePathClient::SetMetadata(
       Storage::Metadata metadata,
-      const SetDataLakePathMetadataOptions& options) const
+      const SetDataLakePathMetadataOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::SetBlobMetadataOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.SetMetadata(std::move(metadata), blobOptions);
+    auto result = m_blobClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetDataLakePathMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -475,7 +482,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
       Models::PathSetAccessControlRecursiveMode mode,
       const std::vector<Models::Acl>& acls,
-      const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options) const
+      const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
     protocolLayerOptions.Mode = mode;
@@ -484,7 +492,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
     protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
     return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake
