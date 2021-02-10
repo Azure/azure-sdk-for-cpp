@@ -112,11 +112,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobSize Specifies the maximum size for the page blob. The size must be
      * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreatePageBlobResult describing the newly created page blob.
      */
     Azure::Core::Response<Models::CreatePageBlobResult> Create(
         int64_t blobSize,
-        const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
+        const CreatePageBlobOptions& options = CreatePageBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new page blob of the specified size. The content keeps unchanged if the blob
@@ -125,12 +127,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobContentLength Specifies the maximum size for the page blob. The size must be
      * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreatePageBlobResult describing the newly created page blob.
      * CreatePageBlobResult.Created is false if the blob already exists.
      */
     Azure::Core::Response<Models::CreatePageBlobResult> CreateIfNotExists(
         int64_t blobContentLength,
-        const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
+        const CreatePageBlobOptions& options = CreatePageBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Writes content to a range of pages in a page blob, starting at offset.
@@ -140,12 +144,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * 512.
      * @param content A BodyStream containing the content of the pages to upload.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A UploadPageBlobPagesResult describing the state of the updated pages.
      */
     Azure::Core::Response<Models::UploadPageBlobPagesResult> UploadPages(
         int64_t offset,
         Azure::Core::Http::BodyStream* content,
-        const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions()) const;
+        const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Writes a range of pages to a page blob where the contents are read from a
@@ -160,14 +166,15 @@ namespace Azure { namespace Storage { namespace Blobs {
      * authentication is required to perform the operation.
      * @param sourceRange Only upload the bytes of the blob in the sourceUri in the specified range.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
     Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
         int64_t destinationOffset,
         std::string sourceUri,
         Azure::Core::Http::Range sourceRange,
-        const UploadPageBlobPagesFromUriOptions& options
-        = UploadPageBlobPagesFromUriOptions()) const;
+        const UploadPageBlobPagesFromUriOptions& options = UploadPageBlobPagesFromUriOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Clears one or more pages from the page blob, as specificed by range.
@@ -178,11 +185,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * range must be a modulus of 512 and the end of the range must be a modulus of 512 – 1.
      * Examples of valid byte ranges are 0-511, 512-1023, etc.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ClearPageBlobPagesResult describing the state of the updated pages.
      */
     Azure::Core::Response<Models::ClearPageBlobPagesResult> ClearPages(
         Azure::Core::Http::Range range,
-        const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions()) const;
+        const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Resizes the page blob to the specified size (which must be a multiple of 512). If the
@@ -192,20 +201,24 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobSize Specifies the maximum size for the page blob. The size must be
      * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ResizePageBlobResult describing the resized page blob.
      */
     Azure::Core::Response<Models::ResizePageBlobResult> Resize(
         int64_t blobSize,
-        const ResizePageBlobOptions& options = ResizePageBlobOptions()) const;
+        const ResizePageBlobOptions& options = ResizePageBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns the list of valid page ranges for a page blob or snapshot of a page blob.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
     Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRanges(
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
+        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns the list of page ranges that differ between a previous snapshot and this page
@@ -216,11 +229,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * pages. The target blob may be a snapshot, as long as the snapshot specified by
      * previousSnapshot is the older of the two.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
     Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRangesDiff(
         const std::string& previousSnapshot,
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
+        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns the list of page ranges that differ between a previous snapshot url and this
@@ -233,11 +248,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * be a snapshot, as long as the snapshot specified by previousSnapshotUrl is the older of the
      * two.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
     Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetManagedDiskPageRangesDiff(
         const std::string& previousSnapshotUrl,
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
+        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Starts copying a snapshot of the sourceUri page blob to this page blob. The snapshot
@@ -248,12 +265,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param sourceUri Specifies the to the source page blob as a uri up to 2 KB in length. The
      * source blob must either be public or must be authenticated via a shared access signature.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A StartCopyBlobResult describing the state of the copy operation.
      */
     Azure::Core::Response<Models::StartCopyBlobResult> StartCopyIncremental(
         const std::string& sourceUri,
-        const StartCopyPageBlobIncrementalOptions& options
-        = StartCopyPageBlobIncrementalOptions()) const;
+        const StartCopyPageBlobIncrementalOptions& options = StartCopyPageBlobIncrementalOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     explicit PageBlobClient(BlobClient blobClient);
