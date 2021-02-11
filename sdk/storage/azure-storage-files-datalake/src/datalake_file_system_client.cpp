@@ -188,10 +188,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::CreateDataLakeFileSystemResult> DataLakeFileSystemClient::Create(
-      const CreateDataLakeFileSystemOptions& options) const
+      const CreateDataLakeFileSystemOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::CreateBlobContainerOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
     if (options.AccessType == Models::PublicAccessType::FileSystem)
     {
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
     }
-    auto result = m_blobContainerClient.Create(blobOptions);
+    auto result = m_blobContainerClient.Create(blobOptions, context);
     Models::CreateDataLakeFileSystemResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -220,11 +220,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::CreateDataLakeFileSystemResult>
-  DataLakeFileSystemClient::CreateIfNotExists(const CreateDataLakeFileSystemOptions& options) const
+  DataLakeFileSystemClient::CreateIfNotExists(
+      const CreateDataLakeFileSystemOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Create(options);
+      return Create(options, context);
     }
     catch (StorageException& e)
     {
@@ -240,14 +242,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> DataLakeFileSystemClient::Delete(
-      const DeleteDataLakeFileSystemOptions& options) const
+      const DeleteDataLakeFileSystemOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::DeleteBlobContainerOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobContainerClient.Delete(blobOptions);
+    auto result = m_blobContainerClient.Delete(blobOptions, context);
     Models::DeleteDataLakeFileSystemResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
@@ -256,11 +258,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::DeleteDataLakeFileSystemResult>
-  DataLakeFileSystemClient::DeleteIfExists(const DeleteDataLakeFileSystemOptions& options) const
+  DataLakeFileSystemClient::DeleteIfExists(
+      const DeleteDataLakeFileSystemOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Delete(options);
+      return Delete(options, context);
     }
     catch (StorageException& e)
     {
@@ -277,12 +281,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult>
   DataLakeFileSystemClient::GetProperties(
-      const GetDataLakeFileSystemPropertiesOptions& options) const
+      const GetDataLakeFileSystemPropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::GetBlobContainerPropertiesOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobContainerClient.GetProperties(blobOptions);
+    auto result = m_blobContainerClient.GetProperties(blobOptions, context);
     Models::GetDataLakeFileSystemPropertiesResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -295,16 +299,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult>
   DataLakeFileSystemClient::SetMetadata(
       Storage::Metadata metadata,
-      const SetDataLakeFileSystemMetadataOptions& options) const
+      const SetDataLakeFileSystemMetadataOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     if (options.AccessConditions.IfUnmodifiedSince.HasValue())
     {
       std::abort();
     }
-    auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions);
+    auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetDataLakeFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -313,8 +317,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::
-      ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
+  Azure::Core::Response<Models::ListPathsSinglePageResult>
+  DataLakeFileSystemClient::ListPathsSinglePage(
+      bool recursive,
+      const ListPathsSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
@@ -323,17 +330,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
-        m_fileSystemUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_fileSystemUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>
   DataLakeFileSystemClient::GetAccessPolicy(
-      const GetDataLakeFileSystemAccessPolicyOptions& options) const
+      const GetDataLakeFileSystemAccessPolicyOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::GetBlobContainerAccessPolicyOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobContainerClient.GetAccessPolicy(blobOptions);
+    auto result = m_blobContainerClient.GetAccessPolicy(blobOptions, context);
     Models::GetDataLakeFileSystemAccessPolicyResult ret;
     if (result->AccessType == Blobs::Models::PublicAccessType::BlobContainer)
     {
@@ -361,10 +368,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>
   DataLakeFileSystemClient::SetAccessPolicy(
-      const SetDataLakeFileSystemAccessPolicyOptions& options) const
+      const SetDataLakeFileSystemAccessPolicyOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::SetBlobContainerAccessPolicyOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
@@ -385,7 +392,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
     }
-    auto result = m_blobContainerClient.SetAccessPolicy(blobOptions);
+    auto result = m_blobContainerClient.SetAccessPolicy(blobOptions, context);
     Models::SetDataLakeFileSystemAccessPolicyResult ret;
 
     ret.ETag = std::move(result->ETag);
@@ -398,18 +405,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<DataLakeFileClient> DataLakeFileSystemClient::RenameFile(
       const std::string& fileName,
       const std::string& destinationFilePath,
-      const RenameDataLakeFileOptions& options) const
+      const RenameDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options);
+    return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options, context);
   }
 
   Azure::Core::Response<DataLakeDirectoryClient> DataLakeFileSystemClient::RenameDirectory(
       const std::string& directoryName,
       const std::string& destinationDirectoryPath,
-      const RenameDataLakeDirectoryOptions& options) const
+      const RenameDataLakeDirectoryOptions& options,
+      const Azure::Core::Context& context) const
   {
     return this->GetDirectoryClient("").RenameSubdirectory(
-        directoryName, destinationDirectoryPath, options);
+        directoryName, destinationDirectoryPath, options, context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

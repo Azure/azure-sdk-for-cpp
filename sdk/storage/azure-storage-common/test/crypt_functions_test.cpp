@@ -53,23 +53,25 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("Hello Azure!")), "DtjZpL9/o8c=");
 
     auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
-    Crc64Hash crc64Single;
-    Crc64Hash crc64Streaming;
-
-    std::size_t length = 0;
-    while (length < data.size())
     {
-      std::size_t s = static_cast<std::size_t>(RandomInt(0, 4_MB));
-      s = std::min(s, data.size() - length);
-      crc64Streaming.Append(&data[length], s);
-      crc64Streaming.Append(&data[length], 0);
-      length += s;
+      Crc64Hash crc64Single;
+      Crc64Hash crc64Streaming;
+
+      std::size_t length = 0;
+      while (length < data.size())
+      {
+        std::size_t s = static_cast<std::size_t>(RandomInt(0, 4_MB));
+        s = std::min(s, data.size() - length);
+        crc64Streaming.Append(&data[length], s);
+        crc64Streaming.Append(&data[length], 0);
+        length += s;
+      }
+      EXPECT_EQ(crc64Streaming.Final(), crc64Single.Final(data.data(), data.size()));
     }
-    EXPECT_EQ(crc64Streaming.Final(), crc64Single.Final(data.data(), data.size()));
 
     // Test concatenate
-    crc64Single = Crc64Hash();
-    crc64Streaming = Crc64Hash();
+    Crc64Hash crc64Single;
+    Crc64Hash crc64Streaming;
     std::string allData;
     while (allData.length() < 16_MB)
     {

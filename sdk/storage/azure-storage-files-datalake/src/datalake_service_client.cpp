@@ -211,15 +211,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::ListFileSystemsSinglePageResult>
   DataLakeServiceClient::ListFileSystemsSinglePage(
-      const ListFileSystemsSinglePageOptions& options) const
+      const ListFileSystemsSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::ListBlobContainersSinglePageOptions blobOptions;
     blobOptions.Include = options.Include;
-    blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.ContinuationToken = options.ContinuationToken;
     blobOptions.PageSizeHint = options.PageSizeHint;
-    auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions);
+    auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions, context);
     auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = std::move(result->ContinuationToken);
     response.RequestId = std::move(result->RequestId);

@@ -78,7 +78,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::UploadBlockBlobResult> BlockBlobClient::Upload(
       Azure::Core::Http::BodyStream* content,
-      const UploadBlockBlobOptions& options) const
+      const UploadBlockBlobOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlockBlob::UploadBlockBlobOptions protocolLayerOptions;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
@@ -99,13 +100,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::BlockBlob::Upload(
-        options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
-      const UploadBlockBlobFromOptions& options) const
+      const UploadBlockBlobFromOptions& options,
+      const Azure::Core::Context& context) const
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
@@ -115,11 +117,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       Azure::Core::Http::MemoryBodyStream contentStream(buffer, bufferSize);
       UploadBlockBlobOptions uploadBlockBlobOptions;
-      uploadBlockBlobOptions.Context = options.Context;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
       uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions);
+      return Upload(&contentStream, uploadBlockBlobOptions, context);
     }
 
     std::vector<std::string> blockIds;
@@ -133,8 +134,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
       StageBlockOptions chunkOptions;
-      chunkOptions.Context = options.Context;
-      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions);
+      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
@@ -149,11 +149,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       blockIds[i] = getBlockId(static_cast<int64_t>(i));
     }
     CommitBlockListOptions commitBlockListOptions;
-    commitBlockListOptions.Context = options.Context;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
     commitBlockListOptions.Tier = options.Tier;
-    auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
+    auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult ret;
     ret.ETag = std::move(commitBlockListResponse->ETag);
@@ -168,7 +167,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const std::string& fileName,
-      const UploadBlockBlobFromOptions& options) const
+      const UploadBlockBlobFromOptions& options,
+      const Azure::Core::Context& context) const
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
@@ -181,11 +181,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::FileBodyStream contentStream(
           fileReader.GetHandle(), 0, fileReader.GetFileSize());
       UploadBlockBlobOptions uploadBlockBlobOptions;
-      uploadBlockBlobOptions.Context = options.Context;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
       uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions);
+      return Upload(&contentStream, uploadBlockBlobOptions, context);
     }
 
     std::vector<std::string> blockIds;
@@ -199,8 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
-      chunkOptions.Context = options.Context;
-      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions);
+      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
@@ -219,11 +217,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       blockIds[i] = getBlockId(static_cast<int64_t>(i));
     }
     CommitBlockListOptions commitBlockListOptions;
-    commitBlockListOptions.Context = options.Context;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
     commitBlockListOptions.Tier = options.Tier;
-    auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
+    auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult result;
     result.ETag = commitBlockListResponse->ETag;
@@ -239,7 +236,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   Azure::Core::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
       const std::string& blockId,
       Azure::Core::Http::BodyStream* content,
-      const StageBlockOptions& options) const
+      const StageBlockOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
@@ -253,13 +251,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::BlockBlob::StageBlock(
-        options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(
       const std::string& blockId,
       const std::string& sourceUri,
-      const StageBlockFromUriOptions& options) const
+      const StageBlockFromUriOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlockBlob::StageBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
@@ -279,12 +278,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::BlockBlob::StageBlockFromUri(
-        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::CommitBlockListResult> BlockBlobClient::CommitBlockList(
       const std::vector<std::string>& blockIds,
-      const CommitBlockListOptions& options) const
+      const CommitBlockListOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
     protocolLayerOptions.BlockList.reserve(blockIds.size());
@@ -309,18 +309,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return Details::BlobRestClient::BlockBlob::CommitBlockList(
-        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetBlockListResult> BlockBlobClient::GetBlockList(
-      const GetBlockListOptions& options) const
+      const GetBlockListOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::BlockBlob::GetBlockList(
-        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

@@ -72,14 +72,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param options Optional parameters for this operation.
+     * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> GetKey(
         std::string const& name,
-        GetKeyOptions const& options = GetKeyOptions()) const
+        GetKeyOptions const& options = GetKeyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       return m_pipeline->SendRequest<KeyVaultKey>(
-          options.Context,
+          context,
           Azure::Core::Http::HttpMethod::Get,
           [name](Azure::Core::Http::RawResponse const& rawResponse) {
             return Details::KeyVaultKeyDeserialize(name, rawResponse);
@@ -96,15 +98,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::KeyTypeEnum.
      * @param options Optional parameters for this operation. See
      * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
+     * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> CreateKey(
         std::string const& name,
         KeyTypeEnum keyType,
-        CreateKeyOptions const& options = CreateKeyOptions()) const
+        CreateKeyOptions const& options = CreateKeyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       return m_pipeline->SendRequest<KeyVaultKey>(
-          options.Context,
+          context,
           Azure::Core::Http::HttpMethod::Post,
           Details::KeyRequestParameters(keyType, options),
           [name](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -113,5 +117,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
           {Details::KeysPath, name, "create"});
     }
   };
-
 }}}} // namespace Azure::Security::KeyVault::Keys

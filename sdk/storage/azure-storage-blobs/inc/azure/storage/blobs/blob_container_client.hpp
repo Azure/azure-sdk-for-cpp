@@ -128,66 +128,76 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same name already exists, the operation fails.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreateBlobContainerResult describing the newly created blob container.
      */
     Azure::Core::Response<Models::CreateBlobContainerResult> Create(
-        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new container under the specified account. If the container with the
      * same name already exists, it is not changed.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreateBlobContainerResult describing the newly created blob container if the
      * container doesn't exist. CreateBlobContainerResult.Created is false if the container already
      * exists.
      */
     Azure::Core::Response<Models::CreateBlobContainerResult> CreateIfNotExists(
-        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Marks the specified container for deletion. The container and any blobs
      * contained within it are later deleted during garbage collection.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DeleteBlobContainerResult if successful.
      */
     Azure::Core::Response<Models::DeleteBlobContainerResult> Delete(
-        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Marks the specified container for deletion if it exists. The container and any blobs
      * contained within it are later deleted during garbage collection.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DeleteBlobContainerResult if the container exists.
      * DeleteBlobContainerResult.Deleted is false if the container doesn't exist.
      */
     Azure::Core::Response<Models::DeleteBlobContainerResult> DeleteIfExists(
-        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns all user-defined metadata and system properties for the specified
      * container. The data returned does not include the container's list of blobs.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetBlobContainerPropertiesResult describing the container and its properties.
      */
     Azure::Core::Response<Models::GetBlobContainerPropertiesResult> GetProperties(
-        const GetBlobContainerPropertiesOptions& options
-        = GetBlobContainerPropertiesOptions()) const;
+        const GetBlobContainerPropertiesOptions& options = GetBlobContainerPropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets one or more user-defined name-value pairs for the specified container.
      *
      * @param metadata Custom metadata to set for this container.
-     * @param options
-     * Optional parameters to execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetBlobContainerMetadataResult if successful.
      */
     Azure::Core::Response<Models::SetBlobContainerMetadataResult> SetMetadata(
         Metadata metadata,
-        SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
+        SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
@@ -196,10 +206,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ListBlobsSinglePageResult describing a segment of the blobs in the container.
      */
     Azure::Core::Response<Models::ListBlobsSinglePageResult> ListBlobsSinglePage(
-        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions()) const;
+        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
@@ -212,37 +224,39 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
      * were a file system. The delimiter may be a single character or a string.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ListBlobsByHierarchySinglePageResult describing a segment of the blobs in the
      * container.
      */
     Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
     ListBlobsByHierarchySinglePage(
         const std::string& delimiter,
-        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions()) const;
+        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Gets the permissions for this container. The permissions indicate whether
      * container data may be accessed publicly.
      *
-     * @param options Optional parameters to
-     * execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetBlobContainerAccessPolicyResult describing the container's access policy.
      */
     Azure::Core::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
-        const GetBlobContainerAccessPolicyOptions& options
-        = GetBlobContainerAccessPolicyOptions()) const;
+        const GetBlobContainerAccessPolicyOptions& options = GetBlobContainerAccessPolicyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the permissions for the specified container. The permissions indicate
      * whether blob container data may be accessed publicly.
      *
-     * @param options Optional
-     * parameters to execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetBlobContainerAccessPolicyResult describing the updated container.
      */
     Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult> SetAccessPolicy(
-        const SetBlobContainerAccessPolicyOptions& options
-        = SetBlobContainerAccessPolicyOptions()) const;
+        const SetBlobContainerAccessPolicyOptions& options = SetBlobContainerAccessPolicyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Marks the specified blob or snapshot for deletion. The blob is later deleted
@@ -251,11 +265,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blobName The name of the blob to delete.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Nothing.
      */
     Azure::Core::Response<void> DeleteBlob(
         const std::string& blobName,
-        const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+        const DeleteBlobOptions& options = DeleteBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new block blob under this container. For partial block blob updates and
@@ -265,12 +281,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobName The name of the blob to create.
      * @param content A BodyStream containing the content to upload.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A BlockBlobClient referencing the newly created block blob.
      */
     Azure::Core::Response<BlockBlobClient> UploadBlob(
         const std::string& blobName,
         Azure::Core::Http::BodyStream* content,
-        const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
+        const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     Azure::Core::Http::Url m_blobContainerUrl;
