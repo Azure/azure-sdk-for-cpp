@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- Moved `Azure::Core::Http::HttpPipeline` to the internal layer `Azure::Core::Internal::Http::HttpPipeline`.
+- Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
 
 ## 1.0.0-beta.6 (2021-02-09)
 
