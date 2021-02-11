@@ -39,6 +39,4 @@ TEST(SimplifiedHeader, core)
     EXPECT_NO_THROW(Azure::Core::Http::MemoryBodyStream mb(buffer));
   }
   EXPECT_NO_THROW(Azure::Core::Http::TelemetryPolicy tp("", ""));
-  EXPECT_NO_THROW(Azure::Core::Http::HttpPipeline pipeline(
-      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>(1)));
 }

@@ -34,7 +34,6 @@
 // azure/core/http
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/pipeline.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
 

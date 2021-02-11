@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakePathClient::DataLakePathClient(
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakePathClient::DataLakePathClient(
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Http::TransportPolicyOptions transportPolicyOptions;
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   Azure::Core::Response<Models::SetDataLakePathAccessControlListResult>
