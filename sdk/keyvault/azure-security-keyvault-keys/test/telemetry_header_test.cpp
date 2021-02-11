@@ -18,7 +18,8 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 
 TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
 {
-  m_clientOptions.TelemetryPolicyOptions.ApplicationId = "ourApplicationId";
+  std::string applicationId("ourApplicationId");
+  m_clientOptions.TelemetryPolicyOptions.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
       "url", m_clientOptions);
@@ -41,7 +42,7 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
                 telemetryInfoWithNoOSAndDate, sent);
           },
           header.second,
-          "ourApplicationId azsdk-cpp-KeyVault/7.2");
+          applicationId);
       break;
     }
   }
