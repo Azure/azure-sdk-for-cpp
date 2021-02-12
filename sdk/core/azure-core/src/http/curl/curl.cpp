@@ -1077,7 +1077,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (options.SSLOptions.NoRevoke)
+  if (options.SSLOptions.DisableCertificateRevocationListCheck)
   {
     key.append("1");
   }
@@ -1202,7 +1202,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
 
   long sslOption = 0;
-  if (options.SSLOptions.NoRevoke)
+  if (options.SSLOptions.DisableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }

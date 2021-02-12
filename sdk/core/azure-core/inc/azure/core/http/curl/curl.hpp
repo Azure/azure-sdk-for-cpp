@@ -31,7 +31,7 @@ namespace Azure { namespace Core { namespace Http {
      * check by default.
      *
      */
-    bool NoRevoke = true;
+    bool DisableCertificateRevocationListCheck = true;
   };
 
   /**
