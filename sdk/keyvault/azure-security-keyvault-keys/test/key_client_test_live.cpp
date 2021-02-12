@@ -10,6 +10,7 @@
 #include "key_client_base_test.hpp"
 
 #include <azure/keyvault/key_vault.hpp>
+#include <azure/keyvault/keys/key_constants.hpp>
 
 #include <string>
 
@@ -119,5 +120,38 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
       auto v = keyVaultKey.Properties.Tags.at(key);
       return value == v;
     };
+  }
+}
+
+// Test Key Delete.
+// The test works for either soft-delete or not, but for non soft-delete, the LRO is completed as
+// soon as the Operation returns.
+TEST_F(KeyVaultClientTest, DeleteKeyVh)
+{
+  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName("deleteThisKey");
+
+  {
+    auto keyResponse
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.ExtractValue();
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+  {
+    // Setting a timeout context to avoid this test to run up to ctest default timeout
+    // The polling operation would usually complete in ~20 seconds.
+    // Setting 3 min as timeout just because I like number 3. We just want to prevent test running
+    // for so long if something happens and no exception is thrown (paranoid scenario)
+    auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
+    auto cancelToken = Azure::Core::GetApplicationContext().WithDeadline(duration);
+
+    auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
+    auto expectedStatusToken = m_keyVaultUrl
+        + std::string(Azure::Security::KeyVault::Keys::Details::DeletedKeysPath) + "/" + keyName;
+    EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
+    // poll each second until key is soft-deleted
+    // Will throw and fail test if test takes more than 3 minutes (token cancelled)
+    auto keyResponse = keyResponseLRO.PollUntilDone(cancelToken, std::chrono::milliseconds(1000));
   }
 }

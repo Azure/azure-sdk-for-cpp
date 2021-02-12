@@ -30,11 +30,17 @@ inline std::string GetHeaderOrEmptyString(
 KeyVaultException KeyVaultException::CreateFromResponse(
     std::unique_ptr<Azure::Core::Http::RawResponse> response)
 {
-  std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
+  return CreateFromResponse(*response);
+}
 
-  auto httpStatusCode = response->GetStatusCode();
-  std::string reasonPhrase = response->GetReasonPhrase();
-  auto& headers = response->GetHeaders();
+KeyVaultException KeyVaultException::CreateFromResponse(
+    Azure::Core::Http::RawResponse const& response)
+{
+  std::vector<uint8_t> bodyBuffer = std::move(response.GetBody());
+
+  auto httpStatusCode = response.GetStatusCode();
+  std::string reasonPhrase = response.GetReasonPhrase();
+  auto& headers = response.GetHeaders();
   std::string requestId = GetHeaderOrEmptyString(headers, Details::MsRequestId);
   std::string clientRequestId = GetHeaderOrEmptyString(headers, Details::MsClientRequestId);
   std::string contentType = GetHeaderOrEmptyString(headers, Details::ContentType);
@@ -62,6 +68,6 @@ KeyVaultException KeyVaultException::CreateFromResponse(
   result.RequestId = std::move(requestId);
   result.ErrorCode = std::move(errorCode);
   result.Message = std::move(message);
-  result.RawResponse = std::move(response);
+  result.RawResponse = std::make_unique<Azure::Core::Http::RawResponse>(response);
   return result;
 }

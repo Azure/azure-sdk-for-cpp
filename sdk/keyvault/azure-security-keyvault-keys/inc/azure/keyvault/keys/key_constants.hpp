@@ -52,4 +52,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char OctValue[] = "oct";
   constexpr static const char OctHsmValue[] = "oct-HSM";
 
+  /***************** Deleted Key *****************/
+  constexpr static const char RecoveryIdPropertyName[] = "recoveryId";
+  constexpr static const char DeletedOnPropertyName[] = "deletedDate";
+  constexpr static const char ScheduledPurgeDatePropertyName[] = "scheduledPurgeDate";
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::Details
