@@ -11,7 +11,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   std::string ShareLeaseClient::CreateUniqueLeaseId()
   {
-    return Azure::Core::Uuid::CreateUuid().GetUuidString();
+    return Azure::Core::Uuid::CreateUuid().ToString();
   }
 
   Azure::Core::Response<Models::AcquireShareLeaseResult> ShareLeaseClient::Acquire(
