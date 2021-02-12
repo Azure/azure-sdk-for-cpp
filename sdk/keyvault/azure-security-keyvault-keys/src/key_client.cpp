@@ -23,7 +23,8 @@ KeyClient::KeyClient(
 
   // Base Pipeline
   std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(std::make_unique<TelemetryPolicy>("KeyVault", apiVersion));
+  policies.emplace_back(
+      std::make_unique<TelemetryPolicy>("KeyVault", apiVersion, options.TelemetryPolicyOptions));
   policies.emplace_back(std::make_unique<RequestIdPolicy>());
   policies.emplace_back(std::make_unique<RetryPolicy>(options.RetryOptions));
 

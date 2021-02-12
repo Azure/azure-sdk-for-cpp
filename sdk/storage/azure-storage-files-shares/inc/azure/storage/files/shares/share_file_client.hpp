@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
@@ -355,11 +355,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   private:
     Azure::Core::Http::Url m_shareFileUrl;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
 
     explicit ShareFileClient(
         Azure::Core::Http::Url shareFileUrl,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline)
         : m_shareFileUrl(std::move(shareFileUrl)), m_pipeline(std::move(pipeline))
     {
     }

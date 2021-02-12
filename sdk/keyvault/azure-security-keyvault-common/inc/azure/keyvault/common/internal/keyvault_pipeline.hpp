@@ -11,7 +11,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json.hpp>
 #include <azure/core/internal/json_serializable.hpp>
 #include <azure/core/response.hpp>
@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
    */
   class KeyVaultPipeline {
     Azure::Core::Http::Url m_vaultUrl;
-    Azure::Core::Http::HttpPipeline m_pipeline;
+    Azure::Core::Internal::Http::HttpPipeline m_pipeline;
     std::string m_apiVersion;
 
     /**

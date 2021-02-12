@@ -11,7 +11,7 @@
 
 #include <azure/core/http/body_stream.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <gtest/gtest.h>
 
 #include <memory>
@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Test {
 
   class TransportAdapter : public testing::TestWithParam<TransportAdaptersTestParameter> {
   protected:
-    std::unique_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::unique_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
 
     // Befor each test, create pipeline
     virtual void SetUp() override
@@ -50,7 +50,7 @@ namespace Azure { namespace Core { namespace Test {
       policies.push_back(
           std::make_unique<Azure::Core::Http::TransportPolicy>(GetParam().TransportAdapter));
 
-      m_pipeline = std::make_unique<Azure::Core::Http::HttpPipeline>(policies);
+      m_pipeline = std::make_unique<Azure::Core::Internal::Http::HttpPipeline>(policies);
     }
 
     static void CheckBodyFromBuffer(

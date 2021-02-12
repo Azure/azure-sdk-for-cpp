@@ -88,16 +88,6 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief HTTP transport implementation used.
-   */
-  enum class TransportKind
-  {
-    // TODO move this to Factory
-    Curl, ///< CURL.
-    WinHttp ///< WinHTTP.
-  };
-
-  /**
    * @brief Defines the possible HTTP status codes.
    */
   enum class HttpStatusCode

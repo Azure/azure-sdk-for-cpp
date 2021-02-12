@@ -4,7 +4,7 @@
 #include "azure/identity/client_secret_credential.hpp"
 
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include <chrono>
 #include <sstream>
@@ -20,6 +20,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
+  using namespace Azure::Core::Internal::Http;
 
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try

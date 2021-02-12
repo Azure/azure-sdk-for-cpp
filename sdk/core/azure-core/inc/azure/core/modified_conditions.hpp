@@ -3,14 +3,12 @@
 
 /**
  * @file
- * @brief Define RequestConditions
+ * @brief Define ModifiedConditions
  */
 
 #pragma once
 
 #include "azure/core/datetime.hpp"
-#include "azure/core/etag.hpp"
-#include "azure/core/match_conditions.hpp"
 
 #include <string>
 
@@ -19,7 +17,7 @@ namespace Azure { namespace Core {
   /**
    * @brief Specifies HTTP options for conditional requests based on modification time.
    */
-  struct RequestConditions : MatchConditions
+  struct ModifiedConditions
   {
     /**
      * @brief Optionally limit requests to resources that have only been modified since this point

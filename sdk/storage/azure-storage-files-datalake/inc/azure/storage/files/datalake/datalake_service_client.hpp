@@ -7,7 +7,7 @@
 #include <string>
 
 #include <azure/core/credentials.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_service_client.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -113,6 +113,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   private:
     Azure::Core::Http::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::DataLake
