@@ -127,7 +127,7 @@ TEST(DateTime, sameResultFromDefaultRfc3339)
     auto dt = DateTime::Parse("2020-10-13T21:06:15.33000000Z", DateTime::DateFormat::Rfc3339);
     auto dt2 = DateTime::Parse("2020-10-13T21:06:15.330000000Z", DateTime::DateFormat::Rfc3339);
     auto const str1 = dt.GetRfc3339String(DateTime::TimeFractionFormat::DropTrailingZeros);
-    auto const str2 = dt2.GetString(DateTime::DateFormat::Rfc3339);
+    auto const str2 = dt2.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str1, str2);
   }
 }
@@ -164,7 +164,7 @@ TEST(DateTime, EmittingTimeCorrectDay)
 {
   DateTime const test
       = DateTime() + std::chrono::seconds(63691573964LL); // 2019-04-22T23:52:44 is a Monday
-  auto const actual = test.GetString(DateTime::DateFormat::Rfc1123);
+  auto const actual = test.ToString(DateTime::DateFormat::Rfc1123);
   std::string const expected("Mon");
   EXPECT_EQ(actual.substr(0, 3), expected);
 }
@@ -435,7 +435,7 @@ TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
   for (auto const& str : badStrings)
   {
     auto const dt = DateTime::Parse(str, DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetString(DateTime::DateFormat::Rfc3339);
+    auto const str2 = dt.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str2, strCorrected);
   }
 }

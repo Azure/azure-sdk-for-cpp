@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader(
             "date",
             Azure::Core::DateTime(std::chrono::system_clock::now())
-                .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPreconditionFailedResponse = []() {
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader(
             "date",
             Azure::Core::DateTime(std::chrono::system_clock::now())
-                .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPrimaryResponse
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
               response->AddHeader(
                   "date",
                   Azure::Core::DateTime(std::chrono::system_clock::now())
-                      .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                      .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
               return response;
             };
       auto ConstructSecondaryResponse =
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Test {
             response->AddHeader(
                 "date",
                 Azure::Core::DateTime(std::chrono::system_clock::now())
-                    .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                    .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
             return response;
           };
 

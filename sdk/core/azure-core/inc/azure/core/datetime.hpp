@@ -167,7 +167,7 @@ namespace Azure { namespace Core {
      *
      * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string GetString(DateFormat format, TimeFractionFormat fractionFormat) const;
+    std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
 
   public:
     /**
@@ -177,9 +177,9 @@ namespace Azure { namespace Core {
      *
      * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string GetString(DateFormat format) const
+    std::string ToString(DateFormat format) const
     {
-      return GetString(format, TimeFractionFormat::DropTrailingZeros);
+      return ToString(format, TimeFractionFormat::DropTrailingZeros);
     };
 
     /**
@@ -191,7 +191,7 @@ namespace Azure { namespace Core {
      */
     std::string GetRfc3339String(TimeFractionFormat fractionFormat) const
     {
-      return GetString(DateFormat::Rfc3339, fractionFormat);
+      return ToString(DateFormat::Rfc3339, fractionFormat);
     };
   };
 
