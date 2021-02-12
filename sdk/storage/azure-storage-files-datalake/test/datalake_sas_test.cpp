@@ -376,8 +376,8 @@ namespace Azure { namespace Storage { namespace Test {
     // PreauthorizedAgentObjectId
     {
       Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().GetUuidString();
-      builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().GetUuidString();
+      builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().ToString();
+      builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().ToString();
       auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_NO_THROW(verify_file_read(sasToken2));
     }
