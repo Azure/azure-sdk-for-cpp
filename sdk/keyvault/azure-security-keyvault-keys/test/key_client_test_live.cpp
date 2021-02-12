@@ -126,7 +126,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 // Test Key Delete.
 // The test works for either soft-delete or not, but for non soft-delete, the LRO is completed as
 // soon as the Operation returns.
-TEST_F(KeyVaultClientTest, DeleteKeyVh)
+TEST_F(KeyVaultClientTest, DeleteKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName("deleteThisKey");
@@ -147,7 +147,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyVh)
     auto cancelToken = Azure::Core::GetApplicationContext().WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto expectedStatusToken = m_keyVaultUrl
+    auto expectedStatusToken = m_keyVaultUrl + "/"
         + std::string(Azure::Security::KeyVault::Keys::Details::DeletedKeysPath) + "/" + keyName;
     EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
     // poll each second until key is soft-deleted
