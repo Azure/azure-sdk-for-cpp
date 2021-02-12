@@ -89,7 +89,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
      * @param response The Http raw response from the network.
      * @return KeyVaultException.
      */
-    static KeyVaultException CreateFromResponse(
-        Azure::Core::Http::RawResponse const& response);
+    static KeyVaultException CreateFromResponse(Azure::Core::Http::RawResponse const& response);
   };
 }}}} // namespace Azure::Security::KeyVault::Common
