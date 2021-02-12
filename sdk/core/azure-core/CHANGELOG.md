@@ -8,6 +8,7 @@
 - Split `Azure::Core::RequestConditions` into `Azure::Core::MatchConditions` and `Azure::Core::ModifiedConditions`.
 - Removed `TransportKind` enum from `Azure::Core::Http`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
+- Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
 
 ## 1.0.0-beta.6 (2021-02-09)
 
