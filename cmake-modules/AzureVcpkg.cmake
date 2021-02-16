@@ -24,7 +24,10 @@ macro(az_vcpkg_portfile_prep targetName fileName contentToRemove)
 
   # Windows -> Unix line endings
   string(FIND fileContents "\r\n" crLfPos)
-  string(REPLACE "\r\n" "\n" fileContents ${fileContents})
+
+  if (crLfPos GREATER -1)
+    string(REPLACE "\r\n" "\n" fileContents ${fileContents})
+  endif()
 
   # remove comment header
   string(REPLACE "${contentToRemove}" "" fileContents ${fileContents})
@@ -51,6 +54,10 @@ macro(az_vcpkg_portfile_prep targetName fileName contentToRemove)
 endmacro()
 
 macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
+  # CONTROL file has an extra '#' in the comment section, because VcPkg can't handle an empty line at that position,
+  # and without that extra '#' line, the file contents look too crowded.
+  # Ultimately, the lines passed to az_vcpkg_portfile_prep() have to match the header comment that is actually
+  # present in the files, or otherwise nothing will be removed.
   az_vcpkg_portfile_prep(
     "${targetName}"
     "CONTROL"
