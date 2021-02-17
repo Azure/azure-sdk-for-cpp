@@ -718,7 +718,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
   }
 }
 
-std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFormat) const
+std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
 {
   {
     static DateTime const Year0001 = DateTime();

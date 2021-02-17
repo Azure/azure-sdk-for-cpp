@@ -11,7 +11,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   std::string BlobLeaseClient::CreateUniqueLeaseId()
   {
-    return Azure::Core::Uuid::CreateUuid().GetUuidString();
+    return Azure::Core::Uuid::CreateUuid().ToString();
   }
 
   Azure::Core::Response<Models::AcquireBlobLeaseResult> BlobLeaseClient::Acquire(

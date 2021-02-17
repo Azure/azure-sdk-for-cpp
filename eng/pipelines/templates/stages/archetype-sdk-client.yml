@@ -23,12 +23,6 @@ parameters:
 - name: CoverageReportPath
   type: string
   default: 'sdk/*/*/*cov_xml.xml'
-- name: WindowsPool
-  type: string
-  default: azsdk-pool-mms-win-2019-general
-- name: LinuxPool
-  type: string
-  default: azsdk-pool-mms-ubuntu-1804-general
 - name: LiveTestTimeoutInMinutes
   type: number
   default: 60
@@ -43,8 +37,6 @@ stages:
           CtestRegex: ${{ parameters.CtestRegex }}
           Coverage: ${{ parameters.Coverage }}
           CoverageReportPath: ${{ parameters.CoverageReportPath }}
-          WindowsPool: ${{ parameters.WindowsPool }}
-          LinuxPool: ${{ parameters.LinuxPool }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest
