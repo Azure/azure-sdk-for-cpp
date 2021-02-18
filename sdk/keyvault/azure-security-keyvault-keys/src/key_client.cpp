@@ -41,6 +41,6 @@ KeyClient::KeyClient(
       std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
   Azure::Core::Http::Url url(vaultUrl);
 
-  m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
       url, apiVersion, std::move(policies));
 }

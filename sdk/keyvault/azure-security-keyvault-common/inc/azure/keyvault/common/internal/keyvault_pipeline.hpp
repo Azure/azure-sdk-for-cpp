@@ -130,5 +130,31 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
       auto response = SendRequest(context, request);
       return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
     }
+
+    /**
+     * @brief Create a key vault request and send it using the Azure Core pipeline directly to avoid
+     * checking the respone code.
+     *
+     * @param context A context for cancellation.
+     * @param method The Http method for the request.
+     * @param path The path for the request.
+     * @return A unique ptr to an Http raw response.
+     */
+    std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::HttpMethod method,
+        std::vector<std::string> const& path)
+    {
+      auto request = CreateRequest(method, path);
+      // Use the core pipeline directly to avoid checking the response code.
+      return m_pipeline.Send(context, request);
+    }
+
+    /**
+     * @brief Get the Vault Url which was used to create the #KeyVaultPipeline.
+     *
+     * @return The vault Url as string.
+     */
+    std::string GetVaultUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
   };
 }}}}} // namespace Azure::Security::KeyVault::Common::Internal

@@ -634,6 +634,24 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+    /**
+     * @brief Copy a raw response to construct a new one.
+     *
+     * @remark The body stream won't be copied.
+     *
+     * @param response A reference for copying the raw response.
+     */
+    RawResponse(RawResponse const& response)
+        : RawResponse(
+            response.m_majorVersion,
+            response.m_minorVersion,
+            response.m_statusCode,
+            response.m_reasonPhrase)
+    {
+      // Copy body
+      m_body = response.GetBody();
+    }
+
     // ===== Methods used to build HTTP response =====
 
     /**
