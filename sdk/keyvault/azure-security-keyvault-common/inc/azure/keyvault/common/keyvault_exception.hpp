@@ -83,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
 
     /**
-     * @brief Create one #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
+     * @brief Create #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
      * response reference.
      *
      * @param response The Http raw response from the network.
