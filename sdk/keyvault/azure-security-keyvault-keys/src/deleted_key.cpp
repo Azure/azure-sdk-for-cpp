@@ -27,7 +27,7 @@ DeletedKey Details::DeletedKeyDeserialize(
   // deletedDate
   // scheduledPurgeDate
   deletedKey.RecoveryId = jsonParser[Details::RecoveryIdPropertyName].get<std::string>();
-  deletedKey.DeletedOn = UnixTimeConverter::UnixTimeToDatetime(
+  deletedKey.DeletedDate = UnixTimeConverter::UnixTimeToDatetime(
       jsonParser[Details::DeletedOnPropertyName].get<uint64_t>());
   deletedKey.ScheduledPurgeDate = UnixTimeConverter::UnixTimeToDatetime(
       jsonParser[Details::ScheduledPurgeDatePropertyName].get<uint64_t>());
