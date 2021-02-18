@@ -70,19 +70,19 @@ inline void PrintOptions(
 {
   {
     std::cout << std::endl << "=== Global Options ===" << std::endl;
-    Azure::Core::Internal::Json::json optionsJs = options;
-    std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl;
+    Azure::Core::Internal::Json::json optionsAsJson = options;
+    std::cout << ReplaceAll(optionsAsJson.dump(), ",", ",\n") << std::endl;
   }
 
   if (testOptions.size() > 0)
   {
     std::cout << std::endl << "=== Test Options ===" << std::endl;
-    Azure::Core::Internal::Json::json optionsJs;
+    Azure::Core::Internal::Json::json optionsAsJson;
     for (auto option : testOptions)
     {
       try
       {
-        optionsJs[option.Name]
+        optionsAsJson[option.Name]
             = option.sensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
       }
       catch (std::out_of_range const&)
@@ -90,7 +90,7 @@ inline void PrintOptions(
         if (!option.required)
         {
           // arg was not parsed
-          optionsJs[option.Name] = "default value";
+          optionsAsJson[option.Name] = "default value";
         }
         else
         {
@@ -103,7 +103,7 @@ inline void PrintOptions(
         throw;
       }
     }
-    std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl << std::endl;
+    std::cout << ReplaceAll(optionsAsJson.dump(), ",", ",\n") << std::endl << std::endl;
   }
 }
 
