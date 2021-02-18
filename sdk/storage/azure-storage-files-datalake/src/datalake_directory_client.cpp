@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeDirectoryClient::DataLakeDirectoryClient(
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeDirectoryClient::DataLakeDirectoryClient(
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient DataLakeDirectoryClient::GetFileClient(const std::string& fileName) const
@@ -157,7 +157,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
       const std::string& fileName,
       const std::string& destinationFilePath,
-      const RenameDataLakeFileOptions& options) const
+      const RenameDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
@@ -186,7 +187,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RenameSource
         = "/" + m_pathUrl.GetPath() + Storage::Details::UrlEncodePath(fileName);
     auto result = Details::DataLakeRestClient::Path::Create(
-        destinationDfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     // Initialize the file client.
     auto blobClient = m_blobClient;
@@ -204,7 +205,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
       const std::string& subdirectoryName,
       const std::string& destinationDirectoryPath,
-      const RenameDataLakeSubdirectoryOptions& options) const
+      const RenameDataLakeSubdirectoryOptions& options,
+      const Azure::Core::Context& context) const
   {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
@@ -233,7 +235,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RenameSource
         = "/" + m_pathUrl.GetPath() + Storage::Details::UrlEncodePath(subdirectoryName);
     auto result = Details::DataLakeRestClient::Path::Create(
-        destinationDfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     // Initialize the directory client.
     auto blobClient = m_blobClient;
@@ -246,27 +248,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::Delete(
       bool recursive,
-      const DeleteDataLakeDirectoryOptions& options) const
+      const DeleteDataLakeDirectoryOptions& options,
+      const Azure::Core::Context& context) const
   {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
-    deleteOptions.Context = options.Context;
     deleteOptions.Recursive = recursive;
-    return DataLakePathClient::Delete(deleteOptions);
+    return DataLakePathClient::Delete(deleteOptions, context);
   }
 
-  Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::
-      DeleteIfExists(bool recursive, const DeleteDataLakeDirectoryOptions& options) const
+  Azure::Core::Response<Models::DeleteDataLakeDirectoryResult>
+  DataLakeDirectoryClient::DeleteIfExists(
+      bool recursive,
+      const DeleteDataLakeDirectoryOptions& options,
+      const Azure::Core::Context& context) const
   {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
-    deleteOptions.Context = options.Context;
     deleteOptions.Recursive = recursive;
-    return DataLakePathClient::DeleteIfExists(deleteOptions);
+    return DataLakePathClient::DeleteIfExists(deleteOptions, context);
   }
 
-  Azure::Core::Response<Models::ListPathsSinglePageResult> DataLakeDirectoryClient::
-      ListPathsSinglePage(bool recursive, const ListPathsSinglePageOptions& options) const
+  Azure::Core::Response<Models::ListPathsSinglePageResult>
+  DataLakeDirectoryClient::ListPathsSinglePage(
+      bool recursive,
+      const ListPathsSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
@@ -281,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (firstSlashPos == 0 || (firstSlashPos == currentPath.size() + 1U))
     {
       return Details::DataLakeRestClient::FileSystem::ListPaths(
-          m_pathUrl, *m_pipeline, options.Context, protocolLayerOptions);
+          m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     }
     else
     {
@@ -291,7 +298,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       fileSystemUrl.SetPath(currentPath.substr(
           0U, currentPath.size() - protocolLayerOptions.Directory.GetValue().size() - 1U));
       return Details::DataLakeRestClient::FileSystem::ListPaths(
-          fileSystemUrl, *m_pipeline, options.Context, protocolLayerOptions);
+          fileSystemUrl, *m_pipeline, context, protocolLayerOptions);
     }
   }
 

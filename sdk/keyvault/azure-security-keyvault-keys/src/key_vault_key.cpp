@@ -4,9 +4,12 @@
 #include "azure/keyvault/keys/key_vault_key.hpp"
 #include "azure/keyvault/keys/key_constants.hpp"
 
+#include <azure/keyvault/common/internal/unix_time_helper.hpp>
+
 #include <azure/core/internal/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
+using Azure::Security::KeyVault::Common::Internal::UnixTimeConverter;
 
 namespace {
 void ParseStringOperationsToKeyOperations(
@@ -24,11 +27,19 @@ KeyVaultKey Details::KeyVaultKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
+  KeyVaultKey key(name);
+  Details::KeyVaultKeyDeserialize(key, rawResponse);
+  return key;
+}
+
+void Details::KeyVaultKeyDeserialize(
+    KeyVaultKey& key,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
   auto body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
 
   // "Key"
-  KeyVaultKey key(name);
   auto const& jsonKey = jsonParser[Details::KeyPropertyName];
   {
     // key_ops
@@ -42,6 +53,11 @@ KeyVaultKey Details::KeyVaultKeyDeserialize(
       = Details::KeyTypeFromString(jsonKey[Details::KeyTypePropertyName].get<std::string>());
 
   // "Attributes"
+  {
+    auto attributes = jsonParser[Details::AttributesPropertyName];
+    key.Properties.CreatedOn
+        = UnixTimeConverter::UnixTimeToDatetime(attributes["created"].get<uint64_t>());
+  }
 
   // "Tags"
   auto const& tags = jsonParser[Details::TagsPropertyName];
@@ -51,6 +67,4 @@ KeyVaultKey Details::KeyVaultKeyDeserialize(
       key.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
     }
   }
-
-  return key;
 }

@@ -12,8 +12,10 @@ include(GoogleTest)
 ################## Unit Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test
-  key_client_test.cpp  
+  key_client_test.cpp
   main.cpp
+  mocked_transport_adapter_test.hpp
+  telemetry_header_test.cpp
 )
 
 if (MSVC)
@@ -33,6 +35,7 @@ add_executable (
   azure-security-keyvault-keys-test-live
   key_client_test_live.cpp
   main.cpp
+  key_client_base_test.hpp
 )
 
 if (MSVC)

@@ -88,16 +88,6 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief HTTP transport implementation used.
-   */
-  enum class TransportKind
-  {
-    // TODO move this to Factory
-    Curl, ///< CURL.
-    WinHttp ///< WinHTTP.
-  };
-
-  /**
    * @brief Defines the possible HTTP status codes.
    */
   enum class HttpStatusCode
@@ -642,6 +632,24 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& reasonPhrase)
         : RawResponse(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
     {
+    }
+
+    /**
+     * @brief Copy a raw response to construct a new one.
+     *
+     * @remark The body stream won't be copied.
+     *
+     * @param response A reference for copying the raw response.
+     */
+    RawResponse(RawResponse const& response)
+        : RawResponse(
+            response.m_majorVersion,
+            response.m_minorVersion,
+            response.m_statusCode,
+            response.m_reasonPhrase)
+    {
+      // Copy body
+      m_body = response.GetBody();
     }
 
     // ===== Methods used to build HTTP response =====

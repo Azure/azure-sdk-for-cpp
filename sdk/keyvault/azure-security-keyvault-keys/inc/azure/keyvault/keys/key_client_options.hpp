@@ -27,6 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     ServiceVersion Version;
     Azure::Core::Http::RetryOptions RetryOptions;
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+    Azure::Core::Http::TelemetryPolicyOptions TelemetryPolicyOptions;
 
     KeyClientOptions(ServiceVersion version = ServiceVersion::V7_2) : Version(version) {}
 

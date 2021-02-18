@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
@@ -69,35 +69,41 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List the shares from the service.
      * @param options Optional parameters to list the shares.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::ListSharesSinglePageResult> The results containing the
      * shares returned and information used for future list operation on valid result not yet
      * returned.
      */
     Azure::Core::Response<Models::ListSharesSinglePageResult> ListSharesSinglePage(
-        const ListSharesSinglePageOptions& options = ListSharesSinglePageOptions()) const;
+        const ListSharesSinglePageOptions& options = ListSharesSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Set the service's properties.
      * @param properties The properties of the service that is to be set.
      * @param options Optional parameters to set the properties of the service.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::SetServicePropertiesResult> The infromation returned
      * when setting the service properties.
      */
     Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
         Models::FileServiceProperties properties,
-        const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
+        const SetServicePropertiesOptions& options = SetServicePropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Get the service's properties.
      * @param options Optional parameters to get the properties of the service.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::GetServicePropertiesResult> The result containing
      * service's properties.
      */
     Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
-        const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
+        const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     Azure::Core::Http::Url m_serviceUrl;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::Shares

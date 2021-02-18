@@ -22,11 +22,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   struct CreateKeyOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     std::list<KeyOperation> KeyOperations;
 
     Azure::Core::Nullable<Azure::Core::DateTime> NotBefore;

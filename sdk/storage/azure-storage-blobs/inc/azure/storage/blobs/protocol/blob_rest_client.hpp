@@ -16,7 +16,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
@@ -1238,7 +1238,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Core::Response<ListBlobContainersSinglePageResult>
         ListBlobContainersSinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ListBlobContainersSinglePageOptions& options)
         {
@@ -1305,7 +1305,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetUserDelegationKeyOptions& options)
         {
@@ -1358,7 +1358,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetServicePropertiesResult> GetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetServicePropertiesOptions& options)
         {
@@ -1401,7 +1401,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetServicePropertiesResult> SetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetServicePropertiesOptions& options)
         {
@@ -1448,7 +1448,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetAccountInfoResult> GetAccountInfo(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetAccountInfoOptions& options)
         {
@@ -1488,7 +1488,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetServiceStatisticsResult> GetStatistics(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetServiceStatisticsOptions& options)
         {
@@ -1533,7 +1533,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const FindBlobsByTagsSinglePageOptions& options)
         {
@@ -3094,7 +3094,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<CreateBlobContainerResult> Create(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreateBlobContainerOptions& options)
         {
@@ -3156,7 +3156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<DeleteBlobContainerResult> Delete(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const DeleteBlobContainerOptions& options)
         {
@@ -3177,14 +3177,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3211,7 +3211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<UndeleteBlobContainerResult> Undelete(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const UndeleteBlobContainerOptions& options)
         {
@@ -3251,7 +3251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetBlobContainerPropertiesResult> GetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobContainerPropertiesOptions& options)
         {
@@ -3324,7 +3324,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobContainerMetadataResult> SetMetadata(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobContainerMetadataOptions& options)
         {
@@ -3351,7 +3351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3384,7 +3384,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<ListBlobsSinglePageResult> ListBlobsSinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ListBlobsSinglePageOptions& options)
         {
@@ -3454,7 +3454,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Core::Response<ListBlobsByHierarchySinglePageResult>
         ListBlobsByHierarchySinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ListBlobsByHierarchySinglePageOptions& options)
         {
@@ -3525,7 +3525,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetBlobContainerAccessPolicyResult> GetAccessPolicy(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobContainerAccessPolicyOptions& options)
         {
@@ -3582,7 +3582,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobContainerAccessPolicyResult> SetAccessPolicy(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobContainerAccessPolicyOptions& options)
         {
@@ -3619,14 +3619,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3659,7 +3659,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::AcquireBlobContainerLeaseResult> AcquireLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AcquireBlobContainerLeaseOptions& options)
         {
@@ -3684,14 +3684,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3724,7 +3724,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::RenewBlobContainerLeaseResult> RenewLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const RenewBlobContainerLeaseOptions& options)
         {
@@ -3745,14 +3745,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3786,7 +3786,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::ChangeBlobContainerLeaseResult> ChangeLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ChangeBlobContainerLeaseOptions& options)
         {
@@ -3808,14 +3808,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3848,7 +3848,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::ReleaseBlobContainerLeaseResult> ReleaseLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ReleaseBlobContainerLeaseOptions& options)
         {
@@ -3869,14 +3869,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3908,7 +3908,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::BreakBlobContainerLeaseResult> BreakLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const BreakBlobContainerLeaseOptions& options)
         {
@@ -3933,14 +3933,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -4848,7 +4848,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<DownloadBlobResult> Download(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const DownloadBlobOptions& options)
         {
@@ -4890,14 +4890,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5230,14 +5230,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5276,7 +5276,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<DeleteBlobResult> Delete(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const DeleteBlobOptions& options)
         {
@@ -5294,7 +5294,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobExpiryResult> ScheduleDeletion(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobExpiryOptions& options)
         {
@@ -5335,7 +5335,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<UndeleteBlobResult> Undelete(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const UndeleteBlobOptions& options)
         {
@@ -5380,7 +5380,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetBlobPropertiesResult> GetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobPropertiesOptions& options)
         {
@@ -5415,14 +5415,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5712,7 +5712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobHttpHeadersOptions& options)
         {
@@ -5761,14 +5761,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5826,7 +5826,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobMetadataResult> SetMetadata(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobMetadataOptions& options)
         {
@@ -5871,14 +5871,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5968,7 +5968,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobAccessTierOptions& options)
         {
@@ -6001,7 +6001,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::StartCopyBlobFromUriResult> StartCopyFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const StartCopyBlobFromUriOptions& options)
         {
@@ -6045,14 +6045,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6071,14 +6071,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "x-ms-source-if-modified-since",
-                options.SourceIfModifiedSince.GetValue().GetString(
+                options.SourceIfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "x-ms-source-if-unmodified-since",
-                options.SourceIfUnmodifiedSince.GetValue().GetString(
+                options.SourceIfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
@@ -6128,7 +6128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AbortCopyBlobFromUriOptions& options)
         {
@@ -6182,7 +6182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<CreateBlobSnapshotResult> CreateSnapshot(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreateBlobSnapshotOptions& options)
         {
@@ -6227,14 +6227,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6297,7 +6297,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetBlobTagsResult> GetTags(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobTagsOptions& options)
         {
@@ -6344,7 +6344,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SetBlobTagsResult> SetTags(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobTagsOptions& options)
         {
@@ -6402,7 +6402,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::AcquireBlobLeaseResult> AcquireLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AcquireBlobLeaseOptions& options)
         {
@@ -6426,14 +6426,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6481,7 +6481,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::RenewBlobLeaseResult> RenewLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const RenewBlobLeaseOptions& options)
         {
@@ -6501,14 +6501,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6557,7 +6557,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::ChangeBlobLeaseResult> ChangeLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ChangeBlobLeaseOptions& options)
         {
@@ -6578,14 +6578,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6633,7 +6633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::ReleaseBlobLeaseResult> ReleaseLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ReleaseBlobLeaseOptions& options)
         {
@@ -6653,14 +6653,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6713,7 +6713,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::BreakBlobLeaseResult> BreakLease(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const BreakBlobLeaseOptions& options)
         {
@@ -6737,14 +6737,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6936,7 +6936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<UploadBlockBlobResult> Upload(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream* requestBody,
             const UploadBlockBlobOptions& options)
@@ -7029,14 +7029,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -7123,7 +7123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<StageBlockResult> StageBlock(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream* requestBody,
             const StageBlockOptions& options)
@@ -7248,7 +7248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const StageBlockFromUriOptions& options)
         {
@@ -7319,14 +7319,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "x-ms-source-if-modified-since",
-                options.SourceIfModifiedSince.GetValue().GetString(
+                options.SourceIfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "x-ms-source-if-unmodified-since",
-                options.SourceIfUnmodifiedSince.GetValue().GetString(
+                options.SourceIfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
@@ -7407,7 +7407,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<CommitBlockListResult> CommitBlockList(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CommitBlockListOptions& options)
         {
@@ -7493,14 +7493,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -7564,7 +7564,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetBlockListResult> GetBlockList(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlockListOptions& options)
         {
@@ -7786,7 +7786,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<CreatePageBlobResult> Create(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreatePageBlobOptions& options)
         {
@@ -7868,14 +7868,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -7951,7 +7951,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream* requestBody,
             const UploadPageBlobPagesOptions& options)
@@ -8037,14 +8037,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8138,7 +8138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const UploadPageBlobPagesFromUriOptions& options)
         {
@@ -8232,14 +8232,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8330,7 +8330,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<ClearPageBlobPagesResult> ClearPages(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ClearPageBlobPagesOptions& options)
         {
@@ -8399,14 +8399,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8463,7 +8463,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<ResizePageBlobResult> Resize(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ResizePageBlobOptions& options)
         {
@@ -8523,14 +8523,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8582,7 +8582,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<GetPageBlobPageRangesResult> GetPageRanges(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetPageBlobPageRangesOptions& options)
         {
@@ -8624,14 +8624,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8686,7 +8686,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Core::Response<Models::Details::StartCopyPageBlobIncrementalResult>
         StartCopyIncremental(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const StartCopyPageBlobIncrementalOptions& options)
         {
@@ -8705,14 +8705,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8956,7 +8956,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<CreateAppendBlobResult> Create(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreateAppendBlobOptions& options)
         {
@@ -9028,14 +9028,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9109,7 +9109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<AppendBlockResult> AppendBlock(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream* requestBody,
             const AppendBlockOptions& options)
@@ -9177,14 +9177,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9278,7 +9278,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AppendBlockFromUriOptions& options)
         {
@@ -9357,14 +9357,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9450,7 +9450,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<SealAppendBlobResult> Seal(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SealAppendBlobOptions& options)
         {
@@ -9472,14 +9472,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9531,7 +9531,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Core::Response<Models::Details::SubmitBlobBatchResult> SubmitBatch(
             const Azure::Core::Context& context,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream* requestBody,
             const SubmitBlobBatchOptions& options)

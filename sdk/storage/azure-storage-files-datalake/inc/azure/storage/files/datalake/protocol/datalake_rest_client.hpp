@@ -17,7 +17,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<FileSystemListPathsResult> ListPaths(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListPathsOptions& listPathsOptions)
         {
@@ -563,7 +563,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -656,14 +656,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderIfModifiedSince,
-                createOptions.IfModifiedSince.GetValue().GetString(
+                createOptions.IfModifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (createOptions.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 Details::HeaderIfUnmodifiedSince,
-                createOptions.IfUnmodifiedSince.GetValue().GetString(
+                createOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (createOptions.SourceIfMatch.HasValue())
@@ -679,14 +679,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderSourceIfModifiedSince,
-                createOptions.SourceIfModifiedSince.GetValue().GetString(
+                createOptions.SourceIfModifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (createOptions.SourceIfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 Details::HeaderSourceIfUnmodifiedSince,
-                createOptions.SourceIfUnmodifiedSince.GetValue().GetString(
+                createOptions.SourceIfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           return CreateParseResult(context, pipeline.Send(context, request));
@@ -707,7 +707,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -752,14 +752,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderIfModifiedSince,
-                getPropertiesOptions.IfModifiedSince.GetValue().GetString(
+                getPropertiesOptions.IfModifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (getPropertiesOptions.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 Details::HeaderIfUnmodifiedSince,
-                getPropertiesOptions.IfUnmodifiedSince.GetValue().GetString(
+                getPropertiesOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           return GetPropertiesParseResult(context, pipeline.Send(context, request));
@@ -780,7 +780,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -823,14 +823,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderIfModifiedSince,
-                deleteOptions.IfModifiedSince.GetValue().GetString(
+                deleteOptions.IfModifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (deleteOptions.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 Details::HeaderIfUnmodifiedSince,
-                deleteOptions.IfUnmodifiedSince.GetValue().GetString(
+                deleteOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           return DeleteParseResult(context, pipeline.Send(context, request));
@@ -853,7 +853,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathSetAccessControlResult> SetAccessControl(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessControlOptions& setAccessControlOptions)
         {
@@ -901,14 +901,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderIfModifiedSince,
-                setAccessControlOptions.IfModifiedSince.GetValue().GetString(
+                setAccessControlOptions.IfModifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (setAccessControlOptions.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 Details::HeaderIfUnmodifiedSince,
-                setAccessControlOptions.IfUnmodifiedSince.GetValue().GetString(
+                setAccessControlOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           request.AddHeader(Details::HeaderVersion, setAccessControlOptions.ApiVersionParameter);
@@ -928,7 +928,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathSetAccessControlRecursiveResult> SetAccessControlRecursive(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessControlRecursiveOptions& setAccessControlRecursiveOptions)
         {
@@ -998,7 +998,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathFlushDataResult> FlushData(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const FlushDataOptions& flushDataOptions)
         {
@@ -1084,14 +1084,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderIfModifiedSince,
-                flushDataOptions.IfModifiedSince.GetValue().GetString(
+                flushDataOptions.IfModifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           if (flushDataOptions.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 Details::HeaderIfUnmodifiedSince,
-                flushDataOptions.IfUnmodifiedSince.GetValue().GetString(
+                flushDataOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
           request.AddHeader(Details::HeaderVersion, flushDataOptions.ApiVersionParameter);
@@ -1112,7 +1112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         static Azure::Core::Response<PathAppendDataResult> AppendData(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream& bodyStream,
-            Azure::Core::Http::HttpPipeline& pipeline,
+            Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AppendDataOptions& appendDataOptions)
         {

@@ -1,10 +1,14 @@
 # Release History
 
-## 12.0.0-beta.8 (Unreleased)
+## 12.0.0-beta.9 (Unreleased)
+
+
+## 12.0.0-beta.8 (2021-02-12)
 
 ### Breaking Changes
 
-- Remove the `Azure::Storage::Md5` class from `crypt.hpp`. Use the type from `Azure::Core::Cryptography` namespace instead, from `azure/core/cryptography/hash.hpp`.
+- Removed the `Azure::Storage::Md5` class from `crypt.hpp`. Use the type from `Azure::Core::Cryptography` namespace instead, from `azure/core/cryptography/hash.hpp`.
+- Renamed `Crc64` to `Crc64Hash` and change it to derive from the `Azure::Core::Cryptography::Hash` class.
 
 ## 12.0.0-beta.7 (2021-02-03)
 

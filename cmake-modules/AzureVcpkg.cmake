@@ -18,13 +18,57 @@ macro(az_vcpkg_integrate)
   endif()
 endmacro()
 
-macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
+macro(az_vcpkg_portfile_prep targetName fileName contentToRemove)
+  # with sdk/<lib>/vcpkg/<fileName>
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/${fileName}" fileContents)
+
+  # Windows -> Unix line endings
+  string(FIND fileContents "\r\n" crLfPos)
+
+  if (crLfPos GREATER -1)
+    string(REPLACE "\r\n" "\n" fileContents ${fileContents})
+  endif()
+
+  # remove comment header
+  string(REPLACE "${contentToRemove}" "" fileContents ${fileContents})
+
+  # undo Windows -> Unix line endings (if applicable)
+  if (crLfPos GREATER -1)
+    string(REPLACE "\n" "\r\n" fileContents ${fileContents})
+  endif()
+  unset(crLfPos)
+
+  # output to an intermediate location
+  file (WRITE "${CMAKE_BINARY_DIR}/vcpkg_prep/${targetName}/${fileName}" ${fileContents})
+  unset(fileContents)
+
   # Produce the files to help with the VcPkg release.
   # Go to the /out/build/<cfg>/vcpkg directory, and copy (merge) "ports" folder to the vcpkg repo.
   # Then, update portfile.cmake's SHA512 from "1" to the actual hash (a good way to do it is to uninstall a package,
   # clean vcpkg/downloads, vcpkg/buildtrees, run "vcpkg install <pkg>", and get the SHA from the error message).
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/CONTROL" "${CMAKE_BINARY_DIR}/vcpkg/ports/${targetName}-cpp/CONTROL" @ONLY)
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/portfile.cmake" "${CMAKE_BINARY_DIR}/vcpkg/ports/${targetName}-cpp/portfile.cmake" @ONLY)
+  configure_file(
+    "${CMAKE_BINARY_DIR}/vcpkg_prep/${targetName}/${fileName}"
+    "${CMAKE_BINARY_DIR}/vcpkg/ports/${targetName}-cpp/${fileName}"
+    @ONLY
+  )
+endmacro()
+
+macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
+  # CONTROL file has an extra '#' in the comment section, because VcPkg can't handle an empty line at that position,
+  # and without that extra '#' line, the file contents look too crowded.
+  # Ultimately, the lines passed to az_vcpkg_portfile_prep() have to match the header comment that is actually
+  # present in the files, or otherwise nothing will be removed.
+  az_vcpkg_portfile_prep(
+    "${targetName}"
+    "CONTROL"
+    "# Copyright (c) Microsoft Corporation. All rights reserved.\n# SPDX-License-Identifier: MIT\n#\n"
+  )
+
+  az_vcpkg_portfile_prep(
+    "${targetName}"
+    "portfile.cmake"
+    "# Copyright (c) Microsoft Corporation. All rights reserved.\n# SPDX-License-Identifier: MIT\n\n"
+  )
 
   # Standard names for folders such as "bin", "lib", "include". We could hardcode, but some other libs use it too (curl).
   include(GNUInstallDirs)

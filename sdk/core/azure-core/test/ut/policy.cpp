@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -34,7 +34,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
-  Azure::Core::Http::HttpPipeline pipeline(policies);
+  Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
   EXPECT_THROW(pipeline.Send(Azure::Core::GetApplicationContext(), request), std::invalid_argument);
@@ -49,7 +49,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
-  Azure::Core::Http::HttpPipeline pipeline(policies);
+  Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
@@ -67,6 +67,7 @@ TEST(Policy, ValuePolicy)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
+  using namespace Azure::Core::Internal::Http;
 
   Azure::Core::Http::Internal::ValuePolicyOptions options
       = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},

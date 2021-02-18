@@ -11,13 +11,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   std::string ShareLeaseClient::CreateUniqueLeaseId()
   {
-    return Azure::Core::Uuid::CreateUuid().GetUuidString();
+    return Azure::Core::Uuid::CreateUuid().ToString();
   }
 
   Azure::Core::Response<Models::AcquireShareLeaseResult> ShareLeaseClient::Acquire(
       std::chrono::seconds duration,
-      const AcquireShareLeaseOptions& options) const
+      const AcquireShareLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
@@ -27,7 +29,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::File::AcquireLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::AcquireShareLeaseResult ret;
@@ -47,7 +49,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::Share::AcquireLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::AcquireShareLeaseResult ret;
@@ -65,8 +67,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::RenewShareLeaseResult> ShareLeaseClient::Renew(
-      const RenewShareLeaseOptions& options) const
+      const RenewShareLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     if (m_fileClient.HasValue())
     {
       // Renew only support share level lease.
@@ -80,7 +84,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::Share::RenewLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::RenewShareLeaseResult ret;
@@ -98,8 +102,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::ReleaseShareLeaseResult> ShareLeaseClient::Release(
-      const ReleaseShareLeaseOptions& options) const
+      const ReleaseShareLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
@@ -108,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::File::ReleaseLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::ReleaseShareLeaseResult ret;
@@ -126,7 +132,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::Share::ReleaseLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::ReleaseShareLeaseResult ret;
@@ -144,8 +150,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Core::Response<Models::ChangeShareLeaseResult> ShareLeaseClient::Change(
       const std::string& proposedLeaseId,
-      const ChangeShareLeaseOptions& options) const
+      const ChangeShareLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
@@ -155,7 +163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::File::ChangeLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::ChangeShareLeaseResult ret;
@@ -175,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::Share::ChangeLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::ChangeShareLeaseResult ret;
@@ -193,8 +201,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::BreakShareLeaseResult> ShareLeaseClient::Break(
-      const BreakShareLeaseOptions& options) const
+      const BreakShareLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
+    unused(options);
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
@@ -202,7 +212,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::File::BreakLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::BreakShareLeaseResult ret;
@@ -219,7 +229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto response = Details::ShareRestClient::Share::BreakLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
-          options.Context,
+          context,
           protocolLayerOptions);
 
       Models::BreakShareLeaseResult ret;

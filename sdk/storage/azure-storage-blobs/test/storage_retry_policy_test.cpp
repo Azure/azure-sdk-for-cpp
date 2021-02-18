@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto ConstructTransportException
           = []() { return Azure::Core::Http::TransportException("Error while sending request. "); };
       auto ConstructNotFoundResponse = []() {
-        auto requestId = Core::Uuid::CreateUuid().GetUuidString();
+        auto requestId = Core::Uuid::CreateUuid().ToString();
         std::string errorResponseBody
             = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
               "<Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\n"
@@ -84,17 +84,17 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
         response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
         response->AddHeader("content-type", "application/xml");
-        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
+        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
         response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
         response->AddHeader("x-ms-error-code", "BlobNotFound");
         response->AddHeader(
             "date",
             Azure::Core::DateTime(std::chrono::system_clock::now())
-                .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPreconditionFailedResponse = []() {
-        auto requestId = Core::Uuid::CreateUuid().GetUuidString();
+        auto requestId = Core::Uuid::CreateUuid().ToString();
         std::string errorResponseBody
             = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
               "<Error><Code>ConditionNotMet</Code>"
@@ -109,13 +109,13 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
         response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
         response->AddHeader("content-type", "application/xml");
-        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
+        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
         response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
         response->AddHeader("x-ms-error-code", "ConditionNotMet");
         response->AddHeader(
             "date",
             Azure::Core::DateTime(std::chrono::system_clock::now())
-                .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPrimaryResponse
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
               response->AddHeader("content-length", std::to_string(bodyLength));
               response->AddHeader("etag", m_primaryETag.ToString());
               response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
-              response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
+              response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
               response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
               response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
               response->AddHeader("x-ms-lease-status", "unlocked");
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
               response->AddHeader(
                   "date",
                   Azure::Core::DateTime(std::chrono::system_clock::now())
-                      .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                      .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
               return response;
             };
       auto ConstructSecondaryResponse =
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Test {
             response->AddHeader("content-length", std::to_string(bodyLength));
             response->AddHeader("etag", m_secondaryETag.ToString());
             response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
-            response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
+            response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
             response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
             response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
             response->AddHeader("x-ms-lease-status", "unlocked");
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Test {
             response->AddHeader(
                 "date",
                 Azure::Core::DateTime(std::chrono::system_clock::now())
-                    .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                    .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
             return response;
           };
 

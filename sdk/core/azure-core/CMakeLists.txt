@@ -48,10 +48,10 @@ set(
     inc/azure/core/cryptography/hash.hpp
     inc/azure/core/http/body_stream.hpp
     inc/azure/core/http/http.hpp
-    inc/azure/core/http/pipeline.hpp
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
@@ -65,11 +65,11 @@ set(
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/match_conditions.hpp
+    inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
-    inc/azure/core/request_conditions.hpp
     inc/azure/core/response.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core/version.hpp
