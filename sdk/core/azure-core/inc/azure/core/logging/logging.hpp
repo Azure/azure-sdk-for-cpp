@@ -9,143 +9,50 @@
 
 #pragma once
 
-#include "azure/core/dll_import_export.hpp"
-
 #include <functional>
-#include <initializer_list>
-#include <set>
 #include <string>
-#include <utility>
 
 namespace Azure { namespace Core { namespace Logging {
-  class LogClassification;
-  class LogClassifications;
+  /**
+   * @brief Log message level.
+   */
+  enum class LogLevel
+  {
+    /// Logging level for failures that the application is unlikely to recover from.
+    Error,
+
+    /// Logging level when a function fails to perform its intended task.
+    Warning,
+
+    /// Logging level when a function operates normally.
+    Informational,
+
+    /// Logging level for detailed troubleshooting scenarios.
+    Verbose,
+  };
 
   /**
    * @brief Defines the signature of the callback function that application developers must write in
    * order to receive Azure SDK log messages.
    *
-   * @param classification The log message classification.
+   * @param level The log message level.
    * @param message The log message.
    */
-  typedef std::function<void(LogClassification const& classification, std::string const& message)>
-      LogListener;
+  typedef std::function<void(LogLevel level, std::string const& message)> LogListener;
 
   /**
    * @brief Set the function that will be invoked to report an SDK log message.
    *
    * @param logListener A #LogListener function that will be invoked when the SDK reports a log
-   * message matching one of the log classifications passed to #SetLogClassifications(). If null, no
+   * message matching one of the log levels passed to #SetLogLevel(). If `nullptr`, no
    * function will be invoked.
    */
   void SetLogListener(LogListener logListener);
 
   /**
-   * @brief Allows the application to specify which log classification types it is interested in
-   * receiving.
+   * @brief Sets the #LogLevel an application is interested in receiving.
    *
-   * @param logClassifications Log classification values.
+   * @param level Maximum log level.
    */
-  void SetLogClassifications(LogClassifications logClassifications);
-
-  namespace Details {
-    enum class Facility : uint16_t
-    {
-      Core = 1,
-      Storage = 100,
-    };
-
-    template <Facility> class LogClassificationProvider;
-
-    class LogClassificationsPrivate;
-  } // namespace Details
-
-  /**
-   * @brief Represents a set of log classifications.
-   */
-  class LogClassifications {
-    friend class Details::LogClassificationsPrivate;
-
-    std::set<LogClassification> m_classifications;
-    bool m_all;
-
-    explicit LogClassifications(bool all) : m_all(all) {}
-
-  public:
-    /**
-     * @brief Initialize the list of log classifications with `std::initializer_list`.
-     * @param list An initializer list.
-     */
-    LogClassifications(std::initializer_list<LogClassification> list)
-        : m_classifications(list), m_all(false)
-    {
-    }
-
-    /**
-     * @brief Initialize the list of log classifications with `std::set`.
-     * @param set A set of classifications.
-     */
-    explicit LogClassifications(std::set<LogClassification> set)
-        : m_classifications(std::move(set)), m_all(false)
-    {
-    }
-  };
-
-  /**
-   * @brief Represents a log classification.
-   */
-  class LogClassification {
-    template <Details::Facility> friend class Details::LogClassificationProvider;
-    friend struct std::less<LogClassification>;
-
-    int32_t m_value;
-
-    constexpr explicit LogClassification(Details::Facility facility, int16_t number)
-        : m_value((static_cast<int32_t>(number) << 16) | static_cast<int32_t>(facility))
-    {
-    }
-
-    constexpr bool operator<(LogClassification const& other) const
-    {
-      return m_value < other.m_value;
-    }
-
-  public:
-    /**
-     * @brief Compare log classification to another one.
-     * @param other Another log classification to compare to.
-     * @return `true` if this log classification equals to \p other, `false` otherwise.
-     */
-    constexpr bool operator==(LogClassification const& other) const
-    {
-      return m_value == other.m_value;
-    }
-
-    /**
-     * @brief Compare log classification to another one.
-     * @param other Another log classification to compare to.
-     * @return `true` if this log classification does not equal to \p other, `false` otherwise.
-     */
-    constexpr bool operator!=(LogClassification const& other) const
-    {
-      return m_value != other.m_value;
-    }
-
-    /**
-     * @brief Represents a list of all classifications.
-     */
-    AZ_CORE_DLLEXPORT static LogClassifications const All;
-
-    /**
-     * @brief Represents an empty list of classifications.
-     */
-    AZ_CORE_DLLEXPORT static LogClassifications const None;
-  };
-
-  namespace Details {
-    template <Facility F> class LogClassificationProvider {
-    protected:
-      constexpr static auto Classification(int16_t number) { return LogClassification(F, number); }
-    };
-  } // namespace Details
+  void SetLogLevel(LogLevel level);
 }}} // namespace Azure::Core::Logging

@@ -5,9 +5,9 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/policy.hpp>
 #include <azure/core/http/transport.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("http://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noRevoke)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.NoRevoke = true;
+    curlOptions.SSLOptions.EnableCertificateRevocationListCheck = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::TransportPolicyOptions options;
@@ -67,7 +67,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
@@ -99,7 +99,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
@@ -126,7 +126,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
@@ -153,7 +153,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
@@ -185,7 +185,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     // Use https
     Azure::Core::Http::Url url("https://httpbin.org/get");
@@ -215,7 +215,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
     // Use https
     Azure::Core::Http::Url url("https://httpbin.org/get");
@@ -251,7 +251,7 @@ namespace Azure { namespace Core { namespace Test {
       // pool
       std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
       policies.emplace_back(std::move(transportPolicy));
-      Azure::Core::Http::HttpPipeline pipeline(policies);
+      Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
 
       Azure::Core::Http::Url url("http://httpbin.org/get");
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);

@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return Lease id of this lease client.
      */
-    std::string GetLeaseId() const { return m_leaseId; }
+    const std::string& GetLeaseId() const { return m_leaseId; }
 
     /**
      * @brief Acquires a lease on the blob or blob container.
@@ -65,50 +65,60 @@ namespace Azure { namespace Storage { namespace Blobs {
      * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
      * changed using renew or change.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A AcquireBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<Models::AcquireBlobLeaseResult> Acquire(
         std::chrono::seconds duration,
-        const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions()) const;
+        const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Renews the blob or blob container's previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A RenewBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<Models::RenewBlobLeaseResult> Renew(
-        const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions()) const;
+        const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Releases the blob or blob container's previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ReleaseBlobLeaseResult describing the updated container or blob.
      */
     Azure::Core::Response<Models::ReleaseBlobLeaseResult> Release(
-        const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
+        const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Changes the lease of an active lease.
      *
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ChangeBlobLeaseResult describing the changed lease.
      * @remarks The current BlobLeaseClient becomes invalid if this operation succeeds.
      */
     Azure::Core::Response<Models::ChangeBlobLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
+        const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Breaks the previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A BreakBlobLeaseResult describing the broken lease.
      */
     Azure::Core::Response<Models::BreakBlobLeaseResult> Break(
-        const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
+        const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     Azure::Core::Nullable<BlobClient> m_blobClient;

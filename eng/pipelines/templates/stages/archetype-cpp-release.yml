@@ -46,7 +46,7 @@ stages:
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: Publish Docs to GitHub pages
-              condition: ne(variables['Skip.PublishDocs'], 'true')
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
               # Release tag must exist for link substitution to work
               dependsOn: TagRepository
@@ -77,7 +77,7 @@ stages:
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
             - deployment: PublishVcpkg
               displayName: Publish to vcpkg
-              condition: ne(variables['Skip.PublishVcpkg'], 'true')
+              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
               environment: github
               # This step requires the tag step
               dependsOn: TagRepository
@@ -99,6 +99,24 @@ stages:
                           } 
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
                         displayName: Set fork branch name
+
+                      - pwsh: |
+                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
+                          $version = $packageSpec.version
+                          $title = "[${{ artifact.VcpkgPortName }}] publish version $version"
+
+                          if ('$(VcpkgPRTitle)') { 
+                            Write-Host "Using queue time PR title"
+                            $title = '$(VcpkgPRTitle)'
+                          }
+                          Write-Host "##vso[task.setvariable variable=PrTitle]$title"
+                        displayName: Set PR title
+
+                      - pwsh: |
+                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
+                          $version = $packageSpec.version
+                          Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
+                        displayName: Set PackageVersion variable
 
                       - task: Powershell@2
                         inputs:
@@ -139,21 +157,42 @@ stages:
                           
                           Write-Host "git status"
                           git status
-                        displayName: Copy updated files into vcpkg fork for PR
-                        condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
-                      # This template does not need to check the 
-                      # SkipVcpkgUpdate variable, it will stop if there are no
-                      # changes in the git repo.
+                          # Commit changes
+                          Write-Host "git add -A"
+                          git add -A 
+                          Write-Host "git -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" commit -m `"Initial vcpkg commit for ${{ artifact.VcpkgPortName }}`""
+                          git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" commit  -m "Initial vcpkg commit for ${{ artifact.VcpkgPortName }}" 
+
+                          # Run vcpkg x-add-version to add version to vcpkg file
+                          Write-Host "./bootstrap-vcpkg.bat"
+                          ./bootstrap-vcpkg.bat
+                          Write-Host "./vcpkg.exe x-add-version ${{ artifact.VcpkgPortName }}"
+                          ./vcpkg.exe x-add-version ${{ artifact.VcpkgPortName }}
+
+                          # Amend commit to include results of x-add-version
+                          Write-Host "git status"
+                          git status
+                          Write-Host "git add -A"
+                          git add -A
+                          Write-Host "git -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" commit --amend -m `"[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)`""
+                          git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" commit --amend -m "[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)"
+
+                          # Work around create-pull-request.yml logic that 
+                          # checks for changes
+                          Write-Host "##vso[task.setvariable variable=HasChanges]$true"
+                        displayName: Commit changes for PR
+
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoOwner: Microsoft
                           RepoName: vcpkg
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
-                          CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
-                          PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
+                          CommitMsg: "[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)"
+                          PRTitle: $(PrTitle)
                           BaseBranchName: master
+                          SkipCheckingForChanges: true
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

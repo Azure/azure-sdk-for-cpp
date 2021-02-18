@@ -11,8 +11,10 @@
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/response.hpp>
+
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
+#include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 #include "azure/keyvault/keys/key_constants.hpp"
 #include "azure/keyvault/keys/key_create_options.hpp"
@@ -32,7 +34,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   class KeyClient {
   protected:
-    std::unique_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
+    // Using a shared pipeline for a client to share it with LRO (like delete key)
+    std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
 
   public:
     /**
@@ -72,16 +75,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param options Optional parameters for this operation.
+     * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> GetKey(
         std::string const& name,
-        GetKeyOptions const& options = GetKeyOptions()) const
+        GetKeyOptions const& options = GetKeyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       return m_pipeline->SendRequest<KeyVaultKey>(
-          options.Context,
+          context,
           Azure::Core::Http::HttpMethod::Get,
-          [name](Azure::Core::Http::RawResponse const& rawResponse) {
+          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
             return Details::KeyVaultKeyDeserialize(name, rawResponse);
           },
           {Details::KeysPath, name, options.Version});
@@ -96,22 +101,52 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::KeyTypeEnum.
      * @param options Optional parameters for this operation. See
      * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
+     * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> CreateKey(
         std::string const& name,
         KeyTypeEnum keyType,
-        CreateKeyOptions const& options = CreateKeyOptions()) const
+        CreateKeyOptions const& options = CreateKeyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       return m_pipeline->SendRequest<KeyVaultKey>(
-          options.Context,
+          context,
           Azure::Core::Http::HttpMethod::Post,
           Details::KeyRequestParameters(keyType, options),
-          [name](Azure::Core::Http::RawResponse const& rawResponse) {
+          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
             return Details::KeyVaultKeyDeserialize(name, rawResponse);
           },
           {Details::KeysPath, name, "create"});
     }
-  };
 
+    /**
+     * @brief Deletes a key of any type from storage in Azure Key Vault.
+     *
+     * @remark The delete key operation cannot be used to remove individual versions of a key. This
+     * operation removes the cryptographic material associated with the key, which means the key is
+     * not usable for Sign/Verify, Wrap/Unwrap or Encrypt/Decrypt operations. This operation
+     * requires the keys/delete permission.
+     *
+     * @param name The name of the key.
+     * @param context A cancellation token controlling the request lifetime.
+     * @return A #DeleteKeyOperation to wait on this long-running operation. If the key is soft
+     * delete-enabled, you only need to wait for the operation to complete if you need to recover or
+     * purge the key; otherwise, the key is deleted automatically on purge schedule.
+     */
+    Azure::Security::KeyVault::Keys::DeleteKeyOperation StartDeleteKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const
+    {
+      return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
+          m_pipeline,
+          m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::DeletedKey>(
+              context,
+              Azure::Core::Http::HttpMethod::Delete,
+              [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+                return Details::DeletedKeyDeserialize(name, rawResponse);
+              },
+              {Details::KeysPath, name}));
+    }
+  };
 }}}} // namespace Azure::Security::KeyVault::Keys

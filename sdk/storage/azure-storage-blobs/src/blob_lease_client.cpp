@@ -11,12 +11,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   std::string BlobLeaseClient::CreateUniqueLeaseId()
   {
-    return Azure::Core::Uuid::CreateUuid().GetUuidString();
+    return Azure::Core::Uuid::CreateUuid().ToString();
   }
 
   Azure::Core::Response<Models::AcquireBlobLeaseResult> BlobLeaseClient::Acquire(
       std::chrono::seconds duration,
-      const AcquireBlobLeaseOptions& options) const
+      const AcquireBlobLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
     {
@@ -30,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = Details::BlobRestClient::Blob::AcquireLease(
-          options.Context,
+          context,
           *(m_blobClient.GetValue().m_pipeline),
           m_blobClient.GetValue().m_blobUrl,
           protocolLayerOptions);
@@ -59,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::abort();
       }
       auto response = Details::BlobRestClient::BlobContainer::AcquireLease(
-          options.Context,
+          context,
           *(m_blobContainerClient.GetValue().m_pipeline),
           m_blobContainerClient.GetValue().m_blobContainerUrl,
           protocolLayerOptions);
@@ -80,7 +81,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::RenewBlobLeaseResult> BlobLeaseClient::Renew(
-      const RenewBlobLeaseOptions& options) const
+      const RenewBlobLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
     {
@@ -93,7 +95,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = Details::BlobRestClient::Blob::RenewLease(
-          options.Context,
+          context,
           *(m_blobClient.GetValue().m_pipeline),
           m_blobClient.GetValue().m_blobUrl,
           protocolLayerOptions);
@@ -122,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = Details::BlobRestClient::BlobContainer::RenewLease(
-          options.Context,
+          context,
           *(m_blobContainerClient.GetValue().m_pipeline),
           m_blobContainerClient.GetValue().m_blobContainerUrl,
           protocolLayerOptions);
@@ -143,7 +145,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::ReleaseBlobLeaseResult> BlobLeaseClient::Release(
-      const ReleaseBlobLeaseOptions& options) const
+      const ReleaseBlobLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
     {
@@ -156,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = Details::BlobRestClient::Blob::ReleaseLease(
-          options.Context,
+          context,
           *(m_blobClient.GetValue().m_pipeline),
           m_blobClient.GetValue().m_blobUrl,
           protocolLayerOptions);
@@ -184,7 +187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = Details::BlobRestClient::BlobContainer::ReleaseLease(
-          options.Context,
+          context,
           *(m_blobContainerClient.GetValue().m_pipeline),
           m_blobContainerClient.GetValue().m_blobContainerUrl,
           protocolLayerOptions);
@@ -205,7 +208,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::ChangeBlobLeaseResult> BlobLeaseClient::Change(
       const std::string& proposedLeaseId,
-      const ChangeBlobLeaseOptions& options) const
+      const ChangeBlobLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
     {
@@ -219,7 +223,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = Details::BlobRestClient::Blob::ChangeLease(
-          options.Context,
+          context,
           *(m_blobClient.GetValue().m_pipeline),
           m_blobClient.GetValue().m_blobUrl,
           protocolLayerOptions);
@@ -249,7 +253,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = Details::BlobRestClient::BlobContainer::ChangeLease(
-          options.Context,
+          context,
           *(m_blobContainerClient.GetValue().m_pipeline),
           m_blobContainerClient.GetValue().m_blobContainerUrl,
           protocolLayerOptions);
@@ -270,7 +274,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::BreakBlobLeaseResult> BlobLeaseClient::Break(
-      const BreakBlobLeaseOptions& options) const
+      const BreakBlobLeaseOptions& options,
+      const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
     {
@@ -283,7 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = Details::BlobRestClient::Blob::BreakLease(
-          options.Context,
+          context,
           *(m_blobClient.GetValue().m_pipeline),
           m_blobClient.GetValue().m_blobUrl,
           protocolLayerOptions);
@@ -292,7 +297,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
-      ret.LeaseTime = response->LeaseTime;
 
       return Azure::Core::Response<Models::BreakBlobLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
@@ -312,7 +316,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = Details::BlobRestClient::BlobContainer::BreakLease(
-          options.Context,
+          context,
           *(m_blobContainerClient.GetValue().m_pipeline),
           m_blobContainerClient.GetValue().m_blobContainerUrl,
           protocolLayerOptions);
@@ -321,7 +325,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
-      ret.LeaseTime = response->LeaseTime;
 
       return Azure::Core::Response<Models::BreakBlobLeaseResult>(
           std::move(ret), response.ExtractRawResponse());

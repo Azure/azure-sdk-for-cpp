@@ -3,10 +3,6 @@
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 
-#include <limits>
-#include <stdexcept>
-#include <utility>
-
 #include <azure/core/http/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -91,26 +87,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileUri = std::move(parsedConnectionString.DataLakeServiceUrl);
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(fileName));
+    auto fileUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
+    fileUrl.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
+    fileUrl.AppendPath(Storage::Details::UrlEncodePath(fileName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return DataLakeFileClient(
-          fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          fileUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DataLakeFileClient(fileUri.GetAbsoluteUrl(), options);
+      return DataLakeFileClient(fileUrl.GetAbsoluteUrl(), options);
     }
   }
 
   DataLakeFileClient::DataLakeFileClient(
-      const std::string& fileUri,
+      const std::string& fileUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUri, credential, options),
+      : DataLakePathClient(fileUrl, credential, options),
         m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -134,14 +130,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient::DataLakeFileClient(
-      const std::string& fileUri,
+      const std::string& fileUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUri, credential, options),
+      : DataLakePathClient(fileUrl, credential, options),
         m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -173,13 +169,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient::DataLakeFileClient(
-      const std::string& fileUri,
+      const std::string& fileUrl,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUri, options), m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, options), m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -201,13 +197,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   Azure::Core::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
       Azure::Core::Http::BodyStream* content,
       int64_t offset,
-      const AppendDataLakeFileOptions& options) const
+      const AppendDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
@@ -225,12 +222,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::DataLakeRestClient::Path::AppendData(
-        m_dfsUrl, *content, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *content, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::FlushDataLakeFileResult> DataLakeFileClient::Flush(
       int64_t position,
-      const FlushDataLakeFileOptions& options) const
+      const FlushDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = position;
@@ -254,16 +252,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::DataLakeRestClient::Path::FlushData(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::DeleteDataLakeFileResult> DataLakeFileClient::Delete(
-      const DeleteDataLakeFileOptions& options) const
+      const DeleteDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
-    deleteOptions.Context = options.Context;
-    auto result = DataLakePathClient::Delete(deleteOptions);
+    auto result = DataLakePathClient::Delete(deleteOptions, context);
     Models::DeleteDataLakeFileResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
@@ -272,12 +270,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::DeleteDataLakeFileResult> DataLakeFileClient::DeleteIfExists(
-      const DeleteDataLakeFileOptions& options) const
+      const DeleteDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
-    deleteOptions.Context = options.Context;
-    auto result = DataLakePathClient::DeleteIfExists(deleteOptions);
+    auto result = DataLakePathClient::DeleteIfExists(deleteOptions, context);
     Models::DeleteDataLakeFileResult ret;
     ret.Deleted = result->Deleted;
     ret.RequestId = std::move(result->RequestId);
@@ -286,10 +284,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::DownloadDataLakeFileResult> DataLakeFileClient::Download(
-      const DownloadDataLakeFileOptions& options) const
+      const DownloadDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::DownloadBlobOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.Range = options.Range;
     blobOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     blobOptions.Range = options.Range;
@@ -298,10 +296,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.Download(blobOptions);
+    auto result = m_blobClient.Download(blobOptions, context);
     Models::DownloadDataLakeFileResult ret;
     ret.Body = std::move(result->BodyStream);
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
+    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
     ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
@@ -340,46 +338,46 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
       const std::string& fileName,
-      const UploadDataLakeFileFromOptions& options) const
+      const UploadDataLakeFileFromOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.TransferOptions.SingleUploadThreshold
         = options.TransferOptions.SingleUploadThreshold;
     blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    return m_blockBlobClient.UploadFrom(fileName, blobOptions);
+    return m_blockBlobClient.UploadFrom(fileName, blobOptions, context);
   }
 
   Azure::Core::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
-      const UploadDataLakeFileFromOptions& options) const
+      const UploadDataLakeFileFromOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
-    blobOptions.Context = options.Context;
     blobOptions.TransferOptions.SingleUploadThreshold
         = options.TransferOptions.SingleUploadThreshold;
     blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);
+    return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions, context);
   }
 
   Azure::Core::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
-      const DownloadDataLakeFileToOptions& options) const
+      const DownloadDataLakeFileToOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto result = m_blockBlobClient.DownloadTo(buffer, bufferSize, options);
+    auto result = m_blockBlobClient.DownloadTo(buffer, bufferSize, options, context);
     Models::DownloadDataLakeFileToResult ret;
-    ret.ContentRange.Length = result->ContentRange.Length.GetValue();
-    ret.ContentRange.Offset = result->ContentRange.Offset;
+    ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
+    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
     ret.Details.ETag = std::move(result->Details.ETag);
     ret.Details.LastModified = std::move(result->Details.LastModified);
     if (result->Details.LeaseDuration.HasValue())
@@ -414,14 +412,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
       const std::string& fileName,
-      const DownloadDataLakeFileToOptions& options) const
+      const DownloadDataLakeFileToOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto result = m_blockBlobClient.DownloadTo(fileName, options);
+    auto result = m_blockBlobClient.DownloadTo(fileName, options, context);
     Models::DownloadDataLakeFileToResult ret;
-    ret.ContentRange.Length = result->ContentRange.Length.GetValue();
-    ret.ContentRange.Offset = result->ContentRange.Offset;
+    ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
+    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
     ret.Details.ETag = std::move(result->Details.ETag);
     ret.Details.LastModified = std::move(result->Details.LastModified);
     if (result->Details.LeaseDuration.HasValue())
@@ -457,25 +455,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::ScheduleDataLakeFileDeletionResult>
   DataLakeFileClient::ScheduleDeletion(
       ScheduleDataLakeFileExpiryOriginType expiryOrigin,
-      const ScheduleDataLakeFileDeletionOptions& options) const
+      const ScheduleDataLakeFileDeletionOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::Details::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-    if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
+    if (options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue())
     {
-      // ExpiresOn and TimeToExpireInMs should be mutually exlusive.
+      // ExpiresOn and TimeToExpire should be mutually exlusive.
       std::abort();
     }
     if (options.ExpiresOn.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = options.ExpiresOn;
+      protocolLayerOptions.ExpiryTime
+          = options.ExpiresOn.GetValue().ToString(Azure::Core::DateTime::DateFormat::Rfc1123);
     }
-    else if (options.TimeToExpireInMs.HasValue())
+    else if (options.TimeToExpire.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpireInMs.GetValue());
+      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpire.GetValue().count());
     }
     return Blobs::Details::BlobRestClient::Blob::ScheduleDeletion(
-        options.Context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
+        context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

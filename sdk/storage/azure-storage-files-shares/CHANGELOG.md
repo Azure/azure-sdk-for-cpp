@@ -1,6 +1,42 @@
 # Release History
 
-## 12.0.0-beta.7 (Unreleased)
+## 12.0.0-beta.9 (Unreleased)
+
+
+## 12.0.0-beta.8 (2021-02-12)
+
+### New Features
+
+- Changed type of `FileAttributes` to extensible enum.
+
+### Breaking Changes
+
+- `ListSharesSinglePageOptions::ListSharesInclude` was renamed to `ListSharesSinglePageOptions::ListSharesIncludeFlags`.
+- `DeleteShareOptions::IncludeSnapshots` was renamed to `DeleteShareOptions::DeleteSnapshots`.
+- `FileShareSmbProperties` was renamed to `FileSmbProperties`.
+- `DownloadShareFileOptions::GetRangeContentMd5` was renamed to `DownloadShareFileOptions::RangeHashAlgorithm`.
+- `UploadFileRangeFromUriOptions::SourceContentHash` was renamed to `UploadFileRangeFromUriOptions::TransactionalContentHash`.
+- `GetShareFileRangeListOptions::PrevShareSnapshot` was renamed to `GetShareFileRangeListOptions::PreviousShareSnapshot`.
+- Refined `CreateShareDirectoryResult` and `CreateShareFileResult`.
+- Removed `DownloadShareFileDetails::AcceptRanges`.
+- Removed `GetShareFilePropertiesResult::FileType`.
+- Added `RequestId` in `ForceCloseShareDirectoryHandleResult`.
+- Removed `TransactionalContentHash` from `ClearShareFileRangeResult`.
+- Changed API signature of `ShareFileClient::UploadRangeFromUri`.
+- Renamed `ForceCloseAllHandles` to `ForceCloseAllHandlesSinglePage` and all related structs.
+- Made all `ContinuationToken` in return types nullable.
+- Renamed `ShareFileHttpHeaders` to `FileHttpHeaders`.
+- Renamed `ShareGetPropertiesResult::AccessTierChangeTime` to `AccessTierChangedOn`.
+- Renamed `ShareGetStatisticsResult::ShareUsageBytes` to `ShareUsageInBytes`.
+- Renamed `ShareGetPermissionResult::Permission` to `FilePermission`.
+- Grouped all file SMB properties into a struct and refined the APIs that return these properties.
+- Renamed `numberOfHandlesClosed` to `NumberOfHandlesClosed` and `numberOfHandlesFailedToClose` to `NumberOfHandlesFailedToClose`.
+- Renamed `FileGetRangeListResult::FileContentLength` to `FileSize`.
+- Renamed `StorageServiceProperties` to `FileServiceProperties`.
+- Removed `LeaseTime` in results returned by lease operations. Also removed `LeaseId` in `ShareBreakLeaseResult`.
+- Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
+
+## 12.0.0-beta.7 (2021-02-04)
 
 ### New Features
 

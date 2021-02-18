@@ -7,6 +7,7 @@
 #include <random>
 #include <vector>
 
+#include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
 
@@ -120,17 +121,22 @@ namespace Azure { namespace Storage { namespace Test {
     auto res = m_blockBlobClient->Download(options);
     ASSERT_TRUE(res->TransactionalContentHash.HasValue());
     EXPECT_EQ(res->TransactionalContentHash.GetValue().Algorithm, HashAlgorithm::Md5);
-    EXPECT_EQ(
-        res->TransactionalContentHash.GetValue().Value,
-        Md5::Hash(m_blobContent.data(), downloadLength));
-
+    {
+      Azure::Core::Cryptography::Md5Hash instance;
+      EXPECT_EQ(
+          res->TransactionalContentHash.GetValue().Value,
+          instance.Final(m_blobContent.data(), downloadLength));
+    }
     options.RangeHashAlgorithm = HashAlgorithm::Crc64;
     res = m_blockBlobClient->Download(options);
     ASSERT_TRUE(res->TransactionalContentHash.HasValue());
     EXPECT_EQ(res->TransactionalContentHash.GetValue().Algorithm, HashAlgorithm::Crc64);
-    EXPECT_EQ(
-        res->TransactionalContentHash.GetValue().Value,
-        Crc64::Hash(m_blobContent.data(), downloadLength));
+    {
+      Crc64Hash instance;
+      EXPECT_EQ(
+          res->TransactionalContentHash.GetValue().Value,
+          instance.Final(m_blobContent.data(), downloadLength));
+    }
   }
 
   TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)

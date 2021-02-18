@@ -90,7 +90,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
-    std::string NamespaceEnabled;
   };
 
   // PathClient models:
@@ -150,15 +149,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::ETag ETag;
     Core::DateTime LastModified;
     Core::DateTime CreatedOn;
-    int64_t FileSize;
+    int64_t FileSize = 0;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<bool> IsServerEncrypted;
     Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Core::Nullable<bool> AccessTierInferred;
+    Azure::Core::Nullable<bool> IsAccessTierInferred;
     Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
@@ -230,6 +229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
+    PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     Core::DateTime CreatedOn;
     Azure::Core::Nullable<Core::DateTime> ExpiresOn;
@@ -250,7 +250,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct DownloadDataLakeFileResult
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
-    PathHttpHeaders HttpHeaders;
     int64_t FileSize = int64_t();
     Azure::Core::Http::Range ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
@@ -268,7 +267,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     int64_t FileSize = int64_t();
     Azure::Core::Http::Range ContentRange;
-    PathHttpHeaders HttpHeaders;
     DownloadDataLakeFileDetails Details;
   };
 
@@ -282,12 +280,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  using SetDataLakePathAccessControlRecursiveListSinglePageResult
+  using SetDataLakePathAccessControlListRecursiveSinglePageResult
       = Details::PathSetAccessControlRecursiveResult;
-  using UpdateDataLakePathAccessControlRecursiveListSinglePageResult
-      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
-  using RemoveDataLakePathAccessControlRecursiveListSinglePageResult
-      = SetDataLakePathAccessControlRecursiveListSinglePageResult;
+  using UpdateDataLakePathAccessControlListRecursiveSinglePageResult
+      = SetDataLakePathAccessControlListRecursiveSinglePageResult;
+  using RemoveDataLakePathAccessControlListRecursiveSinglePageResult
+      = SetDataLakePathAccessControlListRecursiveSinglePageResult;
   using CreateDataLakeDirectoryResult = CreateDataLakePathResult;
   using DeleteDataLakeDirectoryResult = DeleteDataLakePathResult;
 

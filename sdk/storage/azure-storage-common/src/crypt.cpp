@@ -18,7 +18,6 @@
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
-#include <openssl/md5.h>
 #include <openssl/sha.h>
 #endif
 
@@ -87,7 +86,6 @@ namespace Azure { namespace Storage {
     {
       HmacSha256,
       Sha256,
-      Md5,
     };
 
     struct AlgorithmProviderInstance
@@ -102,10 +100,6 @@ namespace Azure { namespace Storage {
         if (type == AlgorithmType::HmacSha256 || type == AlgorithmType::Sha256)
         {
           algorithmId = BCRYPT_SHA256_ALGORITHM;
-        }
-        else if (type == AlgorithmType::Md5)
-        {
-          algorithmId = BCRYPT_MD5_ALGORITHM;
         }
         else
         {
@@ -249,75 +243,6 @@ namespace Azure { namespace Storage {
     }
   } // namespace Details
 
-  struct Md5HashContext
-  {
-    std::string buffer;
-    BCRYPT_HASH_HANDLE hashHandle = nullptr;
-    std::size_t hashLength = 0;
-  };
-
-  Md5::Md5()
-  {
-    static Details::AlgorithmProviderInstance AlgorithmProvider(Details::AlgorithmType::Md5);
-
-    Md5HashContext* context = new Md5HashContext;
-    m_context = context;
-    context->buffer.resize(AlgorithmProvider.ContextSize);
-    context->hashLength = AlgorithmProvider.HashLength;
-
-    NTSTATUS status = BCryptCreateHash(
-        AlgorithmProvider.Handle,
-        &context->hashHandle,
-        reinterpret_cast<PUCHAR>(&context->buffer[0]),
-        static_cast<ULONG>(context->buffer.size()),
-        nullptr,
-        0,
-        0);
-    if (!BCRYPT_SUCCESS(status))
-    {
-      throw std::runtime_error("BCryptCreateHash failed");
-    }
-  }
-
-  Md5::~Md5()
-  {
-    Md5HashContext* context = static_cast<Md5HashContext*>(m_context);
-    BCryptDestroyHash(context->hashHandle);
-    delete context;
-  }
-
-  void Md5::Update(const uint8_t* data, std::size_t length)
-  {
-    Md5HashContext* context = static_cast<Md5HashContext*>(m_context);
-
-    NTSTATUS status = BCryptHashData(
-        context->hashHandle,
-        reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data)),
-        static_cast<ULONG>(length),
-        0);
-    if (!BCRYPT_SUCCESS(status))
-    {
-      throw std::runtime_error("BCryptHashData failed");
-    }
-  }
-
-  std::vector<uint8_t> Md5::Digest() const
-  {
-    Md5HashContext* context = static_cast<Md5HashContext*>(m_context);
-    std::vector<uint8_t> hash;
-    hash.resize(context->hashLength);
-    NTSTATUS status = BCryptFinishHash(
-        context->hashHandle,
-        reinterpret_cast<PUCHAR>(&hash[0]),
-        static_cast<ULONG>(hash.size()),
-        0);
-    if (!BCRYPT_SUCCESS(status))
-    {
-      throw std::runtime_error("BCryptFinishHash failed");
-    }
-    return hash;
-  }
-
 #elif defined(AZ_PLATFORM_POSIX)
 
   namespace Details {
@@ -351,33 +276,6 @@ namespace Azure { namespace Storage {
     }
 
   } // namespace Details
-
-  Md5::Md5()
-  {
-    MD5_CTX* context = new MD5_CTX;
-    m_context = context;
-    MD5_Init(context);
-  }
-
-  Md5::~Md5()
-  {
-    MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
-    delete context;
-  }
-
-  void Md5::Update(const uint8_t* data, std::size_t length)
-  {
-    MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
-    MD5_Update(context, data, length);
-  }
-
-  std::vector<uint8_t> Md5::Digest() const
-  {
-    MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
-    unsigned char hash[MD5_DIGEST_LENGTH];
-    MD5_Final(hash, context);
-    return std::vector<uint8_t>(std::begin(hash), std::end(hash));
-  }
 
 #endif
 
@@ -1012,7 +910,7 @@ namespace Azure { namespace Storage {
     return vr[0] ^ vr[1];
   }
 
-  void Crc64::Update(const uint8_t* data, std::size_t length)
+  void Crc64Hash::OnAppend(const uint8_t* data, std::size_t length)
   {
     m_length += length;
 
@@ -1160,7 +1058,7 @@ namespace Azure { namespace Storage {
     m_context = uCrc ^ ~0ULL;
   }
 
-  void Crc64::Concatenate(const Crc64& other)
+  void Crc64Hash::Concatenate(const Crc64Hash& other)
   {
     m_length += other.m_length;
 
@@ -1189,8 +1087,9 @@ namespace Azure { namespace Storage {
     m_context ^= other.m_context;
   }
 
-  std::vector<uint8_t> Crc64::Digest() const
+  std::vector<uint8_t> Crc64Hash::OnFinal(const uint8_t* data, std::size_t length)
   {
+    OnAppend(data, length);
     std::vector<uint8_t> binary;
     binary.resize(sizeof(m_context));
     for (std::size_t i = 0; i < sizeof(m_context); ++i)

@@ -147,47 +147,53 @@ namespace Azure { namespace Storage { namespace Blobs {
      * properties for the blob. It does not return the content of the blob.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetBlobPropertiesResult describing the blob's properties.
      */
     Azure::Core::Response<Models::GetBlobPropertiesResult> GetProperties(
-        const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions()) const;
+        const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets system properties on the blob.
      *
      * @param httpHeaders The standard HTTP header system properties to set.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetBlobHttpHeadersResult describing the updated blob.
      */
     Azure::Core::Response<Models::SetBlobHttpHeadersResult> SetHttpHeaders(
         Models::BlobHttpHeaders httpHeaders,
-        const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
+        const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets user-defined metadata for the specified blob as one or more name-value
      * pairs.
      *
      * @param metadata Custom metadata to set for this blob.
-     * @param
-     * options Optional parameters to execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetBlobMetadataResult describing the updated blob.
      */
     Azure::Core::Response<Models::SetBlobMetadataResult> SetMetadata(
         Metadata metadata,
-        const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
+        const SetBlobMetadataOptions& options = SetBlobMetadataOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the tier on a blob. The operation is allowed on a page blob in a premium
      * storage account and on a block blob in a blob storage or general purpose v2 account.
      *
      * @param tier Indicates the tier to be set on the blob.
-     * @param options Optional
-     * parameters to execute this function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetBlobAccessTierResult on successfully setting the tier.
      */
     Azure::Core::Response<Models::SetBlobAccessTierResult> SetAccessTier(
         Models::AccessTier tier,
-        const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions()) const;
+        const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Copies data at from the source to this blob.
@@ -199,11 +205,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * public or must be authenticated via a shared access signature. If the source blob is public,
      * no authentication is required to perform the copy operation.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A StartCopyBlobResult describing the state of the copy operation.
      */
     Azure::Core::Response<Models::StartCopyBlobResult> StartCopyFromUri(
         const std::string& sourceUri,
-        const StartCopyBlobFromUriOptions& options = StartCopyBlobFromUriOptions()) const;
+        const StartCopyBlobFromUriOptions& options = StartCopyBlobFromUriOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Aborts a pending StartCopyFromUri operation, and leaves this blob with zero
@@ -211,22 +219,26 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A AbortCopyBlobFromUriResult on successfully aborting.
      */
     Azure::Core::Response<Models::AbortCopyBlobFromUriResult> AbortCopyFromUri(
         const std::string& copyId,
-        const AbortCopyBlobFromUriOptions& options = AbortCopyBlobFromUriOptions()) const;
+        const AbortCopyBlobFromUriOptions& options = AbortCopyBlobFromUriOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service, including its metadata and
      * properties.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DownloadBlobResult describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
     Azure::Core::Response<Models::DownloadBlobResult> Download(
-        const DownloadBlobOptions& options = DownloadBlobOptions()) const;
+        const DownloadBlobOptions& options = DownloadBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service to a memory buffer using parallel
@@ -236,12 +248,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
      * or blob range.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Core::Response<Models::DownloadBlobToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
+        const DownloadBlobToOptions& options = DownloadBlobToOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service to a file using parallel
@@ -249,20 +263,24 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Core::Response<Models::DownloadBlobToResult> DownloadTo(
         const std::string& fileName,
-        const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
+        const DownloadBlobToOptions& options = DownloadBlobToOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A CreateBlobSnapshotResult describing the new blob snapshot.
      */
     Azure::Core::Response<Models::CreateBlobSnapshotResult> CreateSnapshot(
-        const CreateBlobSnapshotOptions& options = CreateBlobSnapshotOptions()) const;
+        const CreateBlobSnapshotOptions& options = CreateBlobSnapshotOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Marks the specified blob or snapshot for deletion. The blob is later deleted
@@ -270,61 +288,71 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DeleteBlobResult on successfully deleting.
      */
     Azure::Core::Response<Models::DeleteBlobResult> Delete(
-        const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+        const DeleteBlobOptions& options = DeleteBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Marks the specified blob or snapshot for deletion if it exists.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A DeleteBlobResult on successfully deleting. DeleteBlobResult.Deleted is false if the
      * blob doesn't exist.
      */
     Azure::Core::Response<Models::DeleteBlobResult> DeleteIfExists(
-        const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+        const DeleteBlobOptions& options = DeleteBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Restores the contents and metadata of a soft deleted blob and any associated
      * soft deleted snapshots.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A UndeleteBlobResult on successfully deleting.
      */
     Azure::Core::Response<Models::UndeleteBlobResult> Undelete(
-        const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
+        const UndeleteBlobOptions& options = UndeleteBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets tags on the underlying blob.
      *
      * @param tags The tags to set on the blob.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetBlobTagsInfo on successfully setting tags.
      */
     Azure::Core::Response<Models::SetBlobTagsResult> SetTags(
         std::map<std::string, std::string> tags,
-        const SetBlobTagsOptions& options = SetBlobTagsOptions()) const;
+        const SetBlobTagsOptions& options = SetBlobTagsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Gets the tags associated with the underlying blob.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Tags on successfully getting tags.
      */
     Azure::Core::Response<Models::GetBlobTagsResult> GetTags(
-        const GetBlobTagsOptions& options = GetBlobTagsOptions()) const;
+        const GetBlobTagsOptions& options = GetBlobTagsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   protected:
     Azure::Core::Http::Url m_blobUrl;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     explicit BlobClient(
         Azure::Core::Http::Url blobUrl,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
+        std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
         : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),

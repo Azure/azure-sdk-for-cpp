@@ -19,7 +19,8 @@
 namespace Azure { namespace Core {
 
   /**
-   * @ A base abstract class for the `std::unique_ptr` value representation in #ContextValue.
+   * @brief A base abstract class for the `std::unique_ptr` value representation in #ContextValue.
+   *
    */
   struct ValueBase
   {
@@ -290,6 +291,8 @@ namespace Azure { namespace Core {
     {
     }
 
+    time_point CancelWhen() const;
+
   public:
     /**
      * @brief Construct a new context with no expiration, and no value associated.
@@ -328,11 +331,6 @@ namespace Azure { namespace Core {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, time_point::max(), key, std::move(value))};
     }
-
-    /**
-     * @
-     */
-    time_point CancelWhen() const;
 
     /**
      * @brief Get a value associated with a \p key parameter within this context or the branch of

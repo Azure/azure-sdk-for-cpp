@@ -7,57 +7,23 @@
 #include <string>
 #include <vector>
 
+#include "azure/core/cryptography/hash.hpp"
 #include <azure/core/base64.hpp>
 
 namespace Azure { namespace Storage {
 
-  class Md5 {
+  class Crc64Hash : public Azure::Core::Cryptography::Hash {
   public:
-    Md5();
-    ~Md5();
+    void Concatenate(const Crc64Hash& other);
 
-    void Update(const uint8_t* data, std::size_t length);
-
-    std::vector<uint8_t> Digest() const;
-
-    static std::vector<uint8_t> Hash(const uint8_t* data, std::size_t length)
-    {
-      Md5 instance;
-      instance.Update(data, length);
-      return instance.Digest();
-    }
-
-    static std::vector<uint8_t> Hash(const std::string& data)
-    {
-      return Hash(reinterpret_cast<const uint8_t*>(data.data()), data.length());
-    }
-
-  private:
-    void* m_context;
-  };
-
-  class Crc64 {
-  public:
-    void Update(const uint8_t* data, std::size_t length);
-    void Concatenate(const Crc64& other);
-
-    std::vector<uint8_t> Digest() const;
-
-    static std::vector<uint8_t> Hash(const uint8_t* data, std::size_t length)
-    {
-      Crc64 instance;
-      instance.Update(data, length);
-      return instance.Digest();
-    }
-
-    static std::vector<uint8_t> Hash(const std::string& data)
-    {
-      return Hash(reinterpret_cast<const uint8_t*>(data.data()), data.length());
-    }
+    ~Crc64Hash() override = default;
 
   private:
     uint64_t m_context = 0ULL;
     uint64_t m_length = 0ULL;
+
+    void OnAppend(const uint8_t* data, std::size_t length) override;
+    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override;
   };
 
   namespace Details {

@@ -6,6 +6,7 @@
 #include <future>
 #include <vector>
 
+#include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
@@ -224,7 +225,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto brokenLease = *leaseClient.Break();
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
-    EXPECT_EQ(brokenLease.LeaseTime, 0);
 
     leaseClient
         = Blobs::BlobLeaseClient(*m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
@@ -232,7 +232,6 @@ namespace Azure { namespace Storage { namespace Test {
     brokenLease = *leaseClient.Break();
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
-    EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakBlobLeaseOptions options;
     options.BreakPeriod = std::chrono::seconds(0);
@@ -253,7 +252,11 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::UploadPageBlobPagesOptions options;
     ContentHash hash;
     hash.Algorithm = HashAlgorithm::Md5;
-    hash.Value = Md5::Hash(blobContent.data(), blobContent.size());
+
+    {
+      Azure::Core::Cryptography::Md5Hash instance;
+      hash.Value = instance.Final(blobContent.data(), blobContent.size());
+    }
     options.TransactionalContentHash = hash;
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
@@ -277,7 +280,11 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::UploadPageBlobPagesOptions options;
     ContentHash hash;
     hash.Algorithm = HashAlgorithm::Crc64;
-    hash.Value = Crc64::Hash(blobContent.data(), blobContent.size());
+
+    {
+      Crc64Hash instance;
+      hash.Value = instance.Final(blobContent.data(), blobContent.size());
+    }
     options.TransactionalContentHash = hash;
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 

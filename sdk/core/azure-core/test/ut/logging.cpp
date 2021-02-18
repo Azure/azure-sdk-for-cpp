@@ -1,112 +1,226 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/internal/log.hpp>
 #include <azure/core/logging/logging.hpp>
 #include <gtest/gtest.h>
 
-#include <utility>
-#include <vector>
+using namespace Azure::Core::Logging;
+using namespace Azure::Core::Logging::Internal;
 
-using namespace Azure::Core;
-
-namespace {
-typedef std::vector<std::pair<Logging::LogClassification, std::string>> LogArguments;
-
-struct LogRecorder
+TEST(Logging, Defaults)
 {
-  LogArguments Actual;
+  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
+  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
+  EXPECT_FALSE(ShouldLog(LogLevel::Warning));
+  EXPECT_FALSE(ShouldLog(LogLevel::Error));
 
-  Logging::LogListener LogListener
-      = [&](Logging::LogClassification const& c, std::string const& m) {
-          Actual.push_back(std::make_pair(c, m));
-        };
-};
-} // namespace
+  SetLogListener([](auto, auto) {});
 
-TEST(Logging, allClassifications)
-{
-  LogArguments const Values{
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Response, "Response"},
-      {Http::LogClassification::Request, "Request"},
-  };
+  EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
+  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
+  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
+  EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  LogRecorder logRecorder;
-  Logging::SetLogListener(logRecorder.LogListener);
+  SetLogListener(nullptr);
 
-  Logging::SetLogClassifications(Logging::LogClassification::All);
-  auto const expected = Values;
-
-  for (auto value : Values)
-  {
-    Logging::Details::Write(value.first, value.second);
-  }
-
-  EXPECT_EQ(logRecorder.Actual, expected);
+  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
+  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
+  EXPECT_FALSE(ShouldLog(LogLevel::Warning));
+  EXPECT_FALSE(ShouldLog(LogLevel::Error));
 }
 
-TEST(Logging, filteredClassifications)
+TEST(Logging, Levels)
 {
-  LogArguments const Values{
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Response, "Response"},
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Retry, "Retry"},
-  };
+  SetLogListener([](auto, auto) {});
 
-  LogRecorder logRecorder;
-  Logging::SetLogListener(logRecorder.LogListener);
+  SetLogLevel(LogLevel::Verbose);
+  EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
+  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
+  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
+  EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  auto const AllowedClassification1 = Http::LogClassification::Request;
-  auto const AllowedClassification2 = Http::LogClassification::Retry;
-  Logging::SetLogClassifications({AllowedClassification1, AllowedClassification2});
+  SetLogLevel(LogLevel::Informational);
+  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
+  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
+  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
+  EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  LogArguments expected;
-  for (auto value : Values)
+  SetLogLevel(LogLevel::Warning);
+  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
+  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
+  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
+  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+
+  SetLogLevel(LogLevel::Error);
+  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
+  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
+  EXPECT_FALSE(ShouldLog(LogLevel::Warning));
+  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+
+  SetLogLevel(LogLevel::Verbose);
+  EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
+  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
+  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
+  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+
+  SetLogListener(nullptr);
+}
+
+TEST(Logging, Message)
+{
+  try
   {
-    if (value.first == AllowedClassification1 || value.first == AllowedClassification2)
+    LogLevel level = LogLevel::Error;
+    std::string message;
+
+    SetLogListener([&](auto lvl, auto msg) {
+      level = lvl;
+      message = msg;
+    });
+
+    SetLogLevel(LogLevel::Verbose);
     {
-      expected.push_back(value);
+      level = LogLevel::Error;
+      message = "";
+
+      Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Verbose);
+      EXPECT_EQ(message, "Verbose");
+
+      Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Informational);
+      EXPECT_EQ(message, "Informational");
+
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
+      EXPECT_EQ(message, "Warning");
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "Error");
+    }
+
+    SetLogLevel(LogLevel::Informational);
+    {
+      level = LogLevel::Error;
+      message = "";
+
+      Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Informational);
+      EXPECT_EQ(message, "Informational");
+
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
+      EXPECT_EQ(message, "Warning");
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "Error");
+    }
+
+    SetLogLevel(LogLevel::Warning);
+    {
+      level = LogLevel::Error;
+      message = "";
+
+      Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
+      EXPECT_EQ(message, "Warning");
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "Error");
+    }
+
+    SetLogLevel(LogLevel::Error);
+    {
+      level = LogLevel::Error;
+      message = "";
+
+      Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      level = LogLevel::Verbose;
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "Error");
+    }
+
+    // Verify that we can switch back to Verbose
+    SetLogLevel(LogLevel::Verbose);
+    {
+      level = LogLevel::Error;
+      message = "";
+
+      Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Verbose);
+      EXPECT_EQ(message, "Verbose");
+
+      Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Informational);
+      EXPECT_EQ(message, "Informational");
+
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Warning);
+      EXPECT_EQ(message, "Warning");
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "Error");
+    }
+
+    SetLogListener(nullptr);
+
+    SetLogLevel(LogLevel::Verbose);
+    {
+      level = LogLevel::Error;
+      message = "";
+
+      Log(LogLevel::Verbose, "Verbose");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Informational, "Informational");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      Log(LogLevel::Warning, "Warning");
+      EXPECT_EQ(level, LogLevel::Error);
+      EXPECT_EQ(message, "");
+
+      level = LogLevel::Verbose;
+
+      Log(LogLevel::Error, "Error");
+      EXPECT_EQ(level, LogLevel::Verbose);
+      EXPECT_EQ(message, "");
     }
   }
-
-  for (auto value : Values)
+  catch (...)
   {
-    EXPECT_EQ(
-        Logging::Details::ShouldWrite(value.first),
-        (value.first == AllowedClassification1 || value.first == AllowedClassification2));
-
-    Logging::Details::Write(value.first, value.second);
+    SetLogListener(nullptr);
+    throw;
   }
-
-  EXPECT_EQ(logRecorder.Actual, expected);
-}
-
-TEST(Logging, noClassifications)
-{
-  LogArguments const Values{
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Request, "Request"},
-      {Http::LogClassification::Response, "Response"},
-      {Http::LogClassification::Request, "Request"},
-  };
-
-  LogRecorder logRecorder;
-  Logging::SetLogListener(logRecorder.LogListener);
-
-  auto const AllowedClassification = Http::LogClassification::Request;
-  Logging::SetLogClassifications(Logging::LogClassification::None);
-  LogArguments const expected; // Empty
-
-  for (auto value : Values)
-  {
-    EXPECT_EQ(Logging::Details::ShouldWrite(value.first), false);
-    Logging::Details::Write(value.first, value.second);
-  }
-
-  EXPECT_EQ(logRecorder.Actual, expected);
 }

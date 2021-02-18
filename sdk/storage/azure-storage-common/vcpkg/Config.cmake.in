@@ -8,7 +8,7 @@ find_dependency(LibXml2)
 find_dependency(Threads)
 find_dependency(azure-core-cpp)
 
-if(NOT MSVC)
+if(NOT WIN32)
   find_dependency(OpenSSL)
 endif()
 

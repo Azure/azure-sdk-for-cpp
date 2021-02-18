@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Internal utility functions for strings.
  *
  */

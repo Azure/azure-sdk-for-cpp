@@ -93,12 +93,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A ListBlobContainersSinglePageResult describing segment of the blob containers in the
      * storage account.
      */
     Azure::Core::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
-        const ListBlobContainersSinglePageOptions& options
-        = ListBlobContainersSinglePageOptions()) const;
+        const ListBlobContainersSinglePageOptions& options = ListBlobContainersSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
@@ -107,11 +108,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A deserialized GetUserDelegationKeyResult instance.
      */
     Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
         const Azure::Core::DateTime& expiresOn,
-        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
+        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets properties for a storage account's Blob service endpoint, including
@@ -122,30 +125,36 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param
      * properties The blob service properties.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A SetServicePropertiesResult on successfully setting the properties.
      */
     Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
         Models::BlobServiceProperties properties,
-        const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
+        const SetServicePropertiesOptions& options = SetServicePropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Gets the properties of a storage account's blob service, including properties
      * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A GetServicePropertiesResult describing the service properties.
      */
     Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
-        const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
+        const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns the sku name and account kind for the specified account.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return GetAccountInfoResult describing the account.
      */
     Azure::Core::Response<Models::GetAccountInfoResult> GetAccountInfo(
-        const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
+        const GetAccountInfoOptions& options = GetAccountInfoOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Retrieves statistics related to replication for the Blob service. It is only
@@ -153,10 +162,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * enabled for the storage account.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A BlobServiceStatistics describing the service replication statistics.
      */
     Azure::Core::Response<Models::GetServiceStatisticsResult> GetStatistics(
-        const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions()) const;
+        const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief The Filter Blobs operation enables callers to list blobs across all containers
@@ -168,13 +179,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * be returned in the results. The[OData - ABNF] filter syntax rule defines the formal grammar
      * for the value of the where query parameter, however, only a subset of the OData filter syntax
      * is supported in the Blob service.
-     * @param options Optional parameters to execute this
-     * function.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A FindBlobsByTagsSinglePageResult describing the blobs.
      */
     Azure::Core::Response<Models::FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
         const std::string& tagFilterSqlExpression,
-        const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions()) const;
+        const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a new blob container under the specified account. If the container with the
@@ -182,11 +194,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blobContainerName The name of the container to create.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A BlobContainerClient referencing the newly created container.
      */
     Azure::Core::Response<BlobContainerClient> CreateBlobContainer(
         const std::string& blobContainerName,
-        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Marks the specified blob container for deletion. The container and any blobs
@@ -194,11 +208,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blobContainerName The name of the container to delete.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return Nothing.
      */
     Azure::Core::Response<void> DeleteBlobContainer(
         const std::string& blobContainerName,
-        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Restores a previously deleted container.
@@ -206,16 +222,18 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param deletedBlobContainerName The name of the previously deleted container.
      * @param deletedBlobContainerVersion The version of the previously deleted container.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A BlobContainerClient referencing the undeleted container.
      */
     Azure::Core::Response<BlobContainerClient> UndeleteBlobContainer(
         const std::string deletedBlobContainerName,
         const std::string deletedBlobContainerVersion,
-        const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions()) const;
+        const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     Azure::Core::Http::Url m_serviceUrl;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
   };

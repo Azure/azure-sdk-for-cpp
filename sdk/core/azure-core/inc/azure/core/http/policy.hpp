@@ -12,7 +12,6 @@
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
@@ -73,7 +72,10 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
   };
 
-  // Represents the next HTTP policy in the stack sequence of policies.
+  /**
+   * @brief Represents the next HTTP policy in the stack sequence of policies.
+   *
+   */
   class NextHttpPolicy {
     const std::size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
@@ -240,7 +242,7 @@ namespace Azure { namespace Core { namespace Http {
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override
     {
-      auto uuid = Uuid::CreateUuid().GetUuidString();
+      auto uuid = Uuid::CreateUuid().ToString();
 
       request.AddHeader(RequestIdHeader, uuid);
       return nextHttpPolicy.Send(ctx, request);
@@ -358,7 +360,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Logs every HTTP request.
    *
-   * @details Logs every HTTP request, response, or retry attempt (see #LogClassification)
+   * @detail Logs every HTTP request, response, or retry attempt.
    * @remark See #logging.hpp
    */
   class LoggingPolicy : public HttpPolicy {
@@ -377,25 +379,6 @@ namespace Azure { namespace Core { namespace Http {
         Context const& ctx,
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override;
-  };
-
-  /**
-   * @brief Log classigications being used to designate log messages from HTTP #LoggingPolicy.
-   */
-  class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
-                                Azure::Core::Logging::Details::Facility::Core> {
-  public:
-    /// HTTP request.
-    static constexpr auto const Request = Classification(1);
-
-    /// HTTP response.
-    static constexpr auto const Response = Classification(2);
-
-    /// HTTP retry attempt.
-    static constexpr auto const Retry = Classification(3);
-
-    /// HTTP Transport adapter.
-    static constexpr auto const HttpTransportAdapter = Classification(4);
   };
 
   namespace Internal {

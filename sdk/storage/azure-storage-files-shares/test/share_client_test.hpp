@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static Files::Shares::Models::ShareFileHttpHeaders GetInterestingHttpHeaders();
+    static Files::Shares::Models::FileHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::Shares::ShareClient> m_shareClient;
     static std::string m_shareName;

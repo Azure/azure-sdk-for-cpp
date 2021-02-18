@@ -1,5 +1,24 @@
 # Release History
 
+## 12.0.0-beta.9 (Unreleased)
+
+
+## 12.0.0-beta.8 (2021-02-12)
+
+### Breaking Changes
+
+- Removed `DataLakeFileSystemClient::GetPathClient`.
+- Renamed `SetDataLakePathAccessControlRecursiveListSinglePageOptions::MaxEntries` to `PageSizeHint`.
+- `GetDataLakePathPropertiesResult::ServerEncrypted` was renamed to `IsServerEncrypted`.
+- `GetDataLakePathPropertiesResult::AccessTierInferred` was renamed to `IsAccessTierInferred`.
+- `HttpHeaders` of `DownloadDataLakeFileResult` and `DownloadDataLakeFileToResult` was moved into `Details`, to align with Blob service.
+- Removed `BreakDataLakeLeaseResult::LeaseTime`.
+- Renamed APIs for modifying access list recursively. Used to be with pattern `AccessControlRecursiveList`, now is with pattern `AccessControlListRecursive`.
+- Refined options for `ScheduleDeletion`, to be consistent with other APIs.
+- Renamed `ContentLength` in `PathItem` to `FileSize`.
+- In `PathSetAccessControlRecursiveResult`, `DirectoriesSuccessful` is renamed to `NumberOfSuccessfulDirectories`, `FilesSuccessful` is renamed to `NumberOfSuccessfulFiles`, `FailureCount` is renamed to `NumberOfFailures`.
+- Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
+
 ## 12.0.0-beta.7 (2021-02-03)
 
 ### New Features

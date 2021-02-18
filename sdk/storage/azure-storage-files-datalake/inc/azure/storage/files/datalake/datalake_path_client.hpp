@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <azure/core/credentials.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_client.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -39,33 +39,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param pathUri The URI of the path this client's request targets.
+     * @param pathUrl The URL of the path this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakePathClient(
-        const std::string& pathUri,
+        const std::string& pathUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param pathUri The URI of the path this client's request targets.
+     * @param pathUrl The URL of the path this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakePathClient(
-        const std::string& pathUri,
+        const std::string& pathUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param pathUri The URI of the path this client's request targets.
+     * @param pathUrl The URL of the path this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakePathClient(
-        const std::string& pathUri,
+        const std::string& pathUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -80,18 +80,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::CreateDataLakePathResult> containing the information
      * returned when creating a path.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::CreateDataLakePathResult> Create(
         Models::PathResourceType type,
-        const CreateDataLakePathOptions& options = CreateDataLakePathOptions()) const;
+        const CreateDataLakePathOptions& options = CreateDataLakePathOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates a file or directory. By default, the destination is not changed if it already
      * exists.
      * @param options Optional parameters to create the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::CreateDataLakePathResult> containing the information
      * returned when creating a path, the information will only be valid when the create operation
      * is successful.
@@ -99,27 +102,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Core::Response<Models::CreateDataLakePathResult> CreateIfNotExists(
         Models::PathResourceType type,
-        const CreateDataLakePathOptions& options = CreateDataLakePathOptions()) const;
+        const CreateDataLakePathOptions& options = CreateDataLakePathOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DeleteDataLakePathResult> which is current empty but
      * preserved for future usage.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeleteDataLakePathResult> Delete(
-        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions()) const;
+        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the resource the path points to if it exists.
      * @param options Optional parameters to delete the reource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::DeleteDataLakePathResult> which is current empty but
      * preserved for future usage. The result will only valid if the delete operation is successful.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeleteDataLakePathResult> DeleteIfExists(
-        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions()) const;
+        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the owner, group, and access control list for a file or directory.
@@ -130,6 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::SetDataLakePathAccessControlListResult> containing the
      * information returned when setting path's access control.
      * @remark This request is sent to dfs endpoint.
@@ -137,7 +146,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Response<Models::SetDataLakePathAccessControlListResult> SetAccessControlList(
         std::vector<Models::Acl> acls,
         const SetDataLakePathAccessControlListOptions& options
-        = SetDataLakePathAccessControlListOptions()) const;
+        = SetDataLakePathAccessControlListOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the owner, group, and permissions for a file or directory.
@@ -145,27 +155,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control.
      * @param permissions Sets the permissions on the path
      * @param options Optional parameters to set permissions to the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::SetDataLakePathPermissionsResult> containing the
      * information returned when setting path's permissions.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::SetDataLakePathPermissionsResult> SetPermissions(
         std::string permissions,
-        const SetDataLakePathPermissionsOptions& options
-        = SetDataLakePathPermissionsOptions()) const;
+        const SetDataLakePathPermissionsOptions& options = SetDataLakePathPermissionsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the http headers to the resource the path points
      * to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<SetDataLakePathHttpHeadersResult> containing the information
      * returned when setting the path's Http headers.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::SetDataLakePathHttpHeadersResult> SetHttpHeaders(
         Models::PathHttpHeaders httpHeaders,
-        const SetDataLakePathHttpHeadersOptions& options
-        = SetDataLakePathHttpHeadersOptions()) const;
+        const SetDataLakePathHttpHeadersOptions& options = SetDataLakePathHttpHeadersOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Get Properties returns all system and user defined properties for a path. Get Status
@@ -173,36 +185,42 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control list for a path.
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::GetDataLakePathPropertiesResult> containing the
      * properties of the path.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::GetDataLakePathPropertiesResult> GetProperties(
-        const GetDataLakePathPropertiesOptions& options = GetDataLakePathPropertiesOptions()) const;
+        const GetDataLakePathPropertiesOptions& options = GetDataLakePathPropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::GetDataLakePathAccessControlListResult> containing the
      * access control list of the path.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::GetDataLakePathAccessControlListResult> GetAccessControlList(
         const GetDataLakePathAccessControlListOptions& options
-        = GetDataLakePathAccessControlListOptions()) const;
+        = GetDataLakePathAccessControlListOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the metadata of a resource the path points to.
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to the resource the path points to.
+     * @param context Context for cancelling long running operations.
      * @return Azure::Core::Response<Models::SetDataLakePathMetadataResult> containing the
      * information returned when setting the metadata.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::SetDataLakePathMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetDataLakePathMetadataOptions& options = SetDataLakePathMetadataOptions()) const;
+        const SetDataLakePathMetadataOptions& options = SetDataLakePathMetadataOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets POSIX access control rights on files and directories under given directory
@@ -211,18 +229,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
+     * @param context Context for cancelling long running operations.
      * @return
-     * Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
+     * Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
-    SetAccessControlRecursiveListSinglePage(
-        std::vector<Models::Acl> acls,
-        const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = SetDataLakePathAccessControlRecursiveListSinglePageOptions()) const
+    Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+    SetAccessControlListRecursiveSinglePage(
+        const std::vector<Models::Acl>& acls,
+        const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = SetDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return SetAccessControlRecursiveListSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Set, acls, options);
+      return SetAccessControlListRecursiveSinglePageInternal(
+          Models::PathSetAccessControlRecursiveMode::Set, acls, options, context);
     }
 
     /**
@@ -232,18 +252,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
+     * @param context Context for cancelling long running operations.
      * @return
-     * Azure::Core::Response<Models::UpdateDataLakePathAccessControlRecursiveListSinglePageResult>
+     * Azure::Core::Response<Models::UpdateDataLakePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::UpdateDataLakePathAccessControlRecursiveListSinglePageResult>
-    UpdateAccessControlRecursiveListSinglePage(
-        std::vector<Models::Acl> acls,
-        const UpdateDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = UpdateDataLakePathAccessControlRecursiveListSinglePageOptions()) const
+    Azure::Core::Response<Models::UpdateDataLakePathAccessControlListRecursiveSinglePageResult>
+    UpdateAccessControlListRecursiveSinglePage(
+        const std::vector<Models::Acl>& acls,
+        const UpdateDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = UpdateDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return SetAccessControlRecursiveListSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Modify, acls, options);
+      return SetAccessControlListRecursiveSinglePageInternal(
+          Models::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
     }
 
     /**
@@ -253,40 +275,43 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
+     * @param context Context for cancelling long running operations.
      * @return
-     * Azure::Core::Response<Models::RemoveDataLakePathAccessControlRecursiveListSinglePageResult>
+     * Azure::Core::Response<Models::RemoveDataLakePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RemoveDataLakePathAccessControlRecursiveListSinglePageResult>
-    RemoveAccessControlRecursiveListSinglePage(
-        std::vector<Models::Acl> acls,
-        const RemoveDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = RemoveDataLakePathAccessControlRecursiveListSinglePageOptions()) const
+    Azure::Core::Response<Models::RemoveDataLakePathAccessControlListRecursiveSinglePageResult>
+    RemoveAccessControlListRecursiveSinglePage(
+        const std::vector<Models::Acl>& acls,
+        const RemoveDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = RemoveDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return SetAccessControlRecursiveListSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Remove, acls, options);
+      return SetAccessControlListRecursiveSinglePageInternal(
+          Models::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
     }
 
   protected:
-    Azure::Core::Http::Url m_dfsUrl;
+    Azure::Core::Http::Url m_pathUrl;
     Blobs::BlobClient m_blobClient;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakePathClient(
-        Azure::Core::Http::Url dfsUrl,
+        Azure::Core::Http::Url pathUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUrl(std::move(dfsUrl)), m_blobClient(std::move(blobClient)),
+        std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline)
+        : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
           m_pipeline(std::move(pipeline))
     {
     }
 
-    Azure::Core::Response<Models::SetDataLakePathAccessControlRecursiveListSinglePageResult>
-    SetAccessControlRecursiveListSinglePageInternal(
+    Azure::Core::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+    SetAccessControlListRecursiveSinglePageInternal(
         Models::PathSetAccessControlRecursiveMode mode,
-        std::vector<Models::Acl> acls,
-        const SetDataLakePathAccessControlRecursiveListSinglePageOptions& options
-        = SetDataLakePathAccessControlRecursiveListSinglePageOptions()) const;
+        const std::vector<Models::Acl>& acls,
+        const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options
+        = SetDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     friend class DataLakeFileSystemClient;
     friend class DataLakeLeaseClient;

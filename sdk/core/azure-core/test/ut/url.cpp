@@ -205,8 +205,16 @@ namespace Azure { namespace Core { namespace Test {
   TEST(URL, getPortAfterSet)
   {
     Http::Url url("http://test.com");
+
+    uint16_t expected = 0;
+
+    EXPECT_PRED2(
+        [](uint16_t expectedValue, uint16_t code) { return expectedValue == code; },
+        url.GetPort(),
+        expected);
+
     url.SetPort(40);
-    uint16_t expected = 40;
+    expected = 40;
 
     EXPECT_PRED2(
         [](uint16_t expectedValue, uint16_t code) { return expectedValue == code; },

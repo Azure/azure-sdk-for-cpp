@@ -83,27 +83,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.DataLakeServiceUrl);
+    auto serviceUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
     {
       return DataLakeServiceClient(
-          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          serviceUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DataLakeServiceClient(serviceUri.GetAbsoluteUrl(), options);
+      return DataLakeServiceClient(serviceUrl.GetAbsoluteUrl(), options);
     }
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(serviceUri)), m_blobServiceClient(
-                                                             Details::GetBlobUrlFromUrl(serviceUri),
-                                                             credential,
-                                                             GetBlobServiceClientOptions(options))
+      : m_serviceUrl(Details::GetDfsUrlFromUrl(serviceUrl)),
+        m_blobServiceClient(
+            Details::GetBlobUrlFromUrl(serviceUrl),
+            credential,
+            GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -125,17 +126,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(serviceUri)), m_blobServiceClient(
-                                                             Details::GetBlobUrlFromUrl(serviceUri),
-                                                             credential,
-                                                             GetBlobServiceClientOptions(options))
+      : m_serviceUrl(Details::GetDfsUrlFromUrl(serviceUrl)),
+        m_blobServiceClient(
+            Details::GetBlobUrlFromUrl(serviceUrl),
+            credential,
+            GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -165,15 +167,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       const DataLakeClientOptions& options)
-      : m_dfsUrl(Details::GetDfsUrlFromUrl(serviceUri)), m_blobServiceClient(
-                                                             Details::GetBlobUrlFromUrl(serviceUri),
-                                                             GetBlobServiceClientOptions(options))
+      : m_serviceUrl(Details::GetDfsUrlFromUrl(serviceUrl)),
+        m_blobServiceClient(
+            Details::GetBlobUrlFromUrl(serviceUrl),
+            GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -194,13 +197,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileSystemClient DataLakeServiceClient::GetFileSystemClient(
       const std::string& fileSystemName) const
   {
-    auto builder = m_dfsUrl;
+    auto builder = m_serviceUrl;
     builder.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
     return DataLakeFileSystemClient(
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
@@ -208,15 +211,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<Models::ListFileSystemsSinglePageResult>
   DataLakeServiceClient::ListFileSystemsSinglePage(
-      const ListFileSystemsSinglePageOptions& options) const
+      const ListFileSystemsSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::ListBlobContainersSinglePageOptions blobOptions;
     blobOptions.Include = options.Include;
-    blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.ContinuationToken = options.ContinuationToken;
     blobOptions.PageSizeHint = options.PageSizeHint;
-    auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions);
+    auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions, context);
     auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = std::move(result->ContinuationToken);
     response.RequestId = std::move(result->RequestId);

@@ -1,7 +1,33 @@
 # Release History
 
-## 1.0.0-beta.6 (Unreleased)
+## 1.0.0-beta.7 (Unreleased)
 
+### Breaking Changes
+
+- Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
+- Split `Azure::Core::RequestConditions` into `Azure::Core::MatchConditions` and `Azure::Core::ModifiedConditions`.
+- Removed `TransportKind` enum from `Azure::Core::Http`.
+- Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
+- Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
+- Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
+
+## 1.0.0-beta.6 (2021-02-09)
+
+### New Features
+
+- Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
+- Added the `Hash` base class and MD5 hashing APIs to the `Azure::Core::Cryptography` namespace available from `azure/core/cryptography/hash.hpp`.
+
+### Breaking Changes
+
+- Removed `Context::CancelWhen()`.
+- Removed `LogClassification` and related functionality, added `LogLevel` instead.
+
+### Bug Fixes
+
+- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+- Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.
+- Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.
 
 ## 1.0.0-beta.5 (2021-02-02)
 

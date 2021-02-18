@@ -45,12 +45,13 @@ set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
+    inc/azure/core/cryptography/hash.hpp
     inc/azure/core/http/body_stream.hpp
     inc/azure/core/http/http.hpp
-    inc/azure/core/http/pipeline.hpp
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
@@ -63,6 +64,8 @@ set(
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
+    inc/azure/core/match_conditions.hpp
+    inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
@@ -77,6 +80,7 @@ set(
   AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
+    src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/body_stream.cpp
     src/http/http.cpp
@@ -114,10 +118,9 @@ create_code_coverage(core azure-core azure-core-test)
 
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
-if(MSVC)
-    target_link_libraries(azure-core PRIVATE crypt32)
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
-    message("Find the OpenSSL package on MacOS, used for Base64 encoding.")
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()
@@ -137,3 +140,7 @@ az_vcpkg_export(
     CORE
     "azure/core/dll_import_export.hpp"
   )
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/performance)
+endif()

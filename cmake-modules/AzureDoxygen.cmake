@@ -19,6 +19,13 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_RECURSIVE YES)
         set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ./README.md)
         set(DOXYGEN_INLINE_SOURCES YES)
+        # Skip generating docs for json, test and private files.
+        set(DOXYGEN_EXCLUDE_PATTERNS
+            json.hpp
+            test
+            *private*)
+        # Skip documenting Details symbols (all from ::Details namespace)
+        set(DOXYGEN_EXCLUDE_SYMBOLS Details Internal)
         set(DOXYGEN_IGNORE_PREFIX az_ AZ_)
         set(DOXYGEN_HTML_HEADER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/header.html)
         set(DOXYGEN_HTML_FOOTER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/footer.html)

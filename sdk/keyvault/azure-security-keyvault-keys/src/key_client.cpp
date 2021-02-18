@@ -23,7 +23,8 @@ KeyClient::KeyClient(
 
   // Base Pipeline
   std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(std::make_unique<TelemetryPolicy>("KeyVault", apiVersion));
+  policies.emplace_back(
+      std::make_unique<TelemetryPolicy>("KeyVault", apiVersion, options.TelemetryPolicyOptions));
   policies.emplace_back(std::make_unique<RequestIdPolicy>());
   policies.emplace_back(std::make_unique<RetryPolicy>(options.RetryOptions));
 
@@ -40,6 +41,6 @@ KeyClient::KeyClient(
       std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
   Azure::Core::Http::Url url(vaultUrl);
 
-  m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
       url, apiVersion, std::move(policies));
 }
