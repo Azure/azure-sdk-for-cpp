@@ -36,7 +36,7 @@ std::string GetConflictErrorMsg(std::string const& keyName)
 {
   return "Key " + keyName
       + " is currently in a deleted but recoverable state, and its name cannot be reused; in this "
-        "state, the key can only be recovered or purged";
+        "state, the key can only be recovered or purged.";
 }
 
 std::string GetConflictDeletingErrorMsg(std::string const& keyName)
