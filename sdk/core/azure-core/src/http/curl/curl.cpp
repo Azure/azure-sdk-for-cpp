@@ -1077,7 +1077,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
   {
     key.append("1");
   }
