@@ -113,3 +113,7 @@ if(BUILD_STORAGE_SAMPLES)
 
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
 endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/performance)
+endif()

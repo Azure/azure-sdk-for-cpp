@@ -9,10 +9,9 @@
 
 #pragma once
 
-#include <azure/performance-stress/options.hpp>
-#include <azure/performance-stress/test.hpp>
-#include <azure/performance-stress/test_options.hpp>
+#include <azure/performance_framework.hpp>
 
+#include <memory>
 #include <vector>
 
 namespace Azure { namespace PerformanceStress { namespace Test {
@@ -50,6 +49,22 @@ namespace Azure { namespace PerformanceStress { namespace Test {
     std::vector<Azure::PerformanceStress::TestOption> GetTestOptions() override
     {
       return {{"extraOption", {"-e"}, "Example for extended option for test.", 1}};
+    }
+
+    /**
+     * @brief Get the static Test Metadata for the test.
+     *
+     * @return Azure::PerformanceStress::TestMetadata describing the test.
+     */
+    static Azure::PerformanceStress::TestMetadata GetTestMetadata()
+    {
+      return {
+          "extendedOptions",
+          "Demostrate how to include a test option to a test and measures how expensive is to do "
+          "it.",
+          [](Azure::PerformanceStress::TestOptions options) {
+            return std::make_unique<Azure::PerformanceStress::Test::ExtendedOptionsTest>(options);
+          }};
     }
   };
 

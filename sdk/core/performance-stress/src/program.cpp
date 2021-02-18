@@ -14,26 +14,19 @@
 namespace {
 
 inline std::unique_ptr<Azure::PerformanceStress::PerformanceTest> PrintAvailableTests(
-    std::map<
-        std::string,
-        std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::TestOptions)>> const& tests)
+    std::vector<Azure::PerformanceStress::TestMetadata> const& tests)
 {
-  std::cout << "Available tests to run:" << std::endl;
+  std::cout << "No test name found in the input. Available tests to run:" << std::endl;
+  std::cout << std::endl << "Name\t\tDescription" << std::endl << "---\t\t---" << std::endl;
   for (auto test : tests)
   {
-    std::cout << "  - " << test.first << std::endl;
+    std::cout << test.Name << "\t\t" << test.Description << std::endl;
   }
   return nullptr;
 }
 
-inline std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-    Azure::PerformanceStress::TestOptions)>
-GetTest(
-    std::map<
-        std::string,
-        std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::TestOptions)>> const& tests,
+inline Azure::PerformanceStress::TestMetadata const* GetTestMetadata(
+    std::vector<Azure::PerformanceStress::TestMetadata> const& tests,
     int argc,
     char** argv)
 {
@@ -46,11 +39,11 @@ GetTest(
 
   auto testName = std::string(args.pos[0]);
 
-  for (auto test : tests)
+  for (auto& test : tests)
   {
-    if (Azure::Core::Internal::Strings::LocaleInvariantCaseInsensitiveEqual(test.first, testName))
+    if (Azure::Core::Internal::Strings::LocaleInvariantCaseInsensitiveEqual(test.Name, testName))
     {
-      return test.second;
+      return &test;
     }
   }
   return nullptr;
@@ -77,26 +70,27 @@ inline void PrintOptions(
 {
   {
     std::cout << std::endl << "=== Global Options ===" << std::endl;
-    Azure::Core::Internal::Json::json optionsJs = options;
-    std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl;
+    Azure::Core::Internal::Json::json optionsAsJson = options;
+    std::cout << ReplaceAll(optionsAsJson.dump(), ",", ",\n") << std::endl;
   }
 
   if (testOptions.size() > 0)
   {
     std::cout << std::endl << "=== Test Options ===" << std::endl;
-    Azure::Core::Internal::Json::json optionsJs;
+    Azure::Core::Internal::Json::json optionsAsJson;
     for (auto option : testOptions)
     {
       try
       {
-        optionsJs[option.Name] = parsedArgs[option.Name].as<std::string>();
+        optionsAsJson[option.Name]
+            = option.sensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
       }
       catch (std::out_of_range const&)
       {
         if (!option.required)
         {
           // arg was not parsed
-          optionsJs[option.Name] = "default value";
+          optionsAsJson[option.Name] = "default value";
         }
         else
         {
@@ -109,7 +103,7 @@ inline void PrintOptions(
         throw;
       }
     }
-    std::cout << ReplaceAll(optionsJs.dump(), ",", ",\n") << std::endl;
+    std::cout << ReplaceAll(optionsAsJson.dump(), ",", ",\n") << std::endl << std::endl;
   }
 }
 
@@ -278,16 +272,14 @@ inline void RunTests(
 
 void Azure::PerformanceStress::Program::Run(
     Azure::Core::Context const& context,
-    std::map<
-        std::string,
-        std::function<std::unique_ptr<Azure::PerformanceStress::PerformanceTest>(
-            Azure::PerformanceStress::TestOptions)>> const& tests,
+    std::vector<Azure::PerformanceStress::TestMetadata> const& tests,
     int argc,
     char** argv)
 {
   // Parse args only to get the test name first
-  auto testGenerator = GetTest(tests, argc, argv);
-  if (testGenerator == nullptr)
+  auto testMetadata = GetTestMetadata(tests, argc, argv);
+  auto const& testGenerator = testMetadata->Factory;
+  if (testMetadata == nullptr)
   {
     // Wrong input. Print what are the options.
     PrintAvailableTests(tests);
@@ -304,8 +296,12 @@ void Azure::PerformanceStress::Program::Run(
 
   if (options.JobStatistics)
   {
-    std::cout << "Application started." << std::endl;
+    std::cout << std::endl << "Application started." << std::endl;
   }
+
+  // Print test metadata
+  std::cout << std::endl << "Running test: " << testMetadata->Name;
+  std::cout << std::endl << "Description: " << testMetadata->Description << std::endl;
 
   // Print options
   PrintOptions(options, testOptions, argResults);

@@ -9,12 +9,11 @@
 
 #pragma once
 
-#include <azure/performance-stress/options.hpp>
-#include <azure/performance-stress/test.hpp>
-#include <azure/performance-stress/test_options.hpp>
+#include <azure/performance_framework.hpp>
 
 #include <atomic>
 #include <chrono>
+#include <memory>
 #include <thread>
 #include <vector>
 
@@ -93,6 +92,21 @@ namespace Azure { namespace PerformanceStress { namespace Test {
            "Initial delay (in milliseconds). The delay of iteration N will be (InitialDelayMS * "
            "(IterationGrowthFactor ^ IterationCount)). Default to 1",
            1}};
+    }
+
+    /**
+     * @brief Get the static Test Metadata for the test.
+     *
+     * @return Azure::PerformanceStress::TestMetadata describing the test.
+     */
+    static Azure::PerformanceStress::TestMetadata GetTestMetadata()
+    {
+      return {
+          "delay",
+          "The no op test with a configurable time delay for the main test loop.",
+          [](Azure::PerformanceStress::TestOptions options) {
+            return std::make_unique<Azure::PerformanceStress::Test::DelayTest>(options);
+          }};
     }
   };
 

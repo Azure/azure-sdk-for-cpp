@@ -43,3 +43,7 @@ gtest_discover_tests(azure-identity-test
      TEST_PREFIX azure-identity.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(performance)
+endif()
