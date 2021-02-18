@@ -12,7 +12,7 @@ namespace Azure { namespace Storage {
   std::string CreateUniqueLeaseId()
   {
     auto uuid = Azure::Core::Uuid::CreateUuid();
-    return uuid.GetUuidString();
+    return uuid.ToString();
   }
 
   namespace Details {

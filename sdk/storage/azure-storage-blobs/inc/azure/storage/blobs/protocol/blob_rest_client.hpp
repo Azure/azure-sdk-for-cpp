@@ -3177,14 +3177,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3351,7 +3351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3619,14 +3619,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3684,14 +3684,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3745,14 +3745,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3808,14 +3808,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3869,14 +3869,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -3933,14 +3933,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           auto pHttpResponse = pipeline.Send(context, request);
@@ -4890,14 +4890,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5230,14 +5230,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5415,14 +5415,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5761,14 +5761,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -5871,14 +5871,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6045,14 +6045,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6071,14 +6071,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "x-ms-source-if-modified-since",
-                options.SourceIfModifiedSince.GetValue().GetString(
+                options.SourceIfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "x-ms-source-if-unmodified-since",
-                options.SourceIfUnmodifiedSince.GetValue().GetString(
+                options.SourceIfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
@@ -6227,14 +6227,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6426,14 +6426,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6501,14 +6501,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6578,14 +6578,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6653,14 +6653,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -6737,14 +6737,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -7029,14 +7029,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -7319,14 +7319,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "x-ms-source-if-modified-since",
-                options.SourceIfModifiedSince.GetValue().GetString(
+                options.SourceIfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "x-ms-source-if-unmodified-since",
-                options.SourceIfUnmodifiedSince.GetValue().GetString(
+                options.SourceIfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
@@ -7493,14 +7493,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -7868,14 +7868,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8037,14 +8037,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8232,14 +8232,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8399,14 +8399,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8523,14 +8523,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8624,14 +8624,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -8705,14 +8705,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9028,14 +9028,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9177,14 +9177,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9357,14 +9357,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
@@ -9472,14 +9472,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader(
                 "If-Modified-Since",
-                options.IfModifiedSince.GetValue().GetString(
+                options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfUnmodifiedSince.HasValue())
           {
             request.AddHeader(
                 "If-Unmodified-Since",
-                options.IfUnmodifiedSince.GetValue().GetString(
+                options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
           if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
