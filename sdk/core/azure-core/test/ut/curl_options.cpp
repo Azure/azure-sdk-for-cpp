@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noRevoke)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.DisableCertificateRevocationListCheck = true;
+    curlOptions.SSLOptions.EnableCertificateRevocationListCheck = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::TransportPolicyOptions options;
