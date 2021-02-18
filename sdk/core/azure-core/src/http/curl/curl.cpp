@@ -1202,7 +1202,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
 
   long sslOption = 0;
-  if (options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
