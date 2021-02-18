@@ -50,9 +50,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context& context,
         std::chrono::milliseconds period) override
     {
-      while (!IsDone())
+      while (true)
       {
         m_rawResponse = Poll(context);
+        if (IsDone())
+        {
+          break;
+        }
         std::this_thread::sleep_for(period);
       }
 
