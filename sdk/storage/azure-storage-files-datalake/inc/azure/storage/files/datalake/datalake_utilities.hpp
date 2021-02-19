@@ -5,7 +5,10 @@
 
 #include <string>
 
+#include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/storage_common.hpp>
+
+#include "azure/storage/files/datalake/datalake_options.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
 
@@ -20,5 +23,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       std::string::const_iterator& cur);
 
   bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata);
+
+  Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options);
 
 }}}}} // namespace Azure::Storage::Files::DataLake::Details

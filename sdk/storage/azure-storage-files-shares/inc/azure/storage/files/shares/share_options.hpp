@@ -43,6 +43,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+
+    /**
+     * @brief The last part of the user agent for telemetry.
+     */
+    std::string ApplicationId;
+
+    /**
+     * API version used by this client.
+     */
+    std::string ApiVersion = Details::DefaultServiceApiVersion;
   };
 
   struct ListSharesSinglePageOptions
