@@ -116,7 +116,7 @@ namespace Azure { namespace Storage {
       }
       policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
           std::forward<T>(clientOptions).TransportPolicyOptions));
-      return std::move(policies);
+      return policies;
     }
 
   } // namespace Details
