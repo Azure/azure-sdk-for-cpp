@@ -2,23 +2,18 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Defines the Key Vault Keys client.
  *
  */
 
 #pragma once
 
-#include <azure/core/credentials.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/response.hpp>
-
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
-#include "azure/keyvault/keys/key_constants.hpp"
 #include "azure/keyvault/keys/key_create_options.hpp"
-#include "azure/keyvault/keys/key_request_parameters.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
@@ -81,16 +76,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Core::Response<KeyVaultKey> GetKey(
         std::string const& name,
         GetKeyOptions const& options = GetKeyOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      return m_pipeline->SendRequest<KeyVaultKey>(
-          context,
-          Azure::Core::Http::HttpMethod::Get,
-          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return Details::KeyVaultKeyDeserialize(name, rawResponse);
-          },
-          {Details::KeysPath, name, options.Version});
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates and stores a new key in Key Vault. The create key operation can be used to
@@ -98,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * creates a new version of the key. It requires the keys/create permission.
      *
      * @param name The name of the key.
-     * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::KeyTypeEnum.
+     * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::Kty.
      * @param options Optional parameters for this operation. See
      * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
      * @param context The context for the operation can be used for request cancellation.
@@ -106,19 +92,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Core::Response<KeyVaultKey> CreateKey(
         std::string const& name,
-        KeyTypeEnum keyType,
+        Kty keyType,
         CreateKeyOptions const& options = CreateKeyOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      return m_pipeline->SendRequest<KeyVaultKey>(
-          context,
-          Azure::Core::Http::HttpMethod::Post,
-          Details::KeyRequestParameters(keyType, options),
-          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return Details::KeyVaultKeyDeserialize(name, rawResponse);
-          },
-          {Details::KeysPath, name, "create"});
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes a key of any type from storage in Azure Key Vault.
@@ -136,17 +112,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Security::KeyVault::Keys::DeleteKeyOperation StartDeleteKey(
         std::string const& name,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
-          m_pipeline,
-          m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::DeletedKey>(
-              context,
-              Azure::Core::Http::HttpMethod::Delete,
-              [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-                return Details::DeletedKeyDeserialize(name, rawResponse);
-              },
-              {Details::KeysPath, name}));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Defines the JsonWebKey.
  *
  */
 
 #pragma once
 
-#include "azure/keyvault/keys/key_constants.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 
@@ -17,6 +17,10 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
+  /**
+   * @brief Represents a JSON Web Key as defined in http://tools.ietf.org/html/rfc7517.
+   *
+   */
   struct JsonWebKey
   {
     /**
@@ -24,14 +28,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     std::string Id;
-    KeyTypeEnum KeyType;
 
-    JsonWebKey() {}
+    /**
+     * @brief They type of the key.
+     *
+     */
+    Kty KeyType;
 
+    /**
+     * @brief Construct a new Json Web Key object.
+     *
+     */
+    JsonWebKey() = default;
+
+    /**
+     * @brief Set the Key Operations object based on a list of operations.
+     *
+     * @param keyOperations
+     */
     void SetKeyOperations(std::vector<KeyOperation> const& keyOperations)
     {
       m_keyOps = keyOperations;
     }
+
+    /**
+     * @brief Get the list of operations from the JsonWebKey.
+     *
+     * @return std::vector<KeyOperation> const&
+     */
     std::vector<KeyOperation> const& KeyOperations() const { return m_keyOps; }
 
   private:

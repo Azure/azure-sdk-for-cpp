@@ -5,6 +5,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policy.hpp>
 
+#include "azure/keyvault/keys/details/key_request_parameters.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 
 #include <memory>
@@ -43,4 +44,49 @@ KeyClient::KeyClient(
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
       url, apiVersion, std::move(policies));
+}
+
+Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
+    std::string const& name,
+    GetKeyOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+      },
+      {Details::KeysPath, name, options.Version});
+}
+
+Azure::Core::Response<KeyVaultKey> KeyClient::CreateKey(
+    std::string const& name,
+    Kty keyType,
+    CreateKeyOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      Details::KeyRequestParameters(keyType, options),
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+      },
+      {Details::KeysPath, name, "create"});
+}
+
+Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
+      m_pipeline,
+      m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::DeletedKey>(
+          context,
+          Azure::Core::Http::HttpMethod::Delete,
+          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+            return Details::DeletedKeyDeserialize(name, rawResponse);
+          },
+          {Details::KeysPath, name}));
 }

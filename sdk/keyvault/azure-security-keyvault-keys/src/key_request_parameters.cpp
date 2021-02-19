@@ -3,8 +3,8 @@
 
 #include <azure/core/internal/json.hpp>
 
-#include "azure/keyvault/keys/key_constants.hpp"
-#include "azure/keyvault/keys/key_request_parameters.hpp"
+#include "azure/keyvault/keys/details/key_request_parameters.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
 
 #include <string>
 

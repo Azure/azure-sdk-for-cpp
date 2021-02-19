@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Defines the Key Vault Key.
  *
  */
@@ -9,7 +10,7 @@
 #pragma once
 
 #include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 #include "azure/keyvault/keys/key_properties.hpp"
 
@@ -69,7 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @return The type of the Key.
      */
-    KeyTypeEnum const& GetKeyType() const { return Key.KeyType; }
+    Kty const& GetKeyType() const { return Key.KeyType; }
 
     /**
      * @brief Gets the operations you can perform using the key.

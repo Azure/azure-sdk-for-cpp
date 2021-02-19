@@ -10,7 +10,7 @@
 #include "key_client_base_test.hpp"
 
 #include <azure/keyvault/key_vault.hpp>
-#include <azure/keyvault/keys/key_constants.hpp>
+#include <azure/keyvault/keys/details/key_constants.hpp>
 
 #include <string>
 
@@ -58,7 +58,7 @@ TEST_F(KeyVaultClientTest, GetKey)
   auto key = keyResponse.ExtractValue();
 
   EXPECT_EQ(key.Name(), keyName);
-  EXPECT_EQ(key.GetKeyType(), Azure::Security::KeyVault::Keys::KeyTypeEnum::Rsa);
+  EXPECT_EQ(key.GetKeyType(), Azure::Security::KeyVault::Keys::Kty::Rsa);
 }
 
 TEST_F(KeyVaultClientTest, CreateKey)
@@ -68,7 +68,7 @@ TEST_F(KeyVaultClientTest, CreateKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -92,12 +92,12 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify());
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec, options);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec, options);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::Kty::Ec);
     auto& keyOperations = keyVaultKey.KeyOperations();
     uint16_t expectedSize = 2;
     EXPECT_EQ(keyOperations.size(), expectedSize);
@@ -128,12 +128,12 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Rsa, options);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Rsa, options);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::KeyTypeEnum::Rsa);
+    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::Kty::Rsa);
 
     auto findTag = [keyVaultKey](std::string key, std::string value) {
       // Will throw if key is not found
@@ -153,7 +153,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -183,7 +183,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -234,7 +234,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
@@ -272,7 +272,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -308,7 +308,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
@@ -321,7 +321,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
   try
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
   {
@@ -348,7 +348,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -358,7 +358,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
   try
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyTypeEnum::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
   {

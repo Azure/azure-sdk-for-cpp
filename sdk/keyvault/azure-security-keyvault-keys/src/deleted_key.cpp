@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/deleted_key.hpp"
-#include "azure/keyvault/keys/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
