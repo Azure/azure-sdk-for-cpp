@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto filesystemUrl = Files::DataLake::Details::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
     auto directory1Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory1Client0.GetUrl());
     auto directory2Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory2Client0.GetUrl());
-    auto fileUrl = fileClient0.GetUrl();
+    auto fileUrl = Files::DataLake::Details::GetDfsUrlFromUrl(fileClient0.GetUrl());
 
     auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
         serviceUrl,
