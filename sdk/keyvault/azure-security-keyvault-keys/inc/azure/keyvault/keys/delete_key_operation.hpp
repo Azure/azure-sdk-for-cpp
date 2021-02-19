@@ -74,33 +74,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     DeleteKeyOperation(
         std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>
             keyvaultPipeline,
-        Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
-        : m_pipeline(keyvaultPipeline)
-    {
-      if (!response.HasValue())
-      {
-        throw Azure::Security::KeyVault::Common::KeyVaultException(
-            "The response does not contain a value.");
-      }
-      // The response becomes useless and the value and rawResponse are now owned by the
-      // DeleteKeyOperation. This is fine because the DeleteKeyOperation is what the delete key api
-      // will return.
-      m_value = response.ExtractValue();
-      m_rawResponse = response.ExtractRawResponse();
-
-      // Build the full url for continuation token. It is only used in case customers wants to use
-      // it on their own. The Operation uses the KeyVaultPipeline from the client which knows how to
-      // build this url.
-      m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(Details::DeletedKeysPath)
-          + "/" + m_value.Name();
-
-      // The recoveryId is only returned if soft-delete is enabled.
-      // The LRO is considered completed for non soft-delete (key will be eventually removed).
-      if (m_value.RecoveryId.empty())
-      {
-        m_status = Azure::Core::OperationStatus::Succeeded;
-      }
-    }
+        Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
   public:
     /**

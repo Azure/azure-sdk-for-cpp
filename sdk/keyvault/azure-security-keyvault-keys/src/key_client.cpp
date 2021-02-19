@@ -5,6 +5,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policy.hpp>
 
+#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 

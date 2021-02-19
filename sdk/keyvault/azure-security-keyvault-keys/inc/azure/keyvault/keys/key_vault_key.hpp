@@ -10,7 +10,6 @@
 #pragma once
 
 #include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 #include "azure/keyvault/keys/key_properties.hpp"
 
