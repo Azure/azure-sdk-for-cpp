@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief #HttpTransport implementation via CURL.
+ * @brief #Azure::Core::Http::HttpTransport implementation via CURL.
  */
 
 #pragma once
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request an HTTP Request to be send.
      * @return unique ptr to an HTTP RawResponse.
      */

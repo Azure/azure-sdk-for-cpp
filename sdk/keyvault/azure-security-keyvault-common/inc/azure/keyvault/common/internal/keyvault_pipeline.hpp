@@ -151,7 +151,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     }
 
     /**
-     * @brief Get the Vault Url which was used to create the #KeyVaultPipeline.
+     * @brief Get the Vault Url which was used to create the
+     * #Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline.
      *
      * @return The vault Url as string.
      */

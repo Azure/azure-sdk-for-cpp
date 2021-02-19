@@ -24,7 +24,8 @@ namespace Azure { namespace Core { namespace Cryptography {
   private:
     /**
      * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
-     * @remark Once all the data has been added, call #Final() to get the computed hash value.
+     * @remark Once all the data has been added, call #Azure::Core::Cryptography::Hash::Final() to
+     * get the computed hash value.
      * @param data The pointer to the current block of binary data that is used for hash
      * calculation.
      * @param length The size of the data provided.
@@ -49,8 +50,9 @@ namespace Azure { namespace Core { namespace Cryptography {
 
     /**
      * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
-     * @remark Once all the data has been added, call #Final() to get the computed hash value.
-     * @remark Do not call this function after a call to #Final().
+     * @remark Once all the data has been added, call #Azure::Core::Cryptography::Hash::Final() to
+     * get the computed hash value.
+     * @remark Do not call this function after a call to #Azure::Core::Cryptography::Hash::Final().
      * @param data The pointer to the current block of binary data that is used for hash
      * calculation.
      * @param length The size of the data provided.
@@ -95,7 +97,8 @@ namespace Azure { namespace Core { namespace Cryptography {
 
     /**
      * @brief Computes the hash value of all the binary input data appended to the instance so far.
-     * @remark Use #Append() to add more partial data before calling this function.
+     * @remark Use #Azure::Core::Cryptography::Hash::Append() to add more partial data before
+     * calling this function.
      * @remark Do not call this function multiple times.
      * @return The computed hash value corresponding to the input provided.
      */
@@ -147,7 +150,8 @@ namespace Azure { namespace Core { namespace Cryptography {
     /**
      * @brief Used to append partial binary input data to compute the MD5 hash in a streaming
      * fashion.
-     * @remark Once all the data has been added, call #Final() to get the computed hash value.
+     * @remark Once all the data has been added, call #Azure::Core::Cryptography::Hash::Final() to
+     * get the computed hash value.
      * @param data The pointer to the current block of binary data that is used for hash
      * calculation.
      * @param length The size of the data provided.

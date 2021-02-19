@@ -19,7 +19,8 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief A base abstract class for the `std::unique_ptr` value representation in #ContextValue.
+   * @brief A base abstract class for the `std::unique_ptr` value representation in
+   * #Azure::Core::ContextValue.
    *
    */
   struct ValueBase
@@ -121,9 +122,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Create a context value with `std::unique_ptr<ValueBase>` value type.
+     * @brief Create a context value with `std::unique_ptr<Azure::Core::ValueBase>` value type.
      *
-     * @param p Smart pointer to #ValueBase.
+     * @param p Smart pointer to #Azure::Core::ValueBase.
      */
     ContextValue(std::unique_ptr<ValueBase>&& p) noexcept
         : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
@@ -133,7 +134,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Move constructor.
      *
-     * @param other An rvalue reference to another instance of #ContextValue.
+     * @param other An rvalue reference to another instance of #Azure::Core::ContextValue.
      */
     ContextValue(ContextValue&& other) noexcept : m_contextValueType(other.m_contextValueType)
     {
@@ -160,7 +161,7 @@ namespace Azure { namespace Core {
 #endif
 
     /**
-     * @brief #ContextValue destructor.
+     * @brief #Azure::Core::ContextValue destructor.
      */
     ~ContextValue()
     {

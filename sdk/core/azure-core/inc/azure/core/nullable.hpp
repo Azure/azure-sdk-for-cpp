@@ -38,12 +38,12 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct a #Nullable that represents the absence of value.
+     * @brief Construct a #Azure::Core::Nullable that represents the absence of value.
      */
     constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
 
     /**
-     * @brief Construct a #Nullable having an \p initialValue.
+     * @brief Construct a #Azure::Core::Nullable having an \p initialValue.
      *
      * @param initialValue A non-absent value to initialize with.
      */
@@ -127,8 +127,8 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Invokes #Swap while having a lowercase name that satisfies `swappable` requirements
-     * (see details).
+     * @brief Invokes #Azure::Core::Nullable::Swap while having a lowercase name that satisfies
+     * `swappable` requirements (see details).
      *
      * @details Swappable requirements: https://en.cppreference.com/w/cpp/named_req/Swappable
      */
@@ -161,7 +161,7 @@ namespace Azure { namespace Core {
      *
      * @tparam U Type of \p other.
      *
-     * @param other Other #Nullable.
+     * @param other Other #Azure::Core::Nullable.
      */
     template <
         class U = T,
@@ -262,7 +262,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief `operator bool` on the condition of #HasValue.
+     * @brief `operator bool` on the condition of #Azure::Core::Nullable::HasValue.
      */
     explicit operator bool() const noexcept { return HasValue(); }
 

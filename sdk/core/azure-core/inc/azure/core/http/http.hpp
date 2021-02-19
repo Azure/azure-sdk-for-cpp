@@ -71,7 +71,8 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief An invalid header key name in #Request or #RawResponse.
+   * @brief An invalid header key name in #Azure::Core::Http::Request or
+   * #Azure::Core::Http::RawResponse.
    *
    */
   class InvalidHeaderException : public Azure::Core::RequestFailedException {
@@ -203,9 +204,9 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Get a string representation for a value of #HttpMethod.
    *
-   * @param method A value of #HttpMethod value.
+   * @param method A value of #Azure::Core::Http::HttpMethod value.
    *
-   * @return String name that corresponds to a value of #HttpMethod type.
+   * @return String name that corresponds to a value of #Azure::Core::Http::HttpMethod type.
    */
   inline std::string HttpMethodToString(const HttpMethod& method)
   {
@@ -464,11 +465,11 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct an HTTP #Request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param bodyStream HTTP #BodyStream.
+     * @param bodyStream #Azure::Core::Http::BodyStream.
      * @param downloadViaStream A boolean value indicating whether download should happen via
      * stream.
      */
@@ -479,11 +480,11 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP #Request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param bodyStream HTTP #BodyStream.
+     * @param bodyStream #Azure::Core::Http::BodyStream.
      */
     explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, false)
@@ -491,7 +492,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP #Request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -508,7 +509,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP #Request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -519,7 +520,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Add HTTP header to the #Request.
+     * @brief Add HTTP header to the #Azure::Core::Http::Request.
      *
      * @param name The name for the header to be added.
      * @param value The value for the header to be added.
@@ -554,7 +555,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> GetHeaders() const;
 
     /**
-     * @brief Get HTTP body as #BodyStream.
+     * @brief Get HTTP body as #Azure::Core::Http::BodyStream.
      */
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
@@ -657,7 +658,7 @@ namespace Azure { namespace Core { namespace Http {
     // ===== Methods used to build HTTP response =====
 
     /**
-     * @brief Add HTTP header to the #RawResponse.
+     * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
      *
      * @remark The \p name must contain valid header name characters (RFC 7230).
      *
@@ -669,7 +670,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& name, std::string const& value);
 
     /**
-     * @brief Add HTTP header to the #RawResponse.
+     * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
      *
      * @remark The \p header must contain valid header name characters (RFC 7230).
      * @remark Header name, value and delimiter are expected to be in \p header.
@@ -681,7 +682,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& header);
 
     /**
-     * @brief Add HTTP header to the #RawResponse.
+     * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
      *
      * @remark The string referenced by \p first and \p last must contain valid header name
      * characters (RFC 7230).
@@ -697,9 +698,9 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(uint8_t const* const first, uint8_t const* const last);
 
     /**
-     * @brief Set #BodyStream for this HTTP response.
+     * @brief Set #Azure::Core::Http::BodyStream for this HTTP response.
      *
-     * @param stream HTTP #BodyStream.
+     * @param stream #Azure::Core::Http::BodyStream.
      */
     void SetBodyStream(std::unique_ptr<BodyStream> stream);
 
@@ -739,7 +740,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> const& GetHeaders() const;
 
     /**
-     * @brief Get HTTP response body as #BodyStream.
+     * @brief Get HTTP response body as #Azure::Core::Http::BodyStream.
      */
     std::unique_ptr<BodyStream> GetBodyStream()
     {

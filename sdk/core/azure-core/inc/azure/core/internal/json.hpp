@@ -15809,7 +15809,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
      * value as unsigned integer. The plus/minus shuffling is necessary as we can
      * not directly remove the sign of an arbitrary signed integer as the
      * absolute values of INT_MIN and INT_MAX are usually not the same. See
-     * #1708 for details.
+     * `#1708` for details.
      */
     inline number_unsigned_t remove_sign(number_integer_t x) noexcept
     {

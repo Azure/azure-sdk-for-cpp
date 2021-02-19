@@ -63,9 +63,9 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Finds a connection to be re-used from the connection pool.
      * @remark If there is not any available connection, a new connection is created.
      *
-     * @param request HTTP request to get #CurlNetworkConnection for.
+     * @param request HTTP request to get #Azure::Core::Http::CurlNetworkConnection for.
      *
-     * @return #CurlNetworkConnection to use.
+     * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
     static std::unique_ptr<CurlNetworkConnection> GetCurlConnection(
         Request& request,

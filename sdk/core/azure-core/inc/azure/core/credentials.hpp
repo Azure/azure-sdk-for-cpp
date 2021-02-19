@@ -47,7 +47,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Get an authentication token.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param tokenRequestOptions Options to get the token.
      */
     virtual AccessToken GetToken(

@@ -130,9 +130,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param context A cancellation token controlling the request lifetime.
-     * @return A #DeleteKeyOperation to wait on this long-running operation. If the key is soft
-     * delete-enabled, you only need to wait for the operation to complete if you need to recover or
-     * purge the key; otherwise, the key is deleted automatically on purge schedule.
+     * @return A #Azure::Security::KeyVault::Keys::DeleteKeyOperation to wait on this long-running
+     * operation. If the key is soft delete-enabled, you only need to wait for the operation to
+     * complete if you need to recover or purge the key; otherwise, the key is deleted automatically
+     * on purge schedule.
      */
     Azure::Security::KeyVault::Keys::DeleteKeyOperation StartDeleteKey(
         std::string const& name,

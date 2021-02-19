@@ -39,7 +39,7 @@ namespace Azure { namespace Identity {
     std::string AuthorityHost = Details::g_aadGlobalAuthority;
 
     /**
-     * @brief #TransportPolicyOptions for authentication HTTP pipeline.
+     * @brief #Azure::Core::Http::TransportPolicyOptions for authentication HTTP pipeline.
      */
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
@@ -62,7 +62,7 @@ namespace Azure { namespace Identity {
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
      * @param clientSecret Client Secret.
-     * @param options #ClientSecretCredentialOptions.
+     * @param options #Azure::Identity::ClientSecretCredentialOptions.
      */
     explicit ClientSecretCredential(
         std::string tenantId,
