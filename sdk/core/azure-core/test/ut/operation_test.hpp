@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Test {
     int m_count = 0;
 
   private:
-    std::unique_ptr<Http::RawResponse> PollInternal(Context& context) override
+    std::unique_ptr<Http::RawResponse> PollInternal(Context&) override
     {
       // Artificial delay to require 2 polls
       if (++m_count == 2)

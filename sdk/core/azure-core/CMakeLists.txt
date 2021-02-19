@@ -141,6 +141,21 @@ az_vcpkg_export(
     "azure/core/dll_import_export.hpp"
   )
 
+if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+  
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+  
+  add_subdirectory(test/ut)
+  if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
+    add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
+  endif()
+endif()
+
 if (BUILD_PERFORMANCE_TESTS)
-  add_subdirectory(test/performance)
+  add_subdirectory(test/perf)
 endif()
