@@ -60,7 +60,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Acquires a lease on the blob or blob container.
      *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of
      * the lease, in seconds, or InfiniteLeaseDuration for a lease that never
      * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
@@ -77,7 +76,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Renews the blob or blob container's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A RenewBlobLeaseResult describing the lease.
@@ -89,7 +87,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Releases the blob or blob container's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A ReleaseBlobLeaseResult describing the updated container or blob.
@@ -101,7 +98,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Changes the lease of an active lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.

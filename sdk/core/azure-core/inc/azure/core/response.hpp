@@ -25,7 +25,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Initialize a #Response<T> with an initial value.
+     * @brief Initialize a #Azure::Core::Response<T> with an initial value.
      *
      * @param initialValue Initial value.
      * @param rawResponse Raw HTTP response.
@@ -37,7 +37,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Initialize a #Response<T> with an absent value.
+     * @brief Initialize a #Azure::Core::Response<T> with an absent value.
      *
      * @param rawResponse Raw HTTP response.
      */
@@ -104,7 +104,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Initialize a #Response<void> with a raw response.
+     * @brief Initialize a #Azure::Core::Response<void> with a raw response.
      *
      * @param rawResponse Raw HTTP response.
      */

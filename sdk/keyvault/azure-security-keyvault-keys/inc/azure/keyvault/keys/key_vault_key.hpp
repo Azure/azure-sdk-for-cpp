@@ -46,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Construct a new Key Vault Key object.
      *
-     * @param name
+     * @param name The name of the key.
      */
     KeyVaultKey(std::string name) : Properties(std::move(name)) {}
 
@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Get the Key Type.
      *
-     * @return The type of the Key.
+     * @return The type of the key.
      */
     KeyTypeEnum const& GetKeyType() const { return Key.KeyType; }
 

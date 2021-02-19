@@ -47,8 +47,8 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     }
 
     auto const bodyString = body.str();
-    auto bodyStream
-        = std::make_unique<MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
+    auto bodyStream = std::make_unique<MemoryBodyStream>(
+        reinterpret_cast<uint8_t const*>(bodyString.data()), bodyString.size());
 
     Request request(HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();

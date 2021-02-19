@@ -139,12 +139,12 @@ void ParseHttpVersion(
   auto minorVersionStart = majorVersionEnd + 1; // start of minor version
   auto minorVersionInt = std::stoi(std::string(minorVersionStart, httpVersionEnd));
 
-  *majorVersion = (uint16_t)majorVersionInt;
-  *minorVersion = (uint16_t)minorVersionInt;
+  *majorVersion = static_cast<uint16_t>(majorVersionInt);
+  *minorVersion = static_cast<uint16_t>(minorVersionInt);
 }
 
 /**
- * @brief Add a list of HTTP headers to the @RawResponse.
+ * @brief Add a list of HTTP headers to the #Azure::Core::Http::RawResponse.
  *
  * @remark The \p headers must contain valid header name characters (RFC 7230).
  * @remark Header name, value and delimiter are expected to be in \p headers.

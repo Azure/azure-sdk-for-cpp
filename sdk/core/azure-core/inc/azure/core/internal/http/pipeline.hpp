@@ -35,8 +35,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
-     * @param policies A sequence of #HttpPolicy representing a stack, first element corresponding
-     * to the top of the stack.
+     * @param policies A sequence of #Azure::Core::Http::HttpPolicy representing a stack, first
+     * element corresponding to the top of the stack.
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
@@ -58,8 +58,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
-     * @param policies A sequence of #HttpPolicy representing a stack, first element corresponding
-     * to the top of the stack.
+     * @param policies A sequence of #Azure::Core::Http::HttpPolicy representing a stack, first
+     * element corresponding to the top of the stack.
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
@@ -77,7 +77,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
      *
      * @remark \p other is expected to have at least one policy.
      *
-     * @param other
+     * @param other Another instance of #Azure::Core::Internal::Http::HttpPipeline to create a copy
+     * of.
      */
     HttpPipeline(const HttpPipeline& other)
     {
@@ -91,7 +92,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     /**
      * @brief Start the HTTP pipeline.
      *
-     * @param ctx #Context so that operation can be cancelled.
+     * @param ctx #Azure::Core::Context so that operation can be cancelled.
      * @param request The HTTP request to be processed.
      *
      * @return HTTP response after the request has been processed.

@@ -36,7 +36,7 @@ namespace Azure { namespace Core {
   public:
     /**
      * Gets UUID as a string.
-     * @detail A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
+     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
      */
     std::string ToString()
     {

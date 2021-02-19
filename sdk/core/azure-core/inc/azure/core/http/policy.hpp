@@ -44,12 +44,13 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Apply this HTTP policy.
      *
-     * @param context #Context so that operation can be cancelled.
-     * @param request An HTTP #Request being sent.
-     * @param policy #NextHttpPolicy to invoke after this policy has been applied.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param request An #Azure::Core::Http::Request being sent.
+     * @param policy #Azure::Core::Http::NextHttpPolicy to invoke after this policy has been
+     * applied.
      *
-     * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
-     * sequence of policies have been applied.
+     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
+     * policies in the stack sequence of policies have been applied.
      */
     virtual std::unique_ptr<RawResponse> Send(
         Context const& context,
@@ -99,24 +100,24 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Apply this HTTP policy.
      *
-     * @param context #Context so that operation can be cancelled.
-     * @param request An HTTP #Request being sent.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param request An #Azure::Core::Http::Request being sent.
      *
-     * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
-     * sequence of policies have been applied.
+     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
+     * policies in the stack sequence of policies have been applied.
      */
-    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
+    std::unique_ptr<RawResponse> Send(Context const& context, Request& request);
   };
 
   /**
-   * @brief The options for the #TransportPolicy.
+   * @brief The options for the #Azure::Core::Http::TransportPolicy.
    *
    */
   struct TransportPolicyOptions
   {
     /**
-     * @brief Set the #HttpTransport that the transport policy will use to send and receive requests
-     * and responses over the wire.
+     * @brief Set the #Azure::Core::Http::HttpTransport that the transport policy will use to send
+     * and receive requests and responses over the wire.
      *
      * @remark When no option is set, the default transport adapter on non-Windows platforms is the
      * curl transport adapter and winhttp transport adapter on Windows.
@@ -140,8 +141,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an HTTP transport policy.
      *
-     * @param transport A pointer to the #HttpTransport implementation to use when this policy gets
-     * applied (#Send).
+     * @param options #Azure::Core::Http::TransportPolicyOptions.
      */
     explicit TransportPolicy(TransportPolicyOptions options = TransportPolicyOptions())
         : m_options(std::move(options))
@@ -160,7 +160,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Options for the #RetryPolicy.
+   * @brief Options for the #Azure::Core::Http::RetryPolicy.
    */
   struct RetryOptions
   {
@@ -200,9 +200,9 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * Constructs HTTP retry policy with the provided #RetryOptions.
+     * Constructs HTTP retry policy with the provided #Azure::Core::Http::RetryOptions.
      *
-     * @param options HTTP #RetryOptions.
+     * @param options #Azure::Core::Http::RetryOptions.
      */
     explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
@@ -251,7 +251,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief The options for the #TelemetryPolicy
+   * @brief The options for the #Azure::Core::Http::TelemetryPolicy
    *
    */
   struct TelemetryPolicyOptions
@@ -337,8 +337,8 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct a Bearer Token authentication policy.
      *
-     * @param credential A #TokenCredential to use with this policy.
-     * @param tokenRequestOptions #TokenRequestOptions.
+     * @param credential A #Azure::Core::TokenCredential to use with this policy.
+     * @param tokenRequestOptions #Azure::Core::Http::TokenRequestOptions.
      */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
@@ -361,7 +361,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Logs every HTTP request.
    *
-   * @detail Logs every HTTP request, response, or retry attempt
+   * @details Logs every HTTP request, response, or retry attempt.
    * @remark See #logging.hpp
    */
   class LoggingPolicy : public HttpPolicy {
@@ -384,7 +384,7 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace Internal {
     /**
-     * @brief @ValuePolicy options.
+     * @brief #Azure::Core::Http::Internal::ValuePolicy options.
      */
     struct ValuePolicyOptions
     {
@@ -404,8 +404,9 @@ namespace Azure { namespace Core { namespace Http {
 
     public:
       /**
-       * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
-       * @param options @ValuePolicyOptions.
+       * @brief Construct a #Azure::Core::Http::Internal::ValuePolicy with the
+       * #Azure::Core::Http::Internal::ValuePolicyOptions provided.
+       * @param options #Azure::Core::Http::Internal::ValuePolicyOptions.
        */
       explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
 

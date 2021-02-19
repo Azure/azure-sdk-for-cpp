@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Sas {
     Create = 32,
 
     /**
-     * @beirf Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Sas {
     ManageAccessControl = 512,
 
     /**
-     * @beirf Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -327,7 +327,8 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Uses an account's user delegation key to sign this shared access signature, to
      * produce the proper SAS query parameters for authentication requests.
      *
-     * @param credential UserDelegationKey retruned from BlobServiceClient.GetUserDelegationKey.
+     * @param userDelegationKey UserDelegationKey retruned from
+     * BlobServiceClient.GetUserDelegationKey.
      * @param accountName The name of the storage account.
      * @return The SAS query parameters used for authenticating requests.
      */

@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark This is the `OnRead` implementation that all derived classes need to provide.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param buffer Pointer to a byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Read portion of data into a buffer.
      * @remark Throws if error/cancelled.
      *
-     * @param conntext #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
@@ -91,11 +91,11 @@ namespace Azure { namespace Core { namespace Http {
     };
 
     /**
-     * @brief Read #BodyStream into a buffer until the buffer is filled, or until the stream is
-     * read to end.
+     * @brief Read #Azure::Core::Http::BodyStream into a buffer until the buffer is filled, or until
+     * the stream is read to end.
      *
-     * @param conntext #Context so that operation can be cancelled.
-     * @param body #BodyStream to read.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param body #Azure::Core::Http::BodyStream to read.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
@@ -108,11 +108,11 @@ namespace Azure { namespace Core { namespace Http {
         int64_t count);
 
     /**
-     * @brief Read #BodyStream until the stream is read to end, allocating memory for the entirety
-     * of contents.
+     * @brief Read #Azure::Core::Http::BodyStream until the stream is read to end, allocating memory
+     * for the entirety of contents.
      *
-     * @param conntext #Context so that operation can be cancelled.
-     * @param body #BodyStream to read.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param body #Azure::Core::Http::BodyStream to read.
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */
@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief #BodyStream providing data from an initialized memory buffer.
+   * @brief #Azure::Core::Http::BodyStream providing data from an initialized memory buffer.
    */
   class MemoryBodyStream : public BodyStream {
   private:
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Empty #BodyStream.
+   * @brief Empty #Azure::Core::Http::BodyStream.
    * @remark Used for requests with no body.
    */
   class NullBodyStream : public Azure::Core::Http::BodyStream {
@@ -183,7 +183,7 @@ namespace Azure { namespace Core { namespace Http {
     void Rewind() override {}
 
     /**
-     * @brief Gets a singleton instance of a #NullBodyStream.
+     * @brief Gets a singleton instance of a #Azure::Core::Http::NullBodyStream.
      */
     static NullBodyStream* GetNullBodyStream()
     {
@@ -193,7 +193,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief #BodyStream providing its data from a file.
+   * @brief #Azure::Core::Http::BodyStream providing its data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
@@ -244,7 +244,8 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief #BodyStream that provides its data from another #BodyStream.
+   * @brief #Azure::Core::Http::BodyStream that provides its data from another
+   * #Azure::Core::Http::BodyStream.
    */
   class LimitBodyStream : public BodyStream {
   private:
@@ -256,9 +257,9 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct from another #BodyStream.
+     * @brief Construct from another #Azure::Core::Http::BodyStream.
      *
-     * @param inner #BodyStream to provide the data from to the readers.
+     * @param inner #Azure::Core::Http::BodyStream to provide the data from to the readers.
      * @param max_length Maximum number of bytes to provide to the readers.
      */
     LimitBodyStream(BodyStream* inner, int64_t max_length)

@@ -127,6 +127,13 @@ namespace Azure { namespace Storage { namespace Details {
     xmlBufferFree(static_cast<xmlBufferPtr>(m_buffer));
   }
 
+  namespace {
+    inline xmlChar* BadCast(const char* x)
+    {
+      return const_cast<xmlChar*>(reinterpret_cast<const xmlChar*>(x));
+    }
+  } // namespace
+
   void XmlWriter::Write(XmlNode node)
   {
     xmlTextWriterPtr writer = static_cast<xmlTextWriterPtr>(m_writer);
@@ -134,11 +141,11 @@ namespace Azure { namespace Storage { namespace Details {
     {
       if (!node.Value)
       {
-        xmlTextWriterStartElement(writer, BAD_CAST(node.Name));
+        xmlTextWriterStartElement(writer, BadCast(node.Name));
       }
       else
       {
-        xmlTextWriterWriteElement(writer, BAD_CAST(node.Name), BAD_CAST(node.Value));
+        xmlTextWriterWriteElement(writer, BadCast(node.Name), BadCast(node.Value));
       }
     }
     else if (node.Type == XmlNodeType::EndTag)
@@ -147,16 +154,16 @@ namespace Azure { namespace Storage { namespace Details {
     }
     else if (node.Type == XmlNodeType::SelfClosingTag)
     {
-      xmlTextWriterStartElement(writer, BAD_CAST(node.Name));
+      xmlTextWriterStartElement(writer, BadCast(node.Name));
       xmlTextWriterEndElement(writer);
     }
     else if (node.Type == XmlNodeType::Text)
     {
-      xmlTextWriterWriteString(writer, BAD_CAST(node.Value));
+      xmlTextWriterWriteString(writer, BadCast(node.Value));
     }
     else if (node.Type == XmlNodeType::Attribute)
     {
-      xmlTextWriterWriteAttribute(writer, BAD_CAST(node.Name), BAD_CAST(node.Value));
+      xmlTextWriterWriteAttribute(writer, BadCast(node.Name), BadCast(node.Value));
     }
     else if (node.Type == XmlNodeType::End)
     {

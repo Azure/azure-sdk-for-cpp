@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Destructor.
-       * @detail Cleans up CURL (invokes `curl_easy_cleanup()`).
+       * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
        */
       ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
 
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Http {
        * Function will try to keep pulling data from socket until the buffer is all written or until
        * there is no more data to get from the socket.
        *
-       * @param context #Context so that operation can be cancelled.
+       * @param context #Azure::Core::Context so that operation can be cancelled.
        * @param buffer ptr to buffer where to copy bytes from socket.
        * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
        * @return return the numbers of bytes pulled from socket. It can be less than what it was
@@ -163,7 +163,7 @@ namespace Azure { namespace Core { namespace Http {
        *
        * @remarks Hardcoded timeout is used in case a socket stop responding.
        *
-       * @param context #Context so that operation can be cancelled.
+       * @param context #Azure::Core::Context so that operation can be cancelled.
        * @param buffer ptr to the data to be sent to wire.
        * @param bufferSize size of the buffer to send.
        * @return CURL_OK when response is sent successfully.

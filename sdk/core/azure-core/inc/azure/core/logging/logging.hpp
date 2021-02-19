@@ -43,14 +43,14 @@ namespace Azure { namespace Core { namespace Logging {
   /**
    * @brief Set the function that will be invoked to report an SDK log message.
    *
-   * @param logListener A #LogListener function that will be invoked when the SDK reports a log
-   * message matching one of the log levels passed to #SetLogLevel(). If `nullptr`, no
-   * function will be invoked.
+   * @param logListener A #Azure::Core::Logging::LogListener function that will be invoked when the
+   * SDK reports a log message matching one of the log levels passed to
+   * #Azure::Core::Logging::SetLogLevel(). If `nullptr`, no function will be invoked.
    */
   void SetLogListener(LogListener logListener);
 
   /**
-   * @brief Sets the #LogLevel an application is interested in receiving.
+   * @brief Sets the #Azure::Core::Logging::LogLevel an application is interested in receiving.
    *
    * @param level Maximum log level.
    */

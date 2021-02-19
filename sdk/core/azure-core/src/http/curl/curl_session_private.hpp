@@ -52,9 +52,9 @@ namespace Azure { namespace Core { namespace Http {
     void ReadExpected(Context const& context, uint8_t expected);
 
     /**
-     * @brief Read `\r\n` from internal buffer or from the wire.
+     * @brief Read `\\r\\n` from internal buffer or from the wire.
      *
-     * @remark throw if `\r\n` are not the next data read.
+     * @remark throw if `\\r\\n` are not the next data read.
      */
     void ReadCRLF(Context const& context);
 
@@ -284,7 +284,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function used when working with Streams to manually write from the HTTP Request to
      * the wire.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @return CURL_OK when response is sent successfully.
      */
@@ -293,7 +293,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Upload body.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @return Curl code.
      */
@@ -303,10 +303,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
      * RawResponse from wire until the end of headers only.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param reuseInternalBuffer Indicates whether the internal buffer should be reused.
-     *
-     * @return CURL_OK when an HTTP response is created.
      */
     void ReadStatusLineAndHeadersFromRawResponse(
         Context const& context,
@@ -316,7 +314,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
      * unsigned long long
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      */
     void ParseChunkSize(Context const& context);
 
@@ -356,9 +354,10 @@ namespace Azure { namespace Core { namespace Http {
     bool m_keepAlive = true;
 
     /**
-     * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
+     * @brief Implement #Azure::Core::Http::BodyStream::OnRead(). Calling this function pulls data
+     * from the wire.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param buffer Buffer where data from wire is written to.
      * @param count The number of bytes to read from the network.
      * @return The actual number of bytes read from the network.
@@ -394,7 +393,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function will use the HTTP request received in constructor to perform a network call
      * based on the HTTP request configuration.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @return CURLE_OK when the network call is completed successfully.
      */
     CURLcode Perform(Context const& context);
@@ -408,7 +407,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse();
 
     /**
-     * @brief Implement #BodyStream length.
+     * @brief Implement #Azure::Core::Http::BodyStream length.
      *
      * @return The size of the payload.
      */

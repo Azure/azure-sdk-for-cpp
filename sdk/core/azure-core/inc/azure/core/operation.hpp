@@ -52,7 +52,7 @@ namespace Azure { namespace Core {
     virtual std::string GetResumeToken() const = 0;
 
     /**
-     * @brief Returns the current #OperationStatus of the long-running operation.
+     * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
      */
     OperationStatus Status() const noexcept { return m_status; }
 
@@ -79,7 +79,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Calls the server to get updated status of the long-running operation.
      *
-     * @return An HTTP #RawResponse returned from the service.
+     * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
     std::unique_ptr<Http::RawResponse> Poll()
     {
@@ -91,9 +91,9 @@ namespace Azure { namespace Core {
     /**
      * @brief Calls the server to get updated status of the long-running operation.
      *
-     * @param context #Context allows the user to cancel the long-running operation.
+     * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
      *
-     * @return An HTTP #RawResponse returned from the service.
+     * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
     std::unique_ptr<Http::RawResponse> Poll(Context& context) { return PollInternal(context); }
 
@@ -114,7 +114,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Periodically calls the server till the long-running operation completes;
      *
-     * @param context #Context allows the user to cancel the long-running operation.
+     * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
      * @param period Time in milliseconds to wait between polls
      *
      * @return Response<T> the final result of the long-running operation.

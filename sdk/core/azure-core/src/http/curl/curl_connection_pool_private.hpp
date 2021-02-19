@@ -50,7 +50,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
      *
-     * @detail This way getting a connection for a specific host can be done in O(1) instead of
+     * @details This way getting a connection for a specific host can be done in O(1) instead of
      * looping a single connection list to find the first connection for the required host.
      *
      * @remark There might be multiple connections for each host.
@@ -63,9 +63,9 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Finds a connection to be re-used from the connection pool.
      * @remark If there is not any available connection, a new connection is created.
      *
-     * @param request HTTP request to get #CurlNetworkConnection for.
+     * @param request HTTP request to get #Azure::Core::Http::CurlNetworkConnection for.
      *
-     * @return #CurlNetworkConnection to use.
+     * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
     static std::unique_ptr<CurlNetworkConnection> GetCurlConnection(
         Request& request,

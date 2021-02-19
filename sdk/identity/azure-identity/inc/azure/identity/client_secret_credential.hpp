@@ -29,7 +29,7 @@ namespace Azure { namespace Identity {
   public:
     /**
      * @brief Authentication authority URL.
-     * @detail Default value is Azure AD global authority -
+     * @details Default value is Azure AD global authority -
      * "https://login.microsoftonline.com/".
      *
      * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
@@ -39,7 +39,7 @@ namespace Azure { namespace Identity {
     std::string AuthorityHost = Details::g_aadGlobalAuthority;
 
     /**
-     * @brief #TransportPolicyOptions for authentication HTTP pipeline.
+     * @brief #Azure::Core::Http::TransportPolicyOptions for authentication HTTP pipeline.
      */
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
@@ -62,7 +62,7 @@ namespace Azure { namespace Identity {
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
      * @param clientSecret Client Secret.
-     * @param options #ClientSecretCredentialOptions.
+     * @param options #Azure::Identity::ClientSecretCredentialOptions.
      */
     explicit ClientSecretCredential(
         std::string tenantId,

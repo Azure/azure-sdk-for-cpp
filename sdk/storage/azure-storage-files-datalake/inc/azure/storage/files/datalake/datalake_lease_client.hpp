@@ -65,7 +65,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Acquires a lease on the datalake path or datalake path container.
      *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of
      * the lease, in seconds, or InfiniteLeaseDuration for a lease that never
      * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
@@ -85,7 +84,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Renews the datalake path or datalake path container's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A RenewDataLakeLeaseResult describing the lease.
@@ -100,7 +98,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Releases the datalake path or datalake path container's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A ReleaseDataLakeLeaseResult describing the updated container or blob.
@@ -115,7 +112,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Changes the lease of an active lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.

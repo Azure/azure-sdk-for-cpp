@@ -43,8 +43,8 @@ namespace Azure { namespace Core {
 
   /**
    * @brief Manages date and time in standardized string formats.
-   * @detail Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places for
-   * fractional second) precision.
+   * @details Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places
+   * for fractional second) precision.
    * @remark `std::chrono::system_clock::time_point` can't be used, because there is no guarantees
    * for the date range and precision.
    * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
@@ -54,7 +54,8 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct a default instance of @DateTime (00:00:00.0000000 on Janualy 1st, 0001).
+     * @brief Construct a default instance of #Azure::Core::DateTime (00:00:00.0000000 on Janualy
+     * 1st, 0001).
      */
     constexpr DateTime() : time_point() {}
 
@@ -74,7 +75,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct an instance of @DateTime.
+     * @brief Construct an instance of #Azure::Core::DateTime.
      *
      * @param year Year.
      * @param month Month.
@@ -97,12 +98,13 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Construct an instance of @DateTime from base class.
+     * @brief Construct an instance of #Azure::Core::DateTime from base class.
      */
     constexpr DateTime(time_point const& timePoint) : time_point(timePoint) {}
 
     /**
-     * @brief Construct an instance of @DateTime from `std::chrono::system_clock::time_point`.
+     * @brief Construct an instance of #Azure::Core::DateTime from
+     * `std::chrono::system_clock::time_point`.
      * @param systemTime A value of `std::chrono::system_clock::time_point`.
      */
     DateTime(std::chrono::system_clock::time_point const& systemTime)
@@ -112,13 +114,15 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Convert an instance of @DateTime to `std::chrono::system_clock::time_point`.
-     * @throw std::invalid_argument if @DateTime is outside of the range that can be represented.
+     * @brief Convert an instance of #Azure::Core::DateTime to
+     * `std::chrono::system_clock::time_point`.
+     * @throw std::invalid_argument if #Azure::Core::DateTime is outside of the range that can be
+     * represented.
      */
     explicit operator std::chrono::system_clock::time_point() const;
 
     /**
-     * @brief Defines the format applied to the fraction part of any @DateTime.
+     * @brief Defines the format applied to the fraction part of any #Azure::Core::DateTime.
      */
     enum class TimeFractionFormat
     {
@@ -146,12 +150,13 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * @brief Create @DateTime from a string representing time in UTC in the specified format.
+     * @brief Create #Azure::Core::DateTime from a string representing time in UTC in the specified
+     * format.
      *
      * @param dateTime A string with the date and time.
      * @param format A format to which \p dateTime string adheres to.
      *
-     * @return @DateTime that was constructed from the \p dateTime string.
+     * @return #Azure::Core::DateTime that was constructed from the \p dateTime string.
      *
      * @throw std::invalid_argument If \p format is not recognized, or if parsing error.
      */
@@ -159,7 +164,7 @@ namespace Azure { namespace Core {
 
   private:
     /**
-     * @brief Get a string representation of the @DateTime.
+     * @brief Get a string representation of the #Azure::Core::DateTime.
      *
      * @param format The representation format to use.
      * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
@@ -171,7 +176,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Get a string representation of the @DateTime.
+     * @brief Get a string representation of the #Azure::Core::DateTime.
      *
      * @param format The representation format to use.
      *
@@ -183,7 +188,7 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * @brief Get a string representation of the @DateTime formatted with RFC 3339.
+     * @brief Get a string representation of the #Azure::Core::DateTime formatted with RFC 3339.
      *
      * @param fractionFormat The format that is applied to the fraction part from the RFC 3339 date.
      *

@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Initializes a new instance of the ShareFileClient class with an identical url
      * source but the specified share snapshot timestamp.
      *
-     * @param snapshot The snapshot identifier for the share snapshot.
+     * @param shareSnapshot The snapshot identifier for the share snapshot.
      * @return A new ShareFileClient instance.
      * @remarks Pass empty string to remove the snapshot returning the file client without
      * specifying the share snapshot.

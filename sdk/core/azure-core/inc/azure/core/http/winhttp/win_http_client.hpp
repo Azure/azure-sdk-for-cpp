@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief #HttpTransport implementation via WinHttp.
+ * @brief #Azure::Core::Http::HttpTransport implementation via WinHttp.
  */
 
 #pragma once
@@ -84,9 +84,10 @@ namespace Azure { namespace Core { namespace Http {
       int64_t m_streamTotalRead;
 
       /**
-       * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
+       * @brief Implement #Azure::Core::Http::BodyStream::OnRead(). Calling this function pulls data
+       * from the wire.
        *
-       * @param context #Context so that operation can be cancelled.
+       * @param context #Azure::Core::Context so that operation can be cancelled.
        * @param buffer Buffer where data from wire is written to.
        * @param count The number of bytes to read from the network.
        * @return The actual number of bytes read from the network.
@@ -101,7 +102,7 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       /**
-       * @brief Implement #BodyStream length.
+       * @brief Implement #Azure::Core::Http::BodyStream length.
        *
        * @return The size of the payload.
        */
@@ -133,8 +134,8 @@ namespace Azure { namespace Core { namespace Http {
     void CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
     void Upload(std::unique_ptr<Details::HandleManager>& handleManager);
     void SendRequest(std::unique_ptr<Details::HandleManager>& handleManager);
-    void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
-    int64_t WinHttpTransport::GetContentLength(
+    void ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
+    int64_t GetContentLength(
         std::unique_ptr<Details::HandleManager>& handleManager,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
@@ -157,7 +158,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Implements the Http transport interface to send an HTTP Request and produce an HTTP
      * RawResponse.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request an HTTP request to be send.
      * @return A unique pointer to an HTTP RawResponse.
      */

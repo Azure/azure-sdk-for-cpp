@@ -19,7 +19,8 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief A base abstract class for the `std::unique_ptr` value representation in #ContextValue.
+   * @brief A base abstract class for the `std::unique_ptr` value representation in
+   * #Azure::Core::ContextValue.
    *
    */
   struct ValueBase
@@ -45,7 +46,7 @@ namespace Azure { namespace Core {
 
   /**
    * @brief Represents a value that is associated with context.
-   * @rmark Exists as a substitute for variant which isn't available until C++17.
+   * @remark Exists as a substitute for variant which isn't available until C++17.
    */
   class ContextValue {
   public:
@@ -121,9 +122,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Create a context value with `std::unique_ptr<ValueBase>` value type.
+     * @brief Create a context value with `std::unique_ptr<Azure::Core::ValueBase>` value type.
      *
-     * @param p Smart pointer to #ValueBase.
+     * @param p Smart pointer to #Azure::Core::ValueBase.
      */
     ContextValue(std::unique_ptr<ValueBase>&& p) noexcept
         : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
@@ -133,7 +134,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Move constructor.
      *
-     * @param other An rvalue reference to another instance of #ContextValue.
+     * @param other An rvalue reference to another instance of #Azure::Core::ContextValue.
      */
     ContextValue(ContextValue&& other) noexcept : m_contextValueType(other.m_contextValueType)
     {
@@ -160,7 +161,7 @@ namespace Azure { namespace Core {
 #endif
 
     /**
-     * @brief #ContextValue destructor.
+     * @brief #Azure::Core::ContextValue destructor.
      */
     ~ContextValue()
     {
@@ -184,7 +185,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Get the context value.
      *
-     * @tparam Expected The type of value to get.
+     * @tparam ExpectedType The type of value to get.
      */
     template <class ExpectedType> const ExpectedType& Get() const noexcept;
 

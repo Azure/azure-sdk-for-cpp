@@ -38,8 +38,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // The contents of the response are irrelevant for testing purposes
       // Need only ensure that a RawResponse is returned
-      return std::make_unique<Http::RawResponse>(
-          (uint16_t)1, (uint16_t)0, Http::HttpStatusCode(200), "OK");
+      return std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
     }
 
     Response<std::string> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
