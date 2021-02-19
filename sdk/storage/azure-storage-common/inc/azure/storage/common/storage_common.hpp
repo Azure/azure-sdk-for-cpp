@@ -106,6 +106,7 @@ namespace Azure { namespace Storage {
       }
       policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(
           std::forward<T>(clientOptions).RetryOptions));
+      policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
       for (const auto& p : clientOptions.PerRetryPolicies)
       {
         policies.emplace_back(p->Clone());
