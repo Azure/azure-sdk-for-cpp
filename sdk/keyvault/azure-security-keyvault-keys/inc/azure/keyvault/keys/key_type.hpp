@@ -17,7 +17,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The JsonWebKey types.
    *
    */
-  enum class Kty
+  enum class JsonWebKeyType
   {
     /**
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm.
@@ -53,8 +53,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   namespace Details {
-    Kty KeyTypeFromString(std::string const& name);
-    std::string KeyTypeToString(Kty kty);
+    JsonWebKeyType KeyTypeFromString(std::string const& name);
+    std::string KeyTypeToString(JsonWebKeyType kty);
   } // namespace Details
 
 }}}} // namespace Azure::Security::KeyVault::Keys

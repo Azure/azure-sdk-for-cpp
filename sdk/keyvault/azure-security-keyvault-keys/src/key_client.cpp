@@ -63,7 +63,7 @@ Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
 
 Azure::Core::Response<KeyVaultKey> KeyClient::CreateKey(
     std::string const& name,
-    Kty keyType,
+    JsonWebKeyType keyType,
     CreateKeyOptions const& options,
     Azure::Core::Context const& context) const
 {

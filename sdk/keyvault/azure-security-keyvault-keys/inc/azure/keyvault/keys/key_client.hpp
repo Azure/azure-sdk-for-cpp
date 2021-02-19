@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * creates a new version of the key. It requires the keys/create permission.
      *
      * @param name The name of the key.
-     * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::Kty.
+     * @param keyType The type of key to create. See #Azure::Security::KeyVault::Keys::JsonWebKeyType.
      * @param options Optional parameters for this operation. See
      * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
      * @param context The context for the operation can be used for request cancellation.
@@ -92,7 +92,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Core::Response<KeyVaultKey> CreateKey(
         std::string const& name,
-        Kty keyType,
+        JsonWebKeyType keyType,
         CreateKeyOptions const& options = CreateKeyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

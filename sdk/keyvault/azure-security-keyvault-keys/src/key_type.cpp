@@ -8,58 +8,58 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 
-Kty Details::KeyTypeFromString(std::string const& name)
+JsonWebKeyType Details::KeyTypeFromString(std::string const& name)
 {
   if (name == EcValue)
   {
-    return Kty::Ec;
+    return JsonWebKeyType::Ec;
   }
   if (name == EcHsmValue)
   {
-    return Kty::EcHsm;
+    return JsonWebKeyType::EcHsm;
   }
   if (name == OctValue)
   {
-    return Kty::Oct;
+    return JsonWebKeyType::Oct;
   }
   if (name == OctHsmValue)
   {
-    return Kty::OctHsm;
+    return JsonWebKeyType::OctHsm;
   }
   if (name == RsaValue)
   {
-    return Kty::Rsa;
+    return JsonWebKeyType::Rsa;
   }
   if (name == RsaHsmValue)
   {
-    return Kty::RsaHsm;
+    return JsonWebKeyType::RsaHsm;
   }
   throw std::runtime_error("cannot convert " + name + " to key type (kty)");
 }
 
-std::string Details::KeyTypeToString(Kty kty)
+std::string Details::KeyTypeToString(JsonWebKeyType kty)
 {
-  if (kty == Kty::Ec)
+  if (kty == JsonWebKeyType::Ec)
   {
     return EcValue;
   }
-  if (kty == Kty::EcHsm)
+  if (kty == JsonWebKeyType::EcHsm)
   {
     return EcHsmValue;
   }
-  if (kty == Kty::Oct)
+  if (kty == JsonWebKeyType::Oct)
   {
     return OctValue;
   }
-  if (kty == Kty::OctHsm)
+  if (kty == JsonWebKeyType::OctHsm)
   {
     return OctHsmValue;
   }
-  if (kty == Kty::Rsa)
+  if (kty == JsonWebKeyType::Rsa)
   {
     return RsaValue;
   }
-  if (kty == Kty::RsaHsm)
+  if (kty == JsonWebKeyType::RsaHsm)
   {
     return RsaHsmValue;
   }

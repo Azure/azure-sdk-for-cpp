@@ -24,11 +24,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   class KeyRequestParameters : public Azure::Core::Internal::Json::JsonSerializable {
   private:
-    Kty m_keyType;
+    JsonWebKeyType m_keyType;
     CreateKeyOptions const& m_options;
 
   public:
-    explicit KeyRequestParameters(Kty keyType, CreateKeyOptions const& options)
+    explicit KeyRequestParameters(JsonWebKeyType keyType, CreateKeyOptions const& options)
         : m_keyType(keyType), m_options(options)
     {
     }

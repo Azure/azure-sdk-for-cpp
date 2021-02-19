@@ -33,7 +33,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief They type of the key.
      *
      */
-    Kty KeyType;
+    JsonWebKeyType KeyType;
 
     /**
      * @brief Construct a new Json Web Key object.
@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Set the Key Operations object based on a list of operations.
      *
-     * @param keyOperations
+     * @param keyOperations The list of key operations.
      */
     void SetKeyOperations(std::vector<KeyOperation> const& keyOperations)
     {
