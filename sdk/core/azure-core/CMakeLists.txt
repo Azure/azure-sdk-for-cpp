@@ -152,7 +152,7 @@ if(BUILD_TESTING)
   
   add_subdirectory(test/ut)
   if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
-    add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
+    add_subdirectory(test/nlohmann-json-test)
   endif()
 endif()
 
