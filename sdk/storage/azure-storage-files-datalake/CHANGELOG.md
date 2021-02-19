@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.9 (Unreleased)
 
+### New Features
+
+- Added support for customized application ID.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
