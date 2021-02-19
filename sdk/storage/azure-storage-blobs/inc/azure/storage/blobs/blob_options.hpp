@@ -434,6 +434,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobAccessTierOptions
   {
     /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
      * @brief Indicates the priority with which to rehydrate an archived blob. The priority
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
