@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_file_add = [&](const std::string& sas) {
-      unused(sas);
+      (void)sas;
       /*
        * Add test for append block when DataLake supports append blobs.
        */
@@ -244,7 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_directory_list(sasToken2);
       }
-      unused(verify_file_move);
+      (void)verify_file_move;
       /*
       don't know why, move doesn't work
       if ((permissions & Sas::DataLakeSasPermissions::Move)
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Test {
       if ((permissions & Sas::DataLakeFileSystemSasPermissions::All)
           == Sas::DataLakeFileSystemSasPermissions::All)
       {
-        unused(verify_file_move);
+        (void)verify_file_move;
         /*
         don't know why, move doesn't work
         verify_file_move(sasToken);

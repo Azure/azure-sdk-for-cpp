@@ -41,7 +41,8 @@ namespace Azure { namespace Storage { namespace Test {
         Core::Http::Request& request,
         Core::Http::NextHttpPolicy nextHttpPolicy) const override
     {
-      unused(context, nextHttpPolicy);
+      (void)context;
+      (void)nextHttpPolicy;
 
       const auto requestHeaders = request.GetHeaders();
       int64_t requestOffset = 0;
@@ -267,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
     int numTrial = 0;
     auto failPolicy
         = [&numTrial](MockTransportPolicy::Region region) -> MockTransportPolicy::ResponseType {
-      unused(region);
+      (void)region;
       if (numTrial++ == 0)
         return MockTransportPolicy::ResponseType::TransportException;
       return MockTransportPolicy::ResponseType::Success;

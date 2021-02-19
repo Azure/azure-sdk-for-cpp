@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, LeaseRelated)
   {
-    std::string leaseId1 = CreateUniqueLeaseId();
+    std::string leaseId1 = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
     auto lastModified = m_fileClient->GetProperties()->LastModified;
     auto leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, leaseId1);
     auto aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
     EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
 
-    std::string leaseId2 = CreateUniqueLeaseId();
+    std::string leaseId2 = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto cLease = *leaseClient.Change(leaseId2);
@@ -300,7 +300,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(fileInfo.ETag.HasValue());
     EXPECT_TRUE(fileInfo.LastModified >= lastModified);
 
-    leaseClient = Files::Shares::ShareLeaseClient(*m_fileClient, CreateUniqueLeaseId());
+    leaseClient = Files::Shares::ShareLeaseClient(
+        *m_fileClient, Files::Shares::ShareLeaseClient::CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
     lastModified = m_fileClient->GetProperties()->LastModified;
     auto brokenLease = *leaseClient.Break();

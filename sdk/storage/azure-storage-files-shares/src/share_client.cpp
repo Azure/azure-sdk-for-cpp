@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetPropertiesOptions();
     return Details::ShareRestClient::Share::GetProperties(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetShareMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::SetMetadataOptions();
     protocolLayerOptions.Metadata = metadata;
     return Details::ShareRestClient::Share::SetMetadata(
@@ -237,7 +237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetShareAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetAccessPolicyOptions();
     return Details::ShareRestClient::Share::GetAccessPolicy(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetShareAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::SetAccessPolicyOptions();
     protocolLayerOptions.ShareAcl = accessPolicy;
     return Details::ShareRestClient::Share::SetAccessPolicy(
@@ -259,7 +259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetShareStatsOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetStatisticsOptions();
     return Details::ShareRestClient::Share::GetStatistics(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const CreateSharePermissionOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreatePermissionOptions();
     protocolLayerOptions.Permission.FilePermission = permission;
     return Details::ShareRestClient::Share::CreatePermission(
@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePermissionOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetPermissionOptions();
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
     return Details::ShareRestClient::Share::GetPermission(

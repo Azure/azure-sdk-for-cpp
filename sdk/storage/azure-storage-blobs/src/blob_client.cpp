@@ -666,7 +666,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UndeleteBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     Details::BlobRestClient::Blob::UndeleteBlobOptions protocolLayerOptions;
     return Details::BlobRestClient::Blob::Undelete(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);

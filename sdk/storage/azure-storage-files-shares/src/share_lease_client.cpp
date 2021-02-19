@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const AcquireShareLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const RenewShareLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     if (m_fileClient.HasValue())
     {
       // Renew only support share level lease.
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ReleaseShareLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ChangeShareLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const BreakShareLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     if (m_fileClient.HasValue())
     {
       Details::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;

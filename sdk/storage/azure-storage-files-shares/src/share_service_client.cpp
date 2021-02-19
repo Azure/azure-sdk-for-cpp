@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
     protocolLayerOptions.ServiceProperties = std::move(properties);
     return Details::ShareRestClient::Service::SetProperties(
@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
     auto result = Details::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);

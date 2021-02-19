@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteShareDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Directory::DeleteOptions();
     auto result = Details::ShareRestClient::Directory::Delete(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetShareDirectoryPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Directory::GetPropertiesOptions();
     return Details::ShareRestClient::Directory::GetProperties(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
@@ -299,7 +299,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetShareDirectoryMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::Directory::SetMetadataOptions();
     protocolLayerOptions.Metadata = std::move(metadata);
     return Details::ShareRestClient::Directory::SetMetadata(
@@ -358,7 +358,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseShareDirectoryHandleOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
     auto result = Details::ShareRestClient::File::ForceCloseHandles(

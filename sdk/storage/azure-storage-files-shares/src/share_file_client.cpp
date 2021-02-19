@@ -594,7 +594,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseShareFileHandleOptions& options,
       const Azure::Core::Context& context) const
   {
-    unused(options);
+    (void)options;
     auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
     auto result = Details::ShareRestClient::File::ForceCloseHandles(
@@ -916,7 +916,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      unused(chunkId, numChunks);
+      (void)chunkId;
+      (void)numChunks;
       Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
       UploadShareFileRangeOptions uploadRangeOptions;
       UploadRange(offset, &contentStream, uploadRangeOptions, context);
@@ -1020,7 +1021,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      unused(chunkId, numChunks);
+      (void)chunkId;
+      (void)numChunks;
       Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
       UploadShareFileRangeOptions uploadRangeOptions;
       UploadRange(offset, &contentStream, uploadRangeOptions, context);
