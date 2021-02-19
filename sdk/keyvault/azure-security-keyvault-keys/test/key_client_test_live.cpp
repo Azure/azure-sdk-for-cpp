@@ -67,8 +67,7 @@ TEST_F(KeyVaultClientTest, CreateKey)
   std::string keyName("createKey");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -152,8 +151,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
   std::string keyName("deleteThisKey");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -182,8 +180,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
   std::string keyName("deleteThisKeyPoll");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -233,8 +230,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
   std::string keyName("DeleteMeTwoTimes");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
@@ -271,8 +267,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
   std::string keyName("DeleteMeBeforePollComplete1");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -307,8 +302,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
   std::string keyName("YouCanCreateMeAfterYouDeletedMe");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
@@ -320,8 +314,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
   auto wasThrown = false;
   try
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
   {
@@ -347,8 +340,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
   std::string keyName("YouCanCreateMeAfterYouDeletedMeEvenBeforePollComplete");
 
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -357,8 +349,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
   auto wasThrown = false;
   try
   {
-    auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::Kty::Ec);
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
   {
