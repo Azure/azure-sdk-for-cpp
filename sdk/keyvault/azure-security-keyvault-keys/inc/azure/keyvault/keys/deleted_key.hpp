@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Construct a new Deleted Key object.
      *
-     * @param name THe name of the deleted key.
+     * @param name The name of the deleted key.
      */
     DeletedKey(std::string name) : KeyVaultKey(name) {}
 
