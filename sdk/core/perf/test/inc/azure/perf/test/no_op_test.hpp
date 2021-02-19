@@ -31,7 +31,6 @@ namespace Azure { namespace Perf { namespace Test {
     /**
      * @brief Define an empty test.
      *
-     * @param ctx The cancellation token.
      */
     void Run(Azure::Core::Context const&) override {}
 

@@ -36,7 +36,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test { namespa
     /**
      * @brief Define the test
      *
-     * @param ctx The cancellation token.
      */
     void Run(Azure::Core::Context const&) override { auto blob = m_blobClient->Download(); }
 

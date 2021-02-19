@@ -31,7 +31,6 @@ namespace Azure { namespace Core { namespace Test { namespace Performance {
     /**
      * @brief Use NUllable to assing and read.
      *
-     * @param ctx The cancellation token.
      */
     void Run(Azure::Core::Context const&) override
     {

@@ -66,7 +66,6 @@ namespace Azure { namespace Perf { namespace Test {
     /**
      * @brief The test definition
      *
-     * @param ctx The cancellation token.
      */
     void Run(Azure::Core::Context const&) override { std::this_thread::sleep_for(m_delay); }
 

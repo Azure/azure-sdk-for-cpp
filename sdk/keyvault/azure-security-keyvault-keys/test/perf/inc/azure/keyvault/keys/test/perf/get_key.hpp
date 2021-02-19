@@ -63,7 +63,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       /**
        * @brief Define the test
        *
-       * @param ctx The cancellation token.
        */
       void Run(Azure::Core::Context const&) override { auto t = m_client->GetKey(m_keyName); }
 

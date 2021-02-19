@@ -429,7 +429,7 @@ namespace Azure { namespace Core { namespace Test {
       // if ref can't be cast, it throws
       EXPECT_NO_THROW((void)dynamic_cast<Azure::Core::Http::TransportException&>(err));
       EXPECT_NO_THROW((void)dynamic_cast<std::runtime_error&>(err));
-      EXPECT_THROW(dynamic_cast<std::range_error&>(err), std::bad_cast);
+      EXPECT_THROW((void)dynamic_cast<std::range_error&>(err), std::bad_cast);
     }
   }
 

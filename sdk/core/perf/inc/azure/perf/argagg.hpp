@@ -169,7 +169,6 @@ namespace convert {
    * provides that extension point. The default, generic implementation of
    * argagg::convert::arg<T>() calls converter<T>::convert().
    *
-   * @see
    * @ref argagg::csv
    */
   template <typename T> struct converter

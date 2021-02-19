@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
   public:
-    StringOperation(StringClient* client) : m_client(client) {}
+    StringOperation(StringClient* client) : m_client(client) { (void)m_client; }
 
     std::string GetResumeToken() const override { return m_operationToken; }
 
