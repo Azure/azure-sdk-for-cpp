@@ -10,7 +10,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyBlobResult::PollInternal(
       Azure::Core::Context& context)
   {
-    unused(context);
+    (void)context;
 
     auto response = m_blobClient->GetProperties();
     if (!response->CopyStatus.HasValue())

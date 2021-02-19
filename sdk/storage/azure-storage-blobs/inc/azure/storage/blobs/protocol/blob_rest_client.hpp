@@ -1242,7 +1242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ListBlobContainersSinglePageOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -1309,7 +1309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetUserDelegationKeyOptions& options)
         {
-          unused(options);
+          (void)options;
           std::string xml_body;
           {
             Storage::Details::XmlWriter writer;
@@ -1362,7 +1362,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetServicePropertiesOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -1405,7 +1405,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetServicePropertiesOptions& options)
         {
-          unused(options);
+          (void)options;
           std::string xml_body;
           {
             Storage::Details::XmlWriter writer;
@@ -1452,7 +1452,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetAccountInfoOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter("restype", "account");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -1492,7 +1492,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetServiceStatisticsOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "stats");
@@ -1537,7 +1537,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const FindBlobsByTagsSinglePageOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -3098,7 +3098,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const CreateBlobContainerOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("restype", "container");
@@ -3160,7 +3160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const DeleteBlobContainerOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -3215,7 +3215,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const UndeleteBlobContainerOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("restype", "container");
@@ -3255,7 +3255,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetBlobContainerPropertiesOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -3328,7 +3328,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobContainerMetadataOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("restype", "container");
@@ -3388,7 +3388,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ListBlobsSinglePageOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -3458,7 +3458,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ListBlobsByHierarchySinglePageOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -3529,7 +3529,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetBlobContainerAccessPolicyOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -3586,7 +3586,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobContainerAccessPolicyOptions& options)
         {
-          unused(options);
+          (void)options;
           std::string xml_body;
           {
             Storage::Details::XmlWriter writer;
@@ -3663,7 +3663,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const AcquireBlobContainerLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -3728,7 +3728,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const RenewBlobContainerLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -3790,7 +3790,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ChangeBlobContainerLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -3852,7 +3852,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ReleaseBlobContainerLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -3912,7 +3912,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const BreakBlobContainerLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -4852,7 +4852,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const DownloadBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, true);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -5210,7 +5210,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const DeleteBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -5259,7 +5259,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
         {
-          unused(context);
+          (void)context;
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteBlobResult response;
           auto http_status_code
@@ -5298,7 +5298,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobExpiryOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -5339,7 +5339,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const UndeleteBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -5384,7 +5384,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetBlobPropertiesOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -5716,7 +5716,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobHttpHeadersOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -5830,7 +5830,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobMetadataOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "metadata");
@@ -5924,7 +5924,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobAccessTierOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "tier");
@@ -5951,7 +5951,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
         {
-          unused(context);
+          (void)context;
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobAccessTierResult response;
           auto http_status_code
@@ -6005,7 +6005,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const StartCopyBlobFromUriOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6132,7 +6132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const AbortCopyBlobFromUriOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6186,7 +6186,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const CreateBlobSnapshotOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "snapshot");
@@ -6301,7 +6301,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetBlobTagsOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -6348,7 +6348,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SetBlobTagsOptions& options)
         {
-          unused(options);
+          (void)options;
           std::string xml_body;
           {
             Storage::Details::XmlWriter writer;
@@ -6406,7 +6406,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const AcquireBlobLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6485,7 +6485,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const RenewBlobLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6561,7 +6561,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ChangeBlobLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6637,7 +6637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ReleaseBlobLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6717,7 +6717,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const BreakBlobLeaseOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -6941,7 +6941,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             Azure::Core::Http::BodyStream* requestBody,
             const UploadBlockBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
           request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -7128,7 +7128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             Azure::Core::Http::BodyStream* requestBody,
             const StageBlockOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
           request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -7252,7 +7252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const StageBlockFromUriOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "block");
@@ -7411,7 +7411,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const CommitBlockListOptions& options)
         {
-          unused(options);
+          (void)options;
           std::string xml_body;
           {
             Storage::Details::XmlWriter writer;
@@ -7568,7 +7568,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetBlockListOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("comp", "blocklist");
           request.GetUrl().AppendQueryParameter(
@@ -7790,7 +7790,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const CreatePageBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -7956,7 +7956,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             Azure::Core::Http::BodyStream* requestBody,
             const UploadPageBlobPagesOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
           request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -8142,7 +8142,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const UploadPageBlobPagesFromUriOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "page");
@@ -8334,7 +8334,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ClearPageBlobPagesOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "page");
@@ -8467,7 +8467,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const ResizePageBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -8586,7 +8586,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const GetPageBlobPageRangesOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("comp", "pagelist");
           if (options.PreviousSnapshot.HasValue())
@@ -8690,7 +8690,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const StartCopyPageBlobIncrementalOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "incrementalcopy");
@@ -8960,7 +8960,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const CreateAppendBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.AddHeader("x-ms-version", "2020-02-10");
@@ -9114,7 +9114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             Azure::Core::Http::BodyStream* requestBody,
             const AppendBlockOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
           request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -9282,7 +9282,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const AppendBlockFromUriOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "appendblock");
@@ -9454,7 +9454,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Http::Url& url,
             const SealAppendBlobOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.AddHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "seal");
@@ -9536,7 +9536,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             Azure::Core::Http::BodyStream* requestBody,
             const SubmitBlobBatchOptions& options)
         {
-          unused(options);
+          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, requestBody);
           request.AddHeader("Content-Length", std::to_string(requestBody->Length()));

@@ -13,12 +13,6 @@
 
 namespace Azure { namespace Storage {
 
-  template <class... T> void unused(T&&...) {}
-
-  // Remove these two after DataLake lease client and file lease client are done.
-  constexpr int32_t InfiniteLeaseDuration = -1;
-  std::string CreateUniqueLeaseId();
-
   /**
    * @brief The algorithm used for hash.
    */
