@@ -40,6 +40,13 @@ void Request::StartTry()
 {
   this->m_retryModeEnabled = true;
   this->m_retryHeaders.clear();
+
+  // Make sure to rewind the body stream before each attempt, including the first.
+  // It's possible the request doesn't have a body, so make sure to check if a body stream exists.
+  if (auto bodyStream = this->GetBodyStream())
+  {
+    bodyStream->Rewind();
+  }
 }
 
 HttpMethod Request::GetMethod() const { return this->m_method; }
