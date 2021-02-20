@@ -29,6 +29,18 @@ For a complete list of available packages, please see the [latest available pack
 
 Last stable versions of packages that are production-ready. These libraries provide similar functionalities to the beta packages, as they allow you to use and consume existing resources and interact with them, for example: upload a storage blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html) or have the same feature set. They do however offer wider coverage of services.
 
+### VcPkg
+
+Released SDK library versions are available on [VcPkg](https://github.com/microsoft/vcpkg):
+* `azure-core-cpp`
+* `azure-identity-cpp`
+* `azure-storage-blobs-cpp`
+* `azure-storage-common-cpp`
+* `azure-storage-files-datalake-cpp`
+* `azure-storage-files-shares-cpp`
+
+> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [VcPkg trilet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/en-us/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build.
+
 ## Need help
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).

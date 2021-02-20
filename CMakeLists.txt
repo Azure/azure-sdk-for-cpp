@@ -18,7 +18,7 @@ option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxyge
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
-option(STATIC_CRT "Set to ON to build SDK with static CRT on Windows (MSVC /MT)." OFF)
+option(STATIC_CRT "Set to ON to link SDK with static CRT on Windows (use MSVC's /MT switch)." OFF)
 
 include(AzureTransportAdapters)
 include(AzureVcpkg)
