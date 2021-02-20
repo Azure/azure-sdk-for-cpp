@@ -7,6 +7,7 @@
 #include <thread>
 
 #include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/files/datalake/datalake_utilities.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -364,9 +365,10 @@ namespace Azure { namespace Storage { namespace Test {
           AadTenantId(), AadClientId(), AadClientSecret());
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakePathClient(
-          Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
-              .GetUrl(),
+          Files::DataLake::Details::GetDfsUrlFromUrl(
+              Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+                  AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+                  .GetUrl()),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));

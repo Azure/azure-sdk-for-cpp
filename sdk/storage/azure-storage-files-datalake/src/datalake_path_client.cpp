@@ -8,32 +8,14 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 #include "azure/storage/files/datalake/version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
-  namespace {
-    Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options)
-    {
-      Blobs::BlobClientOptions blobOptions;
-      for (const auto& p : options.PerOperationPolicies)
-      {
-        blobOptions.PerOperationPolicies.emplace_back(p->Clone());
-      }
-      for (const auto& p : options.PerRetryPolicies)
-      {
-        blobOptions.PerRetryPolicies.emplace_back(p->Clone());
-      }
-      blobOptions.RetryOptions = options.RetryOptions;
-      blobOptions.RetryOptions.SecondaryHostForRetryReads
-          = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-      return blobOptions;
-    }
 
+  namespace {
     Models::LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
     {
       if (state == Blobs::Models::BlobLeaseState::Available)
@@ -99,100 +81,63 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : m_pathUrl(Details::GetDfsUrlFromUrl(pathUrl)),
-        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), credential, GetBlobClientOptions(options))
+      : m_pathUrl(pathUrl), m_blobClient(
+                                Details::GetBlobUrlFromUrl(pathUrl),
+                                credential,
+                                Details::GetBlobClientOptions(options))
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
+    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    telemetryPolicyOptions.ApplicationId = options.ApplicationId;
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
+        Storage::Details::ConstructPolicies(
+            std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+                Storage::Details::BlobServicePackageName,
+                Details::Version::VersionString(),
+                telemetryPolicyOptions),
+            std::make_unique<Storage::Details::SharedKeyPolicy>(credential),
+            options));
   }
 
   DataLakePathClient::DataLakePathClient(
       const std::string& pathUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : m_pathUrl(Details::GetDfsUrlFromUrl(pathUrl)),
-        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), credential, GetBlobClientOptions(options))
+      : m_pathUrl(pathUrl), m_blobClient(
+                                Details::GetBlobUrlFromUrl(pathUrl),
+                                credential,
+                                Details::GetBlobClientOptions(options))
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-
-    {
-      Azure::Core::Http::TokenRequestOptions const tokenOptions
-          = {{Storage::Details::StorageScope}};
-
-      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
-          credential, tokenOptions));
-    }
-
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
+    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    telemetryPolicyOptions.ApplicationId = options.ApplicationId;
+    Azure::Core::Http::TokenRequestOptions tokenOptions;
+    tokenOptions.Scopes.emplace_back(Storage::Details::StorageScope);
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
+        Storage::Details::ConstructPolicies(
+            std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+                Storage::Details::BlobServicePackageName,
+                Details::Version::VersionString(),
+                telemetryPolicyOptions),
+            std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+                credential, tokenOptions),
+            options));
   }
 
   DataLakePathClient::DataLakePathClient(
       const std::string& pathUrl,
       const DataLakeClientOptions& options)
-      : m_pathUrl(Details::GetDfsUrlFromUrl(pathUrl)),
-        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), GetBlobClientOptions(options))
+      : m_pathUrl(pathUrl),
+        m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), Details::GetBlobClientOptions(options))
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    Azure::Core::Http::TransportPolicyOptions transportPolicyOptions;
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
+    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    telemetryPolicyOptions.ApplicationId = options.ApplicationId;
+    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
+        Storage::Details::ConstructPolicies(
+            std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+                Storage::Details::BlobServicePackageName,
+                Details::Version::VersionString(),
+                telemetryPolicyOptions),
+            nullptr,
+            options));
   }
 
   Azure::Core::Response<Models::SetDataLakePathAccessControlListResult>

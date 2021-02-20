@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The file's primary url endpoint.
      */
-    std::string GetUrl() const { return m_blockBlobClient.GetUrl(); }
+    std::string GetUrl() const { return m_blobClient.GetUrl(); }
 
     /**
      * @brief Uploads data to be appended to a file. Data can only be appended to a file.
@@ -267,15 +267,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Blobs::BlockBlobClient m_blockBlobClient;
-
     explicit DataLakeFileClient(
         Azure::Core::Http::Url fileUrl,
         Blobs::BlobClient blobClient,
-        Blobs::BlockBlobClient blockBlobClient,
         std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(fileUrl), std::move(blobClient), pipeline),
-          m_blockBlobClient(std::move(blockBlobClient))
+        : DataLakePathClient(std::move(fileUrl), std::move(blobClient), pipeline)
     {
     }
 
