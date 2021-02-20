@@ -43,20 +43,11 @@ namespace Azure { namespace Core { namespace Internal {
       }
     }
 
-    operator HKEY()
-    {
-      return m_value;
-    }
+    operator HKEY() { return m_value; }
 
-    operator HKEY*()
-    {
-      return &m_value;
-    }
+    operator HKEY*() { return &m_value; }
 
-    HKEY* operator&()
-    {
-      return &m_value;
-    }
+    HKEY* operator&() { return &m_value; }
   };
 
 }}} // namespace Azure::Core::Internal
