@@ -599,7 +599,7 @@ namespace Azure { namespace Core { namespace Test {
 
     if (size > 0)
     { // only for known body size
-      EXPECT_EQ(bodyVector.size(), size);
+      EXPECT_EQ(bodyVector.size(), static_cast<size_t>(size));
     }
 
     if (expectedBody.size() > 0)
