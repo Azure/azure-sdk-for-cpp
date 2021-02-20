@@ -751,7 +751,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
-      std::string DefaultEncryptionScope;
+      std::string DefaultEncryptionScope = "$account-encryption-key";
       bool PreventEncryptionScopeOverride = false;
       Azure::Core::Nullable<int32_t> RemainingRetentionDays;
       Azure::Core::Nullable<Azure::Core::DateTime> DeletedOn;
@@ -808,7 +808,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
-      std::string DefaultEncryptionScope;
+      std::string DefaultEncryptionScope = "$account-encryption-key";
       bool PreventEncryptionScopeOverride = false;
     }; // struct GetBlobContainerPropertiesResult
 
@@ -3306,10 +3306,19 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.LeaseDuration = BlobLeaseDurationType(x_ms_lease_duration__iterator->second);
           }
-          response.DefaultEncryptionScope
-              = httpResponse.GetHeaders().at("x-ms-default-encryption-scope");
-          response.PreventEncryptionScopeOverride
-              = httpResponse.GetHeaders().at("x-ms-deny-encryption-scope-override") == "true";
+          auto x_ms_default_encryption_scope__iterator
+              = httpResponse.GetHeaders().find("x-ms-default-encryption-scope");
+          if (x_ms_default_encryption_scope__iterator != httpResponse.GetHeaders().end())
+          {
+            response.DefaultEncryptionScope = x_ms_default_encryption_scope__iterator->second;
+          }
+          auto x_ms_deny_encryption_scope_override__iterator
+              = httpResponse.GetHeaders().find("x-ms-deny-encryption-scope-override");
+          if (x_ms_deny_encryption_scope_override__iterator != httpResponse.GetHeaders().end())
+          {
+            response.PreventEncryptionScopeOverride
+                = x_ms_deny_encryption_scope_override__iterator->second == "true";
+          }
           return Azure::Core::Response<GetBlobContainerPropertiesResult>(
               std::move(response), std::move(pHttpResponse));
         }
