@@ -466,9 +466,9 @@ void CurlSession::ParseChunkSize(Context const& context)
         {
           this->m_chunkSize = static_cast<int64_t>(std::stoull(strChunkSize, nullptr, 16));
         }
-        catch (std::invalid_argument& err)
+        catch (const std::invalid_argument& ex)
         {
-          (void)err;
+          (void)ex;
           // Server can return something like `\n\r\n` for a chunk of zero length data. This is
           // allowed by RFC. `stoull` will throw invalid_argument if there is not at least one hex
           // digit to be parsed. For those cases, we consider the response as zero-length.
