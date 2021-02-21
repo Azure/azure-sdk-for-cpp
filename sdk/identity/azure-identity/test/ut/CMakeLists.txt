@@ -29,7 +29,7 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  target_compile_options(azure-identity-test PUBLIC /wd26495 /wd26812)
+  target_compile_options(azure-identity-test PUBLIC /wd26495 /wd26812 /wd6326)
 endif()
 
 # Adding private headers from identity to the tests so we can test the private APIs with no relative paths include.
