@@ -32,7 +32,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(STATIC_CRT AND MSVC)
   # 1. More about static/shared CRT:
-  # https://docs.microsoft.com/en-us/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160
+  # https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160
   #
   # 2. STATIC_CRT build flag approach is used/inspired by libcurl
   # (https://github.com/curl/curl/blob/master/CMakeLists.txt) and some other projects.
