@@ -159,4 +159,73 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_FALSE(r.Length.HasValue());
     }
   }
+
+  TEST(TestHttp, RequestStartTry)
+  {
+    {
+      Http::HttpMethod httpMethod = Http::HttpMethod::Post;
+      Http::Url url("http://test.com");
+      Http::Request req(httpMethod, url);
+
+      Azure::Core::Http::NullBodyStream* d
+          = dynamic_cast<Azure::Core::Http::NullBodyStream*>(req.GetBodyStream());
+      EXPECT_TRUE(d);
+
+      req.StartTry();
+
+      EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));
+
+      auto headers = req.GetHeaders();
+
+      EXPECT_TRUE(headers.count("name"));
+
+      req.StartTry();
+      headers = req.GetHeaders();
+
+      EXPECT_FALSE(headers.count("name"));
+
+      d = dynamic_cast<Azure::Core::Http::NullBodyStream*>(req.GetBodyStream());
+      EXPECT_TRUE(d);
+    }
+
+    {
+      Http::HttpMethod httpMethod = Http::HttpMethod::Post;
+      Http::Url url("http://test.com");
+
+      std::vector<uint8_t> data = {1, 2, 3, 4};
+      Azure::Core::Http::MemoryBodyStream stream(data);
+
+      // Change the offset of the stream to be non-zero by reading a byte.
+      std::vector<uint8_t> temp(2);
+      EXPECT_EQ(
+          Azure::Core::Http::BodyStream::ReadToCount(
+              GetApplicationContext(), stream, temp.data(), 1),
+          1);
+
+      EXPECT_EQ(temp[0], 1);
+      EXPECT_EQ(temp[1], 0);
+
+      Http::Request req(httpMethod, url, &stream);
+
+      Azure::Core::Http::MemoryBodyStream* d
+          = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      EXPECT_TRUE(d);
+
+      req.StartTry();
+
+      d = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      EXPECT_TRUE(d);
+
+      // Verify that StartTry rewound the stream back.
+      auto getStream = req.GetBodyStream();
+      EXPECT_EQ(
+          Azure::Core::Http::BodyStream::ReadToCount(
+              GetApplicationContext(), *getStream, temp.data(), 2),
+          2);
+
+      EXPECT_EQ(temp[0], 1);
+      EXPECT_EQ(temp[1], 2);
+    }
+  }
+
 }}} // namespace Azure::Core::Test
