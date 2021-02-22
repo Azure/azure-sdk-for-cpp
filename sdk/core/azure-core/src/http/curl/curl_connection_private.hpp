@@ -180,8 +180,6 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief A connection is valid when it can be used to write or read data to/from the network.
        *
-       * @remark
-       *
        * @return `true` if the connection can still read or write data to the network.
        */
       bool IsValid() const override;
