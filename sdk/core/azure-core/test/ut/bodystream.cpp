@@ -1,6 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
+
+#include <iostream>
+
+#if defined(AZ_PLATFORM_POSIX)
+#include <fcntl.h>
+#elif defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 #include <gtest/gtest.h>
 
 #include <azure/core/http/body_stream.hpp>
