@@ -1105,7 +1105,13 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 bool CurlConnection::IsValid() const
 {
   char buffer[1];
+#if defined(AZ_PLATFORM_POSIX)
+  // Posix requires `MSG_DONTWAIT` flag to avoid blocking until next socket's event
   return recv(m_curlSocket, buffer, sizeof(buffer), MSG_PEEK | MSG_DONTWAIT) > 0;
+#elif defined(AZ_PLATFORM_WINDOWS)
+  // Windows won't block as Posix by default
+  return recv(m_curlSocket, buffer, sizeof(buffer), MSG_PEEK) > 0;
+#endif
 }
 
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
