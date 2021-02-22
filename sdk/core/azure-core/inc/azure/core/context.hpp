@@ -272,7 +272,9 @@ namespace Azure { namespace Core {
         return time_point() + static_cast<std::chrono::milliseconds>(msec);
       }
 
-      explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)())) {}
+      explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)()))
+      {
+      }
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
