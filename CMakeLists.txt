@@ -18,7 +18,7 @@ option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxyge
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
-option(STATIC_CRT "Set to ON to link SDK with static CRT on Windows (use MSVC's /MT switch)." OFF)
+option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
 
 include(AzureTransportAdapters)
 include(AzureVcpkg)
@@ -30,11 +30,11 @@ project(azure-sdk LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if(STATIC_CRT AND MSVC)
+if(MSVC_USE_STATIC_CRT AND MSVC)
   # 1. More about static/shared CRT:
   # https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160
   #
-  # 2. STATIC_CRT build flag approach is used/inspired by libcurl
+  # 2. MSVC_USE_STATIC_CRT build flag approach is used/inspired by libcurl
   # (https://github.com/curl/curl/blob/master/CMakeLists.txt) and some other projects.
   #
   # 3. GTest would emit the following warning:
