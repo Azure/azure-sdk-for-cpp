@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Internal utility functions for strings.
+ * @brief Internal HKEY holder.
  *
  */
 #pragma once
@@ -20,34 +20,37 @@
 
 namespace Azure { namespace Core { namespace Internal {
 
-  class HKeyHolder {
+  /**
+   * @brief HKEYHolder ensures native handle resource is released.
+  */
+  class HKEYHolder {
   private:
-    HKEY m_value;
+    HKEY m_value = nullptr;
 
   public:
-    HKeyHolder() : m_value(NULL) {}
+    explicit HKEYHolder() noexcept : m_value(nullptr){};
 
-    ~HKeyHolder()
+    ~HKEYHolder() noexcept
     {
-      if (m_value != NULL)
+      if (m_value != nullptr)
       {
         ::RegCloseKey(m_value);
       }
     }
 
-    void operator=(HKEY p)
+    void operator=(HKEY p) noexcept
     {
-      if (p != NULL)
+      if (p != nullptr)
       {
         m_value = p;
       }
     }
 
-    operator HKEY() { return m_value; }
+    operator HKEY() noexcept { return m_value; }
 
-    operator HKEY*() { return &m_value; }
+    operator HKEY*() noexcept { return &m_value; }
 
-    HKEY* operator&() { return &m_value; }
+    HKEY* operator&() noexcept { return &m_value; }
   };
 
 }}} // namespace Azure::Core::Internal
