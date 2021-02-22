@@ -15,8 +15,8 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
@@ -1104,7 +1104,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 
 bool CurlConnection::IsValid() const
 {
-  char buffer[32];
+  char buffer[1];
   return recv(m_curlSocket, buffer, sizeof(buffer), MSG_PEEK | MSG_DONTWAIT) > 0;
 }
 
