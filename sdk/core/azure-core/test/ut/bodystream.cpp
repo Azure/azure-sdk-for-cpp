@@ -16,7 +16,7 @@ class TestBodyStream : public Http::BodyStream {
 TEST(BodyStream, Rewind)
 {
   TestBodyStream tb;
-  EXPECT_THROW(tb.Rewind(), std::runtime_error);
+  EXPECT_THROW(tb.Rewind(), std::logic_error);
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
 

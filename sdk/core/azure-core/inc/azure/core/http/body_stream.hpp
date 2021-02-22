@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual void Rewind()
     {
-      throw std::runtime_error(
+      throw std::logic_error(
           "The specified BodyStream doesn't support Rewind which is required to guarantee fault "
           "tolerance when retrying any operation. Consider creating a MemoryBodyStream or "
           "FileBodyStream, which are rewindable.");
