@@ -150,7 +150,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
         return response;
       }
     }
-    catch (TransportException const&)
+    catch (const TransportException&)
     {
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {

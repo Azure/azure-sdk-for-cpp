@@ -51,6 +51,7 @@ set(
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/hkeyholder.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp

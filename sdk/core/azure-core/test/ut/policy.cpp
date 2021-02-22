@@ -57,9 +57,9 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   {
     pipeline.Send(Azure::Core::GetApplicationContext(), request);
   }
-  catch (std::invalid_argument& err)
+  catch (const std::invalid_argument& ex)
   {
-    EXPECT_STREQ("Invalid pipeline. No transport policy found. Endless policy.", err.what());
+    EXPECT_STREQ("Invalid pipeline. No transport policy found. Endless policy.", ex.what());
   }
 }
 
