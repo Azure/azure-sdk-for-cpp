@@ -56,12 +56,18 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Update last usage time for the connection.
      */
-    virtual void updateLastUsageTime() = 0;
+    virtual void UpdateLastUsageTime() = 0;
 
     /**
      * @brief Checks whether this CURL connection is expired.
      */
-    virtual bool isExpired() = 0;
+    virtual bool IsExpired() const = 0;
+
+    /**
+     * @brief Check if the connection is still stablished with the server.
+     *
+     */
+    virtual bool IsValid() const = 0;
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
@@ -129,7 +135,7 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief Update last usage time for the connection.
        */
-      void updateLastUsageTime() override
+      void UpdateLastUsageTime() override
       {
         this->m_lastUseTime = std::chrono::steady_clock::now();
       }
@@ -138,7 +144,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Checks whether this CURL connection is expired.
        * @return `true` if this connection is considered expired, `false` otherwise.
        */
-      bool isExpired() override
+      bool IsExpired() const override
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
@@ -170,5 +176,14 @@ namespace Azure { namespace Core { namespace Http {
        */
       CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize)
           override;
+
+      /**
+       * @brief A connection is valid when it can be used to write or read data to/from the network.
+       *
+       * @remark
+       *
+       * @return `true` if the connection can still read or write data to the network.
+       */
+      bool IsValid() const override;
     };
 }}} // namespace Azure::Core::Http

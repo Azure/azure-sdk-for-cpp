@@ -29,8 +29,9 @@ namespace Azure { namespace Core { namespace Test {
   class MockCurlNetworkConnection : public Azure::Core::Http::CurlNetworkConnection {
   public:
     MOCK_METHOD(std::string const&, GetConnectionKey, (), (const, override));
-    MOCK_METHOD(void, updateLastUsageTime, (), (override));
-    MOCK_METHOD(bool, isExpired, (), (override));
+    MOCK_METHOD(void, UpdateLastUsageTime, (), (override));
+    MOCK_METHOD(bool, IsExpired, (), (const, override));
+    MOCK_METHOD(bool, IsValid, (), (const, override));
     MOCK_METHOD(
         int64_t,
         ReadFromSocket,

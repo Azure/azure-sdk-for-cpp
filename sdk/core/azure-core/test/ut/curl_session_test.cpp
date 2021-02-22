@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<1>(response.data(), response.data() + response.size()),
             Return(response.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
-    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
     // Create the unique ptr to take care about memory free at the end
@@ -101,7 +101,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<1>(response2.data(), response2.data() + response2.size()),
             Return(response2.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
-    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
     // Create the unique ptr to take care about memory free at the end
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<1>(response8.data(), response8.data() + response8.size()),
             Return(response8.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
-    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
     // Create the unique ptr to take care about memory free at the end

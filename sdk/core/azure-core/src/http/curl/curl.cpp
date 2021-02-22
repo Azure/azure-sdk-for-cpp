@@ -15,6 +15,8 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
+#include <sys/types.h>
+#include <sys/socket.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
@@ -1100,6 +1102,12 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 }
 } // namespace
 
+bool CurlConnection::IsValid() const
+{
+  char buffer[32];
+  return recv(m_curlSocket, buffer, sizeof(buffer), MSG_PEEK | MSG_DONTWAIT) > 0;
+}
+
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     Request& request,
     CurlTransportOptions const& options)
@@ -1112,28 +1120,43 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
     std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
 
-    // get a ref to the pool from the map of pools
-    auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
-    if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
-        && hostPoolIndex->second.size() > 0)
+    // Try to get a connection from the pool which is still valid. A connection won't be valid if
+    // the server has closed the connection. Some servers are pretty eager to close idle
+    // connections. The Connection pool gives 90 secs of valid duration to each idle connection in
+    // the pool.
+    while (true)
     {
-      // get ref to first connection
-      auto fistConnectionIterator = hostPoolIndex->second.begin();
-      // move the connection ref to temp ref
-      auto connection = std::move(*fistConnectionIterator);
-      // Remove the connection ref from list
-      hostPoolIndex->second.erase(fistConnectionIterator);
-      // reduce number of connections on the pool
-      CurlConnectionPool::s_connectionCounter -= 1;
-
-      // Remove index if there are no more connections
-      if (hostPoolIndex->second.size() == 0)
+      // get a ref to the pool from the map of pools
+      auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
+      if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
+          && hostPoolIndex->second.size() > 0)
       {
-        CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
-      }
+        // get ref to first connection
+        auto fistConnectionIterator = hostPoolIndex->second.begin();
+        // move the connection ref to temp ref
+        auto connection = std::move(*fistConnectionIterator);
+        // Remove the connection ref from list
+        hostPoolIndex->second.erase(fistConnectionIterator);
+        // reduce number of connections on the pool
+        CurlConnectionPool::s_connectionCounter -= 1;
 
-      // return connection ref
-      return connection;
+        // Remove index if there are no more connections
+        if (hostPoolIndex->second.size() == 0)
+        {
+          CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        }
+
+        if (connection->IsValid())
+        {
+          // return connection ref
+          return connection;
+        }
+      }
+      else
+      {
+        // There are not connections to be re-used for the `connectionKey`
+        break;
+      }
     }
   }
 
@@ -1259,7 +1282,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   auto& poolId = connection->GetConnectionKey();
   auto& hostPool = CurlConnectionPool::ConnectionPoolIndex[poolId];
   // update the time when connection was moved back to pool
-  connection->updateLastUsageTime();
+  connection->UpdateLastUsageTime();
   hostPool.push_front(std::move(connection));
   CurlConnectionPool::s_connectionCounter += 1;
   // Check if there's no cleaner running and started
@@ -1311,7 +1334,7 @@ void CurlConnectionPool::CleanUp()
             // size() > 0 so we are safe to go end() - 1 and find the last element in the
             // list
             connection--;
-            if (connection->get()->isExpired())
+            if (connection->get()->IsExpired())
             {
               // remove connection from the pool and update the connection to the next one
               // which is going to be list.end()
