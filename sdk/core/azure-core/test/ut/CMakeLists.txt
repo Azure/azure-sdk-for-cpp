@@ -30,6 +30,7 @@ include(GoogleTest)
 add_executable (
   azure-core-test
     base64.cpp
+    bodystream.cpp
     context.cpp
     ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}
