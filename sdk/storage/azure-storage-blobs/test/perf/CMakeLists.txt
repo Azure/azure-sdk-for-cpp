@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_STORAGE_BLOBS_PERF_TEST_HEADER
-  inc/azure/storage/blobs/test/perf/download_blob.hpp
+  inc/azure/storage/blobs/test/blob_base_test.hpp
+  inc/azure/storage/blobs/test/download_blob.hpp
 )
 
 set(

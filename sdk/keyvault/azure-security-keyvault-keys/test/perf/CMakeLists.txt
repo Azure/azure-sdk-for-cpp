@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_KEYVAULT_KEY_PERF_TEST_HEADER
-  inc/azure/keyvault/keys/test/perf/get_key.hpp
+  inc/azure/keyvault/keys/test/get_key.hpp
 )
 
 set(

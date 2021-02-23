@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Test { namespace Performance {
+namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
   /**
    * @brief A base test that set up a blobs performance test.
@@ -75,4 +75,4 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test { namespa
     }
   };
 
-}}}}} // namespace Azure::Storage::Blobs::Test::Performance
+}}}} // namespace Azure::Storage::Blobs::Test

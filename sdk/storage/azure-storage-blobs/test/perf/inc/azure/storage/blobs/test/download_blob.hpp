@@ -11,19 +11,19 @@
 
 #include <azure/perf.hpp>
 
-#include "azure/storage/blobs/test/perf/blob_base_test.hpp"
+#include "azure/storage/blobs/test/blob_base_test.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Test { namespace Performance {
+namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
   /**
    * @brief A test to measure downloading a blob.
    *
    */
-  class DownloadBlob : public Azure::Storage::Blobs::Test::Performance::BlobsTest {
+  class DownloadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
 
   public:
     /**
@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test { namespa
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return Azure::Storage::Blobs::Test::Performance::BlobsTest::GetTestOptions();
+      return Azure::Storage::Blobs::Test::BlobsTest::GetTestOptions();
     }
 
     /**
@@ -57,10 +57,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test { namespa
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {"DownloadBlob", "Download a blob.", [](Azure::Perf::TestOptions options) {
-                return std::make_unique<Azure::Storage::Blobs::Test::Performance::DownloadBlob>(
-                    options);
+                return std::make_unique<Azure::Storage::Blobs::Test::DownloadBlob>(options);
               }};
     }
   };
 
-}}}}} // namespace Azure::Storage::Blobs::Test::Performance
+}}}} // namespace Azure::Storage::Blobs::Test

@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Identity { namespace Test { namespace Performance {
+namespace Azure { namespace Identity { namespace Test {
 
   /**
    * @brief A test to measure the authentication token performance.
@@ -88,10 +88,9 @@ namespace Azure { namespace Identity { namespace Test { namespace Performance {
           "SecretCredential",
           "Get a token using a secret client token credential.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Identity::Test::Performance::SecretCredentialTest>(
-                options);
+            return std::make_unique<Azure::Identity::Test::SecretCredentialTest>(options);
           }};
     }
   };
 
-}}}} // namespace Azure::Identity::Test::Performance
+}}} // namespace Azure::Identity::Test
