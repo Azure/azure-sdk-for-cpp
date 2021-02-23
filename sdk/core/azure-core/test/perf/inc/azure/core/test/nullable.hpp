@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace Azure { namespace Core { namespace Test { namespace Performance {
+namespace Azure { namespace Core { namespace Test {
 
   /**
    * @brief Measure the Nullable object performance.
@@ -65,9 +65,9 @@ namespace Azure { namespace Core { namespace Test { namespace Performance {
           "NullableTest",
           "Measures the overhead of using nullable objects",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Core::Test::Performance::NullableTest>(options);
+            return std::make_unique<Azure::Core::Test::NullableTest>(options);
           }};
     }
   };
 
-}}}} // namespace Azure::Core::Test::Performance
+}}} // namespace Azure::Core::Test
