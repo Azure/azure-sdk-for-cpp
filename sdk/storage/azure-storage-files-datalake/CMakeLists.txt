@@ -100,6 +100,7 @@ if(BUILD_TESTING)
         test/datalake_sas_test.cpp
         test/datalake_service_client_test.cpp
         test/datalake_service_client_test.hpp
+        test/macro_guard.cpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)

@@ -13,6 +13,7 @@ include(GoogleTest)
 add_executable (
   azure-security-keyvault-keys-test
   key_client_test.cpp
+  macro_guard.cpp
   main.cpp
   mocked_transport_adapter_test.hpp
   telemetry_header_test.cpp
