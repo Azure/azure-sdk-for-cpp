@@ -172,5 +172,24 @@ namespace Azure { namespace Core { namespace Test {
 #endif
     }
 
+    TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
+    {
+      Azure::Core::Http::Request req(
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("http://httpbin.org/get"));
+
+      Azure::Core::Http::CurlTransportOptions options;
+      auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
+      // Simulate connection lost (like server disconnection).
+      connection->Shutdown();
+
+      {
+        // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
+        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+            req, std::move(connection), options.HttpKeepAlive);
+        auto r = session->Perform(Azure::Core::GetApplicationContext());
+        EXPECT_EQ(CURLE_SEND_ERROR, r);
+      }
+    }
+
 #endif
 }}} // namespace Azure::Core::Test

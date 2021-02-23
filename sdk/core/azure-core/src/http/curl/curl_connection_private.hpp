@@ -40,6 +40,9 @@ namespace Azure { namespace Core { namespace Http {
    *
    */
   class CurlNetworkConnection {
+  protected:
+    bool m_isShutDown = false;
+
   public:
     /**
      * @brief Allow derived classes calling a destructor.
@@ -61,7 +64,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Checks whether this CURL connection is expired.
      */
-    virtual bool isExpired() = 0;
+    virtual bool IsExpired() = 0;
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
@@ -77,6 +80,21 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize)
         = 0;
+
+    /**
+     * @brief Set the connection into an invalid and unusable state.
+     *
+     * @remark A connection won't be returned to the connection pool if it was shut it down.
+     *
+     */
+    virtual void Shutdown() { m_isShutDown = true; };
+
+    /**
+     * @brief Check if the the connection was shut it down.
+     *
+     * @return `true` is the connection was shut it down.
+     */
+    bool IsShutdown() const { return m_isShutDown; };
   };
 
   /**
@@ -138,7 +156,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Checks whether this CURL connection is expired.
        * @return `true` if this connection is considered expired, `false` otherwise.
        */
-      bool isExpired() override
+      bool IsExpired() override
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
@@ -170,5 +188,7 @@ namespace Azure { namespace Core { namespace Http {
        */
       CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize)
           override;
+
+      void Shutdown() override;
     };
 }}} // namespace Azure::Core::Http

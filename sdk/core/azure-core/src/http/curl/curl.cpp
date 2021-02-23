@@ -175,7 +175,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
        getConnectionOpenIntent++)
   {
     performing = session->Perform(context);
-    if (performing != CURLE_UNSUPPORTED_PROTOCOL)
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL && performing != CURLE_SEND_ERROR)
     {
       break;
     }
@@ -751,6 +751,12 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
   return totalRead;
 }
 
+void CurlConnection::Shutdown()
+{
+  ::shutdown(m_curlSocket, SHUT_RDWR);
+  m_isShutDown = true;
+}
+
 // Read from socket and return the number of bytes taken from socket
 int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize)
 {
@@ -1254,6 +1260,12 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return;
   }
 
+  if (connection->IsShutdown())
+  {
+    // Can re-used a shut down connection
+    return;
+  }
+
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
   auto& poolId = connection->GetConnectionKey();
@@ -1311,7 +1323,7 @@ void CurlConnectionPool::CleanUp()
             // size() > 0 so we are safe to go end() - 1 and find the last element in the
             // list
             connection--;
-            if (connection->get()->isExpired())
+            if (connection->get()->IsExpired())
             {
               // remove connection from the pool and update the connection to the next one
               // which is going to be list.end()
