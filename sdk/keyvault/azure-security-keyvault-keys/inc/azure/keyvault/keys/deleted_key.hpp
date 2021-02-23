@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Represents a Key Vault key that has been deleted, allowing it to be recovered, if needed.
  *
  */
@@ -10,7 +11,6 @@
 
 #include <azure/core/datetime.hpp>
 
-#include "azure/keyvault/keys/key_constants.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {

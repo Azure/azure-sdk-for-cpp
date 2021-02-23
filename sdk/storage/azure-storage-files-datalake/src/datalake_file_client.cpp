@@ -8,8 +8,6 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
@@ -106,98 +104,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUrl, credential, options),
-        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, credential, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient::DataLakeFileClient(
       const std::string& fileUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUrl, credential, options),
-        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, credential, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-
-    {
-      Azure::Core::Http::TokenRequestOptions const tokenOptions
-          = {{Storage::Details::StorageScope}};
-
-      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
-          credential, tokenOptions));
-    }
-
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient::DataLakeFileClient(
       const std::string& fileUrl,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUrl, options), m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   Azure::Core::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
@@ -348,7 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    return m_blockBlobClient.UploadFrom(fileName, blobOptions, context);
+    return m_blobClient.AsBlockBlobClient().UploadFrom(fileName, blobOptions, context);
   }
 
   Azure::Core::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
@@ -364,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions, context);
+    return m_blobClient.AsBlockBlobClient().UploadFrom(buffer, bufferSize, blobOptions, context);
   }
 
   Azure::Core::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
@@ -373,7 +296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DownloadDataLakeFileToOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto result = m_blockBlobClient.DownloadTo(buffer, bufferSize, options, context);
+    auto result = m_blobClient.AsBlockBlobClient().DownloadTo(buffer, bufferSize, options, context);
     Models::DownloadDataLakeFileToResult ret;
     ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;
@@ -415,7 +338,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DownloadDataLakeFileToOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto result = m_blockBlobClient.DownloadTo(fileName, options, context);
+    auto result = m_blobClient.AsBlockBlobClient().DownloadTo(fileName, options, context);
     Models::DownloadDataLakeFileToResult ret;
     ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;

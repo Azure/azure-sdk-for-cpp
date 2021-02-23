@@ -8,8 +8,6 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
@@ -45,28 +43,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : DataLakePathClient(directoryUrl, credential, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeDirectoryClient::DataLakeDirectoryClient(
@@ -75,35 +51,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : DataLakePathClient(directoryUrl, credential, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-
-    {
-      Azure::Core::Http::TokenRequestOptions const tokenOptions
-          = {{Storage::Details::StorageScope}};
-
-      policies.emplace_back(std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
-          credential, tokenOptions));
-    }
-
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeDirectoryClient::DataLakeDirectoryClient(
@@ -111,26 +58,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : DataLakePathClient(directoryUrl, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient DataLakeDirectoryClient::GetFileClient(const std::string& fileName) const
@@ -139,9 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     builder.AppendPath(Storage::Details::UrlEncodePath(fileName));
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.AppendPath(Storage::Details::UrlEncodePath(fileName));
-    auto blockBlobClient = blobClient.AsBlockBlobClient();
-    return DataLakeFileClient(
-        std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
+    return DataLakeFileClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
   DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
@@ -192,12 +117,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // Initialize the file client.
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.SetPath(destinationDfsUrl.GetPath());
-    auto blockBlobClient = blobClient.AsBlockBlobClient();
-    auto renamedFileClient = DataLakeFileClient(
-        std::move(destinationDfsUrl),
-        std::move(blobClient),
-        std::move(blockBlobClient),
-        m_pipeline);
+    auto renamedFileClient
+        = DataLakeFileClient(std::move(destinationDfsUrl), std::move(blobClient), m_pipeline);
     return Azure::Core::Response<DataLakeFileClient>(
         std::move(renamedFileClient), result.ExtractRawResponse());
   }

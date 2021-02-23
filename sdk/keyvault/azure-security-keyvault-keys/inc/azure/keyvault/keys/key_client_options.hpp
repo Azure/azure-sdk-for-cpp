@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Defines the supported options to create a Key Vault Keys client.
  *
  */
@@ -15,6 +16,10 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
+  /**
+   * @brief Available and supported service versions.
+   *
+   */
   enum class ServiceVersion
   {
     V7_0,
@@ -22,13 +27,43 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     V7_2
   };
 
+  /**
+   * @brief Define the options to create an SDK Keys client.
+   *
+   */
   struct KeyClientOptions
   {
+    /**
+     * @brief The service version. All request are created with this version.
+     *
+     */
     ServiceVersion Version;
+
+    /**
+     * @brief Define the options to retry the Http requests.
+     *
+     */
     Azure::Core::Http::RetryOptions RetryOptions;
+
+    /**
+     * @brief Define the Http client options.
+     *
+     * @remark Use this options to set an specific Http client.
+     *
+     */
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+
+    /**
+     * @brief Define the information to be used for reporting telemetry data.
+     *
+     */
     Azure::Core::Http::TelemetryPolicyOptions TelemetryPolicyOptions;
 
+    /**
+     * @brief Construct a new Key Client Options object.
+     *
+     * @param version Optional version for the client.
+     */
     KeyClientOptions(ServiceVersion version = ServiceVersion::V7_2) : Version(version) {}
 
     std::string GetVersionString()

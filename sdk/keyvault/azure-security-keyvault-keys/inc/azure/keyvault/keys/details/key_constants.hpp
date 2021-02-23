@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Centralize the string constants used by Key Vault Keys Client.
  *
  */

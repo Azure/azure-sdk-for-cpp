@@ -11,6 +11,10 @@
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
 
+### Bug Fixes
+
+- Make sure to rewind the body stream at the start of each request retry attempt, including the first.
+
 ## 1.0.0-beta.6 (2021-02-09)
 
 ### New Features

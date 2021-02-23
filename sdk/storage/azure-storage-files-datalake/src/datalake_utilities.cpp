@@ -72,4 +72,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     auto ite = metadata.find(DataLakeIsDirectoryKey);
     return ite != metadata.end() && ite->second == "true";
   }
+
+  Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options)
+  {
+    Blobs::BlobClientOptions blobOptions;
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      blobOptions.PerOperationPolicies.emplace_back(p->Clone());
+    }
+    for (const auto& p : options.PerRetryPolicies)
+    {
+      blobOptions.PerRetryPolicies.emplace_back(p->Clone());
+    }
+    blobOptions.RetryOptions = options.RetryOptions;
+    blobOptions.RetryOptions.SecondaryHostForRetryReads
+        = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
+    blobOptions.TransportPolicyOptions = options.TransportPolicyOptions;
+    blobOptions.ApplicationId = options.ApplicationId;
+    blobOptions.ApiVersion = options.ApiVersion;
+    return blobOptions;
+  }
+
 }}}}} // namespace Azure::Storage::Files::DataLake::Details

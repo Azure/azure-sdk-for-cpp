@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
       std::cout << blob.Name << std::endl;
     }
   }
-  catch (std::exception& e)
+  catch (const std::exception& ex)
   {
-    std::cout << e.what();
+    std::cout << ex.what();
     return 1;
   }
 
