@@ -263,7 +263,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param max_length Maximum number of bytes to provide to the readers.
      */
     LimitBodyStream(BodyStream* inner, int64_t max_length)
-        : m_inner(inner), m_length(std::min(inner->Length(), max_length))
+        : m_inner(inner), m_length((std::min)(inner->Length(), max_length))
     {
     }
 

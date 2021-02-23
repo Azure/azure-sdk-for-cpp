@@ -152,6 +152,11 @@ The following CMake options are available for adding/removing project features.
 <td>Build Doxygen documentation</td>
 <td>OFF</td>
 </tr>
+<tr>
+<td>MSVC_USE_STATIC_CRT</td>
+<td>On MSVC, link SDK with static CRT (use `/MT` or `/MTd` switch)</td>
+<td>OFF</td>
+</tr>
 </table>
 
 #### Testing the project

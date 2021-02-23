@@ -7,6 +7,12 @@ project (azure-storage LANGUAGES CXX)
 option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
 
 if(BUILD_TESTING)
+
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+
   add_executable(azure-storage-test)
   add_gtest(azure-storage-test)
 endif()

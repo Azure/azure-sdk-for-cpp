@@ -88,17 +88,18 @@ if(BUILD_TESTING)
   target_sources(
     azure-storage-test
       PRIVATE
-        test/append_blob_client_test.cpp
-        test/append_blob_client_test.hpp
-        test/blob_container_client_test.cpp
-        test/blob_container_client_test.hpp
-        test/blob_sas_test.cpp
-        test/blob_service_client_test.cpp
-        test/block_blob_client_test.cpp
-        test/block_blob_client_test.hpp
-        test/page_blob_client_test.cpp
-        test/page_blob_client_test.hpp
-        test/storage_retry_policy_test.cpp
+        test/ut/append_blob_client_test.cpp
+        test/ut/append_blob_client_test.hpp
+        test/ut/blob_container_client_test.cpp
+        test/ut/blob_container_client_test.hpp
+        test/ut/blob_sas_test.cpp
+        test/ut/blob_service_client_test.cpp
+        test/ut/block_blob_client_test.cpp
+        test/ut/block_blob_client_test.hpp
+        test/ut/macro_guard.cpp
+        test/ut/page_blob_client_test.cpp
+        test/ut/page_blob_client_test.hpp
+        test/ut/storage_retry_policy_test.cpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
@@ -115,5 +116,5 @@ if(BUILD_STORAGE_SAMPLES)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
-  add_subdirectory(test/performance)
+  add_subdirectory(test/perf)
 endif()

@@ -33,7 +33,7 @@ TEST(Uuid, separatorPosition)
   auto uuidKey = Uuid::CreateUuid().ToString();
   // validate expected format '8-4-4-4-12'
   EXPECT_PRED5(
-      [](std::string const& uuidKey, char pos1, char pos2, char pos3, char pos4) {
+      [](std::string const&, char pos1, char pos2, char pos3, char pos4) {
         return pos1 == pos2 && pos1 == pos3 && pos1 == pos4 && pos1 == '-';
       },
       uuidKey,
@@ -50,7 +50,7 @@ TEST(Uuid, validChars)
   EXPECT_PRED2(
       [](std::string const& uuidKey, int expectedSeparators) {
         int separatorsCount = 0;
-        for (int index = 0; index < uuidKey.size(); index++)
+        for (size_t index = 0; index < uuidKey.size(); index++)
         {
           if (uuidKey[index] == '-')
           {

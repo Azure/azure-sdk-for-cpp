@@ -8,6 +8,15 @@
  *
  */
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) // !_MSC_VER
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !_MSC_VER !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif // _MSC_VER
+
 #include <azure/core.hpp>
 #include <gtest/gtest.h>
 
@@ -40,3 +49,11 @@ TEST(SimplifiedHeader, core)
   }
   EXPECT_NO_THROW(Azure::Core::Http::TelemetryPolicy tp("", ""));
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) // !_MSC_VER
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !_MSC_VER !__clang__
+#pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
+#endif // _MSC_VER

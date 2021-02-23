@@ -40,6 +40,7 @@ add_executable (
     http.cpp
     json.cpp
     logging.cpp
+    macro_guard.cpp
     main.cpp
     match_conditions.cpp
     md5.cpp
@@ -70,7 +71,8 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812)
+  # - C6323: Google comparisons 
+  target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
