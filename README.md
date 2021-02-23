@@ -2,19 +2,19 @@
 
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&branchName=master)
 
-This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our [public developer docs](https://azure.github.io/azure-sdk-for-cpp).
+This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our [developer docs](https://azure.github.io/azure-sdk-for-cpp).
 
 ## Getting started
 
-For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
+For the best development experience, we recommend developers use [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
 
-You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder. For example, [here is the doc for the storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage#azure-storage-client-library-for-c).
+You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage#azure-storage-client-library-for-c).
 
-For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
+For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure SDK for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
 
 ### Download & Install the SDK
 
-The easiest way to get the C++ SDK is to leverage [vcpkg](https://github.com/microsoft/vcpkg). You'll need to have [Git](https://git-scm.com/downloads) installed before getting started.
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
 
 First clone and bootstrap vcpkg itself. You can install it anywhere on your machine, but **make note** of the directory where you clone the vcpkg repo.
 
@@ -34,27 +34,13 @@ On Linux:
 > ./vcpkg/bootstrap-vcpkg.sh
 ```
 
-To install the libraries for your project, run the following, optionally specifying the triplet:
-
-```cmd
-> .\vcpkg\vcpkg install [packages to install]
-```
-
-For example, this will install the `x64-windows` triplet. On Windows, not specifying a triplet will default to x86-windows:
+To install the libraries for your project, run the following, optionally specifying the triplet. For example, the following will install packages for the `x64-windows` triplet. On Windows, not specifying a triplet will default to `x86-windows`:
 
 ```cmd
 > .\vcpkg\vcpkg install azure-storage-blobs-cpp:x64-windows
 ```
 
-See the [list of packages](https://github.com/Azure/azure-sdk-for-cpp#vcpkg) available via vcpkg below. All Azure C++ SDK package names start with `azure-`.
-
-You can also search for the libraries you need with the `search` subcommand:
-
-```cmd
-> .\vcpkg\vcpkg search [search term]
-```
-
-For example:
+See the [list of packages](https://github.com/Azure/azure-sdk-for-cpp#vcpkg) available via vcpkg below. All Azure C++ SDK package names start with `azure-`. You can also search for the libraries you need with the `search` command. For example:
 
 ```cmd
 > .\vcpkg\vcpkg search azure-
@@ -87,27 +73,33 @@ All the Azure C++ SDK headers needed to be included are located within the `<azu
 Here's an example application to help you get started:
 
 ```C++
+#include <iostream>
 #include <azure/core.hpp>
 #include <azure/storage/blobs.hpp>
 
 using namespace Azure::Storage::Blobs;
 
+std::string GetConnectionString()
+{
+  return "get connection string from azure portal/environment";
+}
+
 int main()
 {
-	std::string containerName = "testcontainer";
-	std::string blobName = "sample-blob";
+  std::string containerName = "testcontainer";
+  std::string blobName = "sample-blob";
 
-	try
-	{
-		auto client = BlobClient::CreateFromConnectionString(
-            GetConnectionString(), containerName, blobName);
-	}
-	catch (Azure::Core::RequestFailedException& e)
-	{
-		puts(e.what());
-		return 1;
-	}
-	return 0;
+  try
+  {
+    auto client = BlobClient::CreateFromConnectionString(
+        GetConnectionString(), containerName, blobName);
+  }
+  catch (const Azure::Core::RequestFailedException& e)
+  {
+    std::cout << e.what() << std::endl;
+    return 1;
+  }
+  return 0;
 }
 ```
 
