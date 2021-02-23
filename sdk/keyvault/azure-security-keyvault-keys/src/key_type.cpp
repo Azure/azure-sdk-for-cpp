@@ -2,64 +2,64 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_type.hpp"
-#include "azure/keyvault/keys/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
 
 #include <stdexcept>
 
 using namespace Azure::Security::KeyVault::Keys;
 
-KeyTypeEnum Details::KeyTypeFromString(std::string const& name)
+JsonWebKeyType Details::KeyTypeFromString(std::string const& name)
 {
   if (name == EcValue)
   {
-    return KeyTypeEnum::Ec;
+    return JsonWebKeyType::Ec;
   }
   if (name == EcHsmValue)
   {
-    return KeyTypeEnum::EcHsm;
+    return JsonWebKeyType::EcHsm;
   }
   if (name == OctValue)
   {
-    return KeyTypeEnum::Oct;
+    return JsonWebKeyType::Oct;
   }
   if (name == OctHsmValue)
   {
-    return KeyTypeEnum::OctHsm;
+    return JsonWebKeyType::OctHsm;
   }
   if (name == RsaValue)
   {
-    return KeyTypeEnum::Rsa;
+    return JsonWebKeyType::Rsa;
   }
   if (name == RsaHsmValue)
   {
-    return KeyTypeEnum::RsaHsm;
+    return JsonWebKeyType::RsaHsm;
   }
   throw std::runtime_error("cannot convert " + name + " to key type (kty)");
 }
 
-std::string Details::KeyTypeToString(KeyTypeEnum kty)
+std::string Details::KeyTypeToString(JsonWebKeyType kty)
 {
-  if (kty == KeyTypeEnum::Ec)
+  if (kty == JsonWebKeyType::Ec)
   {
     return EcValue;
   }
-  if (kty == KeyTypeEnum::EcHsm)
+  if (kty == JsonWebKeyType::EcHsm)
   {
     return EcHsmValue;
   }
-  if (kty == KeyTypeEnum::Oct)
+  if (kty == JsonWebKeyType::Oct)
   {
     return OctValue;
   }
-  if (kty == KeyTypeEnum::OctHsm)
+  if (kty == JsonWebKeyType::OctHsm)
   {
     return OctHsmValue;
   }
-  if (kty == KeyTypeEnum::Rsa)
+  if (kty == JsonWebKeyType::Rsa)
   {
     return RsaValue;
   }
-  if (kty == KeyTypeEnum::RsaHsm)
+  if (kty == JsonWebKeyType::RsaHsm)
   {
     return RsaHsmValue;
   }

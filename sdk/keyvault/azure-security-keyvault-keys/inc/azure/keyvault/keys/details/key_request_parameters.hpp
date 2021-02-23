@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief Internal implementation for sending the HTTP request.
  *
  */
@@ -23,11 +24,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   class KeyRequestParameters : public Azure::Core::Internal::Json::JsonSerializable {
   private:
-    KeyTypeEnum m_keyType;
+    JsonWebKeyType m_keyType;
     CreateKeyOptions const& m_options;
 
   public:
-    explicit KeyRequestParameters(KeyTypeEnum keyType, CreateKeyOptions const& options)
+    explicit KeyRequestParameters(JsonWebKeyType keyType, CreateKeyOptions const& options)
         : m_keyType(keyType), m_options(options)
     {
     }
