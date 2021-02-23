@@ -79,10 +79,8 @@ Here's an example application to help you get started:
 
 using namespace Azure::Storage::Blobs;
 
-std::string GetConnectionString()
-{
-  return "get connection string from azure portal/environment";
-}
+// Get the required connection string/key from an environment variable or Azure KeyVault.
+std::string GetConnectionString();
 
 int main()
 {
