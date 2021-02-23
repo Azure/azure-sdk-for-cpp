@@ -15,6 +15,7 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
+#include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
@@ -753,7 +754,11 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
 
 void CurlConnection::Shutdown()
 {
+#if defined(AZ_PLATFORM_POSIX)
   ::shutdown(m_curlSocket, SHUT_RDWR);
+#elif defined(AZ_PLATFORM_WINDOWS)
+  ::shutdown(m_curlSocket, SD_BOTH);
+#endif
   m_isShutDown = true;
 }
 
