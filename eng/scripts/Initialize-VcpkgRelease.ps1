@@ -56,4 +56,4 @@ $portfileLocation = "$SourceDirectory/port/portfile.cmake"
 $newContent = Get-Content -Raw -Path $portfileLocation `
     | ForEach-Object { $_ -replace '(SHA512\s+)1', "`${1}$sha512" }
 
-$newContent | Set-Content $portfileLocation
+$newContent | Set-Content $portfileLocation -NoNewLine
