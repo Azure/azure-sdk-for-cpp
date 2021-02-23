@@ -167,9 +167,9 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
       request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
   CURLcode performing;
 
-  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
-  // either closed or the socket is not usable any more. In that case, let the session be destroyed
-  // and create a new session to get another connection from connection pool.
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
+  // the connection is either closed or the socket is not usable any more. In that case, let the
+  // session be destroyed and create a new session to get another connection from connection pool.
   // Prevent from trying forever by using DefaultMaxOpenNewConnectionIntentsAllowed.
   for (auto getConnectionOpenIntent = 0;
        getConnectionOpenIntent < Details::DefaultMaxOpenNewConnectionIntentsAllowed;
@@ -180,10 +180,17 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
     {
       break;
     }
-    // Let session be destroyed and create a new one to get a new connection
+    // Let session be destroyed and request a new connection. If the number of
+    // request for connection has reached `RequestPoolResetAfterConnectionFailed`, ask the pool to
+    // clean (remove connections) and create a new one. This is because, keep getting connections
+    // that fail to perform means a general network disconnection where all connections in the pool
+    // won't be no longer valid.
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::GetCurlConnection(request, m_options),
+        CurlConnectionPool::GetCurlConnection(
+            request,
+            m_options,
+            getConnectionOpenIntent + 1 >= Details::RequestPoolResetAfterConnectionFailed),
         m_options.HttpKeepAlive);
   }
 
@@ -1113,7 +1120,8 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     Request& request,
-    CurlTransportOptions const& options)
+    CurlTransportOptions const& options,
+    bool resetPool)
 {
   std::string const& host = request.GetUrl().GetHost();
   std::string const connectionKey = GetConnectionKey(host, options);
@@ -1125,26 +1133,36 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
 
     // get a ref to the pool from the map of pools
     auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
+
     if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
         && hostPoolIndex->second.size() > 0)
     {
-      // get ref to first connection
-      auto fistConnectionIterator = hostPoolIndex->second.begin();
-      // move the connection ref to temp ref
-      auto connection = std::move(*fistConnectionIterator);
-      // Remove the connection ref from list
-      hostPoolIndex->second.erase(fistConnectionIterator);
-      // reduce number of connections on the pool
-      CurlConnectionPool::s_connectionCounter -= 1;
-
-      // Remove index if there are no more connections
-      if (hostPoolIndex->second.size() == 0)
+      if (resetPool)
       {
-        CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        // Remove all connections for the connection Key and move to spawn new connection below
+        CurlConnectionPool::s_connectionCounter -= hostPoolIndex->second.size();
+        hostPoolIndex->second.clear();
       }
+      else
+      {
+        // get ref to first connection
+        auto fistConnectionIterator = hostPoolIndex->second.begin();
+        // move the connection ref to temp ref
+        auto connection = std::move(*fistConnectionIterator);
+        // Remove the connection ref from list
+        hostPoolIndex->second.erase(fistConnectionIterator);
+        // reduce number of connections on the pool
+        CurlConnectionPool::s_connectionCounter -= 1;
 
-      // return connection ref
-      return connection;
+        // Remove index if there are no more connections
+        if (hostPoolIndex->second.size() == 0)
+        {
+          CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        }
+
+        // return connection ref
+        return connection;
+      }
     }
   }
 

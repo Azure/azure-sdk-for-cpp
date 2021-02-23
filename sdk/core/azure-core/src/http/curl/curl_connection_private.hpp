@@ -26,6 +26,9 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
     constexpr static int DefaultMaxOpenNewConnectionIntentsAllowed = 10;
+    // After 3 connections are received from the pool and failed to send a request, the next
+    // connections would ask the pool to be clean and spawn new connection.
+    constexpr static int RequestPoolResetAfterConnectionFailed = 3;
     // 90 sec -> cleaner wait time before next clean routine
     constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used

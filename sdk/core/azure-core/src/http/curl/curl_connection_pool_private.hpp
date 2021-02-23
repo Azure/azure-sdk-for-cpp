@@ -64,12 +64,17 @@ namespace Azure { namespace Core { namespace Http {
      * @remark If there is not any available connection, a new connection is created.
      *
      * @param request HTTP request to get #Azure::Core::Http::CurlNetworkConnection for.
+     * @param options The connection settings which includes host name and libcurl handle specific
+     * configuration.
+     * @param resetPool Request the pool to remove all current connections for the provided options
+     * to force the creation of a new connection.
      *
      * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
     static std::unique_ptr<CurlNetworkConnection> GetCurlConnection(
         Request& request,
-        CurlTransportOptions const& options);
+        CurlTransportOptions const& options,
+        bool resetPool = false);
 
     /**
      * @brief Moves a connection back to the pool to be re-used.
