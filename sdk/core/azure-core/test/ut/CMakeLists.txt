@@ -40,6 +40,7 @@ add_executable (
     http.cpp
     json.cpp
     logging.cpp
+    macro_guard.cpp
     main.cpp
     match_conditions.cpp
     md5.cpp

@@ -13,6 +13,7 @@ include(GoogleTest)
 
 add_executable (
      azure-template-test
+     ut/macro_guard.cpp
      ut/template_test.cpp
      )
 
@@ -23,4 +24,3 @@ if (MSVC)
 endif()
 
 gtest_discover_tests(azure-template-test TEST_PREFIX azure-template.)
-
