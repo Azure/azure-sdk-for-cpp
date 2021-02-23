@@ -26,6 +26,11 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
+if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+endif()
+
 set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp
@@ -69,3 +74,17 @@ az_vcpkg_export(
     IDENTITY
     "azure/identity/dll_import_export.hpp"
   )
+
+if(BUILD_TESTING)
+  # tests
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+
+  add_subdirectory(test/ut)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
+endif()

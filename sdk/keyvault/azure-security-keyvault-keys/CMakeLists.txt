@@ -74,7 +74,17 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/keys/version.hpp"
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-  add_subdirectory(test)
+
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+  
+  add_subdirectory(test/ut)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
 endif()
 
 if(BUILD_SAMPLES)

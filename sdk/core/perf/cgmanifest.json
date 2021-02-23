@@ -1,0 +1,14 @@
+{
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/vietjtnguyen/argagg",
+          "CommitHash": "b259b76c51751e5b4dbd070968e60dce108bbc88"
+        }
+      },
+      "DevelopmentDependency": true
+    }
+  ]
+}

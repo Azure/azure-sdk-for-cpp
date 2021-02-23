@@ -429,7 +429,7 @@ namespace Azure { namespace Core { namespace Test {
       // if ref can't be cast, it throws
       EXPECT_NO_THROW((void)dynamic_cast<Azure::Core::Http::TransportException&>(err));
       EXPECT_NO_THROW((void)dynamic_cast<std::runtime_error&>(err));
-      EXPECT_THROW(dynamic_cast<std::range_error&>(err), std::bad_cast);
+      EXPECT_THROW((void)dynamic_cast<std::range_error&>(err), std::bad_cast);
     }
   }
 
@@ -599,7 +599,7 @@ namespace Azure { namespace Core { namespace Test {
 
     if (size > 0)
     { // only for known body size
-      EXPECT_EQ(bodyVector.size(), size);
+      EXPECT_EQ(bodyVector.size(), static_cast<size_t>(size));
     }
 
     if (expectedBody.size() > 0)
