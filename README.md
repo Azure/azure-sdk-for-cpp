@@ -140,7 +140,7 @@ For a complete list of available packages, please see the [latest available pack
 
 ### Vcpkg
 
-The following SDK library releases are available on [Vcpkg](https://github.com/microsoft/vcpkg):
+The following SDK library releases are available on [vcpkg](https://github.com/microsoft/vcpkg):
 
 * `azure-core-cpp`
 * `azure-identity-cpp`
@@ -149,7 +149,7 @@ The following SDK library releases are available on [Vcpkg](https://github.com/m
 * `azure-storage-files-datalake-cpp`
 * `azure-storage-files-shares-cpp`
 
-> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [Vcpkg triplet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
+> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 
 ## Need help
 
