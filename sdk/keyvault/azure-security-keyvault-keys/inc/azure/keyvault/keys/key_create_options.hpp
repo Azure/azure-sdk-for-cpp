@@ -15,6 +15,7 @@
 
 #include "azure/keyvault/keys/key_curve_name.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_vault_key.hpp"
 
 #include <list>
 #include <string>

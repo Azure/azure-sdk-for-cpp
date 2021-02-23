@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the KeyVaultKey.
    */
-  class KeyClient {1
+  class KeyClient {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> CreateEcKey(
-        CreateEcKeyOptions ecKeyOptions,
+        CreateEcKeyOptions const& ecKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -126,7 +126,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> CreateRsaKey(
-        CreateRsaKeyOptions rsaKeyOptions,
+        CreateRsaKeyOptions const& rsaKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -142,7 +142,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> CreateOctKey(
-        CreateOctKeyOptions octKeyOptions,
+        CreateOctKeyOptions const& octKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
