@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the KeyVaultKey.
    */
-  class KeyClient {
+  class KeyClient {1
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
@@ -95,6 +95,54 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::string const& name,
         JsonWebKeyType keyType,
         CreateKeyOptions const& options = CreateKeyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates and stores a new Elliptic Curve key in Key Vault.
+     *
+     * @remark If the named key already exists, Azure Key Vault creates a new version of the key.
+     *
+     * @remark This operation requires the keys/create permission.
+     *
+     * @param ecKeyOptions The key options object containing information about the Elliptic Curve
+     * key being created.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateEcKey(
+        CreateEcKeyOptions ecKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates and stores a new RSA key in Key Vault.
+     *
+     * @remark If the named key already exists, Azure Key Vault creates a new version of the key.
+     *
+     * @remark This operation requires the keys/create permission.
+     *
+     * @param rsaKeyOptions The key options object containing information about the RSA key being
+     * created.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateRsaKey(
+        CreateRsaKeyOptions rsaKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates and stores a new AES key in Key Vault.
+     *
+     * @remark If the named key already exists, Azure Key Vault creates a new version of the key.
+     *
+     * @remark This operation requires the keys/create permission.
+     *
+     * @param octKeyOptions The key options object containing information about the AES key being
+     * created.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateOctKey(
+        CreateOctKeyOptions octKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
