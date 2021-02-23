@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     static void CleanUp();
 
-    AZ_CORE_DLLEXPORT static int32_t s_connectionCounter;
+    AZ_CORE_DLLEXPORT static uint64_t s_connectionCounter;
     AZ_CORE_DLLEXPORT static bool s_isCleanConnectionsRunning;
     // Removes all connections and indexes
     static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }

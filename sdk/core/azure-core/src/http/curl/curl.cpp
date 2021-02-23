@@ -1075,7 +1075,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
-int32_t CurlConnectionPool::s_connectionCounter = 0;
+uint64_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 namespace {
