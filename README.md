@@ -10,7 +10,7 @@ For the best development experience, we recommend that developers use the [CMake
 
 You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder. For example, [here is the doc for the storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage#azure-storage-client-library-for-c).
 
-For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure for C++ Developers](https://azure.github.io/azure-sdk-for-cpp).
+For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
 
 ### Download & Install the SDK
 
@@ -20,9 +20,17 @@ First clone and bootstrap vcpkg itself. You can install it anywhere on your mach
 
 ```cmd
 > git clone https://github.com/microsoft/vcpkg
-# Windows
+```
+
+On Windows:
+
+```cmd
 > .\vcpkg\bootstrap-vcpkg.bat
-# Linux
+```
+
+On Linux:
+
+```sh
 > ./vcpkg/bootstrap-vcpkg.sh
 ```
 
@@ -30,7 +38,11 @@ To install the libraries for your project, run the following, optionally specify
 
 ```cmd
 > .\vcpkg\vcpkg install [packages to install]
-# For example, this will install the x64-windows triplet, default is x86-windows:
+```
+
+For example, this will install the `x64-windows` triplet. On Windows, not specifying a triplet will default to x86-windows:
+
+```cmd
 > .\vcpkg\vcpkg install azure-storage-blobs-cpp:x64-windows
 ```
 
@@ -40,7 +52,11 @@ You can also search for the libraries you need with the `search` subcommand:
 
 ```cmd
 > .\vcpkg\vcpkg search [search term]
-# For example:
+```
+
+For example:
+
+```cmd
 > .\vcpkg\vcpkg search azure-
 ```
 
@@ -97,7 +113,7 @@ int main()
 
 #### Visual Studio - CMakeSettings.json
 
-When building your application via Visual Studio, you can create and update a CMakeSettings.json file and include the following properties to let VS know where the package is installed and which triplet needs to be used:
+When building your application via Visual Studio, you can create and update a `CMakeSettings.json` file and include the following properties to let Visual Studio know where the packages are installed and which triplet needs to be used:
 
 ```json
 {
@@ -130,9 +146,9 @@ For a complete list of available packages, please see the [latest available pack
 
 > NOTE: If you need to ensure your code is ready for production we strongly recommend using one of the stable, non-beta libraries.
 
-### VcPkg
+### Vcpkg
 
-The following SDK library releases are available on [VcPkg](https://github.com/microsoft/vcpkg):
+The following SDK library releases are available on [Vcpkg](https://github.com/microsoft/vcpkg):
 
 * `azure-core-cpp`
 * `azure-identity-cpp`
@@ -141,7 +157,7 @@ The following SDK library releases are available on [VcPkg](https://github.com/m
 * `azure-storage-files-datalake-cpp`
 * `azure-storage-files-shares-cpp`
 
-> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [VcPkg triplet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
+> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [Vcpkg triplet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 
 ## Need help
 
