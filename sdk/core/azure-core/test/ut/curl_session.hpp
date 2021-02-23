@@ -9,6 +9,15 @@
  *
  */
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) // !_MSC_VER
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !_MSC_VER !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+#endif // _MSC_VER
+
 #include <azure/core/http/curl/curl.hpp>
 #include <curl/curl.h>
 #include <gmock/gmock.h>
@@ -50,3 +59,11 @@ namespace Azure { namespace Core { namespace Test {
   };
 
 }}} // namespace Azure::Core::Test
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) // !_MSC_VER
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !_MSC_VER !__clang__
+#pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
+#endif // _MSC_VER

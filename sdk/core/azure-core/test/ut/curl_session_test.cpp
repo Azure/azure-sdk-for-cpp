@@ -117,9 +117,9 @@ namespace Azure { namespace Core { namespace Test {
           request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
-      auto response = session->GetResponse();
-      response->SetBodyStream(std::move(session));
-      auto bodyS = response->GetBodyStream();
+      auto r = session->GetResponse();
+      r->SetBodyStream(std::move(session));
+      auto bodyS = r->GetBodyStream();
 
       // Read the bodyStream to get all chunks
       EXPECT_THROW(

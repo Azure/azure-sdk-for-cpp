@@ -30,22 +30,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TESTING)
-    # define a symbol that enables some test hooks in code
-    add_compile_definitions(TESTING_BUILD)
-    if(RUN_LONG_UNIT_TESTS)
-      add_compile_definitions(RUN_LONG_UNIT_TESTS)
-    endif()
-    
-    # tests
-    include(AddGoogleTest)
-    enable_testing ()
-    add_subdirectory(sdk/core/azure-core/test/ut)
-    # Set `AZURE_CORE_ENABLE_JSON_TESTS` env var to run Json tests
-    if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
-      add_subdirectory(sdk/core/azure-core/test/nlohmann-json-test)
-    endif()
-
-    add_subdirectory(sdk/identity/azure-identity/test)
+  include(AddGoogleTest)
+  enable_testing ()  
 endif()
 
 # compiler warning flags globally

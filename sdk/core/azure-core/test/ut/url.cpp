@@ -115,7 +115,6 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(URL, query_parameter_encode_decode)
   {
-    Http::HttpMethod httpMethod = Http::HttpMethod::Put;
     Http::Url url("http://test.com");
     EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=lue")));
 

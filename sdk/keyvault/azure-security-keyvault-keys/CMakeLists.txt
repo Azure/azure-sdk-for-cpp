@@ -32,13 +32,12 @@ set(
     inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
-    inc/azure/keyvault/keys/key_constants.hpp
+    inc/azure/keyvault/keys/details/key_constants.hpp
     inc/azure/keyvault/keys/key_create_options.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/key_operation.hpp
     inc/azure/keyvault/keys/key_properties.hpp
-    inc/azure/keyvault/keys/key_release_policy.hpp
-    inc/azure/keyvault/keys/key_request_parameters.hpp
+    inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
     inc/azure/keyvault/keys/version.hpp
@@ -75,7 +74,17 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/keys/version.hpp"
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-  add_subdirectory(test)
+
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+  
+  add_subdirectory(test/ut)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
 endif()
 
 if(BUILD_SAMPLES)

@@ -137,6 +137,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     request.StartTry();
     // creates a copy of original query parameters from request
     auto originalQueryParameters = request.GetUrl().GetQueryParameters();
+
     try
     {
       auto response = nextHttpPolicy.Send(ctx, request);
@@ -156,11 +157,6 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
       {
         throw;
       }
-    }
-
-    if (auto bodyStream = request.GetBodyStream())
-    {
-      bodyStream->Rewind();
     }
 
     if (shouldLog)

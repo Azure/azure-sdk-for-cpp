@@ -69,7 +69,12 @@ generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
     # tests
-    add_subdirectory(test)
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+
+  add_subdirectory(test/ut)
 endif()
 
 az_vcpkg_export(
