@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    class WinHttpStream : public BodyStream {
+    class WinHttpStream : public Azure::IO::BodyStream {
     private:
       std::unique_ptr<HandleManager> m_handleManager;
       bool m_isEOF;
