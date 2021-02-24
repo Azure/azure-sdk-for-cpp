@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<Models::UploadPageBlobPagesResult> UploadPages(
         int64_t offset,
-        Azure::Core::Http::BodyStream* content,
+        Azure::IO::BodyStream* content,
         const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param range Specifies the range of bytes to be cleared. Both the start and end of the range
      * must be specified. For a page clear operation, the page range can be up to the value of the
      * blob's full size. Given that pages must be aligned with 512-byte boundaries, the start of the
-     * range must be a modulus of 512 and the end of the range must be a modulus of 512 – 1.
+     * range must be a modulus of 512 and the end of the range must be a modulus of 512 ï¿½ 1.
      * Examples of valid byte ranges are 0-511, 512-1023, etc.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.

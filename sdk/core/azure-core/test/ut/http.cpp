@@ -167,8 +167,8 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
-      Azure::Core::Http::NullBodyStream* d
-          = dynamic_cast<Azure::Core::Http::NullBodyStream*>(req.GetBodyStream());
+      Azure::IO::NullBodyStream* d
+          = dynamic_cast<Azure::IO::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
-      d = dynamic_cast<Azure::Core::Http::NullBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
     }
 
@@ -193,12 +193,12 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
 
       std::vector<uint8_t> data = {1, 2, 3, 4};
-      Azure::Core::Http::MemoryBodyStream stream(data);
+      Azure::IO::MemoryBodyStream stream(data);
 
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
       EXPECT_EQ(
-          Azure::Core::Http::BodyStream::ReadToCount(
+          Azure::IO::BodyStream::ReadToCount(
               GetApplicationContext(), stream, temp.data(), 1),
           1);
 
@@ -207,19 +207,19 @@ namespace Azure { namespace Core { namespace Test {
 
       Http::Request req(httpMethod, url, &stream);
 
-      Azure::Core::Http::MemoryBodyStream* d
-          = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      Azure::IO::MemoryBodyStream* d
+          = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
 
-      d = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       // Verify that StartTry rewound the stream back.
       auto getStream = req.GetBodyStream();
       EXPECT_EQ(
-          Azure::Core::Http::BodyStream::ReadToCount(
+          Azure::IO::BodyStream::ReadToCount(
               GetApplicationContext(), *getStream, temp.data(), 2),
           2);
 

@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Http {
       int64_t m_streamTotalRead;
 
       /**
-       * @brief Implement #Azure::Core::Http::BodyStream::OnRead(). Calling this function pulls data
+       * @brief Implement #Azure::IO::BodyStream::OnRead(). Calling this function pulls data
        * from the wire.
        *
        * @param context #Azure::Core::Context so that operation can be cancelled.
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       /**
-       * @brief Implement #Azure::Core::Http::BodyStream length.
+       * @brief Implement #Azure::IO::BodyStream length.
        *
        * @return The size of the payload.
        */

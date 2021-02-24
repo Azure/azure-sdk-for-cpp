@@ -1111,7 +1111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         static Azure::Core::Response<PathAppendDataResult> AppendData(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream& bodyStream,
+            Azure::IO::BodyStream& bodyStream,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AppendDataOptions& appendDataOptions)

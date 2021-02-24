@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A AppendBlockResult describing the state of the updated append blob.
      */
     Azure::Core::Response<Models::AppendBlockResult> AppendBlock(
-        Azure::Core::Http::BodyStream* content,
+        Azure::IO::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

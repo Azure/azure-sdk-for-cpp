@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto retryFunction
           = [this, options, eTag](
                 const Azure::Core::Context& context,
-                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::IO::BodyStream> {
         DownloadShareFileOptions newOptions = options;
         newOptions.Range = Core::Http::Range();
         newOptions.Range.GetValue().Offset
@@ -477,7 +477,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Core::Response<Models::UploadShareFileRangeResult> ShareFileClient::UploadRange(
       int64_t offset,
-      Azure::Core::Http::BodyStream* content,
+      Azure::IO::BodyStream* content,
       const UploadShareFileRangeOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -512,7 +512,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     auto response = Details::ShareRestClient::File::UploadRange(
         m_shareFileUrl,
-        *Azure::Core::Http::NullBodyStream::GetNullBodyStream(),
+        *Azure::IO::NullBodyStream::GetNullBodyStream(),
         *m_pipeline,
         context,
         protocolLayerOptions);
@@ -646,7 +646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
     }
 
-    int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
+    int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
         context, *(firstChunk->BodyStream), buffer, firstChunkLength);
     if (bytesRead != firstChunkLength)
     {
@@ -673,7 +673,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             chunkOptions.Range.GetValue().Offset = offset;
             chunkOptions.Range.GetValue().Length = length;
             auto chunk = Download(chunkOptions, context);
-            int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
+            int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
                 context,
                 *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
@@ -747,7 +747,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     firstChunkLength = std::min(firstChunkLength, fileRangeSize);
 
-    auto bodyStreamToFile = [](Azure::Core::Http::BodyStream& stream,
+    auto bodyStreamToFile = [](Azure::IO::BodyStream& stream,
                                Storage::Details::FileWriter& fileWriter,
                                int64_t offset,
                                int64_t length,
@@ -758,7 +758,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
         int64_t bytesRead
-            = Azure::Core::Http::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
+            = Azure::IO::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -899,7 +899,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-      Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
+      Azure::IO::MemoryBodyStream contentStream(buffer + offset, length);
       UploadShareFileRangeOptions uploadRangeOptions;
       UploadRange(offset, &contentStream, uploadRangeOptions, context);
     };
@@ -1004,7 +1004,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      Azure::IO::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
       UploadShareFileRangeOptions uploadRangeOptions;
       UploadRange(offset, &contentStream, uploadRangeOptions, context);
     };

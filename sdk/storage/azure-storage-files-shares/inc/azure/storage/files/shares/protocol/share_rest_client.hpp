@@ -893,7 +893,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileDownloadResult
     {
-      std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
+      std::unique_ptr<Azure::IO::BodyStream> BodyStream;
       Core::DateTime LastModified;
       Storage::Metadata Metadata;
       FileHttpHeaders HttpHeaders;
@@ -1127,7 +1127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
-          auto body = Azure::Core::Http::MemoryBodyStream(
+          auto body = Azure::IO::MemoryBodyStream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
           request.AddHeader("Content-Length", std::to_string(body.Length()));
@@ -2926,7 +2926,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             SharePermissionToJson(json, createPermissionOptions.Permission);
             json_body = json.dump();
           }
-          auto body = Azure::Core::Http::MemoryBodyStream(
+          auto body = Azure::IO::MemoryBodyStream(
               reinterpret_cast<const uint8_t*>(json_body.data()), json_body.length());
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
           request.AddHeader("Content-Length", std::to_string(body.Length()));
@@ -3109,7 +3109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
-          auto body = Azure::Core::Http::MemoryBodyStream(
+          auto body = Azure::IO::MemoryBodyStream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
           request.AddHeader("Content-Length", std::to_string(body.Length()));
@@ -5698,7 +5698,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Core::Response<FileUploadRangeResult> UploadRange(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream& bodyStream,
+            Azure::IO::BodyStream& bodyStream,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeOptions& uploadRangeOptions)

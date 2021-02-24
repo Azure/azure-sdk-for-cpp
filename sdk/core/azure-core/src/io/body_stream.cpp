@@ -17,7 +17,7 @@
 #endif
 
 #include "azure/core/context.hpp"
-#include "azure/core/http/body_stream.hpp"
+#include "azure/core/io/body_stream.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -28,7 +28,7 @@
 #include <vector>
 
 using Azure::Core::Context;
-using namespace Azure::Core::Http;
+using namespace Azure::IO;
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
 int64_t BodyStream::ReadToCount(
