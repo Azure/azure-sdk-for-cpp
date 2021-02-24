@@ -2,21 +2,51 @@
 
 Azure::Core (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++. These libraries follow the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
-The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
+The library allows client libraries to expose common functionality in a consistent fashion. Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
 ## Getting started
 
-Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries.  In case you want to download it explicitly (to implement your own client library, for example), you can find the source
-in here.
+Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries. In case you want to download it explicitly (to implement your own client library, for example), you can find the source in here, or use vcpkg to install the package `azure-core-cpp`.
 
 ## Key concepts
 
-The main shared concepts of Azure::Core include:
-- Configuring service cliesnt, e.g. configuring retries, logging, etc.. (`ClientOptions`)
-- Accessing HTTP response details (`Response`, `Response<T>`)
-- Polling long-running operations
-- Exceptions for reporting errors from service requests in a consistent fashion (`RequestFailedException`)
-- Abstractions for Azure SDK Credentials (`TokenCredential`)
+The main shared concepts of `Azure::Core` include:
+
+- HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
+- Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
+- Accessing HTTP response details from the method return types, via `Response<T>`.
+- Polling long-running operations (LROs), via `Operation<T>`.
+- Exceptions for reporting errors from service requests in a consistent fashion via the base exception type `RequestFailedException`.
+- Abstractions for Azure SDK credentials (`TokenCredential`).
+- Replaceable HTTP transport layer to send requests and receive responses over the network.
+
+### Long Running Operations
+
+Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
+
+You can intermittently poll whether the operation has finished by using the `Poll()` method on the returned `Operation<T>` and track progress of the operation using `Value()`. Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
+
+```C++
+SomeServiceClient client;
+
+auto operation = *client.StartSomeLongRunningOperation();
+
+while (!operation.IsDone())
+{ 
+  std::unique_ptr<Http::RawResponse> response = operation.Poll();
+
+  auto partialResult = operation.Value();
+  
+  // Your per-polling custom logic goes here, such as logging progress.
+
+  // You can also try to abort the operation if it doesn't complete in time.
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+};
+
+auto finalResult = operation.Value();
+
+```
 
 ### HTTP Transport adapter
 

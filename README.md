@@ -50,7 +50,7 @@ Once the library is installed, follow the instructions from the console output t
 
 ```CMake
 find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
-target_link_libraries(myProject PRIVATE Azure::azure-storage-blobs)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
 ```
 
 > NOTE: All the Azure client libraries take a dependency on `azure-core-cpp` which provides functionality commonly needed by all Azure clients. When you install any client library via vcpkg, it will bring in all the necessary dependencies as well. You don't need to install those individually to get started.
@@ -100,6 +100,8 @@ int main()
   return 0;
 }
 ```
+
+Understanding the key concepts from the `azure-core-cpp` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use. You can find more information about them, with sample code snippets, here: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core#key-concepts
 
 #### Visual Studio - CMakeSettings.json
 
