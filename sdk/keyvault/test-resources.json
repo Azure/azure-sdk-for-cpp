@@ -72,16 +72,16 @@
         },
         "keyVaultPremiumSku": {
             "type": "string",
-            "defaultValue": "standard",
+            "defaultValue": "premium",
             "metadata": {
-                "description": "Key Vault SKU to deploy. The default is 'standard'"
+                "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
         },
         "keyVaultSku": {
             "type": "string",
-            "defaultValue": "premium",
+            "defaultValue": "standard",
             "metadata": {
-                "description": "Key Vault SKU to deploy. The default is 'premium'"
+                "description": "Key Vault SKU to deploy. The default is 'standard'"
             }
         },
         "keyType": {
