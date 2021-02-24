@@ -11,7 +11,7 @@
         },
         "baseNamePremium": {
             "type": "string",
-            "defaultValue": "keyvault-live-cpp-test-premium-account",
+            "defaultValue": "cpp-live-premium",
             "metadata": {
                 "description": "The base resource name."
             }
