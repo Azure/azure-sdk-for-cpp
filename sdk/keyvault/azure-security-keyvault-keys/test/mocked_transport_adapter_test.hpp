@@ -66,12 +66,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Base Pipeline
       std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
       policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-          "KeyVault", apiVersion, options.TelemetryPolicyOptions));
+          "KeyVault", apiVersion, options.Telemetry));
       policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-      policies.emplace_back(std::make_unique<Azure::Core::Http::RetryPolicy>(options.RetryOptions));
+      policies.emplace_back(std::make_unique<Azure::Core::Http::RetryPolicy>(options.Retry));
       policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
       policies.emplace_back(
-          std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
+          std::make_unique<Azure::Core::Http::TransportPolicy>(options.Transport));
       Azure::Core::Http::Url url(vaultUrl);
 
       m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
@@ -87,7 +87,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      m_clientOptions.TransportPolicyOptions.Transport = std::make_shared<MockedTransportAdapter>();
+      m_clientOptions.Transport.Transport = std::make_shared<MockedTransportAdapter>();
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test
