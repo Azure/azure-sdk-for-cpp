@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-project(azure-template LANGUAGES CXX)
+project(azure-template-second LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -28,22 +28,22 @@ endif()
 
 set(
   AZURE_TEMPLATE_HEADER
-    inc/azure/template/dll_import_export.hpp
-    inc/azure/template/template_client.hpp
-    inc/azure/template/version.hpp
-    inc/azure/template.hpp
+    inc/azure/template/second/dll_import_export.hpp
+    inc/azure/template/second/template_client.hpp
+    inc/azure/template/second/version.hpp
+    inc/azure/template-second.hpp
 )
 
 set(
   AZURE_TEMPLATE_SOURCE
-    src/template_client.cpp
+    src/template_second_client.cpp
     src/version.cpp
 )
 
-add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
+add_library(azure-template-second ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
 
 target_include_directories(
-  azure-template
+  azure-template-second
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
@@ -52,21 +52,21 @@ target_include_directories(
 )
 
 # Disable dependency on azure-core until azure-core has released to vcpkg
-# target_link_libraries(azure-template PUBLIC Azure::azure-core)
+# target_link_libraries(azure-template-second PUBLIC Azure::azure-core)
 
 # make sure that users can consume the project as a library.
-add_library(Azure::azure-template ALIAS azure-template)
+add_library(Azure::azure-template-second ALIAS azure-template-second)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(template azure-template azure-template-test)
+create_code_coverage(template azure-template-second azure-template-second-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
-generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/second/version.hpp")
+generate_documentation(azure-template-second ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(
-    azure-template
+    azure-template-second
     TEMPLATE
-    "azure/template/dll_import_export.hpp"
+    "azure/template/second/dll_import_export.hpp"
   )
 
 if(BUILD_TESTING)

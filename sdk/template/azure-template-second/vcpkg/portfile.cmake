@@ -4,12 +4,12 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
-    REF azure-template_@AZ_LIBRARY_VERSION@
+    REF azure-template-second_@AZ_LIBRARY_VERSION@
     SHA512 1
 )
 
 vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}/sdk/template/azure-template/
+    SOURCE_PATH ${SOURCE_PATH}/sdk/template/azure-template-second/
     PREFER_NINJA
     OPTIONS
         -DWARNINGS_AS_ERRORS=OFF

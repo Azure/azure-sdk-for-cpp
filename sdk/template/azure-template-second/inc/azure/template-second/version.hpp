@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/template/dll_import_export.hpp"
+#include "azure/template/second/dll_import_export.hpp"
 
 #include <string>
 

@@ -12,4 +12,4 @@
 #define max(x, y) small
 #define min(x, y) small
 
-#include <azure/template.hpp>
+#include <azure/template-second.hpp>

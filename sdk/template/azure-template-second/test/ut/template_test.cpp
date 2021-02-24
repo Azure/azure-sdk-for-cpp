@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include <azure/template/template_client.hpp>
+#include <azure/template/second/template_client.hpp>
 
 using namespace Azure::Template;
 

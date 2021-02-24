@@ -38,3 +38,6 @@ stages:
         - Name: azure-template
           Path: azure-template
           VcpkgPortName: azure-template-cpp
+        - Name: azure-template-second
+          Path: azure-template-second
+          VcpkgPortName: azure-template-second-cpp
