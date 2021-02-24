@@ -9,6 +9,13 @@
                 "description": "The base resource name."
             }
         },
+        "baseNamePremium": {
+            "type": "string",
+            "defaultValue": "premium",
+            "metadata": {
+                "description": "The base resource name."
+            }
+        },
         "keyName": {
             "type": "string",
             "defaultValue": "testKey",
@@ -63,9 +70,16 @@
                 "description": "Domain suffix for sovereign clouds, requies the preceeding '.'. The default uses the public Azure Cloud (.vault.azure.net)"
             }
         },
+        "keyVaultPremiumSku": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "Key Vault SKU to deploy. The default is 'Standard'"
+            }
+        },
         "keyVaultSku": {
             "type": "string",
-            "defaultValue": "premium",
+            "defaultValue": "Premium",
             "metadata": {
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
@@ -100,7 +114,8 @@
         }
     },
     "variables": {
-        "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]"
+        "azurePremiumKeyVaultUrl": "[format('https://{0}{1}', parameters('baseNamePremium'), parameters('keyVaultDomainSuffix'))]",
+        "azureStandardKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]"
     },
     "resources": [
         {
@@ -175,6 +190,79 @@
             }
         },
         {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[parameters('baseNamePremium')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "[parameters('keyVaultPremiumSku')]"
+                },
+                "tenantId": "[parameters('tenantId')]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('tenantId')]",
+                        "objectId": "[parameters('testApplicationOid')]",
+                        "permissions": {
+                            "keys": [
+                                "get",
+                                "list",
+                                "update",
+                                "create",
+                                "import",
+                                "delete",
+                                "recover",
+                                "backup",
+                                "restore",
+                                "decrypt",
+                                "encrypt",
+                                "unwrapKey",
+                                "wrapKey",
+                                "verify",
+                                "sign",
+                                "purge"
+                            ],
+                            "secrets": [
+                                "get",
+                                "list",
+                                "set",
+                                "delete",
+                                "recover",
+                                "backup",
+                                "restore",
+                                "purge"
+                            ],
+                            "certificates": [
+                                "get",
+                                "list",
+                                "update",
+                                "create",
+                                "import",
+                                "delete",
+                                "recover",
+                                "backup",
+                                "restore",
+                                "managecontacts",
+                                "manageissuers",
+                                "getissuers",
+                                "listissuers",
+                                "setissuers",
+                                "deleteissuers",
+                                "purge"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 90,
+                "enableRbacAuthorization": false
+            }
+        },
+        {
             "type": "Microsoft.KeyVault/vaults/keys",
             "apiVersion": "2019-09-01",
             "name": "[concat(parameters('baseName'), '/', parameters('keyName'))]",
@@ -193,7 +281,11 @@
     "outputs": {
         "AZURE_KEYVAULT_URL": {
             "type": "string",
-            "value": "[variables('azureKeyVaultUrl')]"
+            "value": "[variables('azureStandardKeyVaultUrl')]"
+        },
+        "AZURE_KEYVAULT_HSM_URL": {
+            "type": "string",
+            "value": "[variables('azurePremiumKeyVaultUrl')]"
         },
         "AZURE_TENANT_ID": {
             "type": "string",

@@ -21,6 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   protected:
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::string m_keyVaultUrl;
+    std::string m_keyVaultHsmUrl;
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
 
     // Create
@@ -33,6 +34,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, secretId);
 
       m_keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+    }
+
+  public:
+    template <class T>
+    static inline void CheckValidResponse(
+        Azure::Core::Response<T>& response,
+        Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok)
+    {
+      auto rawResponse = response.ExtractRawResponse();
+      EXPECT_EQ(rawResponse->GetStatusCode(), expectedCode);
     }
   };
 

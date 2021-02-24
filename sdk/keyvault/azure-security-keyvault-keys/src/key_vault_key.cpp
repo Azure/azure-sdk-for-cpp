@@ -3,10 +3,12 @@
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/key_curve_name.hpp"
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
 #include <azure/core/internal/json.hpp>
+#include <iostream>
 
 using namespace Azure::Security::KeyVault::Keys;
 using Azure::Security::KeyVault::Common::Internal::UnixTimeConverter;
@@ -38,6 +40,7 @@ void Details::KeyVaultKeyDeserialize(
 {
   auto body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
+  std::cout << jsonParser.dump();
 
   // "Key"
   auto const& jsonKey = jsonParser[Details::KeyPropertyName];
@@ -51,6 +54,11 @@ void Details::KeyVaultKeyDeserialize(
   key.Key.Id = jsonKey[Details::KeyIdPropertyName].get<std::string>();
   key.Key.KeyType
       = Details::KeyTypeFromString(jsonKey[Details::KeyTypePropertyName].get<std::string>());
+
+  if (jsonKey.contains(Details::CurveNamePropertyName))
+  {
+    key.Key.CurveName = KeyCurveName(jsonKey[Details::CurveNamePropertyName].get<std::string>());
+  }
 
   // "Attributes"
   {
