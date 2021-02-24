@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/case_insensitive_map.hpp>
 #include <azure/core/http/policy.hpp>
-#include <azure/core/internal/strings.hpp>
 
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
@@ -52,21 +52,10 @@ namespace Azure { namespace Storage {
   };
 
   namespace Details {
-    struct CaseInsensitiveComparator
-    {
-      bool operator()(const std::string& lhs, const std::string& rhs) const
-      {
-        return std::lexicographical_compare(
-            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-              return Core::Internal::Strings::ToLower(c1) < Core::Internal::Strings::ToLower(c2);
-            });
-      }
-    };
-
     ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm);
     std::string ToBase64String(const ContentHash& hash);
   } // namespace Details
-  using Metadata = std::map<std::string, std::string, Details::CaseInsensitiveComparator>;
+  using Metadata = Azure::Core::CaseInsensitiveMap<std::string>;
 
   namespace Details {
 

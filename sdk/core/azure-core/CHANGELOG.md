@@ -9,7 +9,8 @@
 - Removed `TransportKind` enum from `Azure::Core::Http`.
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
-- Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
+- Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
+- Introduced `Azure::Core::CaseInsensitiveMap<T>` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
 
 ### Bug Fixes
 

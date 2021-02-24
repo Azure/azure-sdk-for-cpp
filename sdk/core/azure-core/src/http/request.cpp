@@ -13,9 +13,9 @@ using namespace Azure::Core::Http;
 namespace {
 // returns left map plus all items in right
 // when duplicates, left items are preferred
-static std::map<std::string, std::string> MergeMaps(
-    std::map<std::string, std::string> left,
-    std::map<std::string, std::string> const& right)
+static Azure::Core::CaseInsensitiveMap<std::string> MergeMaps(
+    Azure::Core::CaseInsensitiveMap<std::string> left,
+    Azure::Core::CaseInsensitiveMap<std::string> const& right)
 {
   left.insert(right.begin(), right.end());
   return left;
@@ -51,7 +51,7 @@ void Request::StartTry()
 
 HttpMethod Request::GetMethod() const { return this->m_method; }
 
-std::map<std::string, std::string> Request::GetHeaders() const
+Azure::Core::CaseInsensitiveMap<std::string> Request::GetHeaders() const
 {
   // create map with retry headers which are the most important and we don't want
   // to override them with any duplicate header

@@ -59,6 +59,7 @@ set(
     inc/azure/core/internal/strings.hpp
     inc/azure/core/logging/logging.hpp
     inc/azure/core/base64.hpp
+    inc/azure/core/case_insensitive_map.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
