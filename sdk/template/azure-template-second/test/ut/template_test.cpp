@@ -5,7 +5,7 @@
 
 #include <azure/template/second/template_client.hpp>
 
-using namespace Azure::Template;
+using namespace Azure::Template::Second;
 
 TEST(Template, Basic)
 {

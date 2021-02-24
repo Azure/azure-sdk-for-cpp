@@ -5,11 +5,11 @@
 
 #include <string>
 
-namespace Azure { namespace Template {
+namespace Azure { namespace Template { namespace Second { 
 
   class TemplateClient {
   public:
     std::string const ClientVersion();
   };
 
-}} // namespace Azure::Template
+}}} // namespace Azure::Template::Second

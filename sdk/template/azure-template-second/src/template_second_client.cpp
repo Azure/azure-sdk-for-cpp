@@ -6,6 +6,6 @@
 
 #include <string>
 
-using namespace Azure::Template;
+using namespace Azure::Template::Second;
 
 std::string const TemplateClient::ClientVersion() { return Details::Version::VersionString(); }
