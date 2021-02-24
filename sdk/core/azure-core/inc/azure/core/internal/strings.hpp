@@ -23,7 +23,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Strings {
     {
       return std::lexicographical_compare(
           lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-            return Core::Internal::Strings::ToLower(c1) < Core::Internal::Strings::ToLower(c2);
+            return ToLower(c1) < ToLower(c2);
           });
     }
   };
