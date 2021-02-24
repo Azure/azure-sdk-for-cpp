@@ -11,7 +11,7 @@
         },
         "baseNamePremium": {
             "type": "string",
-            "defaultValue": "premium",
+            "defaultValue": "keyvault-live-cpp-test-premium-account",
             "metadata": {
                 "description": "The base resource name."
             }
@@ -72,14 +72,14 @@
         },
         "keyVaultPremiumSku": {
             "type": "string",
-            "defaultValue": "Standard",
+            "defaultValue": "standard",
             "metadata": {
-                "description": "Key Vault SKU to deploy. The default is 'Standard'"
+                "description": "Key Vault SKU to deploy. The default is 'standard'"
             }
         },
         "keyVaultSku": {
             "type": "string",
-            "defaultValue": "Premium",
+            "defaultValue": "premium",
             "metadata": {
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
