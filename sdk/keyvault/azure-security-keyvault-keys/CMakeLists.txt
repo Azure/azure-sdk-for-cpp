@@ -34,7 +34,7 @@ set(
     inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/details/key_constants.hpp
     inc/azure/keyvault/keys/key_create_options.hpp
-    inc/azure/keyvault/keys/key_curve_name
+    inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/key_operation.hpp
     inc/azure/keyvault/keys/key_properties.hpp

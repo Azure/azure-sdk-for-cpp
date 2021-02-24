@@ -34,6 +34,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, secretId);
 
       m_keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+      m_keyVaultHsmUrl = std::getenv("AZURE_KEYVAULT_HSM_URL");
     }
 
   public:

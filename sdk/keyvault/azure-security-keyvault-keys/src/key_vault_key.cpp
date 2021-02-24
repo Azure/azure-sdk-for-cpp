@@ -8,7 +8,6 @@
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
 #include <azure/core/internal/json.hpp>
-#include <iostream>
 
 using namespace Azure::Security::KeyVault::Keys;
 using Azure::Security::KeyVault::Common::Internal::UnixTimeConverter;
@@ -40,7 +39,6 @@ void Details::KeyVaultKeyDeserialize(
 {
   auto body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
-  std::cout << jsonParser.dump();
 
   // "Key"
   auto const& jsonKey = jsonParser[Details::KeyPropertyName];
