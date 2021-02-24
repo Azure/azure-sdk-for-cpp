@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief A `map<string, T>` with case-insensitive keys.
+ * @brief A `map<string, T>` with case-insensitive key comparison.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief A `map<string, T>` with case-insensitive keys.
+   * @brief A `map<string, T>` with case-insensitive key comparison.
    */
   template <
       typename T,
