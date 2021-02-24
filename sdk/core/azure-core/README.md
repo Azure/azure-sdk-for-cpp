@@ -14,7 +14,7 @@ The main shared concepts of `Azure::Core` include:
 
 - HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
 - Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
-- Accessing HTTP response details from the method return types, via `Response<T>`.
+- Accessing HTTP response details for the returned model of any SDK client operation, via `Response<T>`.
 - Polling long-running operations (LROs), via `Operation<T>`.
 - Exceptions for reporting errors from service requests in a consistent fashion via the base exception type `RequestFailedException`.
 - Abstractions for Azure SDK credentials (`TokenCredential`).
