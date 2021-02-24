@@ -20,11 +20,7 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-#if defined(AZ_PLATFORM_WINDOWS)
-  using FileHandle = HANDLE;
-#elif defined(AZ_PLATFORM_POSIX)
-  using FileHandle = int;
-#endif
+  using FileHandle = FILE*;
 
   class FileReader {
   public:
@@ -34,11 +30,8 @@ namespace Azure { namespace Storage { namespace Details {
 
     FileHandle GetHandle() const { return m_handle; }
 
-    int64_t GetFileSize() const { return m_fileSize; }
-
   private:
     FileHandle m_handle;
-    int64_t m_fileSize;
   };
 
   class FileWriter {

@@ -437,27 +437,13 @@ namespace Azure { namespace Core { namespace Test {
   {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
-#elif defined(AZ_PLATFORM_WINDOWS)
-    testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
-#else
-#error "Unknown platform"
-#endif
-    auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+
+    FILE* f;
+    EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
+    EXPECT_TRUE(f != NULL);
+
+    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read all stream content for uploading instead of chunks
@@ -469,34 +455,21 @@ namespace Azure { namespace Core { namespace Test {
 
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
+
+    EXPECT_TRUE(fclose(f) == 0);
   }
 
   TEST_P(TransportAdapter, SizePutFromFileDefault)
   {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
-#elif defined(AZ_PLATFORM_WINDOWS)
-    testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
-#else
-#error "Unknown platform"
-#endif
 
-    auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    FILE* f;
+    EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
+    EXPECT_TRUE(f != NULL);
+
+    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
@@ -507,34 +480,22 @@ namespace Azure { namespace Core { namespace Test {
 
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
+
+    EXPECT_TRUE(fclose(f) == 0);
   }
 
   TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
   {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
-#elif defined(AZ_PLATFORM_WINDOWS)
-    testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
-#else
-#error "Unknown platform"
-#endif
+
+    FILE* f;
+    EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
+    EXPECT_TRUE(f != NULL);
 
     auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+        = Azure::Core::Http::FileBodyStream(f, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read more than file size (5Mb)
@@ -546,6 +507,8 @@ namespace Azure { namespace Core { namespace Test {
 
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
+
+    EXPECT_TRUE(fclose(f) == 0);
   }
 
   /*****************  Test Utils *************************/

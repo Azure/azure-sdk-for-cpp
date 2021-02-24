@@ -687,7 +687,7 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
 
   auto totalRead = int64_t();
   auto readRequestLength = this->m_isChunkedResponseType
-      ? std::min(this->m_chunkSize - this->m_sessionTotalRead, count)
+      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, count)
       : count;
 
   // For responses with content-length, avoid trying to read beyond Content-length or
@@ -696,7 +696,7 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
   if (this->m_contentLength > 0)
   {
     auto remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
-    readRequestLength = std::min(readRequestLength, remainingBodyContent);
+    readRequestLength = (std::min)(readRequestLength, remainingBodyContent);
   }
 
   // Take data from inner buffer if any

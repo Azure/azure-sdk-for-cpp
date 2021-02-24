@@ -35,29 +35,122 @@ TEST(BodyStream, Rewind)
   EXPECT_THROW(tb.Rewind(), std::logic_error);
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
   testDataPath.append("/fileData");
-  int f = open(testDataPath.data(), O_RDONLY);
-  EXPECT_GE(f, 0);
-#elif defined(AZ_PLATFORM_WINDOWS)
-  testDataPath.append("\\fileData");
-  HANDLE f = CreateFile(
-      testDataPath.data(),
-      GENERIC_READ,
-      FILE_SHARE_READ,
-      NULL,
-      OPEN_EXISTING,
-      FILE_FLAG_SEQUENTIAL_SCAN,
-      NULL);
-  EXPECT_NE(f, INVALID_HANDLE_VALUE);
-#else
-#error "Unknown platform"
-#endif
-  auto fileBodyStream = Azure::Core::Http::FileBodyStream(f, 0, 0);
+
+  FILE* f{};
+  EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
+  EXPECT_TRUE(f != NULL);
+
+  auto fileBodyStream = Azure::Core::Http::FileBodyStream(f);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
   Azure::Core::Http::MemoryBodyStream ms(data);
   EXPECT_NO_THROW(ms.Rewind());
+
+  EXPECT_TRUE(fclose(f) == 0);
+}
+
+TEST(FileBodyStream, BadInput)
+{
+  FILE* f = NULL;
+  EXPECT_THROW((Azure::Core::Http::FileBodyStream(f)), std::invalid_argument);
+  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, -1), std::invalid_argument);
+}
+
+constexpr int64_t FileSize = 1024 * 100;
+
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C6387: 'f' could be '0': this does not adhere to the specification for the function fread
+#pragma warning(disable : 6387)
+#endif
+
+TEST(FileBodyStream, Length)
+{
+  FILE* f = NULL;
+
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+  EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
+  EXPECT_TRUE(f != NULL);
+
+  auto stream = Azure::Core::Http::FileBodyStream(f);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  stream = Azure::Core::Http::FileBodyStream(f, 2);
+  EXPECT_EQ(stream.Length(), 2);
+
+  std::vector<uint8_t> data(10);
+  const size_t actualRead = fread(data.data(), 1, data.size(), f);
+  EXPECT_EQ(actualRead, data.size());
+
+  stream = Azure::Core::Http::FileBodyStream(f);
+  EXPECT_EQ(stream.Length(), FileSize - data.size());
+
+  auto readResult
+      = Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), stream);
+  EXPECT_EQ(readResult.size(), FileSize - data.size());
+
+  stream.Rewind();
+  stream = Azure::Core::Http::FileBodyStream(f, 10);
+  EXPECT_EQ(stream.Length(), 10);
+
+  readResult
+      = Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), stream);
+  EXPECT_EQ(readResult.size(), 10);
+
+  EXPECT_TRUE(fclose(f) == 0);
+}
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+TEST(FileBodyStream, ReadAndRewind)
+{
+  FILE* f = NULL;
+
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+  EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
+  EXPECT_TRUE(f != NULL);
+
+  auto stream = Azure::Core::Http::FileBodyStream(f);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  std::vector<uint8_t> data(5);
+  EXPECT_EQ(stream.Read(Azure::Core::GetApplicationContext(), data.data(), data.size()), 5);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  data.resize(100);
+  EXPECT_EQ(
+      Azure::Core::Http::BodyStream::ReadToCount(
+          Azure::Core::GetApplicationContext(), stream, data.data(), data.size()),
+      100);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  auto result
+      = Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), stream);
+  EXPECT_EQ(result.size(), FileSize - 105);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  stream.Rewind();
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  data.resize(1024 * 1024);
+  EXPECT_EQ(
+      Azure::Core::Http::BodyStream::ReadToCount(
+          Azure::Core::GetApplicationContext(), stream, data.data(), data.size()),
+      FileSize);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  stream.Rewind();
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  data.resize(1024 * 1024);
+  EXPECT_EQ(stream.Read(Azure::Core::GetApplicationContext(), data.data(), data.size()), FileSize);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  EXPECT_TRUE(fclose(f) == 0);
 }

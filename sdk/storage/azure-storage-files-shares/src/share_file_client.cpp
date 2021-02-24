@@ -928,9 +928,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     Storage::Details::FileReader fileReader(fileName);
+    Azure::Core::Http::FileBodyStream stream(fileReader.GetHandle());
 
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();
+    protocolLayerOptions.XMsContentLength = stream.Length();
     protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
     if (protocolLayerOptions.FileAttributes.empty())
     {
@@ -1004,12 +1005,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), length);
       UploadShareFileRangeOptions uploadRangeOptions;
       UploadRange(offset, &contentStream, uploadRangeOptions, context);
     };
 
-    const int64_t fileSize = fileReader.GetFileSize();
+    const int64_t fileSize = stream.Length();
     int64_t chunkSize = options.TransferOptions.ChunkSize;
     if (fileSize < options.TransferOptions.SingleUploadThreshold)
     {

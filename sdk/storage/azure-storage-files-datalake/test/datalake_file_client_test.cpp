@@ -522,7 +522,8 @@ namespace Azure { namespace Storage { namespace Test {
       std::string tempFileDestinationName = RandomString();
       fileClient.DownloadTo(tempFileDestinationName);
       Azure::Storage::Details::FileReader fileReader(tempFileDestinationName);
-      auto size = fileReader.GetFileSize();
+      Azure::Core::Http::FileBodyStream stream(fileReader.GetHandle());
+      auto size = stream.Length();
       EXPECT_EQ(fileSize, size);
       DeleteFile(tempFileDestinationName);
       DeleteFile(tempFilename);
