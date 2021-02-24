@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief A `map<string, T>` with case-insensitive key comparison.
+ * @brief A `map<string, string>` with case-insensitive key comparison.
  */
 
 #pragma once
@@ -16,11 +16,10 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief A type alias of `std::map<std::string, T>` with case-insensitive key comparison.
-   *
-   * @tparam T Type of values being stored in the map.
+   * @brief A type alias of `std::map<std::string, std::string>` with case-insensitive key
+   * comparison.
    */
-  template <typename T>
-  using CaseInsensitiveMap = std::map<std::string, T, Internal::Strings::CaseInsensitiveComparator>;
+  using CaseInsensitiveMap
+      = std::map<std::string, std::string, Internal::Strings::CaseInsensitiveComparator>;
 
 }} // namespace Azure::Core

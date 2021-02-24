@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if \p headerName is invalid.
      */
     void InsertHeaderWithValidation(
-        CaseInsensitiveMap<std::string>& headers,
+        CaseInsensitiveMap& headers,
         std::string const& headerName,
         std::string const& headerValue);
   } // namespace Details
@@ -450,8 +450,8 @@ namespace Azure { namespace Core { namespace Http {
   private:
     HttpMethod m_method;
     Url m_url;
-    CaseInsensitiveMap<std::string> m_headers;
-    CaseInsensitiveMap<std::string> m_retryHeaders;
+    CaseInsensitiveMap m_headers;
+    CaseInsensitiveMap m_retryHeaders;
 
     BodyStream* m_bodyStream;
 
@@ -553,7 +553,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP headers.
      */
-    CaseInsensitiveMap<std::string> GetHeaders() const;
+    CaseInsensitiveMap GetHeaders() const;
 
     /**
      * @brief Get HTTP body as #Azure::Core::Http::BodyStream.
@@ -604,7 +604,7 @@ namespace Azure { namespace Core { namespace Http {
     int32_t m_minorVersion;
     HttpStatusCode m_statusCode;
     std::string m_reasonPhrase;
-    CaseInsensitiveMap<std::string> m_headers;
+    CaseInsensitiveMap m_headers;
 
     std::unique_ptr<BodyStream> m_bodyStream;
     std::vector<uint8_t> m_body;
@@ -738,7 +738,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response headers.
      */
-    CaseInsensitiveMap<std::string> const& GetHeaders() const;
+    CaseInsensitiveMap const& GetHeaders() const;
 
     /**
      * @brief Get HTTP response body as #Azure::Core::Http::BodyStream.

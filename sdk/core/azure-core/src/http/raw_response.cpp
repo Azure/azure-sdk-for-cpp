@@ -15,10 +15,7 @@ HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
 
 std::string const& RawResponse::GetReasonPhrase() const { return m_reasonPhrase; }
 
-Azure::Core::CaseInsensitiveMap<std::string> const& RawResponse::GetHeaders() const
-{
-  return this->m_headers;
-}
+Azure::Core::CaseInsensitiveMap const& RawResponse::GetHeaders() const { return this->m_headers; }
 
 void RawResponse::AddHeader(uint8_t const* const first, uint8_t const* const last)
 {

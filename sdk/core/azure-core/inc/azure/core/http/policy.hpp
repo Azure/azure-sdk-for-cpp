@@ -389,7 +389,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     struct ValuePolicyOptions
     {
-      CaseInsensitiveMap<std::string> HeaderValues;
+      CaseInsensitiveMap HeaderValues;
       std::map<std::string, std::string> QueryValues;
     };
 

@@ -24,8 +24,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -39,8 +38,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expectedOverride("valid", "override");
     EXPECT_NO_THROW(req.AddHeader(expectedOverride.first, expectedOverride.second));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -52,8 +50,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(req.AddHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondHeader = headers.begin();
           secondHeader++;
           return secondHeader->first == expected.first && secondHeader->second == expected.second
@@ -72,8 +69,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_NO_THROW(response.AddHeader(expected.first, expected.second));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -88,8 +84,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expectedOverride("valid", "override");
     EXPECT_NO_THROW(response.AddHeader(expectedOverride.first, expectedOverride.second));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -101,8 +96,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(response.AddHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
           secondtHeader++;
           return secondtHeader->first == expected.first && secondtHeader->second == expected.second
@@ -119,8 +113,7 @@ namespace Azure { namespace Core { namespace Test {
     // adding header after previous error just happened on add from string
     EXPECT_NO_THROW(response.AddHeader("valid3: header3"));
     EXPECT_PRED2(
-        [](Azure::Core::CaseInsensitiveMap<std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
           secondtHeader++;
           secondtHeader++;

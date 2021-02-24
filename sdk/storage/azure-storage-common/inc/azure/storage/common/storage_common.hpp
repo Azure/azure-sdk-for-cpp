@@ -55,7 +55,7 @@ namespace Azure { namespace Storage {
     ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm);
     std::string ToBase64String(const ContentHash& hash);
   } // namespace Details
-  using Metadata = Azure::Core::CaseInsensitiveMap<std::string>;
+  using Metadata = Azure::Core::CaseInsensitiveMap;
 
   namespace Details {
 
