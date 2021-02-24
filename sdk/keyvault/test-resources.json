@@ -11,7 +11,7 @@
         },
         "baseNamePremium": {
             "type": "string",
-            "defaultValue": "cpp-live-premium",
+            "defaultValue": "[resourceGroup().name]-p",
             "metadata": {
                 "description": "The base resource name."
             }
