@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Azure { namespace Template { namespace Second { 
+namespace Azure { namespace Template { namespace Second {
 
   class TemplateClient {
   public:
