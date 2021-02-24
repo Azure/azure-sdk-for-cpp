@@ -17,9 +17,8 @@ namespace Azure { namespace Storage {
   };
 
   // Defines a fn signature to be use to get a bodyStream from a specific offset.
-  typedef std::function<std::unique_ptr<Azure::IO::BodyStream>(
-      Azure::Core::Context const&,
-      HttpGetterInfo const&)>
+  typedef std::function<
+      std::unique_ptr<Azure::IO::BodyStream>(Azure::Core::Context const&, HttpGetterInfo const&)>
       HTTPGetter;
 
   // Options used by reliable stream

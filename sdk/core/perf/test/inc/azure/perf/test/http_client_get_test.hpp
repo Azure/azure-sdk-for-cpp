@@ -11,9 +11,9 @@
 
 #include <azure/perf.hpp>
 
-#include <azure/core/io/body_stream.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/transport.hpp>
+#include <azure/core/io/body_stream.hpp>
 
 #include <memory>
 #include <vector>

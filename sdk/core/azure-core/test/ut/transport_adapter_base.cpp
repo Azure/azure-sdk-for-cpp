@@ -456,8 +456,7 @@ namespace Azure { namespace Core { namespace Test {
 #else
 #error "Unknown platform"
 #endif
-    auto requestBodyStream
-        = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read all stream content for uploading instead of chunks
@@ -495,8 +494,7 @@ namespace Azure { namespace Core { namespace Test {
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
@@ -533,8 +531,7 @@ namespace Azure { namespace Core { namespace Test {
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read more than file size (5Mb)

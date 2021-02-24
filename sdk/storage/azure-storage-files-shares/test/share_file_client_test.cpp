@@ -634,8 +634,7 @@ namespace Azure { namespace Storage { namespace Test {
         downloadOptions.Range.GetValue().Length = rangeSize;
         Files::Shares::Models::DownloadShareFileResult result;
         EXPECT_NO_THROW(result = fileClient.Download(downloadOptions).ExtractValue());
-        auto resultBuffer
-            = IO::BodyStream::ReadToEnd(Core::Context(), *(result.BodyStream));
+        auto resultBuffer = IO::BodyStream::ReadToEnd(Core::Context(), *(result.BodyStream));
         EXPECT_EQ(rangeContent, resultBuffer);
         EXPECT_EQ(
             downloadOptions.Range.GetValue().Length.GetValue(),
