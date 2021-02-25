@@ -5,9 +5,9 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Models {
+namespace Azure { namespace Storage { namespace Blobs {
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyBlobResult::PollInternal(
+  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyBlobOperation::PollInternal(
       Azure::Core::Context& context)
   {
     (void)context;
@@ -17,11 +17,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    else if (response->CopyStatus.GetValue() == CopyStatus::Pending)
+    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Pending)
     {
       m_status = Azure::Core::OperationStatus::Running;
     }
-    else if (response->CopyStatus.GetValue() == CopyStatus::Success)
+    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Success)
     {
       m_status = Azure::Core::OperationStatus::Succeeded;
     }
@@ -33,9 +33,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     return response.ExtractRawResponse();
   }
 
-  Azure::Core::Response<GetBlobPropertiesResult> StartCopyBlobResult::PollUntilDoneInternal(
-      Azure::Core::Context& context,
-      std::chrono::milliseconds period)
+  Azure::Core::Response<Models::GetBlobPropertiesResult> StartCopyBlobOperation::
+      PollUntilDoneInternal(Azure::Core::Context& context, std::chrono::milliseconds period)
   {
     while (true)
     {
@@ -43,7 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Core::Response<GetBlobPropertiesResult>(m_pollResult, std::move(rawResponse));
+        return Azure::Core::Response<Models::GetBlobPropertiesResult>(
+            m_pollResult, std::move(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {
@@ -58,4 +58,4 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     };
   }
 
-}}}} // namespace Azure::Storage::Blobs::Models
+}}} // namespace Azure::Storage::Blobs
