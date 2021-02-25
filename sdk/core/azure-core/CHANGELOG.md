@@ -10,6 +10,8 @@
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
+- Moved `NullBodyStream` to internal usage only. It is not meant for public use.
+- Removed `LimitBodyStream`.
 
 ### Bug Fixes
 
