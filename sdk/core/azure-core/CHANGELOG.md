@@ -10,6 +10,8 @@
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
+- Removed `Context.Alternative()`.
+- Updated `Context` to create values from void*. 
 
 ### Bug Fixes
 

@@ -16,69 +16,55 @@ using namespace Azure::Core;
 TEST(Context, Basic)
 {
   Context context;
-  auto& valueT = context["key"];
+  auto valueT = context["key"];
   EXPECT_FALSE(context.HasKey(""));
   EXPECT_FALSE(context.HasKey("key"));
-
-  auto kind = valueT.Alternative();
-  EXPECT_TRUE(kind == ContextValue::ContextValueType::Undefined);
+  EXPECT_EQ(valueT, nullptr);
 }
 
 TEST(Context, BasicBool)
 {
   Context context;
   // New context from previous
-  auto c2 = context.WithValue("key", true);
-  auto& valueT = c2["key"];
-  auto value = valueT.Get<bool>();
-  EXPECT_TRUE(value == true);
-
-  auto kind = valueT.Alternative();
-  EXPECT_TRUE(kind == ContextValue::ContextValueType::Bool);
+  bool value(true);
+  auto c2 = context.WithValue("key", reinterpret_cast<void*>(&value));
+  auto valueVoidP = c2["key"];
+  auto valueT = *reinterpret_cast<bool*>(valueVoidP);
+  EXPECT_EQ(value, valueT);
 }
 
 TEST(Context, BasicInt)
 {
   Context context;
+  int value = 123;
   // New context from previous
-  auto c2 = context.WithValue("key", 123);
-  auto& valueT = c2["key"];
-  auto value = valueT.Get<int>();
-  EXPECT_TRUE(value == 123);
-
-  auto kind = valueT.Alternative();
-  EXPECT_TRUE(kind == ContextValue::ContextValueType::Int);
+  auto c2 = context.WithValue("key", reinterpret_cast<void*>(&value));
+  auto valueVoidP = c2["key"];
+  auto valueT = *reinterpret_cast<int*>(valueVoidP);
+  EXPECT_EQ(value, valueT);
 }
 
 TEST(Context, BasicStdString)
 {
   std::string s("Test String");
-
   Context context;
   // New context from previous
-  auto c2 = context.WithValue("key", s);
-  auto& valueT = c2["key"];
-  auto value = valueT.Get<std::string>();
-  EXPECT_TRUE(value == s);
-
-  auto kind = valueT.Alternative();
-  EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
+  auto c2 = context.WithValue("key", reinterpret_cast<void*>(&s));
+  auto valueT = c2["key"];
+  auto value = *reinterpret_cast<std::string*>(valueT);
+  EXPECT_EQ(value, s);
 }
 
 TEST(Context, BasicChar)
 {
-  const char* str = "Test String";
-  std::string s(str);
+  char str[] = "Test String";
 
   Context context;
   // New context from previous
-  auto c2 = context.WithValue("key", str);
-  auto& valueT = c2["key"];
-  auto value = valueT.Get<std::string>();
-  EXPECT_TRUE(value == s);
-
-  auto kind = valueT.Alternative();
-  EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
+  auto c2 = context.WithValue("key", reinterpret_cast<void*>(str));
+  auto valueT = c2["key"];
+  auto value = reinterpret_cast<char*>(valueT);
+  EXPECT_EQ(value, str);
 }
 
 TEST(Context, ApplicationContext)
@@ -122,9 +108,10 @@ TEST(Context, NestedIsCancelled)
 {
   auto duration = std::chrono::milliseconds(250);
   auto deadline = std::chrono::system_clock::now() + duration;
+  std::string valueForContext("Value");
 
   Context context;
-  auto c2 = context.WithValue("Key", "Value");
+  auto c2 = context.WithValue("Key", reinterpret_cast<void*>(&valueForContext));
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_TRUE(c2.HasKey("Key"));
   EXPECT_FALSE(context.HasKey("Key"));
@@ -147,7 +134,8 @@ TEST(Context, NestedIsCancelled)
 TEST(Context, CancelWithValue)
 {
   Context context;
-  auto c2 = context.WithValue("Key", "Value");
+  std::string valueForContext("Value");
+  auto c2 = context.WithValue("Key", reinterpret_cast<void*>(&valueForContext));
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_TRUE(c2.HasKey("Key"));
@@ -173,83 +161,70 @@ TEST(Context, ThrowIfCancelled)
   EXPECT_THROW(c2.ThrowIfCancelled(), Azure::Core::OperationCancelledException);
 }
 
-TEST(Context, Alternative)
-{
-  Context context;
-  // New context from previous
-  auto c2 = context.WithValue("key", 123);
-  auto& valueT1 = c2["key"];
-  auto& valueT2 = c2["otherKey"];
-
-  EXPECT_TRUE(valueT1.Alternative() == ContextValue::ContextValueType::Int);
-  EXPECT_TRUE(valueT2.Alternative() == ContextValue::ContextValueType::Undefined);
-}
-
 TEST(Context, Chain)
 {
   Context context;
+  int value2 = 123;
+  int value3 = 456;
+  int value4 = 789;
+  char value5 = '5';
+  char value6 = '6';
+  char value7 = '7';
+  std::string final("Final");
   // New context from previous
-  auto c2 = context.WithValue("c2", 123);
-  auto c3 = c2.WithValue("c3", 456);
-  auto c4 = c3.WithValue("c4", 789);
-  auto c5 = c4.WithValue("c5", "5");
-  auto c6 = c5.WithValue("c6", "6");
-  auto c7 = c6.WithValue("c7", "7");
-  auto finalContext = c7.WithValue("finalContext", "Final");
+  auto c2 = context.WithValue("c2", reinterpret_cast<void*>(&value2));
+  auto c3 = c2.WithValue("c3", reinterpret_cast<void*>(&value3));
+  auto c4 = c3.WithValue("c4", reinterpret_cast<void*>(&value4));
+  auto c5 = c4.WithValue("c5", reinterpret_cast<void*>(&value5));
+  auto c6 = c5.WithValue("c6", reinterpret_cast<void*>(&value6));
+  auto c7 = c6.WithValue("c7", reinterpret_cast<void*>(&value7));
+  auto finalContext = c7.WithValue("finalContext", reinterpret_cast<void*>(&final));
 
-  auto& valueT2 = finalContext["c2"];
-  auto& valueT3 = finalContext["c3"];
-  auto& valueT4 = finalContext["c4"];
-  auto& valueT5 = finalContext["c5"];
-  auto& valueT6 = finalContext["c6"];
-  auto& valueT7 = finalContext["c7"];
-  auto& valueT8 = finalContext["finalContext"];
-  auto& valueT9 = finalContext["otherKey"];
+  auto valueT2 = finalContext["c2"];
+  auto valueT3 = finalContext["c3"];
+  auto valueT4 = finalContext["c4"];
+  auto valueT5 = finalContext["c5"];
+  auto valueT6 = finalContext["c6"];
+  auto valueT7 = finalContext["c7"];
+  auto valueT8 = finalContext["finalContext"];
+  auto valueT9 = finalContext["otherKey"];
 
-  EXPECT_TRUE(valueT2.Alternative() == ContextValue::ContextValueType::Int);
-  EXPECT_TRUE(valueT3.Alternative() == ContextValue::ContextValueType::Int);
-  EXPECT_TRUE(valueT4.Alternative() == ContextValue::ContextValueType::Int);
-  EXPECT_TRUE(valueT5.Alternative() == ContextValue::ContextValueType::StdString);
-  EXPECT_TRUE(valueT6.Alternative() == ContextValue::ContextValueType::StdString);
-  EXPECT_TRUE(valueT7.Alternative() == ContextValue::ContextValueType::StdString);
-  EXPECT_TRUE(valueT8.Alternative() == ContextValue::ContextValueType::StdString);
-  EXPECT_TRUE(valueT9.Alternative() == ContextValue::ContextValueType::Undefined);
+  auto value = reinterpret_cast<int*>(valueT2);
+  EXPECT_EQ(*value, value2);
+  value = reinterpret_cast<int*>(valueT3);
+  EXPECT_EQ(*value, value3);
+  value = reinterpret_cast<int*>(valueT4);
+  EXPECT_EQ(*value, value4);
 
-  auto value = valueT2.Get<int>();
-  EXPECT_TRUE(value == 123);
-  value = valueT3.Get<int>();
-  EXPECT_TRUE(value == 456);
-  value = valueT4.Get<int>();
-  EXPECT_TRUE(value == 789);
+  auto str = reinterpret_cast<char*>(valueT5);
+  EXPECT_EQ(*str, value5);
+  str = reinterpret_cast<char*>(valueT6);
+  EXPECT_EQ(*str, value6);
+  str = reinterpret_cast<char*>(valueT7);
+  EXPECT_EQ(*str, value7);
 
-  auto str = valueT5.Get<std::string>();
-  EXPECT_TRUE(str == "5");
-  str = valueT6.Get<std::string>();
-  EXPECT_TRUE(str == "6");
-  str = valueT7.Get<std::string>();
-  EXPECT_TRUE(str == "7");
+  auto valueT = *reinterpret_cast<std::string*>(valueT8);
+  EXPECT_EQ(valueT, final);
 
-  str = valueT8.Get<std::string>();
-  EXPECT_TRUE(str == "Final");
+  EXPECT_EQ(valueT9, nullptr);
 }
 
 TEST(Context, MatchingKeys)
 {
   Context context;
+  int value2 = 123;
+  int value3 = 456;
   // New context from previous
-  auto c2 = context.WithValue("key", 123);
-  auto c3 = c2.WithValue("key", 456);
+  auto c2 = context.WithValue("key", reinterpret_cast<void*>(&value2));
+  auto c3 = c2.WithValue("key", reinterpret_cast<void*>(&value3));
 
-  auto& valueT2 = c2["key"];
-  auto& valueT3 = c3["key"];
-  auto& missing = c3["otherKey"];
+  auto valueT2 = c2["key"];
+  auto valueT3 = c3["key"];
+  auto missing = c3["otherKey"];
 
-  EXPECT_TRUE(valueT2.Alternative() == ContextValue::ContextValueType::Int);
-  EXPECT_TRUE(valueT3.Alternative() == ContextValue::ContextValueType::Int);
-  EXPECT_TRUE(missing.Alternative() == ContextValue::ContextValueType::Undefined);
-
-  auto value = valueT2.Get<int>();
-  EXPECT_TRUE(value == 123);
-  value = valueT3.Get<int>();
-  EXPECT_TRUE(value == 456);
+  auto valueT = *reinterpret_cast<int*>(valueT2);
+  EXPECT_EQ(valueT, value2);
+  valueT = *reinterpret_cast<int*>(valueT3);
+  EXPECT_EQ(valueT, value3);
+  EXPECT_EQ(missing, nullptr);
 }
