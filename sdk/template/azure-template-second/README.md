@@ -1,12 +1,17 @@
-# Azure Template Package client library for C++
+# Azure Second Template Package client library for C++
 
-Azure Template Package client library for C++ (`azure-template`)  matches necessary patterns that the development team has established to create a unified sdk written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
+Contributors should use [`azure-template`](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/template/azure-template/README.md) instead of `azure-template-second` for setting up a project. 
 
-The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
+The Azure Second Template Package client library for C++ (`azure-template-second`) is designed to work with the `azure-template` package in testing certain release scenarios. It is intended to match patterns demonstrated in `azure-template`.
+
+Use the patterns described in the [`azure-template`](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/template/azure-template/README.md) package for an example of the necessary patterns that the development team has established to create a unified SDK written in the C++ programming language.
 
 ## Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md)
+This package is intended to test release of multiple packages simultaneously. To validate multiple package release scenarios: 
+
+1) Ensure that the version specified in `version.hpp` and `CHANGELOG.md` for both `azure-template` and `azure-template-second` will successfully pass a release gate.
+1) Queue a for the `azure-template` service and release packages as needed to validate the release scenarios.
 
 # Key concepts
 
