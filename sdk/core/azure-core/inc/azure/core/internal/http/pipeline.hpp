@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       }
 
       m_policies.reserve(policies.size());
-      for (auto&& policy : policies)
+      for (auto& policy : policies)
       {
         m_policies.emplace_back(policy->Clone());
       }
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
         ClientOptions const& clientOptions,
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& perRetryPolicies)
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies)
         : HttpPipeline(
             clientOptions,
             telemetryServiceName,
@@ -98,8 +98,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
         ClientOptions const& clientOptions,
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& perRetryPolicies,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& perCallPolicies)
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perCallPolicies)
     {
       auto const& perCallClientPolicies = clientOptions.GetPerCallPolicies();
       auto const& perRetryClientPolicies = clientOptions.GerPerRetryPolicies();
@@ -110,17 +110,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       // - LoggingPolicy
       // - TransportPolicy
       auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
-          + perRetryPolicies.size() + perCallPolicies.size() + 3;
+          + perRetryPolicies.size() + perCallPolicies.size() + 5;
 
       m_policies.reserve(pipelineSize);
 
       // service-specific per call policies
-      for (auto&& policy : perCallPolicies)
+      for (auto& policy : perCallPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
       // client-options per call policies
-      for (auto&& policy : perCallClientPolicies)
+      for (auto& policy : perCallClientPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
@@ -135,12 +135,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
           std::make_unique<Azure::Core::Http::RetryPolicy>(clientOptions.Retry));
 
       // service-specific per retry policies
-      for (auto&& policy : perRetryPolicies)
+      for (auto& policy : perRetryPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
       // client options per retry policies
-      for (auto&& policy : perRetryClientPolicies)
+      for (auto& policy : perRetryClientPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     HttpPipeline(const HttpPipeline& other)
     {
       m_policies.reserve(other.m_policies.size());
-      for (auto&& policy : other.m_policies)
+      for (auto& policy : other.m_policies)
       {
         m_policies.emplace_back(policy->Clone());
       }

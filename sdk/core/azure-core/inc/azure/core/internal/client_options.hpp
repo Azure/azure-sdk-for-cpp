@@ -65,12 +65,12 @@ namespace Azure { namespace Core { namespace Internal {
     explicit ClientOptions(ClientOptions const& options)
     {
       m_perOperationPolicies.reserve(options.m_perOperationPolicies.size());
-      for (auto&& policy : options.m_perOperationPolicies)
+      for (auto& policy : options.m_perOperationPolicies)
       {
         m_perOperationPolicies.emplace_back(policy->Clone());
       }
       m_perRetryPolicies.reserve(options.m_perRetryPolicies.size());
-      for (auto&& policy : options.m_perRetryPolicies)
+      for (auto& policy : options.m_perRetryPolicies)
       {
         m_perRetryPolicies.emplace_back(policy->Clone());
       }
