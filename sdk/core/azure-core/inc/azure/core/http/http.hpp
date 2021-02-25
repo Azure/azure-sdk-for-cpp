@@ -469,7 +469,7 @@ namespace Azure { namespace Core { namespace Http {
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
     // The count gets incremented on every intent to send the request.
-    uint m_retryCount = 0;
+    int m_retryCount = 0;
 
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
@@ -606,7 +606,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return uint
      */
-    uint GetRetryCount() const { return m_retryCount; }
+    int GetRetryCount() const { return m_retryCount; }
   };
 
   /**
