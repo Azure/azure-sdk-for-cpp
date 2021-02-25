@@ -231,15 +231,6 @@ namespace Azure { namespace Core { namespace Http {
   }
 
   /**
-   * Type of HTTP response body.
-   */
-  enum class BodyType
-  {
-    Buffer, ///< Buffer.
-    Stream, ///< Stream.
-  };
-
-  /**
    * @brief HTTP request.
    */
   class Request {
