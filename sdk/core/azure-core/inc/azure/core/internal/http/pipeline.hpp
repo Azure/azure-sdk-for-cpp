@@ -13,7 +13,9 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/client_options.hpp"
 
+#include <memory>
 #include <vector>
 
 namespace Azure { namespace Core { namespace Internal { namespace Http {
@@ -56,6 +58,100 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     }
 
     /**
+     * @brief Construct a new Http Pipeline object from clientOptions.
+     *
+     * @remark The client options includes per retry and per call policies which are merged with the
+     * service-specific per retry policies.
+     *
+     * @param clientOptions The SDK client options.
+     * @param telemetryServiceName The name of the service for sending telemetry.
+     * @param telemetryServiceVersion The version of the service for sending telemetry.
+     * @param perRetryPolicies The service specific per retry policies.
+     */
+    explicit HttpPipeline(
+        ClientOptions const& clientOptions,
+        std::string const& telemetryServiceName,
+        std::string const& telemetryServiceVersion,
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& perRetryPolicies)
+        : HttpPipeline(
+            clientOptions,
+            telemetryServiceName,
+            telemetryServiceVersion,
+            std::move(perRetryPolicies),
+            {})
+    {
+    }
+
+    /**
+     * @brief Construct a new Http Pipeline object from clientOptions.
+     *
+     * @remark The client options includes per retry and per call policies which are merged with the
+     * service-specific per retry policies.
+     *
+     * @param clientOptions The SDK client options.
+     * @param telemetryServiceName The name of the service for sending telemetry.
+     * @param telemetryServiceVersion The version of the service for sending telemetry.
+     * @param perRetryPolicies The service-specific per retry policies.
+     * @param perCallPolicies The service-specific per call policies.
+     */
+    explicit HttpPipeline(
+        ClientOptions const& clientOptions,
+        std::string const& telemetryServiceName,
+        std::string const& telemetryServiceVersion,
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& perRetryPolicies,
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& perCallPolicies)
+    {
+      auto const& perCallClientPolicies = clientOptions.GetPerCallPolicies();
+      auto const& perRetryClientPolicies = clientOptions.GerPerRetryPolicies();
+      // Adding 5 for:
+      // - TelemetryPolicy
+      // - RequestIdPolicy
+      // - RetryPolicy
+      // - LoggingPolicy
+      // - TransportPolicy
+      auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
+          + perRetryPolicies.size() + perCallPolicies.size() + 3;
+
+      m_policies.reserve(pipelineSize);
+
+      // service-specific per call policies
+      for (auto&& policy : perCallPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+      // client-options per call policies
+      for (auto&& policy : perCallClientPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+      // Request Id
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
+      // Telemetry
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+          telemetryServiceName, telemetryServiceVersion, clientOptions.Telemetry));
+
+      // Retry policy
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::RetryPolicy>(clientOptions.Retry));
+
+      // service-specific per retry policies
+      for (auto&& policy : perRetryPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+      // client options per retry policies
+      for (auto&& policy : perRetryClientPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+      // logging
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
+      // transport
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::TransportPolicy>(clientOptions.Transport));
+    }
+
+    /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
      * @param policies A sequence of #Azure::Core::Http::HttpPolicy representing a stack, first
@@ -83,7 +179,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     HttpPipeline(const HttpPipeline& other)
     {
       m_policies.reserve(other.m_policies.size());
-      for (auto&& policy : m_policies)
+      for (auto&& policy : other.m_policies)
       {
         m_policies.emplace_back(policy->Clone());
       }

@@ -23,27 +23,20 @@ KeyClient::KeyClient(
 {
   auto apiVersion = options.GetVersionString();
 
-  // Base Pipeline
-  std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(
-      std::make_unique<TelemetryPolicy>("KeyVault", apiVersion, options.Telemetry));
-  policies.emplace_back(std::make_unique<RequestIdPolicy>());
-  policies.emplace_back(std::make_unique<RetryPolicy>(options.Retry));
-
+  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Http::TokenRequestOptions const tokenOptions
         = {{"https://vault.azure.net/.default"}};
 
-    policies.emplace_back(
+    perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }
-
-  policies.emplace_back(std::make_unique<LoggingPolicy>());
-  policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(options.Transport));
   Azure::Core::Http::Url url(vaultUrl);
+  Azure::Core::Internal::Http::HttpPipeline pipeline(
+      options, "KeyVault", apiVersion, std::move(perRetrypolicies));
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
-      url, apiVersion, std::move(policies));
+      url, apiVersion, pipeline);
 }
 
 Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(

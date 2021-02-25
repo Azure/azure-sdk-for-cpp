@@ -5,6 +5,7 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/client_options.hpp>
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include <memory>
@@ -16,5 +17,8 @@ TEST(KeyVaultPipeline, initPipeline)
   std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
   policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
   Azure::Core::Http::Url url("urlTest");
-  EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", policies));
+  Azure::Core::Internal::ClientOptions options;
+  Azure::Core::Internal::Http::HttpPipeline pipeline(
+      options, "service-name", "service-version", policies);
+  EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", pipeline));
 }
