@@ -31,12 +31,12 @@ KeyClient::KeyClient(
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }
-  Azure::Core::Http::Url url(vaultUrl);
-  Azure::Core::Internal::Http::HttpPipeline pipeline(
-      options, "KeyVault", apiVersion, std::move(perRetrypolicies));
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
-      url, apiVersion, pipeline);
+      Azure::Core::Http::Url(vaultUrl),
+      apiVersion,
+      Azure::Core::Internal::Http::HttpPipeline(
+          options, "KeyVault", apiVersion, std::move(perRetrypolicies)));
 }
 
 Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
