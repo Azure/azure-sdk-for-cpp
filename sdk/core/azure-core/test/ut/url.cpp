@@ -5,11 +5,18 @@
 
 #include <azure/core/http/http.hpp>
 
+namespace Azure { namespace Core { namespace Test {
+
+  class TestURL : public ::testing::Test {
+  };
+
+}}} // namespace Azure::Core::Test
+
 using namespace Azure::Core;
 
 namespace Azure { namespace Core { namespace Test {
 
-  TEST(URL, getters)
+  TEST(TestURL, getters)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Get;
     Http::Url url("http://test.url.com");
@@ -79,7 +86,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_FALSE(headers.count("newheader"));
   }
 
-  TEST(URL, query_parameter)
+  TEST(TestURL, query_parameter)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Put;
     Http::Url url("http://test.com");
