@@ -114,16 +114,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
 
       m_policies.reserve(pipelineSize);
 
+      // client-options per call policies. End-user policies execute before client's policies.
+      for (auto& policy : perCallClientPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
       // service-specific per call policies
       for (auto& policy : perCallPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
-      // client-options per call policies
-      for (auto& policy : perCallClientPolicies)
-      {
-        m_policies.emplace_back(policy->Clone());
-      }
+
       // Request Id
       m_policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
       // Telemetry
@@ -134,17 +135,19 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::RetryPolicy>(clientOptions.Retry));
 
-      // service-specific per retry policies
-      for (auto& policy : perRetryPolicies)
-      {
-        m_policies.emplace_back(policy->Clone());
-      }
-      // client options per retry policies
+      // client options per retry policies.
       for (auto& policy : perRetryClientPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
-      // logging
+      // service-specific per retry policies. Services like storage have some policies which needs
+      // to execute as the last policy.
+      for (auto& policy : perRetryPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+
+      // logging - won't update request
       m_policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
       // transport
       m_policies.emplace_back(
