@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API to `StartCopyBlobOperation` as suggested by core sdk team. There's no way to access raw response anymore, although this is a clear violation to the entity of [exposing raw response](https://azure.github.io/azure-sdk/cpp_introduction.html#cpp-design-logical-client-expose-raw) in C++ Guidelines.
+- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API to `StartCopyBlobOperation`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
