@@ -5,6 +5,7 @@
 
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/http/null_body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -512,7 +513,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     auto response = Details::ShareRestClient::File::UploadRange(
         m_shareFileUrl,
-        *Azure::Core::Http::NullBodyStream::GetNullBodyStream(),
+        *Azure::Core::Internal::Http::NullBodyStream::GetNullBodyStream(),
         *m_pipeline,
         context,
         protocolLayerOptions);
