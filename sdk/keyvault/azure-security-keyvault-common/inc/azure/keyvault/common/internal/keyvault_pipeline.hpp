@@ -77,9 +77,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     explicit KeyVaultPipeline(
         Azure::Core::Http::Url vaultUrl,
         std::string apiVersion,
-        Azure::Core::Internal::Http::HttpPipeline const& pipeline)
-        : m_vaultUrl(std::move(vaultUrl)), m_pipeline(std::move(pipeline)),
-          m_apiVersion(std::move(apiVersion))
+        Azure::Core::Internal::Http::HttpPipeline&& pipeline)
+        : m_vaultUrl(std::move(vaultUrl)), m_pipeline(pipeline), m_apiVersion(std::move(apiVersion))
     {
     }
 
