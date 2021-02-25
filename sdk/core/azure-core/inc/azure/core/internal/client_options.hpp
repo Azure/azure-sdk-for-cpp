@@ -18,24 +18,6 @@
 namespace Azure { namespace Core { namespace Internal {
 
   /**
-   * @brief Represents a position of the policy in the pipeline.
-   *
-   */
-  enum class HttpPipelinePosition
-  {
-    /**
-     * @brief The policy would be invoked once per pipeline invocation (service call).
-     *
-     */
-    PerCall,
-    /**
-     * @brief The policy would be invoked every time request is retried.
-     *
-     */
-    PerRetry
-  };
-
-  /**
    * @brief  Base type for all client option types, exposes various common client options like Retry
    * and Transport.
    *
@@ -94,33 +76,30 @@ namespace Azure { namespace Core { namespace Internal {
     Azure::Core::Http::TelemetryPolicyOptions Telemetry;
 
     /**
-     * @brief Adds a policy into the client pipeline.
+     * @brief Adds a policy into the client.
      *
-     * @remark The position of policy in the pipeline is controlled by \p parameter. If you want the
-     * policy to execute once per client request use #HttpPipelinePosition::PerCall, otherwise use
-     * #HttpPipelinePosition#PerRetry to run the policy for every retry.
-     *
-     * @remark Note that the same instance of the policy would be added to all pipelines of client
-     * constructed using this #ClientOption object.
+     * @remark The order of policy while sending the request is controlled by \p order.
+     * If you want the policy to execute once per client request use #HttpPolicyOrder::PerCall,
+     * otherwise use #HttpPolicyOrder::PerRetry to run the policy for every retry.
      *
      * @param policy The policy instance to be added to the pipeline.
-     * @param position The position of policy in the pipeline.
+     * @param order The order to execute the policy.
      */
     void AddPolicy(
         std::unique_ptr<Azure::Core::Http::HttpPolicy> policy,
-        HttpPipelinePosition position)
+        Azure::Core::Http::HttpPolicyOrder order)
     {
-      switch (position)
+      switch (order)
       {
-        case HttpPipelinePosition::PerCall:
+        case Azure::Core::Http::HttpPolicyOrder::PerCall:
           m_perOperationPolicies.push_back(std::move(policy));
           break;
-        case HttpPipelinePosition::PerRetry:
+        case Azure::Core::Http::HttpPolicyOrder::PerRetry:
           m_perRetryPolicies.push_back(std::move(policy));
           break;
 
         default:
-          throw std::invalid_argument("Invalid position");
+          throw std::invalid_argument("Invalid order parameter");
       }
     }
 

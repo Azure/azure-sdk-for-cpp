@@ -29,6 +29,24 @@ namespace Azure { namespace Core { namespace Http {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
   }
 
+  /**
+   * @brief Define the order of execution of and Http policy when a request is sent to the server.
+   *
+   */
+  enum class HttpPolicyOrder
+  {
+    /**
+     * @brief The policy would be invoked once per request invocation (service call).
+     *
+     */
+    PerCall,
+    /**
+     * @brief The policy would be invoked every time the request is retried.
+     *
+     */
+    PerRetry
+  };
+
   class NextHttpPolicy;
 
   /**
