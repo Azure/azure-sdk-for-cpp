@@ -4,6 +4,7 @@
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/http/url.hpp>
 
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
@@ -41,7 +42,7 @@ KeyClient::KeyClient(
   policies.emplace_back(std::make_unique<LoggingPolicy>());
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-  Azure::Core::Http::Url url(vaultUrl);
+  Azure::Core::Internal::Http::Url url(vaultUrl);
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
       url, apiVersion, std::move(policies));

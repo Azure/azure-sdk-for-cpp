@@ -72,7 +72,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
       policies.emplace_back(
           std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-      Azure::Core::Http::Url url(vaultUrl);
+      Azure::Core::Internal::Http::Url url(vaultUrl);
 
       m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
           url, apiVersion, std::move(policies));

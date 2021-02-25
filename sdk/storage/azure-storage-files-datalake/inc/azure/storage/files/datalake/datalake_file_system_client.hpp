@@ -245,12 +245,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_fileSystemUrl;
+    Azure::Core::Internal::Http::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
 
     explicit DataLakeFileSystemClient(
-        Azure::Core::Http::Url fileSystemUrl,
+        Azure::Core::Internal::Http::Url fileSystemUrl,
         Blobs::BlobContainerClient blobContainerClient,
         std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline)
         : m_fileSystemUrl(std::move(fileSystemUrl)),

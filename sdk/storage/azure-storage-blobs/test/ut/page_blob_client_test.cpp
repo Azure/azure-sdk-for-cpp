@@ -6,6 +6,8 @@
 #include <future>
 #include <vector>
 
+#include <azure/core/internal/http/url.hpp>
+
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -148,7 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string snapshot = m_pageBlobClient->CreateSnapshot()->Snapshot;
-    Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
+    Azure::Core::Internal::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     sourceUri.AppendQueryParameters(GetSas());
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
     EXPECT_FALSE(copyInfo->RequestId.empty());

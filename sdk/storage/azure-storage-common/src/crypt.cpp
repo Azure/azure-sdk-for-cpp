@@ -37,7 +37,7 @@ namespace Azure { namespace Storage {
     std::string UrlEncodeQueryParameter(const std::string& value)
     {
       const static std::string DoNotEncodeCharacters = []() {
-        // Core::Http::Url::Encode won't encode unreserved characters.
+        // Core::Internal::Http::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = Subdelimiters;
         doNotEncodeCharacters += "/:@?";
         doNotEncodeCharacters.erase(
@@ -54,13 +54,13 @@ namespace Azure { namespace Storage {
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
       }();
-      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
+      return Core::Internal::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
 
     std::string UrlEncodePath(const std::string& value)
     {
       const static std::string DoNotEncodeCharacters = []() {
-        // Core::Http::Url::Encode won't encode unreserved characters.
+        // Core::Internal::Http::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = Subdelimiters;
         doNotEncodeCharacters += "/:@";
         doNotEncodeCharacters.erase(
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage {
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
       }();
-      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
+      return Core::Internal::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
   } // namespace Details
 

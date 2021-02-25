@@ -4,6 +4,7 @@
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/http/url.hpp>
 #include <azure/core/response.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -36,7 +37,8 @@ namespace Azure { namespace Core { namespace Test {
 
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("http://httpbin.org/get"));
+          Azure::Core::Http::HttpMethod::Get,
+          Azure::Core::Internal::Http::Url("http://httpbin.org/get"));
       std::string const expectedConnectionKey = "httpbin.org0011";
 
       {

@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/internal/http/url.hpp>
+
 #include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "azure/keyvault/common/keyvault_constants.hpp"
 #include "azure/keyvault/common/keyvault_exception.hpp"
@@ -11,7 +13,7 @@ namespace {
 inline Azure::Core::Http::Request InitRequest(
     Azure::Core::Http::HttpMethod method,
     Azure::Core::Http::BodyStream* content,
-    Azure::Core::Http::Url const& url)
+    Azure::Core::Internal::Http::Url const& url)
 {
   if (content == nullptr)
   {

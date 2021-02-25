@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
+    Azure::Core::Internal::Http::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
   };

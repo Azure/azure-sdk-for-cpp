@@ -30,7 +30,7 @@ namespace Azure { namespace Perf { namespace Test {
    */
   class HttpClientGetTest : public Azure::Perf::PerfTest {
   protected:
-    Azure::Core::Http::Url m_url;
+    Azure::Core::Internal::Http::Url m_url;
 
   public:
     /**
@@ -46,7 +46,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     void Setup() override
     {
-      m_url = Azure::Core::Http::Url(m_options.GetMandatoryOption<std::string>("url"));
+      m_url = Azure::Core::Internal::Http::Url(m_options.GetMandatoryOption<std::string>("url"));
     }
 
     /**

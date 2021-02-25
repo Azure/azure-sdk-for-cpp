@@ -5,6 +5,7 @@
 
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/url.hpp>
 
 #include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>
@@ -35,7 +36,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Internal::Http::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     // Move the curlMock to build a session and then send the request
@@ -68,7 +69,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Internal::Http::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -108,7 +109,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Internal::Http::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -185,7 +186,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Internal::Http::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -220,7 +221,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Internal::Http::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {

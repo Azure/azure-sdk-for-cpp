@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/internal/http/url.hpp>
+
 #include "azure/storage/common/storage_credential.hpp"
 
 #include <algorithm>
@@ -59,28 +61,29 @@ namespace Azure { namespace Storage { namespace Details {
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".blob." + EndpointSuffix;
     }
-    connectionStringParts.BlobServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.BlobServiceUrl = Azure::Core::Internal::Http::Url(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "DfsEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".dfs." + EndpointSuffix;
     }
-    connectionStringParts.DataLakeServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.DataLakeServiceUrl
+        = Azure::Core::Internal::Http::Url(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "FileEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".file." + EndpointSuffix;
     }
-    connectionStringParts.FileServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.FileServiceUrl = Azure::Core::Internal::Http::Url(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "QueueEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".queue." + EndpointSuffix;
     }
-    connectionStringParts.QueueServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.QueueServiceUrl = Azure::Core::Internal::Http::Url(std::move(endpoint));
 
     std::string accountKey = getWithDefault(connectionStringMap, "AccountKey");
     if (!accountKey.empty())

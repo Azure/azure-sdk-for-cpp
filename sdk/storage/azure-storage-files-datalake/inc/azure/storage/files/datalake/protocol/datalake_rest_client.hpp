@@ -410,7 +410,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<FileSystemListPathsResult> ListPaths(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListPathsOptions& listPathsOptions)
@@ -562,7 +562,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathCreateResult> Create(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
@@ -706,7 +706,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathGetPropertiesResult> GetProperties(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
@@ -779,7 +779,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathDeleteResult> Delete(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
@@ -852,7 +852,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathSetAccessControlResult> SetAccessControl(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessControlOptions& setAccessControlOptions)
@@ -927,7 +927,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathSetAccessControlRecursiveResult> SetAccessControlRecursive(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessControlRecursiveOptions& setAccessControlRecursiveOptions)
@@ -997,7 +997,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathFlushDataResult> FlushData(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const FlushDataOptions& flushDataOptions)
@@ -1110,7 +1110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         };
 
         static Azure::Core::Response<PathAppendDataResult> AppendData(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Internal::Http::Url& url,
             Azure::Core::Http::BodyStream& bodyStream,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,

@@ -4,6 +4,7 @@
 #include "azure/storage/blobs/blob_service_client.hpp"
 
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/http/url.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
@@ -215,7 +216,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = Details::BlobRestClient::BlobContainer::Undelete(
         context,
         *m_pipeline,
-        Azure::Core::Http::Url(blobContainerClient.GetUrl()),
+        Azure::Core::Internal::Http::Url(blobContainerClient.GetUrl()),
         protocolLayerOptions);
 
     return Azure::Core::Response<BlobContainerClient>(

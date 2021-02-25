@@ -4,6 +4,7 @@
 #include "azure/storage/files/shares/share_sas_builder.hpp"
 
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/url.hpp>
 #include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
@@ -100,7 +101,7 @@ namespace Azure { namespace Storage { namespace Sas {
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Base64Decode(credential.GetAccountKey())));
 
-    Azure::Core::Http::Url builder;
+    Azure::Core::Internal::Http::Url builder;
     builder.AppendQueryParameter(
         "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));

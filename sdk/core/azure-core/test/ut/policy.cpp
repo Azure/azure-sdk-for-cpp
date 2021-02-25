@@ -3,6 +3,7 @@
 
 #include <azure/core/http/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/http/url.hpp>
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -35,7 +36,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
-  Azure::Core::Http::Url url("");
+  Azure::Core::Internal::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
   EXPECT_THROW(pipeline.Send(Azure::Core::GetApplicationContext(), request), std::invalid_argument);
 }
@@ -50,7 +51,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
-  Azure::Core::Http::Url url("");
+  Azure::Core::Internal::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
   try

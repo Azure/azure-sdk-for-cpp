@@ -7,6 +7,7 @@
 #include <cctype>
 
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/url.hpp>
 #include <azure/core/internal/strings.hpp>
 
 #include "azure/storage/common/crypt.hpp"
@@ -70,7 +71,8 @@ namespace Azure { namespace Storage { namespace Details {
     {
       std::string key = Azure::Core::Internal::Strings::ToLower(query.first);
       ordered_kv.emplace_back(std::make_pair(
-          Azure::Core::Http::Url::Decode(key), Azure::Core::Http::Url::Decode(query.second)));
+          Azure::Core::Internal::Http::Url::Decode(key),
+          Azure::Core::Internal::Http::Url::Decode(query.second)));
     }
     std::sort(ordered_kv.begin(), ordered_kv.end());
     for (const auto& p : ordered_kv)
