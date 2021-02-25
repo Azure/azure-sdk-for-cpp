@@ -47,6 +47,11 @@ namespace Azure { namespace Core { namespace Test {
 
     // now add to retry headers
     req.StartTry();
+    uint expected = 1;
+    EXPECT_EQ(req.GetRetryCount(), expected);
+    req.StartTry();
+    expected = 2;
+    EXPECT_EQ(req.GetRetryCount(), expected);
 
     // same headers first, then one new
     EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));
