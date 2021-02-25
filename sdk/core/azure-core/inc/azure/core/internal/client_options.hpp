@@ -31,7 +31,6 @@ namespace Azure { namespace Core { namespace Internal {
     /**
      * @brief Move each policy from \p options into the new instance.
      *
-     * @param options
      */
     explicit ClientOptions(ClientOptions&& options)
         : m_perOperationPolicies(std::move(options.m_perOperationPolicies)),
@@ -42,7 +41,6 @@ namespace Azure { namespace Core { namespace Internal {
     /**
      * @brief Copy each policy to the new instance.
      *
-     * @param options
      */
     explicit ClientOptions(ClientOptions const& options)
     {
