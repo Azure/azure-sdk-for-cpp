@@ -29,12 +29,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    m_pollResult = *response;
+    if (response->CopyStatus.HasValue())
+    {
+      m_pollResult = response->CopyStatus.GetValue();
+    }
     return response.ExtractRawResponse();
   }
 
-  Azure::Core::Response<Models::GetBlobPropertiesResult> StartCopyBlobOperation::
-      PollUntilDoneInternal(Azure::Core::Context& context, std::chrono::milliseconds period)
+  Azure::Core::Response<Models::CopyStatus> StartCopyBlobOperation::PollUntilDoneInternal(
+      Azure::Core::Context& context,
+      std::chrono::milliseconds period)
   {
     while (true)
     {
@@ -42,8 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Core::Response<Models::GetBlobPropertiesResult>(
-            m_pollResult, std::move(rawResponse));
+        return Azure::Core::Response<Models::CopyStatus>(m_pollResult, std::move(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {

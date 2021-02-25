@@ -158,7 +158,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(copyInfo.CopyStatus.Get().empty());
     EXPECT_TRUE(copyInfo.VersionId.HasValue());
     EXPECT_FALSE(copyInfo.VersionId.GetValue().empty());
-    auto getPropertiesResult = copyInfo.PollUntilDone(std::chrono::seconds(1));
+    auto copyStatus = *copyInfo.PollUntilDone(std::chrono::seconds(1));
+    EXPECT_EQ(copyStatus, Blobs::Models::CopyStatus::Success);
+    auto getPropertiesResult = pageBlobClient.GetProperties();
     ASSERT_TRUE(getPropertiesResult->CopyStatus.HasValue());
     EXPECT_EQ(getPropertiesResult->CopyStatus.GetValue(), Blobs::Models::CopyStatus::Success);
     ASSERT_TRUE(getPropertiesResult->CopyId.HasValue());
