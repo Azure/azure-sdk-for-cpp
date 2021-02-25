@@ -25,7 +25,7 @@ using namespace Azure::Core;
 
 // Used to test virtual, default behavior of BodyStream.
 class TestBodyStream : public Http::BodyStream {
-  int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override { return 0; }
+  int64_t OnRead(Context const&, uint8_t*, int64_t) override { return 0; }
   int64_t Length() const override { return 0; }
 };
 

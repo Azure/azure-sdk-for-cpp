@@ -86,6 +86,7 @@ if(BUILD_TESTING)
   target_sources(
     azure-storage-test
       PRIVATE
+        test/macro_guard.cpp
         test/share_client_test.cpp
         test/share_client_test.hpp
         test/share_directory_client_test.cpp

@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Details {
           break;
         }
         int64_t chunkOffset = offset + chunkSize * chunkId;
-        int64_t chunkLength = std::min(length - chunkSize * chunkId, chunkSize);
+        int64_t chunkLength = (std::min)(length - chunkSize * chunkId, chunkSize);
         try
         {
           transferFunc(chunkOffset, chunkLength, chunkId, numChunks);

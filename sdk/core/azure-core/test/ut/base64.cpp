@@ -14,7 +14,7 @@ TEST(Base64, Basic)
   int maxLength = 7;
 
   std::vector<uint8_t> data;
-  for (int i = 0; i < maxLength; i++)
+  for (uint8_t i = 0; i < maxLength; i++)
   {
     data.push_back(i + 1);
   }
