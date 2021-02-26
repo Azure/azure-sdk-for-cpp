@@ -12,6 +12,8 @@
 - Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
 - Removed `Context.Alternative()`.
 - Updated `Context` to create values from void*. 
+- Moved `NullBodyStream` to internal usage only. It is not meant for public use.
+- Removed `LimitBodyStream`.
 
 ### Bug Fixes
 
