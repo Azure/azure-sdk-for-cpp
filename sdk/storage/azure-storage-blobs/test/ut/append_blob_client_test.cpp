@@ -332,14 +332,14 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::StartCopyBlobFromUriOptions copyOptions;
     copyOptions.ShouldSealDestination = false;
     auto copyResult = blobClient2.StartCopyFromUri(blobClient.GetUrl() + GetSas(), copyOptions);
-    getPropertiesResult = copyResult->PollUntilDone(std::chrono::seconds(1));
+    getPropertiesResult = copyResult.PollUntilDone(std::chrono::seconds(1));
     ASSERT_TRUE(getPropertiesResult->CopyStatus.HasValue());
     EXPECT_EQ(getPropertiesResult->CopyStatus.GetValue(), Blobs::Models::CopyStatus::Success);
     EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
 
     copyOptions.ShouldSealDestination = true;
     copyResult = blobClient2.StartCopyFromUri(blobClient.GetUrl() + GetSas(), copyOptions);
-    getPropertiesResult = copyResult->PollUntilDone(std::chrono::seconds(1));
+    getPropertiesResult = copyResult.PollUntilDone(std::chrono::seconds(1));
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
     ASSERT_TRUE(getPropertiesResult->CopyStatus.HasValue());

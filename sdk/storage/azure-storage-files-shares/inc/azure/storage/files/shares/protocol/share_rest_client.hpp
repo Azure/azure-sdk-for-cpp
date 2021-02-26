@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit ShareAccessTier(std::string value) : m_value(std::move(value)) {}
       bool operator==(const ShareAccessTier& other) const { return m_value == other.m_value; }
       bool operator!=(const ShareAccessTier& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier TransactionOptimized;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Hot;
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return m_value == other.m_value;
       }
       bool operator!=(const PermissionCopyModeType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyModeType Source;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyModeType Override;
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return m_value == other.m_value;
       }
       bool operator!=(const DeleteSnapshotsOptionType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOptionType Include;
 
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return m_value == other.m_value;
       }
       bool operator!=(const FileRangeWriteFromUrlType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteFromUrlType Update;
 
@@ -229,7 +229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseStateType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseStateType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Available;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStateType Leased;
@@ -264,7 +264,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseStatusType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseStatusType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatusType Locked;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatusType Unlocked;
@@ -405,7 +405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseAction& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Acquire;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Release;
@@ -424,7 +424,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit CopyStatusType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const CopyStatusType& other) const { return m_value == other.m_value; }
       bool operator!=(const CopyStatusType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Pending;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Success;
@@ -446,7 +446,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit FileRangeWriteType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const FileRangeWriteType& other) const { return m_value == other.m_value; }
       bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Update;
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Clear;
@@ -2570,7 +2570,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (createOptions.XMsAccessTier.HasValue())
           {
             request.AddHeader(
-                Details::HeaderAccessTier, (createOptions.XMsAccessTier.GetValue().Get()));
+                Details::HeaderAccessTier, (createOptions.XMsAccessTier.GetValue().ToString()));
           }
           request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
           return CreateParseResult(context, pipeline.Send(context, request));
@@ -2650,7 +2650,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(
                 Details::HeaderDeleteSnapshots,
-                (deleteOptions.XMsDeleteSnapshots.GetValue().Get()));
+                (deleteOptions.XMsDeleteSnapshots.GetValue().ToString()));
           }
           if (deleteOptions.LeaseIdOptional.HasValue())
           {
@@ -3007,7 +3007,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (setPropertiesOptions.XMsAccessTier.HasValue())
           {
             request.AddHeader(
-                Details::HeaderAccessTier, (setPropertiesOptions.XMsAccessTier.GetValue().Get()));
+                Details::HeaderAccessTier,
+                (setPropertiesOptions.XMsAccessTier.GetValue().ToString()));
           }
           if (setPropertiesOptions.LeaseIdOptional.HasValue())
           {
@@ -5713,7 +5714,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(uploadRangeOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderXMsRange, uploadRangeOptions.XMsRange);
-          request.AddHeader(Details::HeaderFileRangeWrite, (uploadRangeOptions.XMsWrite.Get()));
+          request.AddHeader(
+              Details::HeaderFileRangeWrite, (uploadRangeOptions.XMsWrite.ToString()));
           request.AddHeader(
               Details::HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
           if (uploadRangeOptions.ContentMd5.HasValue())
@@ -5770,7 +5772,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Details::HeaderSourceRange, uploadRangeFromUrlOptions.SourceRange.GetValue());
           }
           request.AddHeader(
-              Details::HeaderFileRangeWriteFromUrl, (uploadRangeFromUrlOptions.XMsWrite.Get()));
+              Details::HeaderFileRangeWriteFromUrl,
+              (uploadRangeFromUrlOptions.XMsWrite.ToString()));
           request.AddHeader(
               Details::HeaderContentLength,
               std::to_string(uploadRangeFromUrlOptions.ContentLength));
@@ -5908,7 +5911,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(
                 Details::HeaderFilePermissionCopyMode,
-                (startCopyOptions.XMsFilePermissionCopyMode.GetValue().Get()));
+                (startCopyOptions.XMsFilePermissionCopyMode.GetValue().ToString()));
           }
           if (startCopyOptions.FileCopyIgnoreReadOnly.HasValue())
           {

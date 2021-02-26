@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/core/case_insensitive_map.hpp"
 #include "azure/core/exception.hpp"
 #include "azure/core/internal/contract.hpp"
 #include "azure/core/io/body_stream.hpp"
@@ -45,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if \p headerName is invalid.
      */
     void InsertHeaderWithValidation(
-        std::map<std::string, std::string>& headers,
+        CaseInsensitiveMap& headers,
         std::string const& headerName,
         std::string const& headerValue);
   } // namespace Details
@@ -409,11 +410,11 @@ namespace Azure { namespace Core { namespace Http {
     uint16_t GetPort() const { return m_port; }
 
     /**
-     * @brief Provides a copy to the list of query parameters from the URL.
+     * @brief Get a copy of the list of query parameters from the URL.
      *
      * @remark The query parameters are URL-encoded.
      *
-     * @return const std::map<std::string, std::string>&
+     * @return A copy of the query parameters map.
      */
     std::map<std::string, std::string> GetQueryParameters() const
     {
@@ -421,16 +422,16 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Gets the path and query parameters.
+     * @brief Get the path and query parameters.
      *
-     * @return std::string The string is URL encoded.
+     * @return Relative URL with URL-encoded query parameters.
      */
     std::string GetRelativeUrl() const;
 
     /**
-     * @brief Gets Scheme, host, path and query parameters.
+     * @brief Get Scheme, host, path and query parameters.
      *
-     * @return std::string The string is URL encoded.
+     * @return Absolute URL with URL-encoded query parameters.
      */
     std::string GetAbsoluteUrl() const;
   };
@@ -449,8 +450,8 @@ namespace Azure { namespace Core { namespace Http {
   private:
     HttpMethod m_method;
     Url m_url;
-    std::map<std::string, std::string> m_headers;
-    std::map<std::string, std::string> m_retryHeaders;
+    CaseInsensitiveMap m_headers;
+    CaseInsensitiveMap m_retryHeaders;
 
     Azure::IO::BodyStream* m_bodyStream;
 
@@ -503,14 +504,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param downloadViaStream A boolean value indicating whether download should happen via
      * stream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
-        : Request(
-            httpMethod,
-            std::move(url),
-            Azure::IO::NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
-    {
-    }
+    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream);
 
     /**
      * @brief Construct an #Azure::Core::Http::Request.
@@ -518,10 +512,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param httpMethod HTTP method.
      * @param url URL.
      */
-    explicit Request(HttpMethod httpMethod, Url url)
-        : Request(httpMethod, std::move(url), Azure::IO::NullBodyStream::GetNullBodyStream(), false)
-    {
-    }
+    explicit Request(HttpMethod httpMethod, Url url);
 
     /**
      * @brief Add HTTP header to the #Azure::Core::Http::Request.
@@ -556,7 +547,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP headers.
      */
-    std::map<std::string, std::string> GetHeaders() const;
+    CaseInsensitiveMap GetHeaders() const;
 
     /**
      * @brief Get HTTP body as #Azure::IO::BodyStream.
@@ -607,7 +598,7 @@ namespace Azure { namespace Core { namespace Http {
     int32_t m_minorVersion;
     HttpStatusCode m_statusCode;
     std::string m_reasonPhrase;
-    std::map<std::string, std::string> m_headers;
+    CaseInsensitiveMap m_headers;
 
     std::unique_ptr<Azure::IO::BodyStream> m_bodyStream;
     std::vector<uint8_t> m_body;
@@ -741,7 +732,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response headers.
      */
-    std::map<std::string, std::string> const& GetHeaders() const;
+    CaseInsensitiveMap const& GetHeaders() const;
 
     /**
      * @brief Get HTTP response body as #Azure::IO::BodyStream.

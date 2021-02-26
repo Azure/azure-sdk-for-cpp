@@ -133,13 +133,3 @@ int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buf
   return numberOfBytesRead;
 }
 #endif
-
-int64_t LimitBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
-{
-  (void)context;
-  // Read up to count or whatever length is remaining; whichever is less
-  uint64_t bytesRead
-      = m_inner->Read(context, buffer, std::min(count, this->m_length - this->m_bytesRead));
-  this->m_bytesRead += bytesRead;
-  return bytesRead;
-}

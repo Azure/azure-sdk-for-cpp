@@ -161,39 +161,7 @@ namespace Azure { namespace IO {
   };
 
   /**
-   * @brief Empty #Azure::IO::BodyStream.
-   * @remark Used for requests with no body.
-   */
-  class NullBodyStream : public BodyStream {
-  private:
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
-    {
-      (void)context;
-      (void)buffer;
-      (void)count;
-      return 0;
-    };
-
-  public:
-    /// Constructor.
-    explicit NullBodyStream() {}
-
-    int64_t Length() const override { return 0; }
-
-    void Rewind() override {}
-
-    /**
-     * @brief Gets a singleton instance of a #Azure::IO::NullBodyStream.
-     */
-    static NullBodyStream* GetNullBodyStream()
-    {
-      static NullBodyStream nullBodyStream;
-      return &nullBodyStream;
-    }
-  };
-
-  /**
-   * @brief #Azure::IO::BodyStream providing its data from a file.
+   * @brief #Azure::Core::Http::BodyStream providing its data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
@@ -243,36 +211,4 @@ namespace Azure { namespace IO {
     int64_t Length() const override { return this->m_length; };
   };
 
-  /**
-   * @brief #Azure::IO::BodyStream that provides its data from another
-   * #Azure::IO::BodyStream.
-   */
-  class LimitBodyStream : public BodyStream {
-  private:
-    BodyStream* m_inner;
-    int64_t m_length;
-    int64_t m_bytesRead = 0;
-
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
-
-  public:
-    /**
-     * @brief Construct from another #Azure::IO::BodyStream.
-     *
-     * @param inner #Azure::IO::BodyStream to provide the data from to the readers.
-     * @param max_length Maximum number of bytes to provide to the readers.
-     */
-    LimitBodyStream(BodyStream* inner, int64_t max_length)
-        : m_inner(inner), m_length((std::min)(inner->Length(), max_length))
-    {
-    }
-
-    int64_t Length() const override { return this->m_length; }
-    void Rewind() override
-    {
-      this->m_inner->Rewind();
-      this->m_bytesRead = 0;
-    }
-  };
-
-}} // namespace Azure::IO
+}}} // namespace Azure::Core::Http

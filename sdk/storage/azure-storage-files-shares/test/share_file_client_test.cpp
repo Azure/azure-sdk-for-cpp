@@ -679,10 +679,15 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto destFileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
-      Files::Shares::Models::StartCopyShareFileResult result;
-      EXPECT_NO_THROW(result = destFileClient.StartCopy(fileClient.GetUrl()).ExtractValue());
-      EXPECT_EQ(Files::Shares::Models::CopyStatusType::Success, result.CopyStatus);
-      EXPECT_FALSE(result.CopyId.empty());
+      auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
+      EXPECT_FALSE(copyOperation.RequestId.empty());
+      EXPECT_TRUE(copyOperation.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(copyOperation.LastModified));
+      EXPECT_FALSE(copyOperation.CopyId.empty());
+      EXPECT_FALSE(copyOperation.CopyStatus.ToString().empty());
+      auto fileProperties = *copyOperation.PollUntilDone(std::chrono::milliseconds(1000));
+      EXPECT_EQ(
+          fileProperties.CopyStatus.GetValue(), Files::Shares::Models::CopyStatusType::Success);
     }
 
     {

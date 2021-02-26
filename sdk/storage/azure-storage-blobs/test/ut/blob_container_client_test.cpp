@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
         EXPECT_TRUE(IsValidTime(blob.Details.LastModified));
         EXPECT_TRUE(blob.Details.ETag.HasValue());
-        EXPECT_FALSE(blob.BlobType.Get().empty());
+        EXPECT_FALSE(blob.BlobType.ToString().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
           EXPECT_TRUE(blob.Details.Tier.HasValue());
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
         if (blob.Details.Tier.HasValue())
         {
-          EXPECT_FALSE(blob.Details.Tier.GetValue().Get().empty());
+          EXPECT_FALSE(blob.Details.Tier.GetValue().ToString().empty());
         }
         if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {

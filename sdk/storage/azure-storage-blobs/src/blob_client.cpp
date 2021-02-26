@@ -518,7 +518,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::StartCopyBlobResult> BlobClient::StartCopyFromUri(
+  StartCopyBlobOperation BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartCopyBlobFromUriOptions& options,
       const Azure::Core::Context& context) const
@@ -544,7 +544,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response = Details::BlobRestClient::Blob::StartCopyFromUri(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
-    Models::StartCopyBlobResult res;
+    StartCopyBlobOperation res;
     res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
@@ -552,8 +552,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     res.CopyStatus = std::move(response->CopyStatus);
     res.VersionId = std::move(response->VersionId);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
-    return Azure::Core::Response<Models::StartCopyBlobResult>(
-        std::move(res), response.ExtractRawResponse());
+    return res;
   }
 
   Azure::Core::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(

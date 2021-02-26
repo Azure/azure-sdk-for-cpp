@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         return m_value == other.m_value;
       }
       bool operator!=(const FileSystemResourceType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static FileSystemResourceType Filesystem;
 
@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         return !(*this == other);
       }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlRecursiveMode Set;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlRecursiveMode Modify;
@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit PathExpiryOptions(std::string value) : m_value(std::move(value)) {}
       bool operator==(const PathExpiryOptions& other) const { return m_value == other.m_value; }
       bool operator!=(const PathExpiryOptions& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions NeverExpire;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToCreation;
@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType FileSystem;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType Path;
@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const PathResourceType& other) const { return m_value == other.m_value; }
       bool operator!=(const PathResourceType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit PathRenameMode(std::string value) : m_value(std::move(value)) {}
       bool operator==(const PathRenameMode& other) const { return m_value == other.m_value; }
       bool operator!=(const PathRenameMode& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Posix;
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         return m_value == other.m_value;
       }
       bool operator!=(const PathGetPropertiesAction& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathGetPropertiesAction GetAccessControl;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathGetPropertiesAction GetStatus;
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseDurationType Infinite;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseDurationType Fixed;
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit LeaseStateType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseStateType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Available;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Leased;
@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit LeaseStatusType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const LeaseStatusType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
 
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatusType Locked;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatusType Unlocked;
@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(
               Details::QueryFileSystemResource,
-              Storage::Details::UrlEncodeQueryParameter((listPathsOptions.Resource.Get())));
+              Storage::Details::UrlEncodeQueryParameter((listPathsOptions.Resource.ToString())));
           if (listPathsOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
@@ -582,7 +582,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPathResourceType,
                 Storage::Details::UrlEncodeQueryParameter(
-                    (createOptions.Resource.GetValue().Get())));
+                    (createOptions.Resource.GetValue().ToString())));
           }
           if (createOptions.ContinuationToken.HasValue())
           {
@@ -595,7 +595,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPathRenameMode,
-                Storage::Details::UrlEncodeQueryParameter((createOptions.Mode.GetValue().Get())));
+                Storage::Details::UrlEncodeQueryParameter(
+                    (createOptions.Mode.GetValue().ToString())));
           }
           if (createOptions.CacheControl.HasValue())
           {
@@ -725,7 +726,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPathGetPropertiesAction,
                 Storage::Details::UrlEncodeQueryParameter(
-                    (getPropertiesOptions.Action.GetValue().Get())));
+                    (getPropertiesOptions.Action.GetValue().ToString())));
           }
           if (getPropertiesOptions.Upn.HasValue())
           {
@@ -951,7 +952,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.GetUrl().AppendQueryParameter(
               Details::QueryPathSetAccessControlRecursiveMode,
               Storage::Details::UrlEncodeQueryParameter(
-                  (setAccessControlRecursiveOptions.Mode.Get())));
+                  (setAccessControlRecursiveOptions.Mode.ToString())));
           if (setAccessControlRecursiveOptions.ForceFlag.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
