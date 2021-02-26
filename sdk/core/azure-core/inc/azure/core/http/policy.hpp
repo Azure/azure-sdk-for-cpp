@@ -318,6 +318,11 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Authentication scopes.
      */
     std::vector<std::string> Scopes;
+
+    /**
+     * @brief Authentication claims.
+     */
+    std::string Claims;
   };
 
   /**
