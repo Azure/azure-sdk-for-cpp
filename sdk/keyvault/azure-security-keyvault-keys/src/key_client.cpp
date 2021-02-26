@@ -32,7 +32,7 @@ KeyClient::KeyClient(
 
   {
     Azure::Core::Http::TokenRequestOptions const tokenOptions
-        = {{"https://vault.azure.net/.default"}};
+        = {{"https://vault.azure.net/.default"}, std::string()};
 
     policies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
