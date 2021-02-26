@@ -12,6 +12,7 @@
 - Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
 - Moved `NullBodyStream` to internal usage only. It is not meant for public use.
 - Removed `LimitBodyStream`.
+- Renamed `AddHeader()` from `Request` and `RawResponse` to `SetHeader()`
 
 ### Bug Fixes
 
