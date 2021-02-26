@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   } // namespace Models
 
-  class StartCopyBlobOperation : public Azure::Core::Operation<Models::CopyStatus> {
+  class StartCopyBlobOperation : public Azure::Core::Operation<Models::GetBlobPropertiesResult> {
   public:
     std::string RequestId;
     Azure::Core::ETag ETag;
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> VersionId;
 
   public:
-    Models::CopyStatus Value() const override { return m_pollResult; }
+    Models::GetBlobPropertiesResult Value() const override { return m_pollResult; }
 
     ~StartCopyBlobOperation() override {}
 
@@ -94,12 +94,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Core::Response<Models::CopyStatus> PollUntilDoneInternal(
+    Azure::Core::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
         Azure::Core::Context& context,
         std::chrono::milliseconds period) override;
 
     std::shared_ptr<BlobClient> m_blobClient;
-    Models::CopyStatus m_pollResult;
+    Models::GetBlobPropertiesResult m_pollResult;
 
     friend class Blobs::BlobClient;
     friend class Blobs::PageBlobClient;
