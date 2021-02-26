@@ -10,7 +10,7 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Internal::Http;
 
 void Azure::Core::Http::Details::InsertHeaderWithValidation(
-    std::map<std::string, std::string>& headers,
+    Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
 {
