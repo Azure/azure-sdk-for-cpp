@@ -161,7 +161,7 @@ namespace Azure { namespace IO {
   };
 
   /**
-   * @brief #Azure::Core::Http::BodyStream providing its data from a file.
+   * @brief #Azure::IO::BodyStream providing its data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
@@ -211,4 +211,4 @@ namespace Azure { namespace IO {
     int64_t Length() const override { return this->m_length; };
   };
 
-}}} // namespace Azure::Core::Http
+}} // namespace Azure::IO

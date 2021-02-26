@@ -522,7 +522,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     auto response = Details::ShareRestClient::File::UploadRange(
         m_shareFileUrl,
-        *Azure::Core::Internal::Http::NullBodyStream::GetNullBodyStream(),
+        *Azure::IO::Internal::NullBodyStream::GetNullBodyStream(),
         *m_pipeline,
         context,
         protocolLayerOptions);

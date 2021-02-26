@@ -8,15 +8,15 @@
 
 #pragma once
 
-#include "azure/core/http/body_stream.hpp"
+#include "azure/io/body_stream.hpp"
 
-namespace Azure { namespace Core { namespace Internal { namespace Http {
+namespace Azure { namespace IO { namespace Internal {
 
   /**
-   * @brief Empty #Azure::Core::Http::BodyStream.
+   * @brief Empty #Azure::IO::BodyStream.
    * @remark Used for requests with no body.
    */
-  class NullBodyStream : public Azure::Core::Http::BodyStream {
+  class NullBodyStream : public BodyStream {
   private:
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
     {
@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     void Rewind() override {}
 
     /**
-     * @brief Gets a singleton instance of a #Azure::Core::Http::NullBodyStream.
+     * @brief Gets a singleton instance of a #Azure::IO::Internal::NullBodyStream.
      */
     static NullBodyStream* GetNullBodyStream()
     {
@@ -44,4 +44,4 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     }
   };
 
-}}}} // namespace Azure::Core::Internal::Http
+}}} // namespace Azure::IO::Internal

@@ -161,8 +161,8 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
-      Azure::Core::Internal::Http::NullBodyStream* d
-          = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
+      Azure::IO::Internal::NullBodyStream* d
+          = dynamic_cast<Azure::IO::Internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
-      d = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::Internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
     }
 
