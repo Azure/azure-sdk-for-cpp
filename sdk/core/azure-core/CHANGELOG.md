@@ -10,6 +10,8 @@
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
+- Moved `NullBodyStream` to internal usage only. It is not meant for public use.
+- Removed `LimitBodyStream`.
 - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
 
 ### Bug Fixes

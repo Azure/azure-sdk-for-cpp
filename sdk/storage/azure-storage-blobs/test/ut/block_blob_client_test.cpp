@@ -208,20 +208,17 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl());
-    EXPECT_FALSE(res->RequestId.empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
-    EXPECT_FALSE(res->CopyId.empty());
-    EXPECT_TRUE(res->VersionId.HasValue());
-    EXPECT_FALSE(res->VersionId.GetValue().empty());
+    EXPECT_FALSE(res.RequestId.empty());
+    EXPECT_TRUE(res.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.LastModified));
+    EXPECT_FALSE(res.CopyId.empty());
+    EXPECT_TRUE(res.VersionId.HasValue());
+    EXPECT_FALSE(res.VersionId.GetValue().empty());
     EXPECT_TRUE(
-        res->CopyStatus == Azure::Storage::Blobs::Models::CopyStatus::Pending
-        || res->CopyStatus == Azure::Storage::Blobs::Models::CopyStatus::Success);
+        res.CopyStatus == Azure::Storage::Blobs::Models::CopyStatus::Pending
+        || res.CopyStatus == Azure::Storage::Blobs::Models::CopyStatus::Success);
     auto properties = *blobClient.GetProperties();
-    EXPECT_EQ(properties.CopyId.GetValue(), res->CopyId);
+    EXPECT_EQ(properties.CopyId.GetValue(), res.CopyId);
     EXPECT_FALSE(properties.CopySource.GetValue().empty());
     EXPECT_TRUE(
         properties.CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Pending
@@ -236,7 +233,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.IncrementalCopyDestinationSnapshot.HasValue());
 
     auto downloadResult = blobClient.Download();
-    EXPECT_EQ(downloadResult->Details.CopyId.GetValue(), res->CopyId);
+    EXPECT_EQ(downloadResult->Details.CopyId.GetValue(), res.CopyId);
     EXPECT_FALSE(downloadResult->Details.CopySource.GetValue().empty());
     EXPECT_TRUE(
         downloadResult->Details.CopyStatus.GetValue()

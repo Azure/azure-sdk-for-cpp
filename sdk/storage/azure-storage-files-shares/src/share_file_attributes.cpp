@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     return ret;
   }
 
-  std::string FileAttributes::Get() const
+  std::string FileAttributes::ToString() const
   {
     std::string ret;
     for (const auto& v : m_value)

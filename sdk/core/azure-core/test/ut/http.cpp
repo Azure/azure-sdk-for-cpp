@@ -5,6 +5,7 @@
 
 #include "http.hpp"
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/null_body_stream.hpp>
 
 #include <string>
 #include <utility>
@@ -160,8 +161,8 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
-      Azure::Core::Http::NullBodyStream* d
-          = dynamic_cast<Azure::Core::Http::NullBodyStream*>(req.GetBodyStream());
+      Azure::Core::Internal::Http::NullBodyStream* d
+          = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
@@ -177,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
-      d = dynamic_cast<Azure::Core::Http::NullBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
     }
 

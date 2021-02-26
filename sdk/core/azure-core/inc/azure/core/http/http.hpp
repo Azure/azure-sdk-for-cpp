@@ -500,14 +500,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param downloadViaStream A boolean value indicating whether download should happen via
      * stream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
-        : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
-    {
-    }
+    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream);
 
     /**
      * @brief Construct an #Azure::Core::Http::Request.
@@ -515,10 +508,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param httpMethod HTTP method.
      * @param url URL.
      */
-    explicit Request(HttpMethod httpMethod, Url url)
-        : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
-    {
-    }
+    explicit Request(HttpMethod httpMethod, Url url);
 
     /**
      * @brief Add HTTP header to the #Azure::Core::Http::Request.
