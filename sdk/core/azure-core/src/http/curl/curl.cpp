@@ -110,6 +110,10 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
+using Azure::Core::LogLevel;
+using Azure::Core::Internal::Log;
+using Azure::Core::Internal::ShouldLog;
+
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
@@ -127,15 +131,11 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
 
+    if (ShouldLog(LogLevel::Verbose))
     {
-      using namespace Azure::Core::Logging;
-      using namespace Azure::Core::Logging::Internal;
-      if (ShouldLog(LogLevel::Verbose))
-      {
-        Log(LogLevel::Verbose,
-            LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
-                + std::to_string(ideal) + " result = " + std::to_string(result));
-      }
+      Log(LogLevel::Verbose,
+          LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
+              + std::to_string(ideal) + " result = " + std::to_string(result));
     }
   }
 }
@@ -156,9 +156,6 @@ using Azure::Core::Http::TransportException;
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
 {
-  using namespace Azure::Core::Logging;
-  using namespace Azure::Core::Logging::Internal;
-
   // Create CurlSession to perform request
   Log(LogLevel::Verbose, LogMsgPrefix + "Creating a new session.");
 
@@ -204,9 +201,6 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 
 CURLcode CurlSession::Perform(Context const& context)
 {
-  using namespace Azure::Core::Logging;
-  using namespace Azure::Core::Logging::Internal;
-
   // Set the session state
   m_sessionState = SessionState::PERFORM;
 

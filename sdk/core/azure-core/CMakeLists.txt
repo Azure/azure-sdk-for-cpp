@@ -58,7 +58,6 @@ set(
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
     inc/azure/core/internal/strings.hpp
-    inc/azure/core/logging/logging.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_map.hpp
     inc/azure/core/context.hpp
@@ -67,6 +66,7 @@ set(
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
+    inc/azure/core/logger.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
@@ -95,10 +95,10 @@ set(
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
-    src/logging/logging.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
     src/version.cpp

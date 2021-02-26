@@ -3,9 +3,18 @@
 
 #pragma once
 
-#include "azure/core/logging/logging.hpp"
+#include "azure/core/logger.hpp"
 
-namespace Azure { namespace Core { namespace Logging { namespace Internal {
-  bool ShouldLog(LogLevel level);
-  void Log(LogLevel level, std::string const& message);
-}}}} // namespace Azure::Core::Logging::Internal
+namespace Azure { namespace Core { namespace Internal {
+
+  inline bool ShouldLog(LogLevel level) { return Logger::GetListener(level) != nullptr; }
+
+  inline void Log(LogLevel level, std::string const& message)
+  {
+    if (auto listener = Logger::GetListener(level))
+    {
+      listener(level, message);
+    }
+  }
+
+}}} // namespace Azure::Core::Internal

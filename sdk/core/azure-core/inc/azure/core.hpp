@@ -18,6 +18,7 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/etag.hpp"
 #include "azure/core/exception.hpp"
+#include "azure/core/logger.hpp"
 #include "azure/core/match_conditions.hpp"
 #include "azure/core/modified_conditions.hpp"
 #include "azure/core/nullable.hpp"
@@ -36,6 +37,3 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
-
-// azure/core/logging
-#include "azure/core/logging/logging.hpp"

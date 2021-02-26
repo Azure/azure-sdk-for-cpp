@@ -129,7 +129,11 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  auto const shouldLog = Logging::Internal::ShouldLog(Logging::LogLevel::Informational);
+  using Azure::Core::LogLevel;
+  using Azure::Core::Internal::Log;
+  using Azure::Core::Internal::ShouldLog;
+
+  auto const shouldLog = ShouldLog(LogLevel::Informational);
 
   for (RetryNumber attempt = 1;; ++attempt)
   {
@@ -161,12 +165,13 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     if (shouldLog)
     {
+      // Log as Warning if code is not 200
       std::ostringstream log;
 
       log << "HTTP Retry attempt #" << attempt << " will be made in "
           << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
 
-      Logging::Internal::Log(Logging::LogLevel::Informational, log.str());
+      Log(LogLevel::Informational, log.str());
     }
 
     // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure

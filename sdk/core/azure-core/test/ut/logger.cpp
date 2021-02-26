@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/log.hpp>
-#include <azure/core/logging/logging.hpp>
 #include <gtest/gtest.h>
 
-using namespace Azure::Core::Logging;
-using namespace Azure::Core::Logging::Internal;
+using Azure::Core::Logger;
+using Azure::Core::LogLevel;
+using Azure::Core::Internal::Log;
+using Azure::Core::Internal::ShouldLog;
 
 TEST(Logging, Defaults)
 {
@@ -15,14 +16,14 @@ TEST(Logging, Defaults)
   EXPECT_FALSE(ShouldLog(LogLevel::Warning));
   EXPECT_FALSE(ShouldLog(LogLevel::Error));
 
-  SetLogListener([](auto, auto) {});
+  Logger::SetListener([](auto, auto) {});
 
   EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
   EXPECT_TRUE(ShouldLog(LogLevel::Informational));
   EXPECT_TRUE(ShouldLog(LogLevel::Warning));
   EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  SetLogListener(nullptr);
+  Logger::SetListener(nullptr);
 
   EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
   EXPECT_FALSE(ShouldLog(LogLevel::Informational));
@@ -32,54 +33,54 @@ TEST(Logging, Defaults)
 
 TEST(Logging, Levels)
 {
-  SetLogListener([](auto, auto) {});
+  Logger::SetListener([](auto, auto) {});
 
-  SetLogLevel(LogLevel::Verbose);
+  Logger::SetLevel(LogLevel::Verbose);
   EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
   EXPECT_TRUE(ShouldLog(LogLevel::Informational));
   EXPECT_TRUE(ShouldLog(LogLevel::Warning));
   EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  SetLogLevel(LogLevel::Informational);
+  Logger::SetLevel(LogLevel::Informational);
   EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
   EXPECT_TRUE(ShouldLog(LogLevel::Informational));
   EXPECT_TRUE(ShouldLog(LogLevel::Warning));
   EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  SetLogLevel(LogLevel::Warning);
+  Logger::SetLevel(LogLevel::Warning);
   EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
   EXPECT_FALSE(ShouldLog(LogLevel::Informational));
   EXPECT_TRUE(ShouldLog(LogLevel::Warning));
   EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  SetLogLevel(LogLevel::Error);
+  Logger::SetLevel(LogLevel::Error);
   EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
   EXPECT_FALSE(ShouldLog(LogLevel::Informational));
   EXPECT_FALSE(ShouldLog(LogLevel::Warning));
   EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  SetLogLevel(LogLevel::Verbose);
+  Logger::SetLevel(LogLevel::Verbose);
   EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
   EXPECT_TRUE(ShouldLog(LogLevel::Informational));
   EXPECT_TRUE(ShouldLog(LogLevel::Warning));
   EXPECT_TRUE(ShouldLog(LogLevel::Error));
 
-  SetLogListener(nullptr);
+  Logger::SetListener(nullptr);
 }
 
 TEST(Logging, Message)
 {
   try
   {
-    LogLevel level = LogLevel::Error;
+    Logger::Level level = LogLevel::Error;
     std::string message;
 
-    SetLogListener([&](auto lvl, auto msg) {
+    Logger::SetListener([&](auto lvl, auto msg) {
       level = lvl;
       message = msg;
     });
 
-    SetLogLevel(LogLevel::Verbose);
+    Logger::SetLevel(LogLevel::Verbose);
     {
       level = LogLevel::Error;
       message = "";
@@ -101,7 +102,7 @@ TEST(Logging, Message)
       EXPECT_EQ(message, "Error");
     }
 
-    SetLogLevel(LogLevel::Informational);
+    Logger::SetLevel(LogLevel::Informational);
     {
       level = LogLevel::Error;
       message = "";
@@ -123,7 +124,7 @@ TEST(Logging, Message)
       EXPECT_EQ(message, "Error");
     }
 
-    SetLogLevel(LogLevel::Warning);
+    Logger::SetLevel(LogLevel::Warning);
     {
       level = LogLevel::Error;
       message = "";
@@ -145,7 +146,7 @@ TEST(Logging, Message)
       EXPECT_EQ(message, "Error");
     }
 
-    SetLogLevel(LogLevel::Error);
+    Logger::SetLevel(LogLevel::Error);
     {
       level = LogLevel::Error;
       message = "";
@@ -170,7 +171,7 @@ TEST(Logging, Message)
     }
 
     // Verify that we can switch back to Verbose
-    SetLogLevel(LogLevel::Verbose);
+    Logger::SetLevel(LogLevel::Verbose);
     {
       level = LogLevel::Error;
       message = "";
@@ -192,9 +193,9 @@ TEST(Logging, Message)
       EXPECT_EQ(message, "Error");
     }
 
-    SetLogListener(nullptr);
+    Logger::SetListener(nullptr);
 
-    SetLogLevel(LogLevel::Verbose);
+    Logger::SetLevel(LogLevel::Verbose);
     {
       level = LogLevel::Error;
       message = "";
@@ -220,7 +221,7 @@ TEST(Logging, Message)
   }
   catch (...)
   {
-    SetLogListener(nullptr);
+    Logger::SetListener(nullptr);
     throw;
   }
 }

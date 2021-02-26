@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/core/case_insensitive_map.hpp"
+#include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/http.hpp"
@@ -360,17 +360,33 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief Options for Azure::Core::Http::LoggingPolicy.
+   */
+  struct LoggingPolicyOptions
+  {
+    /// HTTP query parameters that are allowed to be logged.
+    Azure::Core::CaseInsensitiveSet AllowedHttpQueryParameters;
+
+    /// HTTP request headers that are allowed to be logged.
+    Azure::Core::CaseInsensitiveSet AllowedHttpRequestHeaders;
+
+    /// HTTP response headers that are allowed to be logged.
+    Azure::Core::CaseInsensitiveSet AllowedHttpResponseHeaders;
+  };
+
+  /**
    * @brief Logs every HTTP request.
    *
-   * @details Logs every HTTP request, response, or retry attempt.
-   * @remark See #logging.hpp
+   * @details Logs every HTTP request and response.
+   * @remark See Azure::Core::Logger.
    */
   class LoggingPolicy : public HttpPolicy {
+    LoggingPolicyOptions m_options()
   public:
     /**
      * @brief Constructs HTTP logging policy.
      */
-    explicit LoggingPolicy() {}
+    explicit LoggingPolicy(LoggingPolicyOptions options) : m_options(std::move(options)) {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
