@@ -517,7 +517,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw if \p name is an invalid header key.
      */
-    void AddHeader(std::string const& name, std::string const& value);
+    void SetHeader(std::string const& name, std::string const& value);
 
     /**
      * @brief Remove an HTTP header.
@@ -657,7 +657,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw if \p name contains invalid characters.
      */
-    void AddHeader(std::string const& name, std::string const& value);
+    void SetHeader(std::string const& name, std::string const& value);
 
     /**
      * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
@@ -669,7 +669,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw if \p header has an invalid header name or if the delimiter is missing.
      */
-    void AddHeader(std::string const& header);
+    void SetHeader(std::string const& header);
 
     /**
      * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
@@ -685,7 +685,7 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if the string referenced by \p first and \p last contains an invalid header name or if
      * the delimiter is missing.
      */
-    void AddHeader(uint8_t const* const first, uint8_t const* const last);
+    void SetHeader(uint8_t const* const first, uint8_t const* const last);
 
     /**
      * @brief Set #Azure::Core::Http::BodyStream for this HTTP response.

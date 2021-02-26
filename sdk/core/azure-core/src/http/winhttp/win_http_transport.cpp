@@ -154,7 +154,7 @@ void ParseHttpVersion(
  *
  * @throw if \p headers has an invalid header name or if the delimiter is missing.
  */
-void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
+void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
 {
   auto begin = headers.data();
   auto end = begin + headers.size();
@@ -164,7 +164,7 @@ void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->AddHeader(
+      rawResponse->SetHeader(
           reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
     }
     else
@@ -537,7 +537,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   auto rawResponse
       = std::make_unique<RawResponse>(majorVersion, minorVersion, httpStatusCode, reasonPhrase);
 
-  AddHeaders(responseHeaders, rawResponse);
+  SetHeaders(responseHeaders, rawResponse);
 
   int64_t contentLength
       = GetContentLength(handleManager, requestMethod, rawResponse->GetStatusCode());

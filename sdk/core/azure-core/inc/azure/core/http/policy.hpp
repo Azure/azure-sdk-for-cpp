@@ -245,7 +245,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       auto uuid = Uuid::CreateUuid().ToString();
 
-      request.AddHeader(RequestIdHeader, uuid);
+      request.SetHeader(RequestIdHeader, uuid);
       return nextHttpPolicy.Send(ctx, request);
     }
   };
@@ -422,7 +422,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         for (auto const& hdrPair : m_options.HeaderValues)
         {
-          request.AddHeader(hdrPair.first, hdrPair.second);
+          request.SetHeader(hdrPair.first, hdrPair.second);
         }
 
         {

@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Copy headers
       for (auto header : request.GetHeaders())
       {
-        response->AddHeader(header.first, header.second);
+        response->SetHeader(header.first, header.second);
       }
       std::string bodyCount(Details::FakeKey);
       response->SetBodyStream(std::make_unique<Azure::Core::Http::MemoryBodyStream>(

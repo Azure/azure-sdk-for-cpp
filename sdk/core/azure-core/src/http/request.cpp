@@ -22,7 +22,7 @@ static std::map<std::string, std::string> MergeMaps(
 }
 } // namespace
 
-void Request::AddHeader(std::string const& name, std::string const& value)
+void Request::SetHeader(std::string const& name, std::string const& value)
 {
   auto headerNameLowerCase = Azure::Core::Internal::Strings::ToLower(name);
   return this->m_retryModeEnabled
