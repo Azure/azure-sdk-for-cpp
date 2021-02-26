@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(copyInfo.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(copyInfo.LastModified));
     EXPECT_FALSE(copyInfo.CopyId.empty());
-    EXPECT_FALSE(copyInfo.CopyStatus.Get().empty());
+    EXPECT_FALSE(copyInfo.CopyStatus.ToString().empty());
     EXPECT_TRUE(copyInfo.VersionId.HasValue());
     EXPECT_FALSE(copyInfo.VersionId.GetValue().empty());
     auto getPropertiesResult = copyInfo.PollUntilDone(std::chrono::seconds(1));
