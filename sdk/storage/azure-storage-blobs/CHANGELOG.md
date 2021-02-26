@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a Response<T>` to the particular `Operation<T>` directly `StartCopyBlobOperation`.
+- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
