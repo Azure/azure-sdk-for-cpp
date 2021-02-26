@@ -6,6 +6,10 @@
 
 - Added support for customized application ID.
 
+### Breaking Changes
+
+- Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyShareFileOperation` directly.
+
 ## 12.0.0-beta.8 (2021-02-12)
 
 ### New Features
