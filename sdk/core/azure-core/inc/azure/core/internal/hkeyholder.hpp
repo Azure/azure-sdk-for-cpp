@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include "azure/core/platform.hpp"
+
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -17,6 +19,9 @@
 #endif
 
 #include <windows.h>
+
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 
 namespace Azure { namespace Core { namespace Internal {
 
@@ -54,5 +59,7 @@ namespace Azure { namespace Core { namespace Internal {
   };
 
 }}} // namespace Azure::Core::Internal
+
+#endif
 
 #endif
