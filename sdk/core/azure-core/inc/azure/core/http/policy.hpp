@@ -20,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -183,7 +184,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief HTTP status codes to retry on.
      */
-    std::vector<HttpStatusCode> StatusCodes{
+    std::set<HttpStatusCode> StatusCodes{
         HttpStatusCode::RequestTimeout,
         HttpStatusCode::InternalServerError,
         HttpStatusCode::BadGateway,
@@ -381,7 +382,8 @@ namespace Azure { namespace Core { namespace Http {
    * @remark See Azure::Core::Logger.
    */
   class LoggingPolicy : public HttpPolicy {
-    LoggingPolicyOptions m_options()
+    LoggingPolicyOptions m_options;
+
   public:
     /**
      * @brief Constructs HTTP logging policy.
@@ -406,7 +408,7 @@ namespace Azure { namespace Core { namespace Http {
     struct ValuePolicyOptions
     {
       CaseInsensitiveMap HeaderValues;
-      std::map<std::string, std::string> QueryValues;
+      CaseInsensitiveMap QueryValues;
     };
 
     /**

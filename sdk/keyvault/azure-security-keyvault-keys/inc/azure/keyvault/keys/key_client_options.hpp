@@ -60,6 +60,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Core::Http::TelemetryPolicyOptions TelemetryPolicyOptions;
 
     /**
+     * @brief Define the information to be used for logging.
+     *
+     */
+    Azure::Core::Http::LoggingPolicyOptions LoggingPolicyOptions;
+
+    /**
      * @brief Construct a new Key Client Options object.
      *
      * @param version Optional version for the client.

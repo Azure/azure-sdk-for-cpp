@@ -52,9 +52,9 @@ namespace Azure { namespace Core {
     typedef std::function<void(LogLevel level, std::string const& message)> Listener;
 
   private:
-    std::shared_timed_mutex g_mutex;
-    Listener g_listener;
-    LogLevel g_level;
+    static std::shared_timed_mutex g_mutex;
+    static Listener g_listener;
+    static LogLevel g_level;
 
   public:
     /**

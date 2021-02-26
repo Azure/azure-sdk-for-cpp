@@ -38,7 +38,7 @@ KeyClient::KeyClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }
 
-  policies.emplace_back(std::make_unique<LoggingPolicy>());
+  policies.emplace_back(std::make_unique<LoggingPolicy>(options.LoggingPolicyOptions));
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
   Azure::Core::Http::Url url(vaultUrl);

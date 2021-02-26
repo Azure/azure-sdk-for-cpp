@@ -30,22 +30,69 @@ std::string TruncateIfLengthy(std::string const& s)
   return s.substr(0, BeginLength) + Ellipsis + s.substr(length - EndLength, EndLength);
 }
 
-std::string GetRequestLogMessage(Request const& request)
+std::string GetRequestLogMessage(
+    Azure::Core::Http::LoggingPolicyOptions const& options,
+    Request const& request)
 {
   std::ostringstream log;
 
-  log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " "
-      << request.GetUrl().GetAbsoluteUrl();
+  std::string url = request.GetUrl().GetAbsoluteUrl();
+  if (!url.empty())
+  {
+    auto qm = url.find('?');
+    if (qm != std::string::npos)
+    {
+      url = url.substr(0, qm);
+    }
+  }
+
+  {
+    auto separ = '?';
+    for (auto qparam : request.GetUrl().GetQueryParameters())
+    {
+      url += separ + qparam.first + '=';
+
+      if (options.AllowedHttpQueryParameters.find(qparam.first)
+          != options.AllowedHttpQueryParameters.end())
+      {
+        url += TruncateIfLengthy(qparam.second);
+      }
+      else
+      {
+        url += "[hidden]";
+      }
+
+      separ = '&';
+    }
+  }
+
+  log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " " << url;
 
   for (auto header : request.GetHeaders())
   {
-    log << "\n\t" << header.first << " : " << TruncateIfLengthy(header.second);
+    log << "\n\t" << header.first;
+
+    if (header.second.empty())
+    {
+      log << " [empty]";
+    }
+    else if (
+        options.AllowedHttpRequestHeaders.find(header.first)
+        != options.AllowedHttpRequestHeaders.end())
+    {
+      log << " : " << TruncateIfLengthy(header.second);
+    }
+    else
+    {
+      log << " [hidden]";
+    }
   }
 
   return log.str();
 }
 
 std::string GetResponseLogMessage(
+    Azure::Core::Http::LoggingPolicyOptions const& options,
     Request const& request,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
@@ -60,13 +107,23 @@ std::string GetResponseLogMessage(
   for (auto header : response.GetHeaders())
   {
     log << "\n\t" << header.first;
-    if (!header.second.empty() && header.first != "authorization")
+    if (header.second.empty())
+    {
+      log << " [empty]";
+    }
+    else if (
+        options.AllowedHttpResponseHeaders.find(header.first)
+        != options.AllowedHttpResponseHeaders.end())
     {
       log << " : " << TruncateIfLengthy(header.second);
     }
+    else
+    {
+      log << " [hidden]";
+    }
   }
 
-  log << "\n\n -> " << GetRequestLogMessage(request);
+  log << "\n\n -> " << GetRequestLogMessage(options, request);
 
   return log.str();
 }
@@ -83,7 +140,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
 
   if (ShouldLog(LogLevel::Verbose))
   {
-    Log(LogLevel::Verbose, GetRequestLogMessage(request));
+    Log(LogLevel::Verbose, GetRequestLogMessage(m_options, request));
   }
   else
   {
@@ -94,7 +151,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
   auto response = nextHttpPolicy.Send(ctx, request);
   auto const end = std::chrono::system_clock::now();
 
-  Log(LogLevel::Verbose, GetResponseLogMessage(request, *response, end - start));
+  Log(LogLevel::Verbose, GetResponseLogMessage(m_options, request, *response, end - start));
 
   return response;
 }

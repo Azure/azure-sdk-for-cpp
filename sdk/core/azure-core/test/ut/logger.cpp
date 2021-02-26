@@ -72,7 +72,7 @@ TEST(Logging, Message)
 {
   try
   {
-    Logger::Level level = LogLevel::Error;
+    LogLevel level = LogLevel::Error;
     std::string message;
 
     Logger::SetListener([&](auto lvl, auto msg) {

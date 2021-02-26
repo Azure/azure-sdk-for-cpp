@@ -101,6 +101,10 @@ bool ShouldRetryOnResponse(
     RetryNumber attempt,
     Delay& retryAfter)
 {
+  using Azure::Core::LogLevel;
+  using Azure::Core::Internal::Log;
+  using Azure::Core::Internal::ShouldLog;
+
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
   {
@@ -108,11 +112,26 @@ bool ShouldRetryOnResponse(
   }
 
   // Should we retry on the given response retry code?
-  auto const& statusCodes = retryOptions.StatusCodes;
-  auto const statusCodesEnd = statusCodes.end();
-  if (std::find(statusCodes.begin(), statusCodesEnd, response.GetStatusCode()) == statusCodesEnd)
   {
-    return false;
+    auto const& statusCodes = retryOptions.StatusCodes;
+    auto const sc = response.GetStatusCode();
+    if (statusCodes.find(sc) == statusCodes.end())
+    {
+      if (ShouldLog(LogLevel::Warning))
+      {
+        Log(LogLevel::Warning,
+            std::string("HTTP status code: ") + std::to_string(static_cast<int>(sc))
+                + " won't be retried.");
+      }
+
+      return false;
+    }
+    else if (ShouldLog(LogLevel::Informational))
+    {
+      Log(LogLevel::Informational,
+          std::string("HTTP status code: ") + std::to_string(static_cast<int>(sc))
+              + " will be retried.");
+    }
   }
 
   if (!GetResponseHeaderBasedDelay(response, retryAfter))
@@ -132,8 +151,6 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
   using Azure::Core::LogLevel;
   using Azure::Core::Internal::Log;
   using Azure::Core::Internal::ShouldLog;
-
-  auto const shouldLog = ShouldLog(LogLevel::Informational);
 
   for (RetryNumber attempt = 1;; ++attempt)
   {
@@ -155,17 +172,21 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
         return response;
       }
     }
-    catch (const TransportException&)
+    catch (const TransportException& e)
     {
+      if (ShouldLog(LogLevel::Error))
+      {
+        Log(LogLevel::Error, std::string("HTTP Transport error: ") + e.what());
+      }
+
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
         throw;
       }
     }
 
-    if (shouldLog)
+    if (ShouldLog(LogLevel::Informational))
     {
-      // Log as Warning if code is not 200
       std::ostringstream log;
 
       log << "HTTP Retry attempt #" << attempt << " will be made in "
