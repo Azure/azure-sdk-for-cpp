@@ -51,7 +51,7 @@ namespace Azure { namespace Storage {
       std::unique_ptr<Azure::Core::Http::RawResponse> Send(
           const Azure::Core::Context& ctx,
           Azure::Core::Http::Request& request,
-          Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override;
+          std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
 
     private:
       StorageRetryWithSecondaryOptions m_options;

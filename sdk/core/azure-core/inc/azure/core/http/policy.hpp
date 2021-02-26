@@ -30,8 +30,6 @@ namespace Azure { namespace Core { namespace Http {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
   }
 
-  class NextHttpPolicy;
-
   /**
    * @brief HTTP policy.
    * An HTTP pipeline inside SDK clients is an stack sequence of HTTP policies.
@@ -56,7 +54,7 @@ namespace Azure { namespace Core { namespace Http {
     virtual std::unique_ptr<RawResponse> Send(
         Context const& context,
         Request& request,
-        NextHttpPolicy policy) const = 0;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const = 0;
 
     /// Destructor.
     virtual ~HttpPolicy() {}
@@ -72,42 +70,6 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy(const HttpPolicy& other) = default;
     HttpPolicy(HttpPolicy&& other) = default;
     HttpPolicy& operator=(const HttpPolicy& other) = default;
-  };
-
-  /**
-   * @brief Represents the next HTTP policy in the stack sequence of policies.
-   *
-   */
-  class NextHttpPolicy {
-    const std::size_t m_index;
-    const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
-
-  public:
-    /**
-     * @brief Construct an abstraction representing a next line in the stack sequence  of policies,
-     * from the caller's perspective.
-     *
-     * @param index An sequential index of this policy in the stack sequence of policies.
-     * @param policies A vector of unique pointers next in the line to be invoked after the current
-     * policy.
-     */
-    explicit NextHttpPolicy(
-        std::size_t index,
-        const std::vector<std::unique_ptr<HttpPolicy>>& policies)
-        : m_index(index), m_policies(policies)
-    {
-    }
-
-    /**
-     * @brief Apply this HTTP policy.
-     *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
-     * @param request An #Azure::Core::Http::Request being sent.
-     *
-     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
-     * policies in the stack sequence of policies have been applied.
-     */
-    std::unique_ptr<RawResponse> Send(Context const& context, Request& request);
   };
 
   /**
@@ -157,7 +119,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> Send(
         Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
   };
 
   /**
@@ -215,7 +177,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> Send(
         Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
   };
 
   /**
@@ -242,12 +204,12 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> Send(
         Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override
     {
       auto uuid = Uuid::CreateUuid().ToString();
 
       request.AddHeader(RequestIdHeader, uuid);
-      return nextHttpPolicy.Send(ctx, request);
+      return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
     }
   };
 
@@ -306,7 +268,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> Send(
         Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
   };
 
   /**
@@ -356,7 +318,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> Send(
         Context const& context,
         Request& request,
-        NextHttpPolicy policy) const override;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
   };
 
   /**
@@ -380,7 +342,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> Send(
         Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
   };
 
   namespace Internal {
@@ -419,7 +381,7 @@ namespace Azure { namespace Core { namespace Http {
       std::unique_ptr<RawResponse> Send(
           Context const& ctx,
           Request& request,
-          NextHttpPolicy nextHttpPolicy) const override
+          std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override
       {
         for (auto const& hdrPair : m_options.HeaderValues)
         {
@@ -434,7 +396,7 @@ namespace Azure { namespace Core { namespace Http {
           }
         }
 
-        return nextHttpPolicy.Send(ctx, request);
+        return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
       }
     };
   } // namespace Internal

@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Details {
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageRetryPolicy::Send(
       const Azure::Core::Context& ctx,
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const
+      std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const
   {
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Details {
       bool lastAttempt = i == m_options.MaxRetries;
       try
       {
-        auto response = nextHttpPolicy.Send(ctx, request);
+        auto response = (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
 
         bool shouldRetry = false;
 

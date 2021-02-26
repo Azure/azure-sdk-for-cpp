@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Details {
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Context const& ctx,
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override;
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override;
   };
 
 }}} // namespace Azure::Storage::Details

@@ -88,7 +88,6 @@ set(
     src/http/body_stream.cpp
     src/http/http.cpp
     src/http/logging_policy.cpp
-    src/http/policy.cpp
     src/http/raw_response.cpp
     src/http/request.cpp
     src/http/retry_policy.cpp

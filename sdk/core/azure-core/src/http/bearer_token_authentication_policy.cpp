@@ -11,7 +11,7 @@ using namespace Azure::Core::Http;
 std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     Context const& context,
     Request& request,
-    NextHttpPolicy policy) const
+    std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const
 {
   {
     std::lock_guard<std::mutex> lock(m_accessTokenMutex);
@@ -25,5 +25,5 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     request.AddHeader("authorization", "Bearer " + m_accessToken.Token);
   }
 
-  return policy.Send(context, request);
+  return (*nextPolicy)->Send(context, request, nextPolicy + 1);
 }

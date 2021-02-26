@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
-      return m_policies[0]->Send(ctx, request, Azure::Core::Http::NextHttpPolicy(0, m_policies));
+      return m_policies[0]->Send(ctx, request, m_policies.begin() + 1);
     }
   };
 }}}} // namespace Azure::Core::Internal::Http

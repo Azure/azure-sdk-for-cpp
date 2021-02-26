@@ -32,9 +32,9 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
 std::unique_ptr<RawResponse> TransportPolicy::Send(
     Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const
 {
-  (void)nextHttpPolicy;
+  (void)nextPolicy;
   ctx.ThrowIfCancelled();
 
   /**

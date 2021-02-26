@@ -39,10 +39,10 @@ namespace Azure { namespace Storage { namespace Test {
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Context const& context,
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override
     {
       (void)context;
-      (void)nextHttpPolicy;
+      (void)nextPolicy;
 
       const auto requestHeaders = request.GetHeaders();
       int64_t requestOffset = 0;

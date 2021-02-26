@@ -75,7 +75,7 @@ std::string GetResponseLogMessage(
 std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
     Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const
 {
   if (Logging::Internal::ShouldLog(Logging::LogLevel::Verbose))
   {
@@ -83,11 +83,11 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
   }
   else
   {
-    return nextHttpPolicy.Send(ctx, request);
+    return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
   }
 
   auto const start = std::chrono::system_clock::now();
-  auto response = nextHttpPolicy.Send(ctx, request);
+  auto response = (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
   auto const end = std::chrono::system_clock::now();
 
   Logging::Internal::Log(

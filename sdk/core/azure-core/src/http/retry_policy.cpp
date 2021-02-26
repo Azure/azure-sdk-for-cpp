@@ -127,7 +127,7 @@ bool ShouldRetryOnResponse(
 std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const
 {
   auto const shouldLog = Logging::Internal::ShouldLog(Logging::LogLevel::Informational);
 
@@ -140,7 +140,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     try
     {
-      auto response = nextHttpPolicy.Send(ctx, request);
+      auto response = (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
