@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Test {
         | Files::Shares::Models::FileAttributes::Hidden
         | Files::Shares::Models::FileAttributes::System;
 
-    Files::Shares::Models::FileAttributes a2(a1.Get());
+    Files::Shares::Models::FileAttributes a2(a1.ToString());
 
     Files::Shares::Models::FileAttributes a3 =
 
@@ -62,11 +62,11 @@ namespace Azure { namespace Storage { namespace Test {
   {
     // default constructible
     Files::Shares::Models::FileAttributes a1;
-    EXPECT_TRUE(a1.Get().empty());
+    EXPECT_TRUE(a1.ToString().empty());
     EXPECT_TRUE(a1.GetValues().empty());
 
     Files::Shares::Models::FileAttributes a2("");
-    EXPECT_TRUE(a2.Get().empty());
+    EXPECT_TRUE(a2.ToString().empty());
     EXPECT_TRUE(a2.GetValues().empty());
 
     EXPECT_EQ(a1, a2);
@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Test {
         | Files::Shares::Models::FileAttributes::NotContentIndexed
         | Files::Shares::Models::FileAttributes::NoScrubData;
 
-    Files::Shares::Models::FileAttributes a2(a1.Get());
+    Files::Shares::Models::FileAttributes a2(a1.ToString());
     EXPECT_EQ(a1, a2);
   }
 
