@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     FileAttributes() = default;
     explicit FileAttributes(const std::string& value);
 
-    std::string Get() const;
+    std::string ToString() const;
     const std::vector<std::string> GetValues() const { return m_value; }
 
     bool operator==(const FileAttributes& other) const { return m_value == other.m_value; }

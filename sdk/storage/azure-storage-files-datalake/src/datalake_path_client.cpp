@@ -320,7 +320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result->Metadata);
     if (result->LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().Get());
+      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().ToString());
     }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())

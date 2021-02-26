@@ -99,10 +99,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), downloadResponse.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::StartCopyShareFileResult> ShareFileClient::StartCopy(
+  StartCopyShareFileOperation ShareFileClient::StartCopy(
       std::string copySource,
       const StartCopyShareFileOptions& options,
       const Azure::Core::Context& context) const
@@ -318,7 +318,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = Details::ShareRestClient::File::StartCopyOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.CopySource = std::move(copySource);
-    protocolLayerOptions.FileCopyFileAttributes = options.SmbProperties.Attributes.Get();
+    protocolLayerOptions.FileCopyFileAttributes = options.SmbProperties.Attributes.ToString();
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileCreationTime
@@ -367,8 +367,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.FileCopySetArchiveAttribute = options.SetArchiveAttribute;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::StartCopy(
+    auto response = Details::ShareRestClient::File::StartCopy(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+
+    StartCopyShareFileOperation res;
+    res.RequestId = std::move(response->RequestId);
+    res.ETag = std::move(response->ETag);
+    res.LastModified = std::move(response->LastModified);
+    res.CopyId = std::move(response->CopyId);
+    res.CopyStatus = std::move(response->CopyStatus);
+    res.m_fileClient = std::make_shared<ShareFileClient>(*this);
+    return res;
   }
 
   Azure::Core::Response<Models::AbortCopyShareFileResult> ShareFileClient::AbortCopy(
@@ -400,10 +409,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::SetHttpHeadersOptions();
-    protocolLayerOptions.FileAttributes = smbProperties.Attributes.Get();
+    protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (smbProperties.CreatedOn.HasValue())
     {
@@ -827,10 +836,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = bufferSize;
-    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
@@ -932,10 +941,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();
-    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.Get();
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.Get();
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
