@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/io/body_stream.hpp"
+#include "azure/core/io/body_stream.hpp"
 
 namespace Azure { namespace IO { namespace Internal {
 

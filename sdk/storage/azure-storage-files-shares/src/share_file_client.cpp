@@ -5,7 +5,7 @@
 
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/policy.hpp>
-#include <azure/core/internal/http/null_body_stream.hpp>
+#include <azure/core/internal/null_body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
