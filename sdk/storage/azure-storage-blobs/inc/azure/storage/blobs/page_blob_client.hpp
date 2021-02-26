@@ -266,9 +266,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source blob must either be public or must be authenticated via a shared access signature.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A StartCopyBlobResult describing the state of the copy operation.
+     * @return A StartCopyBlobOperation describing the state of the copy operation.
      */
-    Azure::Core::Response<Models::StartCopyBlobResult> StartCopyIncremental(
+    StartCopyBlobOperation StartCopyIncremental(
         const std::string& sourceUri,
         const StartCopyPageBlobIncrementalOptions& options = StartCopyPageBlobIncrementalOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
