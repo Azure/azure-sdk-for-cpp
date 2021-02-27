@@ -45,8 +45,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request An #Azure::Core::Http::Request being sent.
-     * @param policy #Azure::Core::Http::NextHttpPolicy to invoke after this policy has been
-     * applied.
+     * @param nextPolicy An iterator referencing the current called policy.
      *
      * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
      * policies in the stack sequence of policies have been applied.
