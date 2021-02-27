@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Details {
       bool lastAttempt = i == m_options.MaxRetries;
       try
       {
-        auto response = (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+        auto response = HttpPolicy::SendNext(ctx, request, nextPolicy);
 
         bool shouldRetry = false;
 

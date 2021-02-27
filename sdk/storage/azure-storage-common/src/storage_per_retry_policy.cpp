@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Details {
               .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
     }
 
-    return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+    return HttpPolicy::SendNext(ctx, request, nextPolicy);
   }
 
 }}} // namespace Azure::Storage::Details

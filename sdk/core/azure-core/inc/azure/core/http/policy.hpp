@@ -70,6 +70,22 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy(const HttpPolicy& other) = default;
     HttpPolicy(HttpPolicy&& other) = default;
     HttpPolicy& operator=(const HttpPolicy& other) = default;
+
+    /**
+     * @brief Calls the next policy in the send request flow.
+     *
+     * @param context The #Context for cancelling the request.
+     * @param request The Http request to be sent.
+     * @param currentPolicy The current performing policy.
+     * @return The result of the next policy.
+     */
+    static std::unique_ptr<RawResponse> SendNext(
+        Context const& context,
+        Request& request,
+        std::vector<std::unique_ptr<HttpPolicy>>::const_iterator currentPolicy)
+    {
+      return (*currentPolicy)->Send(context, request, currentPolicy + 1);
+    }
   };
 
   /**
@@ -396,7 +412,7 @@ namespace Azure { namespace Core { namespace Http {
           }
         }
 
-        return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+        return HttpPolicy::SendNext(ctx, request, nextPolicy);
       }
     };
   } // namespace Internal

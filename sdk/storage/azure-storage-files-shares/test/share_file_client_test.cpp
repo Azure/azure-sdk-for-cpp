@@ -809,7 +809,7 @@ namespace Azure { namespace Storage { namespace Test {
           std::vector<std::unique_ptr<HttpPolicy>>::const_iterator nextPolicy) const override
       {
         request.GetUrl().AppendQueryParameter("comp", "lease1");
-        return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+        return HttpPolicy::SendNext(ctx, request, nextPolicy);
       }
     };
     options.PerOperationPolicies.emplace_back(std::make_unique<InvalidQueryParameterPolicy>());

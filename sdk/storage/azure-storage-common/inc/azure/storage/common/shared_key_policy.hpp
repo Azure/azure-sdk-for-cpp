@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Details {
     {
       request.AddHeader(
           "Authorization", "SharedKey " + m_credential->AccountName + ":" + GetSignature(request));
-      return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+      return HttpPolicy::SendNext(ctx, request, nextPolicy);
     }
 
   private:

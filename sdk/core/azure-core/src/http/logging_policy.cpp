@@ -83,11 +83,11 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
   }
   else
   {
-    return (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+    return HttpPolicy::SendNext(ctx, request, nextPolicy);
   }
 
   auto const start = std::chrono::system_clock::now();
-  auto response = (*nextPolicy)->Send(ctx, request, nextPolicy + 1);
+  auto response = HttpPolicy::SendNext(ctx, request, nextPolicy);
   auto const end = std::chrono::system_clock::now();
 
   Logging::Internal::Log(
