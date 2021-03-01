@@ -122,7 +122,37 @@ bool ShouldRetryOnResponse(
 
   return true;
 }
+
+static constexpr char RetryKey[] = "azureSdkRetryPolicyCounter";
+
+/**
+ * @brief Creates a new #Context node from \p parent with the information about the retrying while
+ * sending an Http request.
+ *
+ * @param context
+ * @return Context
+ */
+Context inline GetRetryContext(Context const& parent)
+{
+  // First try as default
+  int retryCount = 1;
+  if (parent.HasKey(RetryKey))
+  {
+    retryCount = parent[RetryKey].Get<int>() + 1;
+  }
+  return parent.WithValue(RetryKey, retryCount);
+}
 } // namespace
+
+int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
+{
+  if (!context.HasKey(RetryKey))
+  {
+    // Not in retry mode.
+    return 0;
+  }
+  return context[RetryKey].Get<int>();
+}
 
 std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Context const& ctx,
@@ -130,7 +160,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     NextHttpPolicy nextHttpPolicy) const
 {
   auto const shouldLog = Logging::Internal::ShouldLog(Logging::LogLevel::Informational);
-
+  auto retryContext = GetRetryContext(ctx);
   for (RetryNumber attempt = 1;; ++attempt)
   {
     Delay retryAfter{};
@@ -140,7 +170,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     try
     {
-      auto response = nextHttpPolicy.Send(ctx, request);
+      auto response = nextHttpPolicy.Send(retryContext, request);
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
@@ -179,5 +209,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     // Restore the original query parameters before next retry
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
+
+    // Update retry number
+    retryContext = GetRetryContext(retryContext);
   }
 }

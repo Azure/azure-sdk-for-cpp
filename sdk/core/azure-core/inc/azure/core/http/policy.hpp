@@ -216,6 +216,14 @@ namespace Azure { namespace Core { namespace Http {
         Context const& ctx,
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override;
+
+    /**
+     * @brief Get the Retry Count from the context.
+     *
+     * @param context The context used to call send request.
+     * @return A positive number indicating the current intent to send the request.
+     */
+    static int GetRetryNumber(Context const& context);
   };
 
   /**

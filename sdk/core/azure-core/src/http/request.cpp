@@ -47,7 +47,6 @@ void Request::StartTry()
   {
     bodyStream->Rewind();
   }
-  this->m_retryCount += 1;
 }
 
 HttpMethod Request::GetMethod() const { return this->m_method; }

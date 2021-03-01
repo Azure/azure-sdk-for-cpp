@@ -45,15 +45,8 @@ namespace Azure { namespace Core { namespace Test {
     auto value2 = headers.find("name2");
     EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value2->second, "value2");
 
-    int expected = 0;
-    EXPECT_EQ(req.GetRetryCount(), expected);
     // now add to retry headers
     req.StartTry();
-    expected = 1;
-    EXPECT_EQ(req.GetRetryCount(), expected);
-    req.StartTry();
-    expected = 2;
-    EXPECT_EQ(req.GetRetryCount(), expected);
 
     // same headers first, then one new
     EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));

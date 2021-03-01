@@ -469,8 +469,6 @@ namespace Azure { namespace Core { namespace Http {
     // read and upload chunks of data from the payload body stream. If it is not set, the transport
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
-    // The count gets incremented on every intent to send the request.
-    int m_retryCount = 0;
 
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
@@ -591,13 +589,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get URL.
      */
     Url const& GetUrl() const { return this->m_url; }
-
-    /**
-     * @brief Get the number of retries intents for the request.
-     *
-     * @return uint
-     */
-    int GetRetryCount() const { return m_retryCount; }
   };
 
   /**
