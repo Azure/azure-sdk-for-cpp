@@ -129,8 +129,8 @@ static constexpr char RetryKey[] = "azureSdkRetryPolicyCounter";
  * @brief Creates a new #Context node from \p parent with the information about the retrying while
  * sending an Http request.
  *
- * @param context
- * @return Context
+ * @param parent The parent context for the new created.
+ * @return Context with information about retry counter.
  */
 Context inline GetRetryContext(Context const& parent)
 {
