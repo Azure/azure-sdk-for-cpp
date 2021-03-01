@@ -8,9 +8,10 @@
 
 #pragma once
 
+#include "azure/core/case_insensitive_map.hpp"
 #include "azure/core/exception.hpp"
-#include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
+#include "azure/core/io/body_stream.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <algorithm>
@@ -45,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if \p headerName is invalid.
      */
     void InsertHeaderWithValidation(
-        std::map<std::string, std::string>& headers,
+        CaseInsensitiveMap& headers,
         std::string const& headerName,
         std::string const& headerValue);
   } // namespace Details
@@ -409,11 +410,11 @@ namespace Azure { namespace Core { namespace Http {
     uint16_t GetPort() const { return m_port; }
 
     /**
-     * @brief Provides a copy to the list of query parameters from the URL.
+     * @brief Get a copy of the list of query parameters from the URL.
      *
      * @remark The query parameters are URL-encoded.
      *
-     * @return const std::map<std::string, std::string>&
+     * @return A copy of the query parameters map.
      */
     std::map<std::string, std::string> GetQueryParameters() const
     {
@@ -421,16 +422,16 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Gets the path and query parameters.
+     * @brief Get the path and query parameters.
      *
-     * @return std::string The string is URL encoded.
+     * @return Relative URL with URL-encoded query parameters.
      */
     std::string GetRelativeUrl() const;
 
     /**
-     * @brief Gets Scheme, host, path and query parameters.
+     * @brief Get Scheme, host, path and query parameters.
      *
-     * @return std::string The string is URL encoded.
+     * @return Absolute URL with URL-encoded query parameters.
      */
     std::string GetAbsoluteUrl() const;
   };
@@ -449,10 +450,10 @@ namespace Azure { namespace Core { namespace Http {
   private:
     HttpMethod m_method;
     Url m_url;
-    std::map<std::string, std::string> m_headers;
-    std::map<std::string, std::string> m_retryHeaders;
+    CaseInsensitiveMap m_headers;
+    CaseInsensitiveMap m_retryHeaders;
 
-    BodyStream* m_bodyStream;
+    Azure::IO::BodyStream* m_bodyStream;
 
     // flag to know where to insert header
     bool m_retryModeEnabled{false};
@@ -469,11 +470,15 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param bodyStream #Azure::Core::Http::BodyStream.
+     * @param bodyStream #Azure::IO::BodyStream.
      * @param downloadViaStream A boolean value indicating whether download should happen via
      * stream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream, bool downloadViaStream)
+    explicit Request(
+        HttpMethod httpMethod,
+        Url url,
+        Azure::IO::BodyStream* bodyStream,
+        bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
     {
@@ -484,9 +489,9 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param bodyStream #Azure::Core::Http::BodyStream.
+     * @param bodyStream #Azure::IO::BodyStream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream)
+    explicit Request(HttpMethod httpMethod, Url url, Azure::IO::BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, false)
     {
     }
@@ -545,12 +550,12 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP headers.
      */
-    std::map<std::string, std::string> GetHeaders() const;
+    CaseInsensitiveMap GetHeaders() const;
 
     /**
-     * @brief Get HTTP body as #Azure::Core::Http::BodyStream.
+     * @brief Get HTTP body as #Azure::IO::BodyStream.
      */
-    BodyStream* GetBodyStream() { return this->m_bodyStream; }
+    Azure::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
      * @brief Get the list of headers prior to HTTP body.
@@ -596,9 +601,9 @@ namespace Azure { namespace Core { namespace Http {
     int32_t m_minorVersion;
     HttpStatusCode m_statusCode;
     std::string m_reasonPhrase;
-    std::map<std::string, std::string> m_headers;
+    CaseInsensitiveMap m_headers;
 
-    std::unique_ptr<BodyStream> m_bodyStream;
+    std::unique_ptr<Azure::IO::BodyStream> m_bodyStream;
     std::vector<uint8_t> m_body;
 
     explicit RawResponse(
@@ -606,7 +611,7 @@ namespace Azure { namespace Core { namespace Http {
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase,
-        std::unique_ptr<BodyStream> BodyStream)
+        std::unique_ptr<Azure::IO::BodyStream> BodyStream)
         : m_majorVersion(majorVersion), m_minorVersion(minorVersion), m_statusCode(statusCode),
           m_reasonPhrase(reasonPhrase), m_bodyStream(std::move(BodyStream))
     {
@@ -691,11 +696,11 @@ namespace Azure { namespace Core { namespace Http {
     void SetHeader(uint8_t const* const first, uint8_t const* const last);
 
     /**
-     * @brief Set #Azure::Core::Http::BodyStream for this HTTP response.
+     * @brief Set #Azure::IO::BodyStream for this HTTP response.
      *
-     * @param stream #Azure::Core::Http::BodyStream.
+     * @param stream #Azure::IO::BodyStream.
      */
-    void SetBodyStream(std::unique_ptr<BodyStream> stream);
+    void SetBodyStream(std::unique_ptr<Azure::IO::BodyStream> stream);
 
     /**
      * @brief Set HTTP response body for this HTTP response.
@@ -730,12 +735,12 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response headers.
      */
-    std::map<std::string, std::string> const& GetHeaders() const;
+    CaseInsensitiveMap const& GetHeaders() const;
 
     /**
-     * @brief Get HTTP response body as #Azure::Core::Http::BodyStream.
+     * @brief Get HTTP response body as #Azure::IO::BodyStream.
      */
-    std::unique_ptr<BodyStream> GetBodyStream()
+    std::unique_ptr<Azure::IO::BodyStream> GetBodyStream()
     {
       // If m_bodyStream was moved before. nullptr is returned
       return std::move(this->m_bodyStream);

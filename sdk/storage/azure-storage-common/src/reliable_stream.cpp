@@ -6,7 +6,7 @@
 #include <azure/core/http/http.hpp>
 
 using Azure::Core::Context;
-using Azure::Core::Http::BodyStream;
+using Azure::IO::BodyStream;
 
 namespace Azure { namespace Storage {
 

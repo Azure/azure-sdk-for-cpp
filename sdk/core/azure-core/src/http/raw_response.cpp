@@ -9,16 +9,14 @@
 #include <string>
 #include <vector>
 
+using namespace Azure::IO;
 using namespace Azure::Core::Http;
 
 HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
 
 std::string const& RawResponse::GetReasonPhrase() const { return m_reasonPhrase; }
 
-std::map<std::string, std::string> const& RawResponse::GetHeaders() const
-{
-  return this->m_headers;
-}
+Azure::Core::CaseInsensitiveMap const& RawResponse::GetHeaders() const { return this->m_headers; }
 
 void RawResponse::SetHeader(uint8_t const* const first, uint8_t const* const last)
 {

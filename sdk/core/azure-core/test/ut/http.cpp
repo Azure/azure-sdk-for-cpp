@@ -5,7 +5,7 @@
 
 #include "http.hpp"
 #include <azure/core/http/http.hpp>
-#include <azure/core/internal/http/null_body_stream.hpp>
+#include <azure/core/internal/null_body_stream.hpp>
 
 #include <string>
 #include <utility>
@@ -25,8 +25,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_NO_THROW(req.SetHeader(expected.first, expected.second));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -40,8 +39,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expectedOverride("valid", "override");
     EXPECT_NO_THROW(req.SetHeader(expectedOverride.first, expectedOverride.second));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -53,8 +51,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(req.SetHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondHeader = headers.begin();
           secondHeader++;
           return secondHeader->first == expected.first && secondHeader->second == expected.second
@@ -73,8 +70,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_NO_THROW(response.SetHeader(expected.first, expected.second));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -89,8 +85,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expectedOverride("valid", "override");
     EXPECT_NO_THROW(response.SetHeader(expectedOverride.first, expectedOverride.second));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
           return firstHeader->first == expected.first && firstHeader->second == expected.second
               && headers.size() == 1;
@@ -102,8 +97,7 @@ namespace Azure { namespace Core { namespace Test {
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(response.SetHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
           secondtHeader++;
           return secondtHeader->first == expected.first && secondtHeader->second == expected.second
@@ -120,8 +114,7 @@ namespace Azure { namespace Core { namespace Test {
     // adding header after previous error just happened on add from string
     EXPECT_NO_THROW(response.SetHeader("valid3: header3"));
     EXPECT_PRED2(
-        [](std::map<std::string, std::string> headers,
-           std::pair<std::string, std::string> expected) {
+        [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
           secondtHeader++;
           secondtHeader++;
@@ -168,8 +161,8 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
-      Azure::Core::Internal::Http::NullBodyStream* d
-          = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
+      Azure::IO::Internal::NullBodyStream* d
+          = dynamic_cast<Azure::IO::Internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
@@ -185,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
-      d = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::Internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
     }
 
@@ -194,34 +187,31 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
 
       std::vector<uint8_t> data = {1, 2, 3, 4};
-      Azure::Core::Http::MemoryBodyStream stream(data);
+      Azure::IO::MemoryBodyStream stream(data);
 
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
       EXPECT_EQ(
-          Azure::Core::Http::BodyStream::ReadToCount(
-              GetApplicationContext(), stream, temp.data(), 1),
-          1);
+          Azure::IO::BodyStream::ReadToCount(GetApplicationContext(), stream, temp.data(), 1), 1);
 
       EXPECT_EQ(temp[0], 1);
       EXPECT_EQ(temp[1], 0);
 
       Http::Request req(httpMethod, url, &stream);
 
-      Azure::Core::Http::MemoryBodyStream* d
-          = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      Azure::IO::MemoryBodyStream* d
+          = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
 
-      d = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       // Verify that StartTry rewound the stream back.
       auto getStream = req.GetBodyStream();
       EXPECT_EQ(
-          Azure::Core::Http::BodyStream::ReadToCount(
-              GetApplicationContext(), *getStream, temp.data(), 2),
+          Azure::IO::BodyStream::ReadToCount(GetApplicationContext(), *getStream, temp.data(), 2),
           2);
 
       EXPECT_EQ(temp[0], 1);

@@ -47,7 +47,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         response->SetHeader(header.first, header.second);
       }
       std::string bodyCount(Details::FakeKey);
-      response->SetBodyStream(std::make_unique<Azure::Core::Http::MemoryBodyStream>(
+      response->SetBodyStream(std::make_unique<Azure::IO::MemoryBodyStream>(
           reinterpret_cast<const uint8_t*>(Details::FakeKey), bodyCount.size()));
       return response;
     } // namespace Azure
