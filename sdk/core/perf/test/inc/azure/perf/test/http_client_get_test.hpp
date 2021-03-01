@@ -11,9 +11,9 @@
 
 #include <azure/perf.hpp>
 
-#include <azure/core/http/body_stream.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/transport.hpp>
+#include <azure/core/io/body_stream.hpp>
 
 #include <memory>
 #include <vector>
@@ -60,7 +60,7 @@ namespace Azure { namespace Perf { namespace Test {
       auto response = Details::HttpClient->Send(ctx, request);
       // Read the body from network
       auto bodyStream = response->GetBodyStream();
-      response->SetBody(Azure::Core::Http::BodyStream::ReadToEnd(ctx, *bodyStream));
+      response->SetBody(Azure::IO::BodyStream::ReadToEnd(ctx, *bodyStream));
     }
 
     /**

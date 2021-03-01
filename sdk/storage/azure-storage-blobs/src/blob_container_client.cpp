@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
       const std::string& blobName,
-      Azure::Core::Http::BodyStream* content,
+      Azure::IO::BodyStream* content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {

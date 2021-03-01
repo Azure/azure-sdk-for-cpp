@@ -5,7 +5,7 @@
 
 #include "http.hpp"
 #include <azure/core/http/http.hpp>
-#include <azure/core/internal/http/null_body_stream.hpp>
+#include <azure/core/internal/null_body_stream.hpp>
 
 #include <string>
 #include <utility>
@@ -161,8 +161,8 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
-      Azure::Core::Internal::Http::NullBodyStream* d
-          = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
+      Azure::IO::Internal::NullBodyStream* d
+          = dynamic_cast<Azure::IO::Internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
-      d = dynamic_cast<Azure::Core::Internal::Http::NullBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::Internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
     }
 
@@ -187,34 +187,31 @@ namespace Azure { namespace Core { namespace Test {
       Http::Url url("http://test.com");
 
       std::vector<uint8_t> data = {1, 2, 3, 4};
-      Azure::Core::Http::MemoryBodyStream stream(data);
+      Azure::IO::MemoryBodyStream stream(data);
 
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
       EXPECT_EQ(
-          Azure::Core::Http::BodyStream::ReadToCount(
-              GetApplicationContext(), stream, temp.data(), 1),
-          1);
+          Azure::IO::BodyStream::ReadToCount(GetApplicationContext(), stream, temp.data(), 1), 1);
 
       EXPECT_EQ(temp[0], 1);
       EXPECT_EQ(temp[1], 0);
 
       Http::Request req(httpMethod, url, &stream);
 
-      Azure::Core::Http::MemoryBodyStream* d
-          = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      Azure::IO::MemoryBodyStream* d
+          = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
 
-      d = dynamic_cast<Azure::Core::Http::MemoryBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       // Verify that StartTry rewound the stream back.
       auto getStream = req.GetBodyStream();
       EXPECT_EQ(
-          Azure::Core::Http::BodyStream::ReadToCount(
-              GetApplicationContext(), *getStream, temp.data(), 2),
+          Azure::IO::BodyStream::ReadToCount(GetApplicationContext(), *getStream, temp.data(), 2),
           2);
 
       EXPECT_EQ(temp[0], 1);
