@@ -6,6 +6,11 @@
 
 - Added support for customized application ID.
 
+### Breaking Changes
+
+- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
+- String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+
 ## 12.0.0-beta.8 (2021-02-12)
 
 ### Breaking Changes

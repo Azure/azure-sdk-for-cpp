@@ -2,11 +2,15 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
+#include "azure/core/internal/http/null_body_stream.hpp"
 
 #include <utility>
 
+using namespace Azure::Core::Http;
+using namespace Azure::Core::Internal::Http;
+
 void Azure::Core::Http::Details::InsertHeaderWithValidation(
-    std::map<std::string, std::string>& headers,
+    Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
 {
@@ -154,4 +158,14 @@ void Azure::Core::Http::Details::InsertHeaderWithValidation(
   }
   // insert (override if duplicated)
   headers[headerName] = headerValue;
+}
+
+Request::Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), downloadViaStream)
+{
+}
+
+Request::Request(HttpMethod httpMethod, Url url)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
+{
 }
