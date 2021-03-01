@@ -13,6 +13,7 @@
 - Moved `NullBodyStream` to internal usage only. It is not meant for public use.
 - Removed `LimitBodyStream`.
 - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
+- Moved `StartTry()` from `Azure::Core::Http::Request` to internal usage only. It is not meant for public use.
 
 ### Bug Fixes
 
