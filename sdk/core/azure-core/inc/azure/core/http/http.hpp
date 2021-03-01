@@ -510,10 +510,13 @@ namespace Azure { namespace Core { namespace Http {
     explicit Request(HttpMethod httpMethod, Url url);
 
     /**
-     * @brief Add HTTP header to the #Azure::Core::Http::Request.
+     * @brief Set an  HTTP header to the #Azure::Core::Http::Request.
      *
-     * @param name The name for the header to be added.
-     * @param value The value for the header to be added.
+     * @remark If the header key does not exists, it is added.
+     *
+     *
+     * @param name The name for the header to be set or added.
+     * @param value The value for the header to be set or added.
      *
      * @throw if \p name is an invalid header key.
      */
