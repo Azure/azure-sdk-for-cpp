@@ -270,9 +270,9 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Accesses the contained value.
-     * @return Returns a pointer to the contained value
+     * @return Returns a pointer to the contained value.
      * @warning The behavior is undefined if `*this` does not contain a value.
-     * @note This operator does not check whether the optional contains a value!
+     * @note This operator does not check whether the #Nullable contains a value!
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
@@ -280,9 +280,9 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Accesses the contained value.
-     * @return Returns a pointer to the contained value
+     * @return Returns a pointer to the contained value.
      * @warning The behavior is undefined if `*this` does not contain a value.
-     * @note This operator does not check whether the optional contains a value!
+     * @note This operator does not check whether the #Nullable contains a value!
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
@@ -290,9 +290,9 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Accesses the contained value.
-     * @return Returns a reference to the contained value
+     * @return Returns a reference to the contained value.
      * @warning The behavior is undefined if `*this` does not contain a value.
-     * @note This operator does not check whether the optional contains a value!
+     * @note This operator does not check whether the #Nullable contains a value!
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
@@ -300,9 +300,9 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Accesses the contained value.
-     * @return Returns a reference to the contained value
+     * @return Returns a reference to the contained value.
      * @warning The behavior is undefined if `*this` does not contain a value.
-     * @note This operator does not check whether the optional contains a value!
+     * @note This operator does not check whether the #Nullable contains a value!
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
@@ -310,9 +310,9 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Accesses the contained value.
-     * @return Returns a reference to the contained value
+     * @return Returns a reference to the contained value.
      * @warning The behavior is undefined if `*this` does not contain a value.
-     * @note This operator does not check whether the optional contains a value!
+     * @note This operator does not check whether the #Nullable contains a value!
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
@@ -320,9 +320,9 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Accesses the contained value.
-     * @return Returns a reference to the contained value
+     * @return Returns a reference to the contained value.
      * @warning The behavior is undefined if `*this` does not contain a value.
-     * @note This operator does not check whether the optional contains a value!
+     * @note This operator does not check whether the #Nullable contains a value!
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
