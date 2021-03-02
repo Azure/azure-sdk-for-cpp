@@ -29,6 +29,6 @@ namespace Azure { namespace Core {
     /**
      * @brief Optionally limit requests to resources that have remained unmodified.
      */
-    Azure::Core::Nullable <Azure::Core::DateTime> IfUnmodifiedSince;
+    Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
   };
 }} // namespace Azure::Core
