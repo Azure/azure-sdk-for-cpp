@@ -366,7 +366,7 @@ namespace Azure { namespace Core { namespace Http {
   struct LoggingPolicyOptions
   {
     /// HTTP query parameters that are allowed to be logged.
-    Azure::Core::CaseInsensitiveSet AllowedHttpQueryParameters;
+    std::set<std::string> AllowedHttpQueryParameters;
 
     /// HTTP request headers that are allowed to be logged.
     Azure::Core::CaseInsensitiveSet AllowedHttpRequestHeaders;
@@ -408,7 +408,7 @@ namespace Azure { namespace Core { namespace Http {
     struct ValuePolicyOptions
     {
       CaseInsensitiveMap HeaderValues;
-      CaseInsensitiveMap QueryValues;
+      std::map<std::string, std::string> QueryValues;
     };
 
     /**

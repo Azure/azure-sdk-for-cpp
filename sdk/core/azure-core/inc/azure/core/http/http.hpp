@@ -251,7 +251,7 @@ namespace Azure { namespace Core { namespace Http {
     uint16_t m_port{0};
     std::string m_encodedPath;
     // query parameters are all encoded
-    CaseInsensitiveMap m_encodedQueryParameters;
+    std::map<std::string, std::string> m_encodedQueryParameters;
 
     // List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
     // this set.
@@ -330,7 +330,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param queryParameters
      */
-    void SetQueryParameters(CaseInsensitiveMap queryParameters)
+    void SetQueryParameters(std::map<std::string, std::string> queryParameters)
     {
       // creates a copy and discard previous
       m_encodedQueryParameters = std::move(queryParameters);
@@ -416,7 +416,10 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return A copy of the query parameters map.
      */
-    CaseInsensitiveMap GetQueryParameters() const { return m_encodedQueryParameters; }
+    std::map<std::string, std::string> GetQueryParameters() const
+    {
+      return m_encodedQueryParameters;
+    }
 
     /**
      * @brief Get the path and query parameters.
