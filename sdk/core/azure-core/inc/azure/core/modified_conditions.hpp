@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/core/datetime.hpp"
+#include "azure/core/nullable.hpp"
 
 #include <string>
 
@@ -23,11 +24,11 @@ namespace Azure { namespace Core {
      * @brief Optionally limit requests to resources that have only been modified since this point
      * in time.
      */
-    Azure::Core::DateTime IfModifiedSince;
+    Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
 
     /**
      * @brief Optionally limit requests to resources that have remained unmodified.
      */
-    Azure::Core::DateTime IfUnmodifiedSince;
+    Azure::Core::Nullable <Azure::Core::DateTime> IfUnmodifiedSince;
   };
 }} // namespace Azure::Core
