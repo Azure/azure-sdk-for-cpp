@@ -1,27 +1,29 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/blobs/blob_responses.hpp"
+#include "azure/storage/files/shares/share_responses.hpp"
 
-#include "azure/storage/blobs/blob_client.hpp"
+#include <thread>
 
-namespace Azure { namespace Storage { namespace Blobs {
+#include "azure/storage/files/shares/share_file_client.hpp"
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyBlobOperation::PollInternal(
+namespace Azure { namespace Storage { namespace Files { namespace Shares {
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyShareFileOperation::PollInternal(
       Azure::Core::Context& context)
   {
     (void)context;
 
-    auto response = m_blobClient->GetProperties();
+    auto response = m_fileClient->GetProperties();
     if (!response->CopyStatus.HasValue())
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Pending)
+    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Pending)
     {
       m_status = Azure::Core::OperationStatus::Running;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Success)
+    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Success)
     {
       m_status = Azure::Core::OperationStatus::Succeeded;
     }
@@ -33,7 +35,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response.ExtractRawResponse();
   }
 
-  Azure::Core::Response<Models::GetBlobPropertiesResult> StartCopyBlobOperation::
+  Azure::Core::Response<Models::GetShareFilePropertiesResult> StartCopyShareFileOperation::
       PollUntilDoneInternal(Azure::Core::Context& context, std::chrono::milliseconds period)
   {
     while (true)
@@ -42,7 +44,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Core::Response<Models::GetBlobPropertiesResult>(
+        return Azure::Core::Response<Models::GetShareFilePropertiesResult>(
             m_pollResult, std::move(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
@@ -58,4 +60,4 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Files::Shares

@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string blobName = prefix1 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+      auto emptyContent = Azure::IO::MemoryBodyStream(nullptr, 0);
       blobClient.Upload(&emptyContent);
       p1Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string blobName = prefix2 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+      auto emptyContent = Azure::IO::MemoryBodyStream(nullptr, 0);
       blobClient.Upload(&emptyContent);
       p2Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
         EXPECT_TRUE(IsValidTime(blob.Details.LastModified));
         EXPECT_TRUE(blob.Details.ETag.HasValue());
-        EXPECT_FALSE(blob.BlobType.Get().empty());
+        EXPECT_FALSE(blob.BlobType.ToString().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
           EXPECT_TRUE(blob.Details.Tier.HasValue());
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
         if (blob.Details.Tier.HasValue())
         {
-          EXPECT_FALSE(blob.Details.Tier.GetValue().Get().empty());
+          EXPECT_FALSE(blob.Details.Tier.GetValue().ToString().empty());
         }
         if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         std::string blobName = blobNamePrefix + delimiter + RandomString();
         auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-        auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+        auto emptyContent = Azure::IO::MemoryBodyStream(nullptr, 0);
         blobClient.Upload(&emptyContent);
         blobs.insert(blobName);
       }
@@ -317,7 +317,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.CreateSnapshot();
     blobClient.SetMetadata({{"k1", "v1"}});
     std::vector<uint8_t> content(1);
-    auto contentStream = Azure::Core::Http::MemoryBodyStream(content.data(), 1);
+    auto contentStream = Azure::IO::MemoryBodyStream(content.data(), 1);
     blobClient.AppendBlock(&contentStream);
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
@@ -532,7 +532,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(properties.EncryptionScope.HasValue());
       EXPECT_EQ(properties.EncryptionScope.GetValue(), TestEncryptionScope);
       std::vector<uint8_t> appendContent(1);
-      Azure::Core::Http::MemoryBodyStream bodyStream(appendContent.data(), appendContent.size());
+      Azure::IO::MemoryBodyStream bodyStream(appendContent.data(), appendContent.size());
       EXPECT_NO_THROW(appendBlobClient.AppendBlock(&bodyStream));
 
       bodyStream.Rewind();
@@ -565,7 +565,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, options);
 
     std::vector<uint8_t> blobContent(512);
-    Azure::Core::Http::MemoryBodyStream bodyStream(blobContent.data(), blobContent.size());
+    Azure::IO::MemoryBodyStream bodyStream(blobContent.data(), blobContent.size());
     auto copySourceBlob = m_blobContainerClient->GetBlockBlobClient(RandomString());
     copySourceBlob.UploadFrom(blobContent.data(), blobContent.size());
 
@@ -813,7 +813,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::vector<uint8_t> contentData(512);
     int64_t contentSize = static_cast<int64_t>(contentData.size());
-    auto content = Azure::Core::Http::MemoryBodyStream(contentData.data(), contentSize);
+    auto content = Azure::IO::MemoryBodyStream(contentData.data(), contentSize);
 
     std::string blobName = RandomString();
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
