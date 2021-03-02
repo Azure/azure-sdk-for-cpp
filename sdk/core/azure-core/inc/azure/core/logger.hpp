@@ -10,7 +10,6 @@
 #pragma once
 
 #include <functional>
-#include <shared_mutex>
 #include <string>
 
 namespace Azure { namespace Core {
@@ -51,11 +50,6 @@ namespace Azure { namespace Core {
      */
     typedef std::function<void(LogLevel level, std::string const& message)> Listener;
 
-  private:
-    static std::shared_timed_mutex g_mutex;
-    static Listener g_listener;
-    static LogLevel g_level;
-
   public:
     /**
      * @brief Set the function that will be invoked to report an SDK log message.
@@ -75,10 +69,5 @@ namespace Azure { namespace Core {
   private:
     Logger() = delete;
     ~Logger() = delete;
-
-    friend bool Internal::ShouldLog(LogLevel);
-    friend void Internal::Log(LogLevel, std::string const&);
-
-    static Listener GetListener(LogLevel level);
   };
 }} // namespace Azure::Core

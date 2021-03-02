@@ -5,16 +5,22 @@
 
 #include "azure/core/logger.hpp"
 
-namespace Azure { namespace Core { namespace Internal {
-
-  inline bool ShouldLog(LogLevel level) { return Logger::GetListener(level) != nullptr; }
-
-  inline void Log(LogLevel level, std::string const& message)
-  {
-    if (auto listener = Logger::GetListener(level))
-    {
-      listener(level, message);
-    }
+namespace Azure { namespace Core {
+  namespace Details {
+    Logger::Listener GetLogListener(LogLevel);
   }
 
-}}} // namespace Azure::Core::Internal
+  namespace Internal {
+
+    inline bool ShouldLog(LogLevel level) { return Details::GetLogListener(level) != nullptr; }
+
+    inline void Log(LogLevel level, std::string const& message)
+    {
+      if (auto listener = Details::GetLogListener(level))
+      {
+        listener(level, message);
+      }
+    }
+
+  } // namespace Internal
+}} // namespace Azure::Core
