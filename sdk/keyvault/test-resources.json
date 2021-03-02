@@ -195,6 +195,10 @@
             "type": "string",
             "value": "[variables('azureKeyVaultUrl')]"
         },
+        "AZURE_KEYVAULT_HSM_URL": {
+            "type": "string",
+            "value": "[variables('azureKeyVaultUrl')]"
+        },
         "AZURE_TENANT_ID": {
             "type": "string",
             "value": "[parameters('tenantId')]"

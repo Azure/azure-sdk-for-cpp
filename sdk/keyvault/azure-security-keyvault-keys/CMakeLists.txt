@@ -34,6 +34,7 @@ set(
     inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/details/key_constants.hpp
     inc/azure/keyvault/keys/key_create_options.hpp
+    inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/key_operation.hpp
     inc/azure/keyvault/keys/key_properties.hpp
@@ -48,6 +49,7 @@ set(
     src/delete_key_operation.cpp
     src/deleted_key.cpp
     src/key_client.cpp
+    src/key_curve_name.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
