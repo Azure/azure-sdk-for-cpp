@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/core/case_insensitive_map.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/http.hpp"
@@ -406,7 +407,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     struct ValueOptions
     {
-      std::map<std::string, std::string> HeaderValues;
+      CaseInsensitiveMap HeaderValues;
       std::map<std::string, std::string> QueryValues;
     };
 

@@ -45,7 +45,7 @@ TEST(SimplifiedHeader, core)
 
   {
     std::vector<uint8_t> buffer(10);
-    EXPECT_NO_THROW(Azure::Core::Http::MemoryBodyStream mb(buffer));
+    EXPECT_NO_THROW(Azure::IO::MemoryBodyStream mb(buffer));
   }
   EXPECT_NO_THROW(Azure::Core::Http::TelemetryPolicy tp("", ""));
 }

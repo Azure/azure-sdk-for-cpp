@@ -12,7 +12,11 @@
 - Removed `TransportKind` enum from `Azure::Core::Http`.
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
-- Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
+- Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
+- Moved `BodyStream` and its derived types from `Azure::Core::Http` namespace to `Azure::IO`, and moved the `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
+- Moved `NullBodyStream` to internal usage only. It is not meant for public use.
+- Removed `LimitBodyStream`.
+- Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
 - Renamed `TransportPolicyOptions` to `TransportOptions`.
 - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
 - Renamed `ValuePolicyOptions` to `ValueOptions`.

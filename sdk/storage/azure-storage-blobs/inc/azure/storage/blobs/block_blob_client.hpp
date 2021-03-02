@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
     Azure::Core::Response<Models::UploadBlockBlobResult> Upload(
-        Azure::Core::Http::BodyStream* content,
+        Azure::IO::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<Models::StageBlockResult> StageBlock(
         const std::string& blockId,
-        Azure::Core::Http::BodyStream* content,
+        Azure::IO::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

@@ -46,7 +46,6 @@ set(
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
     inc/azure/core/cryptography/hash.hpp
-    inc/azure/core/http/body_stream.hpp
     inc/azure/core/http/http.hpp
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
@@ -57,9 +56,12 @@ set(
     inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
+    inc/azure/core/internal/null_body_stream.hpp
     inc/azure/core/internal/strings.hpp
+    inc/azure/core/io/body_stream.hpp
     inc/azure/core/logging/logging.hpp
     inc/azure/core/base64.hpp
+    inc/azure/core/case_insensitive_map.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
@@ -84,7 +86,6 @@ set(
     ${WIN_TRANSPORT_ADAPTER_SRC}
     src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
-    src/http/body_stream.cpp
     src/http/http.cpp
     src/http/logging_policy.cpp
     src/http/policy.cpp
@@ -94,6 +95,7 @@ set(
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
+    src/io/body_stream.cpp
     src/logging/logging.cpp
     src/base64.cpp
     src/context.cpp

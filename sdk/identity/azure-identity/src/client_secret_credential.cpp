@@ -10,6 +10,7 @@
 #include <sstream>
 
 using namespace Azure::Identity;
+using namespace Azure::IO;
 
 std::string const Azure::Identity::Details::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";

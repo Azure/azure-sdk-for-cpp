@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 - DataLake client constructors won't automatically convert blob url to dfs url anymore.
+- String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
