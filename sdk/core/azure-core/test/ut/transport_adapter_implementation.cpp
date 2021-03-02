@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Test {
         std::string suffix,
         std::shared_ptr<Azure::Core::Http::HttpTransport> adapter)
     {
-      Azure::Core::Http::TransportPolicyOptions options;
+      Azure::Core::Http::TransportOptions options;
       options.Transport = adapter;
       return TransportAdaptersTestParameter(std::move(suffix), options);
     }

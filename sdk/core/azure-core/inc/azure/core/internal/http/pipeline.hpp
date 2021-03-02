@@ -67,18 +67,22 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
      * @param telemetryServiceName The name of the service for sending telemetry.
      * @param telemetryServiceVersion The version of the service for sending telemetry.
      * @param perRetryPolicies The service specific per retry policies.
+     * @param authBeforeSendPolicy Optional policy to set authentication information to the request
+     * right before sending it.
      */
     explicit HttpPipeline(
         ClientOptions const& clientOptions,
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies)
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
+        std::unique_ptr<Azure::Core::Http::HttpPolicy> authBeforeSendPolicy = nullptr)
         : HttpPipeline(
             clientOptions,
             telemetryServiceName,
             telemetryServiceVersion,
             std::move(perRetryPolicies),
-            {})
+            {},
+            std::move(authBeforeSendPolicy))
     {
     }
 
@@ -93,6 +97,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
      * @param telemetryServiceVersion The version of the service for sending telemetry.
      * @param perRetryPolicies The service-specific per retry policies.
      * @param perCallPolicies The service-specific per call policies.
+     * @param authBeforeSendPolicy Optional policy to set authentication information to the request
+     * right before sending it.
      */
     explicit HttpPipeline(
         ClientOptions const& clientOptions,
@@ -120,7 +126,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       {
         m_policies.emplace_back(policy->Clone());
       }
-      // client-options per call policies. End-user policies execute before client's policies.
+      // client-options per call policies.
       for (auto& policy : perCallClientPolicies)
       {
         m_policies.emplace_back(policy->Clone());

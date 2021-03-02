@@ -12,6 +12,7 @@
 
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/client_options.hpp>
 
 #include <string>
 #include <utility>
@@ -24,7 +25,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief Defines options for token authentication.
    */
-  struct ClientSecretCredentialOptions
+  struct ClientSecretCredentialOptions : public Azure::Core::Internal::ClientOptions
   {
   public:
     /**
@@ -37,11 +38,6 @@ namespace Azure { namespace Identity {
      * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
      */
     std::string AuthorityHost = Details::g_aadGlobalAuthority;
-
-    /**
-     * @brief #Azure::Core::Http::TransportPolicyOptions for authentication HTTP pipeline.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**

@@ -66,12 +66,12 @@ namespace Azure { namespace Core { namespace Internal {
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    Azure::Core::Http::TransportPolicyOptions Transport;
+    Azure::Core::Http::TransportOptions Transport;
 
     /**
      * @brief Telemetry options.
      */
-    Azure::Core::Http::TelemetryPolicyOptions Telemetry;
+    Azure::Core::Http::TelemetryOptions Telemetry;
 
     /**
      * @brief Adds a policy into the client.

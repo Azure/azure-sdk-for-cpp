@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.7 (Unreleased)
 
+### New Features
+- Added `HttpPolicyOrder` for adding custom Http policies to sdk clients.
+
 ### Breaking Changes
 
 - Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
@@ -10,6 +13,9 @@
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` tp `ToString()` in `Azure::Core::Uuid`.
+- Renamed `TransportPolicyOptions` to `TransportOptions`.
+- Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
+- Renamed `ValuePolicyOptions` to `ValueOptions`.
 
 ### Bug Fixes
 
