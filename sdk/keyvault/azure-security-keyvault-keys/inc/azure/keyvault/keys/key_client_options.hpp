@@ -50,7 +50,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
     }
 
-    std::string GetVersionString()
+    std::string GetVersionString() const
     {
       switch (Version)
       {

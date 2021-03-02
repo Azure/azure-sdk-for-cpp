@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   public:
     explicit KeyClientWithNoAuthenticationPolicy(
         std::string const& vaultUrl,
-        KeyClientOptions options = KeyClientOptions())
+        KeyClientOptions const& options = KeyClientOptions())
         : KeyClient(vaultUrl, nullptr, options)
     {
       auto apiVersion = options.GetVersionString();

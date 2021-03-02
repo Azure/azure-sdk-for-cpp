@@ -99,7 +99,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
         std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perCallPolicies)
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perCallPolicies,
+        std::unique_ptr<Azure::Core::Http::HttpPolicy> authBeforeSendPolicy = nullptr)
     {
       auto const& perCallClientPolicies = clientOptions.GetPerCallPolicies();
       auto const& perRetryClientPolicies = clientOptions.GerPerRetryPolicies();
@@ -114,13 +115,13 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
 
       m_policies.reserve(pipelineSize);
 
-      // client-options per call policies. End-user policies execute before client's policies.
-      for (auto& policy : perCallClientPolicies)
+      // service-specific per call policies
+      for (auto& policy : perCallPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
-      // service-specific per call policies
-      for (auto& policy : perCallPolicies)
+      // client-options per call policies. End-user policies execute before client's policies.
+      for (auto& policy : perCallClientPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
@@ -135,20 +136,27 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::RetryPolicy>(clientOptions.Retry));
 
-      // client options per retry policies.
-      for (auto& policy : perRetryClientPolicies)
+      // service-specific per retry policies.
+      for (auto& policy : perRetryPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
-      // service-specific per retry policies. Services like storage have some policies which needs
-      // to execute as the last policy.
-      for (auto& policy : perRetryPolicies)
+      // client options per retry policies.
+      for (auto& policy : perRetryClientPolicies)
       {
         m_policies.emplace_back(policy->Clone());
       }
 
       // logging - won't update request
       m_policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
+
+      // auth policy for those request which builds auth info based in the request data. It must be
+      // the last one.
+      if (authBeforeSendPolicy)
+      {
+        m_policies.emplace_back(authBeforeSendPolicy->Clone());
+      }
+
       // transport
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::TransportPolicy>(clientOptions.Transport));
