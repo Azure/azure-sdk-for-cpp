@@ -18,9 +18,9 @@ TEST(ModifiedConditions, Basic)
       = DateTime::Parse("2013-11-19T14:30:59.1234567Z", DateTime::DateFormat::Rfc3339);
 
   EXPECT_EQ(
-      conditions.IfModifiedSince.ToString(DateTime::DateFormat::Rfc3339),
+      conditions.IfModifiedSince->ToString(DateTime::DateFormat::Rfc3339),
       "2013-11-19T14:30:59.1234567Z");
   EXPECT_EQ(
-      conditions.IfUnmodifiedSince.ToString(DateTime::DateFormat::Rfc3339),
+      conditions.IfUnmodifiedSince->ToString(DateTime::DateFormat::Rfc3339),
       "2013-11-19T14:30:59.1234567Z");
 }
