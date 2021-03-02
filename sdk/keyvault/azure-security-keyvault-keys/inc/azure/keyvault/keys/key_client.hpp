@@ -98,6 +98,54 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Creates and stores a new Elliptic Curve key in Key Vault.
+     *
+     * @remark If the named key already exists, Azure Key Vault creates a new version of the key.
+     *
+     * @remark This operation requires the keys/create permission.
+     *
+     * @param ecKeyOptions The key options object containing information about the Elliptic Curve
+     * key being created.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateEcKey(
+        CreateEcKeyOptions const& ecKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates and stores a new RSA key in Key Vault.
+     *
+     * @remark If the named key already exists, Azure Key Vault creates a new version of the key.
+     *
+     * @remark This operation requires the keys/create permission.
+     *
+     * @param rsaKeyOptions The key options object containing information about the RSA key being
+     * created.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateRsaKey(
+        CreateRsaKeyOptions const& rsaKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates and stores a new AES key in Key Vault.
+     *
+     * @remark If the named key already exists, Azure Key Vault creates a new version of the key.
+     *
+     * @remark This operation requires the keys/create permission.
+     *
+     * @param octKeyOptions The key options object containing information about the AES key being
+     * created.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return The Key wrapped in the Response.
+     */
+    Azure::Core::Response<KeyVaultKey> CreateOctKey(
+        CreateOctKeyOptions const& octKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Deletes a key of any type from storage in Azure Key Vault.
      *
      * @remark The delete key operation cannot be used to remove individual versions of a key. This
