@@ -286,7 +286,7 @@ namespace Azure { namespace Core {
              You can do so manually by using #HasValue() or simply operator #bool().
              Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
      */
-    constexpr T* operator->() { return _STD addressof(m_value); }
+    constexpr T* operator->() { return std::addressof(m_value); }
 
     /**
      * @brief Accesses the contained value.
