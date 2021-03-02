@@ -21,7 +21,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Log message level.
      */
-    enum class Level
+    enum class Level : int
     {
       /// Logging level for failures that the application is unlikely to recover from.
       Error = 10,
@@ -45,7 +45,6 @@ namespace Azure { namespace Core {
      */
     typedef std::function<void(Level level, std::string const& message)> Listener;
 
-  public:
     /**
      * @brief Set the function that will be invoked to report an SDK log message.
      *

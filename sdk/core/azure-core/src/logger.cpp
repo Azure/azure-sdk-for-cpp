@@ -8,27 +8,34 @@
 #include <shared_mutex>
 
 using namespace Azure::Core;
+using namespace Azure::Core::Internal;
 
 namespace {
-static std::shared_timed_mutex g_logMutex;
+static std::shared_timed_mutex g_logListenerMutex;
 static Logger::Listener g_logListener(nullptr);
-static Logger::Level g_logLevel(Logger::Level::Warning);
 } // namespace
+
+std::atomic<bool> Log::g_isLoggingEnabled(false);
+std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(Logger::Level::Warning));
+
+inline void Log::ToggleLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 
 void Logger::SetListener(Logger::Listener listener)
 {
-  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logMutex);
+  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
   g_logListener = std::move(listener);
+  Log::ToggleLogging(g_logListener != nullptr);
 }
 
-void Logger::SetLevel(Logger::Level level)
+Logger::Listener Log::GetLogListener()
 {
-  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logMutex);
-  g_logLevel = level;
+  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
+  return g_logListener;
 }
 
-Logger::Listener Azure::Core::Details::GetLogListener(Logger::Level level)
+inline void Log::SetLogLevel(Logger::Level logLevel)
 {
-  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logMutex);
-  return level <= g_logLevel ? g_logListener : Logger::Listener(nullptr);
+  g_logLevel = static_cast<LogLevelInt>(logLevel);
 }
+
+void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
