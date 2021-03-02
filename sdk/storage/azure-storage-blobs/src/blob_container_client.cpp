@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
       : BlobContainerClient(blobContainerUrl, options)
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
         Storage::Details::ConstructPolicies(
@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
       : BlobContainerClient(blobContainerUrl, options)
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     Azure::Core::Http::TokenRequestOptions tokenOptions;
     tokenOptions.Scopes.emplace_back(Storage::Details::StorageScope);
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_blobContainerUrl(blobContainerUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
         Storage::Details::ConstructPolicies(

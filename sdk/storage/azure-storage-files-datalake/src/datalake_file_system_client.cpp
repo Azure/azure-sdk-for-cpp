@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                             credential,
                                             Details::GetBlobClientOptions(options))
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
         Storage::Details::ConstructPolicies(
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                             credential,
                                             Details::GetBlobClientOptions(options))
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     Azure::Core::Http::TokenRequestOptions tokenOptions;
     tokenOptions.Scopes.emplace_back(Storage::Details::StorageScope);
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                             Details::GetBlobUrlFromUrl(fileSystemUrl),
                                             Details::GetBlobClientOptions(options))
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
         Storage::Details::ConstructPolicies(
