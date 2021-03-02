@@ -7,14 +7,14 @@
 
 namespace Azure { namespace Core {
   namespace Details {
-    Logger::Listener GetLogListener(LogLevel);
+    Logger::Listener GetLogListener(Logger::Level);
   }
 
   namespace Internal {
 
-    inline bool ShouldLog(LogLevel level) { return Details::GetLogListener(level) != nullptr; }
+    inline bool ShouldLog(Logger::Level level) { return Details::GetLogListener(level) != nullptr; }
 
-    inline void Log(LogLevel level, std::string const& message)
+    inline void Log(Logger::Level level, std::string const& message)
     {
       if (auto listener = Details::GetLogListener(level))
       {

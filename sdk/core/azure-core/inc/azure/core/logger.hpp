@@ -14,33 +14,28 @@
 
 namespace Azure { namespace Core {
   /**
-   * @brief Log message level.
-   */
-  enum class LogLevel
-  {
-    /// Logging level for failures that the application is unlikely to recover from.
-    Error = 10,
-
-    /// Logging level when a function fails to perform its intended task.
-    Warning = 20,
-
-    /// Logging level when a function operates normally.
-    Informational = 30,
-
-    /// Logging level for detailed troubleshooting scenarios.
-    Verbose = 40,
-  };
-
-  namespace Internal {
-    inline bool ShouldLog(LogLevel level);
-    inline void Log(LogLevel level, std::string const& message);
-  } // namespace Internal
-
-  /**
    * @brief Log message handler.
    */
   class Logger {
   public:
+    /**
+     * @brief Log message level.
+     */
+    enum class Level
+    {
+      /// Logging level for failures that the application is unlikely to recover from.
+      Error = 10,
+
+      /// Logging level when a function fails to perform its intended task.
+      Warning = 20,
+
+      /// Logging level when a function operates normally.
+      Informational = 30,
+
+      /// Logging level for detailed troubleshooting scenarios.
+      Verbose = 40,
+    };
+
     /**
      * @brief Defines the signature of the callback function that application developers must write
      * in order to receive Azure SDK log messages.
@@ -48,7 +43,7 @@ namespace Azure { namespace Core {
      * @param level The log message level.
      * @param message The log message.
      */
-    typedef std::function<void(LogLevel level, std::string const& message)> Listener;
+    typedef std::function<void(Level level, std::string const& message)> Listener;
 
   public:
     /**
@@ -64,7 +59,7 @@ namespace Azure { namespace Core {
      *
      * @param level Maximum log level.
      */
-    static void SetLevel(LogLevel level);
+    static void SetLevel(Level level);
 
   private:
     Logger() = delete;

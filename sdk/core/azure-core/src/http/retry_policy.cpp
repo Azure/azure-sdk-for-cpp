@@ -101,7 +101,7 @@ bool ShouldRetryOnResponse(
     RetryNumber attempt,
     Delay& retryAfter)
 {
-  using Azure::Core::LogLevel;
+  using Azure::Core::Logger;
   using Azure::Core::Internal::Log;
   using Azure::Core::Internal::ShouldLog;
 
@@ -117,18 +117,18 @@ bool ShouldRetryOnResponse(
     auto const sc = response.GetStatusCode();
     if (statusCodes.find(sc) == statusCodes.end())
     {
-      if (ShouldLog(LogLevel::Warning))
+      if (ShouldLog(Logger::Level::Warning))
       {
-        Log(LogLevel::Warning,
+        Log(Logger::Level::Warning,
             std::string("HTTP status code: ") + std::to_string(static_cast<int>(sc))
                 + " won't be retried.");
       }
 
       return false;
     }
-    else if (ShouldLog(LogLevel::Informational))
+    else if (ShouldLog(Logger::Level::Informational))
     {
-      Log(LogLevel::Informational,
+      Log(Logger::Level::Informational,
           std::string("HTTP status code: ") + std::to_string(static_cast<int>(sc))
               + " will be retried.");
     }
@@ -148,7 +148,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  using Azure::Core::LogLevel;
+  using Azure::Core::Logger;
   using Azure::Core::Internal::Log;
   using Azure::Core::Internal::ShouldLog;
 
@@ -174,9 +174,9 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     }
     catch (const TransportException& e)
     {
-      if (ShouldLog(LogLevel::Error))
+      if (ShouldLog(Logger::Level::Error))
       {
-        Log(LogLevel::Error, std::string("HTTP Transport error: ") + e.what());
+        Log(Logger::Level::Error, std::string("HTTP Transport error: ") + e.what());
       }
 
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
@@ -185,14 +185,14 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
       }
     }
 
-    if (ShouldLog(LogLevel::Informational))
+    if (ShouldLog(Logger::Level::Informational))
     {
       std::ostringstream log;
 
       log << "HTTP Retry attempt #" << attempt << " will be made in "
           << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
 
-      Log(LogLevel::Informational, log.str());
+      Log(Logger::Level::Informational, log.str());
     }
 
     // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure

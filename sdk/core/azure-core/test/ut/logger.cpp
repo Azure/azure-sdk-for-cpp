@@ -5,65 +5,64 @@
 #include <gtest/gtest.h>
 
 using Azure::Core::Logger;
-using Azure::Core::LogLevel;
 using Azure::Core::Internal::Log;
 using Azure::Core::Internal::ShouldLog;
 
 TEST(Logger, Defaults)
 {
-  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
-  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
-  EXPECT_FALSE(ShouldLog(LogLevel::Warning));
-  EXPECT_FALSE(ShouldLog(LogLevel::Error));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Informational));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Warning));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Error));
 
   Logger::SetListener([](auto, auto) {});
 
-  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
-  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
-  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
-  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Informational));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Warning));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Error));
 
   Logger::SetListener(nullptr);
 
-  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
-  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
-  EXPECT_FALSE(ShouldLog(LogLevel::Warning));
-  EXPECT_FALSE(ShouldLog(LogLevel::Error));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Informational));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Warning));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Error));
 }
 
 TEST(Logger, Levels)
 {
   Logger::SetListener([](auto, auto) {});
 
-  Logger::SetLevel(LogLevel::Verbose);
-  EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
-  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
-  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
-  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+  Logger::SetLevel(Logger::Level::Verbose);
+  EXPECT_TRUE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Informational));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Warning));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Error));
 
-  Logger::SetLevel(LogLevel::Informational);
-  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
-  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
-  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
-  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+  Logger::SetLevel(Logger::Level::Informational);
+  EXPECT_FALSE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Informational));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Warning));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Error));
 
-  Logger::SetLevel(LogLevel::Warning);
-  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
-  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
-  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
-  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+  Logger::SetLevel(Logger::Level::Warning);
+  EXPECT_FALSE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Informational));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Warning));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Error));
 
-  Logger::SetLevel(LogLevel::Error);
-  EXPECT_FALSE(ShouldLog(LogLevel::Verbose));
-  EXPECT_FALSE(ShouldLog(LogLevel::Informational));
-  EXPECT_FALSE(ShouldLog(LogLevel::Warning));
-  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+  Logger::SetLevel(Logger::Level::Error);
+  EXPECT_FALSE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Informational));
+  EXPECT_FALSE(ShouldLog(Logger::Level::Warning));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Error));
 
-  Logger::SetLevel(LogLevel::Verbose);
-  EXPECT_TRUE(ShouldLog(LogLevel::Verbose));
-  EXPECT_TRUE(ShouldLog(LogLevel::Informational));
-  EXPECT_TRUE(ShouldLog(LogLevel::Warning));
-  EXPECT_TRUE(ShouldLog(LogLevel::Error));
+  Logger::SetLevel(Logger::Level::Verbose);
+  EXPECT_TRUE(ShouldLog(Logger::Level::Verbose));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Informational));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Warning));
+  EXPECT_TRUE(ShouldLog(Logger::Level::Error));
 
   Logger::SetListener(nullptr);
 }
@@ -72,7 +71,7 @@ TEST(Logger, Message)
 {
   try
   {
-    LogLevel level = LogLevel::Error;
+    Logger::Level level = Logger::Level::Error;
     std::string message;
 
     Logger::SetListener([&](auto lvl, auto msg) {
@@ -80,142 +79,142 @@ TEST(Logger, Message)
       message = msg;
     });
 
-    Logger::SetLevel(LogLevel::Verbose);
+    Logger::SetLevel(Logger::Level::Verbose);
     {
-      level = LogLevel::Error;
+      level = Logger::Level::Error;
       message = "";
 
-      Log(LogLevel::Verbose, "Verbose");
-      EXPECT_EQ(level, LogLevel::Verbose);
+      Log(Logger::Level::Verbose, "Verbose");
+      EXPECT_EQ(level, Logger::Level::Verbose);
       EXPECT_EQ(message, "Verbose");
 
-      Log(LogLevel::Informational, "Informational");
-      EXPECT_EQ(level, LogLevel::Informational);
+      Log(Logger::Level::Informational, "Informational");
+      EXPECT_EQ(level, Logger::Level::Informational);
       EXPECT_EQ(message, "Informational");
 
-      Log(LogLevel::Warning, "Warning");
-      EXPECT_EQ(level, LogLevel::Warning);
+      Log(Logger::Level::Warning, "Warning");
+      EXPECT_EQ(level, Logger::Level::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Error, "Error");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Error, "Error");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "Error");
     }
 
-    Logger::SetLevel(LogLevel::Informational);
+    Logger::SetLevel(Logger::Level::Informational);
     {
-      level = LogLevel::Error;
+      level = Logger::Level::Error;
       message = "";
 
-      Log(LogLevel::Verbose, "Verbose");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Verbose, "Verbose");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Informational");
-      EXPECT_EQ(level, LogLevel::Informational);
+      Log(Logger::Level::Informational, "Informational");
+      EXPECT_EQ(level, Logger::Level::Informational);
       EXPECT_EQ(message, "Informational");
 
-      Log(LogLevel::Warning, "Warning");
-      EXPECT_EQ(level, LogLevel::Warning);
+      Log(Logger::Level::Warning, "Warning");
+      EXPECT_EQ(level, Logger::Level::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Error, "Error");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Error, "Error");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "Error");
     }
 
-    Logger::SetLevel(LogLevel::Warning);
+    Logger::SetLevel(Logger::Level::Warning);
     {
-      level = LogLevel::Error;
+      level = Logger::Level::Error;
       message = "";
 
-      Log(LogLevel::Verbose, "Verbose");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Verbose, "Verbose");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Informational");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Informational, "Informational");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Warning, "Warning");
-      EXPECT_EQ(level, LogLevel::Warning);
+      Log(Logger::Level::Warning, "Warning");
+      EXPECT_EQ(level, Logger::Level::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Error, "Error");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Error, "Error");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "Error");
     }
 
-    Logger::SetLevel(LogLevel::Error);
+    Logger::SetLevel(Logger::Level::Error);
     {
-      level = LogLevel::Error;
+      level = Logger::Level::Error;
       message = "";
 
-      Log(LogLevel::Verbose, "Verbose");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Verbose, "Verbose");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Informational");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Informational, "Informational");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Warning, "Warning");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Warning, "Warning");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      level = LogLevel::Verbose;
+      level = Logger::Level::Verbose;
 
-      Log(LogLevel::Error, "Error");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Error, "Error");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "Error");
     }
 
     // Verify that we can switch back to Verbose
-    Logger::SetLevel(LogLevel::Verbose);
+    Logger::SetLevel(Logger::Level::Verbose);
     {
-      level = LogLevel::Error;
+      level = Logger::Level::Error;
       message = "";
 
-      Log(LogLevel::Verbose, "Verbose");
-      EXPECT_EQ(level, LogLevel::Verbose);
+      Log(Logger::Level::Verbose, "Verbose");
+      EXPECT_EQ(level, Logger::Level::Verbose);
       EXPECT_EQ(message, "Verbose");
 
-      Log(LogLevel::Informational, "Informational");
-      EXPECT_EQ(level, LogLevel::Informational);
+      Log(Logger::Level::Informational, "Informational");
+      EXPECT_EQ(level, Logger::Level::Informational);
       EXPECT_EQ(message, "Informational");
 
-      Log(LogLevel::Warning, "Warning");
-      EXPECT_EQ(level, LogLevel::Warning);
+      Log(Logger::Level::Warning, "Warning");
+      EXPECT_EQ(level, Logger::Level::Warning);
       EXPECT_EQ(message, "Warning");
 
-      Log(LogLevel::Error, "Error");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Error, "Error");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "Error");
     }
 
     Logger::SetListener(nullptr);
 
-    Logger::SetLevel(LogLevel::Verbose);
+    Logger::SetLevel(Logger::Level::Verbose);
     {
-      level = LogLevel::Error;
+      level = Logger::Level::Error;
       message = "";
 
-      Log(LogLevel::Verbose, "Verbose");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Verbose, "Verbose");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Informational, "Informational");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Informational, "Informational");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      Log(LogLevel::Warning, "Warning");
-      EXPECT_EQ(level, LogLevel::Error);
+      Log(Logger::Level::Warning, "Warning");
+      EXPECT_EQ(level, Logger::Level::Error);
       EXPECT_EQ(message, "");
 
-      level = LogLevel::Verbose;
+      level = Logger::Level::Verbose;
 
-      Log(LogLevel::Error, "Error");
-      EXPECT_EQ(level, LogLevel::Verbose);
+      Log(Logger::Level::Error, "Error");
+      EXPECT_EQ(level, Logger::Level::Verbose);
       EXPECT_EQ(message, "");
     }
   }
