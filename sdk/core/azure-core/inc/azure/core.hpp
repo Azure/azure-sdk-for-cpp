@@ -33,7 +33,9 @@
 #include "azure/core/cryptography/hash.hpp"
 
 // azure/core/http
-#include "azure/core/http/body_stream.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
+
+// azure/core/io
+#include "azure/core/io/body_stream.hpp"

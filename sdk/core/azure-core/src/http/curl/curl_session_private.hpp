@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
    * transporter to be reusable in multiple pipelines while every call to network is unique.
    */
-  class CurlSession : public BodyStream {
+  class CurlSession : public Azure::IO::BodyStream {
 #ifdef TESTING_BUILD
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
@@ -354,7 +354,7 @@ namespace Azure { namespace Core { namespace Http {
     bool m_keepAlive = true;
 
     /**
-     * @brief Implement #Azure::Core::Http::BodyStream::OnRead(). Calling this function pulls data
+     * @brief Implement #Azure::IO::BodyStream::OnRead(). Calling this function pulls data
      * from the wire.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
@@ -407,7 +407,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse();
 
     /**
-     * @brief Implement #Azure::Core::Http::BodyStream length.
+     * @brief Implement #Azure::IO::BodyStream length.
      *
      * @return The size of the payload.
      */
