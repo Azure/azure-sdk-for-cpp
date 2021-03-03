@@ -928,7 +928,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     Storage::Details::FileReader fileReader(fileName);
-    Azure::Core::Http::FileBodyStream stream(fileReader.GetHandle());
+    Azure::Core::Http::FileBodyStream stream(fileReader.GetHandle(), 0);
 
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = stream.Length();

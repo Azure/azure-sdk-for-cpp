@@ -30,6 +30,7 @@
 #include <cstring>
 #include <memory>
 #include <vector>
+#include <mutex>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -198,125 +199,61 @@ namespace Azure { namespace Core { namespace Http {
   class FileBodyStream : public BodyStream {
   private:
     // immutable
-    FILE* m_hFile;
+    FILE* m_fileStream;
     int64_t m_baseOffset;
     int64_t m_length;
+#if defined(AZ_PLATFORM_WINDOWS)
+    int m_fileDescriptor;
+    HANDLE m_filehandle;
+#elif defined(AZ_PLATFORM_POSIX)
+    int m_fileDescriptor;
+#endif
     // mutable
     int64_t m_offset;
 
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t GetFileSize(FILE* file);
+
+    std::mutex m_fileMutex;
 
   public:
     /**
-     * @brief Construct from a file.
+     * @brief Construct from a file object.
      *
      * @param file A pointer to an already opened file object that can be used to identify the file.
-     * @param offset The offset in the file to start providing the data from.
-     * @param length The size of the file, in bytes.
+     * @param offset The offset from the beginning of the file from which to start accessing the
+     * data.
+     * @param length The amounts of bytes, starting from the offset, that this stream can access.
      *
      * @remark The caller owns the file object and needs to open it along with keeping it alive for
      * the necessary duration. The caller is also responsible for closing it once they are done.
+     *
+     * @remark It is the callers responsibility to flush any buffered data written before providing
+     * the file object.
+     *
+     * @remark Do not use the file object to read or write, while it is being used by the stream.
      */
-    FileBodyStream(FILE* file, int64_t offset, int64_t length)
-        : m_hFile(file), m_length(length), m_offset(0)
-    {
-        // flush
-
-      if (file == NULL)
-      {
-        throw std::invalid_argument(
-            "The file object cannot be null and must have been successfully opened.");
-      }
-
-      if (offset < 0 || length < 0)
-      {
-        throw std::invalid_argument("The file offset and size must be a non-negative number.");
-      }
-
-      // Get the current file position.
-      if (fgetpos(file, &m_baseOffset))
-      {
-        throw std::runtime_error("Failed to get the file object position.");
-      }
-
-      m_baseOffset += offset;
-    }
+    FileBodyStream(FILE* file, int64_t offset, int64_t length);
 
     /**
-     * @brief Construct from a file.
+     * @brief Construct from a file object.
      *
      * @param file A pointer to an already opened file object that can be used to identify the file.
-     * @param offset The offset in the file to start providing the data from, defaulted to 0.
+     * @param offset The offset from the beginning of the file from which to start accessing the
+     * data.
      *
      * @remark The caller owns the file object and needs to open it along with keeping it alive for
      * the necessary duration. The caller is also responsible for closing it once they are done.
+     *
+     * @remark It is the callers responsibility to flush any buffered data written before providing
+     * the file object.
+     *
+     * @remark Do not use the file object to read or write, while it is being used by the stream.
      */
-    // Ambiguous - beginning of file vs position of current file
-    FileBodyStream(FILE* file, int64_t offset = 0) : m_hFile(file), m_offset(0)
-    {
-      if (file == NULL)
-      {
-        throw std::invalid_argument(
-            "The file object cannot be null and must have been successfully opened.");
-      }
-
-      if (offset < 0)
-      {
-        throw std::invalid_argument("The file offset and size must be a non-negative number.");
-      }
-
-      // Get the current file position, to reset it back, after seeking to the end.
-      if (fgetpos(file, &m_baseOffset))
-      {
-        throw std::runtime_error("Failed to get the file object position.");
-      }
-
-      if (fseek(file, 0, SEEK_END))
-      {
-        throw std::runtime_error("Failed to seek to the end of the file.");
-      }
-
-      auto currentPosition = ftell(file);
-      if (currentPosition == -1)
-      {
-        throw std::runtime_error("Failed to get the size of the file.");
-      }
-
-      m_length = currentPosition;
-
-      if (offset > m_length)
-      {
-        throw std::invalid_argument("The file offset cannot be larger than its size.");
-      }
-
-      m_length -= offset;
-
-      // Reset the file position back to what it was originally set to.
-      if (fsetpos(file, &m_baseOffset))
-      {
-        throw std::runtime_error("Failed to set the file object position.");
-      }
-
-      m_baseOffset += offset;
-    }
+    FileBodyStream(FILE* file, int64_t offset);
 
     // Rewind seeks back to 0
-    void Rewind() override
-    {
-      int64_t currentPosition = 0;
-      if (fgetpos(this->m_hFile, &currentPosition))
-      {
-        throw std::runtime_error("Failed to get the file object position.");
-      }
-      // Reset the file position back to what it was originally set to.
-      if (fsetpos(this->m_hFile, &this->m_baseOffset))
-      {
-        throw std::runtime_error(
-            "Failed to rewind the file object position back to its original position.");
-      }
-
-      this->m_offset = 0;
-    }
+    void Rewind() override { this->m_offset = 0; }
 
     int64_t Length() const override { return this->m_length; };
   };

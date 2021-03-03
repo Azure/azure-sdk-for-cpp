@@ -27,6 +27,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <mutex>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
@@ -83,6 +84,102 @@ int64_t MemoryBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_
   return copy_length;
 }
 
+int64_t FileBodyStream::GetFileSize(FILE* file)
+{
+  std::lock_guard<std::mutex> lock(m_fileMutex);
+  // Get the current file position, to reset it back, after seeking to the end.
+  int64_t currentPosition = 0;
+  if (fgetpos(file, &currentPosition))
+  {
+    throw std::runtime_error("Failed to get the file object position.");
+  }
+
+  if (fseek(file, 0, SEEK_END))
+  {
+    throw std::runtime_error("Failed to seek to the end of the file.");
+  }
+
+  auto fileSize = ftell(file);
+  if (fileSize == -1)
+  {
+    throw std::runtime_error("Failed to get the size of the file.");
+  }
+
+  // Reset the file position back to what it was originally set to.
+  if (fsetpos(file, &currentPosition))
+  {
+    throw std::runtime_error("Failed to set the file object position.");
+  }
+
+  return fileSize;
+}
+
+FileBodyStream::FileBodyStream(FILE* file, int64_t offset, int64_t length)
+    : m_fileStream(file), m_baseOffset(offset), m_length(length), m_offset(0)
+{
+  if (file == NULL)
+  {
+    throw std::invalid_argument(
+        "The file object cannot be null and must have been successfully opened.");
+  }
+
+  if (offset < 0 || length < 0)
+  {
+    throw std::invalid_argument("The file offset and size must be a non-negative number.");
+  }
+
+  int64_t fileSize = GetFileSize(file);
+
+  printf("OUTUT: offset - %lld, length - %lld, file size - %lld\n", offset, length, fileSize);
+  if (offset > fileSize || length > fileSize || offset + length > fileSize)
+  {
+    printf(
+        "SOMETHING WENT WRONG! offset - %lld, length - %lld, file size - %lld\n",
+        offset,
+        length,
+        fileSize);
+    throw std::invalid_argument("The offset and length cannot be larger than the file size.");
+  }
+
+#if defined(AZ_PLATFORM_WINDOWS)
+  m_fileDescriptor = _fileno(m_fileStream);
+  m_filehandle = (HANDLE)_get_osfhandle(m_fileDescriptor);
+#elif defined(AZ_PLATFORM_POSIX)
+  m_fileDescriptor = fileno(m_fileStream);
+#endif
+}
+
+FileBodyStream::FileBodyStream(FILE* file, int64_t offset)
+    : m_fileStream(file), m_baseOffset(offset), m_offset(0)
+{
+  if (file == NULL)
+  {
+    throw std::invalid_argument(
+        "The file object cannot be null and must have been successfully opened.");
+  }
+
+  if (offset < 0)
+  {
+    throw std::invalid_argument("The file offset and size must be a non-negative number.");
+  }
+
+  int64_t fileSize = GetFileSize(file);
+
+  if (offset > fileSize)
+  {
+    throw std::invalid_argument("The offset cannot be larger than the file size.");
+  }
+
+  m_length = fileSize - offset;
+
+#if defined(AZ_PLATFORM_WINDOWS)
+  m_fileDescriptor = _fileno(m_fileStream);
+  m_filehandle = (HANDLE)_get_osfhandle(m_fileDescriptor);
+#elif defined(AZ_PLATFORM_POSIX)
+  m_fileDescriptor = fileno(m_fileStream);
+#endif
+}
+
 int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
@@ -90,7 +187,7 @@ int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buf
 #if defined(AZ_PLATFORM_POSIX)
 
   auto numberOfBytesRead = pread(
-      fileno(this->m_hFile),
+      this->m_fileDescriptor,
       buffer,
       std::min(count, this->m_length - this->m_offset),
       this->m_baseOffset + this->m_offset);
@@ -109,7 +206,7 @@ int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buf
   o.OffsetHigh = static_cast<DWORD>((this->m_baseOffset + this->m_offset) >> 32);
 
   auto result = ReadFile(
-      (HANDLE)_get_osfhandle(_fileno(this->m_hFile)),
+      this->m_filehandle,
       buffer,
       // at most 4Gb to be read
       static_cast<DWORD>(std::min(

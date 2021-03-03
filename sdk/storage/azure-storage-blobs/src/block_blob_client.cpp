@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
     Storage::Details::FileReader fileReader(fileName);
-    Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle());
+    Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), 0);
 
     if (contentStream.Length() <= options.TransferOptions.SingleUploadThreshold)
     {

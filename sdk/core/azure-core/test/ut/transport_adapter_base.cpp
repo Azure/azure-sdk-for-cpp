@@ -443,7 +443,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
     EXPECT_NE(f, nullptr);
 
-    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f);
+    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f, 0);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read all stream content for uploading instead of chunks
@@ -469,7 +469,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
     EXPECT_NE(f, nullptr);
 
-    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f);
+    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f, 0);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size

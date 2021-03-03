@@ -41,7 +41,7 @@ TEST(BodyStream, Rewind)
   EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
   EXPECT_NE(f, nullptr);
 
-  auto fileBodyStream = Azure::Core::Http::FileBodyStream(f);
+  auto fileBodyStream = Azure::Core::Http::FileBodyStream(f, 0);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
@@ -56,7 +56,8 @@ constexpr int64_t FileSize = 1024 * 100;
 TEST(FileBodyStream, BadInput)
 {
   FILE* f = NULL;
-  EXPECT_THROW((Azure::Core::Http::FileBodyStream(f)), std::invalid_argument);
+  EXPECT_THROW((Azure::Core::Http::FileBodyStream(f, 0)), std::invalid_argument);
+  EXPECT_THROW((Azure::Core::Http::FileBodyStream(f, 0, 0)), std::invalid_argument);
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
@@ -64,8 +65,12 @@ TEST(FileBodyStream, BadInput)
   EXPECT_NE(f, nullptr);
 
   EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, -1), std::invalid_argument);
+  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, -1, 0), std::invalid_argument);
   EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, FileSize + 1), std::invalid_argument);
-  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, -1, -1), std::invalid_argument);
+  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, FileSize + 1, 0), std::invalid_argument);
+  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, 0, -1), std::invalid_argument);
+  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, 0, FileSize + 1), std::invalid_argument);
+  EXPECT_THROW(Azure::Core::Http::FileBodyStream(f, 1, FileSize), std::invalid_argument);
 }
 
 #ifdef _MSC_VER
@@ -83,7 +88,7 @@ TEST(FileBodyStream, Length)
   EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
   EXPECT_NE(f, nullptr);
 
-  auto stream = Azure::Core::Http::FileBodyStream(f);
+  auto stream = Azure::Core::Http::FileBodyStream(f, 0);
   EXPECT_EQ(stream.Length(), FileSize);
 
   stream = Azure::Core::Http::FileBodyStream(f, 0, 2);
@@ -93,7 +98,7 @@ TEST(FileBodyStream, Length)
   const size_t actualRead = fread(data.data(), 1, data.size(), f);
   EXPECT_EQ(actualRead, data.size());
 
-  stream = Azure::Core::Http::FileBodyStream(f);
+  stream = Azure::Core::Http::FileBodyStream(f, 10);
   EXPECT_EQ(stream.Length(), FileSize - data.size());
 
   auto readResult
@@ -109,12 +114,12 @@ TEST(FileBodyStream, Length)
   EXPECT_EQ(readResult.size(), 10);
 
   stream.Rewind();
-  stream = Azure::Core::Http::FileBodyStream(f);
-  EXPECT_EQ(stream.Length(), FileSize - data.size());
+  stream = Azure::Core::Http::FileBodyStream(f, 0);
+  EXPECT_EQ(stream.Length(), FileSize);
 
   stream.Rewind();
   stream = Azure::Core::Http::FileBodyStream(f, 15);
-  EXPECT_EQ(stream.Length(), FileSize - data.size() - 15);
+  EXPECT_EQ(stream.Length(), FileSize - 15);
 
   EXPECT_EQ(fclose(f), 0);
 }
@@ -132,7 +137,7 @@ TEST(FileBodyStream, ReadAndRewind)
   EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
   EXPECT_NE(f, nullptr);
 
-  auto stream = Azure::Core::Http::FileBodyStream(f);
+  auto stream = Azure::Core::Http::FileBodyStream(f, 0);
   EXPECT_EQ(stream.Length(), FileSize);
 
   std::vector<uint8_t> data(5);
