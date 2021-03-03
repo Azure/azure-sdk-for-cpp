@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.4 (Unreleased)
 
+### Breaking Changes
+
+- Removed `TransportPolicyOptions` from `ClientSecretCredentialOptions`. Updated the options to derive from ClientOptions.
 
 ## 1.0.0-beta.3 (2021-02-02)
 

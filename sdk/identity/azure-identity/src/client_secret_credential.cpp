@@ -57,17 +57,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
     request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
-    std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<RequestIdPolicy>());
-
-    {
-      RetryOptions retryOptions;
-      policies.emplace_back(std::make_unique<RetryPolicy>(retryOptions));
-    }
-
-    policies.emplace_back(std::make_unique<TransportPolicy>(m_options.TransportPolicyOptions));
-
-    HttpPipeline httpPipeline(policies);
+    HttpPipeline httpPipeline(m_options, "Identity-client-secret-credential", "", {}, {});
 
     std::shared_ptr<RawResponse> response = httpPipeline.Send(context, request);
 

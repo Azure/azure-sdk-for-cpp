@@ -80,7 +80,7 @@ namespace Azure { namespace Storage {
     {
       std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
       {
-        Azure::Core::Http::Internal::ValuePolicyOptions options;
+        Azure::Core::Http::Internal::ValueOptions options;
         options.HeaderValues[Details::HttpHeaderXMsVersion] = clientOptions.ApiVersion;
         policies.emplace_back(std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(options));
       }
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage {
         policies.emplace_back(std::move(authenticationPolicy));
       }
       policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-          std::forward<T>(clientOptions).TransportPolicyOptions));
+          std::forward<T>(clientOptions).TransportOptions));
       return policies;
     }
 
