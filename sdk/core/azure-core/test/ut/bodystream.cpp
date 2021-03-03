@@ -4,6 +4,7 @@
 #include <azure/core/platform.hpp>
 
 #include <iostream>
+#include <stdio.h>
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
