@@ -25,7 +25,7 @@ public:
 };
 
 // A policy to test retry state
-static int retryCounterState = 1;
+static int retryCounterState = 0;
 struct TestRetryPolicySharedState : public Azure::Core::Http::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
@@ -149,7 +149,7 @@ TEST(Policy, RetryPolicyCounter)
 
   // Check when there's no info about retry on the context
   auto initialContext = GetApplicationContext();
-  EXPECT_EQ(0, RetryPolicy::GetRetryNumber(initialContext));
+  EXPECT_EQ(-1, RetryPolicy::GetRetryNumber(initialContext));
 
   // Pipeline with retry test
   std::vector<std::unique_ptr<HttpPolicy>> policies;

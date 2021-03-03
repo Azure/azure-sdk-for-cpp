@@ -220,6 +220,11 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get the Retry Count from the context.
      *
+     * @remark The sentinel `-1` is returned if there is no information in the \p Context about
+     * #RetryPolicy is trying to send a request. Then `0` is returned for the first try of sending a
+     * request by the #RetryPolicy. Any subsequent retry will be referenced with a number greater
+     * than 0.
+     *
      * @param context The context used to call send request.
      * @return A positive number indicating the current intent to send the request.
      */

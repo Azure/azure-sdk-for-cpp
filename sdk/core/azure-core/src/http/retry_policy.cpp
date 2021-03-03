@@ -123,7 +123,7 @@ bool ShouldRetryOnResponse(
   return true;
 }
 
-static constexpr char RetryKey[] = "azureSdkRetryPolicyCounter";
+static constexpr char RetryKey[] = "AzureSdkRetryPolicyCounter";
 
 /**
  * @brief Creates a new #Context node from \p parent with the information about the retrying while
@@ -132,10 +132,10 @@ static constexpr char RetryKey[] = "azureSdkRetryPolicyCounter";
  * @param parent The parent context for the new created.
  * @return Context with information about retry counter.
  */
-Context inline GetRetryContext(Context const& parent)
+Context inline CreateRetryContext(Context const& parent)
 {
   // First try as default
-  int retryCount = 1;
+  int retryCount = 0;
   if (parent.HasKey(RetryKey))
   {
     retryCount = parent[RetryKey].Get<int>() + 1;
@@ -148,8 +148,12 @@ int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
 {
   if (!context.HasKey(RetryKey))
   {
-    // Not in retry mode.
-    return 0;
+    // Context with no data abut sending request with retry policy = -1
+    // First try = 0
+    // Second try = 1
+    // third try = 2
+    // ...
+    return -1;
   }
   return context[RetryKey].Get<int>();
 }
@@ -160,7 +164,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     NextHttpPolicy nextHttpPolicy) const
 {
   auto const shouldLog = Logging::Internal::ShouldLog(Logging::LogLevel::Informational);
-  auto retryContext = GetRetryContext(ctx);
+  auto retryContext = CreateRetryContext(ctx);
   for (RetryNumber attempt = 1;; ++attempt)
   {
     Delay retryAfter{};
@@ -211,6 +215,6 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
 
     // Update retry number
-    retryContext = GetRetryContext(retryContext);
+    retryContext = CreateRetryContext(retryContext);
   }
 }
