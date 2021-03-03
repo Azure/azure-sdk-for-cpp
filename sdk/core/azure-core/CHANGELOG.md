@@ -20,6 +20,7 @@
 - Renamed `TransportPolicyOptions` to `TransportOptions`.
 - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
 - Renamed `ValuePolicyOptions` to `ValueOptions`.
+- Removed `StartTry()` from `Azure::Core::Http::Request`.
 
 ### Bug Fixes
 
