@@ -211,16 +211,58 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Construct from a file.
      *
      * @param file A pointer to an already opened file object that can be used to identify the file.
+     * @param offset The offset in the file to start providing the data from.
+     * @param length The size of the file, in bytes.
      *
      * @remark The caller owns the file object and needs to open it along with keeping it alive for
      * the necessary duration. The caller is also responsible for closing it once they are done.
      */
-    FileBodyStream(FILE* file) : m_hFile(file), m_offset(0)
+    FileBodyStream(FILE* file, int64_t offset, int64_t length)
+        : m_hFile(file), m_length(length), m_offset(0)
+    {
+        // flush
+
+      if (file == NULL)
+      {
+        throw std::invalid_argument(
+            "The file object cannot be null and must have been successfully opened.");
+      }
+
+      if (offset < 0 || length < 0)
+      {
+        throw std::invalid_argument("The file offset and size must be a non-negative number.");
+      }
+
+      // Get the current file position.
+      if (fgetpos(file, &m_baseOffset))
+      {
+        throw std::runtime_error("Failed to get the file object position.");
+      }
+
+      m_baseOffset += offset;
+    }
+
+    /**
+     * @brief Construct from a file.
+     *
+     * @param file A pointer to an already opened file object that can be used to identify the file.
+     * @param offset The offset in the file to start providing the data from, defaulted to 0.
+     *
+     * @remark The caller owns the file object and needs to open it along with keeping it alive for
+     * the necessary duration. The caller is also responsible for closing it once they are done.
+     */
+    // Ambiguous - beginning of file vs position of current file
+    FileBodyStream(FILE* file, int64_t offset = 0) : m_hFile(file), m_offset(0)
     {
       if (file == NULL)
       {
         throw std::invalid_argument(
             "The file object cannot be null and must have been successfully opened.");
+      }
+
+      if (offset < 0)
+      {
+        throw std::invalid_argument("The file offset and size must be a non-negative number.");
       }
 
       // Get the current file position, to reset it back, after seeking to the end.
@@ -234,56 +276,46 @@ namespace Azure { namespace Core { namespace Http {
         throw std::runtime_error("Failed to seek to the end of the file.");
       }
 
-      m_length = ftell(file) - m_baseOffset;
-      if (m_length == -1)
+      auto currentPosition = ftell(file);
+      if (currentPosition == -1)
       {
         throw std::runtime_error("Failed to get the size of the file.");
       }
+
+      m_length = currentPosition;
+
+      if (offset > m_length)
+      {
+        throw std::invalid_argument("The file offset cannot be larger than its size.");
+      }
+
+      m_length -= offset;
 
       // Reset the file position back to what it was originally set to.
       if (fsetpos(file, &m_baseOffset))
       {
         throw std::runtime_error("Failed to set the file object position.");
       }
+
+      m_baseOffset += offset;
     }
 
-    /**
-     * @brief Construct from a file.
-     *
-     * @param file A pointer to an already opened file object that can be used to identify the file.
-     * @param length  Size of the file, in bytes.
-     *
-     * @remark The caller owns the file object and needs to open it along with keeping it alive for
-     * the necessary duration. The caller is also responsible for closing it once they are done.
-     */
-    FileBodyStream(FILE* file, int64_t length) : m_hFile(file), m_offset(0), m_length(length)
+    // Rewind seeks back to 0
+    void Rewind() override
     {
-      if (file == NULL)
-      {
-        throw std::invalid_argument(
-            "The file object cannot be null and must have been successfully opened.");
-      }
-
-      if (length < 0)
-      {
-        throw std::invalid_argument("The file size must be a non-negative number.");
-      }
-
-      if (fgetpos(file, &m_baseOffset))
+      int64_t currentPosition = 0;
+      if (fgetpos(this->m_hFile, &currentPosition))
       {
         throw std::runtime_error("Failed to get the file object position.");
       }
-    }
-
-    // Rewind seek back to 0
-    void Rewind() override
-    {
       // Reset the file position back to what it was originally set to.
       if (fsetpos(this->m_hFile, &this->m_baseOffset))
       {
         throw std::runtime_error(
             "Failed to rewind the file object position back to its original position.");
       }
+
+      this->m_offset = 0;
     }
 
     int64_t Length() const override { return this->m_length; };

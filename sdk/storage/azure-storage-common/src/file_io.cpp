@@ -3,6 +3,12 @@
 
 #include "azure/storage/common/file_io.hpp"
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <io.h>
+#endif
+
 #include <stdexcept>
 #include <stdio.h>
 
@@ -36,13 +42,44 @@ namespace Azure { namespace Storage { namespace Details {
 
   void FileWriter::Write(const uint8_t* buffer, int64_t length, int64_t offset)
   {
-    (void)offset;
-    const size_t numberOfBytesWritten = fwrite(buffer, sizeof(uint8_t), length, m_handle);
+#if defined(AZ_PLATFORM_WINDOWS)
 
-    if (numberOfBytesWritten != static_cast<size_t>(length))
+    if (length > std::numeric_limits<DWORD>::max())
     {
-      throw std::runtime_error(
-          "Writing error. (Code Number: " + std::to_string(ferror(m_handle)) + ")");
+      throw std::runtime_error("failed to write file");
     }
+
+    OVERLAPPED overlapped;
+    std::memset(&overlapped, 0, sizeof(overlapped));
+    overlapped.Offset = static_cast<DWORD>(static_cast<uint64_t>(offset));
+    overlapped.OffsetHigh = static_cast<DWORD>(static_cast<uint64_t>(offset) >> 32);
+
+    DWORD bytesWritten;
+    BOOL ret = WriteFile(
+        (HANDLE)_get_osfhandle(_fileno(m_handle)),
+        buffer,
+        static_cast<DWORD>(length),
+        &bytesWritten,
+        &overlapped);
+    if (!ret)
+    {
+      throw std::runtime_error("failed to write file");
+    }
+
+#elif defined(AZ_PLATFORM_POSIX)
+
+    if (static_cast<uint64_t>(length) > std::numeric_limits<size_t>::max()
+        || offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
+    {
+      throw std::runtime_error("failed to write file");
+    }
+    ssize_t bytesWritten
+        = pwrite(fileno(m_handle), buffer, static_cast<size_t>(length), static_cast<off_t>(offset));
+    if (bytesWritten != length)
+    {
+      throw std::runtime_error("failed to write file");
+    }
+
+#endif
   }
 }}} // namespace Azure::Storage::Details

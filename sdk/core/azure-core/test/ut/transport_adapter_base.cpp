@@ -440,8 +440,8 @@ namespace Azure { namespace Core { namespace Test {
     testDataPath.append("/fileData");
 
     FILE* f;
-    EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
-    EXPECT_TRUE(f != NULL);
+    EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+    EXPECT_NE(f, nullptr);
 
     auto requestBodyStream = Azure::Core::Http::FileBodyStream(f);
     auto request = Azure::Core::Http::Request(
@@ -456,7 +456,7 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
 
-    EXPECT_TRUE(fclose(f) == 0);
+    EXPECT_EQ(fclose(f), 0);
   }
 
   TEST_P(TransportAdapter, SizePutFromFileDefault)
@@ -466,8 +466,8 @@ namespace Azure { namespace Core { namespace Test {
     testDataPath.append("/fileData");
 
     FILE* f;
-    EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
-    EXPECT_TRUE(f != NULL);
+    EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+    EXPECT_NE(f, nullptr);
 
     auto requestBodyStream = Azure::Core::Http::FileBodyStream(f);
     auto request = Azure::Core::Http::Request(
@@ -481,7 +481,7 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
 
-    EXPECT_TRUE(fclose(f) == 0);
+    EXPECT_EQ(fclose(f), 0);
   }
 
   TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
@@ -491,11 +491,11 @@ namespace Azure { namespace Core { namespace Test {
     testDataPath.append("/fileData");
 
     FILE* f;
-    EXPECT_TRUE(fopen_s(&f, testDataPath.c_str(), "rb") == 0);
-    EXPECT_TRUE(f != NULL);
+    EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+    EXPECT_NE(f, nullptr);
 
     auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, Azure::Core::Test::Datails::FileSize);
+        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read more than file size (5Mb)
@@ -508,7 +508,7 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
 
-    EXPECT_TRUE(fclose(f) == 0);
+    EXPECT_EQ(fclose(f), 0);
   }
 
   /*****************  Test Utils *************************/
