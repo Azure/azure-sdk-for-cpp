@@ -16,7 +16,8 @@
 - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
 - Removed `StartTry()` from `Azure::Core::Http::Request`.
 - Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
-- Introduced `Azure::Core::Http::LoggingPolicyOptions`, a mandatory parameter for `LoggingPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
+- Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.
+- Introduced `Azure::Core::Http::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
 - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
 
 ### Bug Fixes

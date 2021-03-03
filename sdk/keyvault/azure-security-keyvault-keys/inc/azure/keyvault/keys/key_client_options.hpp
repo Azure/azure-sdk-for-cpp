@@ -63,7 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Define the information to be used for logging.
      *
      */
-    Azure::Core::Http::LoggingPolicyOptions LoggingPolicyOptions;
+    Azure::Core::Http::LogOptions LogOptions;
 
     /**
      * @brief Construct a new Key Client Options object.

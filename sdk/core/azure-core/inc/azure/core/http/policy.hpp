@@ -374,9 +374,9 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Options for Azure::Core::Http::LoggingPolicy.
+   * @brief Options for Azure::Core::Http::LogPolicy.
    */
-  struct LoggingPolicyOptions
+  struct LogOptions
   {
     /**
      * @brief HTTP query parameters that are allowed to be logged.
@@ -401,18 +401,18 @@ namespace Azure { namespace Core { namespace Http {
    * @details Logs every HTTP request and response.
    * @remark See Azure::Core::Logger.
    */
-  class LoggingPolicy : public HttpPolicy {
-    LoggingPolicyOptions m_options;
+  class LogPolicy : public HttpPolicy {
+    LogOptions m_options;
 
   public:
     /**
      * @brief Constructs HTTP logging policy.
      */
-    explicit LoggingPolicy(LoggingPolicyOptions options) : m_options(std::move(options)) {}
+    explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<LoggingPolicy>(*this);
+      return std::make_unique<LogPolicy>(*this);
     }
 
     std::unique_ptr<RawResponse> Send(

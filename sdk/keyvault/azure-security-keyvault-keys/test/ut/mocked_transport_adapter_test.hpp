@@ -69,8 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           "KeyVault", apiVersion, options.TelemetryPolicyOptions));
       policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
       policies.emplace_back(std::make_unique<Azure::Core::Http::RetryPolicy>(options.RetryOptions));
-      policies.emplace_back(
-          std::make_unique<Azure::Core::Http::LoggingPolicy>(options.LoggingPolicyOptions));
+      policies.emplace_back(std::make_unique<Azure::Core::Http::LogPolicy>(options.LogOptions));
       policies.emplace_back(
           std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
       Azure::Core::Http::Url url(vaultUrl);

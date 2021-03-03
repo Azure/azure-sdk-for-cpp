@@ -31,7 +31,7 @@ std::string TruncateIfLengthy(std::string const& s)
 }
 
 std::string GetRequestLogMessage(
-    Azure::Core::Http::LoggingPolicyOptions const& options,
+    Azure::Core::Http::LogOptions const& options,
     Request const& request)
 {
   std::ostringstream log;
@@ -86,7 +86,7 @@ std::string GetRequestLogMessage(
 }
 
 std::string GetResponseLogMessage(
-    Azure::Core::Http::LoggingPolicyOptions const& options,
+    Azure::Core::Http::LogOptions const& options,
     Request const& request,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
@@ -123,7 +123,7 @@ std::string GetResponseLogMessage(
 }
 } // namespace
 
-std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
+std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
     Context const& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
