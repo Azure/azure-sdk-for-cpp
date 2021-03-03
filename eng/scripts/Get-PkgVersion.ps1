@@ -8,15 +8,15 @@ param (
 )
 
 $repoRoot = Resolve-Path "$PSScriptRoot/../..";
-. ${repoRoot}\eng\common\scripts\logging.ps1
-. ${repoRoot}\eng\scripts\SdkVersion-Common.ps1
+. (Join-Path ${repoRoot} "eng" "common" "scripts" "logging.ps1")
+. (Join-Path ${repoRoot} "eng" "scripts" "SdkVersion-Common.ps1")
 
 $versionFileLocation = Get-VersionHppLocaiton `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 
 if (!$versionFileLocation) {
-    $fallbackpath = "$RepoRoot\sdk\$ServiceDirectory\$PackageName\version.txt"
+    $fallbackpath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageName "version.txt"
     if (!(Test-Path $fallbackpath))
     {
         LogWarning "Failed to retrieve package version. No version file found."
