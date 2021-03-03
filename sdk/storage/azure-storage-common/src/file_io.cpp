@@ -15,6 +15,7 @@
 #pragma warning(disable : 4996)
 #endif
 
+#include <limits>
 #include <stdexcept>
 #include <stdio.h>
 
