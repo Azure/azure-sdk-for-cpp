@@ -5,8 +5,14 @@
 
 #include <azure/core/platform.hpp>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZ_PLATFORM_POSIX)
+#include <unistd.h>
+#elif defined(AZ_PLATFORM_WINDOWS)
 #include <io.h>
+#pragma warning(push)
+// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s
+// instead.
+#pragma warning(disable : 4996)
 #endif
 
 #include <stdexcept>
@@ -16,8 +22,8 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileReader::FileReader(const std::string& filename)
   {
-    FILE* handle{};
-    if (fopen_s(&handle, filename.c_str(), "rb"))
+    FILE* handle = fopen(filename.c_str(), "rb");
+    if (handle == nullptr)
     {
       throw std::runtime_error("Failed to open file for reading.");
     }
@@ -29,14 +35,18 @@ namespace Azure { namespace Storage { namespace Details {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-    FILE* handle{};
-    if (fopen_s(&handle, filename.c_str(), "wb"))
+    FILE* handle = fopen(filename.c_str(), "wb");
+    if (handle == nullptr)
     {
       throw std::runtime_error("Failed to open file for writing.");
     }
 
     m_handle = handle;
   }
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#pragma warning(pop)
+#endif
 
   FileWriter::~FileWriter() { fclose(m_handle); }
 

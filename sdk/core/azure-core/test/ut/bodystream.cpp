@@ -31,6 +31,11 @@ class TestBodyStream : public BodyStream {
   int64_t Length() const override { return 0; }
 };
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#pragma warning(push)
+// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
+#pragma warning(disable : 4996)
+#endif
 TEST(BodyStream, Rewind)
 {
   TestBodyStream tb;
@@ -39,8 +44,7 @@ TEST(BodyStream, Rewind)
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
 
-  FILE* f{};
-  EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+  FILE* f = fopen(testDataPath.c_str(), "rb");
   EXPECT_NE(f, nullptr);
 
   auto fileBodyStream = Azure::IO::FileBodyStream(f, 0);
@@ -63,7 +67,7 @@ TEST(FileBodyStream, BadInput)
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
-  EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+  f = fopen(testDataPath.c_str(), "rb");
   EXPECT_NE(f, nullptr);
 
   EXPECT_THROW(Azure::IO::FileBodyStream(f, -1), std::invalid_argument);
@@ -75,7 +79,7 @@ TEST(FileBodyStream, BadInput)
   EXPECT_THROW(Azure::IO::FileBodyStream(f, 1, FileSize), std::invalid_argument);
 }
 
-#ifdef _MSC_VER
+#if defined(AZ_PLATFORM_WINDOWS)
 #pragma warning(push)
 // warning C6387: 'f' could be '0': this does not adhere to the specification for the function fread
 #pragma warning(disable : 6387)
@@ -83,11 +87,9 @@ TEST(FileBodyStream, BadInput)
 
 TEST(FileBodyStream, Length)
 {
-  FILE* f = NULL;
-
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
-  EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+  FILE* f = fopen(testDataPath.c_str(), "rb");
   EXPECT_NE(f, nullptr);
 
   auto stream = Azure::IO::FileBodyStream(f, 0);
@@ -124,17 +126,15 @@ TEST(FileBodyStream, Length)
   EXPECT_EQ(fclose(f), 0);
 }
 
-#ifdef _MSC_VER
+#if defined(AZ_PLATFORM_WINDOWS)
 #pragma warning(pop)
 #endif
 
 TEST(FileBodyStream, ReadAndRewind)
 {
-  FILE* f = NULL;
-
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
-  EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+  FILE* f = fopen(testDataPath.c_str(), "rb");
   EXPECT_NE(f, nullptr);
 
   auto stream = Azure::IO::FileBodyStream(f, 0);
@@ -174,3 +174,7 @@ TEST(FileBodyStream, ReadAndRewind)
 
   EXPECT_EQ(fclose(f), 0);
 }
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#pragma warning(pop)
+#endif

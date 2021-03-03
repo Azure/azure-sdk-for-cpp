@@ -13,6 +13,9 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
+#pragma warning(push)
+// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
+#pragma warning(disable : 4996)
 #endif
 
 #include "transport_adapter_base.hpp"
@@ -439,8 +442,7 @@ namespace Azure { namespace Core { namespace Test {
     std::string testDataPath(AZURE_TEST_DATA_PATH);
     testDataPath.append("/fileData");
 
-    FILE* f;
-    EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+    FILE* f = fopen(testDataPath.c_str(), "rb");
     EXPECT_NE(f, nullptr);
 
     auto requestBodyStream = Azure::IO::FileBodyStream(f, 0);
@@ -465,8 +467,7 @@ namespace Azure { namespace Core { namespace Test {
     std::string testDataPath(AZURE_TEST_DATA_PATH);
     testDataPath.append("/fileData");
 
-    FILE* f;
-    EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+    FILE* f = fopen(testDataPath.c_str(), "rb");
     EXPECT_NE(f, nullptr);
 
     auto requestBodyStream = Azure::IO::FileBodyStream(f, 0);
@@ -490,8 +491,7 @@ namespace Azure { namespace Core { namespace Test {
     std::string testDataPath(AZURE_TEST_DATA_PATH);
     testDataPath.append("/fileData");
 
-    FILE* f;
-    EXPECT_EQ(fopen_s(&f, testDataPath.c_str(), "rb"), 0);
+    FILE* f = fopen(testDataPath.c_str(), "rb");
     EXPECT_NE(f, nullptr);
 
     auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
@@ -509,6 +509,10 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_EQ(fclose(f), 0);
   }
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#pragma warning(pop)
+#endif
 
   /*****************  Test Utils *************************/
   void TransportAdapter::checkResponseCode(
