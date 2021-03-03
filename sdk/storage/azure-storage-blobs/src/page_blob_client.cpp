@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
       int64_t offset,
-      Azure::Core::Http::BodyStream* content,
+      Azure::IO::BodyStream* content,
       const UploadPageBlobPagesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::StartCopyBlobResult> PageBlobClient::StartCopyIncremental(
+  StartCopyBlobOperation PageBlobClient::StartCopyIncremental(
       const std::string& sourceUri,
       const StartCopyPageBlobIncrementalOptions& options,
       const Azure::Core::Context& context) const
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response = Details::BlobRestClient::PageBlob::StartCopyIncremental(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
-    Models::StartCopyBlobResult res;
+    StartCopyBlobOperation res;
     res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
@@ -311,8 +311,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     res.CopyStatus = std::move(response->CopyStatus);
     res.VersionId = std::move(response->VersionId);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
-    return Azure::Core::Response<Models::StartCopyBlobResult>(
-        std::move(res), response.ExtractRawResponse());
+    return res;
   }
 
 }}} // namespace Azure::Storage::Blobs

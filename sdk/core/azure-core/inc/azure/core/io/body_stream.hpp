@@ -31,7 +31,7 @@
 #include <memory>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Http {
+namespace Azure { namespace IO {
 
   /**
    *@brief Used to read data to/from a service.
@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return Number of bytes read.
      */
-    virtual int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) = 0;
+    virtual int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) = 0;
 
   public:
     /// Destructor.
@@ -84,43 +84,43 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return Number of bytes read.
      */
-    int64_t Read(Context const& context, uint8_t* buffer, int64_t count)
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
     {
       context.ThrowIfCancelled();
       return OnRead(context, buffer, count);
     };
 
     /**
-     * @brief Read #Azure::Core::Http::BodyStream into a buffer until the buffer is filled, or until
+     * @brief Read #Azure::IO::BodyStream into a buffer until the buffer is filled, or until
      * the stream is read to end.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
-     * @param body #Azure::Core::Http::BodyStream to read.
+     * @param body #Azure::IO::BodyStream to read.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
      * @return Number of bytes read.
      */
     static int64_t ReadToCount(
-        Context const& context,
+        Azure::Core::Context const& context,
         BodyStream& body,
         uint8_t* buffer,
         int64_t count);
 
     /**
-     * @brief Read #Azure::Core::Http::BodyStream until the stream is read to end, allocating memory
+     * @brief Read #Azure::IO::BodyStream until the stream is read to end, allocating memory
      * for the entirety of contents.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
-     * @param body #Azure::Core::Http::BodyStream to read.
+     * @param body #Azure::IO::BodyStream to read.
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */
-    static std::vector<uint8_t> ReadToEnd(Context const& context, BodyStream& body);
+    static std::vector<uint8_t> ReadToEnd(Azure::Core::Context const& context, BodyStream& body);
   };
 
   /**
-   * @brief #Azure::Core::Http::BodyStream providing data from an initialized memory buffer.
+   * @brief #Azure::IO::BodyStream providing data from an initialized memory buffer.
    */
   class MemoryBodyStream : public BodyStream {
   private:
@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_length;
     int64_t m_offset = 0;
 
-    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
@@ -161,39 +161,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Empty #Azure::Core::Http::BodyStream.
-   * @remark Used for requests with no body.
-   */
-  class NullBodyStream : public Azure::Core::Http::BodyStream {
-  private:
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
-    {
-      (void)context;
-      (void)buffer;
-      (void)count;
-      return 0;
-    };
-
-  public:
-    /// Constructor.
-    explicit NullBodyStream() {}
-
-    int64_t Length() const override { return 0; }
-
-    void Rewind() override {}
-
-    /**
-     * @brief Gets a singleton instance of a #Azure::Core::Http::NullBodyStream.
-     */
-    static NullBodyStream* GetNullBodyStream()
-    {
-      static NullBodyStream nullBodyStream;
-      return &nullBodyStream;
-    }
-  };
-
-  /**
-   * @brief #Azure::Core::Http::BodyStream providing its data from a file.
+   * @brief #Azure::IO::BodyStream providing its data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
@@ -255,36 +223,4 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Length() const override { return this->m_length; };
   };
 
-  /**
-   * @brief #Azure::Core::Http::BodyStream that provides its data from another
-   * #Azure::Core::Http::BodyStream.
-   */
-  class LimitBodyStream : public BodyStream {
-  private:
-    BodyStream* m_inner;
-    int64_t m_length;
-    int64_t m_bytesRead = 0;
-
-    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
-
-  public:
-    /**
-     * @brief Construct from another #Azure::Core::Http::BodyStream.
-     *
-     * @param inner #Azure::Core::Http::BodyStream to provide the data from to the readers.
-     * @param max_length Maximum number of bytes to provide to the readers.
-     */
-    LimitBodyStream(BodyStream* inner, int64_t max_length)
-        : m_inner(inner), m_length((std::min)(inner->Length(), max_length))
-    {
-    }
-
-    int64_t Length() const override { return this->m_length; }
-    void Rewind() override
-    {
-      this->m_inner->Rewind();
-      this->m_bytesRead = 0;
-    }
-  };
-
-}}} // namespace Azure::Core::Http
+}} // namespace Azure::IO

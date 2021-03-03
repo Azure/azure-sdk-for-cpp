@@ -341,3 +341,5 @@ jobs:
         inputs:
           artifactName: docs
           path: $(Build.ArtifactStagingDirectory)/docs
+
+      - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml

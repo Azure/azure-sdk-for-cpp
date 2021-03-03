@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::UploadBlockBlobResult> BlockBlobClient::Upload(
-      Azure::Core::Http::BodyStream* content,
+      Azure::IO::BodyStream* content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
     {
-      Azure::Core::Http::MemoryBodyStream contentStream(buffer, bufferSize);
+      Azure::IO::MemoryBodyStream contentStream(buffer, bufferSize);
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
+      Azure::IO::MemoryBodyStream contentStream(buffer + offset, length);
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
     Storage::Details::FileReader fileReader(fileName);
-    Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), 0);
+    Azure::IO::FileBodyStream contentStream(fileReader.GetHandle(), 0);
 
     if (contentStream.Length() <= options.TransferOptions.SingleUploadThreshold)
     {
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Storage::Details::FileReader fileReader(fileName);
-      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      Azure::IO::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
       const std::string& blockId,
-      Azure::Core::Http::BodyStream* content,
+      Azure::IO::BodyStream* content,
       const StageBlockOptions& options,
       const Azure::Core::Context& context) const
   {

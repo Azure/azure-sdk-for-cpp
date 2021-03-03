@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto retryFunction
           = [this, options, eTag](
                 const Azure::Core::Context& context,
-                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::Range();
         newOptions.Range.GetValue().Offset
@@ -244,7 +244,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
     }
 
-    int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
+    int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
         context, *(firstChunk->BodyStream), buffer, firstChunkLength);
     if (bytesRead != firstChunkLength)
     {
@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               chunkOptions.AccessConditions.IfMatch = eTag;
             }
             auto chunk = Download(chunkOptions, context);
-            int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
+            int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
                 context,
                 *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
@@ -350,7 +350,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
 
-    auto bodyStreamToFile = [](Azure::Core::Http::BodyStream& stream,
+    auto bodyStreamToFile = [](Azure::IO::BodyStream& stream,
                                Storage::Details::FileWriter& fileWriter,
                                int64_t offset,
                                int64_t length,
@@ -361,7 +361,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
         int64_t bytesRead
-            = Azure::Core::Http::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
+            = Azure::IO::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -518,7 +518,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::StartCopyBlobResult> BlobClient::StartCopyFromUri(
+  StartCopyBlobOperation BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartCopyBlobFromUriOptions& options,
       const Azure::Core::Context& context) const
@@ -544,7 +544,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response = Details::BlobRestClient::Blob::StartCopyFromUri(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
-    Models::StartCopyBlobResult res;
+    StartCopyBlobOperation res;
     res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
@@ -552,8 +552,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     res.CopyStatus = std::move(response->CopyStatus);
     res.VersionId = std::move(response->VersionId);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
-    return Azure::Core::Response<Models::StartCopyBlobResult>(
-        std::move(res), response.ExtractRawResponse());
+    return res;
   }
 
   Azure::Core::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(

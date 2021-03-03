@@ -68,40 +68,40 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LeaseId;
     };
 
-    class StartCopyBlobResult : public Azure::Core::Operation<GetBlobPropertiesResult> {
-    public:
-      std::string RequestId;
-      Azure::Core::ETag ETag;
-      Azure::Core::DateTime LastModified;
-      std::string CopyId;
-      Models::CopyStatus CopyStatus;
-      Azure::Core::Nullable<std::string> VersionId;
-
-    public:
-      GetBlobPropertiesResult Value() const override { return m_pollResult; }
-
-      ~StartCopyBlobResult() override {}
-
-    private:
-      std::string GetResumeToken() const override
-      {
-        // Not supported
-        std::abort();
-      }
-
-      std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
-          Azure::Core::Context& context) override;
-
-      Azure::Core::Response<GetBlobPropertiesResult> PollUntilDoneInternal(
-          Azure::Core::Context& context,
-          std::chrono::milliseconds period) override;
-
-      std::shared_ptr<BlobClient> m_blobClient;
-      Models::GetBlobPropertiesResult m_pollResult;
-
-      friend class Blobs::BlobClient;
-      friend class Blobs::PageBlobClient;
-    };
-
   } // namespace Models
+
+  class StartCopyBlobOperation : public Azure::Core::Operation<Models::GetBlobPropertiesResult> {
+  public:
+    std::string RequestId;
+    Azure::Core::ETag ETag;
+    Azure::Core::DateTime LastModified;
+    std::string CopyId;
+    Models::CopyStatus CopyStatus;
+    Azure::Core::Nullable<std::string> VersionId;
+
+  public:
+    Models::GetBlobPropertiesResult Value() const override { return m_pollResult; }
+
+    ~StartCopyBlobOperation() override {}
+
+  private:
+    std::string GetResumeToken() const override
+    {
+      // Not supported
+      std::abort();
+    }
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
+        Azure::Core::Context& context) override;
+
+    Azure::Core::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
+        Azure::Core::Context& context,
+        std::chrono::milliseconds period) override;
+
+    std::shared_ptr<BlobClient> m_blobClient;
+    Models::GetBlobPropertiesResult m_pollResult;
+
+    friend class Blobs::BlobClient;
+    friend class Blobs::PageBlobClient;
+  };
 }}} // namespace Azure::Storage::Blobs

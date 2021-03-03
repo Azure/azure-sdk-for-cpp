@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit AccessTier(std::string value) : m_value(std::move(value)) {}
       bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
       bool operator!=(const AccessTier& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P2;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P3;
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit AccountKind(std::string value) : m_value(std::move(value)) {}
       bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
       bool operator!=(const AccountKind& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlobArchiveStatus(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlobArchiveStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobArchiveStatus& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobArchiveStatus RehydratePendingToHot;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobArchiveStatus RehydratePendingToCool;
 
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return m_value == other.m_value;
       }
       bool operator!=(const BlobGeoReplicationStatus& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobGeoReplicationStatus Live;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobGeoReplicationStatus Bootstrap;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobGeoReplicationStatus Unavailable;
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlobLeaseDurationType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlobLeaseDurationType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobLeaseDurationType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseDurationType Infinite;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseDurationType Fixed;
 
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlobLeaseState(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlobLeaseState& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobLeaseState& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Available;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Leased;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseState Expired;
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlobLeaseStatus(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlobLeaseStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobLeaseStatus& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseStatus Locked;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobLeaseStatus Unlocked;
 
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlobType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlobType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlockListTypeOption(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlockListTypeOption& other) const { return m_value == other.m_value; }
       bool operator!=(const BlockListTypeOption& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption Committed;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption Uncommitted;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption All;
@@ -256,7 +256,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlockType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const BlockType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlockType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
       bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const CopyStatus& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
 
@@ -390,7 +390,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
       bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
       bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
 
@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return m_value == other.m_value;
       }
       bool operator!=(const EncryptionAlgorithmType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
 
     private:
@@ -521,7 +521,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return m_value == other.m_value;
       }
       bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
 
@@ -535,7 +535,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
@@ -550,7 +550,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
       bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
       bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
 
@@ -614,7 +614,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return m_value == other.m_value;
       }
       bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
@@ -688,7 +688,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit SkuName(std::string value) : m_value(std::move(value)) {}
       bool operator==(const SkuName& other) const { return m_value == other.m_value; }
       bool operator!=(const SkuName& other) const { return !(*this == other); }
-      const std::string& Get() const { return m_value; }
+      const std::string& ToString() const { return m_value; }
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
@@ -1127,7 +1127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct DownloadBlobResult
     {
       std::string RequestId;
-      std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
+      std::unique_ptr<Azure::IO::BodyStream> BodyStream;
       Azure::Core::Http::Range ContentRange;
       int64_t BlobSize = 0;
       Models::BlobType BlobType;
@@ -1317,7 +1317,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
-          Azure::Core::Http::MemoryBodyStream xml_body_stream(
+          Azure::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Post, url, &xml_body_stream);
@@ -1413,7 +1413,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
-          Azure::Core::Http::MemoryBodyStream xml_body_stream(
+          Azure::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -3112,9 +3112,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          if (!options.AccessType.Get().empty())
+          if (!options.AccessType.ToString().empty())
           {
-            request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.ToString());
           }
           if (options.DefaultEncryptionScope.HasValue())
           {
@@ -3594,7 +3594,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
-          Azure::Core::Http::MemoryBodyStream xml_body_stream(
+          Azure::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -3607,9 +3607,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "acl");
-          if (!options.AccessType.Get().empty())
+          if (!options.AccessType.ToString().empty())
           {
-            request.AddHeader("x-ms-blob-public-access", options.AccessType.Get());
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.ToString());
           }
           if (options.LeaseId.HasValue())
           {
@@ -4884,7 +4884,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -5220,7 +5220,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.DeleteSnapshots.HasValue())
           {
-            request.AddHeader("x-ms-delete-snapshots", options.DeleteSnapshots.GetValue().Get());
+            request.AddHeader(
+                "x-ms-delete-snapshots", options.DeleteSnapshots.GetValue().ToString());
           }
           if (options.LeaseId.HasValue())
           {
@@ -5308,7 +5309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
           request.GetUrl().AppendQueryParameter("comp", "expiry");
-          request.AddHeader("x-ms-expiry-option", options.ExpiryOrigin.Get());
+          request.AddHeader("x-ms-expiry-option", options.ExpiryOrigin.ToString());
           if (options.ExpiryTime.HasValue())
           {
             request.AddHeader("x-ms-expiry-time", options.ExpiryTime.GetValue());
@@ -5405,7 +5406,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.LeaseId.HasValue())
           {
@@ -5857,7 +5858,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -5934,11 +5935,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader("x-ms-access-tier", options.Tier.Get());
+          request.AddHeader("x-ms-access-tier", options.Tier.ToString());
           if (options.RehydratePriority.HasValue())
           {
             request.AddHeader(
-                "x-ms-rehydrate-priority", options.RehydratePriority.GetValue().Get());
+                "x-ms-rehydrate-priority", options.RehydratePriority.GetValue().ToString());
           }
           if (options.IfTags.HasValue())
           {
@@ -6029,12 +6030,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
           }
           if (options.RehydratePriority.HasValue())
           {
             request.AddHeader(
-                "x-ms-rehydrate-priority", options.RehydratePriority.GetValue().Get());
+                "x-ms-rehydrate-priority", options.RehydratePriority.GetValue().ToString());
           }
           if (options.ShouldSealDestination.HasValue())
           {
@@ -6209,7 +6210,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -6356,7 +6357,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
-          Azure::Core::Http::MemoryBodyStream xml_body_stream(
+          Azure::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -6938,7 +6939,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream* requestBody,
+            Azure::IO::BodyStream* requestBody,
             const UploadBlockBlobOptions& options)
         {
           (void)options;
@@ -6964,7 +6965,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7023,7 +7024,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-blob-type", "BlockBlob");
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -7125,7 +7126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream* requestBody,
+            Azure::IO::BodyStream* requestBody,
             const StageBlockOptions& options)
         {
           (void)options;
@@ -7173,7 +7174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7309,7 +7310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7419,7 +7420,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
-          Azure::Core::Http::MemoryBodyStream xml_body_stream(
+          Azure::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -7479,7 +7480,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7487,7 +7488,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -7572,7 +7573,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("comp", "blocklist");
           request.GetUrl().AppendQueryParameter(
-              "blocklisttype", Storage::Details::UrlEncodeQueryParameter(options.ListType.Get()));
+              "blocklisttype",
+              Storage::Details::UrlEncodeQueryParameter(options.ListType.ToString()));
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
           {
@@ -7755,7 +7757,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& i : options.BlockList)
           {
             writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::StartTag, i.first.Get().data(), i.second.data()});
+                Storage::Details::XmlNodeType::StartTag,
+                i.first.ToString().data(),
+                i.second.data()});
           }
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -7843,7 +7847,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
           }
           if (options.EncryptionKey.HasValue())
           {
@@ -7858,7 +7862,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7953,7 +7957,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream* requestBody,
+            Azure::IO::BodyStream* requestBody,
             const UploadPageBlobPagesOptions& options)
         {
           (void)options;
@@ -8027,7 +8031,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8222,7 +8226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8389,7 +8393,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8513,7 +8517,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9018,7 +9022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9111,7 +9115,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream* requestBody,
+            Azure::IO::BodyStream* requestBody,
             const AppendBlockOptions& options)
         {
           (void)options;
@@ -9167,7 +9171,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9347,7 +9351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().ToString());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9533,7 +9537,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Internal::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::BodyStream* requestBody,
+            Azure::IO::BodyStream* requestBody,
             const SubmitBlobBatchOptions& options)
         {
           (void)options;

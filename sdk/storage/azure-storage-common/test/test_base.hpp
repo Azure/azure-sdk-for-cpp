@@ -11,7 +11,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
-#include <azure/core/http/body_stream.hpp>
+#include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <gtest/gtest.h>
@@ -65,14 +65,13 @@ namespace Azure { namespace Storage { namespace Test {
   }
   std::vector<uint8_t> RandomBuffer(std::size_t length);
 
-  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::IO::BodyStream>& stream)
   {
     Azure::Core::Context context;
-    return Azure::Core::Http::BodyStream::ReadToEnd(context, *stream);
+    return Azure::IO::BodyStream::ReadToEnd(context, *stream);
   }
 
-  inline std::vector<uint8_t> ReadBodyStream(
-      std::unique_ptr<Azure::Core::Http::BodyStream>&& stream)
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::IO::BodyStream>&& stream)
   {
     return ReadBodyStream(stream);
   }
