@@ -141,7 +141,41 @@ bool ShouldRetryOnResponse(
 
   return true;
 }
+
+static constexpr char RetryKey[] = "AzureSdkRetryPolicyCounter";
+
+/**
+ * @brief Creates a new #Context node from \p parent with the information about the retrying while
+ * sending an Http request.
+ *
+ * @param parent The parent context for the new created.
+ * @return Context with information about retry counter.
+ */
+Context inline CreateRetryContext(Context const& parent)
+{
+  // First try as default
+  int retryCount = 0;
+  if (parent.HasKey(RetryKey))
+  {
+    retryCount = parent[RetryKey].Get<int>() + 1;
+  }
+  return parent.WithValue(RetryKey, retryCount);
+}
 } // namespace
+
+int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
+{
+  if (!context.HasKey(RetryKey))
+  {
+    // Context with no data abut sending request with retry policy = -1
+    // First try = 0
+    // Second try = 1
+    // third try = 2
+    // ...
+    return -1;
+  }
+  return context[RetryKey].Get<int>();
+}
 
 std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Context const& ctx,
@@ -150,6 +184,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 {
   using Azure::Core::Logger;
   using Azure::Core::Internal::Log;
+
+  auto retryContext = CreateRetryContext(ctx);
 
   for (RetryNumber attempt = 1;; ++attempt)
   {
@@ -160,7 +196,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     try
     {
-      auto response = nextHttpPolicy.Send(ctx, request);
+      auto response = nextHttpPolicy.Send(retryContext, request);
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
@@ -204,5 +240,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     // Restore the original query parameters before next retry
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
+
+    // Update retry number
+    retryContext = CreateRetryContext(retryContext);
   }
 }

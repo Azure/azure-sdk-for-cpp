@@ -13,6 +13,7 @@
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_create_options.hpp"
+#include "azure/keyvault/keys/key_curve_name.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 
 #include <functional>
@@ -28,9 +29,44 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     CreateKeyOptions const& m_options;
 
   public:
+    Azure::Core::Nullable<KeyCurveName> Curve;
+    Azure::Core::Nullable<uint64_t> KeySize;
+    Azure::Core::Nullable<uint64_t> PublicExponent;
+
     explicit KeyRequestParameters(JsonWebKeyType keyType, CreateKeyOptions const& options)
         : m_keyType(keyType), m_options(options)
     {
+    }
+
+    explicit KeyRequestParameters(CreateEcKeyOptions const& ecKey)
+        : KeyRequestParameters(ecKey.GetKeyType(), ecKey)
+    {
+      if (ecKey.CurveName.HasValue())
+      {
+        Curve = ecKey.CurveName.GetValue();
+      }
+    }
+
+    explicit KeyRequestParameters(CreateRsaKeyOptions const& rsaKey)
+        : KeyRequestParameters(rsaKey.GetKeyType(), rsaKey)
+    {
+      if (rsaKey.KeySize.HasValue())
+      {
+        KeySize = rsaKey.KeySize.GetValue();
+      }
+      if (rsaKey.PublicExponent.HasValue())
+      {
+        PublicExponent = rsaKey.PublicExponent.GetValue();
+      }
+    }
+
+    explicit KeyRequestParameters(CreateOctKeyOptions const& octKey)
+        : KeyRequestParameters(octKey.GetKeyType(), octKey)
+    {
+      if (octKey.KeySize.HasValue())
+      {
+        KeySize = octKey.KeySize.GetValue();
+      }
     }
 
     std::string Serialize() const override;
