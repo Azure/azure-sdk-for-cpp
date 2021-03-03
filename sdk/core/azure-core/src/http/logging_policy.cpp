@@ -36,19 +36,13 @@ std::string GetRequestLogMessage(
 {
   std::ostringstream log;
 
-  std::string url = request.GetUrl().GetAbsoluteUrl();
-  if (!url.empty())
-  {
-    auto qm = url.find('?');
-    if (qm != std::string::npos)
-    {
-      url = url.substr(0, qm);
-    }
-  }
+  auto const& requestUrl = request.GetUrl();
+
+  std::string url = requestUrl.GetUrlWithoutQuery();
 
   {
     auto separ = '?';
-    for (auto qparam : request.GetUrl().GetQueryParameters())
+    for (auto const& qparam : requestUrl.GetQueryParameters())
     {
       url += separ + qparam.first + '=';
 
@@ -68,7 +62,7 @@ std::string GetRequestLogMessage(
 
   log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " " << url;
 
-  for (auto header : request.GetHeaders())
+  for (auto const& header : request.GetHeaders())
   {
     log << "\n\t" << header.first;
 
@@ -104,7 +98,7 @@ std::string GetResponseLogMessage(
       << "ms) : " << static_cast<int>(response.GetStatusCode()) << " "
       << response.GetReasonPhrase();
 
-  for (auto header : response.GetHeaders())
+  for (auto const& header : response.GetHeaders())
   {
     log << "\n\t" << header.first;
     if (header.second.empty())

@@ -365,13 +365,20 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct LoggingPolicyOptions
   {
-    /// HTTP query parameters that are allowed to be logged.
+    /**
+     * @brief HTTP query parameters that are allowed to be logged.
+     * @remark URL-encoded parameter names are expected.
+     */
     std::set<std::string> AllowedHttpQueryParameters;
 
-    /// HTTP request headers that are allowed to be logged.
+    /**
+     * @brief HTTP request headers that are allowed to be logged.
+     */
     Azure::Core::CaseInsensitiveSet AllowedHttpRequestHeaders;
 
-    /// HTTP response headers that are allowed to be logged.
+    /**
+     * @brief HTTP response headers that are allowed to be logged.
+     */
     Azure::Core::CaseInsensitiveSet AllowedHttpResponseHeaders;
   };
 

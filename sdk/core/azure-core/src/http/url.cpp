@@ -177,6 +177,25 @@ void Url::AppendQueryParameters(const std::string& query)
   }
 }
 
+std::string Url::GetUrlWithoutQuery() const
+{
+  std::string full_url;
+  if (!m_scheme.empty())
+  {
+    full_url += m_scheme + "://";
+  }
+  full_url += m_host;
+  if (m_port != 0)
+  {
+    full_url += ":" + std::to_string(m_port);
+  }
+  if (!m_encodedPath.empty())
+  {
+    full_url += "/";
+  }
+  return full_url;
+}
+
 std::string Url::GetRelativeUrl() const
 {
   std::string relative_url;
@@ -196,25 +215,7 @@ std::string Url::GetRelativeUrl() const
   return relative_url;
 }
 
-std::string Url::GetAbsoluteUrl() const
-{
-  std::string full_url;
-  if (!m_scheme.empty())
-  {
-    full_url += m_scheme + "://";
-  }
-  full_url += m_host;
-  if (m_port != 0)
-  {
-    full_url += ":" + std::to_string(m_port);
-  }
-  if (!m_encodedPath.empty())
-  {
-    full_url += "/";
-  }
-  full_url += GetRelativeUrl();
-  return full_url;
-}
+std::string Url::GetAbsoluteUrl() const { return GetUrlWithoutQuery() + GetRelativeUrl(); }
 
 const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
     = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
