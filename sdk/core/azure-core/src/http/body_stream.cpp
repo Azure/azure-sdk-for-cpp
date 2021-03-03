@@ -27,7 +27,6 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
-#include <mutex>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
@@ -86,7 +85,6 @@ int64_t MemoryBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_
 
 int64_t FileBodyStream::GetFileSize(FILE* file)
 {
-  std::lock_guard<std::mutex> lock(m_fileMutex);
   // Get the current file position, to reset it back, after seeking to the end.
   int64_t currentPosition = 0;
   if (fgetpos(file, &currentPosition))
@@ -128,16 +126,9 @@ FileBodyStream::FileBodyStream(FILE* file, int64_t offset, int64_t length)
     throw std::invalid_argument("The file offset and size must be a non-negative number.");
   }
 
-  int64_t fileSize = GetFileSize(file);
-
-  printf("OUTUT: offset - %lld, length - %lld, file size - %lld\n", offset, length, fileSize);
+  int64_t fileSize = GetFileSize(m_fileStream);
   if (offset > fileSize || length > fileSize || offset + length > fileSize)
   {
-    printf(
-        "SOMETHING WENT WRONG! offset - %lld, length - %lld, file size - %lld\n",
-        offset,
-        length,
-        fileSize);
     throw std::invalid_argument("The offset and length cannot be larger than the file size.");
   }
 
@@ -163,8 +154,7 @@ FileBodyStream::FileBodyStream(FILE* file, int64_t offset)
     throw std::invalid_argument("The file offset and size must be a non-negative number.");
   }
 
-  int64_t fileSize = GetFileSize(file);
-
+  int64_t fileSize = GetFileSize(m_fileStream);
   if (offset > fileSize)
   {
     throw std::invalid_argument("The offset cannot be larger than the file size.");

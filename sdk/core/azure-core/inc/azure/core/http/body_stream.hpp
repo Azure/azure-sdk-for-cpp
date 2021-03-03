@@ -30,7 +30,6 @@
 #include <cstring>
 #include <memory>
 #include <vector>
-#include <mutex>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -213,8 +212,6 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
     int64_t GetFileSize(FILE* file);
-
-    std::mutex m_fileMutex;
 
   public:
     /**
