@@ -86,7 +86,7 @@ int64_t MemoryBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_
 int64_t FileBodyStream::GetFileSize(FILE* file)
 {
   // Get the current file position, to reset it back, after seeking to the end.
-  fpos_t currentPosition = 0;
+  fpos_t currentPosition;
   if (fgetpos(file, &currentPosition))
   {
     throw std::runtime_error("Failed to get the file object position.");
