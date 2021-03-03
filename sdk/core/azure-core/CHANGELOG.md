@@ -14,6 +14,7 @@
 ### Bug Fixes
 
 - Make sure to rewind the body stream at the start of each request retry attempt, including the first.
+- Let connection pool to reset the pool when all connections are closed.
 
 ## 1.0.0-beta.6 (2021-02-09)
 
