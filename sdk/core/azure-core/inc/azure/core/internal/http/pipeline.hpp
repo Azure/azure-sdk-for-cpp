@@ -66,47 +66,15 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
      * @param clientOptions The SDK client options.
      * @param telemetryServiceName The name of the service for sending telemetry.
      * @param telemetryServiceVersion The version of the service for sending telemetry.
-     * @param perRetryPolicies The service specific per retry policies.
-     * @param authBeforeSendPolicy Optional policy to set authentication information to the request
-     * right before sending it.
-     */
-    explicit HttpPipeline(
-        ClientOptions const& clientOptions,
-        std::string const& telemetryServiceName,
-        std::string const& telemetryServiceVersion,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
-        std::unique_ptr<Azure::Core::Http::HttpPolicy> authBeforeSendPolicy = nullptr)
-        : HttpPipeline(
-            clientOptions,
-            telemetryServiceName,
-            telemetryServiceVersion,
-            std::move(perRetryPolicies),
-            {},
-            std::move(authBeforeSendPolicy))
-    {
-    }
-
-    /**
-     * @brief Construct a new Http Pipeline object from clientOptions.
-     *
-     * @remark The client options includes per retry and per call policies which are merged with the
-     * service-specific per retry policies.
-     *
-     * @param clientOptions The SDK client options.
-     * @param telemetryServiceName The name of the service for sending telemetry.
-     * @param telemetryServiceVersion The version of the service for sending telemetry.
      * @param perRetryPolicies The service-specific per retry policies.
      * @param perCallPolicies The service-specific per call policies.
-     * @param authBeforeSendPolicy Optional policy to set authentication information to the request
-     * right before sending it.
      */
     explicit HttpPipeline(
         ClientOptions const& clientOptions,
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
         std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perCallPolicies,
-        std::unique_ptr<Azure::Core::Http::HttpPolicy> authBeforeSendPolicy = nullptr)
+        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perCallPolicies)
     {
       auto const& perCallClientPolicies = clientOptions.GetPerCallPolicies();
       auto const& perRetryClientPolicies = clientOptions.GerPerRetryPolicies();
@@ -155,13 +123,6 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
 
       // logging - won't update request
       m_policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
-
-      // auth policy for those request which builds auth info based in the request data. It must be
-      // the last one.
-      if (authBeforeSendPolicy)
-      {
-        m_policies.emplace_back(authBeforeSendPolicy->Clone());
-      }
 
       // transport
       m_policies.emplace_back(

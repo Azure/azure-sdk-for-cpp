@@ -36,7 +36,7 @@ KeyClient::KeyClient(
       Azure::Core::Http::Url(vaultUrl),
       apiVersion,
       Azure::Core::Internal::Http::HttpPipeline(
-          options, "KeyVault", apiVersion, std::move(perRetrypolicies)));
+          options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
 Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(

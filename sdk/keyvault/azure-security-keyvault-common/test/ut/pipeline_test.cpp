@@ -19,6 +19,6 @@ TEST(KeyVaultPipeline, initPipeline)
   Azure::Core::Http::Url url("urlTest");
   Azure::Core::Internal::ClientOptions options;
   Azure::Core::Internal::Http::HttpPipeline pipeline(
-      options, "service-name", "service-version", std::move(policies));
+      options, "service-name", "service-version", std::move(policies), {});
   EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", std::move(pipeline)));
 }
