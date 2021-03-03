@@ -86,7 +86,7 @@ int64_t MemoryBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_
 int64_t FileBodyStream::GetFileSize(FILE* file)
 {
   // Get the current file position, to reset it back, after seeking to the end.
-  int64_t currentPosition = 0;
+  fpos_t currentPosition = 0;
   if (fgetpos(file, &currentPosition))
   {
     throw std::runtime_error("Failed to get the file object position.");
@@ -182,7 +182,7 @@ int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buf
       std::min(count, this->m_length - this->m_offset),
       this->m_baseOffset + this->m_offset);
 
-  if (result < 0)
+  if (numberOfBytesRead < 0)
   {
 
     throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
