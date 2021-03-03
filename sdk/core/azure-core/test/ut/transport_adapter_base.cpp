@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // PUT 1K
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -166,7 +166,7 @@ namespace Azure { namespace Core { namespace Test {
     for (auto i = 0; i < 10; i++)
     {
       auto requestBodyVector = std::vector<uint8_t>(10, 'x');
-      auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+      auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
       auto request
           = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
       auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -233,7 +233,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -249,7 +249,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, true);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, true);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -325,7 +325,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // PUT 1MB
     auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
     // Make transport adapter to read all stream content for uploading instead of chunks
@@ -345,7 +345,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto bodyRequest = Azure::IO::MemoryBodyStream(requestBodyVector);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
     auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
@@ -364,7 +364,7 @@ namespace Azure { namespace Core { namespace Test {
     auto threadRoutine = [&]() {
       // Start a big upload and expect it to throw cancelation
       std::vector<uint8_t> bigBuffer(1024 * 1024 * 200, 'x'); // upload 200 Mb
-      auto stream = Azure::Core::Http::MemoryBodyStream(bigBuffer);
+      auto stream = Azure::IO::MemoryBodyStream(bigBuffer);
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &stream);
 
       // Request will be cancelled from main thread throwing the exception
@@ -456,8 +456,7 @@ namespace Azure { namespace Core { namespace Test {
 #else
 #error "Unknown platform"
 #endif
-    auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read all stream content for uploading instead of chunks
@@ -495,8 +494,7 @@ namespace Azure { namespace Core { namespace Test {
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
@@ -533,8 +531,7 @@ namespace Azure { namespace Core { namespace Test {
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    auto requestBodyStream = Azure::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read more than file size (5Mb)
@@ -592,7 +589,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NE(body, nullptr);
 
     std::vector<uint8_t> bodyVector
-        = Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *body);
+        = Azure::IO::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *body);
     int64_t bodySize = body->Length();
     EXPECT_EQ(bodySize, size);
     bodySize = bodyVector.size();

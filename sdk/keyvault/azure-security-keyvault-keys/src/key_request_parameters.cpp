@@ -35,6 +35,11 @@ std::string KeyRequestParameters::Serialize() const
   }
 
   // crv
+  if (Curve.HasValue())
+  {
+    payload[Details::CurveNamePropertyName] = Curve.GetValue().ToString();
+  }
+
   // release_policy
   return payload.dump();
 }

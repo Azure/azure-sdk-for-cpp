@@ -303,8 +303,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
     auto buffer = RandomBuffer(bufferSize);
-    auto bufferStream = std::make_unique<Azure::Core::Http::MemoryBodyStream>(
-        Azure::Core::Http::MemoryBodyStream(buffer));
+    auto bufferStream
+        = std::make_unique<Azure::IO::MemoryBodyStream>(Azure::IO::MemoryBodyStream(buffer));
     auto properties1 = m_fileClient->GetProperties();
 
     // Append
@@ -330,8 +330,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
     auto buffer = RandomBuffer(bufferSize);
-    auto bufferStream = std::make_unique<Azure::Core::Http::MemoryBodyStream>(
-        Azure::Core::Http::MemoryBodyStream(buffer));
+    auto bufferStream
+        = std::make_unique<Azure::IO::MemoryBodyStream>(Azure::IO::MemoryBodyStream(buffer));
     auto newFileName = RandomString(10);
     auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(newFileName));
@@ -586,8 +586,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Blob;
       containerClient.SetAccessPolicy(options);
       auto blobClient = containerClient.GetBlockBlobClient(objectName);
-      auto memoryStream
-          = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
+      auto memoryStream = Azure::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
       EXPECT_NO_THROW(blobClient.Upload(&memoryStream));
 
       auto anonymousClient = Azure::Storage::Files::DataLake::DataLakeFileClient(

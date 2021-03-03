@@ -19,12 +19,13 @@
 
 #include <gtest/gtest.h>
 
-#include <azure/core/http/body_stream.hpp>
+#include <azure/core/io/body_stream.hpp>
 
+using namespace Azure::IO;
 using namespace Azure::Core;
 
 // Used to test virtual, default behavior of BodyStream.
-class TestBodyStream : public Http::BodyStream {
+class TestBodyStream : public BodyStream {
   int64_t OnRead(Context const&, uint8_t*, int64_t) override { return 0; }
   int64_t Length() const override { return 0; }
 };
@@ -54,10 +55,10 @@ TEST(BodyStream, Rewind)
 #else
 #error "Unknown platform"
 #endif
-  auto fileBodyStream = Azure::Core::Http::FileBodyStream(f, 0, 0);
+  auto fileBodyStream = Azure::IO::FileBodyStream(f, 0, 0);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
-  Azure::Core::Http::MemoryBodyStream ms(data);
+  Azure::IO::MemoryBodyStream ms(data);
   EXPECT_NO_THROW(ms.Rewind());
 }
