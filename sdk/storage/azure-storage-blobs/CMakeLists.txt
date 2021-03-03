@@ -96,6 +96,7 @@ if(BUILD_TESTING)
         test/ut/blob_service_client_test.cpp
         test/ut/block_blob_client_test.cpp
         test/ut/block_blob_client_test.hpp
+        test/ut/macro_guard.cpp
         test/ut/page_blob_client_test.cpp
         test/ut/page_blob_client_test.hpp
         test/ut/storage_retry_policy_test.cpp

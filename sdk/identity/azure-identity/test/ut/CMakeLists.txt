@@ -13,6 +13,7 @@ include(GoogleTest)
 
 add_executable (
   azure-identity-test
+    macro_guard.cpp
     main.cpp
     simplified_header.cpp
 )

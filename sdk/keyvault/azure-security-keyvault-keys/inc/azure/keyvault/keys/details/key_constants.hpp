@@ -58,4 +58,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char DeletedOnPropertyName[] = "deletedDate";
   constexpr static const char ScheduledPurgeDatePropertyName[] = "scheduledPurgeDate";
 
+  /***************** Curve Names *****************/
+  constexpr static const char P256Value[] = "P-256";
+  constexpr static const char P256KValue[] = "P-256K";
+  constexpr static const char P384Value[] = "P-384";
+  constexpr static const char P521Value[] = "P-521";
+
+  constexpr static const char P256OidValue[] = "1.2.840.10045.3.1.7";
+  constexpr static const char P256KOidValue[] = "1.3.132.0.10";
+  constexpr static const char P384OidValue[] = "1.3.132.0.34";
+  constexpr static const char P521OidValue[] = "1.3.132.0.35";
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::Details

@@ -206,9 +206,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * no authentication is required to perform the copy operation.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A StartCopyBlobResult describing the state of the copy operation.
+     * @return A StartCopyBlobOperation describing the state of the copy operation.
      */
-    Azure::Core::Response<Models::StartCopyBlobResult> StartCopyFromUri(
+    StartCopyBlobOperation StartCopyFromUri(
         const std::string& sourceUri,
         const StartCopyBlobFromUriOptions& options = StartCopyBlobFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;

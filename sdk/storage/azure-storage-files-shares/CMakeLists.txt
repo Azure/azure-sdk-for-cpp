@@ -51,6 +51,7 @@ set(
     src/share_file_attributes.cpp
     src/share_file_client.cpp
     src/share_lease_client.cpp
+    src/share_responses.cpp
     src/share_rest_client.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
@@ -86,6 +87,7 @@ if(BUILD_TESTING)
   target_sources(
     azure-storage-test
       PRIVATE
+        test/macro_guard.cpp
         test/share_client_test.cpp
         test/share_client_test.hpp
         test/share_directory_client_test.cpp

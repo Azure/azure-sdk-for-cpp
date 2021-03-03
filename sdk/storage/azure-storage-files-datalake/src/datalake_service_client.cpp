@@ -42,17 +42,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          fileSystem.Details.AccessType = Models::PublicAccessType(item.Details.AccessType.Get());
+          fileSystem.Details.AccessType
+              = Models::PublicAccessType(item.Details.AccessType.ToString());
         }
         fileSystem.Details.HasImmutabilityPolicy = item.Details.HasImmutabilityPolicy;
         fileSystem.Details.HasLegalHold = item.Details.HasLegalHold;
         if (item.Details.LeaseDuration.HasValue())
         {
           fileSystem.Details.LeaseDuration
-              = Models::LeaseDurationType((item.Details.LeaseDuration.GetValue().Get()));
+              = Models::LeaseDurationType((item.Details.LeaseDuration.GetValue().ToString()));
         }
-        fileSystem.Details.LeaseState = Models::LeaseStateType(item.Details.LeaseState.Get());
-        fileSystem.Details.LeaseStatus = Models::LeaseStatusType(item.Details.LeaseStatus.Get());
+        fileSystem.Details.LeaseState = Models::LeaseStateType(item.Details.LeaseState.ToString());
+        fileSystem.Details.LeaseStatus
+            = Models::LeaseStatusType(item.Details.LeaseStatus.ToString());
 
         fileSystems.emplace_back(std::move(fileSystem));
       }

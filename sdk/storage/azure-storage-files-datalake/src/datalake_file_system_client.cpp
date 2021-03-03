@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     else
     {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
+      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
     }
     auto result = m_blobContainerClient.Create(blobOptions, context);
     Models::CreateDataLakeFileSystemResult ret;
@@ -289,7 +289,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     else
     {
-      ret.AccessType = Models::PublicAccessType(result->AccessType.Get());
+      ret.AccessType = Models::PublicAccessType(result->AccessType.ToString());
     }
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     else
     {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.Get());
+      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
     }
     auto result = m_blobContainerClient.SetAccessPolicy(blobOptions, context);
     Models::SetDataLakeFileSystemAccessPolicyResult ret;

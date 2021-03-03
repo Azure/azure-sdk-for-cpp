@@ -31,6 +31,7 @@ add_executable (
   azure-core-test
     base64.cpp
     bodystream.cpp
+    case_insensitive_map.cpp
     context.cpp
     ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}
@@ -40,6 +41,7 @@ add_executable (
     http.cpp
     json.cpp
     logging.cpp
+    macro_guard.cpp
     main.cpp
     match_conditions.cpp
     md5.cpp
