@@ -7,16 +7,21 @@
 #include <mutex>
 #include <shared_mutex>
 
+#include "environment_log_level_listener_private.hpp"
+
 using namespace Azure::Core;
 using namespace Azure::Core::Internal;
 
 namespace {
 static std::shared_timed_mutex g_logListenerMutex;
-static Logger::Listener g_logListener(nullptr);
+static Logger::Listener g_logListener(Details::EnvironmentLogLevelListener::GetLogListener());
 } // namespace
 
-std::atomic<bool> Log::g_isLoggingEnabled(false);
-std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(Logger::Level::Warning));
+std::atomic<bool> Log::g_isLoggingEnabled(
+    Details::EnvironmentLogLevelListener::GetLogListener() != nullptr);
+
+std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(
+    Details::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning)));
 
 inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 

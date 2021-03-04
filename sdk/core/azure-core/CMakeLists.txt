@@ -21,6 +21,10 @@ az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
+if (NOT BUILTIN_ENV_LOGGER)
+  add_compile_definitions(AZ_NO_ENV_LOGGER)
+endif()
+
 if(BUILD_TRANSPORT_CURL)
   # min version for `CURLSSLOPT_NO_REVOKE`
   # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
@@ -99,6 +103,8 @@ set(
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/environment_log_level_listener.cpp
+    src/environment_log_level_listener_private.hpp
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp

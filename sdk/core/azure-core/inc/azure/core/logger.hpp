@@ -10,7 +10,9 @@
 #pragma once
 
 #include <functional>
+#include <ostream>
 #include <string>
+#include <type_traits>
 
 namespace Azure { namespace Core {
   /**
@@ -64,4 +66,33 @@ namespace Azure { namespace Core {
     Logger() = delete;
     ~Logger() = delete;
   };
+
+  inline std::ostream& operator<<(std::ostream& os, Logger::Level const& logLevel)
+  {
+    switch (logLevel)
+    {
+      case Logger::Level::Error:
+        os << "Error";
+        break;
+
+      case Logger::Level::Warning:
+        os << "Warning";
+        break;
+
+      case Logger::Level::Informational:
+        os << "Info";
+        break;
+
+      case Logger::Level::Verbose:
+        os << "Verbose";
+        break;
+
+      default:
+        os << "LogLevel(" << static_cast<std::underlying_type<Logger::Level>::type>(logLevel)
+           << ")";
+        break;
+    };
+
+    return os;
+  }
 }} // namespace Azure::Core

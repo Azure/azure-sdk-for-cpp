@@ -11,6 +11,7 @@
 #include "azure/core/dll_import_export.hpp"
 
 #include <chrono>
+#include <ostream>
 #include <string>
 
 namespace Azure { namespace Core {
@@ -263,5 +264,11 @@ namespace Azure { namespace Core {
   inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
   {
     return (dt <= tp);
+  }
+
+  inline std::ostream& operator<<(std::ostream& os, DateTime const& dt)
+  {
+    os << dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    return os;
   }
 }} // namespace Azure::Core
