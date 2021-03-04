@@ -1285,7 +1285,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 
   if (connection->IsShutdown())
   {
-    // Can re-used a shut down connection
+    // Can't re-used a shut down connection
     return;
   }
 
