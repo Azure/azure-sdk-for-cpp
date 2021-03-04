@@ -18,13 +18,13 @@ static Logger::Listener g_logListener(nullptr);
 std::atomic<bool> Log::g_isLoggingEnabled(false);
 std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(Logger::Level::Warning));
 
-inline void Log::ToggleLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
+inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 
 void Logger::SetListener(Logger::Listener listener)
 {
   std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
   g_logListener = std::move(listener);
-  Log::ToggleLogging(g_logListener != nullptr);
+  Log::EnableLogging(g_logListener != nullptr);
 }
 
 Logger::Listener Log::GetLogListener()

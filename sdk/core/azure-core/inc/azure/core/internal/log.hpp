@@ -24,28 +24,27 @@ namespace Azure { namespace Core { namespace Internal {
 
     static Logger::Listener GetLogListener();
 
-    static Logger::Listener GetLogListener(Logger::Level level)
-    {
-      return g_isLoggingEnabled && static_cast<LogLevelInt>(level) <= g_logLevel
-          ? GetLogListener()
-          : Logger::Listener(nullptr);
-    }
-
     Log() = delete;
     ~Log() = delete;
 
   public:
-    static bool ShouldWrite(Logger::Level level) { return GetLogListener(level) != nullptr; }
+    static bool ShouldWrite(Logger::Level level)
+    {
+      return g_isLoggingEnabled && static_cast<LogLevelInt>(level) <= g_logLevel;
+    }
 
     static void Write(Logger::Level level, std::string const& message)
     {
-      if (auto listener = GetLogListener(level))
+      if (ShouldWrite(level))
       {
-        listener(level, message);
+        if (auto listener = GetLogListener())
+        {
+          listener(level, message);
+        }
       }
     }
 
-    static void ToggleLogging(bool isEnabled);
+    static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
   };
 }}} // namespace Azure::Core::Internal
