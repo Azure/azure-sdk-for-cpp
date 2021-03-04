@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Details {
     if (headers.find(HttpHeaderDate) == headers.end())
     {
       // add x-ms-date header in RFC1123 format
-      request.AddHeader(
+      request.SetHeader(
           HttpHeaderXMsDate,
           Core::DateTime(std::chrono::system_clock::now())
               .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));

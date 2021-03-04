@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Test {
     // Need to init request again, since retry would be on after it is sent
     request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     // Add a header and send again. RawResponse should return that header in the body
-    request.AddHeader("123", "456");
+    request.SetHeader("123", "456");
     response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
     checkResponseCode(response->GetStatusCode());
     // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
@@ -189,7 +189,7 @@ namespace Azure { namespace Core { namespace Test {
 
     request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
     // Add a header and send again. Response should return that header in the body
-    request.AddHeader("123", "456");
+    request.SetHeader("123", "456");
     response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
     checkResponseCode(response->GetStatusCode());
     // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
