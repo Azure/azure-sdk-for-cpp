@@ -217,13 +217,13 @@ CURLcode CurlSession::Perform(Context const& context)
     if (hostHeader == headers.end())
     {
       Log(LogLevel::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
-      this->m_request.AddHeader("Host", this->m_request.GetUrl().GetHost());
+      this->m_request.SetHeader("Host", this->m_request.GetUrl().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
     {
       Log(LogLevel::Verbose, LogMsgPrefix + "No content-length in headers. Adding it");
-      this->m_request.AddHeader(
+      this->m_request.SetHeader(
           "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
     }
   }
@@ -232,7 +232,7 @@ CURLcode CurlSession::Perform(Context const& context)
   if (this->m_request.GetMethod() == HttpMethod::Put)
   {
     Log(LogLevel::Verbose, LogMsgPrefix + "Using 100-continue for PUT request");
-    this->m_request.AddHeader("expect", "100-continue");
+    this->m_request.SetHeader("expect", "100-continue");
   }
 
   // Send request. If the connection assigned to this curlSession is closed or the socket is
@@ -851,7 +851,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         else if (this->state == ResponseParserState::Headers)
         {
           // will throw if header is invalid
-          this->m_response->AddHeader(this->m_internalBuffer);
+          this->m_response->SetHeader(this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -888,7 +888,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // will throw if header is invalid
-          this->m_response->AddHeader(buffer + start, buffer + index - 1);
+          this->m_response->SetHeader(buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -1035,14 +1035,14 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
     // will throw if header is invalid
-    m_response->AddHeader(this->m_internalBuffer);
+    m_response->SetHeader(this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
     std::string header(std::string(start, indexOfEndOfStatusLine));
     // will throw if header is invalid
-    this->m_response->AddHeader(header);
+    this->m_response->SetHeader(header);
   }
 
   // reuse buffer

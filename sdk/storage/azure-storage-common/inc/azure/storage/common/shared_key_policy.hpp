@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Details {
         Core::Http::Request& request,
         Core::Http::NextHttpPolicy nextHttpPolicy) const override
     {
-      request.AddHeader(
+      request.SetHeader(
           "Authorization", "SharedKey " + m_credential->AccountName + ":" + GetSignature(request));
       return nextHttpPolicy.Send(ctx, request);
     }

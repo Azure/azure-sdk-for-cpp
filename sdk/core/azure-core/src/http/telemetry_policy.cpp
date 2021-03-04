@@ -119,6 +119,6 @@ std::unique_ptr<RawResponse> TelemetryPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  request.AddHeader("User-Agent", m_telemetryId);
+  request.SetHeader("User-Agent", m_telemetryId);
   return nextHttpPolicy.Send(ctx, request);
 }

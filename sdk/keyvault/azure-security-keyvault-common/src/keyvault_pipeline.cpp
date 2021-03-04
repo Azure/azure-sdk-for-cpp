@@ -29,8 +29,8 @@ Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
 
   auto request = ::InitRequest(method, content, m_vaultUrl);
 
-  request.AddHeader(Details::ContentType, Details::ApplicationJson);
-  request.AddHeader(Details::Accept, Details::ApplicationJson);
+  request.SetHeader(Details::ContentType, Details::ApplicationJson);
+  request.SetHeader(Details::Accept, Details::ApplicationJson);
 
   request.GetUrl().AppendQueryParameter(Details::ApiVersion, m_apiVersion);
 
