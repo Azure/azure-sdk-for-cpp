@@ -84,7 +84,7 @@ namespace Azure { namespace Core {
         break;
 
       case Logger::Level::Verbose:
-        os << "Verbose";
+        os << "Debug";
         break;
 
       default:
