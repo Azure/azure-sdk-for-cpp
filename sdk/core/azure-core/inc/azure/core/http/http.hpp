@@ -515,7 +515,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit Request(HttpMethod httpMethod, Url url);
 
     /**
-     * @brief Set an  HTTP header to the #Azure::Core::Http::Request.
+     * @brief Set an HTTP header to the #Azure::Core::Http::Request.
      *
      * @remark If the header key does not exists, it is added.
      *
@@ -656,19 +656,19 @@ namespace Azure { namespace Core { namespace Http {
     // ===== Methods used to build HTTP response =====
 
     /**
-     * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
+     * @brief Set an HTTP header to the #Azure::Core::Http::Request.
      *
      * @remark The \p name must contain valid header name characters (RFC 7230).
      *
-     * @param name The name for the header to be added.
-     * @param value The value for the header to be added.
+     * @param name The name for the header to be set or added.
+     * @param value The value for the header to be set or added.
      *
      * @throw if \p name contains invalid characters.
      */
     void SetHeader(std::string const& name, std::string const& value);
 
     /**
-     * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
+     * @brief Set an HTTP header to the #Azure::Core::Http::Request.
      *
      * @remark The \p header must contain valid header name characters (RFC 7230).
      * @remark Header name, value and delimiter are expected to be in \p header.
@@ -680,7 +680,7 @@ namespace Azure { namespace Core { namespace Http {
     void SetHeader(std::string const& header);
 
     /**
-     * @brief Add HTTP header to the #Azure::Core::Http::RawResponse.
+     * @brief Set an HTTP header to the #Azure::Core::Http::Request.
      *
      * @remark The string referenced by \p first and \p last must contain valid header name
      * characters (RFC 7230).
