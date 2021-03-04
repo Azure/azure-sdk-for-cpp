@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.7 (Unreleased)
 
+### New Features
+- Added `HttpPolicyOrder` for adding custom Http policies to sdk clients.
+
 ### Breaking Changes
 
 - Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
@@ -14,6 +17,9 @@
 - Moved `NullBodyStream` to internal usage only. It is not meant for public use.
 - Removed `LimitBodyStream`.
 - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
+- Renamed `TransportPolicyOptions` to `TransportOptions`.
+- Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
+- Renamed `ValuePolicyOptions` to `ValueOptions`.
 - Removed `StartTry()` from `Azure::Core::Http::Request`.
 - Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
 - Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.

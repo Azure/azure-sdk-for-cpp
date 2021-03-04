@@ -20,7 +20,7 @@ TEST(KeyClient, initClient)
   }
   {
     KeyClientOptions options;
-    options.RetryOptions.MaxRetries = 10;
+    options.Retry.MaxRetries = 10;
     EXPECT_NO_THROW(KeyClient keyClient("vaultUrl", credential));
   }
 }

@@ -10,6 +10,7 @@
 #pragma once
 
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/client_options.hpp>
 #include <azure/core/response.hpp>
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
@@ -31,7 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define the options to create an SDK Keys client.
    *
    */
-  struct KeyClientOptions
+  struct KeyClientOptions : public Azure::Core::Internal::ClientOptions
   {
     /**
      * @brief The service version. All request are created with this version.
@@ -40,39 +41,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     ServiceVersion Version;
 
     /**
-     * @brief Define the options to retry the Http requests.
-     *
-     */
-    Azure::Core::Http::RetryOptions RetryOptions;
-
-    /**
-     * @brief Define the Http client options.
-     *
-     * @remark Use this options to set an specific Http client.
-     *
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-
-    /**
-     * @brief Define the information to be used for reporting telemetry data.
-     *
-     */
-    Azure::Core::Http::TelemetryPolicyOptions TelemetryPolicyOptions;
-
-    /**
-     * @brief Define the information to be used for logging.
-     *
-     */
-    Azure::Core::Http::LogOptions LogOptions;
-
-    /**
      * @brief Construct a new Key Client Options object.
      *
      * @param version Optional version for the client.
      */
-    KeyClientOptions(ServiceVersion version = ServiceVersion::V7_2) : Version(version) {}
+    KeyClientOptions(ServiceVersion version = ServiceVersion::V7_2)
+        : ClientOptions(), Version(version)
+    {
+    }
 
-    std::string GetVersionString()
+    std::string GetVersionString() const
     {
       switch (Version)
       {

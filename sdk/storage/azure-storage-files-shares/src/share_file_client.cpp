@@ -47,7 +47,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl)
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
         Storage::Details::ConstructPolicies(
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl)
   {
-    Azure::Core::Http::TelemetryPolicyOptions telemetryPolicyOptions;
+    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
     telemetryPolicyOptions.ApplicationId = options.ApplicationId;
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
         Storage::Details::ConstructPolicies(

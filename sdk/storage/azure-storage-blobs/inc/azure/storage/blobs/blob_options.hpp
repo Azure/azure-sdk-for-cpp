@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+    Azure::Core::Http::TransportOptions TransportOptions;
 
     /**
      * @brief The last part of the user agent for telemetry.

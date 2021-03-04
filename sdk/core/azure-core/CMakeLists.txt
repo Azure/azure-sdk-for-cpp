@@ -49,6 +49,7 @@ set(
     inc/azure/core/http/http.hpp
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/hkeyholder.hpp
     inc/azure/core/internal/http/pipeline.hpp

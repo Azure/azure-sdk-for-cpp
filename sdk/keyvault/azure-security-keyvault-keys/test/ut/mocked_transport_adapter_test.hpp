@@ -58,24 +58,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   public:
     explicit KeyClientWithNoAuthenticationPolicy(
         std::string const& vaultUrl,
-        KeyClientOptions options = KeyClientOptions())
+        KeyClientOptions const& options = KeyClientOptions())
         : KeyClient(vaultUrl, nullptr, options)
     {
       auto apiVersion = options.GetVersionString();
 
-      // Base Pipeline
-      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-      policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-          "KeyVault", apiVersion, options.TelemetryPolicyOptions));
-      policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-      policies.emplace_back(std::make_unique<Azure::Core::Http::RetryPolicy>(options.RetryOptions));
-      policies.emplace_back(std::make_unique<Azure::Core::Http::LogPolicy>(options.LogOptions));
-      policies.emplace_back(
-          std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-      Azure::Core::Http::Url url(vaultUrl);
-
       m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
-          url, apiVersion, std::move(policies));
+          Azure::Core::Http::Url(vaultUrl),
+          apiVersion,
+          Azure::Core::Internal::Http::HttpPipeline(options, "test", "version", {}, {}));
     }
   };
 
@@ -87,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      m_clientOptions.TransportPolicyOptions.Transport = std::make_shared<MockedTransportAdapter>();
+      m_clientOptions.Transport.Transport = std::make_shared<MockedTransportAdapter>();
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test

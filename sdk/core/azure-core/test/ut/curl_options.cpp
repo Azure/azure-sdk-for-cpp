@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.Proxy = "136.228.165.138:8080";
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.SSLOptions.EnableCertificateRevocationListCheck = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.CAInfo = "/";
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
@@ -209,7 +209,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, httpsDefault)
   {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
@@ -242,7 +242,7 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.HttpKeepAlive = false;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 

@@ -121,7 +121,7 @@ TEST(Policy, ValuePolicy)
   using namespace Azure::Core::Http;
   using namespace Azure::Core::Internal::Http;
 
-  Azure::Core::Http::Internal::ValuePolicyOptions options
+  Azure::Core::Http::Internal::ValueOptions options
       = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
          {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}};
 

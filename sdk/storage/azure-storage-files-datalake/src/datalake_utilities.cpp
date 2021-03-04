@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     blobOptions.RetryOptions = options.RetryOptions;
     blobOptions.RetryOptions.SecondaryHostForRetryReads
         = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    blobOptions.TransportPolicyOptions = options.TransportPolicyOptions;
+    blobOptions.TransportOptions = options.TransportOptions;
     blobOptions.ApplicationId = options.ApplicationId;
     blobOptions.ApiVersion = options.ApiVersion;
     return blobOptions;
