@@ -20,22 +20,28 @@ std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(Logger::L
 
 inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 
+inline void Log::SetLogLevel(Logger::Level logLevel)
+{
+  g_logLevel = static_cast<LogLevelInt>(logLevel);
+}
+
+void Log::Write(Logger::Level level, std::string const& message)
+{
+  if (ShouldWrite(level))
+  {
+    std::shared_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
+    if (g_logListener)
+    {
+      g_logListener(level, message);
+    }
+  }
+}
+
 void Logger::SetListener(Logger::Listener listener)
 {
   std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
   g_logListener = std::move(listener);
   Log::EnableLogging(g_logListener != nullptr);
-}
-
-Logger::Listener Log::GetLogListener()
-{
-  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
-  return g_logListener;
-}
-
-inline void Log::SetLogLevel(Logger::Level logLevel)
-{
-  g_logLevel = static_cast<LogLevelInt>(logLevel);
 }
 
 void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }

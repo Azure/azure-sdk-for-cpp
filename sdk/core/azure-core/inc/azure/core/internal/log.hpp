@@ -22,8 +22,6 @@ namespace Azure { namespace Core { namespace Internal {
     static AZ_CORE_DLLEXPORT std::atomic<bool> g_isLoggingEnabled;
     static AZ_CORE_DLLEXPORT std::atomic<LogLevelInt> g_logLevel;
 
-    static Logger::Listener GetLogListener();
-
     Log() = delete;
     ~Log() = delete;
 
@@ -33,16 +31,7 @@ namespace Azure { namespace Core { namespace Internal {
       return g_isLoggingEnabled && static_cast<LogLevelInt>(level) <= g_logLevel;
     }
 
-    static void Write(Logger::Level level, std::string const& message)
-    {
-      if (ShouldWrite(level))
-      {
-        if (auto listener = GetLogListener())
-        {
-          listener(level, message);
-        }
-      }
-    }
+    static void Write(Logger::Level level, std::string const& message);
 
     static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
