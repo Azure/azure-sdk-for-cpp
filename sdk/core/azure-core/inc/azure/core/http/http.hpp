@@ -29,6 +29,9 @@
 namespace Azure { namespace Core { namespace Test {
   class TestHttp_getters_Test;
   class TestHttp_query_parameter_Test;
+  class TestHttp_RequestStartTry_Test;
+  class TestURL_getters_Test;
+  class TestURL_query_parameter_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -445,6 +448,9 @@ namespace Azure { namespace Core { namespace Http {
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;
+    friend class Azure::Core::Test::TestHttp_RequestStartTry_Test;
+    friend class Azure::Core::Test::TestURL_getters_Test;
+    friend class Azure::Core::Test::TestURL_query_parameter_Test;
 #endif
 
   private:
@@ -463,6 +469,10 @@ namespace Azure { namespace Core { namespace Http {
     // read and upload chunks of data from the payload body stream. If it is not set, the transport
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
+
+    // Expected to be called by a Retry policy to reset all headers set after this function was
+    // previously called
+    void StartTry();
 
   public:
     /**
@@ -586,9 +596,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get URL.
      */
     Url const& GetUrl() const { return this->m_url; }
-    // Expected to be called by a Retry policy to reset all headers set after this function was
-    // previously called
-    void StartTry();
   };
 
   /**

@@ -23,6 +23,58 @@ public:
     return nullptr;
   }
 };
+
+// A policy to test retry state
+static int retryCounterState = 0;
+struct TestRetryPolicySharedState : public Azure::Core::Http::HttpPolicy
+{
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<TestRetryPolicySharedState>(*this);
+  }
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Azure::Core::Context const& ctx,
+      Azure::Core::Http::Request& request,
+      Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override
+  {
+    EXPECT_EQ(retryCounterState, Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx));
+    retryCounterState += 1;
+    return nextHttpPolicy.Send(ctx, request);
+  }
+};
+
+class SuccessAfter : public Azure::Core::Http::HttpPolicy {
+private:
+  int m_successAfter; // Always success
+
+public:
+  std::unique_ptr<Azure::Core::Http::HttpPolicy> Clone() const override
+  {
+    return std::make_unique<SuccessAfter>(*this);
+  }
+
+  SuccessAfter(int successAfter = 1) : m_successAfter(successAfter) {}
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Azure::Core::Context const& context,
+      Azure::Core::Http::Request&,
+      Azure::Core::Http::NextHttpPolicy) const override
+  {
+    auto retryNumber = Azure::Core::Http::RetryPolicy::GetRetryNumber(context);
+    if (retryNumber == m_successAfter)
+    {
+      auto response = std::make_unique<Azure::Core::Http::RawResponse>(
+          1, 1, Azure::Core::Http::HttpStatusCode::Ok, "All Fine");
+      return response;
+    }
+
+    auto retryResponse = std::make_unique<Azure::Core::Http::RawResponse>(
+        1, 1, Azure::Core::Http::HttpStatusCode::ServiceUnavailable, "retry please :)");
+    return retryResponse;
+  }
+};
+
 } // namespace
 
 TEST(Policy, throwWhenNoTransportPolicy)
@@ -69,7 +121,7 @@ TEST(Policy, ValuePolicy)
   using namespace Azure::Core::Http;
   using namespace Azure::Core::Internal::Http;
 
-  Azure::Core::Http::Internal::ValuePolicyOptions options
+  Azure::Core::Http::Internal::ValueOptions options
       = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
          {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}};
 
@@ -87,4 +139,45 @@ TEST(Policy, ValuePolicy)
 
   ASSERT_EQ(headers, decltype(headers)({{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}}));
   ASSERT_EQ(queryParams, decltype(queryParams)({{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}));
+}
+
+TEST(Policy, RetryPolicyCounter)
+{
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+  using namespace Azure::Core::Internal::Http;
+
+  // Check when there's no info about retry on the context
+  auto initialContext = GetApplicationContext();
+  EXPECT_EQ(-1, RetryPolicy::GetRetryNumber(initialContext));
+
+  // Pipeline with retry test
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+  RetryOptions opt;
+  policies.push_back(std::make_unique<RetryPolicy>(opt));
+  policies.push_back(std::make_unique<TestRetryPolicySharedState>());
+  policies.push_back(std::make_unique<SuccessAfter>());
+
+  HttpPipeline pipeline(policies);
+  Request request(HttpMethod::Get, Url("url"));
+  pipeline.Send(initialContext, request);
+}
+
+TEST(Policy, RetryPolicyRetryCycle)
+{
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+  using namespace Azure::Core::Internal::Http;
+
+  // Pipeline with retry test
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+  RetryOptions opt;
+  opt.RetryDelay = std::chrono::milliseconds(10);
+  policies.push_back(std::make_unique<RetryPolicy>(opt));
+  policies.push_back(std::make_unique<TestRetryPolicySharedState>());
+  policies.push_back(std::make_unique<SuccessAfter>(3));
+
+  HttpPipeline pipeline(policies);
+  Request request(HttpMethod::Get, Url("url"));
+  pipeline.Send(GetApplicationContext(), request);
 }

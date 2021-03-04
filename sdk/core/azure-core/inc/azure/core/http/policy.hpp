@@ -30,6 +30,24 @@ namespace Azure { namespace Core { namespace Http {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
   }
 
+  /**
+   * @brief Define the order of execution of and Http policy when a request is sent to the server.
+   *
+   */
+  enum class HttpPolicyOrder
+  {
+    /**
+     * @brief The policy would be invoked once per request invocation (service call).
+     *
+     */
+    PerCall,
+    /**
+     * @brief The policy would be invoked every time the request is retried.
+     *
+     */
+    PerRetry
+  };
+
   class NextHttpPolicy;
 
   /**
@@ -114,7 +132,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief The options for the #Azure::Core::Http::TransportPolicy.
    *
    */
-  struct TransportPolicyOptions
+  struct TransportOptions
   {
     /**
      * @brief Set the #Azure::Core::Http::HttpTransport that the transport policy will use to send
@@ -136,15 +154,15 @@ namespace Azure { namespace Core { namespace Http {
    */
   class TransportPolicy : public HttpPolicy {
   private:
-    TransportPolicyOptions m_options;
+    TransportOptions m_options;
 
   public:
     /**
      * @brief Construct an HTTP transport policy.
      *
-     * @param options #Azure::Core::Http::TransportPolicyOptions.
+     * @param options #Azure::Core::Http::TransportOptions.
      */
-    explicit TransportPolicy(TransportPolicyOptions options = TransportPolicyOptions())
+    explicit TransportPolicy(TransportOptions options = TransportOptions())
         : m_options(std::move(options))
     {
     }
@@ -216,6 +234,19 @@ namespace Azure { namespace Core { namespace Http {
         Context const& ctx,
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override;
+
+    /**
+     * @brief Get the Retry Count from the context.
+     *
+     * @remark The sentinel `-1` is returned if there is no information in the \p Context about
+     * #RetryPolicy is trying to send a request. Then `0` is returned for the first try of sending a
+     * request by the #RetryPolicy. Any subsequent retry will be referenced with a number greater
+     * than 0.
+     *
+     * @param context The context used to call send request.
+     * @return A positive number indicating the current intent to send the request.
+     */
+    static int GetRetryNumber(Context const& context);
   };
 
   /**
@@ -255,7 +286,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief The options for the #Azure::Core::Http::TelemetryPolicy
    *
    */
-  struct TelemetryPolicyOptions
+  struct TelemetryOptions
   {
     /**
      * @brief The Application id is the last part of the user agent for telemetry.
@@ -293,7 +324,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit TelemetryPolicy(
         std::string const& componentName,
         std::string const& componentVersion,
-        TelemetryPolicyOptions options = TelemetryPolicyOptions())
+        TelemetryOptions options = TelemetryOptions())
         : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
     {
     }
@@ -387,7 +418,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief #Azure::Core::Http::Internal::ValuePolicy options.
      */
-    struct ValuePolicyOptions
+    struct ValueOptions
     {
       CaseInsensitiveMap HeaderValues;
       std::map<std::string, std::string> QueryValues;
@@ -401,15 +432,15 @@ namespace Azure { namespace Core { namespace Http {
      */
     class ValuePolicy : public HttpPolicy {
     private:
-      ValuePolicyOptions m_options;
+      ValueOptions m_options;
 
     public:
       /**
        * @brief Construct a #Azure::Core::Http::Internal::ValuePolicy with the
-       * #Azure::Core::Http::Internal::ValuePolicyOptions provided.
-       * @param options #Azure::Core::Http::Internal::ValuePolicyOptions.
+       * #Azure::Core::Http::Internal::ValueOptions provided.
+       * @param options #Azure::Core::Http::Internal::ValueOptions.
        */
-      explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
+      explicit ValuePolicy(ValueOptions options) : m_options(std::move(options)) {}
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {

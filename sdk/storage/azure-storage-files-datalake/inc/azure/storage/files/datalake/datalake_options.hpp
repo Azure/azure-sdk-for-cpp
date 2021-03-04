@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+    Azure::Core::Http::TransportOptions TransportOptions;
 
     /**
      * @brief The last part of the user agent for telemetry.
@@ -62,15 +62,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Specifies access conditions for a file system.
    */
-  struct FileSystemAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct FileSystemAccessConditions : public Azure::Core::ModifiedConditions,
+                                      public LeaseAccessConditions
   {
   };
 
   /**
    * @brief Specifies access conditions for a path.
    */
-  struct PathAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct PathAccessConditions : public Azure::Core::ModifiedConditions,
+                                public Azure::Core::MatchConditions,
                                 public LeaseAccessConditions
   {
   };
