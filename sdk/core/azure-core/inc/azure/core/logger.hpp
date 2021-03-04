@@ -72,19 +72,19 @@ namespace Azure { namespace Core {
     switch (logLevel)
     {
       case Logger::Level::Error:
-        os << "Error";
+        os << "ERROR";
         break;
 
       case Logger::Level::Warning:
-        os << "Warning";
+        os << "WARN";
         break;
 
       case Logger::Level::Informational:
-        os << "Info";
+        os << "INFO";
         break;
 
       case Logger::Level::Verbose:
-        os << "Debug";
+        os << "DEBUG";
         break;
 
       default:
