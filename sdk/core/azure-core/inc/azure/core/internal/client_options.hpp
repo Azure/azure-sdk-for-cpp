@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Telemetry options.
      */
     Azure::Core::Http::TelemetryOptions Telemetry;
-    
+
     /**
      * @brief Define the information to be used for logging.
      *
