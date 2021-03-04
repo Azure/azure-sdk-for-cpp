@@ -22,19 +22,28 @@ namespace Azure { namespace Core { namespace Internal {
    * and Transport.
    *
    */
-  class ClientOptions {
-  private:
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> m_perOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> m_perRetryPolicies;
+  struct ClientOptions
+  {
 
-  public:
+    /**
+     * @brief Define policies to be called one time for every Http request from an sdk client.
+     *
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Define policies to be called each time and sdk client tries to send the Http request.
+     *
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
     /**
      * @brief Move each policy from \p options into the new instance.
      *
      */
     explicit ClientOptions(ClientOptions&& options)
-        : m_perOperationPolicies(std::move(options.m_perOperationPolicies)),
-          m_perRetryPolicies(std::move(options.m_perRetryPolicies))
+        : PerOperationPolicies(std::move(options.PerOperationPolicies)),
+          PerRetryPolicies(std::move(options.PerRetryPolicies))
     {
     }
 
@@ -44,15 +53,15 @@ namespace Azure { namespace Core { namespace Internal {
      */
     explicit ClientOptions(ClientOptions const& options)
     {
-      m_perOperationPolicies.reserve(options.m_perOperationPolicies.size());
-      for (auto& policy : options.m_perOperationPolicies)
+      PerOperationPolicies.reserve(options.PerOperationPolicies.size());
+      for (auto& policy : options.PerOperationPolicies)
       {
-        m_perOperationPolicies.emplace_back(policy->Clone());
+        PerOperationPolicies.emplace_back(policy->Clone());
       }
-      m_perRetryPolicies.reserve(options.m_perRetryPolicies.size());
-      for (auto& policy : options.m_perRetryPolicies)
+      PerRetryPolicies.reserve(options.PerRetryPolicies.size());
+      for (auto& policy : options.PerRetryPolicies)
       {
-        m_perRetryPolicies.emplace_back(policy->Clone());
+        PerRetryPolicies.emplace_back(policy->Clone());
       }
     }
 
@@ -72,52 +81,6 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Telemetry options.
      */
     Azure::Core::Http::TelemetryOptions Telemetry;
-
-    /**
-     * @brief Adds a policy into the client.
-     *
-     * @remark The order of policy while sending the request is controlled by \p order.
-     * If you want the policy to execute once per client request use #HttpPolicyOrder::PerCall,
-     * otherwise use #HttpPolicyOrder::PerRetry to run the policy for every retry.
-     *
-     * @param policy The policy instance to be added to the pipeline.
-     * @param order The order to execute the policy.
-     */
-    void AddPolicy(
-        std::unique_ptr<Azure::Core::Http::HttpPolicy> policy,
-        Azure::Core::Http::HttpPolicyOrder order)
-    {
-      switch (order)
-      {
-        case Azure::Core::Http::HttpPolicyOrder::PerCall:
-          m_perOperationPolicies.push_back(std::move(policy));
-          break;
-        case Azure::Core::Http::HttpPolicyOrder::PerRetry:
-          m_perRetryPolicies.push_back(std::move(policy));
-          break;
-
-        default:
-          throw std::invalid_argument("Invalid order parameter");
-      }
-    }
-
-    /**
-     * @brief Get the Per Call Policies.
-     *
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& GetPerCallPolicies() const
-    {
-      return m_perOperationPolicies;
-    }
-
-    /**
-     * @brief Get the Per Retry Policies.
-     *
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& GerPerRetryPolicies() const
-    {
-      return m_perRetryPolicies;
-    }
   };
 
 }}} // namespace Azure::Core::Internal
