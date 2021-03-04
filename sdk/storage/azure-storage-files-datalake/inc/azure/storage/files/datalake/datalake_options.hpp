@@ -62,15 +62,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Specifies access conditions for a file system.
    */
-  struct FileSystemAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct FileSystemAccessConditions : public Azure::Core::ModifiedConditions,
+                                      public LeaseAccessConditions
   {
   };
 
   /**
    * @brief Specifies access conditions for a path.
    */
-  struct PathAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct PathAccessConditions : public Azure::Core::ModifiedConditions,
+                                public Azure::Core::MatchConditions,
                                 public LeaseAccessConditions
   {
   };
