@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Internal {
   public:
     static bool ShouldWrite(Logger::Level level)
     {
-      return g_isLoggingEnabled && static_cast<LogLevelInt>(level) <= g_logLevel;
+      return g_isLoggingEnabled && static_cast<LogLevelInt>(level) >= g_logLevel;
     }
 
     static void Write(Logger::Level level, std::string const& message);

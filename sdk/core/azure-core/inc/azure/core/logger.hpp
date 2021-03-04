@@ -10,9 +10,7 @@
 #pragma once
 
 #include <functional>
-#include <ostream>
 #include <string>
-#include <type_traits>
 
 namespace Azure { namespace Core {
   /**
@@ -23,19 +21,20 @@ namespace Azure { namespace Core {
     /**
      * @brief Log message level.
      */
+    // https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/LogLevel.java
     enum class Level : int
     {
-      /// Logging level for failures that the application is unlikely to recover from.
-      Error = 10,
-
-      /// Logging level when a function fails to perform its intended task.
-      Warning = 20,
+      /// Logging level for detailed troubleshooting scenarios.
+      Verbose = 1,
 
       /// Logging level when a function operates normally.
-      Informational = 30,
+      Informational = 2,
 
-      /// Logging level for detailed troubleshooting scenarios.
-      Verbose = 40,
+      /// Logging level when a function fails to perform its intended task.
+      Warning = 3,
+
+      /// Logging level for failures that the application is unlikely to recover from.
+      Error = 4,
     };
 
     /**
@@ -66,33 +65,4 @@ namespace Azure { namespace Core {
     Logger() = delete;
     ~Logger() = delete;
   };
-
-  inline std::ostream& operator<<(std::ostream& os, Logger::Level const& logLevel)
-  {
-    switch (logLevel)
-    {
-      case Logger::Level::Error:
-        os << "ERROR";
-        break;
-
-      case Logger::Level::Warning:
-        os << "WARN";
-        break;
-
-      case Logger::Level::Informational:
-        os << "INFO";
-        break;
-
-      case Logger::Level::Verbose:
-        os << "DEBUG";
-        break;
-
-      default:
-        os << "LogLevel(" << static_cast<std::underlying_type<Logger::Level>::type>(logLevel)
-           << ")";
-        break;
-    };
-
-    return os;
-  }
 }} // namespace Azure::Core
