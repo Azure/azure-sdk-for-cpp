@@ -120,9 +120,9 @@ Azure::Core::CaseInsensitiveSet Azure::Core::Http::Details::g_defaultAllowedHttp
        "User-Agent"};
 
 std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
-    Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
 {
   using Azure::Core::Internal::Log;
 
@@ -132,11 +132,11 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
   }
   else
   {
-    return nextHttpPolicy.Send(ctx, request);
+    return nextHttpPolicy.Send(request, ctx);
   }
 
   auto const start = std::chrono::system_clock::now();
-  auto response = nextHttpPolicy.Send(ctx, request);
+  auto response = nextHttpPolicy.Send(request, ctx);
   auto const end = std::chrono::system_clock::now();
 
   Log::Write(
