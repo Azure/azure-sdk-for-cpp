@@ -13,6 +13,7 @@
 #include <azure/storage/common/reliable_stream.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
 
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/version.hpp"
@@ -50,6 +51,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
+
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
@@ -72,18 +74,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl)
   {
-    ShareClientOptions newOptions = options;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     {
       Azure::Core::Http::Internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
-        newOptions,
+        options,
         Storage::Details::FileServicePackageName,
         Details::Version::VersionString(),
         std::move(perRetryPolicies),
