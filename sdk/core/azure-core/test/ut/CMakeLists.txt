@@ -32,6 +32,7 @@ add_executable (
     base64.cpp
     bodystream.cpp
     case_insensitive_containers.cpp
+    client_options.cpp
     context.cpp
     ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}

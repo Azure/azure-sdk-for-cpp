@@ -291,14 +291,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<void> BlobContainerClient::DeleteBlob(
+  Azure::Core::Response<Models::DeleteBlobResult> BlobContainerClient::DeleteBlob(
       const std::string& blobName,
       const DeleteBlobOptions& options,
       const Azure::Core::Context& context) const
   {
     auto blobClient = GetBlobClient(blobName);
-    auto response = blobClient.Delete(options, context);
-    return Azure::Core::Response<void>(response.ExtractRawResponse());
+    return blobClient.Delete(options, context);
   }
 
   Azure::Core::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
