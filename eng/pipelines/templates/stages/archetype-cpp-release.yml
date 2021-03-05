@@ -178,6 +178,7 @@ stages:
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
                           PRTitle: $(PrTitle)
+                          PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
                           SkipCheckingForChanges: true
                           BaseBranchName: master
 
