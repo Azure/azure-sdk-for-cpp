@@ -11,6 +11,7 @@
 #include "azure/core/dll_import_export.hpp"
 
 #include <chrono>
+#include <ostream>
 #include <string>
 
 namespace Azure { namespace Core {
@@ -33,8 +34,8 @@ namespace Azure { namespace Core {
       // It would not be possible to base this clock on steady_clock and provide an implementation
       // that universally works in any context in predictable manner. However, it does not mean that
       // implementation can't use steady_clock in conjunction with this clock: an author can get a
-      // duration beteen two time_points of this clock (or between system_clock::time point ant this
-      // clock's time_point), and add that duration to steady clock's time_point to get a new
+      // duration between two time_points of this clock (or between system_clock::time point at
+      // this clock's time_point), and add that duration to steady clock's time_point to get a new
       // time_point in the steady clock's "coordinate system".
       static constexpr bool is_steady = std::chrono::system_clock::is_steady;
       static time_point now() noexcept;
@@ -162,42 +163,18 @@ namespace Azure { namespace Core {
      */
     static DateTime Parse(std::string const& dateTime, DateFormat format);
 
-  private:
     /**
      * @brief Get a string representation of the #Azure::Core::DateTime.
      *
      * @param format The representation format to use.
-     * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
-     * RFC 3339.
+     * @param fractionFormat The format for the fraction part of the DateTime. Only
+     * supported by RFC3339.
      *
      * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
-
-  public:
-    /**
-     * @brief Get a string representation of the #Azure::Core::DateTime.
-     *
-     * @param format The representation format to use.
-     *
-     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
-     */
-    std::string ToString(DateFormat format) const
-    {
-      return ToString(format, TimeFractionFormat::DropTrailingZeros);
-    };
-
-    /**
-     * @brief Get a string representation of the #Azure::Core::DateTime formatted with RFC 3339.
-     *
-     * @param fractionFormat The format that is applied to the fraction part from the RFC 3339 date.
-     *
-     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
-     */
-    std::string GetRfc3339String(TimeFractionFormat fractionFormat) const
-    {
-      return ToString(DateFormat::Rfc3339, fractionFormat);
-    };
+    std::string ToString(
+        DateFormat format,
+        TimeFractionFormat fractionFormat = TimeFractionFormat::DropTrailingZeros) const;
   };
 
   inline Details::Clock::time_point Details::Clock::now() noexcept

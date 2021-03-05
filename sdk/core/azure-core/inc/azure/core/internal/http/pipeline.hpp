@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       // - TelemetryPolicy
       // - RequestIdPolicy
       // - RetryPolicy
-      // - LoggingPolicy
+      // - LogPolicy
       // - TransportPolicy
       auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
           + perRetryPolicies.size() + perCallPolicies.size() + 5;
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       }
 
       // logging - won't update request
-      m_policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::LogPolicy>(clientOptions.Log));
 
       // transport
       m_policies.emplace_back(

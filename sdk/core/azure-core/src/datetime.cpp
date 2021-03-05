@@ -73,11 +73,16 @@ constexpr bool IsLeapYear(int16_t year)
   return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
 }
 
-constexpr int16_t LeapYarsSinceEpoch(int16_t year)
+constexpr int16_t LeapYearsSinceEpoch(int16_t year)
 {
   int16_t const fourHundredYearPeriods = year / 400;
   int16_t const hundredYearPeriods = (year % 400) / 100;
   int16_t const remainder = year - (400 * fourHundredYearPeriods) - 100 * (hundredYearPeriods);
+
+  // Every 4 years have 1 leap year.
+  // Every 100 years have 24, not 25 leap years (years divisible by 100 are not leap years).
+  // Every 400 years have 97, not 96 (would be 24 * 4 = 96) years.
+  // That's because year divisible by 100 is not a leap year, unless it is also divisible by 400.
   return (fourHundredYearPeriods * 97) + (hundredYearPeriods * 24) + (remainder / 4);
 }
 
@@ -102,7 +107,7 @@ constexpr int16_t DayOfYear(int16_t year, int8_t month, int8_t day)
 constexpr int32_t DaySinceEpoch(int16_t year, int8_t month, int8_t day)
 {
   int16_t const priorYear = year - 1;
-  auto const leapYears = LeapYarsSinceEpoch(priorYear);
+  auto const leapYears = LeapYearsSinceEpoch(priorYear);
   auto const nonLeapYears = priorYear - leapYears;
   return (nonLeapYears * 365) + (leapYears * 366) + DayOfYear(year, month, day);
 }
@@ -112,11 +117,17 @@ constexpr int8_t GetDayOfWeek(int16_t year, int8_t month, int8_t day)
   return DaySinceEpoch(year, month, day) % 7;
 }
 
-constexpr int8_t WeekDayMonthDayOfYear(int8_t* month, int8_t* day, int16_t year, int16_t dayOfYear)
+constexpr int8_t WeekDayAndMonthDayOfYear(
+    int8_t* month,
+    int8_t* day,
+    int16_t year,
+    int16_t dayOfYear)
 {
   auto remainder = dayOfYear;
   for (int8_t i = 1; i <= 12; ++i)
   {
+    // MonthDays = number of days in this month.
+    // If this month is February, then check for leap year and adjust accordingly.
     int8_t const MonthDays = MaxDaysPerMonth[i - 1] - ((i == 2 && !IsLeapYear(year)) ? 1 : 0);
     if (remainder <= MonthDays)
     {
@@ -780,7 +791,7 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
 
     year += static_cast<int16_t>((years400 * 400) + (years100 * 100) + (years4 * 4) + years1);
 
-    dayOfWeek = WeekDayMonthDayOfYear(
+    dayOfWeek = WeekDayAndMonthDayOfYear(
         &month,
         &day,
         year,

@@ -22,6 +22,11 @@
 - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
 - Renamed `ValuePolicyOptions` to `ValueOptions`.
 - Removed `StartTry()` from `Azure::Core::Http::Request`.
+- Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
+- Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.
+- Introduced `Azure::Core::Http::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
+- Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
+- Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 
 ### Bug Fixes
 

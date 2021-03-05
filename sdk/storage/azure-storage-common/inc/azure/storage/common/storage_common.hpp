@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include <azure/core/case_insensitive_map.hpp>
+#include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/http/policy.hpp>
 
 #include "azure/storage/common/constants.hpp"

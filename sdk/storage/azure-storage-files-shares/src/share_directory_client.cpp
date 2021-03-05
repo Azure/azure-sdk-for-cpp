@@ -117,9 +117,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime
-          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+          Azure::Core::DateTime::DateFormat::Rfc3339,
+          Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -128,7 +128,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+              Azure::Core::DateTime::DateFormat::Rfc3339,
               Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -242,7 +243,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (smbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().GetRfc3339String(
+      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().ToString(
+          Azure::Core::DateTime::DateFormat::Rfc3339,
           Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -251,9 +253,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = smbProperties.LastWrittenOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.GetValue().ToString(
+          Azure::Core::DateTime::DateFormat::Rfc3339,
+          Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {

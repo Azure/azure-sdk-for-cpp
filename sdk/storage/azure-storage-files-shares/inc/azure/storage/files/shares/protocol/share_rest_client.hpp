@@ -3869,7 +3869,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text,
               nullptr,
-              object.StartsOn.GetRfc3339String(Core::DateTime::TimeFractionFormat::AllDigits)
+              object.StartsOn
+                  .ToString(
+                      Azure::Core::DateTime::DateFormat::Rfc3339,
+                      Core::DateTime::TimeFractionFormat::AllDigits)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
@@ -3877,7 +3880,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text,
               nullptr,
-              object.ExpiresOn.GetRfc3339String(Core::DateTime::TimeFractionFormat::AllDigits)
+              object.ExpiresOn
+                  .ToString(
+                      Azure::Core::DateTime::DateFormat::Rfc3339,
+                      Core::DateTime::TimeFractionFormat::AllDigits)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(

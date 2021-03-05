@@ -48,7 +48,8 @@ namespace Azure { namespace Core { namespace Internal {
      *
      */
     ClientOptions(ClientOptions const& options)
-        : Retry(options.Retry), Transport(options.Transport), Telemetry(options.Telemetry)
+        : Retry(options.Retry), Transport(options.Transport), Telemetry(options.Telemetry),
+          Log(options.Log)
     {
       PerOperationPolicies.reserve(options.PerOperationPolicies.size());
       for (auto& policy : options.PerOperationPolicies)
@@ -78,6 +79,12 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Telemetry options.
      */
     Azure::Core::Http::TelemetryOptions Telemetry;
+
+    /**
+     * @brief Define the information to be used for logging.
+     *
+     */
+    Azure::Core::Http::LogOptions Log;
   };
 
 }}} // namespace Azure::Core::Internal
