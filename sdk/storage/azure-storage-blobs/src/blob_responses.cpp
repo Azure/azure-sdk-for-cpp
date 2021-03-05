@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::GetBlobPropertiesResult> StartCopyBlobOperation::
-      PollUntilDoneInternal(Azure::Core::Context& context, std::chrono::milliseconds period)
+      PollUntilDoneInternal(std::chrono::milliseconds period, Azure::Core::Context& context)
   {
     while (true)
     {

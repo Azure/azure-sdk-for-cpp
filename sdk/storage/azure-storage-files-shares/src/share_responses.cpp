@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::GetShareFilePropertiesResult> StartCopyShareFileOperation::
-      PollUntilDoneInternal(Azure::Core::Context& context, std::chrono::milliseconds period)
+      PollUntilDoneInternal(std::chrono::milliseconds period, Azure::Core::Context& context)
   {
     while (true)
     {

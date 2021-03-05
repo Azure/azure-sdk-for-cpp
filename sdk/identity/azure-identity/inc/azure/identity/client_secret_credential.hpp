@@ -71,8 +71,8 @@ namespace Azure { namespace Identity {
     }
 
     Core::AccessToken GetToken(
-        Core::Context const& context,
-        Core::Http::TokenRequestOptions const& tokenRequestOptions) const override;
+        Core::Http::TokenRequestOptions const& tokenRequestOptions,
+        Core::Context const& context) const override;
   };
 
 }} // namespace Azure::Identity

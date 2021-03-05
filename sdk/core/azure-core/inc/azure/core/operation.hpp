@@ -27,7 +27,7 @@ namespace Azure { namespace Core {
   private:
     // These are pure virtual b/c the derived class must provide an implementation
     virtual std::unique_ptr<Http::RawResponse> PollInternal(Context& context) = 0;
-    virtual Response<T> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
+    virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
 
   protected:
@@ -108,20 +108,20 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollUntilDoneInternal(GetApplicationContext(), period);
+      return PollUntilDoneInternal(period, GetApplicationContext());
     }
 
     /**
      * @brief Periodically calls the server till the long-running operation completes;
      *
-     * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
      * @param period Time in milliseconds to wait between polls
+     * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
      *
      * @return Response<T> the final result of the long-running operation.
      */
-    Response<T> PollUntilDone(Context& context, std::chrono::milliseconds period)
+    Response<T> PollUntilDone(std::chrono::milliseconds period, Context& context)
     {
-      return PollUntilDoneInternal(context, period);
+      return PollUntilDoneInternal(period, context);
     }
   };
 }} // namespace Azure::Core

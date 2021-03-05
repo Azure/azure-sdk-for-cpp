@@ -34,8 +34,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   // A transport adapter which only echo a request headers back as a response.
   class MockedTransportAdapter : public Azure::Core::Http::HttpTransport {
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        Azure::Core::Context const& context,
-        Azure::Core::Http::Request& request) override
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) override
     {
       (void)context;
       auto response = std::make_unique<Azure::Core::Http::RawResponse>(

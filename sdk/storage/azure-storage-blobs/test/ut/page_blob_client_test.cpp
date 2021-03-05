@@ -313,7 +313,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(
-        Azure::IO::BodyStream::ReadToEnd(Azure::Core::Context(), *downloadStream), m_blobContent);
+        Azure::IO::BodyStream::ReadToEnd(*downloadStream, Azure::Core::Context()), m_blobContent);
   }
 
 }}} // namespace Azure::Storage::Test

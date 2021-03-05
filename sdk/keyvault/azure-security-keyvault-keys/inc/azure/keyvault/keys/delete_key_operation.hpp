@@ -48,8 +48,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context& context) override;
 
     Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
-        Azure::Core::Context& context,
-        std::chrono::milliseconds period) override
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override
     {
       while (true)
       {

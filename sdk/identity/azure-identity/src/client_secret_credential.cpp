@@ -16,8 +16,8 @@ std::string const Azure::Identity::Details::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
-    Azure::Core::Context const& context,
-    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions) const
+    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions,
+    Azure::Core::Context const& context) const
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
@@ -59,7 +59,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
 
     HttpPipeline httpPipeline(m_options, "Identity-client-secret-credential", "", {}, {});
 
-    std::shared_ptr<RawResponse> response = httpPipeline.Send(context, request);
+    std::shared_ptr<RawResponse> response = httpPipeline.Send(request, context);
 
     if (!response)
     {
