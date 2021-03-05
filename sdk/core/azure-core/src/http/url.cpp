@@ -213,7 +213,11 @@ std::string Url::GetRelativeUrl() const
       + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
-std::string Url::GetAbsoluteUrl() const { return GetUrlWithoutQuery() + GetRelativeUrl(); }
+std::string Url::GetAbsoluteUrl() const
+{
+  return GetUrlWithoutQuery(false)
+      + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
+}
 
 const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
     = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
