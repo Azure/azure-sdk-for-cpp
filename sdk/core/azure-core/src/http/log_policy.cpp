@@ -4,6 +4,7 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/internal/log.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <sstream>
 
@@ -11,83 +12,74 @@ using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 namespace {
-std::string TruncateIfLengthy(std::string const& s)
+std::string RedactedPlaceholder = "REDACTED";
+
+inline void AppendHeaders(
+    std::ostringstream& log,
+    Azure::Core::CaseInsensitiveMap const& headers,
+    Azure::Core::CaseInsensitiveSet const& allowedHaders)
 {
-  static constexpr auto const MaxLength = 50;
-
-  auto const length = s.length();
-  if (length <= MaxLength)
+  for (auto const& header : headers)
   {
-    return s;
+    log << std::endl << header.first << " : ";
+
+    if (!header.second.empty())
+    {
+      log
+          << ((allowedHaders.find(header.first) != allowedHaders.end()) ? header.second
+                                                                        : RedactedPlaceholder);
+    }
   }
-
-  static constexpr char const Ellipsis[] = " ... ";
-  static constexpr auto const EllipsisLength = sizeof(Ellipsis) - 1;
-
-  auto const BeginLength = (MaxLength / 2) - ((EllipsisLength / 2) + (EllipsisLength % 2));
-  auto const EndLength = ((MaxLength / 2) + (MaxLength % 2)) - (EllipsisLength / 2);
-
-  return s.substr(0, BeginLength) + Ellipsis + s.substr(length - EndLength, EndLength);
 }
 
-std::string GetRequestLogMessage(
+inline std::string GetRequestLogMessage(
     Azure::Core::Http::LogOptions const& options,
     Request const& request)
 {
-  std::ostringstream log;
-
   auto const& requestUrl = request.GetUrl();
 
-  std::string url = requestUrl.GetUrlWithoutQuery();
-
+  std::ostringstream log;
+  log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " "
+      << requestUrl.GetUrlWithoutQuery();
   {
-    auto separ = '?';
-    for (auto const& qparam : requestUrl.GetQueryParameters())
+    auto encodedRequestQueryParams = requestUrl.GetQueryParameters();
+    auto const& unencodedAllowedQueryParams = options.AllowedHttpQueryParameters;
+    if (!encodedRequestQueryParams.empty() && !unencodedAllowedQueryParams.empty())
     {
-      url += separ + qparam.first + '=';
+      std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::type
+          encodedAllowedQueryParams;
+      std::transform(
+          unencodedAllowedQueryParams.begin(),
+          unencodedAllowedQueryParams.end(),
+          std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
+          [](std::string const& s) { return Url::Encode(s); });
 
-      if (options.AllowedHttpQueryParameters.find(qparam.first)
-          != options.AllowedHttpQueryParameters.end())
+      std::remove_const<std::remove_reference<decltype(encodedRequestQueryParams)>::type>::type
+          encodedAllowedRequestQueryParams;
+      for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
       {
-        url += TruncateIfLengthy(qparam.second);
-      }
-      else
-      {
-        url += "[hidden]";
+        if (encodedRequestQueryParam.second.empty()
+            || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
+                != encodedAllowedQueryParams.end()))
+        {
+          encodedAllowedRequestQueryParams.insert(encodedRequestQueryParam);
+        }
+        else
+        {
+          encodedAllowedRequestQueryParams.insert(
+              std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
+        }
       }
 
-      separ = '&';
+      log << Details::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
     }
   }
-
-  log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " " << url;
-
-  for (auto const& header : request.GetHeaders())
-  {
-    log << "\n\t" << header.first;
-
-    if (header.second.empty())
-    {
-      log << " [empty]";
-    }
-    else if (
-        options.AllowedHttpRequestHeaders.find(header.first)
-        != options.AllowedHttpRequestHeaders.end())
-    {
-      log << " : " << TruncateIfLengthy(header.second);
-    }
-    else
-    {
-      log << " [hidden]";
-    }
-  }
-
+  AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);
   return log.str();
 }
 
-std::string GetResponseLogMessage(
+inline std::string GetResponseLogMessage(
     Azure::Core::Http::LogOptions const& options,
-    Request const& request,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
 {
@@ -98,30 +90,34 @@ std::string GetResponseLogMessage(
       << "ms) : " << static_cast<int>(response.GetStatusCode()) << " "
       << response.GetReasonPhrase();
 
-  for (auto const& header : response.GetHeaders())
-  {
-    log << "\n\t" << header.first;
-    if (header.second.empty())
-    {
-      log << " [empty]";
-    }
-    else if (
-        options.AllowedHttpResponseHeaders.find(header.first)
-        != options.AllowedHttpResponseHeaders.end())
-    {
-      log << " : " << TruncateIfLengthy(header.second);
-    }
-    else
-    {
-      log << " [hidden]";
-    }
-  }
-
-  log << "\n\n -> " << GetRequestLogMessage(options, request);
-
+  AppendHeaders(log, response.GetHeaders(), options.AllowedHttpHeaders);
   return log.str();
 }
 } // namespace
+
+Azure::Core::CaseInsensitiveSet Azure::Core::Http::Details::g_defaultAllowedHttpHeaders
+    = {"x-ms-client-request-id",
+       "x-ms-return-client-request-id",
+       "traceparent",
+       "Accept",
+       "Cache-Control",
+       "Connection",
+       "Content-Length",
+       "Content-Type",
+       "Date",
+       "ETag",
+       "Expires",
+       "If-Match",
+       "If-Modified-Since",
+       "If-None-Match",
+       "If-Unmodified-Since",
+       "Last-Modified",
+       "Pragma",
+       "Request-Id",
+       "Retry-After",
+       "Server",
+       "Transfer-Encoding",
+       "User-Agent"};
 
 std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
     Context const& ctx,
@@ -132,7 +128,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {
-    Log::Write(Logger::Level::Verbose, GetRequestLogMessage(m_options, request));
+    Log::Write(Logger::Level::Informational, GetRequestLogMessage(m_options, request));
   }
   else
   {
@@ -144,7 +140,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
   auto const end = std::chrono::system_clock::now();
 
   Log::Write(
-      Logger::Level::Verbose, GetResponseLogMessage(m_options, request, *response, end - start));
+      Logger::Level::Informational, GetResponseLogMessage(m_options, *response, end - start));
 
   return response;
 }

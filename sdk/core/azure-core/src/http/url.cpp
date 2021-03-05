@@ -177,42 +177,40 @@ void Url::AppendQueryParameters(const std::string& query)
   }
 }
 
-std::string Url::GetUrlWithoutQuery() const
+std::string Url::GetUrlWithoutQuery(bool relative) const
 {
-  std::string full_url;
-  if (!m_scheme.empty())
+  std::string url;
+
+  if (!relative)
   {
-    full_url += m_scheme + "://";
+    if (!m_scheme.empty())
+    {
+      url += m_scheme + "://";
+    }
+    url += m_host;
+    if (m_port != 0)
+    {
+      url += ":" + std::to_string(m_port);
+    }
   }
-  full_url += m_host;
-  if (m_port != 0)
-  {
-    full_url += ":" + std::to_string(m_port);
-  }
+
   if (!m_encodedPath.empty())
   {
-    full_url += "/";
+    if (!relative)
+    {
+      url += "/";
+    }
+
+    url += m_encodedPath;
   }
-  return full_url;
+
+  return url;
 }
 
 std::string Url::GetRelativeUrl() const
 {
-  std::string relative_url;
-  if (!m_encodedPath.empty())
-  {
-    relative_url += m_encodedPath;
-  }
-  {
-    relative_url += '?';
-    for (const auto& q : m_encodedQueryParameters)
-    {
-      relative_url += q.first + '=' + q.second + '&';
-    }
-    relative_url.pop_back();
-  }
-
-  return relative_url;
+  return GetUrlWithoutQuery(true)
+      + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 std::string Url::GetAbsoluteUrl() const { return GetUrlWithoutQuery() + GetRelativeUrl(); }

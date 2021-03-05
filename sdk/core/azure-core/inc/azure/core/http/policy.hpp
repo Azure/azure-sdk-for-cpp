@@ -11,6 +11,7 @@
 #include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/credentials.hpp"
+#include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/uuid.hpp"
@@ -103,12 +104,12 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct an abstraction representing a next line in the stack sequence  of policies,
-     * from the caller's perspective.
+     * @brief Construct an abstraction representing a next line in the stack sequence  of
+     * policies, from the caller's perspective.
      *
      * @param index An sequential index of this policy in the stack sequence of policies.
-     * @param policies A vector of unique pointers next in the line to be invoked after the current
-     * policy.
+     * @param policies A vector of unique pointers next in the line to be invoked after the
+     * current policy.
      */
     explicit NextHttpPolicy(
         std::size_t index,
@@ -139,8 +140,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Set the #Azure::Core::Http::HttpTransport that the transport policy will use to send
      * and receive requests and responses over the wire.
      *
-     * @remark When no option is set, the default transport adapter on non-Windows platforms is the
-     * curl transport adapter and winhttp transport adapter on Windows.
+     * @remark When no option is set, the default transport adapter on non-Windows platforms is
+     * the curl transport adapter and winhttp transport adapter on Windows.
      *
      * @remark When using a custom transport adapter, the implementation for
      * `AzureSdkGetCustomHttpTransport` must be linked in the end-user application.
@@ -240,9 +241,9 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get the Retry Count from the context.
      *
      * @remark The sentinel `-1` is returned if there is no information in the \p Context about
-     * #RetryPolicy is trying to send a request. Then `0` is returned for the first try of sending a
-     * request by the #RetryPolicy. Any subsequent retry will be referenced with a number greater
-     * than 0.
+     * #RetryPolicy is trying to send a request. Then `0` is returned for the first try of sending
+     * a request by the #RetryPolicy. Any subsequent retry will be referenced with a number
+     * greater than 0.
      *
      * @param context The context used to call send request.
      * @return A positive number indicating the current intent to send the request.
@@ -253,8 +254,8 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief HTTP Request ID policy.
    *
-   * @details Applies an HTTP header with a unique ID to each HTTP request, so that each individual
-   * request can be traced for troubleshooting.
+   * @details Applies an HTTP header with a unique ID to each HTTP request, so that each
+   * individual request can be traced for troubleshooting.
    */
   class RequestIdPolicy : public HttpPolicy {
   private:
@@ -391,6 +392,10 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy policy) const override;
   };
 
+  namespace Details {
+    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet g_defaultAllowedHttpHeaders;
+  }
+
   /**
    * @brief Options for Azure::Core::Http::LogPolicy.
    */
@@ -398,19 +403,13 @@ namespace Azure { namespace Core { namespace Http {
   {
     /**
      * @brief HTTP query parameters that are allowed to be logged.
-     * @remark URL-encoded parameter names are expected.
      */
     std::set<std::string> AllowedHttpQueryParameters;
 
     /**
-     * @brief HTTP request headers that are allowed to be logged.
+     * @brief HTTP headers that are allowed to be logged.
      */
-    Azure::Core::CaseInsensitiveSet AllowedHttpRequestHeaders;
-
-    /**
-     * @brief HTTP response headers that are allowed to be logged.
-     */
-    Azure::Core::CaseInsensitiveSet AllowedHttpResponseHeaders;
+    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = Details::g_defaultAllowedHttpHeaders;
   };
 
   /**

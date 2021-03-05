@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Details {
         && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp for explanation.
   inline Logger::Level EnvironmentLogLevelListener::GetLogLevel(Logger::Level defaultValue)
   {
-    return defailtValue;
+    return defaultValue;
   }
 
   inline Logger::Listener EnvironmentLogLevelListener::GetLogListener() { return nullptr; }

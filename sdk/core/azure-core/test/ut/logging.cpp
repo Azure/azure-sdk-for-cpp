@@ -7,28 +7,6 @@
 using Azure::Core::Logger;
 using Azure::Core::Internal::Log;
 
-TEST(Logger, Defaults)
-{
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Verbose));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Informational));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Warning));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Error));
-
-  Logger::SetListener([](auto, auto) {});
-
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Verbose));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Informational));
-  EXPECT_TRUE(Log::ShouldWrite(Logger::Level::Warning));
-  EXPECT_TRUE(Log::ShouldWrite(Logger::Level::Error));
-
-  Logger::SetListener(nullptr);
-
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Verbose));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Informational));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Warning));
-  EXPECT_FALSE(Log::ShouldWrite(Logger::Level::Error));
-}
-
 TEST(Logger, Levels)
 {
   Logger::SetListener([](auto, auto) {});

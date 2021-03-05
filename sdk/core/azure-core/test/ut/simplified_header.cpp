@@ -37,6 +37,7 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::Cryptography::Md5Hash m);
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse r(
       1, 1, Azure::Core::Http::HttpStatusCode::Accepted, "phrase"));
+  EXPECT_NO_THROW(Azure::Core::Logger::Listener ll = nullptr);
   EXPECT_NO_THROW(Azure::Core::MatchConditions mc);
   EXPECT_NO_THROW(Azure::Core::ModifiedConditions mc);
   EXPECT_NO_THROW(Azure::Core::Nullable<int> n);

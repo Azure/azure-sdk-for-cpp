@@ -52,6 +52,25 @@ namespace Azure { namespace Core { namespace Http {
         CaseInsensitiveMap& headers,
         std::string const& headerName,
         std::string const& headerValue);
+
+    inline std::string FormatEncodedUrlQueryParameters(
+        std::map<std::string, std::string> const& encodedQueryParameters)
+    {
+      {
+        std::string queryStr;
+        if (!encodedQueryParameters.empty())
+        {
+          auto separ = '?';
+          for (const auto& q : encodedQueryParameters)
+          {
+            queryStr += separ + q.first + '=' + q.second;
+            separ = '&';
+          }
+        }
+
+        return queryStr;
+      }
+    }
   } // namespace Details
 
   /*********************  Exceptions  **********************/
@@ -260,6 +279,8 @@ namespace Azure { namespace Core { namespace Http {
     // this set.
     const static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
+    std::string GetUrlWithoutQuery(bool relative) const;
+
   public:
     /**
      * @brief Decodes \p value by transforming all escaped characters to it's non-encoded value.
@@ -428,7 +449,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get Scheme, host, and path, without query parameters.
      * @return Absolute URL without query parameters.
      */
-    std::string GetUrlWithoutQuery() const;
+    std::string GetUrlWithoutQuery() const { return GetUrlWithoutQuery(false); }
 
     /**
      * @brief Get the path and query parameters.

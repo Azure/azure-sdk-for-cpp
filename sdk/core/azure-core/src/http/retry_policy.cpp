@@ -119,7 +119,7 @@ bool ShouldRetryOnResponse(
       {
         Log::Write(
             Logger::Level::Warning,
-            std::string("HTTP status code: ") + std::to_string(static_cast<int>(sc))
+            std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
                 + " won't be retried.");
       }
 
@@ -129,7 +129,7 @@ bool ShouldRetryOnResponse(
     {
       Log::Write(
           Logger::Level::Informational,
-          std::string("HTTP status code: ") + std::to_string(static_cast<int>(sc))
+          std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
               + " will be retried.");
     }
   }
@@ -209,9 +209,9 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     }
     catch (const TransportException& e)
     {
-      if (Log::ShouldWrite(Logger::Level::Error))
+      if (Log::ShouldWrite(Logger::Level::Warning))
       {
-        Log::Write(Logger::Level::Error, std::string("HTTP Transport error: ") + e.what());
+        Log::Write(Logger::Level::Warning, std::string("HTTP Transport error: ") + e.what());
       }
 
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))

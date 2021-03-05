@@ -84,12 +84,14 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string protocol = Details::SasProtocolToString(Protocol);
     std::string resource = ShareSasResourceToString(Resource);
 
-    std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
-        : "";
-    std::string expiresOnStr = Identifier.empty()
-        ? ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
-        : "";
+    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
+                                  Azure::Core::DateTime::DateFormat::Rfc3339,
+                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
+    std::string expiresOnStr = Identifier.empty() ? ExpiresOn.ToString(
+                                   Azure::Core::DateTime::DateFormat::Rfc3339,
+                                   Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")

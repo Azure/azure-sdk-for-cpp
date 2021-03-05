@@ -41,7 +41,7 @@ add_executable (
     etag.cpp
     http.cpp
     json.cpp
-    logger.cpp
+    logging.cpp
     macro_guard.cpp
     main.cpp
     match_conditions.cpp

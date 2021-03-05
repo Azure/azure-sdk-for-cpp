@@ -24,7 +24,7 @@ namespace Azure { namespace Core {
       = std::map<std::string, std::string, Internal::Strings::CaseInsensitiveComparator>;
 
   /**
-   * @brief A type alias of `std::set<std::string>` with case-insensitive key comparison.
+   * @brief A type alias of `std::set<std::string>` with case-insensitive element comparison.
    */
   using CaseInsensitiveSet = std::set<std::string, Internal::Strings::CaseInsensitiveComparator>;
 
