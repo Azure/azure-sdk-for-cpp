@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/internal/client_options.hpp>
 #include <azure/core/match_conditions.hpp>
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
@@ -125,20 +126,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Client options used to initalize all kinds of blob clients.
    */
-  struct BlobClientOptions
+  struct BlobClientOptions : Azure::Core::Internal::ClientOptions
   {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
     /**
      * @brief Holds the customer provided key used when making requests.
      */
@@ -150,19 +139,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionScope;
 
     /**
-     * @brief Specify the number of retries and other retry-related options.
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
      */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportOptions TransportOptions;
-
-    /**
-     * @brief The last part of the user agent for telemetry.
-     */
-    std::string ApplicationId;
+    std::string SecondaryHostForRetryReads;
 
     /**
      * API version used by this client.

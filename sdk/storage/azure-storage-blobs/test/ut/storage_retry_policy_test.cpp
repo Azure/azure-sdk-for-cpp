@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
     int64_t delayMs = 1000;
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(delayMs);
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(delayMs);
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto timeBegin = std::chrono::steady_clock::now();
@@ -315,7 +315,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(0);
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(0);
     {
       std::string primaryUrl
           = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Test {
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
       std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
-      clientOptions.RetryOptions.SecondaryHostForRetryReads = secondaryHost;
+      clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
@@ -363,8 +363,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
-    clientOptions.RetryOptions.MaxRetries = 3;
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(0);
+    clientOptions.Retry.MaxRetries = 3;
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(0);
     {
       std::string primaryUrl
           = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -372,7 +372,7 @@ namespace Azure { namespace Storage { namespace Test {
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
       std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
-      clientOptions.RetryOptions.SecondaryHostForRetryReads = secondaryHost;
+      clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
@@ -418,8 +418,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
-    clientOptions.RetryOptions.MaxRetries = 3;
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(0);
+    clientOptions.Retry.MaxRetries = 3;
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(0);
     {
       std::string primaryUrl
           = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Test {
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
       std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
-      clientOptions.RetryOptions.SecondaryHostForRetryReads = secondaryHost;
+      clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);

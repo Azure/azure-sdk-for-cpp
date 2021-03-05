@@ -76,19 +76,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options)
   {
     Blobs::BlobClientOptions blobOptions;
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      blobOptions.PerOperationPolicies.emplace_back(p->Clone());
-    }
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      blobOptions.PerRetryPolicies.emplace_back(p->Clone());
-    }
-    blobOptions.RetryOptions = options.RetryOptions;
-    blobOptions.RetryOptions.SecondaryHostForRetryReads
-        = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    blobOptions.TransportOptions = options.TransportOptions;
-    blobOptions.ApplicationId = options.ApplicationId;
+    *(static_cast<Azure::Core::Internal::ClientOptions*>(&blobOptions))
+        = Azure::Core::Internal::ClientOptions(options);
+    blobOptions.SecondaryHostForRetryReads
+        = Details::GetBlobUrlFromUrl(options.SecondaryHostForRetryReads);
     blobOptions.ApiVersion = options.ApiVersion;
     return blobOptions;
   }
