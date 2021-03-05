@@ -41,17 +41,15 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Move each policy from \p options into the new instance.
      *
      */
-    explicit ClientOptions(ClientOptions&& options)
-        : PerOperationPolicies(std::move(options.PerOperationPolicies)),
-          PerRetryPolicies(std::move(options.PerRetryPolicies))
-    {
-    }
+    ClientOptions(ClientOptions&& options) = default;
 
     /**
      * @brief Copy each policy to the new instance.
      *
      */
-    explicit ClientOptions(ClientOptions const& options)
+    ClientOptions(ClientOptions const& options)
+        : Retry(options.Retry), Transport(options.Transport), Telemetry(options.Telemetry),
+          Log(options.Log)
     {
       PerOperationPolicies.reserve(options.PerOperationPolicies.size());
       for (auto& policy : options.PerOperationPolicies)
@@ -81,6 +79,12 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Telemetry options.
      */
     Azure::Core::Http::TelemetryOptions Telemetry;
+
+    /**
+     * @brief Define the information to be used for logging.
+     *
+     */
+    Azure::Core::Http::LogOptions Log;
   };
 
 }}} // namespace Azure::Core::Internal

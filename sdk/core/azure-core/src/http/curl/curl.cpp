@@ -110,6 +110,9 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
+using Azure::Core::Logger;
+using Azure::Core::Internal::Log;
+
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
@@ -127,15 +130,12 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
 
+    if (Log::ShouldWrite(Logger::Level::Verbose))
     {
-      using namespace Azure::Core::Logging;
-      using namespace Azure::Core::Logging::Internal;
-      if (ShouldLog(LogLevel::Verbose))
-      {
-        Log(LogLevel::Verbose,
-            LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
-                + std::to_string(ideal) + " result = " + std::to_string(result));
-      }
+      Log::Write(
+          Logger::Level::Verbose,
+          LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
+              + std::to_string(ideal) + " result = " + std::to_string(result));
     }
   }
 }
@@ -156,11 +156,8 @@ using Azure::Core::Http::TransportException;
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const& context)
 {
-  using namespace Azure::Core::Logging;
-  using namespace Azure::Core::Logging::Internal;
-
   // Create CurlSession to perform request
-  Log(LogLevel::Verbose, LogMsgPrefix + "Creating a new session.");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
   auto session = std::make_unique<CurlSession>(
       request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
@@ -192,7 +189,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
         "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
 
-  Log(LogLevel::Verbose,
+  Log::Write(
+      Logger::Level::Verbose,
       LogMsgPrefix + "Request completed. Moving response out of session and session to response.");
 
   // Move Response out of the session
@@ -204,9 +202,6 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 
 CURLcode CurlSession::Perform(Context const& context)
 {
-  using namespace Azure::Core::Logging;
-  using namespace Azure::Core::Logging::Internal;
-
   // Set the session state
   m_sessionState = SessionState::PERFORM;
 
@@ -216,13 +211,13 @@ CURLcode CurlSession::Perform(Context const& context)
     auto hostHeader = headers.find("Host");
     if (hostHeader == headers.end())
     {
-      Log(LogLevel::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
+      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
       this->m_request.SetHeader("Host", this->m_request.GetUrl().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
     {
-      Log(LogLevel::Verbose, LogMsgPrefix + "No content-length in headers. Adding it");
+      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No content-length in headers. Adding it");
       this->m_request.SetHeader(
           "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
     }
@@ -231,14 +226,14 @@ CURLcode CurlSession::Perform(Context const& context)
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put)
   {
-    Log(LogLevel::Verbose, LogMsgPrefix + "Using 100-continue for PUT request");
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Using 100-continue for PUT request");
     this->m_request.SetHeader("expect", "100-continue");
   }
 
   // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
   // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
-  Log(LogLevel::Verbose, LogMsgPrefix + "Send request without payload");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Send request without payload");
 
   auto result = SendRawHttp(context);
   if (result != CURLE_OK)
@@ -246,7 +241,7 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Parse server response");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
 
   // non-PUT request are ready to be stream at this point. Only PUT request would start an uploading
@@ -257,17 +252,17 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Check server response before upload starts");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Check server response before upload starts");
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
   if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
-    Log(LogLevel::Verbose, LogMsgPrefix + "Server rejected the upload request");
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Server rejected the upload request");
     m_sessionState = SessionState::STREAMING;
     return result; // Won't upload.
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Upload payload");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Upload payload");
   if (this->m_bodyStartInBuffer > 0)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
@@ -285,7 +280,7 @@ CURLcode CurlSession::Perform(Context const& context)
     return result; // will throw transport exception before trying to read
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Upload completed. Parse server response");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Upload completed. Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
   // If no throw at this point, the request is ready to stream.
   // If any throw happened before this point, the state will remain as PERFORM.

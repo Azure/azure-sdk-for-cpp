@@ -2856,7 +2856,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text,
               nullptr,
-              options.StartsOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+              options.StartsOn
+                  .ToString(
+                      Azure::Core::DateTime::DateFormat::Rfc3339,
+                      Azure::Core::DateTime::TimeFractionFormat::Truncate)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
@@ -2865,7 +2868,9 @@ namespace Azure { namespace Storage { namespace Blobs {
               Storage::Details::XmlNodeType::Text,
               nullptr,
               options.ExpiresOn
-                  .GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                  .ToString(
+                      Azure::Core::DateTime::DateFormat::Rfc3339,
+                      Azure::Core::DateTime::TimeFractionFormat::Truncate)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
@@ -4805,7 +4810,9 @@ namespace Azure { namespace Storage { namespace Blobs {
               Storage::Details::XmlNodeType::Text,
               nullptr,
               options.StartsOn
-                  .GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::AllDigits)
+                  .ToString(
+                      Azure::Core::DateTime::DateFormat::Rfc3339,
+                      Azure::Core::DateTime::TimeFractionFormat::AllDigits)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
@@ -4814,7 +4821,9 @@ namespace Azure { namespace Storage { namespace Blobs {
               Storage::Details::XmlNodeType::Text,
               nullptr,
               options.ExpiresOn
-                  .GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::AllDigits)
+                  .ToString(
+                      Azure::Core::DateTime::DateFormat::Rfc3339,
+                      Azure::Core::DateTime::TimeFractionFormat::AllDigits)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(

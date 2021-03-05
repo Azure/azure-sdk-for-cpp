@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include <azure/core/case_insensitive_map.hpp>
+#include <azure/core/case_insensitive_containers.hpp>
 
 using namespace Azure::Core;
 

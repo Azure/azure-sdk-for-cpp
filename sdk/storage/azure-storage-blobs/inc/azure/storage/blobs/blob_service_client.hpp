@@ -209,9 +209,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobContainerName The name of the container to delete.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Nothing.
+     * @return A DeleteBlobContainerResult if successful.
      */
-    Azure::Core::Response<void> DeleteBlobContainer(
+    Azure::Core::Response<Models::DeleteBlobContainerResult> DeleteBlobContainer(
         const std::string& blobContainerName,
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;

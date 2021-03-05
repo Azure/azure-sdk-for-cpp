@@ -11,6 +11,11 @@
 - Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 
+### Other Changes and Improvements
+
+- Changed return type of `BlobServiceClient::DeleteBlobContainer` to `Azure::Core::Response<Models::DeleteBlobContainerResult>`.
+- Changed return type of `BlobContainerClient::DeleteBlob` to `Azure::Core::Response<Models::DeleteBlobResult>`.
+
 ## 12.0.0-beta.8 (2021-02-12)
 
 ### Breaking Changes
