@@ -167,7 +167,7 @@ namespace Azure { namespace Core {
      * @brief Get a string representation of the #Azure::Core::DateTime.
      *
      * @param format The representation format to use.
-     * @param[optional] fractionFormat The format for the fraction part of the DateTime. Only
+     * @param fractionFormat The format for the fraction part of the DateTime. Only
      * supported by RFC3339.
      *
      * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
