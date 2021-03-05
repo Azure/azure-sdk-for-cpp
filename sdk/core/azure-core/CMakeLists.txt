@@ -21,7 +21,7 @@ az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
-if (NOT BUILTIN_ENV_LOGGER)
+if (NOT BUILD_ENV_LOGGER)
   add_compile_definitions(AZ_NO_ENV_LOGGER)
 endif()
 
