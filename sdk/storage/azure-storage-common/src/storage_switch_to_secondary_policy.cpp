@@ -33,6 +33,7 @@ namespace Azure { namespace Storage { namespace Details {
     if (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
         || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
     {
+      // FIXME: need a machenism to retain this value on a per-operation basis.
       considerSecondary = false;
     }
 
