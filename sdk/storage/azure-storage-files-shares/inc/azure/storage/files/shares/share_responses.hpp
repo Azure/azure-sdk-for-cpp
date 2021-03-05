@@ -211,8 +211,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Context& context) override;
 
     Azure::Core::Response<Models::GetShareFilePropertiesResult> PollUntilDoneInternal(
-        Azure::Core::Context& context,
-        std::chrono::milliseconds period) override;
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override;
 
     std::shared_ptr<ShareFileClient> m_fileClient;
     Models::GetShareFilePropertiesResult m_pollResult;

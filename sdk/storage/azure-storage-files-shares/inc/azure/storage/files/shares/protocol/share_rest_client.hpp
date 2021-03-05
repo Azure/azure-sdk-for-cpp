@@ -1141,7 +1141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
-          return SetPropertiesParseResult(context, pipeline.Send(context, request));
+          return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
@@ -1167,7 +1167,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct ListSharesSinglePageOptions
@@ -1225,7 +1225,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
           request.AddHeader(
               Details::HeaderVersion, listSharesSinglePageOptions.ApiVersionParameter);
-          return ListSharesSinglePageParseResult(context, pipeline.Send(context, request));
+          return ListSharesSinglePageParseResult(context, pipeline.Send(request, context));
         }
 
       private:
@@ -2573,7 +2573,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Details::HeaderAccessTier, (createOptions.XMsAccessTier.GetValue().ToString()));
           }
           request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
-          return CreateParseResult(context, pipeline.Send(context, request));
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
@@ -2612,7 +2612,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
           }
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
@@ -2656,7 +2656,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(Details::HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
           }
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct AcquireLeaseOptions
@@ -2702,7 +2702,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     acquireLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return AcquireLeaseParseResult(context, pipeline.Send(context, request));
+          return AcquireLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ReleaseLeaseOptions
@@ -2740,7 +2740,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     releaseLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return ReleaseLeaseParseResult(context, pipeline.Send(context, request));
+          return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ChangeLeaseOptions
@@ -2785,7 +2785,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     changeLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return ChangeLeaseParseResult(context, pipeline.Send(context, request));
+          return ChangeLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct RenewLeaseOptions
@@ -2823,7 +2823,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     renewLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return RenewLeaseParseResult(context, pipeline.Send(context, request));
+          return RenewLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct BreakLeaseOptions
@@ -2871,7 +2871,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     breakLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return BreakLeaseParseResult(context, pipeline.Send(context, request));
+          return BreakLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct CreateSnapshotOptions
@@ -2903,7 +2903,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
           request.AddHeader(Details::HeaderVersion, createSnapshotOptions.ApiVersionParameter);
-          return CreateSnapshotParseResult(context, pipeline.Send(context, request));
+          return CreateSnapshotParseResult(context, pipeline.Send(request, context));
         }
 
         struct CreatePermissionOptions
@@ -2940,7 +2940,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(createPermissionOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, createPermissionOptions.ApiVersionParameter);
-          return CreatePermissionParseResult(context, pipeline.Send(context, request));
+          return CreatePermissionParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPermissionOptions
@@ -2969,7 +2969,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(getPermissionOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, getPermissionOptions.ApiVersionParameter);
-          return GetPermissionParseResult(context, pipeline.Send(context, request));
+          return GetPermissionParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetPropertiesOptions
@@ -3015,7 +3015,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, setPropertiesOptions.LeaseIdOptional.GetValue());
           }
-          return SetPropertiesParseResult(context, pipeline.Send(context, request));
+          return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetMetadataOptions
@@ -3053,7 +3053,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
           }
-          return SetMetadataParseResult(context, pipeline.Send(context, request));
+          return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetAccessPolicyOptions
@@ -3085,7 +3085,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, getAccessPolicyOptions.LeaseIdOptional.GetValue());
           }
-          return GetAccessPolicyParseResult(context, pipeline.Send(context, request));
+          return GetAccessPolicyParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetAccessPolicyOptions
@@ -3129,7 +3129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, setAccessPolicyOptions.LeaseIdOptional.GetValue());
           }
-          return SetAccessPolicyParseResult(context, pipeline.Send(context, request));
+          return SetAccessPolicyParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetStatisticsOptions
@@ -3161,7 +3161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, getStatisticsOptions.LeaseIdOptional.GetValue());
           }
-          return GetStatisticsParseResult(context, pipeline.Send(context, request));
+          return GetStatisticsParseResult(context, pipeline.Send(request, context));
         }
 
         struct RestoreOptions
@@ -3200,7 +3200,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderDeletedShareVersion, restoreOptions.DeletedShareVersion.GetValue());
           }
-          return RestoreParseResult(context, pipeline.Send(context, request));
+          return RestoreParseResult(context, pipeline.Send(request, context));
         }
 
       private:
@@ -4080,7 +4080,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(Details::HeaderFileAttributes, createOptions.FileAttributes);
           request.AddHeader(Details::HeaderFileCreatedOn, createOptions.FileCreationTime);
           request.AddHeader(Details::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
-          return CreateParseResult(context, pipeline.Send(context, request));
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
@@ -4113,7 +4113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
@@ -4138,7 +4138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetPropertiesOptions
@@ -4185,7 +4185,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(Details::HeaderFileCreatedOn, setPropertiesOptions.FileCreationTime);
           request.AddHeader(
               Details::HeaderFileLastWrittenOn, setPropertiesOptions.FileLastWriteTime);
-          return SetPropertiesParseResult(context, pipeline.Send(context, request));
+          return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetMetadataOptions
@@ -4217,7 +4217,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
           request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
-          return SetMetadataParseResult(context, pipeline.Send(context, request));
+          return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
         struct ListFilesAndDirectoriesSinglePageOptions
@@ -4279,7 +4279,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::HeaderVersion, listFilesAndDirectoriesSinglePageOptions.ApiVersionParameter);
           return ListFilesAndDirectoriesSinglePageParseResult(
-              context, pipeline.Send(context, request));
+              context, pipeline.Send(request, context));
         }
 
         struct ListHandlesOptions
@@ -4335,7 +4335,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 (listHandlesOptions.Recursive.GetValue() ? "true" : "false"));
           }
           request.AddHeader(Details::HeaderVersion, listHandlesOptions.ApiVersionParameter);
-          return ListHandlesParseResult(context, pipeline.Send(context, request));
+          return ListHandlesParseResult(context, pipeline.Send(request, context));
         }
 
         struct ForceCloseHandlesOptions
@@ -4386,7 +4386,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 (forceCloseHandlesOptions.Recursive.GetValue() ? "true" : "false"));
           }
           request.AddHeader(Details::HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
-          return ForceCloseHandlesParseResult(context, pipeline.Send(context, request));
+          return ForceCloseHandlesParseResult(context, pipeline.Send(request, context));
         }
 
       private:
@@ -5305,7 +5305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(Details::HeaderLeaseId, createOptions.LeaseIdOptional.GetValue());
           }
-          return CreateParseResult(context, pipeline.Send(context, request));
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct DownloadOptions
@@ -5346,7 +5346,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(Details::HeaderLeaseId, downloadOptions.LeaseIdOptional.GetValue());
           }
-          return DownloadParseResult(context, pipeline.Send(context, request));
+          return DownloadParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
@@ -5384,7 +5384,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
           }
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
@@ -5413,7 +5413,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(Details::HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
           }
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetHttpHeadersOptions
@@ -5512,7 +5512,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, setHttpHeadersOptions.LeaseIdOptional.GetValue());
           }
-          return SetHttpHeadersParseResult(context, pipeline.Send(context, request));
+          return SetHttpHeadersParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetMetadataOptions
@@ -5549,7 +5549,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
           }
-          return SetMetadataParseResult(context, pipeline.Send(context, request));
+          return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
         struct AcquireLeaseOptions
@@ -5586,7 +5586,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 acquireLeaseOptions.ProposedLeaseIdOptional.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, acquireLeaseOptions.ApiVersionParameter);
-          return AcquireLeaseParseResult(context, pipeline.Send(context, request));
+          return AcquireLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ReleaseLeaseOptions
@@ -5615,7 +5615,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
           request.AddHeader(Details::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
           request.AddHeader(Details::HeaderVersion, releaseLeaseOptions.ApiVersionParameter);
-          return ReleaseLeaseParseResult(context, pipeline.Send(context, request));
+          return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ChangeLeaseOptions
@@ -5651,7 +5651,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 changeLeaseOptions.ProposedLeaseIdOptional.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, changeLeaseOptions.ApiVersionParameter);
-          return ChangeLeaseParseResult(context, pipeline.Send(context, request));
+          return ChangeLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct BreakLeaseOptions
@@ -5683,7 +5683,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(Details::HeaderLeaseId, breakLeaseOptions.LeaseIdOptional.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, breakLeaseOptions.ApiVersionParameter);
-          return BreakLeaseParseResult(context, pipeline.Send(context, request));
+          return BreakLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct UploadRangeOptions
@@ -5730,7 +5730,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, uploadRangeOptions.LeaseIdOptional.GetValue());
           }
-          return UploadRangeParseResult(context, pipeline.Send(context, request));
+          return UploadRangeParseResult(context, pipeline.Send(request, context));
         }
 
         struct UploadRangeFromUrlOptions
@@ -5804,7 +5804,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, uploadRangeFromUrlOptions.LeaseIdOptional.GetValue());
           }
-          return UploadRangeFromUrlParseResult(context, pipeline.Send(context, request));
+          return UploadRangeFromUrlParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetRangeListOptions
@@ -5856,7 +5856,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderLeaseId, getRangeListOptions.LeaseIdOptional.GetValue());
           }
-          return GetRangeListParseResult(context, pipeline.Send(context, request));
+          return GetRangeListParseResult(context, pipeline.Send(request, context));
         }
 
         struct StartCopyOptions
@@ -5945,7 +5945,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(Details::HeaderLeaseId, startCopyOptions.LeaseIdOptional.GetValue());
           }
-          return StartCopyParseResult(context, pipeline.Send(context, request));
+          return StartCopyParseResult(context, pipeline.Send(request, context));
         }
 
         struct AbortCopyOptions
@@ -5981,7 +5981,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(Details::HeaderLeaseId, abortCopyOptions.LeaseIdOptional.GetValue());
           }
-          return AbortCopyParseResult(context, pipeline.Send(context, request));
+          return AbortCopyParseResult(context, pipeline.Send(request, context));
         }
 
         struct ListHandlesOptions
@@ -6030,7 +6030,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     listHandlesOptions.ShareSnapshot.GetValue()));
           }
           request.AddHeader(Details::HeaderVersion, listHandlesOptions.ApiVersionParameter);
-          return ListHandlesParseResult(context, pipeline.Send(context, request));
+          return ListHandlesParseResult(context, pipeline.Send(request, context));
         }
 
         struct ForceCloseHandlesOptions
@@ -6074,7 +6074,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
           request.AddHeader(Details::HeaderHandleId, forceCloseHandlesOptions.HandleId);
           request.AddHeader(Details::HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
-          return ForceCloseHandlesParseResult(context, pipeline.Send(context, request));
+          return ForceCloseHandlesParseResult(context, pipeline.Send(request, context));
         }
 
       private:

@@ -3,6 +3,7 @@
 ## 1.0.0-beta.7 (Unreleased)
 
 ### New Features
+
 - Added `HttpPolicyOrder` for adding custom Http policies to sdk clients.
 
 ### Breaking Changes
@@ -21,6 +22,12 @@
 - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
 - Renamed `ValuePolicyOptions` to `ValueOptions`.
 - Removed `StartTry()` from `Azure::Core::Http::Request`.
+- Move `Azure::Core::Context` to be the last parameter for consistency, instead of first in various azure-core types. For example:
+  - `BodyStream::Read(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)`
+  - `BodyStream::ReadToEnd(BodyStream& body, Azure::Core::Context const& context)`
+  - `HttpPolicy::Send(Request& request, NextHttpPolicy policy, Azure::Core::Context const& context)`
+  - `Operation<T>::PollUntilDone(std::chrono::milliseconds period, Azure::Core::Context& context)`
+  - `TokenCredential::GetToken(Http::TokenRequestOptions const& tokenRequestOptions, Azure::Core::Context const& context)`
 
 ### Bug Fixes
 

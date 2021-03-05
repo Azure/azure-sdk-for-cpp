@@ -55,7 +55,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> Internal::KeyVaultPipeline::Send
     Azure::Core::Context const& context,
     Azure::Core::Http::Request& request) const
 {
-  auto response = m_pipeline.Send(context, request);
+  auto response = m_pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
   switch (responseCode)
   {

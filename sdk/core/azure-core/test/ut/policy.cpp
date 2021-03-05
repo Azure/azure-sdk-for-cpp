@@ -16,9 +16,9 @@ public:
   }
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-      Azure::Core::Context const&,
       Azure::Core::Http::Request&,
-      Azure::Core::Http::NextHttpPolicy) const override
+      Azure::Core::Http::NextHttpPolicy,
+      Azure::Core::Context const&) const override
   {
     return nullptr;
   }
@@ -34,13 +34,13 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::HttpPolicy
   }
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-      Azure::Core::Context const& ctx,
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override
+      Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Context const& ctx) const override
   {
     EXPECT_EQ(retryCounterState, Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx));
     retryCounterState += 1;
-    return nextHttpPolicy.Send(ctx, request);
+    return nextHttpPolicy.Send(request, ctx);
   }
 };
 
@@ -57,9 +57,9 @@ public:
   SuccessAfter(int successAfter = 1) : m_successAfter(successAfter) {}
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-      Azure::Core::Context const& context,
       Azure::Core::Http::Request&,
-      Azure::Core::Http::NextHttpPolicy) const override
+      Azure::Core::Http::NextHttpPolicy,
+      Azure::Core::Context const& context) const override
   {
     auto retryNumber = Azure::Core::Http::RetryPolicy::GetRetryNumber(context);
     if (retryNumber == m_successAfter)
@@ -89,7 +89,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-  EXPECT_THROW(pipeline.Send(Azure::Core::GetApplicationContext(), request), std::invalid_argument);
+  EXPECT_THROW(pipeline.Send(request, Azure::Core::GetApplicationContext()), std::invalid_argument);
 }
 
 TEST(Policy, throwWhenNoTransportPolicyMessage)
@@ -107,7 +107,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
 
   try
   {
-    pipeline.Send(Azure::Core::GetApplicationContext(), request);
+    pipeline.Send(request, Azure::Core::GetApplicationContext());
   }
   catch (const std::invalid_argument& ex)
   {
@@ -132,7 +132,7 @@ TEST(Policy, ValuePolicy)
 
   Request request(HttpMethod::Get, Url("https:://www.example.com"));
 
-  pipeline.Send(GetApplicationContext(), request);
+  pipeline.Send(request, GetApplicationContext());
 
   auto headers = request.GetHeaders();
   auto queryParams = request.GetUrl().GetQueryParameters();
@@ -160,7 +160,7 @@ TEST(Policy, RetryPolicyCounter)
 
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
-  pipeline.Send(initialContext, request);
+  pipeline.Send(request, initialContext);
 }
 
 TEST(Policy, RetryPolicyRetryCycle)
@@ -179,5 +179,5 @@ TEST(Policy, RetryPolicyRetryCycle)
 
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
-  pipeline.Send(GetApplicationContext(), request);
+  pipeline.Send(request, GetApplicationContext());
 }

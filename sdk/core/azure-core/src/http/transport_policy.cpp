@@ -31,9 +31,9 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
 }
 
 std::unique_ptr<RawResponse> TransportPolicy::Send(
-    Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
 {
   (void)nextHttpPolicy;
   ctx.ThrowIfCancelled();
@@ -42,7 +42,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
    * The transport policy is always the last policy.
    * Call the transport and return
    */
-  auto response = m_options.Transport->Send(ctx, request);
+  auto response = m_options.Transport->Send(request, ctx);
   auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
       response->GetStatusCode());
 
@@ -57,7 +57,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // Using DownloadViaStream and getting an error code would also get to here to download error from
   // body
   auto bodyStream = response->GetBodyStream();
-  response->SetBody(BodyStream::ReadToEnd(ctx, *bodyStream));
+  response->SetBody(BodyStream::ReadToEnd(*bodyStream, ctx));
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.
   return response;

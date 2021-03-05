@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
     }
 
-    Response<std::string> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
+    Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         override
     {
       std::unique_ptr<Http::RawResponse> response;

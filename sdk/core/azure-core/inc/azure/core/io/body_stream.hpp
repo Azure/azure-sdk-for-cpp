@@ -43,13 +43,13 @@ namespace Azure { namespace IO {
      *
      * @remark This is the `OnRead` implementation that all derived classes need to provide.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param buffer Pointer to a byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @return Number of bytes read.
      */
-    virtual int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) = 0;
+    virtual int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) = 0;
 
   public:
     /// Destructor.
@@ -78,34 +78,34 @@ namespace Azure { namespace IO {
      * @brief Read portion of data into a buffer.
      * @remark Throws if error/cancelled.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @return Number of bytes read.
      */
-    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+    int64_t Read(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
     {
       context.ThrowIfCancelled();
-      return OnRead(context, buffer, count);
+      return OnRead(buffer, count, context);
     };
 
     /**
      * @brief Read #Azure::IO::BodyStream into a buffer until the buffer is filled, or until
      * the stream is read to end.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param body #Azure::IO::BodyStream to read.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @return Number of bytes read.
      */
     static int64_t ReadToCount(
-        Azure::Core::Context const& context,
         BodyStream& body,
         uint8_t* buffer,
-        int64_t count);
+        int64_t count,
+        Azure::Core::Context const& context);
 
     /**
      * @brief Read #Azure::IO::BodyStream until the stream is read to end, allocating memory
@@ -116,7 +116,7 @@ namespace Azure { namespace IO {
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */
-    static std::vector<uint8_t> ReadToEnd(Azure::Core::Context const& context, BodyStream& body);
+    static std::vector<uint8_t> ReadToEnd(BodyStream& body, Azure::Core::Context const& context);
   };
 
   /**
@@ -128,7 +128,7 @@ namespace Azure { namespace IO {
     int64_t m_length;
     int64_t m_offset = 0;
 
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
@@ -176,7 +176,7 @@ namespace Azure { namespace IO {
     // mutable
     int64_t m_offset;
 
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
 #if defined(AZ_PLATFORM_POSIX)

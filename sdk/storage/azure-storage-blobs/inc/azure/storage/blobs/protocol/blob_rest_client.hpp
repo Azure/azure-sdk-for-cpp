@@ -1275,7 +1275,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 "include",
                 Storage::Details::UrlEncodeQueryParameter(list_blob_containers_include_flags));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ListBlobContainersSinglePageResult response;
           auto http_status_code
@@ -1330,7 +1330,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetUserDelegationKeyResult response;
           auto http_status_code
@@ -1372,7 +1372,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetServicePropertiesResult response;
           auto http_status_code
@@ -1426,7 +1426,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetServicePropertiesResult response;
           auto http_status_code
@@ -1462,7 +1462,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetAccountInfoResult response;
           auto http_status_code
@@ -1502,7 +1502,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetServiceStatisticsResult response;
           auto http_status_code
@@ -1559,7 +1559,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "maxresults", std::to_string(options.MaxResults.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           FindBlobsByTagsSinglePageResult response;
           auto http_status_code
@@ -3127,7 +3127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 "x-ms-deny-encryption-scope-override",
                 options.PreventEncryptionScopeOverride.GetValue() ? "true" : "false");
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateBlobContainerResult response;
           auto http_status_code
@@ -3187,7 +3187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteBlobContainerResult response;
           auto http_status_code
@@ -3228,7 +3228,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.AddHeader("x-ms-deleted-container-name", options.DeletedBlobContainerName);
           request.AddHeader("x-ms-deleted-container-version", options.DeletedBlobContainerVersion);
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UndeleteBlobContainerResult response;
           auto http_status_code
@@ -3268,7 +3268,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetBlobContainerPropertiesResult response;
           auto http_status_code
@@ -3354,7 +3354,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfModifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobContainerMetadataResult response;
           auto http_status_code
@@ -3420,7 +3420,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "include", Storage::Details::UrlEncodeQueryParameter(list_blobs_include_flags));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ListBlobsSinglePageResult response;
           auto http_status_code
@@ -3496,7 +3496,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "include", Storage::Details::UrlEncodeQueryParameter(list_blobs_include_flags));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ListBlobsByHierarchySinglePageResult response;
           auto http_status_code
@@ -3539,7 +3539,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "acl");
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetBlobContainerAccessPolicyResult response;
           auto http_status_code
@@ -3629,7 +3629,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobContainerAccessPolicyResult response;
           auto http_status_code
@@ -3694,7 +3694,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::AcquireBlobContainerLeaseResult response;
           auto http_status_code
@@ -3755,7 +3755,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::RenewBlobContainerLeaseResult response;
           auto http_status_code
@@ -3818,7 +3818,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::ChangeBlobContainerLeaseResult response;
           auto http_status_code
@@ -3879,7 +3879,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::ReleaseBlobContainerLeaseResult response;
           auto http_status_code
@@ -3943,7 +3943,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 options.IfUnmodifiedSince.GetValue().ToString(
                     Azure::Core::DateTime::DateFormat::Rfc1123));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::BreakBlobContainerLeaseResult response;
           auto http_status_code
@@ -4927,7 +4927,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               request.AddHeader("x-ms-range-get-content-crc64", "true");
             }
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DownloadBlobResult response;
           auto http_status_code
@@ -5282,7 +5282,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const DeleteBlobOptions& options)
         {
           auto request = DeleteCreateMessage(url, options);
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           return DeleteCreateResponse(context, std::move(pHttpResponse));
         }
 
@@ -5314,7 +5314,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-expiry-time", options.ExpiryTime.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobExpiryResult response;
           auto http_status_code
@@ -5350,7 +5350,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
           request.GetUrl().AppendQueryParameter("comp", "undelete");
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UndeleteBlobResult response;
           auto http_status_code
@@ -5438,7 +5438,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetBlobPropertiesResult response;
           auto http_status_code
@@ -5784,7 +5784,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobHttpHeadersResult response;
           auto http_status_code
@@ -5894,7 +5894,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobMetadataResult response;
           auto http_status_code
@@ -5974,7 +5974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobAccessTierOptions& options)
         {
           auto request = SetAccessTierCreateMessage(url, options);
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           return SetAccessTierCreateResponse(context, std::move(pHttpResponse));
         }
 
@@ -6094,7 +6094,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-source-if-tags", options.SourceIfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::StartCopyBlobFromUriResult response;
           auto http_status_code
@@ -6150,7 +6150,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AbortCopyBlobFromUriResult response;
           auto http_status_code
@@ -6250,7 +6250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateBlobSnapshotResult response;
           auto http_status_code
@@ -6315,7 +6315,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetBlobTagsResult response;
           auto http_status_code
@@ -6374,7 +6374,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobTagsResult response;
           auto http_status_code
@@ -6449,7 +6449,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::AcquireBlobLeaseResult response;
           auto http_status_code
@@ -6524,7 +6524,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::RenewBlobLeaseResult response;
           auto http_status_code
@@ -6601,7 +6601,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::ChangeBlobLeaseResult response;
           auto http_status_code
@@ -6676,7 +6676,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::ReleaseBlobLeaseResult response;
           auto http_status_code
@@ -6760,7 +6760,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::BreakBlobLeaseResult response;
           auto http_status_code
@@ -7052,7 +7052,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadBlockBlobResult response;
           auto http_status_code
@@ -7180,7 +7180,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           StageBlockResult response;
           auto http_status_code
@@ -7338,7 +7338,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           StageBlockFromUriResult response;
           auto http_status_code
@@ -7516,7 +7516,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CommitBlockListResult response;
           auto http_status_code
@@ -7589,7 +7589,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetBlockListResult response;
           auto http_status_code
@@ -7894,7 +7894,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreatePageBlobResult response;
           auto http_status_code
@@ -8063,7 +8063,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadPageBlobPagesResult response;
           auto http_status_code
@@ -8258,7 +8258,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadPageBlobPagesFromUriResult response;
           auto http_status_code
@@ -8425,7 +8425,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ClearPageBlobPagesResult response;
           auto http_status_code
@@ -8549,7 +8549,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ResizePageBlobResult response;
           auto http_status_code
@@ -8650,7 +8650,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetPageBlobPageRangesResult response;
           auto http_status_code
@@ -8731,7 +8731,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::StartCopyPageBlobIncrementalResult response;
           auto http_status_code
@@ -9054,7 +9054,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateAppendBlobResult response;
           auto http_status_code
@@ -9203,7 +9203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AppendBlockResult response;
           auto http_status_code
@@ -9383,7 +9383,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AppendBlockFromUriResult response;
           auto http_status_code
@@ -9503,7 +9503,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader(
                 "x-ms-blob-condition-appendpos", std::to_string(options.AppendPosition.GetValue()));
           }
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SealAppendBlobResult response;
           auto http_status_code
@@ -9552,7 +9552,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
           request.AddHeader("Content-Type", options.ContentType);
-          auto pHttpResponse = pipeline.Send(context, request);
+          auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::Details::SubmitBlobBatchResult response;
           auto http_status_code

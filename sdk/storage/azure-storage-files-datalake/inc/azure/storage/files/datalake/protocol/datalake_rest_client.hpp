@@ -458,7 +458,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 Storage::Details::UrlEncodeQueryParameter(
                     (listPathsOptions.Upn.GetValue() ? "true" : "false")));
           }
-          return ListPathsParseResult(context, pipeline.Send(context, request));
+          return ListPathsParseResult(context, pipeline.Send(request, context));
         }
 
       private:
@@ -690,7 +690,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 createOptions.SourceIfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
-          return CreateParseResult(context, pipeline.Send(context, request));
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
@@ -763,7 +763,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 getPropertiesOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
@@ -834,7 +834,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 deleteOptions.IfUnmodifiedSince.GetValue().ToString(
                     Core::DateTime::DateFormat::Rfc1123));
           }
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetAccessControlOptions
@@ -913,7 +913,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                     Core::DateTime::DateFormat::Rfc1123));
           }
           request.AddHeader(Details::HeaderVersion, setAccessControlOptions.ApiVersionParameter);
-          return SetAccessControlParseResult(context, pipeline.Send(context, request));
+          return SetAccessControlParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetAccessControlRecursiveOptions
@@ -973,7 +973,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           request.AddHeader(
               Details::HeaderVersion, setAccessControlRecursiveOptions.ApiVersionParameter);
-          return SetAccessControlRecursiveParseResult(context, pipeline.Send(context, request));
+          return SetAccessControlRecursiveParseResult(context, pipeline.Send(request, context));
         }
 
         struct FlushDataOptions
@@ -1096,7 +1096,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                     Core::DateTime::DateFormat::Rfc1123));
           }
           request.AddHeader(Details::HeaderVersion, flushDataOptions.ApiVersionParameter);
-          return FlushDataParseResult(context, pipeline.Send(context, request));
+          return FlushDataParseResult(context, pipeline.Send(request, context));
         }
 
         struct AppendDataOptions
@@ -1159,7 +1159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.AddHeader(Details::HeaderLeaseId, appendDataOptions.LeaseIdOptional.GetValue());
           }
           request.AddHeader(Details::HeaderVersion, appendDataOptions.ApiVersionParameter);
-          return AppendDataParseResult(context, pipeline.Send(context, request));
+          return AppendDataParseResult(context, pipeline.Send(request, context));
         }
 
       private:

@@ -260,8 +260,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       auto retryFunction
           = [this, options, eTag](
-                const Azure::Core::Context& context,
-                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::IO::BodyStream> {
+                const HttpGetterInfo& retryInfo,
+                const Azure::Core::Context& context) -> std::unique_ptr<Azure::IO::BodyStream> {
         DownloadShareFileOptions newOptions = options;
         newOptions.Range = Core::Http::Range();
         newOptions.Range.GetValue().Offset
@@ -657,7 +657,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
-        context, *(firstChunk->BodyStream), buffer, firstChunkLength);
+        *(firstChunk->BodyStream), buffer, firstChunkLength, context);
     if (bytesRead != firstChunkLength)
     {
       throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -684,10 +684,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             chunkOptions.Range.GetValue().Length = length;
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
-                context,
                 *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Range.GetValue().Length.GetValue());
+                chunkOptions.Range.GetValue().Length.GetValue(),
+                context);
             if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
             {
               throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -768,7 +768,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
         int64_t bytesRead
-            = Azure::IO::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
+            = Azure::IO::BodyStream::ReadToCount(stream, buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");

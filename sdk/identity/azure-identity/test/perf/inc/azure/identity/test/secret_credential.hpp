@@ -60,7 +60,7 @@ namespace Azure { namespace Identity { namespace Test {
      */
     void Run(Azure::Core::Context const& context) override
     {
-      auto t = m_credentail->GetToken(context, m_scopes);
+      auto t = m_credentail->GetToken(m_scopes, context);
     }
 
     /**

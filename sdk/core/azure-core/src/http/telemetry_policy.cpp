@@ -115,10 +115,10 @@ std::string TelemetryPolicy::BuildTelemetryId(
 }
 
 std::unique_ptr<RawResponse> TelemetryPolicy::Send(
-    Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
 {
   request.AddHeader("User-Agent", m_telemetryId);
-  return nextHttpPolicy.Send(ctx, request);
+  return nextHttpPolicy.Send(request, ctx);
 }

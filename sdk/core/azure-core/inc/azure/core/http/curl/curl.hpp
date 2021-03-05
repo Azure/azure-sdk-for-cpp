@@ -112,11 +112,12 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request an HTTP Request to be send.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     *
      * @return unique ptr to an HTTP RawResponse.
      */
-    std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
+    std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
   };
 
 }}} // namespace Azure::Core::Http

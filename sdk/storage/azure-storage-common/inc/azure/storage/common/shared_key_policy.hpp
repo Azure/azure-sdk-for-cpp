@@ -27,13 +27,13 @@ namespace Azure { namespace Storage { namespace Details {
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
-        Core::Context const& ctx,
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override
+        Core::Http::NextHttpPolicy nextHttpPolicy,
+        Core::Context const& ctx) const override
     {
       request.AddHeader(
           "Authorization", "SharedKey " + m_credential->AccountName + ":" + GetSignature(request));
-      return nextHttpPolicy.Send(ctx, request);
+      return nextHttpPolicy.Send(request, ctx);
     }
 
   private:

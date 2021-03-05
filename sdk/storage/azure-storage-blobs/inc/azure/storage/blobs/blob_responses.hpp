@@ -95,8 +95,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Context& context) override;
 
     Azure::Core::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
-        Azure::Core::Context& context,
-        std::chrono::milliseconds period) override;
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override;
 
     std::shared_ptr<BlobClient> m_blobClient;
     Models::GetBlobPropertiesResult m_pollResult;

@@ -288,7 +288,7 @@ void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleMan
   while (true)
   {
     auto rawRequestLen
-        = streamBody->Read(handleManager->m_context, unique_buffer.get(), uploadChunkSize);
+        = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
     if (rawRequestLen == 0)
     {
       break;
@@ -547,9 +547,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   return rawResponse;
 }
 
-std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Request& request)
+std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
-  auto handleManager = std::make_unique<Details::HandleManager>(context, request);
+  auto handleManager = std::make_unique<Details::HandleManager>(request, context);
 
   CreateSessionHandle(handleManager);
   CreateConnectionHandle(handleManager);
@@ -563,7 +563,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 }
 
 // Read the response from the sent request.
-int64_t Details::WinHttpStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
+int64_t Details::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
 {
   if (count <= 0 || this->m_isEOF)
   {
