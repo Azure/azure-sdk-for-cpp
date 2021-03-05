@@ -13,7 +13,6 @@
 #include <azure/core/match_conditions.hpp>
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 

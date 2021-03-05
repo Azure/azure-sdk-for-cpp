@@ -1,11 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/storage_retry_policy.hpp"
-
-#include <thread>
-
-#include "azure/storage/common/constants.hpp"
+#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Details {
 

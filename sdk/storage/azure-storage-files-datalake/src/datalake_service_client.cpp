@@ -10,6 +10,7 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
