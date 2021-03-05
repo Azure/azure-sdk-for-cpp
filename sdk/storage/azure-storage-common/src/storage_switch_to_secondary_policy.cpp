@@ -10,7 +10,8 @@ namespace Azure { namespace Storage { namespace Details {
       Azure::Core::Http::Request& request,
       Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const
   {
-    return nextHttpPolicy.Send(ctx, request);
+    auto response = nextHttpPolicy.Send(ctx, request);
+    return response;
   }
 
 }}} // namespace Azure::Storage::Details

@@ -12,8 +12,8 @@ namespace Azure { namespace Storage { namespace Details {
 
   class StorageSwitchToSecondaryPolicy : public Azure::Core::Http::HttpPolicy {
   public:
-    explicit StorageSwitchToSecondaryPolicy(std::string secondaryHost)
-        : m_secondaryHost(secondaryHost)
+    explicit StorageSwitchToSecondaryPolicy(std::string primaryHost, std::string secondaryHost)
+        : m_primaryHost(std::move(primaryHost)), m_secondaryHost(std::move(secondaryHost))
     {
     }
 
@@ -28,6 +28,7 @@ namespace Azure { namespace Storage { namespace Details {
         Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override;
 
   private:
+    std::string m_primaryHost;
     std::string m_secondaryHost;
   };
 
