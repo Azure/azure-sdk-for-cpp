@@ -10,7 +10,32 @@ namespace Azure { namespace Storage { namespace Details {
       Azure::Core::Http::Request& request,
       Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const
   {
+    bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
+                              || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
+        && !m_secondaryHost.empty();
+
+    int retryNumber = Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx);
+    if (retryNumber > 0)
+    {
+      // switch host
+      if (request.GetUrl().GetHost() == m_primaryHost && considerSecondary)
+      {
+        request.GetUrl().SetHost(m_secondaryHost);
+      }
+      else
+      {
+        request.GetUrl().SetHost(m_primaryHost);
+      }
+    }
+
     auto response = nextHttpPolicy.Send(ctx, request);
+
+    if (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
+        || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
+    {
+      considerSecondary = false;
+    }
+
     return response;
   }
 
