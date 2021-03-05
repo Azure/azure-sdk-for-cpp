@@ -4,7 +4,7 @@
 
 ### New Features
 
-- Added support for customized application ID.
+- Added support for telemetry options.
 
 ### Breaking Changes
 
