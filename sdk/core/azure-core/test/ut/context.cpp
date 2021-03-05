@@ -253,3 +253,19 @@ TEST(Context, MatchingKeys)
   value = valueT3.Get<int>();
   EXPECT_TRUE(value == 456);
 }
+
+struct SomeStructForContext : ValueBase
+{
+  bool someField = false;
+};
+
+TEST(Context, UniquePtr)
+{
+  auto contextP
+      = GetApplicationContext().WithValue("bool", std::make_unique<SomeStructForContext>());
+  auto& contextValueRef = contextP["bool"].Get<std::unique_ptr<ValueBase>>();
+  SomeStructForContext* pointerToStruct{static_cast<SomeStructForContext*>(contextValueRef.get())};
+  EXPECT_FALSE(pointerToStruct->someField);
+  pointerToStruct->someField = true;
+  EXPECT_TRUE(pointerToStruct->someField);
+}
