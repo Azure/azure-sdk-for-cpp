@@ -17,6 +17,7 @@
 - Moved `BodyStream` and its derived types from `Azure::Core::Http` namespace to `Azure::IO`, and moved the `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
 - Moved `NullBodyStream` to internal usage only. It is not meant for public use.
 - Removed `LimitBodyStream`.
+- Renamed `AddHeader()` from `Request` and `RawResponse` to `SetHeader()`.
 - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
 - Renamed `TransportPolicyOptions` to `TransportOptions`.
 - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.

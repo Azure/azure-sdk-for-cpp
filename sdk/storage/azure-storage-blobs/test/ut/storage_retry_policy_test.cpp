@@ -83,12 +83,12 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = std::make_unique<Core::Http::RawResponse>(Core::Http::RawResponse(
             1, 1, Core::Http::HttpStatusCode::NotFound, "The specified blob does not exist."));
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
-        response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
-        response->AddHeader("content-type", "application/xml");
-        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-        response->AddHeader("x-ms-error-code", "BlobNotFound");
-        response->AddHeader(
+        response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
+        response->SetHeader("content-type", "application/xml");
+        response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+        response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+        response->SetHeader("x-ms-error-code", "BlobNotFound");
+        response->SetHeader(
             "date",
             Azure::Core::DateTime(std::chrono::system_clock::now())
                 .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
@@ -108,12 +108,12 @@ namespace Azure { namespace Storage { namespace Test {
             Core::Http::HttpStatusCode::PreconditionFailed,
             "The condition specified using HTTP conditional header(s) is not met."));
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
-        response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
-        response->AddHeader("content-type", "application/xml");
-        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-        response->AddHeader("x-ms-error-code", "ConditionNotMet");
-        response->AddHeader(
+        response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
+        response->SetHeader("content-type", "application/xml");
+        response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+        response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+        response->SetHeader("x-ms-error-code", "ConditionNotMet");
+        response->SetHeader(
             "date",
             Azure::Core::DateTime(std::chrono::system_clock::now())
                 .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
@@ -133,17 +133,17 @@ namespace Azure { namespace Storage { namespace Test {
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
                   bodyLength);
               response->SetBodyStream(std::move(bodyStream));
-              response->AddHeader("content-length", std::to_string(bodyLength));
-              response->AddHeader("etag", m_primaryETag.ToString());
-              response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
-              response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-              response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-              response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
-              response->AddHeader("x-ms-lease-status", "unlocked");
-              response->AddHeader("x-ms-lease-state", "available");
-              response->AddHeader("x-ms-blob-type", "BlockBlob");
-              response->AddHeader("x-ms-server-encrypted", "true");
-              response->AddHeader(
+              response->SetHeader("content-length", std::to_string(bodyLength));
+              response->SetHeader("etag", m_primaryETag.ToString());
+              response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
+              response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+              response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+              response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
+              response->SetHeader("x-ms-lease-status", "unlocked");
+              response->SetHeader("x-ms-lease-state", "available");
+              response->SetHeader("x-ms-blob-type", "BlockBlob");
+              response->SetHeader("x-ms-server-encrypted", "true");
+              response->SetHeader(
                   "date",
                   Azure::Core::DateTime(std::chrono::system_clock::now())
                       .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
@@ -163,17 +163,17 @@ namespace Azure { namespace Storage { namespace Test {
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
                 bodyLength);
             response->SetBodyStream(std::move(bodyStream));
-            response->AddHeader("content-length", std::to_string(bodyLength));
-            response->AddHeader("etag", m_secondaryETag.ToString());
-            response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
-            response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-            response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-            response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
-            response->AddHeader("x-ms-lease-status", "unlocked");
-            response->AddHeader("x-ms-lease-state", "available");
-            response->AddHeader("x-ms-blob-type", "BlockBlob");
-            response->AddHeader("x-ms-server-encrypted", "true");
-            response->AddHeader(
+            response->SetHeader("content-length", std::to_string(bodyLength));
+            response->SetHeader("etag", m_secondaryETag.ToString());
+            response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
+            response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+            response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+            response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
+            response->SetHeader("x-ms-lease-status", "unlocked");
+            response->SetHeader("x-ms-lease-state", "available");
+            response->SetHeader("x-ms-blob-type", "BlockBlob");
+            response->SetHeader("x-ms-server-encrypted", "true");
+            response->SetHeader(
                 "date",
                 Azure::Core::DateTime(std::chrono::system_clock::now())
                     .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));

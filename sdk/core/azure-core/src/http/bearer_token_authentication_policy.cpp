@@ -22,7 +22,7 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
       m_accessToken = m_credential->GetToken(m_tokenRequestOptions, context);
     }
 
-    request.AddHeader("authorization", "Bearer " + m_accessToken.Token);
+    request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
   }
 
   return policy.Send(request, context);

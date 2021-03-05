@@ -54,8 +54,8 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Request request(HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
 
-    request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.AddHeader("Content-Length", std::to_string(bodyString.size()));
+    request.SetHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.SetHeader("Content-Length", std::to_string(bodyString.size()));
 
     HttpPipeline httpPipeline(m_options, "Identity-client-secret-credential", "", {}, {});
 

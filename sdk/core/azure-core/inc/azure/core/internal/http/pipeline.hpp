@@ -76,8 +76,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
         std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
         std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perCallPolicies)
     {
-      auto const& perCallClientPolicies = clientOptions.GetPerCallPolicies();
-      auto const& perRetryClientPolicies = clientOptions.GerPerRetryPolicies();
+      auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
+      auto const& perRetryClientPolicies = clientOptions.PerRetryPolicies;
       // Adding 5 for:
       // - TelemetryPolicy
       // - RequestIdPolicy

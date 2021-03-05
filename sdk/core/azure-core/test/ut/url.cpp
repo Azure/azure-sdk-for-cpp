@@ -30,8 +30,8 @@ namespace Azure { namespace Core { namespace Test {
         req.GetUrl().GetAbsoluteUrl(),
         url.GetAbsoluteUrl());
 
-    EXPECT_NO_THROW(req.AddHeader("Name", "value"));
-    EXPECT_NO_THROW(req.AddHeader("naME2", "value2"));
+    EXPECT_NO_THROW(req.SetHeader("Name", "value"));
+    EXPECT_NO_THROW(req.SetHeader("naME2", "value2"));
 
     auto headers = req.GetHeaders();
 
@@ -49,9 +49,9 @@ namespace Azure { namespace Core { namespace Test {
     req.StartTry();
 
     // same headers first, then one new
-    EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));
-    EXPECT_NO_THROW(req.AddHeader("HEADER-to-Lower-123", "retryValue2"));
-    EXPECT_NO_THROW(req.AddHeader("newHeader", "new"));
+    EXPECT_NO_THROW(req.SetHeader("namE", "retryValue"));
+    EXPECT_NO_THROW(req.SetHeader("HEADER-to-Lower-123", "retryValue2"));
+    EXPECT_NO_THROW(req.SetHeader("newHeader", "new"));
 
     headers = req.GetHeaders();
 

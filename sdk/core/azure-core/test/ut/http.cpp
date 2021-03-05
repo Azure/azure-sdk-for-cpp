@@ -23,7 +23,7 @@ namespace Azure { namespace Core { namespace Test {
     Http::Request req(httpMethod, url);
     std::pair<std::string, std::string> expected("valid", "header");
 
-    EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
+    EXPECT_NO_THROW(req.SetHeader(expected.first, expected.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
@@ -33,11 +33,11 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    EXPECT_THROW(req.AddHeader("invalid()", "header"), std::runtime_error);
+    EXPECT_THROW(req.SetHeader("invalid()", "header"), std::runtime_error);
 
     // same header will just override
     std::pair<std::string, std::string> expectedOverride("valid", "override");
-    EXPECT_NO_THROW(req.AddHeader(expectedOverride.first, expectedOverride.second));
+    EXPECT_NO_THROW(req.SetHeader(expectedOverride.first, expectedOverride.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // adding header after one error happened before
     std::pair<std::string, std::string> expected2("valid2", "header2");
-    EXPECT_NO_THROW(req.AddHeader(expected2.first, expected2.second));
+    EXPECT_NO_THROW(req.SetHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondHeader = headers.begin();
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Test {
     Http::RawResponse response(1, 1, Http::HttpStatusCode::Accepted, "Test");
     std::pair<std::string, std::string> expected("valid", "header");
 
-    EXPECT_NO_THROW(response.AddHeader(expected.first, expected.second));
+    EXPECT_NO_THROW(response.SetHeader(expected.first, expected.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
@@ -79,11 +79,11 @@ namespace Azure { namespace Core { namespace Test {
         expected);
 
     EXPECT_THROW(
-        response.AddHeader("invalid()", "header"), Azure::Core::Http::InvalidHeaderException);
+        response.SetHeader("invalid()", "header"), Azure::Core::Http::InvalidHeaderException);
 
     // same header will just override
     std::pair<std::string, std::string> expectedOverride("valid", "override");
-    EXPECT_NO_THROW(response.AddHeader(expectedOverride.first, expectedOverride.second));
+    EXPECT_NO_THROW(response.SetHeader(expectedOverride.first, expectedOverride.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto firstHeader = headers.begin();
@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // adding header after on error happened
     std::pair<std::string, std::string> expected2("valid2", "header2");
-    EXPECT_NO_THROW(response.AddHeader(expected2.first, expected2.second));
+    EXPECT_NO_THROW(response.SetHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
@@ -106,13 +106,13 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected2);
 
-    // Response addHeader overload method to add from string
-    EXPECT_THROW(response.AddHeader("inv(): header"), Azure::Core::Http::InvalidHeaderException);
+    // Response SetHeader overload method to add from string
+    EXPECT_THROW(response.SetHeader("inv(): header"), Azure::Core::Http::InvalidHeaderException);
     EXPECT_THROW(
-        response.AddHeader("no delimiter header"), Azure::Core::Http::InvalidHeaderException);
+        response.SetHeader("no delimiter header"), Azure::Core::Http::InvalidHeaderException);
 
     // adding header after previous error just happened on add from string
-    EXPECT_NO_THROW(response.AddHeader("valid3: header3"));
+    EXPECT_NO_THROW(response.SetHeader("valid3: header3"));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Test {
 
       req.StartTry();
 
-      EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));
+      EXPECT_NO_THROW(req.SetHeader("namE", "retryValue"));
 
       auto headers = req.GetHeaders();
 

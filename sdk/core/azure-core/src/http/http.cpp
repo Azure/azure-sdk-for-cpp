@@ -15,7 +15,7 @@ void Azure::Core::Http::Details::InsertHeaderWithValidation(
     std::string const& headerValue)
 {
   // Static table for validating header names. It is created just once for the program and reused
-  // each time AddHeader is called
+  // each time SetHeader is called
   static const uint8_t validChars[256] = {
       0, /* 0 - null */
       0, /* 1 - start of heading */

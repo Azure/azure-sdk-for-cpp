@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/match_conditions.hpp>
+#include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 #include <azure/storage/common/storage_retry_policy.hpp>
 
@@ -19,7 +21,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct BlobContainerAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct BlobContainerAccessConditions : public Azure::Core::ModifiedConditions,
+                                         public LeaseAccessConditions
   {
   };
 
@@ -39,8 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct BlobAccessConditions : public Azure::Core::ModifiedConditions,
+                                public Azure::Core::MatchConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions
   {
@@ -49,8 +52,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for blob lease operations.
    */
-  struct LeaseBlobAccessConditions : public ModifiedTimeConditions,
-                                     public ETagAccessConditions,
+  struct LeaseBlobAccessConditions : public Azure::Core::ModifiedConditions,
+                                     public Azure::Core::MatchConditions,
                                      public TagAccessConditions
   {
   };
@@ -804,7 +807,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    struct : public ModifiedTimeConditions, public ETagAccessConditions
+    struct : public Azure::Core::ModifiedConditions, public Azure::Core::MatchConditions
     {
     } SourceAccessConditions;
   };
