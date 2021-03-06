@@ -38,9 +38,6 @@ using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-  Azure::Core::Logging::SetLogListener(
-      [](auto, std::string const& message) { std::cout << message << std::endl; });
-
   auto tenantId = std::getenv("AZURE_KEYVAULT_TENANT_ID");
   auto clientId = std::getenv("AZURE_KEYVAULT_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_KEYVAULT_CLIENT_SECRET");

@@ -57,10 +57,10 @@ namespace Azure { namespace Perf { namespace Test {
     void Run(Azure::Core::Context const& ctx) override
     {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, m_url);
-      auto response = Details::HttpClient->Send(ctx, request);
+      auto response = Details::HttpClient->Send(request, ctx);
       // Read the body from network
       auto bodyStream = response->GetBodyStream();
-      response->SetBody(Azure::IO::BodyStream::ReadToEnd(ctx, *bodyStream));
+      response->SetBody(Azure::IO::BodyStream::ReadToEnd(*bodyStream, ctx));
     }
 
     /**
