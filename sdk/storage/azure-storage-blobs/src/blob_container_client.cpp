@@ -227,7 +227,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     Details::BlobRestClient::BlobContainer::GetBlobContainerPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return Details::BlobRestClient::BlobContainer::GetProperties(
-        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context),
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
