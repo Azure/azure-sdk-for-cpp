@@ -18,8 +18,6 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/exception.hpp"
 #include "azure/core/logger.hpp"
-#include "azure/core/match_conditions.hpp"
-#include "azure/core/modified_conditions.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/operation.hpp"
 #include "azure/core/operation_status.hpp"
@@ -27,6 +25,8 @@
 #include "azure/core/uuid.hpp"
 #include "azure/core/version.hpp"
 #include "azure/etag.hpp"
+#include "azure/match_conditions.hpp"
+#include "azure/modified_conditions.hpp"
 
 // azure/core/cryptography
 #include "azure/core/cryptography/hash.hpp"

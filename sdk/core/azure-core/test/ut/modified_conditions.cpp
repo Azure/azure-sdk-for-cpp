@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/datetime.hpp>
-#include <azure/core/modified_conditions.hpp>
+#include <azure/modified_conditions.hpp>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
 
 using namespace Azure::Core;
+using namespace Azure;
 
 TEST(ModifiedConditions, Basic)
 {

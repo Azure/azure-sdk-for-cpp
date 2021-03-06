@@ -71,8 +71,6 @@ set(
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/logger.hpp
-    inc/azure/core/match_conditions.hpp
-    inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
@@ -81,6 +79,8 @@ set(
     inc/azure/core/version.hpp
     inc/azure/core.hpp
     inc/azure/etag.hpp
+    inc/azure/match_conditions.hpp
+    inc/azure/modified_conditions.hpp
     inc/azure/response.hpp
 )
 
