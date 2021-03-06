@@ -81,10 +81,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   public:
     Models::GetBlobPropertiesResult Value() const override { return m_pollResult; }
+
     /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @brief Get the raw HTTP response.
      * @return A pointer to #Azure::Core::Http::RawResponse or null if the RawResponse does not
      * exist.
+     * @note Does not give up ownership of the RawResponse
      */
     Azure::Core::Http::RawResponse* GetRawResponse() const override
     {

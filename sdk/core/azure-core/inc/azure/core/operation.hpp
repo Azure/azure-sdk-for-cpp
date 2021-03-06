@@ -51,6 +51,12 @@ namespace Azure { namespace Core {
      */
     virtual std::string GetResumeToken() const = 0;
 
+    /**
+     * @brief Get the raw HTTP response.
+     * @return A pointer to #Azure::Core::Http::RawResponse or null if the RawResponse does not
+     * exist.
+     * @note Does not give up ownership of the RawResponse
+     */
     virtual Azure::Core::Http::RawResponse* GetRawResponse() const = 0;
 
     /**
