@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     StartCopyBlobOperation() = default;
 
-    StartCopyBlobOperation(StartCopyBlobOperation&&) noexcept = default;
+    StartCopyBlobOperation(StartCopyBlobOperation&&) = default;
 
     StartCopyBlobOperation& operator=(StartCopyBlobOperation&&) = default;
 

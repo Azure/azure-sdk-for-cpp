@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     StartCopyShareFileOperation() = default;
 
-    StartCopyShareFileOperation(StartCopyShareFileOperation&&) noexcept = default;
+    StartCopyShareFileOperation(StartCopyShareFileOperation&&) = default;
 
     StartCopyShareFileOperation& operator=(StartCopyShareFileOperation&&) = default;
 
