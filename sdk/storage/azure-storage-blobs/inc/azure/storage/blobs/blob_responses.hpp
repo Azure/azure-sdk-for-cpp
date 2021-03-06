@@ -87,11 +87,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A pointer to #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    Azure::Core::Http::RawResponse* GetRawResponse() const override
-    {
-      // TODO: Fix to return the rawResponse
-      return nullptr;
-    }
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+
+    StartCopyBlobOperation() = default;
+
+    StartCopyBlobOperation(StartCopyBlobOperation&&) = default;
+
+    StartCopyBlobOperation& operator=(StartCopyBlobOperation&&) = default;
 
     ~StartCopyBlobOperation() override {}
 
@@ -109,6 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
     std::shared_ptr<BlobClient> m_blobClient;
     Models::GetBlobPropertiesResult m_pollResult;
 

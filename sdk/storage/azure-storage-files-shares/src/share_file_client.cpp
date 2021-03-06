@@ -374,6 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     StartCopyShareFileOperation res;
+    res.m_rawResponse = response.ExtractRawResponse();
     res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
