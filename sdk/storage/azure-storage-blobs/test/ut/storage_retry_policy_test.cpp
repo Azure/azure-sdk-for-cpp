@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Test {
     int64_t elapsedTime
         = std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeBegin).count();
     EXPECT_GE(elapsedTime, delayMs * 0.5);
-    EXPECT_LE(elapsedTime, delayMs * 2);
+    EXPECT_LE(elapsedTime, delayMs * 4);
   }
 
   TEST(StorageRetryPolicyTest, Failover)
