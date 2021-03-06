@@ -680,6 +680,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto destFileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
       auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
+      EXPECT_NE(copyOperation.GetRawResponse(), nullptr);
       EXPECT_FALSE(copyOperation.RequestId.empty());
       EXPECT_TRUE(copyOperation.ETag.HasValue());
       EXPECT_TRUE(IsValidTime(copyOperation.LastModified));

@@ -203,11 +203,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return A pointer to #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    Azure::Core::Http::RawResponse* GetRawResponse() const override
-    {
-      // TODO: Fix to return the rawResponse
-      return nullptr;
-    }
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+
+    StartCopyShareFileOperation() = default;
+
+    StartCopyShareFileOperation(StartCopyShareFileOperation&&) noexcept = default;
+
+    StartCopyShareFileOperation& operator=(StartCopyShareFileOperation&&) = default;
 
     ~StartCopyShareFileOperation() override {}
 
@@ -225,6 +227,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
     std::shared_ptr<ShareFileClient> m_fileClient;
     Models::GetShareFilePropertiesResult m_pollResult;
 
