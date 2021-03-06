@@ -12,7 +12,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
-#include <azure/core/response.hpp>
+#include <azure/response.hpp>
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/keyvault/common/keyvault_exception.hpp>
@@ -47,7 +47,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
+    Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override
     {
@@ -61,7 +61,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::this_thread::sleep_for(period);
       }
 
-      return Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey>(
+      return Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey>(
           m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
     }
 
@@ -74,7 +74,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     DeleteKeyOperation(
         std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>
             keyvaultPipeline,
-        Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
+        Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
   public:
     /**

@@ -11,7 +11,7 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/client_options.hpp>
-#include <azure/core/response.hpp>
+#include <azure/response.hpp>
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
 

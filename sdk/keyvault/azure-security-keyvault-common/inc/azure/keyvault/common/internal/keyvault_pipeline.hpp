@@ -14,7 +14,7 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json.hpp>
 #include <azure/core/internal/json_serializable.hpp>
-#include <azure/core/response.hpp>
+#include <azure/response.hpp>
 
 #include <functional>
 #include <memory>
@@ -93,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>
-    Azure::Core::Response<T> SendRequest(
+    Azure::Response<T> SendRequest(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
@@ -101,7 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     {
       auto request = CreateRequest(method, path);
       auto response = SendRequest(context, request);
-      return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
+      return Azure::Response<T>(factoryFn(*response), std::move(response));
     }
 
     /**
@@ -116,7 +116,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>
-    Azure::Core::Response<T> SendRequest(
+    Azure::Response<T> SendRequest(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         Azure::Core::Internal::Json::JsonSerializable const& content,
@@ -129,7 +129,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
-      return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
+      return Azure::Response<T>(factoryFn(*response), std::move(response));
     }
 
     /**

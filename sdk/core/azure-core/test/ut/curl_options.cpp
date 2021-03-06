@@ -8,7 +8,7 @@
 #include <azure/core/http/policy.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/response.hpp>
+#include <azure/response.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl/curl.hpp"

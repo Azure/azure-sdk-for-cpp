@@ -7,7 +7,7 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
-#include <azure/core/response.hpp>
+#include <azure/response.hpp>
 #include <memory>
 #include <string>
 #include <thread>

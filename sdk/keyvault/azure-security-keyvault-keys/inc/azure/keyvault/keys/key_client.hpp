@@ -73,7 +73,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
-    Azure::Core::Response<KeyVaultKey> GetKey(
+    Azure::Response<KeyVaultKey> GetKey(
         std::string const& name,
         GetKeyOptions const& options = GetKeyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -91,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Key wrapped in the Response.
      */
-    Azure::Core::Response<KeyVaultKey> CreateKey(
+    Azure::Response<KeyVaultKey> CreateKey(
         std::string const& name,
         JsonWebKeyType keyType,
         CreateKeyOptions const& options = CreateKeyOptions(),
@@ -109,7 +109,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return The Key wrapped in the Response.
      */
-    Azure::Core::Response<KeyVaultKey> CreateEcKey(
+    Azure::Response<KeyVaultKey> CreateEcKey(
         CreateEcKeyOptions const& ecKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -125,7 +125,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return The Key wrapped in the Response.
      */
-    Azure::Core::Response<KeyVaultKey> CreateRsaKey(
+    Azure::Response<KeyVaultKey> CreateRsaKey(
         CreateRsaKeyOptions const& rsaKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -141,7 +141,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return The Key wrapped in the Response.
      */
-    Azure::Core::Response<KeyVaultKey> CreateOctKey(
+    Azure::Response<KeyVaultKey> CreateOctKey(
         CreateOctKeyOptions const& octKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
