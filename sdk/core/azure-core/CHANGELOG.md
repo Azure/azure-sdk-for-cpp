@@ -11,6 +11,7 @@
 - Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
 - Split `Azure::Core::RequestConditions` into `Azure::Core::MatchConditions` and `Azure::Core::ModifiedConditions`.
 - Removed `TransportKind` enum from `Azure::Core::Http`.
+- Added `Azure::Core::Operation<T>::GetRawResponse().`
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
