@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       // - TelemetryPolicy
       // - RequestIdPolicy
       // - RetryPolicy
-      // - LoggingPolicy
+      // - LogPolicy
       // - TransportPolicy
       auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
           + perRetryPolicies.size() + perCallPolicies.size() + 5;
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
       }
 
       // logging - won't update request
-      m_policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::LogPolicy>(clientOptions.Log));
 
       // transport
       m_policies.emplace_back(
@@ -166,18 +166,18 @@ namespace Azure { namespace Core { namespace Internal { namespace Http {
     /**
      * @brief Start the HTTP pipeline.
      *
-     * @param ctx #Azure::Core::Context so that operation can be cancelled.
      * @param request The HTTP request to be processed.
+     * @param ctx #Azure::Core::Context so that operation can be cancelled.
      *
      * @return HTTP response after the request has been processed.
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        Context const& ctx,
-        Azure::Core::Http::Request& request) const
+        Azure::Core::Http::Request& request,
+        Context const& ctx) const
     {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
-      return m_policies[0]->Send(ctx, request, Azure::Core::Http::NextHttpPolicy(0, m_policies));
+      return m_policies[0]->Send(request, Azure::Core::Http::NextHttpPolicy(0, m_policies), ctx);
     }
   };
 }}}} // namespace Azure::Core::Internal::Http

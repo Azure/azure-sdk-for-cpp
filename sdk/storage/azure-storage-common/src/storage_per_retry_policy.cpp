@@ -11,9 +11,9 @@
 namespace Azure { namespace Storage { namespace Details {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
-      Core::Context const& ctx,
       Core::Http::Request& request,
-      Core::Http::NextHttpPolicy nextHttpPolicy) const
+      Core::Http::NextHttpPolicy nextHttpPolicy,
+      Core::Context const& ctx) const
   {
     const char* HttpHeaderDate = "Date";
     const char* HttpHeaderXMsDate = "x-ms-date";
@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Details {
               .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
     }
 
-    return nextHttpPolicy.Send(ctx, request);
+    return nextHttpPolicy.Send(request, ctx);
   }
 
 }}} // namespace Azure::Storage::Details

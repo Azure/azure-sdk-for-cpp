@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Test {
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::IO::BodyStream>& stream)
   {
     Azure::Core::Context context;
-    return Azure::IO::BodyStream::ReadToEnd(context, *stream);
+    return Azure::IO::BodyStream::ReadToEnd(*stream, context);
   }
 
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::IO::BodyStream>&& stream)

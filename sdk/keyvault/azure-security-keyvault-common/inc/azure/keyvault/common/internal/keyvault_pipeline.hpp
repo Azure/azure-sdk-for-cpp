@@ -148,7 +148,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     {
       auto request = CreateRequest(method, path);
       // Use the core pipeline directly to avoid checking the response code.
-      return m_pipeline.Send(context, request);
+      return m_pipeline.Send(request, context);
     }
 
     /**

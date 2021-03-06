@@ -47,12 +47,13 @@ namespace Azure { namespace Core {
     /**
      * @brief Get an authentication token.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param tokenRequestOptions Options to get the token.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     *
      */
     virtual AccessToken GetToken(
-        Context const& context,
-        Http::TokenRequestOptions const& tokenRequestOptions) const = 0;
+        Http::TokenRequestOptions const& tokenRequestOptions,
+        Context const& context) const = 0;
 
     /// Destructor.
     virtual ~TokenCredential() = default;

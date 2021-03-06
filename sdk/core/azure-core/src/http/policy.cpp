@@ -9,7 +9,7 @@ using namespace Azure::Core::Http;
 
 // The NextHttpPolicy can't be created from a nullptr because it is a reference. So we don't need to
 // check if m_policies is nullptr.
-std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& req)
+std::unique_ptr<RawResponse> NextHttpPolicy::Send(Request& req, Context const& ctx)
 {
   if (m_index == m_policies.size() - 1)
   {
@@ -17,5 +17,5 @@ std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& r
     throw std::invalid_argument("Invalid pipeline. No transport policy found. Endless policy.");
   }
 
-  return m_policies[m_index + 1]->Send(ctx, req, NextHttpPolicy{m_index + 1, m_policies});
+  return m_policies[m_index + 1]->Send(req, NextHttpPolicy{m_index + 1, m_policies}, ctx);
 }

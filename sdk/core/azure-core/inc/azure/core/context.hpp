@@ -126,7 +126,12 @@ namespace Azure { namespace Core {
      *
      * @param p Smart pointer to #Azure::Core::ValueBase.
      */
-    ContextValue(std::unique_ptr<ValueBase>&& p) noexcept
+    template <
+        class DerivedFromValueBase,
+        typename std::
+            enable_if<std::is_convertible<DerivedFromValueBase*, ValueBase*>::value, int>::type
+        = 0>
+    ContextValue(std::unique_ptr<DerivedFromValueBase>&& p)
         : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
     {
     }

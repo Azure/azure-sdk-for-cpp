@@ -66,6 +66,7 @@ namespace Azure { namespace Core { namespace Internal {
       this->Retry = other.Retry;
       this->Transport = other.Transport;
       this->Telemetry = other.Telemetry;
+	  this->Log = other.Log;
       this->PerOperationPolicies.reserve(other.PerOperationPolicies.size());
       for (auto& policy : other.PerOperationPolicies)
       {
@@ -93,6 +94,12 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Telemetry options.
      */
     Azure::Core::Http::TelemetryOptions Telemetry;
+
+    /**
+     * @brief Define the information to be used for logging.
+     *
+     */
+    Azure::Core::Http::LogOptions Log;
   };
 
 }}} // namespace Azure::Core::Internal

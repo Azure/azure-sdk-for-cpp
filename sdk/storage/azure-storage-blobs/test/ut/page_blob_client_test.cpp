@@ -150,6 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     sourceUri.AppendQueryParameters(GetSas());
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
+    EXPECT_NE(copyInfo.GetRawResponse(), nullptr);
     EXPECT_FALSE(copyInfo.RequestId.empty());
     EXPECT_TRUE(copyInfo.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(copyInfo.LastModified));
@@ -313,7 +314,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(
-        Azure::IO::BodyStream::ReadToEnd(Azure::Core::Context(), *downloadStream), m_blobContent);
+        Azure::IO::BodyStream::ReadToEnd(*downloadStream, Azure::Core::Context()), m_blobContent);
   }
 
 }}} // namespace Azure::Storage::Test

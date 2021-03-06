@@ -198,6 +198,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   public:
     Models::GetShareFilePropertiesResult Value() const override { return m_pollResult; }
 
+    /**
+     * @brief Get the raw HTTP response.
+     * @return A pointer to #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+
+    StartCopyShareFileOperation() = default;
+
+    StartCopyShareFileOperation(StartCopyShareFileOperation&&) = default;
+
+    StartCopyShareFileOperation& operator=(StartCopyShareFileOperation&&) = default;
+
     ~StartCopyShareFileOperation() override {}
 
   private:
@@ -211,9 +224,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Context& context) override;
 
     Azure::Core::Response<Models::GetShareFilePropertiesResult> PollUntilDoneInternal(
-        Azure::Core::Context& context,
-        std::chrono::milliseconds period) override;
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override;
 
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
     std::shared_ptr<ShareFileClient> m_fileClient;
     Models::GetShareFilePropertiesResult m_pollResult;
 

@@ -110,6 +110,9 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
+using Azure::Core::Logger;
+using Azure::Core::Internal::Log;
+
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
@@ -127,15 +130,12 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
 
+    if (Log::ShouldWrite(Logger::Level::Verbose))
     {
-      using namespace Azure::Core::Logging;
-      using namespace Azure::Core::Logging::Internal;
-      if (ShouldLog(LogLevel::Verbose))
-      {
-        Log(LogLevel::Verbose,
-            LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
-                + std::to_string(ideal) + " result = " + std::to_string(result));
-      }
+      Log::Write(
+          Logger::Level::Verbose,
+          LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
+              + std::to_string(ideal) + " result = " + std::to_string(result));
     }
   }
 }
@@ -154,13 +154,10 @@ using Azure::Core::Http::RawResponse;
 using Azure::Core::Http::Request;
 using Azure::Core::Http::TransportException;
 
-std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
+std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const& context)
 {
-  using namespace Azure::Core::Logging;
-  using namespace Azure::Core::Logging::Internal;
-
   // Create CurlSession to perform request
-  Log(LogLevel::Verbose, LogMsgPrefix + "Creating a new session.");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
   auto session = std::make_unique<CurlSession>(
       request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
@@ -192,7 +189,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
         "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
 
-  Log(LogLevel::Verbose,
+  Log::Write(
+      Logger::Level::Verbose,
       LogMsgPrefix + "Request completed. Moving response out of session and session to response.");
 
   // Move Response out of the session
@@ -204,9 +202,6 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 
 CURLcode CurlSession::Perform(Context const& context)
 {
-  using namespace Azure::Core::Logging;
-  using namespace Azure::Core::Logging::Internal;
-
   // Set the session state
   m_sessionState = SessionState::PERFORM;
 
@@ -216,13 +211,13 @@ CURLcode CurlSession::Perform(Context const& context)
     auto hostHeader = headers.find("Host");
     if (hostHeader == headers.end())
     {
-      Log(LogLevel::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
+      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
       this->m_request.SetHeader("Host", this->m_request.GetUrl().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
     {
-      Log(LogLevel::Verbose, LogMsgPrefix + "No content-length in headers. Adding it");
+      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No content-length in headers. Adding it");
       this->m_request.SetHeader(
           "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
     }
@@ -231,14 +226,14 @@ CURLcode CurlSession::Perform(Context const& context)
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put)
   {
-    Log(LogLevel::Verbose, LogMsgPrefix + "Using 100-continue for PUT request");
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Using 100-continue for PUT request");
     this->m_request.SetHeader("expect", "100-continue");
   }
 
   // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
   // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
-  Log(LogLevel::Verbose, LogMsgPrefix + "Send request without payload");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Send request without payload");
 
   auto result = SendRawHttp(context);
   if (result != CURLE_OK)
@@ -246,7 +241,7 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Parse server response");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
 
   // non-PUT request are ready to be stream at this point. Only PUT request would start an uploading
@@ -257,17 +252,17 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Check server response before upload starts");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Check server response before upload starts");
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
   if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
-    Log(LogLevel::Verbose, LogMsgPrefix + "Server rejected the upload request");
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Server rejected the upload request");
     m_sessionState = SessionState::STREAMING;
     return result; // Won't upload.
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Upload payload");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Upload payload");
   if (this->m_bodyStartInBuffer > 0)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
@@ -285,7 +280,7 @@ CURLcode CurlSession::Perform(Context const& context)
     return result; // will throw transport exception before trying to read
   }
 
-  Log(LogLevel::Verbose, LogMsgPrefix + "Upload completed. Parse server response");
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Upload completed. Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
   // If no throw at this point, the request is ready to stream.
   // If any throw happened before this point, the state will remain as PERFORM.
@@ -335,9 +330,9 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(std::string const& header
 
 // Send buffer thru the wire
 CURLcode CurlConnection::SendBuffer(
-    Context const& context,
     uint8_t const* buffer,
-    size_t bufferSize)
+    size_t bufferSize,
+    Context const& context)
 {
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
@@ -410,13 +405,13 @@ CURLcode CurlSession::UploadBody(Context const& context)
 
   while (true)
   {
-    auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), uploadChunkSize);
+    auto rawRequestLen = streamBody->Read(unique_buffer.get(), uploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
     }
     sendResult = m_connection->SendBuffer(
-        context, unique_buffer.get(), static_cast<size_t>(rawRequestLen));
+        unique_buffer.get(), static_cast<size_t>(rawRequestLen), context);
     if (sendResult != CURLE_OK)
     {
       return sendResult;
@@ -433,9 +428,9 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
   int64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = m_connection->SendBuffer(
-      context,
       reinterpret_cast<uint8_t const*>(rawRequest.data()),
-      static_cast<size_t>(rawRequestLen));
+      static_cast<size_t>(rawRequestLen),
+      context);
 
   if (sendResult != CURLE_OK || this->m_request.GetMethod() == HttpMethod::Put)
   {
@@ -497,7 +492,7 @@ void CurlSession::ParseChunkSize(Context const& context)
            * indicate the the next read call should read from the inner buffer start.
            */
           this->m_innerBufferSize = m_connection->ReadFromSocket(
-              context, this->m_readBuffer, Details::DefaultLibcurlReaderSize);
+              this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -517,7 +512,7 @@ void CurlSession::ParseChunkSize(Context const& context)
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize = m_connection->ReadFromSocket(
-          context, this->m_readBuffer, Details::DefaultLibcurlReaderSize);
+          this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -553,7 +548,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       // Try to fill internal buffer from socket.
       // If response is smaller than buffer, we will get back the size of the response
       bufferSize = m_connection->ReadFromSocket(
-          context, this->m_readBuffer, Details::DefaultLibcurlReaderSize);
+          this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
       if (bufferSize == 0)
       {
         // closed connection, prevent application from keep trying to pull more bytes from the wire
@@ -615,7 +610,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize = m_connection->ReadFromSocket(
-            context, this->m_readBuffer, Details::DefaultLibcurlReaderSize);
+            this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -632,13 +627,13 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   */
 }
 
-void CurlSession::ReadExpected(Context const& context, uint8_t expected)
+void CurlSession::ReadExpected(uint8_t expected, Context const& context)
 {
   if (this->m_bodyStartInBuffer == -1 || this->m_bodyStartInBuffer == this->m_innerBufferSize)
   {
     // end of buffer, pull data from wire
     this->m_innerBufferSize = m_connection->ReadFromSocket(
-        context, this->m_readBuffer, Details::DefaultLibcurlReaderSize);
+        this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
     this->m_bodyStartInBuffer = 0;
   }
   auto data = this->m_readBuffer[this->m_bodyStartInBuffer];
@@ -653,12 +648,12 @@ void CurlSession::ReadExpected(Context const& context, uint8_t expected)
 
 void CurlSession::ReadCRLF(Context const& context)
 {
-  ReadExpected(context, '\r');
-  ReadExpected(context, '\n');
+  ReadExpected('\r', context);
+  ReadExpected('\n', context);
 }
 
 // Read from curl session
-int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t count)
+int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& context)
 {
   if (count <= 0 || this->IsEOF())
   {
@@ -707,7 +702,7 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
         this->m_readBuffer + this->m_bodyStartInBuffer,
         this->m_innerBufferSize - this->m_bodyStartInBuffer);
 
-    totalRead = innerBufferMemoryStream.Read(context, buffer, readRequestLength);
+    totalRead = innerBufferMemoryStream.Read(buffer, readRequestLength, context);
     this->m_bodyStartInBuffer += totalRead;
     this->m_sessionTotalRead += totalRead;
 
@@ -727,7 +722,7 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
 
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
-  totalRead = m_connection->ReadFromSocket(context, buffer, static_cast<size_t>(readRequestLength));
+  totalRead = m_connection->ReadFromSocket(buffer, static_cast<size_t>(readRequestLength), context);
   this->m_sessionTotalRead += totalRead;
 
   // Reading 0 bytes means closed connection.
@@ -752,7 +747,7 @@ int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t cou
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize)
+int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
 {
   // loop until read result is not CURLE_AGAIN
   // Next loop is expected to be called at most 2 times:

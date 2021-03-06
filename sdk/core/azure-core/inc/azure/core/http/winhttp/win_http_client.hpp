@@ -31,8 +31,8 @@ namespace Azure { namespace Core { namespace Http {
       HINTERNET m_connectionHandle;
       HINTERNET m_requestHandle;
 
-      HandleManager(Context const& context, Request& request)
-          : m_context(context), m_request(request)
+      HandleManager(Request& request, Context const& context)
+          : m_request(request), m_context(context)
       {
         m_sessionHandle = NULL;
         m_connectionHandle = NULL;
@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Http {
        * @param count The number of bytes to read from the network.
        * @return The actual number of bytes read from the network.
        */
-      int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
     public:
       WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)
@@ -162,7 +162,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param request an HTTP request to be send.
      * @return A unique pointer to an HTTP RawResponse.
      */
-    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
+    virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
   };
 
 }}} // namespace Azure::Core::Http

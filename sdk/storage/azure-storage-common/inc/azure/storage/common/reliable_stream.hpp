@@ -18,7 +18,7 @@ namespace Azure { namespace Storage {
 
   // Defines a fn signature to be use to get a bodyStream from a specific offset.
   typedef std::function<
-      std::unique_ptr<Azure::IO::BodyStream>(Azure::Core::Context const&, HttpGetterInfo const&)>
+      std::unique_ptr<Azure::IO::BodyStream>(HttpGetterInfo const&, Azure::Core::Context const&)>
       HTTPGetter;
 
   // Options used by reliable stream
@@ -51,7 +51,7 @@ namespace Azure { namespace Storage {
     // Options to use when getting a new bodyStream like current offset
     HttpGetterInfo m_retryInfo;
 
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
     explicit ReliableStream(

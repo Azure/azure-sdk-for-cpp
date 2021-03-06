@@ -12,7 +12,7 @@ using namespace Azure::Core::Internal::Http;
 namespace {
 
 class NoOpPolicy : public HttpPolicy {
-  std::unique_ptr<RawResponse> Send(Context const& context, Request& request, NextHttpPolicy policy)
+  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
       const override
   {
     (void)context;
@@ -73,10 +73,10 @@ TEST(TelemetryPolicy, telemetryString)
   auto request4 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
 
   Context context;
-  pipeline1.Send(context, request1);
-  pipeline2.Send(context, request2);
-  pipeline3.Send(context, request3);
-  pipeline4.Send(context, request4);
+  pipeline1.Send(request1, context);
+  pipeline2.Send(request2, context);
+  pipeline3.Send(request3, context);
+  pipeline4.Send(request4, context);
 
   auto const headers1 = request1.GetHeaders();
   auto const headers2 = request2.GetHeaders();

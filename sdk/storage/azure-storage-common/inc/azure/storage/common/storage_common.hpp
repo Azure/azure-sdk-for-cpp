@@ -10,7 +10,12 @@
 #include <string>
 #include <vector>
 
-#include <azure/core/case_insensitive_map.hpp>
+#include <azure/core/case_insensitive_containers.hpp>
+#include <azure/core/http/policy.hpp>
+
+#include "azure/storage/common/constants.hpp"
+#include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 
 namespace Azure { namespace Storage {
 

@@ -128,12 +128,14 @@ namespace Azure { namespace Storage { namespace Sas {
       snapshotVersion = BlobVersionId;
     }
 
-    std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
-        : "";
-    std::string expiresOnStr = Identifier.empty()
-        ? ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
-        : "";
+    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
+                                  Azure::Core::DateTime::DateFormat::Rfc3339,
+                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
+    std::string expiresOnStr = Identifier.empty() ? ExpiresOn.ToString(
+                                   Azure::Core::DateTime::DateFormat::Rfc3339,
+                                   Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
@@ -222,14 +224,18 @@ namespace Azure { namespace Storage { namespace Sas {
       snapshotVersion = BlobVersionId;
     }
 
-    std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
-        : "";
-    std::string expiresOnStr
-        = ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate);
-    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.GetRfc3339String(
+    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
+                                  Azure::Core::DateTime::DateFormat::Rfc3339,
+                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
+    std::string expiresOnStr = ExpiresOn.ToString(
+        Azure::Core::DateTime::DateFormat::Rfc3339,
         Azure::Core::DateTime::TimeFractionFormat::Truncate);
-    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.GetRfc3339String(
+    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
+        Azure::Core::DateTime::DateFormat::Rfc3339,
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
+        Azure::Core::DateTime::DateFormat::Rfc3339,
         Azure::Core::DateTime::TimeFractionFormat::Truncate);
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"

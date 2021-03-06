@@ -48,8 +48,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context& context) override;
 
     Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
-        Azure::Core::Context& context,
-        std::chrono::milliseconds period) override
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override
     {
       while (true)
       {
@@ -77,6 +77,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
   public:
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A pointer to #Azure::Core::Http::RawResponse or null.
+     */
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
      *

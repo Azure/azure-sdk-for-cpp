@@ -89,11 +89,6 @@
           "name": "BUILD_PERFORMANCE_TESTS",
           "value": "true",
           "type": "BOOL"
-        },
-        {
-          "name": "CMAKE_BUILD_TYPE",
-          "value": "MinSizeRel",
-          "type": "STRING"
         }
       ]
     },
@@ -137,11 +132,6 @@
           "name": "BUILD_PERFORMANCE_TESTS",
           "value": "True",
           "type": "BOOL"
-        },
-        {
-          "name": "CMAKE_BUILD_TYPE",
-          "value": "MinSizeRel",
-          "type": "STRING"
         }
       ]
     },
@@ -180,11 +170,6 @@
           "name": "BUILD_PERFORMANCE_TESTS",
           "value": "True",
           "type": "BOOL"
-        },
-        {
-          "name": "CMAKE_BUILD_TYPE",
-          "value": "MinSizeRel",
-          "type": "STRING"
         }
       ]
     },
@@ -218,11 +203,6 @@
           "name": "BUILD_PERFORMANCE_TESTS",
           "value": "True",
           "type": "BOOL"
-        },
-        {
-          "name": "CMAKE_BUILD_TYPE",
-          "value": "MinSizeRel",
-          "type": "STRING"
         }
       ]
     }

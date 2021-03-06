@@ -28,6 +28,8 @@ class DllExportTest {
 
 TEST(SimplifiedHeader, core)
 {
+  EXPECT_NO_THROW(Azure::Core::CaseInsensitiveMap imap);
+  EXPECT_NO_THROW(Azure::Core::CaseInsensitiveSet iset);
   EXPECT_NO_THROW(Azure::Core::Context c);
   EXPECT_NO_THROW(Azure::Core::DateTime(2020, 11, 03, 15, 30, 44));
   EXPECT_NO_THROW(Azure::Core::ETag e);
@@ -35,6 +37,7 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::Cryptography::Md5Hash m);
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse r(
       1, 1, Azure::Core::Http::HttpStatusCode::Accepted, "phrase"));
+  EXPECT_NO_THROW(Azure::Core::Logger::Listener ll = nullptr);
   EXPECT_NO_THROW(Azure::Core::MatchConditions mc);
   EXPECT_NO_THROW(Azure::Core::ModifiedConditions mc);
   EXPECT_NO_THROW(Azure::Core::Nullable<int> n);
