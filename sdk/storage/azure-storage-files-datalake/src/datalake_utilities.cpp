@@ -76,8 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options)
   {
     Blobs::BlobClientOptions blobOptions;
-    *(static_cast<Azure::Core::Internal::ClientOptions*>(&blobOptions))
-        = Azure::Core::Internal::ClientOptions(options);
+    *(static_cast<Azure::Core::Internal::ClientOptions*>(&blobOptions)) = options;
     blobOptions.SecondaryHostForRetryReads
         = Details::GetBlobUrlFromUrl(options.SecondaryHostForRetryReads);
     blobOptions.ApiVersion = options.ApiVersion;

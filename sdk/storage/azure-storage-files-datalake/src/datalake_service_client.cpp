@@ -86,7 +86,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakeServiceClient(serviceUrl, options)
+      : m_serviceUrl(serviceUrl), m_blobServiceClient(
+                                      Details::GetBlobUrlFromUrl(serviceUrl),
+                                      credential,
+                                      Details::GetBlobClientOptions(options))
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -116,7 +119,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakeServiceClient(serviceUrl, options)
+      : m_serviceUrl(serviceUrl), m_blobServiceClient(
+                                      Details::GetBlobUrlFromUrl(serviceUrl),
+                                      credential,
+                                      Details::GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
