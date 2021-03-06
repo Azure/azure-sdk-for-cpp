@@ -23,9 +23,9 @@ namespace Azure { namespace Storage { namespace Details {
     }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        const Azure::Core::Context& ctx,
         Azure::Core::Http::Request& request,
-        Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override;
+        Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+        const Azure::Core::Context& ctx) const override;
 
   private:
     std::string m_primaryHost;

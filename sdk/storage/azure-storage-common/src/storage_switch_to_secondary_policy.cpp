@@ -6,9 +6,9 @@
 namespace Azure { namespace Storage { namespace Details {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
-      const Azure::Core::Context& ctx,
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const
+      Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+      const Azure::Core::Context& ctx) const
   {
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Details {
       }
     }
 
-    auto response = nextHttpPolicy.Send(ctx, request);
+    auto response = nextHttpPolicy.Send(request, ctx);
 
     if (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
         || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
