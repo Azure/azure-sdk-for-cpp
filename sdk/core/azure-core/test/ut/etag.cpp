@@ -3,11 +3,11 @@
 
 #include <gtest/gtest.h>
 
-#include <azure/core/etag.hpp>
+#include <azure/etag.hpp>
 
 #include <limits>
 
-using namespace Azure::Core;
+using namespace Azure;
 
 TEST(ETag, ToString)
 {

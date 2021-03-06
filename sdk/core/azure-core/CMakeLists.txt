@@ -69,7 +69,6 @@ set(
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
-    inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/logger.hpp
     inc/azure/core/match_conditions.hpp
@@ -81,6 +80,7 @@ set(
     inc/azure/core/uuid.hpp
     inc/azure/core/version.hpp
     inc/azure/core.hpp
+    inc/azure/etag.hpp
     inc/azure/response.hpp
 )
 

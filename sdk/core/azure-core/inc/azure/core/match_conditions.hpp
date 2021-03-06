@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/core/etag.hpp"
+#include "azure/etag.hpp"
 
 #include <string>
 
@@ -26,7 +26,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Optionally limit requests to resources that do not match the value specified. Specify
-     * Azure::Core::ETag::Any() to limit requests to resources that do not exist.
+     * Azure::ETag::Any() to limit requests to resources that do not exist.
      */
     ETag IfNoneMatch;
   };
