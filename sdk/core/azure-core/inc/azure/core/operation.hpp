@@ -51,6 +51,8 @@ namespace Azure { namespace Core {
      */
     virtual std::string GetResumeToken() const = 0;
 
+    virtual Azure::Core::Http::RawResponse* GetRawResponse() const = 0;
+
     /**
      * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
      */
