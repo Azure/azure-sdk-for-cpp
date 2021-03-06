@@ -10,7 +10,8 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-  static constexpr const char* SecondaryHostReplicaStatusKey = "AzureSdkStorageSecondaryHostReplicaStatusKey";
+  static constexpr const char* SecondaryHostReplicaStatusKey
+      = "AzureSdkStorageSecondaryHostReplicaStatusKey";
 
   struct SecondaryHostReplicaStatus : public Azure::Core::ValueBase
   {

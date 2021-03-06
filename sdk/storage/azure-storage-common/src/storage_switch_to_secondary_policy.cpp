@@ -36,8 +36,10 @@ namespace Azure { namespace Storage { namespace Details {
 
     auto response = nextHttpPolicy.Send(request, ctx);
 
-    if (considerSecondary && (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
-        || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed) && request.GetUrl().GetHost() == m_secondaryHost)
+    if (considerSecondary
+        && (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
+            || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
+        && request.GetUrl().GetHost() == m_secondaryHost)
     {
       replicaStatus->replicated = false;
       // switch back
