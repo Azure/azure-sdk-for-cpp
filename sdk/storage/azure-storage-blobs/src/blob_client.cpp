@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     auto downloadResponse = Details::BlobRestClient::Blob::Download(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
 
     {
       // In case network failure during reading the body
@@ -479,7 +479,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     auto response = Details::BlobRestClient::Blob::GetProperties(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
     if (response->Tier.HasValue() && !response->IsAccessTierInferred.HasValue())
     {
       response->IsAccessTierInferred = false;
@@ -693,7 +693,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Details::BlobRestClient::Blob::GetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::Blob::GetTags(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

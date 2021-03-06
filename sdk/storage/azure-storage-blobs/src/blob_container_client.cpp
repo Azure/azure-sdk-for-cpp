@@ -253,7 +253,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
     auto response = Details::BlobRestClient::BlobContainer::ListBlobsSinglePage(
-        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context),
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions);
     for (auto& i : response->Items)
     {
       if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
@@ -286,7 +289,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
     auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
-        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context),
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions);
     for (auto& i : response->Items)
     {
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
@@ -306,7 +312,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return Details::BlobRestClient::BlobContainer::GetAccessPolicy(
-        context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context),
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult>

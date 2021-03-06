@@ -10,15 +10,21 @@ namespace Azure { namespace Storage { namespace Details {
       Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
       const Azure::Core::Context& ctx) const
   {
+    SecondaryHostReplicaStatus* replicaStatus = nullptr;
+    if (ctx.HasKey(SecondaryHostReplicaStatusKey))
+    {
+      replicaStatus = dynamic_cast<SecondaryHostReplicaStatus*>(
+          ctx[SecondaryHostReplicaStatusKey].Get<std::unique_ptr<Azure::Core::ValueBase>>().get());
+    }
+
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
-        && !m_secondaryHost.empty();
+        && !m_secondaryHost.empty() && replicaStatus && replicaStatus->replicated;
 
-    int retryNumber = Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx);
-    if (retryNumber > 0)
+    if (considerSecondary && Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx) > 0)
     {
       // switch host
-      if (request.GetUrl().GetHost() == m_primaryHost && considerSecondary)
+      if (request.GetUrl().GetHost() == m_primaryHost)
       {
         request.GetUrl().SetHost(m_secondaryHost);
       }
@@ -30,11 +36,13 @@ namespace Azure { namespace Storage { namespace Details {
 
     auto response = nextHttpPolicy.Send(request, ctx);
 
-    if (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
-        || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
+    if (considerSecondary && (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NotFound
+        || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed) && request.GetUrl().GetHost() == m_secondaryHost)
     {
-      // FIXME: need a machenism to retain this value on a per-operation basis.
-      considerSecondary = false;
+      replicaStatus->replicated = false;
+      // switch back
+      request.GetUrl().SetHost(m_primaryHost);
+      response = nextHttpPolicy.Send(request, ctx);
     }
 
     return response;

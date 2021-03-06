@@ -291,7 +291,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
     return Details::DataLakeRestClient::FileSystem::ListPaths(
-        m_fileSystemUrl, *m_pipeline, context, protocolLayerOptions);
+        m_fileSystemUrl,
+        *m_pipeline,
+        Storage::Details::WithReplicaStatus(context),
+        protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>
