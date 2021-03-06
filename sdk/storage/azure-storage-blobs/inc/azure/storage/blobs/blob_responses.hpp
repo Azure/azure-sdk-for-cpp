@@ -84,8 +84,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Get the raw HTTP response.
-     * @return A pointer to #Azure::Core::Http::RawResponse or null if the RawResponse does not
-     * exist.
+     * @return A pointer to #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
     Azure::Core::Http::RawResponse* GetRawResponse() const override
