@@ -8,6 +8,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/file_io.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -320,7 +321,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::BlockBlob::GetBlockList(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

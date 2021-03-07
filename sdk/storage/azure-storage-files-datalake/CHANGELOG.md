@@ -4,12 +4,13 @@
 
 ### New Features
 
-- Added support for customized application ID.
+- Added support for telemetry options.
 
 ### Breaking Changes
 
 - DataLake client constructors won't automatically convert blob url to dfs url anymore.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+- Moved `SecondaryHostForRetryReads` out of retry options, now it's under `DataLakeClientOptions`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

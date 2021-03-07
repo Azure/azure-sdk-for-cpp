@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/internal/client_options.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/access_conditions.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
@@ -20,35 +20,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Client options used to initalize ShareServiceClient, ShareClient, ShareFileClient and
    * ShareDirectoryClient.
    */
-  struct ShareClientOptions
+  struct ShareClientOptions : Azure::Core::Internal::ClientOptions
   {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    Core::Http::RetryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportOptions TransportOptions;
-
-    /**
-     * @brief The last part of the user agent for telemetry.
-     */
-    std::string ApplicationId;
-
     /**
      * API version used by this client.
      */

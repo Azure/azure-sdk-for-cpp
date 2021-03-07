@@ -8,6 +8,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
@@ -209,7 +210,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (firstSlashPos == 0 || (firstSlashPos == currentPath.size() + 1U))
     {
       return Details::DataLakeRestClient::FileSystem::ListPaths(
-          m_pathUrl, *m_pipeline, context, protocolLayerOptions);
+          m_pathUrl,
+          *m_pipeline,
+          Storage::Details::WithReplicaStatus(context),
+          protocolLayerOptions);
     }
     else
     {
@@ -219,7 +223,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       fileSystemUrl.SetPath(currentPath.substr(
           0U, currentPath.size() - protocolLayerOptions.Directory.GetValue().size() - 1U));
       return Details::DataLakeRestClient::FileSystem::ListPaths(
-          fileSystemUrl, *m_pipeline, context, protocolLayerOptions);
+          fileSystemUrl,
+          *m_pipeline,
+          Storage::Details::WithReplicaStatus(context),
+          protocolLayerOptions);
     }
   }
 
