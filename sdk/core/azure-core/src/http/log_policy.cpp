@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <iterator>
 #include <sstream>
 
 using Azure::Core::Context;
