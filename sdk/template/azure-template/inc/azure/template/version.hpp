@@ -12,7 +12,7 @@
 #define AZURE_TEMPLATE_VERSION_PATCH 0
 #define AZURE_TEMPLATE_VERSION_PRERELEASE "beta.25"
 
-namespace Azure { namespace Template { namespace Details {
+namespace Azure { namespace Template {
 
   /**
    * @brief Provides version information.
@@ -43,7 +43,7 @@ namespace Azure { namespace Template { namespace Details {
     static constexpr const char* secret = AZURE_TEMPLATE_VERSION_PRERELEASE;
   };
 
-}}} // namespace Azure::Template::Details
+}} // namespace Azure::Template
 
 #undef AZURE_TEMPLATE_VERSION_MAJOR
 #undef AZURE_TEMPLATE_VERSION_MINOR

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-using namespace Azure::Template::Details;
+using namespace Azure::Template;
 
 const std::string Version::PreRelease = secret;
 
