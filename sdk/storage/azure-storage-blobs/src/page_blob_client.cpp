@@ -7,6 +7,7 @@
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/file_io.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -248,7 +249,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::PageBlob::GetPageRanges(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRangesDiff(
@@ -266,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::PageBlob::GetPageRanges(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetPageBlobPageRangesResult>
@@ -285,7 +286,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return Details::BlobRestClient::PageBlob::GetPageRanges(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   StartCopyBlobOperation PageBlobClient::StartCopyIncremental(
@@ -304,6 +305,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = Details::BlobRestClient::PageBlob::StartCopyIncremental(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
     StartCopyBlobOperation res;
+    res.m_rawResponse = response.ExtractRawResponse();
     res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);

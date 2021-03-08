@@ -6,7 +6,9 @@
 
 #include <algorithm>
 #include <chrono>
+#include <iterator>
 #include <sstream>
+#include <type_traits>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;

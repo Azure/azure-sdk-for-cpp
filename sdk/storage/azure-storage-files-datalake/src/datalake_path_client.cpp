@@ -8,6 +8,8 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
@@ -86,16 +88,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                 credential,
                                 Details::GetBlobClientOptions(options))
   {
-    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
-    telemetryPolicyOptions.ApplicationId = options.ApplicationId;
+    DataLakeClientOptions newOptions = options;
+    newOptions.PerRetryPolicies.emplace_back(
+        std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
+
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(
+        std::make_unique<Storage::Details::StorageSwitchToSecondaryPolicy>(
+            m_pathUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    {
+      Azure::Core::Http::Internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
+    }
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
-        Storage::Details::ConstructPolicies(
-            std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-                Storage::Details::BlobServicePackageName,
-                Details::Version::VersionString(),
-                telemetryPolicyOptions),
-            std::make_unique<Storage::Details::SharedKeyPolicy>(credential),
-            options));
+        newOptions,
+        Storage::Details::FileServicePackageName,
+        Details::Version::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
   DataLakePathClient::DataLakePathClient(
@@ -107,19 +121,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                 credential,
                                 Details::GetBlobClientOptions(options))
   {
-    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
-    telemetryPolicyOptions.ApplicationId = options.ApplicationId;
-    Azure::Core::Http::TokenRequestOptions tokenOptions;
-    tokenOptions.Scopes.emplace_back(Storage::Details::StorageScope);
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(
+        std::make_unique<Storage::Details::StorageSwitchToSecondaryPolicy>(
+            m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    {
+      Azure::Core::Http::TokenRequestOptions tokenOptions;
+      tokenOptions.Scopes.emplace_back(Storage::Details::StorageScope);
+      perRetryPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+              credential, tokenOptions));
+    }
+    {
+      Azure::Core::Http::Internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = options.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
+    }
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
-        Storage::Details::ConstructPolicies(
-            std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-                Storage::Details::BlobServicePackageName,
-                Details::Version::VersionString(),
-                telemetryPolicyOptions),
-            std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
-                credential, tokenOptions),
-            options));
+        options,
+        Storage::Details::FileServicePackageName,
+        Details::Version::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
   DataLakePathClient::DataLakePathClient(
@@ -128,16 +154,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_pathUrl(pathUrl),
         m_blobClient(Details::GetBlobUrlFromUrl(pathUrl), Details::GetBlobClientOptions(options))
   {
-    Azure::Core::Http::TelemetryOptions telemetryPolicyOptions;
-    telemetryPolicyOptions.ApplicationId = options.ApplicationId;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(
+        std::make_unique<Storage::Details::StorageSwitchToSecondaryPolicy>(
+            m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    {
+      Azure::Core::Http::Internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = options.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
+    }
     m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
-        Storage::Details::ConstructPolicies(
-            std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-                Storage::Details::BlobServicePackageName,
-                Details::Version::VersionString(),
-                telemetryPolicyOptions),
-            nullptr,
-            options));
+        options,
+        Storage::Details::FileServicePackageName,
+        Details::Version::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
   Azure::Core::Response<Models::SetDataLakePathAccessControlListResult>
@@ -371,7 +405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = Details::DataLakeRestClient::Path::GetProperties(
-        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
+        m_pathUrl, *m_pipeline, Storage::Details::WithReplicaStatus(context), protocolLayerOptions);
     Azure::Core::Nullable<std::vector<Models::Acl>> acl;
     if (result->Acl.HasValue())
     {

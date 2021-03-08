@@ -41,29 +41,44 @@ namespace Azure { namespace Core { namespace Internal {
      * @brief Move each policy from \p options into the new instance.
      *
      */
-    ClientOptions(ClientOptions&& options) = default;
+    ClientOptions(ClientOptions&&) = default;
 
     /**
      * @brief Copy each policy to the new instance.
      *
      */
-    ClientOptions(ClientOptions const& options)
-        : Retry(options.Retry), Transport(options.Transport), Telemetry(options.Telemetry),
-          Log(options.Log)
-    {
-      PerOperationPolicies.reserve(options.PerOperationPolicies.size());
-      for (auto& policy : options.PerOperationPolicies)
-      {
-        PerOperationPolicies.emplace_back(policy->Clone());
-      }
-      PerRetryPolicies.reserve(options.PerRetryPolicies.size());
-      for (auto& policy : options.PerRetryPolicies)
-      {
-        PerRetryPolicies.emplace_back(policy->Clone());
-      }
-    }
+    ClientOptions(ClientOptions const& other) { *this = other; }
 
     ClientOptions() = default;
+
+    /**
+     * @brief Move each policy from \p options into the this instance.
+     *
+     */
+    ClientOptions& operator=(ClientOptions&&) = default;
+
+    /**
+     * @brief Copy each policy to the this instance.
+     *
+     */
+    ClientOptions& operator=(const ClientOptions& other)
+    {
+      this->Retry = other.Retry;
+      this->Transport = other.Transport;
+      this->Telemetry = other.Telemetry;
+      this->Log = other.Log;
+      this->PerOperationPolicies.reserve(other.PerOperationPolicies.size());
+      for (auto& policy : other.PerOperationPolicies)
+      {
+        this->PerOperationPolicies.emplace_back(policy->Clone());
+      }
+      this->PerRetryPolicies.reserve(other.PerRetryPolicies.size());
+      for (auto& policy : other.PerRetryPolicies)
+      {
+        this->PerRetryPolicies.emplace_back(policy->Clone());
+      }
+      return *this;
+    }
 
     /**
      * @brief Specify the number of retries and other retry-related options.

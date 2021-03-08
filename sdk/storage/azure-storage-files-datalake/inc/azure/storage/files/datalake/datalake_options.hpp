@@ -24,34 +24,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Client options used to initalize DataLakeServiceClient, FileSystemClient, PathClient,
    * FileClient and DirectoryClient.
    */
-  struct DataLakeClientOptions
+  struct DataLakeClientOptions : Azure::Core::Internal::ClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportOptions TransportOptions;
-
-    /**
-     * @brief The last part of the user agent for telemetry.
-     */
-    std::string ApplicationId;
+    std::string SecondaryHostForRetryReads;
 
     /**
      * API version used by this client.

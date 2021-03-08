@@ -4,12 +4,13 @@
 
 ### New Features
 
-- Added support for customized application ID.
+- Added support for telemetry options.
 
 ### Breaking Changes
 
 - Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+- Moved `SecondaryHostForRetryReads` out of retry options, now it's under `BlobClientOptions`.
 
 ### Other Changes and Improvements
 
