@@ -17,7 +17,7 @@
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
-#include <azure/response.hpp>
+#include <azure/core/response.hpp>
 #include <iostream>
 #include <string>
 #include <thread>

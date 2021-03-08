@@ -14,7 +14,7 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json.hpp>
 #include <azure/core/internal/json_serializable.hpp>
-#include <azure/response.hpp>
+#include <azure/core/response.hpp>
 
 #include <functional>
 #include <memory>

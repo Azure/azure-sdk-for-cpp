@@ -12,7 +12,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
-#include <azure/response.hpp>
+#include <azure/core/response.hpp>
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/keyvault/common/keyvault_exception.hpp>

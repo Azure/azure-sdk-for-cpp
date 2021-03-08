@@ -22,12 +22,12 @@ namespace Azure { namespace Core {
     /**
      * @brief Optionally limit requests to resources that match the value specified.
      */
-    ETag IfMatch;
+    Azure::ETag IfMatch;
 
     /**
      * @brief Optionally limit requests to resources that do not match the value specified. Specify
-     * Azure::Core::ETag::Any() to limit requests to resources that do not exist.
+     * Azure::ETag::Any() to limit requests to resources that do not exist.
      */
-    ETag IfNoneMatch;
+    Azure::ETag IfNoneMatch;
   };
 }} // namespace Azure::Core

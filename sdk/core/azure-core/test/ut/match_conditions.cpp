@@ -7,6 +7,7 @@
 #include <string>
 
 using namespace Azure::Core;
+using namespace Azure;
 
 TEST(MatchConditions, Basic)
 {

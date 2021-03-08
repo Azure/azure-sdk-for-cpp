@@ -9,4 +9,5 @@
  *
  */
 
+#include "azure/core/etag.hpp"
 #include "azure/core/response.hpp"

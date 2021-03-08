@@ -10,7 +10,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/operation_status.hpp"
-#include "azure/response.hpp"
+#include "azure/core/response.hpp"
 
 #include <chrono>
 #include <memory>
