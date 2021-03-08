@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A CreateAppendBlobResult describing the newly created append blob.
      */
-    Azure::Core::Response<Models::CreateAppendBlobResult> Create(
+    Azure::Response<Models::CreateAppendBlobResult> Create(
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A CreateAppendBlobResult describing the newly created append blob.
      * CreateAppendBlobResult.Created is false if the blob already exists.
      */
-    Azure::Core::Response<Models::CreateAppendBlobResult> CreateIfNotExists(
+    Azure::Response<Models::CreateAppendBlobResult> CreateIfNotExists(
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A AppendBlockResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<Models::AppendBlockResult> AppendBlock(
+    Azure::Response<Models::AppendBlockResult> AppendBlock(
         Azure::IO::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
+    Azure::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SealAppendBlobResult describing the state of the sealed append blob.
      */
-    Azure::Core::Response<Models::SealAppendBlobResult> Seal(
+    Azure::Response<Models::SealAppendBlobResult> Seal(
         const SealAppendBlobOptions& options = SealAppendBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A CreateBlobContainerResult describing the newly created blob container.
      */
-    Azure::Core::Response<Models::CreateBlobContainerResult> Create(
+    Azure::Response<Models::CreateBlobContainerResult> Create(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * container doesn't exist. CreateBlobContainerResult.Created is false if the container already
      * exists.
      */
-    Azure::Core::Response<Models::CreateBlobContainerResult> CreateIfNotExists(
+    Azure::Response<Models::CreateBlobContainerResult> CreateIfNotExists(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A DeleteBlobContainerResult if successful.
      */
-    Azure::Core::Response<Models::DeleteBlobContainerResult> Delete(
+    Azure::Response<Models::DeleteBlobContainerResult> Delete(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A DeleteBlobContainerResult if the container exists.
      * DeleteBlobContainerResult.Deleted is false if the container doesn't exist.
      */
-    Azure::Core::Response<Models::DeleteBlobContainerResult> DeleteIfExists(
+    Azure::Response<Models::DeleteBlobContainerResult> DeleteIfExists(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetBlobContainerPropertiesResult describing the container and its properties.
      */
-    Azure::Core::Response<Models::GetBlobContainerPropertiesResult> GetProperties(
+    Azure::Response<Models::GetBlobContainerPropertiesResult> GetProperties(
         const GetBlobContainerPropertiesOptions& options = GetBlobContainerPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetBlobContainerMetadataResult if successful.
      */
-    Azure::Core::Response<Models::SetBlobContainerMetadataResult> SetMetadata(
+    Azure::Response<Models::SetBlobContainerMetadataResult> SetMetadata(
         Metadata metadata,
         SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A ListBlobsSinglePageResult describing a segment of the blobs in the container.
      */
-    Azure::Core::Response<Models::ListBlobsSinglePageResult> ListBlobsSinglePage(
+    Azure::Response<Models::ListBlobsSinglePageResult> ListBlobsSinglePage(
         const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -228,8 +228,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ListBlobsByHierarchySinglePageResult describing a segment of the blobs in the
      * container.
      */
-    Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
-    ListBlobsByHierarchySinglePage(
+    Azure::Response<Models::ListBlobsByHierarchySinglePageResult> ListBlobsByHierarchySinglePage(
         const std::string& delimiter,
         const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -242,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetBlobContainerAccessPolicyResult describing the container's access policy.
      */
-    Azure::Core::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
         const GetBlobContainerAccessPolicyOptions& options = GetBlobContainerAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -254,7 +253,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetBlobContainerAccessPolicyResult describing the updated container.
      */
-    Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult> SetAccessPolicy(
+    Azure::Response<Models::SetBlobContainerAccessPolicyResult> SetAccessPolicy(
         const SetBlobContainerAccessPolicyOptions& options = SetBlobContainerAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -268,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A DeleteBlobResult on successfully deleting.
      */
-    Azure::Core::Response<Models::DeleteBlobResult> DeleteBlob(
+    Azure::Response<Models::DeleteBlobResult> DeleteBlob(
         const std::string& blobName,
         const DeleteBlobOptions& options = DeleteBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -284,7 +283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A BlockBlobClient referencing the newly created block blob.
      */
-    Azure::Core::Response<BlockBlobClient> UploadBlob(
+    Azure::Response<BlockBlobClient> UploadBlob(
         const std::string& blobName,
         Azure::IO::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
