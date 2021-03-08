@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathCreateResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::Nullable<Core::DateTime> LastModified;
       std::string RequestId;
       Azure::Core::Nullable<int64_t> ContentLength;
@@ -341,7 +341,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::Core::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       std::string RequestId;
       Azure::Core::Nullable<std::string> ResourceType;
@@ -363,7 +363,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathSetAccessControlResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       std::string RequestId;
     };
@@ -380,7 +380,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathFlushDataResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       int64_t ContentLength = int64_t();
       std::string RequestId;
@@ -551,12 +551,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<std::string> Properties;
           Azure::Core::Nullable<std::string> Permissions;
           Azure::Core::Nullable<std::string> Umask;
-          Core::ETag IfMatch;
-          Core::ETag IfNoneMatch;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
           Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
-          Core::ETag SourceIfMatch;
-          Core::ETag SourceIfNoneMatch;
+          Azure::ETag SourceIfMatch;
+          Azure::ETag SourceIfNoneMatch;
           Azure::Core::Nullable<Core::DateTime> SourceIfModifiedSince;
           Azure::Core::Nullable<Core::DateTime> SourceIfUnmodifiedSince;
         };
@@ -700,8 +700,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<PathGetPropertiesAction> Action;
           Azure::Core::Nullable<bool> Upn;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Core::ETag IfMatch;
-          Core::ETag IfNoneMatch;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
           Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
         };
@@ -773,8 +773,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<bool> RecursiveOptional;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Core::ETag IfMatch;
-          Core::ETag IfNoneMatch;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
           Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
         };
@@ -845,8 +845,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<std::string> Group;
           Azure::Core::Nullable<std::string> Permissions;
           Azure::Core::Nullable<std::string> Acl;
-          Core::ETag IfMatch;
-          Core::ETag IfNoneMatch;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
           Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -990,8 +990,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<std::string> ContentDisposition;
           Azure::Core::Nullable<std::string> ContentEncoding;
           Azure::Core::Nullable<std::string> ContentLanguage;
-          Core::ETag IfMatch;
-          Core::ETag IfNoneMatch;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
           Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -1174,7 +1174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             PathCreateResult result;
             if (response.GetHeaders().find(Details::HeaderETag) != response.GetHeaders().end())
             {
-              result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
+              result.ETag = Azure::ETag(response.GetHeaders().at(Details::HeaderETag));
             }
             if (response.GetHeaders().find(Details::HeaderLastModified)
                 != response.GetHeaders().end())
@@ -1242,7 +1242,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             }
             if (response.GetHeaders().find(Details::HeaderETag) != response.GetHeaders().end())
             {
-              result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
+              result.ETag = Azure::ETag(response.GetHeaders().at(Details::HeaderETag));
             }
             if (response.GetHeaders().find(Details::HeaderLastModified)
                 != response.GetHeaders().end())
@@ -1342,7 +1342,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             PathSetAccessControlResult result;
             if (response.GetHeaders().find(Details::HeaderETag) != response.GetHeaders().end())
             {
-              result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
+              result.ETag = Azure::ETag(response.GetHeaders().at(Details::HeaderETag));
             }
             if (response.GetHeaders().find(Details::HeaderLastModified)
                 != response.GetHeaders().end())
@@ -1439,7 +1439,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             PathFlushDataResult result;
             if (response.GetHeaders().find(Details::HeaderETag) != response.GetHeaders().end())
             {
-              result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
+              result.ETag = Azure::ETag(response.GetHeaders().at(Details::HeaderETag));
             }
             if (response.GetHeaders().find(Details::HeaderLastModified)
                 != response.GetHeaders().end())

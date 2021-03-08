@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct CreateShareResult
     {
       bool Created = true;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       std::string RequestId;
     };
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct CreateShareDirectoryResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct CreateShareFileResult
     {
       bool Created = true;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Core::DateTime LastModified;
       Storage::Metadata Metadata;
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     using UploadShareFileRangeResult = Details::FileUploadRangeResult;
     struct ClearShareFileRangeResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Core::DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       : public Azure::Core::Operation<Models::GetShareFilePropertiesResult> {
   public:
     std::string RequestId;
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Azure::Core::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatusType CopyStatus;

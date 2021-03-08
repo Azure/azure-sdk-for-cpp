@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     try
     {
       auto createOptions = options;
-      createOptions.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
+      createOptions.AccessConditions.IfNoneMatch = Azure::ETag::Any();
       return Create(type, createOptions, context);
     }
     catch (StorageException& e)

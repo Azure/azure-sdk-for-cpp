@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Test {
       if (region == Region::Primary)
       {
         if (requestHeaders.find("if-match") == requestHeaders.end()
-            || Azure::Core::ETag(requestHeaders.at("if-match")) == m_primaryETag)
+            || Azure::ETag(requestHeaders.at("if-match")) == m_primaryETag)
         {
           return ConstructPrimaryResponse();
         }
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Test {
       else
       {
         if (requestHeaders.find("if-match") == requestHeaders.end()
-            || Azure::Core::ETag(requestHeaders.at("if-match")) == m_secondaryETag)
+            || Azure::ETag(requestHeaders.at("if-match")) == m_secondaryETag)
         {
           return ConstructSecondaryResponse();
         }
@@ -240,8 +240,8 @@ namespace Azure { namespace Storage { namespace Test {
   private:
     std::shared_ptr<std::string> m_primaryContent;
     std::shared_ptr<std::string> m_secondaryContent;
-    Azure::Core::ETag m_primaryETag;
-    Azure::Core::ETag m_secondaryETag;
+    Azure::ETag m_primaryETag;
+    Azure::ETag m_secondaryETag;
 
     std::function<ResponseType(Region)> m_failPolicy;
   };

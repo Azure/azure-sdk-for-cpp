@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     {
       // In case network failure during reading the body
-      const Azure::Core::ETag eTag = downloadResponse->Details.ETag;
+      const Azure::ETag eTag = downloadResponse->Details.ETag;
 
       auto retryFunction
           = [this, options, eTag](
@@ -254,7 +254,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     auto firstChunk = Download(firstChunkOptions, context);
-    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
+    const Azure::ETag eTag = firstChunk->Details.ETag;
 
     const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
@@ -366,7 +366,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Details::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions, context);
-    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
+    const Azure::ETag eTag = firstChunk->Details.ETag;
 
     const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;

@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     auto optionsCopy = options;
-    optionsCopy.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
+    optionsCopy.AccessConditions.IfNoneMatch = Azure::ETag::Any();
     try
     {
       return Create(blobContentLength, optionsCopy, context);
