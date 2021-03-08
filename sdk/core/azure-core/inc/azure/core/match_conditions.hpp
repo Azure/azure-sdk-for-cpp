@@ -12,22 +12,22 @@
 
 #include <string>
 
-namespace Azure { namespace Core {
+namespace Azure {
+
+/**
+ * @brief Specifies HTTP options for conditional requests.
+ */
+struct MatchConditions
+{
+  /**
+   * @brief Optionally limit requests to resources that match the value specified.
+   */
+  ETag IfMatch;
 
   /**
-   * @brief Specifies HTTP options for conditional requests.
+   * @brief Optionally limit requests to resources that do not match the value specified. Specify
+   * ETag::Any() to limit requests to resources that do not exist.
    */
-  struct MatchConditions
-  {
-    /**
-     * @brief Optionally limit requests to resources that match the value specified.
-     */
-    Azure::ETag IfMatch;
-
-    /**
-     * @brief Optionally limit requests to resources that do not match the value specified. Specify
-     * Azure::ETag::Any() to limit requests to resources that do not exist.
-     */
-    Azure::ETag IfNoneMatch;
-  };
-}} // namespace Azure::Core
+  ETag IfNoneMatch;
+};
+} // namespace Azure

@@ -13,22 +13,22 @@
 
 #include <string>
 
-namespace Azure { namespace Core {
+namespace Azure {
+
+/**
+ * @brief Specifies HTTP options for conditional requests based on modification time.
+ */
+struct ModifiedConditions
+{
+  /**
+   * @brief Optionally limit requests to resources that have only been modified since this point
+   * in time.
+   */
+  Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
 
   /**
-   * @brief Specifies HTTP options for conditional requests based on modification time.
+   * @brief Optionally limit requests to resources that have remained unmodified.
    */
-  struct ModifiedConditions
-  {
-    /**
-     * @brief Optionally limit requests to resources that have only been modified since this point
-     * in time.
-     */
-    Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
-
-    /**
-     * @brief Optionally limit requests to resources that have remained unmodified.
-     */
-    Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
-  };
-}} // namespace Azure::Core
+  Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
+};
+} // namespace Azure

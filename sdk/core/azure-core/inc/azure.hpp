@@ -10,4 +10,6 @@
  */
 
 #include "azure/core/etag.hpp"
+#include "azure/core/match_conditions.hpp"
+#include "azure/core/modified_conditions.hpp"
 #include "azure/core/response.hpp"
