@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ListBlobContainersSinglePageResult describing segment of the blob containers in the
      * storage account.
      */
-    Azure::Core::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
+    Azure::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
         const ListBlobContainersSinglePageOptions& options = ListBlobContainersSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A deserialized GetUserDelegationKeyResult instance.
      */
-    Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
         const Azure::Core::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetServicePropertiesResult on successfully setting the properties.
      */
-    Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
+    Azure::Response<Models::SetServicePropertiesResult> SetProperties(
         Models::BlobServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetServicePropertiesResult describing the service properties.
      */
-    Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
+    Azure::Response<Models::GetServicePropertiesResult> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return GetAccountInfoResult describing the account.
      */
-    Azure::Core::Response<Models::GetAccountInfoResult> GetAccountInfo(
+    Azure::Response<Models::GetAccountInfoResult> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A BlobServiceStatistics describing the service replication statistics.
      */
-    Azure::Core::Response<Models::GetServiceStatisticsResult> GetStatistics(
+    Azure::Response<Models::GetServiceStatisticsResult> GetStatistics(
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A FindBlobsByTagsSinglePageResult describing the blobs.
      */
-    Azure::Core::Response<Models::FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
+    Azure::Response<Models::FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
         const std::string& tagFilterSqlExpression,
         const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -197,7 +197,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A BlobContainerClient referencing the newly created container.
      */
-    Azure::Core::Response<BlobContainerClient> CreateBlobContainer(
+    Azure::Response<BlobContainerClient> CreateBlobContainer(
         const std::string& blobContainerName,
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -211,7 +211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A DeleteBlobContainerResult if successful.
      */
-    Azure::Core::Response<Models::DeleteBlobContainerResult> DeleteBlobContainer(
+    Azure::Response<Models::DeleteBlobContainerResult> DeleteBlobContainer(
         const std::string& blobContainerName,
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A BlobContainerClient referencing the undeleted container.
      */
-    Azure::Core::Response<BlobContainerClient> UndeleteBlobContainer(
+    Azure::Response<BlobContainerClient> UndeleteBlobContainer(
         const std::string deletedBlobContainerName,
         const std::string deletedBlobContainerVersion,
         const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions(),

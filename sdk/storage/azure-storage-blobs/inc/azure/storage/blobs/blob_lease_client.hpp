@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A AcquireBlobLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::AcquireBlobLeaseResult> Acquire(
+    Azure::Response<Models::AcquireBlobLeaseResult> Acquire(
         std::chrono::seconds duration,
         const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A RenewBlobLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::RenewBlobLeaseResult> Renew(
+    Azure::Response<Models::RenewBlobLeaseResult> Renew(
         const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A ReleaseBlobLeaseResult describing the updated container or blob.
      */
-    Azure::Core::Response<Models::ReleaseBlobLeaseResult> Release(
+    Azure::Response<Models::ReleaseBlobLeaseResult> Release(
         const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ChangeBlobLeaseResult describing the changed lease.
      * @remarks The current BlobLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Core::Response<Models::ChangeBlobLeaseResult> Change(
+    Azure::Response<Models::ChangeBlobLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A BreakBlobLeaseResult describing the broken lease.
      */
-    Azure::Core::Response<Models::BreakBlobLeaseResult> Break(
+    Azure::Response<Models::BreakBlobLeaseResult> Break(
         const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

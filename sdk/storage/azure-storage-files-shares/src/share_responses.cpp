@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return response.ExtractRawResponse();
   }
 
-  Azure::Core::Response<Models::GetShareFilePropertiesResult> StartCopyShareFileOperation::
+  Azure::Response<Models::GetShareFilePropertiesResult> StartCopyShareFileOperation::
       PollUntilDoneInternal(std::chrono::milliseconds period, Azure::Core::Context& context)
   {
     while (true)
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Core::Response<Models::GetShareFilePropertiesResult>(
+        return Azure::Response<Models::GetShareFilePropertiesResult>(
             m_pollResult, std::move(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)

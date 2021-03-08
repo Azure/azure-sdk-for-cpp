@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
-  Azure::Core::Response<Models::ListFileSystemsSinglePageResult>
+  Azure::Response<Models::ListFileSystemsSinglePageResult>
   DataLakeServiceClient::ListFileSystemsSinglePage(
       const ListFileSystemsSinglePageOptions& options,
       const Azure::Core::Context& context) const
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     response.ServiceEndpoint = std::move(result->ServiceEndpoint);
     response.Prefix = std::move(result->Prefix);
     response.Items = FileSystemsFromContainerItems(std::move(result->Items));
-    return Azure::Core::Response<Models::ListFileSystemsSinglePageResult>(
+    return Azure::Response<Models::ListFileSystemsSinglePageResult>(
         std::move(response), result.ExtractRawResponse());
   }
 

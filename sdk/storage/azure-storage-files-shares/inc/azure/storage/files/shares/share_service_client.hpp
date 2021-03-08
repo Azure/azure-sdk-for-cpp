@@ -70,11 +70,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief List the shares from the service.
      * @param options Optional parameters to list the shares.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ListSharesSinglePageResult> The results containing the
+     * @return Azure::Response<Models::ListSharesSinglePageResult> The results containing the
      * shares returned and information used for future list operation on valid result not yet
      * returned.
      */
-    Azure::Core::Response<Models::ListSharesSinglePageResult> ListSharesSinglePage(
+    Azure::Response<Models::ListSharesSinglePageResult> ListSharesSinglePage(
         const ListSharesSinglePageOptions& options = ListSharesSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -83,10 +83,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param properties The properties of the service that is to be set.
      * @param options Optional parameters to set the properties of the service.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetServicePropertiesResult> The infromation returned
+     * @return Azure::Response<Models::SetServicePropertiesResult> The infromation returned
      * when setting the service properties.
      */
-    Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
+    Azure::Response<Models::SetServicePropertiesResult> SetProperties(
         Models::FileServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -95,10 +95,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Get the service's properties.
      * @param options Optional parameters to get the properties of the service.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetServicePropertiesResult> The result containing
+     * @return Azure::Response<Models::GetServicePropertiesResult> The result containing
      * service's properties.
      */
-    Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
+    Azure::Response<Models::GetServicePropertiesResult> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

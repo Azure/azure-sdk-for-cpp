@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blobContainerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
-  Azure::Core::Response<Models::ListBlobContainersSinglePageResult>
+  Azure::Response<Models::ListBlobContainersSinglePageResult>
   BlobServiceClient::ListBlobContainersSinglePage(
       const ListBlobContainersSinglePageOptions& options,
       const Azure::Core::Context& context) const
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
+  Azure::Response<Models::GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
       const Azure::Core::DateTime& expiresOn,
       const GetUserDelegationKeyOptions& options,
       const Azure::Core::Context& context) const
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetServicePropertiesResult> BlobServiceClient::SetProperties(
+  Azure::Response<Models::SetServicePropertiesResult> BlobServiceClient::SetProperties(
       Models::BlobServiceProperties properties,
       const SetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetServicePropertiesResult> BlobServiceClient::GetProperties(
+  Azure::Response<Models::GetServicePropertiesResult> BlobServiceClient::GetProperties(
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetAccountInfoResult> BlobServiceClient::GetAccountInfo(
+  Azure::Response<Models::GetAccountInfoResult> BlobServiceClient::GetAccountInfo(
       const GetAccountInfoOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetServiceStatisticsResult> BlobServiceClient::GetStatistics(
+  Azure::Response<Models::GetServiceStatisticsResult> BlobServiceClient::GetStatistics(
       const GetBlobServiceStatisticsOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::FindBlobsByTagsSinglePageResult>
+  Azure::Response<Models::FindBlobsByTagsSinglePageResult>
   BlobServiceClient::FindBlobsByTagsSinglePage(
       const std::string& tagFilterSqlExpression,
       const FindBlobsByTagsSinglePageOptions& options,
@@ -177,18 +177,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobContainerClient> BlobServiceClient::CreateBlobContainer(
+  Azure::Response<BlobContainerClient> BlobServiceClient::CreateBlobContainer(
       const std::string& blobContainerName,
       const CreateBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
     auto blobContainerClient = GetBlobContainerClient(blobContainerName);
     auto response = blobContainerClient.Create(options, context);
-    return Azure::Core::Response<BlobContainerClient>(
+    return Azure::Response<BlobContainerClient>(
         std::move(blobContainerClient), response.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteBlobContainerResult> BlobServiceClient::DeleteBlobContainer(
+  Azure::Response<Models::DeleteBlobContainerResult> BlobServiceClient::DeleteBlobContainer(
       const std::string& blobContainerName,
       const DeleteBlobContainerOptions& options,
       const Azure::Core::Context& context) const
@@ -197,7 +197,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return blobContainerClient.Delete(options, context);
   }
 
-  Azure::Core::Response<BlobContainerClient> BlobServiceClient::UndeleteBlobContainer(
+  Azure::Response<BlobContainerClient> BlobServiceClient::UndeleteBlobContainer(
       const std::string deletedBlobContainerName,
       const std::string deletedBlobContainerVersion,
       const UndeleteBlobContainerOptions& options,
@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Http::Url(blobContainerClient.GetUrl()),
         protocolLayerOptions);
 
-    return Azure::Core::Response<BlobContainerClient>(
+    return Azure::Response<BlobContainerClient>(
         std::move(blobContainerClient), response.ExtractRawResponse());
   }
 

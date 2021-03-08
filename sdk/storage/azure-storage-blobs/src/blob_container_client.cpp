@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return GetBlobClient(blobName).AsPageBlobClient();
   }
 
-  Azure::Core::Response<Models::CreateBlobContainerResult> BlobContainerClient::Create(
+  Azure::Response<Models::CreateBlobContainerResult> BlobContainerClient::Create(
       const CreateBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::CreateBlobContainerResult> BlobContainerClient::CreateIfNotExists(
+  Azure::Response<Models::CreateBlobContainerResult> BlobContainerClient::CreateIfNotExists(
       const CreateBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -143,14 +143,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::CreateBlobContainerResult ret;
         ret.RequestId = e.RequestId;
         ret.Created = false;
-        return Azure::Core::Response<Models::CreateBlobContainerResult>(
+        return Azure::Response<Models::CreateBlobContainerResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::Delete(
+  Azure::Response<Models::DeleteBlobContainerResult> BlobContainerClient::Delete(
       const DeleteBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::DeleteIfExists(
+  Azure::Response<Models::DeleteBlobContainerResult> BlobContainerClient::DeleteIfExists(
       const DeleteBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -178,15 +178,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::DeleteBlobContainerResult ret;
         ret.RequestId = e.RequestId;
         ret.Deleted = false;
-        return Azure::Core::Response<Models::DeleteBlobContainerResult>(
+        return Azure::Response<Models::DeleteBlobContainerResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::GetBlobContainerPropertiesResult>
-  BlobContainerClient::GetProperties(
+  Azure::Response<Models::GetBlobContainerPropertiesResult> BlobContainerClient::GetProperties(
       const GetBlobContainerPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -196,7 +195,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
+  Azure::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
       Metadata metadata,
       SetBlobContainerMetadataOptions options,
       const Azure::Core::Context& context) const
@@ -209,7 +208,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListBlobsSinglePageResult> BlobContainerClient::ListBlobsSinglePage(
+  Azure::Response<Models::ListBlobsSinglePageResult> BlobContainerClient::ListBlobsSinglePage(
       const ListBlobsSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -238,7 +237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
+  Azure::Response<Models::ListBlobsByHierarchySinglePageResult>
   BlobContainerClient::ListBlobsByHierarchySinglePage(
       const std::string& delimiter,
       const ListBlobsSinglePageOptions& options,
@@ -263,8 +262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<Models::GetBlobContainerAccessPolicyResult>
-  BlobContainerClient::GetAccessPolicy(
+  Azure::Response<Models::GetBlobContainerAccessPolicyResult> BlobContainerClient::GetAccessPolicy(
       const GetBlobContainerAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -275,8 +273,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult>
-  BlobContainerClient::SetAccessPolicy(
+  Azure::Response<Models::SetBlobContainerAccessPolicyResult> BlobContainerClient::SetAccessPolicy(
       const SetBlobContainerAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -291,7 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::DeleteBlobResult> BlobContainerClient::DeleteBlob(
+  Azure::Response<Models::DeleteBlobResult> BlobContainerClient::DeleteBlob(
       const std::string& blobName,
       const DeleteBlobOptions& options,
       const Azure::Core::Context& context) const
@@ -300,7 +297,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return blobClient.Delete(options, context);
   }
 
-  Azure::Core::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
+  Azure::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
       const std::string& blobName,
       Azure::IO::BodyStream* content,
       const UploadBlockBlobOptions& options,
@@ -308,7 +305,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto blockBlobClient = GetBlockBlobClient(blobName);
     auto response = blockBlobClient.Upload(content, options, context);
-    return Azure::Core::Response<BlockBlobClient>(
+    return Azure::Response<BlockBlobClient>(
         std::move(blockBlobClient), response.ExtractRawResponse());
   }
 

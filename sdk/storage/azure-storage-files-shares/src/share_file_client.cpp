@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return newClient;
   }
 
-  Azure::Core::Response<Models::CreateShareFileResult> ShareFileClient::Create(
+  Azure::Response<Models::CreateShareFileResult> ShareFileClient::Create(
       int64_t fileSize,
       const CreateShareFileOptions& options,
       const Azure::Core::Context& context) const
@@ -177,11 +177,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
 
-    return Azure::Core::Response<Models::CreateShareFileResult>(
+    return Azure::Response<Models::CreateShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteShareFileResult> ShareFileClient::Delete(
+  Azure::Response<Models::DeleteShareFileResult> ShareFileClient::Delete(
       const DeleteShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -192,11 +192,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::DeleteShareFileResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::DeleteShareFileResult>(
+    return Azure::Response<Models::DeleteShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteShareFileResult> ShareFileClient::DeleteIfExists(
+  Azure::Response<Models::DeleteShareFileResult> ShareFileClient::DeleteIfExists(
       const DeleteShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -212,14 +212,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Models::DeleteShareFileResult ret;
         ret.Deleted = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Core::Response<Models::DeleteShareFileResult>(
+        return Azure::Response<Models::DeleteShareFileResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::DownloadShareFileResult> ShareFileClient::Download(
+  Azure::Response<Models::DownloadShareFileResult> ShareFileClient::Download(
       const DownloadShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -307,7 +307,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Details.LeaseDuration = std::move(downloadResponse->LeaseDuration);
     ret.Details.LeaseState = std::move(downloadResponse->LeaseState);
     ret.Details.LeaseStatus = std::move(downloadResponse->LeaseStatus);
-    return Azure::Core::Response<Models::DownloadShareFileResult>(
+    return Azure::Response<Models::DownloadShareFileResult>(
         std::move(ret), downloadResponse.ExtractRawResponse());
   }
 
@@ -383,7 +383,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return res;
   }
 
-  Azure::Core::Response<Models::AbortCopyShareFileResult> ShareFileClient::AbortCopy(
+  Azure::Response<Models::AbortCopyShareFileResult> ShareFileClient::AbortCopy(
       std::string copyId,
       const AbortCopyShareFileOptions& options,
       const Azure::Core::Context& context) const
@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetShareFilePropertiesResult> ShareFileClient::GetProperties(
+  Azure::Response<Models::GetShareFilePropertiesResult> ShareFileClient::GetProperties(
       const GetShareFilePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -405,7 +405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareFilePropertiesResult> ShareFileClient::SetProperties(
+  Azure::Response<Models::SetShareFilePropertiesResult> ShareFileClient::SetProperties(
       const Models::FileHttpHeaders& httpHeaders,
       const Models::FileSmbProperties& smbProperties,
       const SetShareFilePropertiesOptions& options,
@@ -477,7 +477,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareFileMetadataResult> ShareFileClient::SetMetadata(
+  Azure::Response<Models::SetShareFileMetadataResult> ShareFileClient::SetMetadata(
       Storage::Metadata metadata,
       const SetShareFileMetadataOptions& options,
       const Azure::Core::Context& context) const
@@ -489,7 +489,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::UploadShareFileRangeResult> ShareFileClient::UploadRange(
+  Azure::Response<Models::UploadShareFileRangeResult> ShareFileClient::UploadRange(
       int64_t offset,
       Azure::IO::BodyStream* content,
       const UploadShareFileRangeOptions& options,
@@ -511,7 +511,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *content, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ClearShareFileRangeResult> ShareFileClient::ClearRange(
+  Azure::Response<Models::ClearShareFileRangeResult> ShareFileClient::ClearRange(
       int64_t offset,
       int64_t length,
       const ClearShareFileRangeOptions& options,
@@ -535,11 +535,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.IsServerEncrypted = response->IsServerEncrypted;
     ret.LastModified = std::move(response->LastModified);
     ret.RequestId = std::move(response->RequestId);
-    return Azure::Core::Response<Models::ClearShareFileRangeResult>(
+    return Azure::Response<Models::ClearShareFileRangeResult>(
         std::move(ret), response.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
+  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
       const GetShareFileRangeListOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -566,7 +566,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult>
+  Azure::Response<Models::ListShareFileHandlesSinglePageResult>
   ShareFileClient::ListHandlesSinglePage(
       const ListShareFileHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
@@ -580,11 +580,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Handles = std::move(result->HandleList);
 
-    return Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult>(
+    return Azure::Response<Models::ListShareFileHandlesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseShareFileHandleResult> ShareFileClient::ForceCloseHandle(
+  Azure::Response<Models::ForceCloseShareFileHandleResult> ShareFileClient::ForceCloseHandle(
       const std::string& handleId,
       const ForceCloseShareFileHandleOptions& options,
       const Azure::Core::Context& context) const
@@ -594,11 +594,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.HandleId = handleId;
     auto result = Details::ShareRestClient::File::ForceCloseHandles(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
-    return Azure::Core::Response<Models::ForceCloseShareFileHandleResult>(
+    return Azure::Response<Models::ForceCloseShareFileHandleResult>(
         Models::ForceCloseShareFileHandleResult(), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+  Azure::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
   ShareFileClient::ForceCloseAllHandlesSinglePage(
       const ForceCloseAllShareFileHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
@@ -610,7 +610,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
+  Azure::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
       const DownloadShareFileToOptions& options,
@@ -668,15 +668,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter
-        = [](Azure::Core::Response<Models::DownloadShareFileResult>& response) {
-            Models::DownloadShareFileToResult ret;
-            ret.FileSize = response->FileSize;
-            ret.HttpHeaders = std::move(response->HttpHeaders);
-            ret.Details = std::move(response->Details);
-            return Azure::Core::Response<Models::DownloadShareFileToResult>(
-                std::move(ret), response.ExtractRawResponse());
-          };
+    auto returnTypeConverter = [](Azure::Response<Models::DownloadShareFileResult>& response) {
+      Models::DownloadShareFileToResult ret;
+      ret.FileSize = response->FileSize;
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Details = std::move(response->Details);
+      return Azure::Response<Models::DownloadShareFileToResult>(
+          std::move(ret), response.ExtractRawResponse());
+    };
     auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
@@ -717,7 +716,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ret;
   }
 
-  Azure::Core::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
+  Azure::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
       const std::string& fileName,
       const DownloadShareFileToOptions& options,
       const Azure::Core::Context& context) const
@@ -786,15 +785,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     bodyStreamToFile(*(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter
-        = [](Azure::Core::Response<Models::DownloadShareFileResult>& response) {
-            Models::DownloadShareFileToResult ret;
-            ret.FileSize = response->FileSize;
-            ret.HttpHeaders = std::move(response->HttpHeaders);
-            ret.Details = std::move(response->Details);
-            return Azure::Core::Response<Models::DownloadShareFileToResult>(
-                std::move(ret), response.ExtractRawResponse());
-          };
+    auto returnTypeConverter = [](Azure::Response<Models::DownloadShareFileResult>& response) {
+      Models::DownloadShareFileToResult ret;
+      ret.FileSize = response->FileSize;
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Details = std::move(response->Details);
+      return Azure::Response<Models::DownloadShareFileToResult>(
+          std::move(ret), response.ExtractRawResponse());
+    };
     auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
@@ -832,7 +830,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ret;
   }
 
-  Azure::Core::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
+  Azure::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
       const UploadShareFileFromOptions& options,
@@ -933,11 +931,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
-    return Azure::Core::Response<Models::UploadShareFileFromResult>(
+    return Azure::Response<Models::UploadShareFileFromResult>(
         std::move(result), createResult.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
+  Azure::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
       const std::string& fileName,
       const UploadShareFileFromOptions& options,
       const Azure::Core::Context& context) const
@@ -1040,11 +1038,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
-    return Azure::Core::Response<Models::UploadShareFileFromResult>(
+    return Azure::Response<Models::UploadShareFileFromResult>(
         std::move(result), createResult.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
+  Azure::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
       int64_t destinationOffset,
       const std::string& sourceUri,
       const Azure::Core::Http::Range& sourceRange,

@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Core::Response<Models::GetShareFilePropertiesResult> PollUntilDoneInternal(
+    Azure::Response<Models::GetShareFilePropertiesResult> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
