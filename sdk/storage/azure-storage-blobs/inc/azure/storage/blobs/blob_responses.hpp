@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     std::string GetResumeToken() const override
     {
-      // Not sud
+      // Not supported
       std::abort();
     }
 
