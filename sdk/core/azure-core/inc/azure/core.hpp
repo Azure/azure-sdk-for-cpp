@@ -16,6 +16,7 @@
 #include "azure/core/credentials.hpp"
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
+#include "azure/core/etag.hpp"
 #include "azure/core/exception.hpp"
 #include "azure/core/logger.hpp"
 #include "azure/core/match_conditions.hpp"
