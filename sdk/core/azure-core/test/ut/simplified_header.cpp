@@ -17,7 +17,6 @@
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif // _MSC_VER
 
-#include <azure.hpp>
 #include <azure/core.hpp>
 #include <gtest/gtest.h>
 
