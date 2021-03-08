@@ -39,7 +39,6 @@ KeyClient::KeyClient(
           options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
-
 Azure::Response<KeyVaultKey> KeyClient::GetKey(
     std::string const& name,
     GetKeyOptions const& options,
