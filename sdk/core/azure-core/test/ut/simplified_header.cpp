@@ -44,7 +44,7 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
   EXPECT_NO_THROW(Azure::Core::RequestFailedException("foo"));
   EXPECT_NO_THROW(Azure::Core::OperationStatus("foo"));
-  EXPECT_NO_THROW(Azure::Core::Details::Version::VersionString());
+  EXPECT_NO_THROW(Azure::Core::Version::VersionString());
 
   {
     std::vector<uint8_t> buffer(10);
