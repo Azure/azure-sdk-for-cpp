@@ -729,42 +729,39 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
   }
 }
 
-std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
+void DateTime::ValidateYear() const
 {
+  static DateTime const Year0001 = DateTime();
+  static DateTime const Eoy9999 = DateTime(9999, 12, 31, 23, 59, 59, 9999999, -1, 0, 0);
+
+  auto outOfRange = 0;
+  if (*this < Year0001)
   {
-    static DateTime const Year0001 = DateTime();
-    static DateTime const Eoy9999 = DateTime(9999, 12, 31, 23, 59, 59, 9999999, -1, 0, 0);
-
-    auto outOfRange = 0;
-    if (*this < Year0001)
-    {
-      outOfRange = -1;
-    }
-    else if (*this > Eoy9999)
-    {
-      outOfRange = +1;
-    }
-
-    if (outOfRange != 0)
-    {
-      throw std::invalid_argument(
-          std::string("Cannot represent Azure::Core::DateTime as std::string: the date is ")
-          + (outOfRange < 0 ? "before 0001-01-01." : "after 9999-12-31 23:59:59.9999999."));
-    }
+    outOfRange = -1;
+  }
+  else if (*this > Eoy9999)
+  {
+    outOfRange = +1;
   }
 
-  int16_t year = 1;
+  if (outOfRange != 0)
+  {
+    throw std::invalid_argument(
+        std::string("Cannot represent Azure::Core::DateTime as std::string: the date is ")
+        + (outOfRange < 0 ? "before 0001-01-01." : "after 9999-12-31 23:59:59.9999999."));
+  }
+}
 
-  // The values that are not supposed to be read before they are written are set to -123... to avoid
-  // warnings on some compilers, yet provide a clearly bad value to make it obvious if things don't
-  // work as expected.
-  int8_t month = -123;
-  int8_t day = -123;
-  int8_t hour = -123;
-  int8_t minute = -123;
-  int8_t second = -123;
-  int32_t fracSec = -1234567890;
-  int8_t dayOfWeek = -123;
+void DateTime::GetDateTimeParts(
+    int16_t* year,
+    int8_t* month,
+    int8_t* day,
+    int8_t* hour,
+    int8_t* minute,
+    int8_t* second,
+    int32_t* fracSec,
+    int8_t* dayOfWeek) const
+{
   {
     auto remainder = time_since_epoch().count();
 
@@ -789,66 +786,116 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
       years1 = DivideAndUpdateRemainder(&remainder, OneYearIn100ns);
     }
 
-    year += static_cast<int16_t>((years400 * 400) + (years100 * 100) + (years4 * 4) + years1);
+    *year += static_cast<int16_t>((years400 * 400) + (years100 * 100) + (years4 * 4) + years1);
 
-    dayOfWeek = WeekDayAndMonthDayOfYear(
-        &month,
-        &day,
-        year,
+    *dayOfWeek = WeekDayAndMonthDayOfYear(
+        month,
+        day,
+        *year,
         static_cast<int16_t>(DivideAndUpdateRemainder(&remainder, OneDayIn100ns) + 1));
 
-    hour = static_cast<int8_t>(DivideAndUpdateRemainder(&remainder, OneHourIn100ns));
-    minute = static_cast<int8_t>(DivideAndUpdateRemainder(&remainder, OneMinuteIn100ns));
-    second = static_cast<int8_t>(DivideAndUpdateRemainder(&remainder, OneSecondIn100ns));
-    fracSec = static_cast<int32_t>(remainder);
+    *hour = static_cast<int8_t>(DivideAndUpdateRemainder(&remainder, OneHourIn100ns));
+    *minute = static_cast<int8_t>(DivideAndUpdateRemainder(&remainder, OneMinuteIn100ns));
+    *second = static_cast<int8_t>(DivideAndUpdateRemainder(&remainder, OneSecondIn100ns));
+    *fracSec = static_cast<int32_t>(remainder);
   }
+}
+
+std::string DateTime::ToStringRfc1123() const
+{
+  ValidateYear();
+
+  int16_t year = 1;
+
+  // The values that are not supposed to be read before they are written are set to -123... to
+  // avoid warnings on some compilers, yet provide a clearly bad value to make it obvious if
+  // things don't work as expected.
+  int8_t month = -123;
+  int8_t day = -123;
+  int8_t hour = -123;
+  int8_t minute = -123;
+  int8_t second = -123;
+  int32_t fracSec = -1234567890;
+  int8_t dayOfWeek = -123;
+
+  GetDateTimeParts(&year, &month, &day, &hour, &minute, &second, &fracSec, &dayOfWeek);
 
   std::ostringstream dateString;
-  if (format == DateFormat::Rfc3339)
+
+  dateString << DayNames[dayOfWeek] << ", " << std::setfill('0') << std::setw(2)
+             << static_cast<int>(day) << ' ' << MonthNames[month - 1] << ' ' << std::setw(4)
+             << static_cast<int>(year) << ' ' << std::setw(2) << static_cast<int>(hour) << ':'
+             << std::setw(2) << static_cast<int>(minute) << ':' << std::setw(2)
+             << static_cast<int>(second) << " GMT";
+
+  return dateString.str();
+}
+
+std::string DateTime::ToString(DateFormat format) const
+{
+  if (format == DateFormat::Rfc1123)
   {
-    dateString << std::setfill('0') << std::setw(4) << static_cast<int>(year) << '-' << std::setw(2)
-               << static_cast<int>(month) << '-' << std::setw(2) << static_cast<int>(day) << 'T'
-               << std::setw(2) << static_cast<int>(hour) << ':' << std::setw(2)
-               << static_cast<int>(minute) << ':' << std::setw(2) << static_cast<int>(second);
-
-    if (fractionFormat == TimeFractionFormat::AllDigits)
-    {
-      dateString << '.' << std::setw(7) << static_cast<int>(fracSec);
-    }
-    else if (fracSec != 0 && fractionFormat != TimeFractionFormat::Truncate)
-    {
-      // Append fractional second, which is a 7-digit value with no trailing zeros
-      // This way, '0001200' becomes '00012'
-      auto setw = 1;
-      auto frac = fracSec;
-      for (auto div = 1000000; div >= 1; div /= 10)
-      {
-        if ((fracSec % div) == 0)
-        {
-          frac /= div;
-          break;
-        }
-        ++setw;
-      }
-
-      dateString << '.' << std::setw(setw) << static_cast<int>(frac);
-    }
-
-    dateString << 'Z';
+    return DateTime::ToStringRfc1123();
   }
-  else if (format == DateFormat::Rfc1123)
-  {
-    dateString << DayNames[dayOfWeek] << ", " << std::setfill('0') << std::setw(2)
-               << static_cast<int>(day) << ' ' << MonthNames[month - 1] << ' ' << std::setw(4)
-               << static_cast<int>(year) << ' ' << std::setw(2) << static_cast<int>(hour) << ':'
-               << std::setw(2) << static_cast<int>(minute) << ':' << std::setw(2)
-               << static_cast<int>(second) << " GMT";
-  }
-  else
+  return ToString(format, TimeFractionFormat::DropTrailingZeros);
+}
+
+std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
+{
+  if (format != DateFormat::Rfc3339)
   {
     throw std::invalid_argument(
         "Unrecognized date format (" + std::to_string(static_cast<int64_t>(format)) + ").");
   }
+
+  ValidateYear();
+
+  int16_t year = 1;
+
+  // The values that are not supposed to be read before they are written are set to -123... to avoid
+  // warnings on some compilers, yet provide a clearly bad value to make it obvious if things don't
+  // work as expected.
+  int8_t month = -123;
+  int8_t day = -123;
+  int8_t hour = -123;
+  int8_t minute = -123;
+  int8_t second = -123;
+  int32_t fracSec = -1234567890;
+  int8_t dayOfWeek = -123;
+
+  GetDateTimeParts(&year, &month, &day, &hour, &minute, &second, &fracSec, &dayOfWeek);
+
+  std::ostringstream dateString;
+
+  dateString << std::setfill('0') << std::setw(4) << static_cast<int>(year) << '-' << std::setw(2)
+             << static_cast<int>(month) << '-' << std::setw(2) << static_cast<int>(day) << 'T'
+             << std::setw(2) << static_cast<int>(hour) << ':' << std::setw(2)
+             << static_cast<int>(minute) << ':' << std::setw(2) << static_cast<int>(second);
+
+  if (fractionFormat == TimeFractionFormat::AllDigits)
+  {
+    dateString << '.' << std::setw(7) << static_cast<int>(fracSec);
+  }
+  else if (fracSec != 0 && fractionFormat != TimeFractionFormat::Truncate)
+  {
+    // Append fractional second, which is a 7-digit value with no trailing zeros
+    // This way, '0001200' becomes '00012'
+    auto setw = 1;
+    auto frac = fracSec;
+    for (auto div = 1000000; div >= 1; div /= 10)
+    {
+      if ((fracSec % div) == 0)
+      {
+        frac /= div;
+        break;
+      }
+      ++setw;
+    }
+
+    dateString << '.' << std::setw(setw) << static_cast<int>(frac);
+  }
+
+  dateString << 'Z';
 
   return dateString.str();
 }

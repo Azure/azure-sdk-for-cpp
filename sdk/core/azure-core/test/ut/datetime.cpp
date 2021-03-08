@@ -34,6 +34,7 @@ TEST(DateTime, ParseDateBasic)
   {
     auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
     EXPECT_NE(0, dt.time_since_epoch().count());
+    EXPECT_EQ(dt.ToString(), "2013-05-17T00:00:00Z");
   }
 }
 
@@ -135,6 +136,7 @@ TEST(DateTime, sameResultFromDefaultRfc3339)
         DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::DropTrailingZeros);
     auto const str2 = dt2.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str1, str2);
+    EXPECT_EQ(str1, dt2.ToString());
   }
 }
 
