@@ -344,7 +344,7 @@ namespace Azure { namespace Core {
      * @brief Get a value associated with a \p key parameter within this context or the branch of
      * contexts this context belongs to.
      *
-     * @param key A key assiciated with a context to find.
+     * @param key A key associated with a context to find.
      *
      * @return A value associated with the context found; an empty value if a specific value can't
      * be found.
@@ -370,10 +370,10 @@ namespace Azure { namespace Core {
      * @brief Check whether the context has a key matching \p key parameter in it itself, or in the
      * branch the context belongs to.
      *
-     * @param key A key assiciated with a context to find.
+     * @param key A key associated with a context to find.
      *
      * @return `true` if this context, or the tree branch this context belongs to has a \p key
-     * associsted with it. `false` otherwise.
+     * associated with it. `false` otherwise.
      */
     bool HasKey(const std::string& key) const
     {
