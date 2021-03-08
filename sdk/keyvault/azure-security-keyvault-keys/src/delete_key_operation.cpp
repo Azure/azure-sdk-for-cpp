@@ -45,7 +45,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
     std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> keyvaultPipeline,
-    Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
+    Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
     : m_pipeline(keyvaultPipeline)
 {
   if (!response.HasValue())

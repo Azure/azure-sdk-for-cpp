@@ -301,7 +301,7 @@ namespace Azure { namespace Core { namespace Test {
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
     auto response = m_pipeline->Send(request, Azure::Core::GetApplicationContext());
 
-    Azure::Core::Response<std::string> responseT(expectedType, std::move(response));
+    Azure::Response<std::string> responseT(expectedType, std::move(response));
     auto& r = responseT.GetRawResponse();
 
     EXPECT_TRUE(r.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);

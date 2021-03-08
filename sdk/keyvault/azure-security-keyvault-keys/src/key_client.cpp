@@ -39,7 +39,8 @@ KeyClient::KeyClient(
           options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
+
+Azure::Response<KeyVaultKey> KeyClient::GetKey(
     std::string const& name,
     GetKeyOptions const& options,
     Azure::Core::Context const& context) const
@@ -53,7 +54,7 @@ Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
       {Details::KeysPath, name, options.Version});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateKey(
     std::string const& name,
     JsonWebKeyType keyType,
     CreateKeyOptions const& options,
@@ -69,7 +70,7 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateKey(
       {Details::KeysPath, name, "create"});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateEcKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
     CreateEcKeyOptions const& ecKeyOptions,
     Azure::Core::Context const& context) const
 {
@@ -84,7 +85,7 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateEcKey(
       {Details::KeysPath, keyName, "create"});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateRsaKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
     CreateRsaKeyOptions const& rsaKeyOptions,
     Azure::Core::Context const& context) const
 {
@@ -99,7 +100,7 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateRsaKey(
       {Details::KeysPath, keyName, "create"});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateOctKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
     CreateOctKeyOptions const& octKeyOptions,
     Azure::Core::Context const& context) const
 {

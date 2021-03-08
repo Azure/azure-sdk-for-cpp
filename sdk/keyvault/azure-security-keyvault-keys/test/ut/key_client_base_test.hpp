@@ -40,7 +40,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   public:
     template <class T>
     static inline void CheckValidResponse(
-        Azure::Core::Response<T>& response,
+        Azure::Response<T>& response,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok)
     {
       auto rawResponse = response.ExtractRawResponse();
