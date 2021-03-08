@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakeDirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
-  Azure::Core::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
+  Azure::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
       const std::string& fileName,
       const std::string& destinationFilePath,
       const RenameDataLakeFileOptions& options,
@@ -120,11 +120,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobClient.m_blobUrl.SetPath(destinationDfsUrl.GetPath());
     auto renamedFileClient
         = DataLakeFileClient(std::move(destinationDfsUrl), std::move(blobClient), m_pipeline);
-    return Azure::Core::Response<DataLakeFileClient>(
+    return Azure::Response<DataLakeFileClient>(
         std::move(renamedFileClient), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
+  Azure::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
       const std::string& subdirectoryName,
       const std::string& destinationDirectoryPath,
       const RenameDataLakeSubdirectoryOptions& options,
@@ -164,11 +164,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobClient.m_blobUrl.SetPath(destinationDfsUrl.GetPath());
     auto renamedDirectoryClient
         = DataLakeDirectoryClient(std::move(destinationDfsUrl), std::move(blobClient), m_pipeline);
-    return Azure::Core::Response<DataLakeDirectoryClient>(
+    return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::Delete(
+  Azure::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::Delete(
       bool recursive,
       const DeleteDataLakeDirectoryOptions& options,
       const Azure::Core::Context& context) const
@@ -179,8 +179,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakePathClient::Delete(deleteOptions, context);
   }
 
-  Azure::Core::Response<Models::DeleteDataLakeDirectoryResult>
-  DataLakeDirectoryClient::DeleteIfExists(
+  Azure::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::DeleteIfExists(
       bool recursive,
       const DeleteDataLakeDirectoryOptions& options,
       const Azure::Core::Context& context) const
@@ -191,8 +190,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakePathClient::DeleteIfExists(deleteOptions, context);
   }
 
-  Azure::Core::Response<Models::ListPathsSinglePageResult>
-  DataLakeDirectoryClient::ListPathsSinglePage(
+  Azure::Response<Models::ListPathsSinglePageResult> DataLakeDirectoryClient::ListPathsSinglePage(
       bool recursive,
       const ListPathsSinglePageOptions& options,
       const Azure::Core::Context& context) const

@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<Models::DownloadBlobResult> BlobClient::Download(
+  Azure::Response<Models::DownloadBlobResult> BlobClient::Download(
       const DownloadBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     {
       // In case network failure during reading the body
-      const Azure::Core::ETag eTag = downloadResponse->Details.ETag;
+      const Azure::ETag eTag = downloadResponse->Details.ETag;
 
       auto retryFunction
           = [this, options, eTag](
@@ -230,7 +230,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return downloadResponse;
   }
 
-  Azure::Core::Response<Models::DownloadBlobToResult> BlobClient::DownloadTo(
+  Azure::Response<Models::DownloadBlobToResult> BlobClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
       const DownloadBlobToOptions& options,
@@ -254,7 +254,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     auto firstChunk = Download(firstChunkOptions, context);
-    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
+    const Azure::ETag eTag = firstChunk->Details.ETag;
 
     const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
@@ -286,14 +286,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
+    auto returnTypeConverter = [](Azure::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
       ret.BlobType = std::move(response->BlobType);
       ret.ContentRange = std::move(response->ContentRange);
       ret.BlobSize = response->BlobSize;
       ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
       ret.Details = std::move(response->Details);
-      return Azure::Core::Response<Models::DownloadBlobToResult>(
+      return Azure::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
     auto ret = returnTypeConverter(firstChunk);
@@ -341,7 +341,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return ret;
   }
 
-  Azure::Core::Response<Models::DownloadBlobToResult> BlobClient::DownloadTo(
+  Azure::Response<Models::DownloadBlobToResult> BlobClient::DownloadTo(
       const std::string& fileName,
       const DownloadBlobToOptions& options,
       const Azure::Core::Context& context) const
@@ -366,7 +366,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Details::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions, context);
-    const Azure::Core::ETag eTag = firstChunk->Details.ETag;
+    const Azure::ETag eTag = firstChunk->Details.ETag;
 
     const int64_t blobSize = firstChunk->BlobSize;
     int64_t blobRangeSize;
@@ -409,14 +409,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     bodyStreamToFile(*(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter = [](Azure::Core::Response<Models::DownloadBlobResult>& response) {
+    auto returnTypeConverter = [](Azure::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
       ret.BlobType = std::move(response->BlobType);
       ret.ContentRange = std::move(response->ContentRange);
       ret.BlobSize = response->BlobSize;
       ret.TransactionalContentHash = std::move(response->TransactionalContentHash);
       ret.Details = std::move(response->Details);
-      return Azure::Core::Response<Models::DownloadBlobToResult>(
+      return Azure::Response<Models::DownloadBlobToResult>(
           std::move(ret), response.ExtractRawResponse());
     };
     auto ret = returnTypeConverter(firstChunk);
@@ -461,7 +461,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return ret;
   }
 
-  Azure::Core::Response<Models::GetBlobPropertiesResult> BlobClient::GetProperties(
+  Azure::Response<Models::GetBlobPropertiesResult> BlobClient::GetProperties(
       const GetBlobPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<Models::SetBlobHttpHeadersResult> BlobClient::SetHttpHeaders(
+  Azure::Response<Models::SetBlobHttpHeadersResult> BlobClient::SetHttpHeaders(
       Models::BlobHttpHeaders httpHeaders,
       const SetBlobHttpHeadersOptions& options,
       const Azure::Core::Context& context) const
@@ -516,7 +516,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetBlobMetadataResult> BlobClient::SetMetadata(
+  Azure::Response<Models::SetBlobMetadataResult> BlobClient::SetMetadata(
       Metadata metadata,
       const SetBlobMetadataOptions& options,
       const Azure::Core::Context& context) const
@@ -540,7 +540,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetBlobAccessTierResult> BlobClient::SetAccessTier(
+  Azure::Response<Models::SetBlobAccessTierResult> BlobClient::SetAccessTier(
       Models::AccessTier tier,
       const SetBlobAccessTierOptions& options,
       const Azure::Core::Context& context) const
@@ -590,7 +590,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return res;
   }
 
-  Azure::Core::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(
+  Azure::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(
       const std::string& copyId,
       const AbortCopyBlobFromUriOptions& options,
       const Azure::Core::Context& context) const
@@ -602,7 +602,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::CreateBlobSnapshotResult> BlobClient::CreateSnapshot(
+  Azure::Response<Models::CreateBlobSnapshotResult> BlobClient::CreateSnapshot(
       const CreateBlobSnapshotOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -625,7 +625,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::DeleteBlobResult> BlobClient::Delete(
+  Azure::Response<Models::DeleteBlobResult> BlobClient::Delete(
       const DeleteBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -641,7 +641,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::DeleteBlobResult> BlobClient::DeleteIfExists(
+  Azure::Response<Models::DeleteBlobResult> BlobClient::DeleteIfExists(
       const DeleteBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -657,14 +657,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::DeleteBlobResult ret;
         ret.RequestId = e.RequestId;
         ret.Deleted = false;
-        return Azure::Core::Response<Models::DeleteBlobResult>(
-            std::move(ret), std::move(e.RawResponse));
+        return Azure::Response<Models::DeleteBlobResult>(std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::UndeleteBlobResult> BlobClient::Undelete(
+  Azure::Response<Models::UndeleteBlobResult> BlobClient::Undelete(
       const UndeleteBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -674,7 +673,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetBlobTagsResult> BlobClient::SetTags(
+  Azure::Response<Models::SetBlobTagsResult> BlobClient::SetTags(
       std::map<std::string, std::string> tags,
       const SetBlobTagsOptions& options,
       const Azure::Core::Context& context) const
@@ -686,7 +685,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetBlobTagsResult> BlobClient::GetTags(
+  Azure::Response<Models::GetBlobTagsResult> BlobClient::GetTags(
       const GetBlobTagsOptions& options,
       const Azure::Core::Context& context) const
   {

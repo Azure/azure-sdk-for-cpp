@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct FileSystemItemDetails
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Azure::Core::DateTime LastModified;
     Storage::Metadata Metadata;
     PublicAccessType AccessType = PublicAccessType::None;
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct GetDataLakeFileSystemAccessPolicyResult
   {
     PublicAccessType AccessType = PublicAccessType::None;
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Azure::Core::DateTime LastModified;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
     std::string RequestId;
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct GetDataLakeFileSystemPropertiesResult
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     Storage::Metadata Metadata;
     std::string RequestId;
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct CreateDataLakeFileSystemResult
   {
     bool Created = true;
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
   };
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct SetDataLakeFileSystemMetadataResult
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
   };
@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct GetDataLakePathPropertiesResult
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     Core::DateTime CreatedOn;
     int64_t FileSize = 0;
@@ -179,7 +179,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct GetDataLakePathAccessControlListResult
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     std::string Owner;
     std::string Group;
@@ -190,14 +190,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct SetDataLakePathHttpHeadersResult
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
   };
 
   struct SetDataLakePathMetadataResult
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     std::string RequestId;
   };
@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct CreateDataLakePathResult
   {
     bool Created = true;
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     Azure::Core::Nullable<int64_t> FileSize;
     std::string RequestId;
@@ -224,7 +224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct DownloadDataLakeFileDetails
   {
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Core::DateTime LastModified;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;

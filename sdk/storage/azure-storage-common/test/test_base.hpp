@@ -43,8 +43,8 @@ namespace Azure { namespace Storage { namespace Test {
     return x * 1024 * 1024 * 1024 * 1024;
   }
 
-  const static Azure::Core::ETag DummyETag("0x8D83B58BDF51D75");
-  const static Azure::Core::ETag DummyETag2("0x8D812645BFB0CDE");
+  const static Azure::ETag DummyETag("0x8D83B58BDF51D75");
+  const static Azure::ETag DummyETag2("0x8D812645BFB0CDE");
   constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
   constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
 

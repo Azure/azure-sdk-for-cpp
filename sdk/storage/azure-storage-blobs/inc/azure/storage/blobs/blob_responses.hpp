@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct AcquireBlobLeaseResult
     {
       std::string RequestId;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string LeaseId;
     };
@@ -41,14 +41,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct BreakBlobLeaseResult
     {
       std::string RequestId;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::DateTime LastModified;
     };
 
     struct ChangeBlobLeaseResult
     {
       std::string RequestId;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string LeaseId;
     };
@@ -56,14 +56,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ReleaseBlobLeaseResult
     {
       std::string RequestId;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::DateTime LastModified;
     };
 
     struct RenewBlobLeaseResult
     {
       std::string RequestId;
-      Azure::Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::DateTime LastModified;
       std::string LeaseId;
     };
@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   class StartCopyBlobOperation : public Azure::Core::Operation<Models::GetBlobPropertiesResult> {
   public:
     std::string RequestId;
-    Azure::Core::ETag ETag;
+    Azure::ETag ETag;
     Azure::Core::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatus CopyStatus;
@@ -100,14 +100,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     std::string GetResumeToken() const override
     {
-      // Not supported
+      // Not sud
       std::abort();
     }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Core::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
+    Azure::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 

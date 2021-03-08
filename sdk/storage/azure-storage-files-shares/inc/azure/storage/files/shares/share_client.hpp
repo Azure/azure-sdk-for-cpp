@@ -81,10 +81,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates the file share.
      * @param options Optional parameters to create this file share.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::CreateShareResult> containing the information including
+     * @return Azure::Response<Models::CreateShareResult> containing the information including
      * the version and modified time of a share.
      */
-    Azure::Core::Response<Models::CreateShareResult> Create(
+    Azure::Response<Models::CreateShareResult> Create(
         const CreateShareOptions& options = CreateShareOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -93,10 +93,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * already exists.
      * @param options Optional parameters to create this file share.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::CreateShareResult> containing the information including
+     * @return Azure::Response<Models::CreateShareResult> containing the information including
      * the version and modified time of a share if it is successfully created.
      */
-    Azure::Core::Response<Models::CreateShareResult> CreateIfNotExists(
+    Azure::Response<Models::CreateShareResult> CreateIfNotExists(
         const CreateShareOptions& options = CreateShareOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -104,10 +104,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Deletes the file share.
      * @param options Optional parameters to delete this file share.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * @return Azure::Response<Models::ShareDeleteResult> currently empty and reserved for
      * future usage.
      */
-    Azure::Core::Response<Models::DeleteShareResult> Delete(
+    Azure::Response<Models::DeleteShareResult> Delete(
         const DeleteShareOptions& options = DeleteShareOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -115,10 +115,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Deletes the file share if it exists.
      * @param options Optional parameters to delete this file share.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * @return Azure::Response<Models::ShareDeleteResult> currently empty and reserved for
      * future usage.
      */
-    Azure::Core::Response<Models::DeleteShareResult> DeleteIfExists(
+    Azure::Response<Models::DeleteShareResult> DeleteIfExists(
         const DeleteShareOptions& options = DeleteShareOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -126,10 +126,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates a snapshot for the share.
      * @param options Optional parameters to create the share snapshot.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::CreateShareSnapshotResult> containing the information
+     * @return Azure::Response<Models::CreateShareSnapshotResult> containing the information
      * for ths snapshot.
      */
-    Azure::Core::Response<Models::CreateShareSnapshotResult> CreateSnapshot(
+    Azure::Response<Models::CreateShareSnapshotResult> CreateSnapshot(
         const CreateShareSnapshotOptions& options = CreateShareSnapshotOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -137,10 +137,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Sets the properties of the share.
      * @param options Optional parameters to set the share properties.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetSharePropertiesResult> containing the information
+     * @return Azure::Response<Models::SetSharePropertiesResult> containing the information
      * including the version and modified time of a share.
      */
-    Azure::Core::Response<Models::SetSharePropertiesResult> SetProperties(
+    Azure::Response<Models::SetSharePropertiesResult> SetProperties(
         const SetSharePropertiesOptions& options = SetSharePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -148,10 +148,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the properties of the share.
      * @param options Optional parameters to get the share properties.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetSharePropertiesResult> containing the properties for
+     * @return Azure::Response<Models::GetSharePropertiesResult> containing the properties for
      * ths share or one of its snapshot.
      */
-    Azure::Core::Response<Models::GetSharePropertiesResult> GetProperties(
+    Azure::Response<Models::GetSharePropertiesResult> GetProperties(
         const GetSharePropertiesOptions& options = GetSharePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -160,10 +160,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param metadata A name-value pair to associate with a file storage 'Share' object..
      * @param options Optional parameters to set the share metadata.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetShareMetadataResult> containing the information
+     * @return Azure::Response<Models::SetShareMetadataResult> containing the information
      * including the version and modified time of a share.
      */
-    Azure::Core::Response<Models::SetShareMetadataResult> SetMetadata(
+    Azure::Response<Models::SetShareMetadataResult> SetMetadata(
         Storage::Metadata metadata,
         const SetShareMetadataOptions& options = SetShareMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -172,10 +172,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the access policy of the share.
      * @param options Optional parameters to get the share's access policy.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetShareAccessPolicyResult> containing the access
+     * @return Azure::Response<Models::GetShareAccessPolicyResult> containing the access
      * policy of the share.
      */
-    Azure::Core::Response<Models::GetShareAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::GetShareAccessPolicyResult> GetAccessPolicy(
         const GetShareAccessPolicyOptions& options = GetShareAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -184,10 +184,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param accessPolicy Specifies the access policy to be set to the share.
      * @param options Optional parameters to Set the share's access policy.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetShareAccessPolicyResult> containing the information
+     * @return Azure::Response<Models::SetShareAccessPolicyResult> containing the information
      * including the version and modified time of a share.
      */
-    Azure::Core::Response<Models::SetShareAccessPolicyResult> SetAccessPolicy(
+    Azure::Response<Models::SetShareAccessPolicyResult> SetAccessPolicy(
         const std::vector<Models::SignedIdentifier>& accessPolicy,
         const SetShareAccessPolicyOptions& options = SetShareAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -196,10 +196,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the stats of the share.
      * @param options Optional parameters to get share's statistics.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetShareStatisticsResult> containing the information
+     * @return Azure::Response<Models::GetShareStatisticsResult> containing the information
      * including the bytes used in by the share, the version and modified time of a share.
      */
-    Azure::Core::Response<Models::GetShareStatisticsResult> GetStatistics(
+    Azure::Response<Models::GetShareStatisticsResult> GetStatistics(
         const GetShareStatsOptions& options = GetShareStatsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -208,10 +208,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param permission Specifies the permission to be created on the share.
      * @param options Optional parameters to create the share's permission.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::CreateSharePermissionResult> containing the information
+     * @return Azure::Response<Models::CreateSharePermissionResult> containing the information
      * including the permission key of the permission.
      */
-    Azure::Core::Response<Models::CreateSharePermissionResult> CreatePermission(
+    Azure::Response<Models::CreateSharePermissionResult> CreatePermission(
         const std::string& permission,
         const CreateSharePermissionOptions& options = CreateSharePermissionOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -221,10 +221,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param permissionKey The permission key of a permission.
      * @param options Optional parameters to get share's permission.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetSharePermissionResult> containing the permission
+     * @return Azure::Response<Models::GetSharePermissionResult> containing the permission
      * string with specified key.
      */
-    Azure::Core::Response<Models::GetSharePermissionResult> GetPermission(
+    Azure::Response<Models::GetSharePermissionResult> GetPermission(
         const std::string& permissionKey,
         const GetSharePermissionOptions& options = GetSharePermissionOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -233,10 +233,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
+     * @return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>
+    Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
     ListFilesAndDirectoriesSinglePage(
         const ListFilesAndDirectoriesSinglePageOptions& options
         = ListFilesAndDirectoriesSinglePageOptions(),
