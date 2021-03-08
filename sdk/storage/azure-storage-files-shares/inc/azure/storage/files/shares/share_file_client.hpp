@@ -79,10 +79,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param fileSize Size of the file in bytes.
      * @param options Optional parameters to create this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<CreateShareFileResult> containing the information returned when
+     * @return Azure::Response<CreateShareFileResult> containing the information returned when
      * creating the file.
      */
-    Azure::Core::Response<Models::CreateShareFileResult> Create(
+    Azure::Response<Models::CreateShareFileResult> Create(
         int64_t fileSize,
         const CreateShareFileOptions& options = CreateShareFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -91,10 +91,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Deletes the file.
      * @param options Optional parameters to delete this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<DeleteShareFileResult> containing the information returned when
+     * @return Azure::Response<DeleteShareFileResult> containing the information returned when
      * deleting the file.
      */
-    Azure::Core::Response<Models::DeleteShareFileResult> Delete(
+    Azure::Response<Models::DeleteShareFileResult> Delete(
         const DeleteShareFileOptions& options = DeleteShareFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -102,10 +102,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Deletes the file if it exists.
      * @param options Optional parameters to delete this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<DeleteShareFileResult> containing the information returned when
+     * @return Azure::Response<DeleteShareFileResult> containing the information returned when
      * deleting the file. Only valid when successfully deleted.
      */
-    Azure::Core::Response<Models::DeleteShareFileResult> DeleteIfExists(
+    Azure::Response<Models::DeleteShareFileResult> DeleteIfExists(
         const DeleteShareFileOptions& options = DeleteShareFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -114,10 +114,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * used to download the server end data.
      * @param options Optional parameters to get the content of this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::DownloadShareFileResult> containing the range or full
+     * @return Azure::Response<Models::DownloadShareFileResult> containing the range or full
      * content and the information of the file.
      */
-    Azure::Core::Response<Models::DownloadShareFileResult> Download(
+    Azure::Response<Models::DownloadShareFileResult> Download(
         const DownloadShareFileOptions& options = DownloadShareFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -130,10 +130,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * or file range.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::DownloadShareFileToResult> containing the information
+     * @return Azure::Response<Models::DownloadShareFileToResult> containing the information
      * of the downloaded file/file range.
      */
-    Azure::Core::Response<Models::DownloadShareFileToResult> DownloadTo(
+    Azure::Response<Models::DownloadShareFileToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
         const DownloadShareFileToOptions& options = DownloadShareFileToOptions(),
@@ -146,10 +146,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::DownloadShareFileToResult> containing the information
+     * @return Azure::Response<Models::DownloadShareFileToResult> containing the information
      * of the downloaded file/file range.
      */
-    Azure::Core::Response<Models::DownloadShareFileToResult> DownloadTo(
+    Azure::Response<Models::DownloadShareFileToResult> DownloadTo(
         const std::string& fileName,
         const DownloadShareFileToOptions& options = DownloadShareFileToOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -162,10 +162,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::UploadShareFileFromResult> describing the state of the
+     * @return Azure::Response<Models::UploadShareFileFromResult> describing the state of the
      * updated file.
      */
-    Azure::Core::Response<Models::UploadShareFileFromResult> UploadFrom(
+    Azure::Response<Models::UploadShareFileFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
         const UploadShareFileFromOptions& options = UploadShareFileFromOptions(),
@@ -178,10 +178,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::UploadShareFileFromResult> describing the state of the
+     * @return Azure::Response<Models::UploadShareFileFromResult> describing the state of the
      * updated file.
      */
-    Azure::Core::Response<Models::UploadShareFileFromResult> UploadFrom(
+    Azure::Response<Models::UploadShareFileFromResult> UploadFrom(
         const std::string& fileName,
         const UploadShareFileFromOptions& options = UploadShareFileFromOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -210,10 +210,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * StartCopy operation.
      * @param options Optional parameters to abort copying the content of this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::AbortCopyShareFileResult> containing the abort copy
+     * @return Azure::Response<Models::AbortCopyShareFileResult> containing the abort copy
      * related information, current empty but preserved for future usage.
      */
-    Azure::Core::Response<Models::AbortCopyShareFileResult> AbortCopy(
+    Azure::Response<Models::AbortCopyShareFileResult> AbortCopy(
         std::string copyId,
         const AbortCopyShareFileOptions& options = AbortCopyShareFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -222,10 +222,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the properties of a file.
      * @param options Optional parameters to get the properties of this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetShareFilePropertiesResult> containing the file
+     * @return Azure::Response<Models::GetShareFilePropertiesResult> containing the file
      * properties.
      */
-    Azure::Core::Response<Models::GetShareFilePropertiesResult> GetProperties(
+    Azure::Response<Models::GetShareFilePropertiesResult> GetProperties(
         const GetShareFilePropertiesOptions& options = GetShareFilePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -235,10 +235,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param smbProperties The SMB properties to be set to the file.
      * @param options Optional parameters to set this file's properties.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetShareFilePropertiesResult> containing the properties
+     * @return Azure::Response<Models::SetShareFilePropertiesResult> containing the properties
      * of the file returned from the server.
      */
-    Azure::Core::Response<Models::SetShareFilePropertiesResult> SetProperties(
+    Azure::Response<Models::SetShareFilePropertiesResult> SetProperties(
         const Models::FileHttpHeaders& httpHeaders,
         const Models::FileSmbProperties& smbProperties,
         const SetShareFilePropertiesOptions& options = SetShareFilePropertiesOptions(),
@@ -250,10 +250,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set this file's metadata.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetShareFileMetadataResult> containing the information
+     * @return Azure::Response<Models::SetShareFileMetadataResult> containing the information
      * of the file returned from the server.
      */
-    Azure::Core::Response<Models::SetShareFileMetadataResult> SetMetadata(
+    Azure::Response<Models::SetShareFileMetadataResult> SetMetadata(
         Storage::Metadata metadata,
         const SetShareFileMetadataOptions& options = SetShareFileMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -263,10 +263,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param offset Specifies the starting offset for the content to be written as a range.
      * @param content A BodyStream containing the content of the range to upload.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::UploadFileRange> containing the information of the
+     * @return Azure::Response<Models::UploadFileRange> containing the information of the
      * uploaded range and the file returned from the server.
      */
-    Azure::Core::Response<Models::UploadShareFileRangeResult> UploadRange(
+    Azure::Response<Models::UploadShareFileRangeResult> UploadRange(
         int64_t offset,
         Azure::IO::BodyStream* content,
         const UploadShareFileRangeOptions& options = UploadShareFileRangeOptions(),
@@ -277,10 +277,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param offset Specifies the starting offset for the content to be cleared within the file.
      * @param length Specifies the length for the content to be cleared within the file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ClearShareFileRangeResult> containing the information
+     * @return Azure::Response<Models::ClearShareFileRangeResult> containing the information
      * of the cleared range returned from the server.
      */
-    Azure::Core::Response<Models::ClearShareFileRangeResult> ClearRange(
+    Azure::Response<Models::ClearShareFileRangeResult> ClearRange(
         int64_t offset,
         int64_t length,
         const ClearShareFileRangeOptions& options = ClearShareFileRangeOptions(),
@@ -289,10 +289,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the list of valid range from the file within specified range.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetShareFileRangeListResult> containing the valid
+     * @return Azure::Response<Models::GetShareFileRangeListResult> containing the valid
      * ranges within the file for the specified range.
      */
-    Azure::Core::Response<Models::GetShareFileRangeListResult> GetRangeList(
+    Azure::Response<Models::GetShareFileRangeListResult> GetRangeList(
         const GetShareFileRangeListOptions& options = GetShareFileRangeListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -300,10 +300,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief List open handles on the file.
      * @param options Optional parameters to list this file's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult> containing the
+     * @return Azure::Response<Models::ListShareFileHandlesSinglePageResult> containing the
      * information of the operation and the open handles of this file
      */
-    Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult> ListHandlesSinglePage(
+    Azure::Response<Models::ListShareFileHandlesSinglePageResult> ListHandlesSinglePage(
         const ListShareFileHandlesSinglePageOptions& options
         = ListShareFileHandlesSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -313,10 +313,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param handleId The ID of the handle to be closed.
      * @param options Optional parameters to close one of this file's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ForceCloseShareFileHandleResult> containing the
+     * @return Azure::Response<Models::ForceCloseShareFileHandleResult> containing the
      * information of the closed handle. Current empty but preserved for future usage.
      */
-    Azure::Core::Response<Models::ForceCloseShareFileHandleResult> ForceCloseHandle(
+    Azure::Response<Models::ForceCloseShareFileHandleResult> ForceCloseHandle(
         const std::string& handleId,
         const ForceCloseShareFileHandleOptions& options = ForceCloseShareFileHandleOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -325,11 +325,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Closes all handles opened on a file at the service.
      * @param options Optional parameters to close all this file's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+     * @return Azure::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
      * containing the information of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+    Azure::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
     ForceCloseAllHandlesSinglePage(
         const ForceCloseAllShareFileHandlesSinglePageOptions& options
         = ForceCloseAllShareFileHandlesSinglePageOptions(),
@@ -342,10 +342,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param sourceRange The source URI's range to be uploaded to file.
      * @param options Optional parameters to upload a range to file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::UploadFileRangeFromUriResult> containing the returned
+     * @return Azure::Response<Models::UploadFileRangeFromUriResult> containing the returned
      * information.
      */
-    Azure::Core::Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUri(
+    Azure::Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUri(
         int64_t destinationOffset,
         const std::string& sourceUri,
         const Azure::Core::Http::Range& sourceRange,

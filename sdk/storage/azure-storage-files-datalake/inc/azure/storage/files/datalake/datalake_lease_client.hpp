@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param context Context for cancelling long running operations.
      * @return A AcquireDataLakeLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::AcquireDataLakeLeaseResult> Acquire(
+    Azure::Response<Models::AcquireDataLakeLeaseResult> Acquire(
         std::chrono::seconds duration,
         const AcquireDataLakeLeaseOptions& options = AcquireDataLakeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param context Context for cancelling long running operations.
      * @return A RenewDataLakeLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::RenewDataLakeLeaseResult> Renew(
+    Azure::Response<Models::RenewDataLakeLeaseResult> Renew(
         const RenewDataLakeLeaseOptions& options = RenewDataLakeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param context Context for cancelling long running operations.
      * @return A ReleaseDataLakeLeaseResult describing the updated container or blob.
      */
-    Azure::Core::Response<Models::ReleaseDataLakeLeaseResult> Release(
+    Azure::Response<Models::ReleaseDataLakeLeaseResult> Release(
         const ReleaseDataLakeLeaseOptions& options = ReleaseDataLakeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return A ChangeDataLakeLeaseResult describing the changed lease.
      * @remarks The current DataLakeLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Core::Response<Models::ChangeDataLakeLeaseResult> Change(
+    Azure::Response<Models::ChangeDataLakeLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeDataLakeLeaseOptions& options = ChangeDataLakeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param context Context for cancelling long running operations.
      * @return A BreakDataLakeLeaseResult describing the broken lease.
      */
-    Azure::Core::Response<Models::BreakDataLakeLeaseResult> Break(
+    Azure::Response<Models::BreakDataLakeLeaseResult> Break(
         const BreakDataLakeLeaseOptions& options = BreakDataLakeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {

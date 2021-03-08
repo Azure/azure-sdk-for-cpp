@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<Models::UploadBlockBlobResult> Upload(
+    Azure::Response<Models::UploadBlockBlobResult> Upload(
         Azure::IO::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<Models::UploadBlockBlobFromResult> UploadFrom(
+    Azure::Response<Models::UploadBlockBlobFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions(),
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<Models::UploadBlockBlobFromResult> UploadFrom(
+    Azure::Response<Models::UploadBlockBlobFromResult> UploadFrom(
         const std::string& fileName,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A StageBlockResult describing the state of the updated block.
      */
-    Azure::Core::Response<Models::StageBlockResult> StageBlock(
+    Azure::Response<Models::StageBlockResult> StageBlock(
         const std::string& blockId,
         Azure::IO::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions(),
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A StageBlockFromUriResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<Models::StageBlockFromUriResult> StageBlockFromUri(
+    Azure::Response<Models::StageBlockFromUriResult> StageBlockFromUri(
         const std::string& blockId,
         const std::string& sourceUri,
         const StageBlockFromUriOptions& options = StageBlockFromUriOptions(),
@@ -208,7 +208,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<Models::CommitBlockListResult> CommitBlockList(
+    Azure::Response<Models::CommitBlockListResult> CommitBlockList(
         const std::vector<std::string>& blockIds,
         const CommitBlockListOptions& options = CommitBlockListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -224,7 +224,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetBlobBlockListResult describing requested block list.
      */
-    Azure::Core::Response<Models::GetBlockListResult> GetBlockList(
+    Azure::Response<Models::GetBlockListResult> GetBlockList(
         const GetBlockListOptions& options = GetBlockListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

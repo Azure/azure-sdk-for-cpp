@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<Models::CreatePageBlobResult> PageBlobClient::Create(
+  Azure::Response<Models::CreatePageBlobResult> PageBlobClient::Create(
       int64_t blobSize,
       const CreatePageBlobOptions& options,
       const Azure::Core::Context& context) const
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::CreatePageBlobResult> PageBlobClient::CreateIfNotExists(
+  Azure::Response<Models::CreatePageBlobResult> PageBlobClient::CreateIfNotExists(
       int64_t blobContentLength,
       const CreatePageBlobOptions& options,
       const Azure::Core::Context& context) const
@@ -123,14 +123,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::CreatePageBlobResult ret;
         ret.RequestId = e.RequestId;
         ret.Created = false;
-        return Azure::Core::Response<Models::CreatePageBlobResult>(
+        return Azure::Response<Models::CreatePageBlobResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
+  Azure::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
       int64_t offset,
       Azure::IO::BodyStream* content,
       const UploadPageBlobPagesOptions& options,
@@ -157,8 +157,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult>
-  PageBlobClient::UploadPagesFromUri(
+  Azure::Response<Models::UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
       int64_t destinationOffset,
       std::string sourceUri,
       Azure::Core::Http::Range sourceRange,
@@ -188,7 +187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ClearPageBlobPagesResult> PageBlobClient::ClearPages(
+  Azure::Response<Models::ClearPageBlobPagesResult> PageBlobClient::ClearPages(
       Azure::Core::Http::Range range,
       const ClearPageBlobPagesOptions& options,
       const Azure::Core::Context& context) const
@@ -212,7 +211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ResizePageBlobResult> PageBlobClient::Resize(
+  Azure::Response<Models::ResizePageBlobResult> PageBlobClient::Resize(
       int64_t blobSize,
       const ResizePageBlobOptions& options,
       const Azure::Core::Context& context) const
@@ -236,7 +235,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRanges(
+  Azure::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRanges(
       const GetPageBlobPageRangesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -252,7 +251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRangesDiff(
+  Azure::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRangesDiff(
       const std::string& previousSnapshot,
       const GetPageBlobPageRangesOptions& options,
       const Azure::Core::Context& context) const
@@ -270,8 +269,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Storage::Details::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetPageBlobPageRangesResult>
-  PageBlobClient::GetManagedDiskPageRangesDiff(
+  Azure::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetManagedDiskPageRangesDiff(
       const std::string& previousSnapshotUrl,
       const GetPageBlobPageRangesOptions& options,
       const Azure::Core::Context& context) const

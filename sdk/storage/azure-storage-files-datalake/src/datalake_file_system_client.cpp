@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
   }
 
-  Azure::Core::Response<Models::CreateDataLakeFileSystemResult> DataLakeFileSystemClient::Create(
+  Azure::Response<Models::CreateDataLakeFileSystemResult> DataLakeFileSystemClient::Create(
       const CreateDataLakeFileSystemOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -182,11 +182,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     ret.Created = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::CreateDataLakeFileSystemResult>(
+    return Azure::Response<Models::CreateDataLakeFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::CreateDataLakeFileSystemResult>
+  Azure::Response<Models::CreateDataLakeFileSystemResult>
   DataLakeFileSystemClient::CreateIfNotExists(
       const CreateDataLakeFileSystemOptions& options,
       const Azure::Core::Context& context) const
@@ -201,14 +201,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Models::CreateDataLakeFileSystemResult ret;
         ret.Created = false;
-        return Azure::Core::Response<Models::CreateDataLakeFileSystemResult>(
+        return Azure::Response<Models::CreateDataLakeFileSystemResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> DataLakeFileSystemClient::Delete(
+  Azure::Response<Models::DeleteDataLakeFileSystemResult> DataLakeFileSystemClient::Delete(
       const DeleteDataLakeFileSystemOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -220,12 +220,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DeleteDataLakeFileSystemResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult>(
+    return Azure::Response<Models::DeleteDataLakeFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteDataLakeFileSystemResult>
-  DataLakeFileSystemClient::DeleteIfExists(
+  Azure::Response<Models::DeleteDataLakeFileSystemResult> DataLakeFileSystemClient::DeleteIfExists(
       const DeleteDataLakeFileSystemOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -239,14 +238,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Models::DeleteDataLakeFileSystemResult ret;
         ret.Deleted = false;
-        return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult>(
+        return Azure::Response<Models::DeleteDataLakeFileSystemResult>(
             ret, std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult>
+  Azure::Response<Models::GetDataLakeFileSystemPropertiesResult>
   DataLakeFileSystemClient::GetProperties(
       const GetDataLakeFileSystemPropertiesOptions& options,
       const Azure::Core::Context& context) const
@@ -259,11 +258,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     ret.Metadata = std::move(result->Metadata);
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult>(
+    return Azure::Response<Models::GetDataLakeFileSystemPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult>
+  Azure::Response<Models::SetDataLakeFileSystemMetadataResult>
   DataLakeFileSystemClient::SetMetadata(
       Storage::Metadata metadata,
       const SetDataLakeFileSystemMetadataOptions& options,
@@ -280,12 +279,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult>(
+    return Azure::Response<Models::SetDataLakeFileSystemMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ListPathsSinglePageResult>
-  DataLakeFileSystemClient::ListPathsSinglePage(
+  Azure::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::ListPathsSinglePage(
       bool recursive,
       const ListPathsSinglePageOptions& options,
       const Azure::Core::Context& context) const
@@ -303,7 +301,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>
+  Azure::Response<Models::GetDataLakeFileSystemAccessPolicyResult>
   DataLakeFileSystemClient::GetAccessPolicy(
       const GetDataLakeFileSystemAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
@@ -332,11 +330,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.LastModified = std::move(result->LastModified);
     ret.SignedIdentifiers = std::move(result->SignedIdentifiers);
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult>(
+    return Azure::Response<Models::GetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>
+  Azure::Response<Models::SetDataLakeFileSystemAccessPolicyResult>
   DataLakeFileSystemClient::SetAccessPolicy(
       const SetDataLakeFileSystemAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
@@ -368,11 +366,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult>(
+    return Azure::Response<Models::SetDataLakeFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<DataLakeFileClient> DataLakeFileSystemClient::RenameFile(
+  Azure::Response<DataLakeFileClient> DataLakeFileSystemClient::RenameFile(
       const std::string& fileName,
       const std::string& destinationFilePath,
       const RenameDataLakeFileOptions& options,
@@ -381,7 +379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options, context);
   }
 
-  Azure::Core::Response<DataLakeDirectoryClient> DataLakeFileSystemClient::RenameDirectory(
+  Azure::Response<DataLakeDirectoryClient> DataLakeFileSystemClient::RenameDirectory(
       const std::string& directoryName,
       const std::string& destinationDirectoryPath,
       const RenameDataLakeDirectoryOptions& options,

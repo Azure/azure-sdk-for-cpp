@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::Create(
+  Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::Create(
       const CreateAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
+  Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
       const CreateAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -115,14 +115,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::CreateAppendBlobResult ret;
         ret.RequestId = e.RequestId;
         ret.Created = false;
-        return Azure::Core::Response<Models::CreateAppendBlobResult>(
+        return Azure::Response<Models::CreateAppendBlobResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
+  Azure::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::IO::BodyStream* content,
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
+  Azure::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
       const AppendBlockFromUriOptions& options,
       const Azure::Core::Context& context) const
@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
+  Azure::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
       const SealAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {

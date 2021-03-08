@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param context Context for cancelling long running operations.
      * @return A AcquireShareLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::AcquireShareLeaseResult> Acquire(
+    Azure::Response<Models::AcquireShareLeaseResult> Acquire(
         std::chrono::seconds duration,
         const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param context Context for cancelling long running operations.
      * @return A ReleaseShareLeaseResult describing the updated share or file.
      */
-    Azure::Core::Response<Models::ReleaseShareLeaseResult> Release(
+    Azure::Response<Models::ReleaseShareLeaseResult> Release(
         const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return A ChangeShareLeaseResult describing the updated lease.
      * @remarks The current ShareLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Core::Response<Models::ChangeShareLeaseResult> Change(
+    Azure::Response<Models::ChangeShareLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param context Context for cancelling long running operations.
      * @return A BreakShareLeaseResult describing the broken lease.
      */
-    Azure::Core::Response<Models::BreakShareLeaseResult> Break(
+    Azure::Response<Models::BreakShareLeaseResult> Break(
         const BreakShareLeaseOptions& options = BreakShareLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param context Context for cancelling long running operations.
      * @return A RenewShareLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::RenewShareLeaseResult> Renew(
+    Azure::Response<Models::RenewShareLeaseResult> Renew(
         const RenewShareLeaseOptions& options = RenewShareLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
