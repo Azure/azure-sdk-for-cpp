@@ -11,6 +11,10 @@
 - DataLake client constructors won't automatically convert blob url to dfs url anymore.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `DataLakeClientOptions`.
+- Changed return type of `DataLakeServiceClient::GetUserDelegationKey` to `UserDelegationKey`.
+- Changed return type of `DataLakeFileSystemClient::GetProperties` to `DataLakeFileSystemProperties`.
+- Changed return type of `DataLakeFileSystemClient::GetAccessPolicy` to `DataLakeFileSystemAccessPolciy`.
+- Changed return type of `DataLakePathClient::GetProperties` to `DataLakePathProperties`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

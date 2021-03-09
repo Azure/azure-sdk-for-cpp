@@ -186,11 +186,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetDataLakePathPropertiesResult> containing the
+     * @return Azure::Response<Models::DataLakePathProperties> containing the
      * properties of the path.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::GetDataLakePathPropertiesResult> GetProperties(
+    Azure::Response<Models::DataLakePathProperties> GetProperties(
         const GetDataLakePathPropertiesOptions& options = GetDataLakePathPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

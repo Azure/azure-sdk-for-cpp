@@ -53,7 +53,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobContentInfo->EncryptionKeySha256.HasValue());
 
     auto properties = *appendBlobClient.GetProperties();
-    EXPECT_FALSE(properties.RequestId.empty());
     EXPECT_TRUE(properties.CommittedBlockCount.HasValue());
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 0);
     EXPECT_EQ(properties.BlobSize, 0);

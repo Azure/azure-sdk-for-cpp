@@ -109,9 +109,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A deserialized GetUserDelegationKeyResult instance.
+     * @return A deserialized UserDelegationKey instance.
      */
-    Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Response<Models::UserDelegationKey> GetUserDelegationKey(
         const Azure::Core::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -139,9 +139,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetServicePropertiesResult describing the service properties.
+     * @return A BlobServiceProperties describing the service properties.
      */
-    Azure::Response<Models::GetServicePropertiesResult> GetProperties(
+    Azure::Response<Models::BlobServiceProperties> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -150,9 +150,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return GetAccountInfoResult describing the account.
+     * @return AccountInfo describing the account.
      */
-    Azure::Response<Models::GetAccountInfoResult> GetAccountInfo(
+    Azure::Response<Models::AccountInfo> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -163,9 +163,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A BlobServiceStatistics describing the service replication statistics.
+     * @return A ServiceStatistics describing the service replication statistics.
      */
-    Azure::Response<Models::GetServiceStatisticsResult> GetStatistics(
+    Azure::Response<Models::ServiceStatistics> GetStatistics(
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

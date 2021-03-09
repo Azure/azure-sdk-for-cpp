@@ -159,11 +159,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetDataLakeFileSystemPropertiesResult> containing the
+     * @return Azure::Response<Models::DataLakeFileSystemProperties> containing the
      * information when getting the file system's properties.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::GetDataLakeFileSystemPropertiesResult> GetProperties(
+    Azure::Response<Models::DataLakeFileSystemProperties> GetProperties(
         const GetDataLakeFileSystemPropertiesOptions& options
         = GetDataLakeFileSystemPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -189,10 +189,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetDataLakeFileSystemAccessPolicyResult describing the container's access policy.
+     * @return A DataLakeFileSystemAccessPolciy describing the container's access policy.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::GetDataLakeFileSystemAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::DataLakeFileSystemAccessPolciy> GetAccessPolicy(
         const GetDataLakeFileSystemAccessPolicyOptions& options
         = GetDataLakeFileSystemAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;

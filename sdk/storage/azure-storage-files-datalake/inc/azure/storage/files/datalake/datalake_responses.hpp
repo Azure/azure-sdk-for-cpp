@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   // ServiceClient models:
 
-  using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
+  using GetUserDelegationKeyResult = Blobs::Models::UserDelegationKey;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
 
   struct FileSystemItemDetails
@@ -52,23 +52,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
   using ListDataLakeFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
 
-  struct GetDataLakeFileSystemAccessPolicyResult
+  struct DataLakeFileSystemAccessPolciy
   {
-    PublicAccessType AccessType = PublicAccessType::None;
-    Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Models::PublicAccessType AccessType = Models::PublicAccessType::None;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
-    std::string RequestId;
-  }; // struct GetDataLakeFileSystemAccessPolicyResult
+  }; // struct DataLakeFileSystemAccessPolciy
 
   using SetDataLakeFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 
-  struct GetDataLakeFileSystemPropertiesResult
+  struct DataLakeFileSystemProperties
   {
     Azure::ETag ETag;
     Core::DateTime LastModified;
     Storage::Metadata Metadata;
-    std::string RequestId;
   };
 
   struct CreateDataLakeFileSystemResult
@@ -144,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
   };
 
-  struct GetDataLakePathPropertiesResult
+  struct DataLakePathProperties
   {
     Azure::ETag ETag;
     Core::DateTime LastModified;
@@ -174,7 +170,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> IsCurrentVersion;
-    std::string RequestId;
   };
 
   struct GetDataLakePathAccessControlListResult

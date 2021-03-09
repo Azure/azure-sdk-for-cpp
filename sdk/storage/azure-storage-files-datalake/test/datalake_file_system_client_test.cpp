@@ -392,8 +392,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(ret->LastModified));
 
       auto ret2 = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(ret2->ETag, ret->ETag);
-      EXPECT_EQ(ret2->LastModified, ret->LastModified);
       EXPECT_EQ(ret2->AccessType, options.AccessType);
       for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
       {

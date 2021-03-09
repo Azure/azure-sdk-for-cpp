@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response.ExtractRawResponse();
   }
 
-  Azure::Response<Models::GetBlobPropertiesResult> StartCopyBlobOperation::PollUntilDoneInternal(
+  Azure::Response<Models::BlobProperties> StartCopyBlobOperation::PollUntilDoneInternal(
       std::chrono::milliseconds period,
       Azure::Core::Context& context)
   {
@@ -43,8 +43,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Response<Models::GetBlobPropertiesResult>(
-            m_pollResult, std::move(rawResponse));
+        return Azure::Response<Models::BlobProperties>(m_pollResult, std::move(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {

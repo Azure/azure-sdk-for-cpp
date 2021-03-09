@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::AppendBlob::Create(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::AppendBlob::AppendBlock(
-        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::AppendBlob::AppendBlockFromUri(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::AppendBlob::Seal(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
 }}} // namespace Azure::Storage::Blobs

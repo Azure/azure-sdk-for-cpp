@@ -369,7 +369,6 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
 
     auto res = blockBlobClient.GetProperties();
-    EXPECT_FALSE(res->RequestId.empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());

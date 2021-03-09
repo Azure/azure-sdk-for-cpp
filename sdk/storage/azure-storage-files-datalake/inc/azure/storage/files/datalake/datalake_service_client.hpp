@@ -98,11 +98,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetUserDelegationKeyResult> containing the user
+     * @return Azure::Response<Models::UserDelegationKey> containing the user
      * delegation key related information.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Response<Models::UserDelegationKey> GetUserDelegationKey(
         const Azure::Core::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const

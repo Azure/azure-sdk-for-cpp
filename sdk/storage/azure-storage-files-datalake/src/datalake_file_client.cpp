@@ -397,7 +397,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpire.GetValue().count());
     }
     return Blobs::_detail::BlobRestClient::Blob::ScheduleDeletion(
-        context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions, context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake
