@@ -9,7 +9,7 @@
 ### Breaking Changes
 
 - Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
-- Split `Azure::Core::RequestConditions` into `Azure::Core::MatchConditions` and `Azure::Core::ModifiedConditions`.
+- Split `Azure::Core::RequestConditions` into `Azure::MatchConditions` and `Azure::ModifiedConditions`.
 - Removed `TransportKind` enum from `Azure::Core::Http`.
 - Added `Azure::Core::Operation<T>::GetRawResponse().`
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
