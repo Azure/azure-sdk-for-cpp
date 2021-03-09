@@ -465,7 +465,7 @@ TEST(DateTime, ToStringInvalid)
 {
   auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
 
-  EXPECT_THROW(dt.ToString((DateTime::DateFormat)2), std::invalid_argument);
+  EXPECT_THROW(dt.ToString(static_cast<DateTime::DateFormat>(2)), std::invalid_argument);
 
   EXPECT_THROW(
       dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::AllDigits),
@@ -477,7 +477,7 @@ TEST(DateTime, ToStringInvalid)
       dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::Truncate),
       std::invalid_argument);
   EXPECT_THROW(
-      dt.ToString(DateTime::DateFormat::Rfc1123, (DateTime::TimeFractionFormat)3),
+      dt.ToString(DateTime::DateFormat::Rfc1123, static_cast<DateTime::TimeFractionFormat>(3)),
       std::invalid_argument);
 }
 
