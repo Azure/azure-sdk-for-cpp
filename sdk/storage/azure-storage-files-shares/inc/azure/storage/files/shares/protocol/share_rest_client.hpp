@@ -1115,7 +1115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ServiceSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
@@ -1152,7 +1152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ServiceGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -1182,7 +1182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ServiceListSharesSinglePageResult> ListSharesSinglePage(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListSharesSinglePageOptions& listSharesSinglePageOptions)
         {
@@ -2543,7 +2543,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -2585,7 +2585,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -2625,7 +2625,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -2669,7 +2669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareAcquireLeaseResult> AcquireLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AcquireLeaseOptions& acquireLeaseOptions)
         {
@@ -2714,7 +2714,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ReleaseLeaseOptions& releaseLeaseOptions)
         {
@@ -2753,7 +2753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareChangeLeaseResult> ChangeLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ChangeLeaseOptions& changeLeaseOptions)
         {
@@ -2797,7 +2797,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareRenewLeaseResult> RenewLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const RenewLeaseOptions& renewLeaseOptions)
         {
@@ -2836,7 +2836,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareBreakLeaseResult> BreakLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const BreakLeaseOptions& breakLeaseOptions)
         {
@@ -2882,7 +2882,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareCreateSnapshotResult> CreateSnapshot(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateSnapshotOptions& createSnapshotOptions)
         {
@@ -2914,7 +2914,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareCreatePermissionResult> CreatePermission(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreatePermissionOptions& createPermissionOptions)
         {
@@ -2951,7 +2951,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetPermissionResult> GetPermission(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPermissionOptions& getPermissionOptions)
         {
@@ -2982,7 +2982,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
@@ -3027,7 +3027,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareSetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
@@ -3064,7 +3064,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetAccessPolicyOptions& getAccessPolicyOptions)
         {
@@ -3097,7 +3097,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessPolicyOptions& setAccessPolicyOptions)
         {
@@ -3140,7 +3140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetStatisticsResult> GetStatistics(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetStatisticsOptions& getStatisticsOptions)
         {
@@ -3173,7 +3173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareRestoreResult> Restore(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const RestoreOptions& restoreOptions)
         {
@@ -4050,7 +4050,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -4094,7 +4094,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -4126,7 +4126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -4156,7 +4156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectorySetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
@@ -4199,7 +4199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectorySetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
@@ -4235,7 +4235,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static Azure::Response<DirectoryListFilesAndDirectoriesSinglePageResult>
         ListFilesAndDirectoriesSinglePage(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListFilesAndDirectoriesSinglePageOptions&
                 listFilesAndDirectoriesSinglePageOptions)
@@ -4296,7 +4296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryListHandlesResult> ListHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListHandlesOptions& listHandlesOptions)
         {
@@ -4352,7 +4352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryForceCloseHandlesResult> ForceCloseHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ForceCloseHandlesOptions& forceCloseHandlesOptions)
         {
@@ -5237,7 +5237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -5321,7 +5321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileDownloadResult> Download(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DownloadOptions& downloadOptions)
         {
@@ -5361,7 +5361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -5398,7 +5398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -5439,7 +5439,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileSetHttpHeadersResult> SetHttpHeaders(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetHttpHeadersOptions& setHttpHeadersOptions)
         {
@@ -5527,7 +5527,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileSetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
@@ -5564,7 +5564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileAcquireLeaseResult> AcquireLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AcquireLeaseOptions& acquireLeaseOptions)
         {
@@ -5600,7 +5600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ReleaseLeaseOptions& releaseLeaseOptions)
         {
@@ -5630,7 +5630,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileChangeLeaseResult> ChangeLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ChangeLeaseOptions& changeLeaseOptions)
         {
@@ -5665,7 +5665,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileBreakLeaseResult> BreakLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const BreakLeaseOptions& breakLeaseOptions)
         {
@@ -5702,7 +5702,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static Azure::Response<FileUploadRangeResult> UploadRange(
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream& bodyStream,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeOptions& uploadRangeOptions)
         {
@@ -5752,7 +5752,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeFromUrlOptions& uploadRangeFromUrlOptions)
         {
@@ -5821,7 +5821,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileGetRangeListResult> GetRangeList(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetRangeListOptions& getRangeListOptions)
         {
@@ -5880,7 +5880,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileStartCopyResult> StartCopy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const StartCopyOptions& startCopyOptions)
         {
@@ -5960,7 +5960,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileAbortCopyResult> AbortCopy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AbortCopyOptions& abortCopyOptions)
         {
@@ -5997,7 +5997,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileListHandlesResult> ListHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListHandlesOptions& listHandlesOptions)
         {
@@ -6046,7 +6046,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileForceCloseHandlesResult> ForceCloseHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ForceCloseHandlesOptions& forceCloseHandlesOptions)
         {

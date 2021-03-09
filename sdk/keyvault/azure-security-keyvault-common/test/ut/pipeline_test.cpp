@@ -18,7 +18,7 @@ TEST(KeyVaultPipeline, initPipeline)
   policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
   Azure::Core::Http::Url url("urlTest");
   Azure::Core::Internal::ClientOptions options;
-  Azure::Core::Internal::Http::HttpPipeline pipeline(
+  Azure::Core::Http::Internal::HttpPipeline pipeline(
       options, "service-name", "service-version", std::move(policies), {});
   EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", std::move(pipeline)));
 }

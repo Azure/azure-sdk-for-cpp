@@ -35,7 +35,7 @@ KeyClient::KeyClient(
   m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
       Azure::Core::Http::Url(vaultUrl),
       apiVersion,
-      Azure::Core::Internal::Http::HttpPipeline(
+      Azure::Core::Http::Internal::HttpPipeline(
           options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
