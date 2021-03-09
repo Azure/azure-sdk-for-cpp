@@ -13,8 +13,7 @@ namespace Azure { namespace Storage { namespace Details {
     SecondaryHostReplicaStatus* replicaStatus = nullptr;
     if (ctx.HasKey(SecondaryHostReplicaStatusKey))
     {
-      replicaStatus = dynamic_cast<SecondaryHostReplicaStatus*>(
-          ctx[SecondaryHostReplicaStatusKey].Get<std::unique_ptr<Azure::Core::ValueBase>>().get());
+      replicaStatus = ctx.Get<SecondaryHostReplicaStatus*>(SecondaryHostReplicaStatusKey);
     }
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
