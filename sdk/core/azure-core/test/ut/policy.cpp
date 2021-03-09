@@ -89,7 +89,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   Azure::Core::Http::Internal::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-  EXPECT_THROW(pipeline.Send(request, Azure::Core::GetApplicationContext()), std::invalid_argument);
+  EXPECT_THROW(pipeline.Send(request, Azure::Core::Context::GetApplicationContext()), std::invalid_argument);
 }
 
 TEST(Policy, throwWhenNoTransportPolicyMessage)
@@ -107,7 +107,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
 
   try
   {
-    pipeline.Send(request, Azure::Core::GetApplicationContext());
+    pipeline.Send(request, Azure::Core::Context::GetApplicationContext());
   }
   catch (const std::invalid_argument& ex)
   {
@@ -132,7 +132,7 @@ TEST(Policy, ValuePolicy)
 
   Request request(HttpMethod::Get, Url("https:://www.example.com"));
 
-  pipeline.Send(request, GetApplicationContext());
+  pipeline.Send(request, Context::GetApplicationContext());
 
   auto headers = request.GetHeaders();
   auto queryParams = request.GetUrl().GetQueryParameters();
@@ -148,7 +148,7 @@ TEST(Policy, RetryPolicyCounter)
   using namespace Azure::Core::Http::Internal;
 
   // Check when there's no info about retry on the context
-  auto initialContext = GetApplicationContext();
+  auto initialContext = Context::GetApplicationContext();
   EXPECT_EQ(-1, RetryPolicy::GetRetryNumber(initialContext));
 
   // Pipeline with retry test
@@ -179,5 +179,5 @@ TEST(Policy, RetryPolicyRetryCycle)
 
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
-  pipeline.Send(request, GetApplicationContext());
+  pipeline.Send(request, Context::GetApplicationContext());
 }
