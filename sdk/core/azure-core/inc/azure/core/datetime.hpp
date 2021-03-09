@@ -166,16 +166,26 @@ namespace Azure { namespace Core {
     /**
      * @brief Get a string representation of the #Azure::Core::DateTime.
      *
-     * @param format The representation format to use. Default is
-     * #Azure::Core::DateTime::DateFormat::Rfc3339.
+     * @param format The representation format to use.
      * @param fractionFormat The format for the fraction part of the DateTime. Only
      * supported by #Azure::Core::DateTime::DateFormat::Rfc3339.
      *
      * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string ToString(
-        DateFormat format = DateFormat::Rfc3339,
-        TimeFractionFormat fractionFormat = TimeFractionFormat::DropTrailingZeros) const;
+    std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
+
+    /**
+     * @brief Get a string representation of the #Azure::Core::DateTime.
+     *
+     * @param format The representation format to use. Default is
+     * #Azure::Core::DateTime::DateFormat::Rfc3339.
+     *
+     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
+     */
+    std::string ToString(DateFormat format = DateFormat::Rfc3339) const
+    {
+      return this->ToString(format, TimeFractionFormat::DropTrailingZeros);
+    }
   };
 
   inline Details::Clock::time_point Details::Clock::now() noexcept
