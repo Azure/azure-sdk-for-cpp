@@ -19,7 +19,7 @@
 
 namespace Azure { namespace Perf { namespace Test {
 
-  namespace Details {
+  namespace _detail {
     static std::atomic_uint64_t DelayTestInstanceCount(0);
   }
 

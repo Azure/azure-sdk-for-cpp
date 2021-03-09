@@ -8,12 +8,12 @@
 
 #include <string>
 
-using namespace Azure::Security::KeyVault::Keys::Details;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 
 std::string KeyRequestParameters::Serialize() const
 {
 
-  Azure::Core::Internal::Json::json payload;
+  Azure::Core::_internal::Json::json payload;
   /* Mandatory */
   // kty
   payload[Details::KeyTypePropertyName] = KeyTypeToString(m_keyType);

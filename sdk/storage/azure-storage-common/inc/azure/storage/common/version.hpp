@@ -16,7 +16,7 @@
 #define AZURE_STORAGE_COMMON_VERSION_PATCH 0
 #define AZURE_STORAGE_COMMON_VERSION_PRERELEASE "beta.9"
 
-namespace Azure { namespace Storage { namespace Common { namespace Details {
+namespace Azure { namespace Storage { namespace Common { namespace _detail {
 
   /**
    * @brief Provides version information.
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Common { namespace Details {
     }
   };
 
-}}}} // namespace Azure::Storage::Common::Details
+}}}} // namespace Azure::Storage::Common::_detail
 
 #undef AZURE_STORAGE_COMMON_VERSION_MAJOR
 #undef AZURE_STORAGE_COMMON_VERSION_MINOR

@@ -347,7 +347,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::string tempFilename = RandomString();
       {
-        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+        Azure::Storage::_detail::FileWriter fileWriter(tempFilename);
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
 

@@ -129,7 +129,7 @@ namespace Azure { namespace Storage {
           response->GetHeaders().at(Details::HttpHeaderContentType).find("json")
           != std::string::npos)
       {
-        auto jsonParser = Azure::Core::Internal::Json::json::parse(bodyBuffer);
+        auto jsonParser = Azure::Core::_internal::Json::json::parse(bodyBuffer);
         errorCode = jsonParser["error"]["code"].get<std::string>();
         message = jsonParser["error"]["message"].get<std::string>();
       }

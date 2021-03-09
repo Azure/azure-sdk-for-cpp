@@ -514,7 +514,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
   } // namespace Models
-  namespace Details {
+  namespace _detail {
     using namespace Models;
     constexpr static const char* DefaultServiceApiVersion = "2020-02-10";
     constexpr static const char* QueryCopyId = "copyid";
@@ -1049,7 +1049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     class ShareRestClient {
     private:
-      static Azure::Core::Http::Range HttpRangeFromXml(Storage::Details::XmlReader& reader)
+      static Azure::Core::Http::Range HttpRangeFromXml(Storage::_detail::XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -1059,24 +1059,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         while (true)
         {
           auto node = reader.Read();
-          if (node.Type == Storage::Details::XmlNodeType::End)
+          if (node.Type == Storage::_detail::XmlNodeType::End)
           {
             break;
           }
           else if (
-              node.Type == Storage::Details::XmlNodeType::StartTag
+              node.Type == Storage::_detail::XmlNodeType::StartTag
               && strcmp(node.Name, "Start") == 0)
           {
             ++depth;
             is_start = true;
           }
           else if (
-              node.Type == Storage::Details::XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
+              node.Type == Storage::_detail::XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
           {
             ++depth;
             is_end = true;
           }
-          else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+          else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
           {
             is_start = false;
             is_end = false;
@@ -1085,7 +1085,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               break;
             }
           }
-          if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
+          if (depth == 1 && node.Type == Storage::_detail::XmlNodeType::Text)
           {
             if (is_start)
             {
@@ -1115,16 +1115,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ServiceSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
 
           std::string xml_body;
           {
-            Storage::Details::XmlWriter writer;
+            Storage::_detail::XmlWriter writer;
             FileServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
           auto body = Azure::IO::MemoryBodyStream(
@@ -1137,7 +1137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
@@ -1152,7 +1152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ServiceGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -1163,7 +1163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
@@ -1182,7 +1182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ServiceListSharesSinglePageResult> ListSharesSinglePage(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListSharesSinglePageOptions& listSharesSinglePageOptions)
         {
@@ -1192,35 +1192,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPrefix,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listSharesSinglePageOptions.Prefix.GetValue()));
           }
           if (listSharesSinglePageOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listSharesSinglePageOptions.ContinuationToken.GetValue()));
           }
           if (listSharesSinglePageOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listSharesSinglePageOptions.MaxResults.GetValue())));
           }
           if (listSharesSinglePageOptions.ListSharesInclude.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryListSharesInclude,
-                Storage::Details::UrlEncodeQueryParameter(ListSharesIncludeTypeToString(
+                Storage::_detail::UrlEncodeQueryParameter(ListSharesIncludeTypeToString(
                     listSharesSinglePageOptions.ListSharesInclude.GetValue())));
           }
           if (listSharesSinglePageOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listSharesSinglePageOptions.Timeout.GetValue())));
           }
           request.SetHeader(
@@ -1250,148 +1250,148 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void ShareRetentionPolicyToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const ShareRetentionPolicy& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           if (object.Days.HasValue())
           {
             writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Days"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
+                Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Days"});
+            writer.Write(Storage::_detail::XmlNode{
+                Storage::_detail::XmlNodeType::Text,
                 nullptr,
                 std::to_string(object.Days.GetValue()).data()});
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           }
         }
 
-        static void MetricsToXml(Storage::Details::XmlWriter& writer, const Metrics& object)
+        static void MetricsToXml(Storage::_detail::XmlWriter& writer, const Metrics& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Version"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Version.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Version"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Version.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           if (object.IncludeApis.HasValue())
           {
             writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
+                Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "IncludeAPIs"});
+            writer.Write(Storage::_detail::XmlNode{
+                Storage::_detail::XmlNodeType::Text,
                 nullptr,
                 object.IncludeApis.GetValue() ? "true" : "false"});
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           }
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "RetentionPolicy"});
           ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
-        static void CorsRuleToXml(Storage::Details::XmlWriter& writer, const CorsRule& object)
+        static void CorsRuleToXml(Storage::_detail::XmlWriter& writer, const CorsRule& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "CorsRule"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "CorsRule"});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedOrigins"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AllowedOrigins"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedMethods"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AllowedMethods"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedHeaders"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AllowedHeaders"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "ExposedHeaders"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "ExposedHeaders"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "MaxAgeInSeconds"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text,
               nullptr,
               std::to_string(object.MaxAgeInSeconds).data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void SmbMultichannelToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const SmbMultichannel& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Multichannel"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Multichannel"});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
-        static void SmbSettingsToXml(Storage::Details::XmlWriter& writer, const SmbSettings& object)
+        static void SmbSettingsToXml(Storage::_detail::XmlWriter& writer, const SmbSettings& object)
         {
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "SMB"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "SMB"});
           SmbMultichannelToXml(writer, object.Multichannel);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void ShareProtocolSettingsToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const ShareProtocolSettings& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "ProtocolSettings"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "ProtocolSettings"});
           SmbSettingsToXml(writer, object.Settings);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void FileServicePropertiesToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const FileServiceProperties& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "StorageServiceProperties"});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "HourMetrics"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "HourMetrics"});
           MetricsToXml(writer, object.HourMetrics);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "MinuteMetrics"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "MinuteMetrics"});
           MetricsToXml(writer, object.MinuteMetrics);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           if (object.Cors.size() > 0)
           {
             writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Cors"});
+                Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Cors"});
             for (const auto& item : object.Cors)
             {
               CorsRuleToXml(writer, item);
             }
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           }
           if (object.Protocol.HasValue())
           {
             ShareProtocolSettingsToXml(writer, object.Protocol.GetValue());
           }
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
         static Azure::Response<ServiceGetPropertiesResult> GetPropertiesParseResult(
             Azure::Core::Context context,
@@ -1402,7 +1402,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceGetPropertiesResult result = bodyBuffer.empty()
                 ? ServiceGetPropertiesResult()
@@ -1419,7 +1419,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareRetentionPolicy ShareRetentionPolicyFromXml(Storage::Details::XmlReader& reader)
+        static ShareRetentionPolicy ShareRetentionPolicyFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareRetentionPolicy();
           enum class XmlTagName
@@ -1433,11 +1433,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1448,7 +1448,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Days") == 0)
@@ -1464,7 +1464,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Days)
               {
@@ -1479,7 +1479,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Metrics MetricsFromXml(Storage::Details::XmlReader& reader)
+        static Metrics MetricsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = Metrics();
           enum class XmlTagName
@@ -1495,11 +1495,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1510,7 +1510,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Enabled") == 0)
@@ -1540,7 +1540,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
@@ -1559,7 +1559,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static CorsRule CorsRuleFromXml(Storage::Details::XmlReader& reader)
+        static CorsRule CorsRuleFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = CorsRule();
           enum class XmlTagName
@@ -1576,11 +1576,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1591,7 +1591,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AllowedHeaders") == 0)
@@ -1619,7 +1619,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::AllowedHeaders)
               {
@@ -1646,7 +1646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SmbMultichannel SmbMultichannelFromXml(Storage::Details::XmlReader& reader)
+        static SmbMultichannel SmbMultichannelFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = SmbMultichannel();
           enum class XmlTagName
@@ -1659,11 +1659,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1674,7 +1674,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Enabled") == 0)
@@ -1686,7 +1686,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
@@ -1697,7 +1697,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SmbSettings SmbSettingsFromXml(Storage::Details::XmlReader& reader)
+        static SmbSettings SmbSettingsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = SmbSettings();
           enum class XmlTagName
@@ -1710,11 +1710,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1725,7 +1725,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Multichannel") == 0)
@@ -1743,7 +1743,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -1751,7 +1751,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static ShareProtocolSettings ShareProtocolSettingsFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = ShareProtocolSettings();
           enum class XmlTagName
@@ -1764,11 +1764,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1779,7 +1779,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "SMB") == 0)
@@ -1797,7 +1797,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -1805,7 +1805,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static FileServiceProperties FileServicePropertiesFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = FileServiceProperties();
           enum class XmlTagName
@@ -1823,11 +1823,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1838,7 +1838,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Cors") == 0)
@@ -1898,7 +1898,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -1925,7 +1925,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceListSharesSinglePageResult result = bodyBuffer.empty()
                 ? ServiceListSharesSinglePageResult()
@@ -1942,7 +1942,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static LeaseStatusType LeaseStatusTypeFromXml(Storage::Details::XmlReader& reader)
+        static LeaseStatusType LeaseStatusTypeFromXml(Storage::_detail::XmlReader& reader)
         {
           LeaseStatusType result;
           enum class XmlTagName
@@ -1955,11 +1955,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1970,7 +1970,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseStatus") == 0)
@@ -1982,7 +1982,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseStatus)
               {
@@ -1993,7 +1993,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static LeaseStateType LeaseStateTypeFromXml(Storage::Details::XmlReader& reader)
+        static LeaseStateType LeaseStateTypeFromXml(Storage::_detail::XmlReader& reader)
         {
           LeaseStateType result;
           enum class XmlTagName
@@ -2006,11 +2006,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2021,7 +2021,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseState") == 0)
@@ -2033,7 +2033,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseState)
               {
@@ -2044,7 +2044,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static LeaseDurationType LeaseDurationTypeFromXml(Storage::Details::XmlReader& reader)
+        static LeaseDurationType LeaseDurationTypeFromXml(Storage::_detail::XmlReader& reader)
         {
           LeaseDurationType result;
           enum class XmlTagName
@@ -2057,11 +2057,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2072,7 +2072,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseDuration") == 0)
@@ -2084,7 +2084,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseDuration)
               {
@@ -2095,7 +2095,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareItemDetails ShareItemDetailsFromXml(Storage::Details::XmlReader& reader)
+        static ShareItemDetails ShareItemDetailsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareItemDetails();
           enum class XmlTagName
@@ -2122,11 +2122,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2137,7 +2137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AccessTier") == 0)
@@ -2221,7 +2221,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::AccessTier)
               {
@@ -2280,7 +2280,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Metadata MetadataFromXml(Storage::Details::XmlReader& reader)
+        static Metadata MetadataFromXml(Storage::_detail::XmlReader& reader)
         {
           Metadata result;
           int depth = 0;
@@ -2288,25 +2288,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
               if (depth++ == 0)
               {
                 key = node.Name;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            else if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
+            else if (depth == 1 && node.Type == Storage::_detail::XmlNodeType::Text)
             {
               result.emplace(std::move(key), std::string(node.Value));
             }
@@ -2314,7 +2314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareItem ShareItemFromXml(Storage::Details::XmlReader& reader)
+        static ShareItem ShareItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareItem();
           enum class XmlTagName
@@ -2332,11 +2332,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2347,7 +2347,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Deleted") == 0)
@@ -2390,7 +2390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Deleted)
               {
@@ -2413,7 +2413,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListSharesResponse ListSharesResponseFromXml(Storage::Details::XmlReader& reader)
+        static ListSharesResponse ListSharesResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListSharesResponse();
           enum class XmlTagName
@@ -2431,11 +2431,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2446,7 +2446,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
@@ -2484,7 +2484,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -2504,7 +2504,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 result.Prefix = node.Value;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
+            else if (node.Type == Storage::_detail::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::EnumerationResults
                   && (std::strcmp(node.Name, "ServiceEndpoint") == 0))
@@ -2543,7 +2543,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -2554,7 +2554,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
           for (const auto& pair : createOptions.Metadata)
@@ -2585,7 +2585,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -2595,14 +2595,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     getPropertiesOptions.ShareSnapshot.GetValue()));
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
@@ -2625,7 +2625,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -2635,13 +2635,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(deleteOptions.ShareSnapshot.GetValue()));
+                Storage::_detail::UrlEncodeQueryParameter(deleteOptions.ShareSnapshot.GetValue()));
           }
           if (deleteOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
@@ -2669,7 +2669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareAcquireLeaseResult> AcquireLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AcquireLeaseOptions& acquireLeaseOptions)
         {
@@ -2682,7 +2682,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(acquireLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(
@@ -2698,7 +2698,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     acquireLeaseOptions.ShareSnapshot.GetValue()));
           }
           return AcquireLeaseParseResult(context, pipeline.Send(request, context));
@@ -2714,7 +2714,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ReleaseLeaseOptions& releaseLeaseOptions)
         {
@@ -2727,7 +2727,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(releaseLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
@@ -2736,7 +2736,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     releaseLeaseOptions.ShareSnapshot.GetValue()));
           }
           return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
@@ -2753,7 +2753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareChangeLeaseResult> ChangeLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ChangeLeaseOptions& changeLeaseOptions)
         {
@@ -2766,7 +2766,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(changeLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderLeaseId, changeLeaseOptions.LeaseIdRequired);
@@ -2781,7 +2781,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     changeLeaseOptions.ShareSnapshot.GetValue()));
           }
           return ChangeLeaseParseResult(context, pipeline.Send(request, context));
@@ -2797,7 +2797,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareRenewLeaseResult> RenewLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const RenewLeaseOptions& renewLeaseOptions)
         {
@@ -2810,7 +2810,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(renewLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderLeaseId, renewLeaseOptions.LeaseIdRequired);
@@ -2819,7 +2819,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     renewLeaseOptions.ShareSnapshot.GetValue()));
           }
           return RenewLeaseParseResult(context, pipeline.Send(request, context));
@@ -2836,7 +2836,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareBreakLeaseResult> BreakLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const BreakLeaseOptions& breakLeaseOptions)
         {
@@ -2849,7 +2849,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(breakLeaseOptions.Timeout.GetValue())));
           }
           if (breakLeaseOptions.LeaseBreakPeriod.HasValue())
@@ -2867,7 +2867,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     breakLeaseOptions.ShareSnapshot.GetValue()));
           }
           return BreakLeaseParseResult(context, pipeline.Send(request, context));
@@ -2882,7 +2882,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareCreateSnapshotResult> CreateSnapshot(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateSnapshotOptions& createSnapshotOptions)
         {
@@ -2894,7 +2894,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createSnapshotOptions.Timeout.GetValue())));
           }
           for (const auto& pair : createSnapshotOptions.Metadata)
@@ -2914,14 +2914,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareCreatePermissionResult> CreatePermission(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreatePermissionOptions& createPermissionOptions)
         {
 
           std::string json_body;
           {
-            Azure::Core::Internal::Json::json json;
+            Azure::Core::_internal::Json::json json;
             SharePermissionToJson(json, createPermissionOptions.Permission);
             json_body = json.dump();
           }
@@ -2935,7 +2935,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createPermissionOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, createPermissionOptions.ApiVersionParameter);
@@ -2951,7 +2951,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetPermissionResult> GetPermission(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPermissionOptions& getPermissionOptions)
         {
@@ -2964,7 +2964,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPermissionOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getPermissionOptions.ApiVersionParameter);
@@ -2982,7 +2982,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
@@ -2994,7 +2994,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
@@ -3027,7 +3027,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareSetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
@@ -3039,7 +3039,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
           for (const auto& pair : setMetadataOptions.Metadata)
@@ -3064,7 +3064,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetAccessPolicyOptions& getAccessPolicyOptions)
         {
@@ -3075,7 +3075,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getAccessPolicyOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getAccessPolicyOptions.ApiVersionParameter);
@@ -3097,16 +3097,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessPolicyOptions& setAccessPolicyOptions)
         {
 
           std::string xml_body;
           {
-            Storage::Details::XmlWriter writer;
+            Storage::_detail::XmlWriter writer;
             SignedIdentifiersToXml(writer, setAccessPolicyOptions.ShareAcl);
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
           auto body = Azure::IO::MemoryBodyStream(
@@ -3119,7 +3119,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setAccessPolicyOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, setAccessPolicyOptions.ApiVersionParameter);
@@ -3140,7 +3140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareGetStatisticsResult> GetStatistics(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetStatisticsOptions& getStatisticsOptions)
         {
@@ -3151,7 +3151,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getStatisticsOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getStatisticsOptions.ApiVersionParameter);
@@ -3173,7 +3173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<ShareRestoreResult> Restore(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const RestoreOptions& restoreOptions)
         {
@@ -3185,7 +3185,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(restoreOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, restoreOptions.ApiVersionParameter);
@@ -3508,7 +3508,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void SharePermissionToJson(
-            Azure::Core::Internal::Json::json& node,
+            Azure::Core::_internal::Json::json& node,
             const SharePermission& object)
         {
           node["permission"] = object.FilePermission;
@@ -3526,7 +3526,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareGetPermissionResult result = bodyBuffer.empty()
                 ? ShareGetPermissionResult()
                 : ShareGetPermissionResultFromSharePermission(
-                    SharePermissionFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
+                    SharePermissionFromJson(Azure::Core::_internal::Json::json::parse(bodyBuffer)));
             result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
             return Azure::Response<ShareGetPermissionResult>(
                 std::move(result), std::move(responsePtr));
@@ -3539,7 +3539,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static SharePermission SharePermissionFromJson(
-            const Azure::Core::Internal::Json::json& node)
+            const Azure::Core::_internal::Json::json& node)
         {
           SharePermission result;
           result.FilePermission = node["permission"].get<std::string>();
@@ -3611,7 +3611,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ShareGetAccessPolicyResult result = bodyBuffer.empty()
                 ? ShareGetAccessPolicyResult()
@@ -3631,7 +3631,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static AccessPolicy AccessPolicyFromXml(Storage::Details::XmlReader& reader)
+        static AccessPolicy AccessPolicyFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = AccessPolicy();
           enum class XmlTagName
@@ -3646,11 +3646,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3661,7 +3661,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Expiry") == 0)
@@ -3681,7 +3681,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Expiry)
               {
@@ -3702,7 +3702,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SignedIdentifier SignedIdentifierFromXml(Storage::Details::XmlReader& reader)
+        static SignedIdentifier SignedIdentifierFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = SignedIdentifier();
           enum class XmlTagName
@@ -3716,11 +3716,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3731,7 +3731,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AccessPolicy") == 0)
@@ -3753,7 +3753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Id)
               {
@@ -3765,7 +3765,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static std::vector<SignedIdentifier> SignedIdentifiersFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = std::vector<SignedIdentifier>();
           enum class XmlTagName
@@ -3779,11 +3779,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3794,7 +3794,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "SignedIdentifier") == 0)
@@ -3817,7 +3817,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -3857,65 +3857,65 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void AccessPolicyToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const AccessPolicy& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AccessPolicy"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Start"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AccessPolicy"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Start"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text,
               nullptr,
               object.StartsOn
                   .ToString(
                       Azure::Core::DateTime::DateFormat::Rfc3339,
                       Core::DateTime::TimeFractionFormat::AllDigits)
                   .data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Expiry"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Expiry"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text,
               nullptr,
               object.ExpiresOn
                   .ToString(
                       Azure::Core::DateTime::DateFormat::Rfc3339,
                       Core::DateTime::TimeFractionFormat::AllDigits)
                   .data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Permission"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Permission.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Permission"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Permission.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void SignedIdentifierToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const SignedIdentifier& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Id"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Id.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "SignedIdentifier"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Id"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Id.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           AccessPolicyToXml(writer, object.Policy);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void SignedIdentifiersToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const std::vector<SignedIdentifier>& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "SignedIdentifiers"});
           for (const auto& item : object)
           {
             SignedIdentifierToXml(writer, item);
           }
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
         static Azure::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
             Azure::Core::Context context,
@@ -3926,7 +3926,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ShareGetStatisticsResult result = bodyBuffer.empty()
                 ? ShareGetStatisticsResult()
@@ -3946,7 +3946,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareStats ShareStatsFromXml(Storage::Details::XmlReader& reader)
+        static ShareStats ShareStatsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareStats();
           enum class XmlTagName
@@ -3960,11 +3960,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3975,7 +3975,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ShareStats") == 0)
@@ -3991,7 +3991,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::ShareStats
                   && path[1] == XmlTagName::ShareUsageBytes)
@@ -4050,7 +4050,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -4061,7 +4061,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
           for (const auto& pair : createOptions.Metadata)
@@ -4094,7 +4094,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -4104,14 +4104,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     getPropertiesOptions.ShareSnapshot.GetValue()));
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
@@ -4126,7 +4126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -4136,7 +4136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
@@ -4156,7 +4156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectorySetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
@@ -4168,7 +4168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
@@ -4199,7 +4199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectorySetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
@@ -4211,7 +4211,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
           for (const auto& pair : setMetadataOptions.Metadata)
@@ -4235,7 +4235,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static Azure::Response<DirectoryListFilesAndDirectoriesSinglePageResult>
         ListFilesAndDirectoriesSinglePage(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListFilesAndDirectoriesSinglePageOptions&
                 listFilesAndDirectoriesSinglePageOptions)
@@ -4247,35 +4247,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPrefix,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listFilesAndDirectoriesSinglePageOptions.Prefix.GetValue()));
           }
           if (listFilesAndDirectoriesSinglePageOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listFilesAndDirectoriesSinglePageOptions.ShareSnapshot.GetValue()));
           }
           if (listFilesAndDirectoriesSinglePageOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listFilesAndDirectoriesSinglePageOptions.ContinuationToken.GetValue()));
           }
           if (listFilesAndDirectoriesSinglePageOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(std::to_string(
+                Storage::_detail::UrlEncodeQueryParameter(std::to_string(
                     listFilesAndDirectoriesSinglePageOptions.MaxResults.GetValue())));
           }
           if (listFilesAndDirectoriesSinglePageOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listFilesAndDirectoriesSinglePageOptions.Timeout.GetValue())));
           }
           request.SetHeader(
@@ -4296,7 +4296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryListHandlesResult> ListHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListHandlesOptions& listHandlesOptions)
         {
@@ -4306,28 +4306,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ContinuationToken.GetValue()));
           }
           if (listHandlesOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.MaxResults.GetValue())));
           }
           if (listHandlesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.Timeout.GetValue())));
           }
           if (listHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ShareSnapshot.GetValue()));
           }
           if (listHandlesOptions.Recursive.HasValue())
@@ -4352,7 +4352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<DirectoryForceCloseHandlesResult> ForceCloseHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ForceCloseHandlesOptions& forceCloseHandlesOptions)
         {
@@ -4363,21 +4363,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(forceCloseHandlesOptions.Timeout.GetValue())));
           }
           if (forceCloseHandlesOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ContinuationToken.GetValue()));
           }
           if (forceCloseHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ShareSnapshot.GetValue()));
           }
           request.SetHeader(Details::HeaderHandleId, forceCloseHandlesOptions.HandleId);
@@ -4579,7 +4579,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             DirectoryListFilesAndDirectoriesSinglePageResult result = bodyBuffer.empty()
                 ? DirectoryListFilesAndDirectoriesSinglePageResult()
@@ -4597,7 +4597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static DirectoryItem DirectoryItemFromXml(Storage::Details::XmlReader& reader)
+        static DirectoryItem DirectoryItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = DirectoryItem();
           enum class XmlTagName
@@ -4610,11 +4610,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4625,7 +4625,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Name") == 0)
@@ -4637,7 +4637,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Name)
               {
@@ -4648,7 +4648,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileItemDetails FileItemDetailsFromXml(Storage::Details::XmlReader& reader)
+        static FileItemDetails FileItemDetailsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = FileItemDetails();
           enum class XmlTagName
@@ -4661,11 +4661,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4676,7 +4676,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Content-Length") == 0)
@@ -4688,7 +4688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::ContentLength)
               {
@@ -4699,7 +4699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileItem FileItemFromXml(Storage::Details::XmlReader& reader)
+        static FileItem FileItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = FileItem();
           enum class XmlTagName
@@ -4713,11 +4713,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4728,7 +4728,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Name") == 0)
@@ -4750,7 +4750,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Name)
               {
@@ -4762,7 +4762,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static FilesAndDirectoriesListSinglePage FilesAndDirectoriesListSinglePageFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = FilesAndDirectoriesListSinglePage();
           enum class XmlTagName
@@ -4776,11 +4776,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4791,7 +4791,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Directory") == 0)
@@ -4817,7 +4817,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -4825,7 +4825,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static ListFilesAndDirectoriesSinglePageResponse
-        ListFilesAndDirectoriesSinglePageResponseFromXml(Storage::Details::XmlReader& reader)
+        ListFilesAndDirectoriesSinglePageResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListFilesAndDirectoriesSinglePageResponse();
           enum class XmlTagName
@@ -4842,11 +4842,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4857,7 +4857,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -4892,7 +4892,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -4912,7 +4912,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 result.Prefix = node.Value;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
+            else if (node.Type == Storage::_detail::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::EnumerationResults
                   && (std::strcmp(node.Name, "DirectoryPath") == 0))
@@ -4967,7 +4967,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             DirectoryListHandlesResult result = bodyBuffer.empty()
                 ? DirectoryListHandlesResult()
@@ -4985,7 +4985,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static HandleItem HandleItemFromXml(Storage::Details::XmlReader& reader)
+        static HandleItem HandleItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = HandleItem();
           enum class XmlTagName
@@ -5005,11 +5005,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5020,7 +5020,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClientIp") == 0)
@@ -5060,7 +5060,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::ClientIp)
               {
@@ -5101,7 +5101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListHandlesResponse ListHandlesResponseFromXml(Storage::Details::XmlReader& reader)
+        static ListHandlesResponse ListHandlesResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListHandlesResponse();
           enum class XmlTagName
@@ -5117,11 +5117,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5132,7 +5132,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -5162,7 +5162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -5237,7 +5237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
@@ -5247,7 +5247,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
@@ -5278,7 +5278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.SetHeader(
                 Details::HeaderContentHashMd5,
-                Storage::Details::ToBase64String(createOptions.ContentMd5.GetValue()));
+                Storage::_detail::ToBase64String(createOptions.ContentMd5.GetValue()));
           }
           if (createOptions.FileContentDisposition.HasValue())
           {
@@ -5321,7 +5321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileDownloadResult> Download(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DownloadOptions& downloadOptions)
         {
@@ -5330,7 +5330,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(downloadOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, downloadOptions.ApiVersionParameter);
@@ -5361,7 +5361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -5370,14 +5370,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     getPropertiesOptions.ShareSnapshot.GetValue()));
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
@@ -5398,7 +5398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -5407,7 +5407,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
@@ -5439,7 +5439,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileSetHttpHeadersResult> SetHttpHeaders(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetHttpHeadersOptions& setHttpHeadersOptions)
         {
@@ -5450,7 +5450,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setHttpHeadersOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, setHttpHeadersOptions.ApiVersionParameter);
@@ -5486,7 +5486,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.SetHeader(
                 Details::HeaderContentHashMd5,
-                Storage::Details::ToBase64String(setHttpHeadersOptions.ContentMd5.GetValue()));
+                Storage::_detail::ToBase64String(setHttpHeadersOptions.ContentMd5.GetValue()));
           }
           if (setHttpHeadersOptions.FileContentDisposition.HasValue())
           {
@@ -5527,7 +5527,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileSetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
@@ -5538,7 +5538,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
           for (const auto& pair : setMetadataOptions.Metadata)
@@ -5564,7 +5564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileAcquireLeaseResult> AcquireLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AcquireLeaseOptions& acquireLeaseOptions)
         {
@@ -5576,7 +5576,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(acquireLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(
@@ -5600,7 +5600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ReleaseLeaseOptions& releaseLeaseOptions)
         {
@@ -5612,7 +5612,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(releaseLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
@@ -5630,7 +5630,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileChangeLeaseResult> ChangeLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ChangeLeaseOptions& changeLeaseOptions)
         {
@@ -5642,7 +5642,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(changeLeaseOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderLeaseId, changeLeaseOptions.LeaseIdRequired);
@@ -5665,7 +5665,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileBreakLeaseResult> BreakLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const BreakLeaseOptions& breakLeaseOptions)
         {
@@ -5677,7 +5677,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(breakLeaseOptions.Timeout.GetValue())));
           }
           if (breakLeaseOptions.LeaseIdOptional.HasValue())
@@ -5702,7 +5702,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static Azure::Response<FileUploadRangeResult> UploadRange(
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream& bodyStream,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeOptions& uploadRangeOptions)
         {
@@ -5712,7 +5712,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(uploadRangeOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderXMsRange, uploadRangeOptions.XMsRange);
@@ -5724,7 +5724,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.SetHeader(
                 Details::HeaderContentHashMd5,
-                Storage::Details::ToBase64String(uploadRangeOptions.ContentMd5.GetValue()));
+                Storage::_detail::ToBase64String(uploadRangeOptions.ContentMd5.GetValue()));
           }
           request.SetHeader(Details::HeaderVersion, uploadRangeOptions.ApiVersionParameter);
           if (uploadRangeOptions.LeaseIdOptional.HasValue())
@@ -5752,7 +5752,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeFromUrlOptions& uploadRangeFromUrlOptions)
         {
@@ -5763,7 +5763,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(uploadRangeFromUrlOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderRange, uploadRangeFromUrlOptions.TargetRange);
@@ -5783,21 +5783,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.SetHeader(
                 Details::HeaderSourceContentHashCrc64,
-                Storage::Details::ToBase64String(
+                Storage::_detail::ToBase64String(
                     uploadRangeFromUrlOptions.SourceContentCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfMatchCrc64.HasValue())
           {
             request.SetHeader(
                 Details::HeaderSourceIfMatchHashCrc64,
-                Storage::Details::ToBase64String(
+                Storage::_detail::ToBase64String(
                     uploadRangeFromUrlOptions.SourceIfMatchCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.HasValue())
           {
             request.SetHeader(
                 Details::HeaderSourceIfNoneMatchHashCrc64,
-                Storage::Details::ToBase64String(
+                Storage::_detail::ToBase64String(
                     uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.GetValue()));
           }
           request.SetHeader(Details::HeaderVersion, uploadRangeFromUrlOptions.ApiVersionParameter);
@@ -5821,7 +5821,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileGetRangeListResult> GetRangeList(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetRangeListOptions& getRangeListOptions)
         {
@@ -5831,21 +5831,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     getRangeListOptions.ShareSnapshot.GetValue()));
           }
           if (getRangeListOptions.PrevShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPrevShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     getRangeListOptions.PrevShareSnapshot.GetValue()));
           }
           if (getRangeListOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getRangeListOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, getRangeListOptions.ApiVersionParameter);
@@ -5880,7 +5880,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileStartCopyResult> StartCopy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const StartCopyOptions& startCopyOptions)
         {
@@ -5890,7 +5890,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(startCopyOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderVersion, startCopyOptions.ApiVersionParameter);
@@ -5960,7 +5960,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileAbortCopyResult> AbortCopy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AbortCopyOptions& abortCopyOptions)
         {
@@ -5969,12 +5969,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.GetUrl().AppendQueryParameter(Details::QueryComp, "copy");
           request.GetUrl().AppendQueryParameter(
               Details::QueryCopyId,
-              Storage::Details::UrlEncodeQueryParameter(abortCopyOptions.CopyId));
+              Storage::_detail::UrlEncodeQueryParameter(abortCopyOptions.CopyId));
           if (abortCopyOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(abortCopyOptions.Timeout.GetValue())));
           }
           request.SetHeader(Details::HeaderCopyActionAbortConstant, "abort");
@@ -5997,7 +5997,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileListHandlesResult> ListHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListHandlesOptions& listHandlesOptions)
         {
@@ -6007,28 +6007,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ContinuationToken.GetValue()));
           }
           if (listHandlesOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.MaxResults.GetValue())));
           }
           if (listHandlesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.Timeout.GetValue())));
           }
           if (listHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ShareSnapshot.GetValue()));
           }
           request.SetHeader(Details::HeaderVersion, listHandlesOptions.ApiVersionParameter);
@@ -6046,7 +6046,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Azure::Response<FileForceCloseHandlesResult> ForceCloseHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Http::Internal::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ForceCloseHandlesOptions& forceCloseHandlesOptions)
         {
@@ -6057,21 +6057,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(forceCloseHandlesOptions.Timeout.GetValue())));
           }
           if (forceCloseHandlesOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ContinuationToken.GetValue()));
           }
           if (forceCloseHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ShareSnapshot.GetValue()));
           }
           request.SetHeader(Details::HeaderHandleId, forceCloseHandlesOptions.HandleId);
@@ -6177,7 +6177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentHash = Storage::Details::FromBase64String(
+              result.TransactionalContentHash = Storage::_detail::FromBase64String(
                   response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
@@ -6243,7 +6243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
+              result.HttpHeaders.ContentHash = Storage::_detail::FromBase64String(
                   response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
@@ -6339,7 +6339,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentHash = Storage::Details::FromBase64String(
+              result.TransactionalContentHash = Storage::_detail::FromBase64String(
                   response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
@@ -6405,7 +6405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
+              result.HttpHeaders.ContentHash = Storage::_detail::FromBase64String(
                   response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
@@ -6487,7 +6487,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
+              result.HttpHeaders.ContentHash = Storage::_detail::FromBase64String(
                   response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
@@ -6800,7 +6800,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentHash = Storage::Details::FromBase64String(
+              result.TransactionalContentHash = Storage::_detail::FromBase64String(
                   response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
@@ -6834,7 +6834,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
-            result.TransactionalContentHash = Storage::Details::FromBase64String(
+            result.TransactionalContentHash = Storage::_detail::FromBase64String(
                 response.GetHeaders().at(Details::HeaderTransactionalContentHashCrc64),
                 HashAlgorithm::Crc64);
             result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
@@ -6859,7 +6859,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileGetRangeListResult result = bodyBuffer.empty()
                 ? FileGetRangeListResult()
@@ -6880,7 +6880,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareFileRangeList ShareFileRangeListFromXml(Storage::Details::XmlReader& reader)
+        static ShareFileRangeList ShareFileRangeListFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareFileRangeList();
           enum class XmlTagName
@@ -6895,11 +6895,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -6910,7 +6910,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClearRange") == 0)
@@ -6942,7 +6942,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -7019,7 +7019,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileListHandlesResult result = bodyBuffer.empty()
                 ? FileListHandlesResult()
@@ -7036,7 +7036,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static HandleItem HandleItemFromXml(Storage::Details::XmlReader& reader)
+        static HandleItem HandleItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = HandleItem();
           enum class XmlTagName
@@ -7056,11 +7056,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7071,7 +7071,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClientIp") == 0)
@@ -7111,7 +7111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::ClientIp)
               {
@@ -7152,7 +7152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListHandlesResponse ListHandlesResponseFromXml(Storage::Details::XmlReader& reader)
+        static ListHandlesResponse ListHandlesResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListHandlesResponse();
           enum class XmlTagName
@@ -7168,11 +7168,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7183,7 +7183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -7213,7 +7213,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -7266,6 +7266,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     }; // class ShareRestClient
 
-  } // namespace Details
+  } // namespace _detail
 
 }}}} // namespace Azure::Storage::Files::Shares

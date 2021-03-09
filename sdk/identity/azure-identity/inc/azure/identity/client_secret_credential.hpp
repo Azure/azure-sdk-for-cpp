@@ -18,14 +18,14 @@
 #include <utility>
 
 namespace Azure { namespace Identity {
-  namespace Details {
+  namespace _detail {
     AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
   }
 
   /**
    * @brief Defines options for token authentication.
    */
-  struct ClientSecretCredentialOptions : public Azure::Core::Internal::ClientOptions
+  struct ClientSecretCredentialOptions : public Azure::Core::_internal::ClientOptions
   {
   public:
     /**

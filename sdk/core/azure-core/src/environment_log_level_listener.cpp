@@ -29,7 +29,7 @@
 #include <string>
 
 using namespace Azure::Core;
-using namespace Azure::Core::Details;
+using namespace Azure::Core::_detail;
 
 namespace {
 Logger::Level const* GetEnvironmentLogLevel()

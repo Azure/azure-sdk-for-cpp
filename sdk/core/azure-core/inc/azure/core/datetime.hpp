@@ -15,7 +15,7 @@
 #include <string>
 
 namespace Azure { namespace Core {
-  namespace Details {
+  namespace _detail {
     class Clock {
     public:
       using rep = int64_t;
@@ -40,7 +40,7 @@ namespace Azure { namespace Core {
       static constexpr bool is_steady = std::chrono::system_clock::is_steady;
       static time_point now() noexcept;
     };
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Manages date and time in standardized string formats.

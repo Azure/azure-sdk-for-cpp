@@ -111,7 +111,7 @@ int pollSocketUntilEventOrTimeout(
 }
 
 using Azure::Core::Logger;
-using Azure::Core::Internal::Log;
+using Azure::Core::_internal::Log;
 
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for

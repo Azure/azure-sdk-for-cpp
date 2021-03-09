@@ -30,14 +30,14 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::_internal::Json::json;
 
 #include <iostream>
 #include <sstream>
 #include <valarray>
 
 namespace {
-struct SaxEventLogger : public Azure::Core::Internal::Json::json_sax<json>
+struct SaxEventLogger : public Azure::Core::_internal::Json::json_sax<json>
 {
   bool null() override
   {

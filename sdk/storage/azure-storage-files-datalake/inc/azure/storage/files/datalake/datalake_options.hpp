@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Client options used to initalize DataLakeServiceClient, FileSystemClient, PathClient,
    * FileClient and DirectoryClient.
    */
-  struct DataLakeClientOptions : Azure::Core::Internal::ClientOptions
+  struct DataLakeClientOptions : Azure::Core::_internal::ClientOptions
   {
     /**
      * SecondaryHostForRetryReads specifies whether the retry policy should retry a read

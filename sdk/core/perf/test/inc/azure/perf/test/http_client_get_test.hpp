@@ -20,9 +20,9 @@
 
 namespace Azure { namespace Perf { namespace Test {
 
-  namespace Details {
+  namespace _detail {
     static std::unique_ptr<Azure::Core::Http::HttpTransport> HttpClient;
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief A performance test that defines a test option.

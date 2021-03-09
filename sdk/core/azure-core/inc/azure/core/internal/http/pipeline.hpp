@@ -18,7 +18,7 @@
 #include <memory>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Http { namespace Internal {
+namespace Azure { namespace Core { namespace Http { namespace _internal {
 
   /**
    * @brief HTTP pipeline is a stack of HTTP policies that get applied sequentially.
@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Http { namespace Internal {
      * @param perCallPolicies The service-specific per call policies.
      */
     explicit HttpPipeline(
-        Azure::Core::Internal::ClientOptions const& clientOptions,
+        Azure::Core::_internal::ClientOptions const& clientOptions,
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
         std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>&& perRetryPolicies,
@@ -151,7 +151,7 @@ namespace Azure { namespace Core { namespace Http { namespace Internal {
      *
      * @remark \p other is expected to have at least one policy.
      *
-     * @param other Another instance of #Azure::Core::Http::Internal::HttpPipeline to create a copy
+     * @param other Another instance of #Azure::Core::Http::_internal::HttpPipeline to create a copy
      * of.
      */
     HttpPipeline(const HttpPipeline& other)
@@ -180,4 +180,4 @@ namespace Azure { namespace Core { namespace Http { namespace Internal {
       return m_policies[0]->Send(request, Azure::Core::Http::NextHttpPolicy(0, m_policies), ctx);
     }
   };
-}}}} // namespace Azure::Core::Http::Internal
+}}}} // namespace Azure::Core::Http::_internal

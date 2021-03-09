@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Cryptography {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  namespace Details {
+  namespace _detail {
     struct AlgorithmProviderInstance
     {
       BCRYPT_ALG_HANDLE Handle;
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Cryptography {
       BCRYPT_HASH_HANDLE hashHandle = nullptr;
       std::size_t hashLength = 0;
     };
-  } // namespace Details
+  } // namespace _detail
 
   Md5Hash::Md5Hash()
   {

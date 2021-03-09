@@ -10,14 +10,14 @@
 #include <azure/core/internal/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
-using Azure::Security::KeyVault::Common::Internal::UnixTimeConverter;
+using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
 DeletedKey Details::DeletedKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto body = rawResponse.GetBody();
-  auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
+  auto jsonParser = Azure::Core::_internal::Json::json::parse(body);
 
   // "Key"
   DeletedKey deletedKey(name);

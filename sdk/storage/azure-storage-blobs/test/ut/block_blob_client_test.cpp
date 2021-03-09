@@ -862,7 +862,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::string tempFilename = RandomString();
       {
-        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+        Azure::Storage::_detail::FileWriter fileWriter(tempFilename);
         fileWriter.Write(blobContent.data(), blobSize, 0);
       }
       auto res = blockBlobClient.UploadFrom(tempFilename, options);

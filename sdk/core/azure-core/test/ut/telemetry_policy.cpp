@@ -7,7 +7,7 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Http::Internal;
+using namespace Azure::Core::Http::_internal;
 
 namespace {
 

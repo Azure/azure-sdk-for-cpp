@@ -7,7 +7,7 @@
 
 #include <azure/core/http/policy.hpp>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   class StoragePerRetryPolicy : public Core::Http::HttpPolicy {
   public:
@@ -24,4 +24,4 @@ namespace Azure { namespace Storage { namespace Details {
         Core::Context const& ctx) const override;
   };
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

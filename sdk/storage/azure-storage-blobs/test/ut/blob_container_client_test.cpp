@@ -1046,7 +1046,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1055,7 +1055,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1064,7 +1064,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
     }
 
     {
@@ -1075,7 +1075,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1085,7 +1085,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1095,7 +1095,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
     }
   }
 
@@ -1106,7 +1106,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.Create());
     auto blobUrl = blobClient.GetUrl();
     EXPECT_EQ(
-        blobUrl, m_blobContainerClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(blobName));
+        blobUrl, m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
   }
 
   TEST_F(BlobContainerClientTest, DeleteBlob)

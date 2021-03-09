@@ -14,12 +14,12 @@
 #include <utility> // for swap and move
 
 namespace Azure { namespace Core {
-  namespace Details {
+  namespace _detail {
     struct NontrivialEmptyType
     {
       constexpr NontrivialEmptyType() noexcept {}
     };
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Manages an optional contained value, i.e. a value that may or may not be present.

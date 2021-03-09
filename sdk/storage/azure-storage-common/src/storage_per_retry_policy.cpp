@@ -8,7 +8,7 @@
 
 #include <chrono>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
       Core::Http::Request& request,
@@ -31,4 +31,4 @@ namespace Azure { namespace Storage { namespace Details {
     return nextHttpPolicy.Send(request, ctx);
   }
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

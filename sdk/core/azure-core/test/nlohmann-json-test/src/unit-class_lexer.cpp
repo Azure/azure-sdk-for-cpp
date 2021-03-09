@@ -31,7 +31,7 @@ SOFTWARE.
 
 #define private public
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::_internal::Json::json;
 #undef private
 
 namespace {
@@ -39,8 +39,8 @@ namespace {
 json::lexer::token_type scan_string(const char* s);
 json::lexer::token_type scan_string(const char* s)
 {
-  auto ia = Azure::Core::Internal::Json::detail::input_adapter(s);
-  return Azure::Core::Internal::Json::detail::lexer<json, decltype(ia)>(std::move(ia)).scan();
+  auto ia = Azure::Core::_internal::Json::detail::input_adapter(s);
+  return Azure::Core::_internal::Json::detail::lexer<json, decltype(ia)>(std::move(ia)).scan();
 }
 } // namespace
 

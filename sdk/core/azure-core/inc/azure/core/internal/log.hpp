@@ -9,7 +9,7 @@
 #include <atomic>
 #include <type_traits>
 
-namespace Azure { namespace Core { namespace Internal {
+namespace Azure { namespace Core { namespace _internal {
   class Log {
     using LogLevelInt = std::underlying_type<Logger::Level>::type;
 
@@ -36,4 +36,4 @@ namespace Azure { namespace Core { namespace Internal {
     static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
   };
-}}} // namespace Azure::Core::Internal
+}}} // namespace Azure::Core::_internal

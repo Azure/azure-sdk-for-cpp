@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Client options used to initalize all kinds of blob clients.
    */
-  struct BlobClientOptions : Azure::Core::Internal::ClientOptions
+  struct BlobClientOptions : Azure::Core::_internal::ClientOptions
   {
     /**
      * @brief Holds the customer provided key used when making requests.

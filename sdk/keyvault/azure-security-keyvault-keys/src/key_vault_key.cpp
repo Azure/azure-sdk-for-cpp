@@ -10,7 +10,7 @@
 #include <azure/core/internal/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
-using Azure::Security::KeyVault::Common::Internal::UnixTimeConverter;
+using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
 namespace {
 void ParseStringOperationsToKeyOperations(
@@ -38,7 +38,7 @@ void Details::KeyVaultKeyDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto body = rawResponse.GetBody();
-  auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
+  auto jsonParser = Azure::Core::_internal::Json::json::parse(body);
 
   // "Key"
   auto const& jsonKey = jsonParser[Details::KeyPropertyName];

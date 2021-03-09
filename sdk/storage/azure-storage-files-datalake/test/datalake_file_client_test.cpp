@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::string tempFilename = RandomString();
       {
-        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+        Azure::Storage::_detail::FileWriter fileWriter(tempFilename);
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
@@ -521,7 +521,7 @@ namespace Azure { namespace Storage { namespace Test {
               fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
       std::string tempFileDestinationName = RandomString();
       fileClient.DownloadTo(tempFileDestinationName);
-      Azure::Storage::Details::FileReader fileReader(tempFileDestinationName);
+      Azure::Storage::_detail::FileReader fileReader(tempFileDestinationName);
       auto size = fileReader.GetFileSize();
       EXPECT_EQ(fileSize, size);
       DeleteFile(tempFileDestinationName);
@@ -564,7 +564,7 @@ namespace Azure { namespace Storage { namespace Test {
           AadTenantId(), AadClientId(), AadClientSecret());
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
-          Azure::Storage::Files::DataLake::Details::GetDfsUrlFromUrl(
+          Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
                   AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
                   .GetUrl()),

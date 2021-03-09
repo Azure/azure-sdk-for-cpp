@@ -10,7 +10,7 @@
 #include "environment_log_level_listener_private.hpp"
 
 using namespace Azure::Core;
-using namespace Azure::Core::Internal;
+using namespace Azure::Core::_internal;
 
 namespace {
 static std::shared_timed_mutex g_logListenerMutex;

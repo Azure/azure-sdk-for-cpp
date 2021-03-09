@@ -8,7 +8,7 @@
 
 #include <azure/core/http/policy.hpp>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   static constexpr const char* SecondaryHostReplicaStatusKey
       = "AzureSdkStorageSecondaryHostReplicaStatusKey";
@@ -46,4 +46,4 @@ namespace Azure { namespace Storage { namespace Details {
     std::string m_secondaryHost;
   };
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

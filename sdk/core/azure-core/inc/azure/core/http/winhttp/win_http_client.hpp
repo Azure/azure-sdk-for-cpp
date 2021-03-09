@@ -18,7 +18,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
 
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
     constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024;
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Http {
        */
       int64_t Length() const override { return this->m_contentLength; }
     };
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
