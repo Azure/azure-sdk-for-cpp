@@ -37,6 +37,7 @@
 - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
+- Moved `Azure::Core::ETag` to `Azure::ETag`.
 
 ### Bug Fixes
 
