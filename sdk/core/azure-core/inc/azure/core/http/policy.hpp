@@ -205,7 +205,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::set<HttpStatusCode> StatusCodes{
         HttpStatusCode::RequestTimeout,
-        HttpStatusCode::_internalServerError,
+        HttpStatusCode::InternalServerError,
         HttpStatusCode::BadGateway,
         HttpStatusCode::ServiceUnavailable,
         HttpStatusCode::GatewayTimeout,
