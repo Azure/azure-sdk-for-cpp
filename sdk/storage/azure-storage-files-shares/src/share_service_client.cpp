@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetServicePropertiesResult> ShareServiceClient::GetProperties(
+  Azure::Response<Models::FileServiceProperties> ShareServiceClient::GetProperties(
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {

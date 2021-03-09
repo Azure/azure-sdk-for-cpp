@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetShareFilePropertiesResult> ShareFileClient::GetProperties(
+  Azure::Response<Models::ShareFileProperties> ShareFileClient::GetProperties(
       const GetShareFilePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -549,7 +549,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), response.ExtractRawResponse());
   }
 
-  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
+  Azure::Response<Models::ShareFileRangeInfo> ShareFileClient::GetRangeList(
       const GetShareFileRangeListOptions& options,
       const Azure::Core::Context& context) const
   {

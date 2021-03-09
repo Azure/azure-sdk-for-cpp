@@ -222,10 +222,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the properties of a file.
      * @param options Optional parameters to get the properties of this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetShareFilePropertiesResult> containing the file
+     * @return Azure::Response<Models::ShareFileProperties> containing the file
      * properties.
      */
-    Azure::Response<Models::GetShareFilePropertiesResult> GetProperties(
+    Azure::Response<Models::ShareFileProperties> GetProperties(
         const GetShareFilePropertiesOptions& options = GetShareFilePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -289,10 +289,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the list of valid range from the file within specified range.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetShareFileRangeListResult> containing the valid
+     * @return Azure::Response<Models::ShareFileRangeInfo> containing the valid
      * ranges within the file for the specified range.
      */
-    Azure::Response<Models::GetShareFileRangeListResult> GetRangeList(
+    Azure::Response<Models::ShareFileRangeInfo> GetRangeList(
         const GetShareFileRangeListOptions& options = GetShareFileRangeListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
