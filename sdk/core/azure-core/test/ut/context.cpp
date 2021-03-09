@@ -83,7 +83,7 @@ TEST(Context, BasicChar)
 
 TEST(Context, ApplicationContext)
 {
-  Context appContext = GetApplicationContext();
+  Context appContext;
 
   EXPECT_FALSE(appContext.HasKey("Key"));
   EXPECT_FALSE(appContext.HasKey("key"));
@@ -100,10 +100,10 @@ TEST(Context, ApplicationContext)
   appContext.Cancel();
   EXPECT_TRUE(appContext.IsCancelled());
 
-  // AppContext2 is the same context as AppContext
+  // AppContext2 is a node from the AppContext
   //  The context should be cancelled
-  Context appContext2 = GetApplicationContext();
-  EXPECT_TRUE(appContext.IsCancelled());
+  Context appContext2 = appContext.WithValue("aaa", 1);
+  EXPECT_TRUE(appContext2.IsCancelled());
 }
 
 TEST(Context, IsCancelled)
