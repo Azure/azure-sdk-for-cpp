@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct BlobContainerAccessConditions : public Azure::Core::ModifiedConditions,
+  struct BlobContainerAccessConditions : public Azure::ModifiedConditions,
                                          public LeaseAccessConditions
   {
   };
@@ -42,8 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public Azure::Core::ModifiedConditions,
-                                public Azure::Core::MatchConditions,
+  struct BlobAccessConditions : public Azure::ModifiedConditions,
+                                public Azure::MatchConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions
   {
@@ -52,8 +52,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for blob lease operations.
    */
-  struct LeaseBlobAccessConditions : public Azure::Core::ModifiedConditions,
-                                     public Azure::Core::MatchConditions,
+  struct LeaseBlobAccessConditions : public Azure::ModifiedConditions,
+                                     public Azure::MatchConditions,
                                      public TagAccessConditions
   {
   };
@@ -789,7 +789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    struct : public Azure::Core::ModifiedConditions, public Azure::Core::MatchConditions
+    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
     } SourceAccessConditions;
   };

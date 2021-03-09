@@ -86,7 +86,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
-  Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
+  Azure::Core::Http::Internal::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
   EXPECT_THROW(pipeline.Send(request, Azure::Core::GetApplicationContext()), std::invalid_argument);
@@ -101,7 +101,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
-  Azure::Core::Internal::Http::HttpPipeline pipeline(policies);
+  Azure::Core::Http::Internal::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
@@ -119,7 +119,7 @@ TEST(Policy, ValuePolicy)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Internal::Http;
+  using namespace Azure::Core::Http::Internal;
 
   Azure::Core::Http::Internal::ValueOptions options
       = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
@@ -145,7 +145,7 @@ TEST(Policy, RetryPolicyCounter)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Internal::Http;
+  using namespace Azure::Core::Http::Internal;;
   // Clean the validation global state
   retryCounterState = 0;
 
@@ -171,7 +171,7 @@ TEST(Policy, RetryPolicyRetryCycle)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Internal::Http;
+  using namespace Azure::Core::Http::Internal;;
   // Clean the validation global state
   retryCounterState = 0;
 

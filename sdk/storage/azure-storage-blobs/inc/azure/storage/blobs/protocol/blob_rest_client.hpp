@@ -1237,7 +1237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ListBlobContainersSinglePageOptions& options)
         {
@@ -1304,7 +1304,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetUserDelegationKeyOptions& options)
         {
@@ -1357,7 +1357,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetServicePropertiesResult> GetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetServicePropertiesOptions& options)
         {
@@ -1400,7 +1400,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetServicePropertiesResult> SetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetServicePropertiesOptions& options)
         {
@@ -1447,7 +1447,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetAccountInfoResult> GetAccountInfo(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetAccountInfoOptions& options)
         {
@@ -1487,7 +1487,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetServiceStatisticsResult> GetStatistics(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetServiceStatisticsOptions& options)
         {
@@ -1532,7 +1532,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const FindBlobsByTagsSinglePageOptions& options)
         {
@@ -3098,7 +3098,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<CreateBlobContainerResult> Create(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreateBlobContainerOptions& options)
         {
@@ -3160,7 +3160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<DeleteBlobContainerResult> Delete(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const DeleteBlobContainerOptions& options)
         {
@@ -3215,7 +3215,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<UndeleteBlobContainerResult> Undelete(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const UndeleteBlobContainerOptions& options)
         {
@@ -3255,7 +3255,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetBlobContainerPropertiesResult> GetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobContainerPropertiesOptions& options)
         {
@@ -3328,7 +3328,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobContainerMetadataResult> SetMetadata(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobContainerMetadataOptions& options)
         {
@@ -3388,7 +3388,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<ListBlobsSinglePageResult> ListBlobsSinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ListBlobsSinglePageOptions& options)
         {
@@ -3457,7 +3457,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<ListBlobsByHierarchySinglePageResult> ListBlobsByHierarchySinglePage(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ListBlobsByHierarchySinglePageOptions& options)
         {
@@ -3528,7 +3528,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetBlobContainerAccessPolicyResult> GetAccessPolicy(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobContainerAccessPolicyOptions& options)
         {
@@ -3585,7 +3585,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobContainerAccessPolicyResult> SetAccessPolicy(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobContainerAccessPolicyOptions& options)
         {
@@ -3662,7 +3662,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::AcquireBlobContainerLeaseResult> AcquireLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AcquireBlobContainerLeaseOptions& options)
         {
@@ -3727,7 +3727,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::RenewBlobContainerLeaseResult> RenewLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const RenewBlobContainerLeaseOptions& options)
         {
@@ -3789,7 +3789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::ChangeBlobContainerLeaseResult> ChangeLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ChangeBlobContainerLeaseOptions& options)
         {
@@ -3851,7 +3851,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::ReleaseBlobContainerLeaseResult> ReleaseLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ReleaseBlobContainerLeaseOptions& options)
         {
@@ -3911,7 +3911,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::BreakBlobContainerLeaseResult> BreakLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const BreakBlobContainerLeaseOptions& options)
         {
@@ -4855,7 +4855,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<DownloadBlobResult> Download(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const DownloadBlobOptions& options)
         {
@@ -5282,7 +5282,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<DeleteBlobResult> Delete(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const DeleteBlobOptions& options)
         {
@@ -5300,7 +5300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobExpiryResult> ScheduleDeletion(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobExpiryOptions& options)
         {
@@ -5341,7 +5341,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<UndeleteBlobResult> Undelete(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const UndeleteBlobOptions& options)
         {
@@ -5385,7 +5385,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetBlobPropertiesResult> GetProperties(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobPropertiesOptions& options)
         {
@@ -5717,7 +5717,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobHttpHeadersOptions& options)
         {
@@ -5831,7 +5831,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobMetadataResult> SetMetadata(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobMetadataOptions& options)
         {
@@ -5973,7 +5973,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobAccessTierResult> SetAccessTier(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobAccessTierOptions& options)
         {
@@ -6006,7 +6006,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::StartCopyBlobFromUriResult> StartCopyFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const StartCopyBlobFromUriOptions& options)
         {
@@ -6133,7 +6133,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AbortCopyBlobFromUriOptions& options)
         {
@@ -6187,7 +6187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<CreateBlobSnapshotResult> CreateSnapshot(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreateBlobSnapshotOptions& options)
         {
@@ -6302,7 +6302,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetBlobTagsResult> GetTags(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlobTagsOptions& options)
         {
@@ -6348,7 +6348,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SetBlobTagsResult> SetTags(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SetBlobTagsOptions& options)
         {
@@ -6405,7 +6405,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::AcquireBlobLeaseResult> AcquireLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AcquireBlobLeaseOptions& options)
         {
@@ -6484,7 +6484,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::RenewBlobLeaseResult> RenewLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const RenewBlobLeaseOptions& options)
         {
@@ -6560,7 +6560,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::ChangeBlobLeaseResult> ChangeLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ChangeBlobLeaseOptions& options)
         {
@@ -6636,7 +6636,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::ReleaseBlobLeaseResult> ReleaseLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ReleaseBlobLeaseOptions& options)
         {
@@ -6716,7 +6716,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::BreakBlobLeaseResult> BreakLease(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const BreakBlobLeaseOptions& options)
         {
@@ -6939,7 +6939,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<UploadBlockBlobResult> Upload(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream* requestBody,
             const UploadBlockBlobOptions& options)
@@ -7126,7 +7126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<StageBlockResult> StageBlock(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream* requestBody,
             const StageBlockOptions& options)
@@ -7250,7 +7250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<StageBlockFromUriResult> StageBlockFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const StageBlockFromUriOptions& options)
         {
@@ -7409,7 +7409,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<CommitBlockListResult> CommitBlockList(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CommitBlockListOptions& options)
         {
@@ -7566,7 +7566,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetBlockListResult> GetBlockList(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetBlockListOptions& options)
         {
@@ -7790,7 +7790,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<CreatePageBlobResult> Create(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreatePageBlobOptions& options)
         {
@@ -7955,7 +7955,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<UploadPageBlobPagesResult> UploadPages(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream* requestBody,
             const UploadPageBlobPagesOptions& options)
@@ -8142,7 +8142,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const UploadPageBlobPagesFromUriOptions& options)
         {
@@ -8334,7 +8334,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<ClearPageBlobPagesResult> ClearPages(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ClearPageBlobPagesOptions& options)
         {
@@ -8467,7 +8467,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<ResizePageBlobResult> Resize(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const ResizePageBlobOptions& options)
         {
@@ -8586,7 +8586,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<GetPageBlobPageRangesResult> GetPageRanges(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const GetPageBlobPageRangesOptions& options)
         {
@@ -8690,7 +8690,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Response<Models::Details::StartCopyPageBlobIncrementalResult>
         StartCopyIncremental(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const StartCopyPageBlobIncrementalOptions& options)
         {
@@ -8960,7 +8960,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<CreateAppendBlobResult> Create(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const CreateAppendBlobOptions& options)
         {
@@ -9113,7 +9113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<AppendBlockResult> AppendBlock(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream* requestBody,
             const AppendBlockOptions& options)
@@ -9281,7 +9281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<AppendBlockFromUriResult> AppendBlockFromUri(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const AppendBlockFromUriOptions& options)
         {
@@ -9453,7 +9453,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<SealAppendBlobResult> Seal(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             const SealAppendBlobOptions& options)
         {
@@ -9534,7 +9534,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         static Azure::Response<Models::Details::SubmitBlobBatchResult> SubmitBatch(
             const Azure::Core::Context& context,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::Internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
             Azure::IO::BodyStream* requestBody,
             const SubmitBlobBatchOptions& options)

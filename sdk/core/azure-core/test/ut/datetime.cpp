@@ -34,6 +34,7 @@ TEST(DateTime, ParseDateBasic)
   {
     auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
     EXPECT_NE(0, dt.time_since_epoch().count());
+    EXPECT_EQ(dt.ToString(), "2013-05-17T00:00:00Z");
   }
 }
 
@@ -135,6 +136,7 @@ TEST(DateTime, sameResultFromDefaultRfc3339)
         DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::DropTrailingZeros);
     auto const str2 = dt2.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str1, str2);
+    EXPECT_EQ(str1, dt2.ToString());
   }
 }
 
@@ -444,6 +446,39 @@ TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
     auto const str2 = dt.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str2, strCorrected);
   }
+}
+
+TEST(DateTime, ToStringNoArg)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(dt.ToString(), "2013-05-17T01:02:03.123Z");
+}
+
+TEST(DateTime, ToStringOneArg)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc3339), "2013-05-17T01:02:03.123Z");
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc1123), "Fri, 17 May 2013 01:02:03 GMT");
+}
+
+TEST(DateTime, ToStringInvalid)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+
+  EXPECT_THROW(dt.ToString(static_cast<DateTime::DateFormat>(2)), std::invalid_argument);
+
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::AllDigits),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::DropTrailingZeros),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::Truncate),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, static_cast<DateTime::TimeFractionFormat>(3)),
+      std::invalid_argument);
 }
 
 TEST(DateTime, ParseTimeInvalid2)

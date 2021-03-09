@@ -74,6 +74,20 @@ namespace Azure { namespace Core {
         int8_t localDiffMinutes,
         bool roundFracSecUp = false);
 
+    void ThrowIfUnsupportedYear() const;
+
+    void GetDateTimeParts(
+        int16_t* year,
+        int8_t* month,
+        int8_t* day,
+        int8_t* hour,
+        int8_t* minute,
+        int8_t* second,
+        int32_t* fracSec,
+        int8_t* dayOfWeek) const;
+
+    std::string ToStringRfc1123() const;
+
   public:
     /**
      * @brief Construct an instance of #Azure::Core::DateTime.
@@ -166,15 +180,22 @@ namespace Azure { namespace Core {
     /**
      * @brief Get a string representation of the #Azure::Core::DateTime.
      *
+     * @param format The representation format to use, defaulted to use RFC 3339.
+     *
+     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
+     */
+    std::string ToString(DateFormat format = DateFormat::Rfc3339) const;
+
+    /**
+     * @brief Get a string representation of the #Azure::Core::DateTime.
+     *
      * @param format The representation format to use.
      * @param fractionFormat The format for the fraction part of the DateTime. Only
      * supported by RFC3339.
      *
      * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string ToString(
-        DateFormat format,
-        TimeFractionFormat fractionFormat = TimeFractionFormat::DropTrailingZeros) const;
+    std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
   };
 
   inline Details::Clock::time_point Details::Clock::now() noexcept

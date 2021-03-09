@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
     }
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
+    m_pipeline = std::make_shared<Azure::Core::Http::Internal::HttpPipeline>(
         newOptions,
         Storage::Details::FileServicePackageName,
         Details::Version::VersionString(),
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
     }
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
+    m_pipeline = std::make_shared<Azure::Core::Http::Internal::HttpPipeline>(
         options,
         Storage::Details::FileServicePackageName,
         Details::Version::VersionString(),
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
     }
-    m_pipeline = std::make_shared<Azure::Core::Internal::Http::HttpPipeline>(
+    m_pipeline = std::make_shared<Azure::Core::Http::Internal::HttpPipeline>(
         options,
         Storage::Details::FileServicePackageName,
         Details::Version::VersionString(),
