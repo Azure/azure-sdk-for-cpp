@@ -145,7 +145,7 @@ TEST(Policy, RetryPolicyCounter)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Internal;;
+  using namespace Azure::Core::Http::Internal;
   // Clean the validation global state
   retryCounterState = 0;
 
@@ -171,7 +171,7 @@ TEST(Policy, RetryPolicyRetryCycle)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Internal;;
+  using namespace Azure::Core::Http::Internal;
   // Clean the validation global state
   retryCounterState = 0;
 
