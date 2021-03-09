@@ -729,7 +729,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
   }
 }
 
-void DateTime::ValidateYear() const
+void DateTime::ThrowIfUnsupportedYear() const
 {
   static DateTime const Year0001 = DateTime();
   static DateTime const Eoy9999 = DateTime(9999, 12, 31, 23, 59, 59, 9999999, -1, 0, 0);
@@ -803,7 +803,7 @@ void DateTime::GetDateTimeParts(
 
 std::string DateTime::ToStringRfc1123() const
 {
-  ValidateYear();
+  ThrowIfUnsupportedYear();
 
   int16_t year = 1;
 
@@ -848,7 +848,7 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
         "Unrecognized date format (" + std::to_string(static_cast<int64_t>(format)) + ").");
   }
 
-  ValidateYear();
+  ThrowIfUnsupportedYear();
 
   int16_t year = 1;
 

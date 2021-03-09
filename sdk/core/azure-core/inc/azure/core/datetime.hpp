@@ -74,7 +74,8 @@ namespace Azure { namespace Core {
         int8_t localDiffMinutes,
         bool roundFracSecUp = false);
 
-    void ValidateYear() const;
+    void ThrowIfUnsupportedYear() const;
+
     void GetDateTimeParts(
         int16_t* year,
         int8_t* month,
@@ -84,8 +85,8 @@ namespace Azure { namespace Core {
         int8_t* second,
         int32_t* fracSec,
         int8_t* dayOfWeek) const;
+
     std::string ToStringRfc1123() const;
-    std::string ToStringRfc3339() const;
 
   public:
     /**

@@ -448,6 +448,39 @@ TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
   }
 }
 
+TEST(DateTime, ToStringNoArg)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(dt.ToString(), "2013-05-17T01:02:03.123Z");
+}
+
+TEST(DateTime, ToStringOneArg)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc3339), "2013-05-17T01:02:03.123Z");
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc1123), "Fri, 17 May 2013 01:02:03 GMT");
+}
+
+TEST(DateTime, ToStringInvalid)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+
+  EXPECT_THROW(dt.ToString((DateTime::DateFormat)2), std::invalid_argument);
+
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::AllDigits),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::DropTrailingZeros),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::Truncate),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, (DateTime::TimeFractionFormat)3),
+      std::invalid_argument);
+}
+
 TEST(DateTime, ParseTimeInvalid2)
 {
   // Various unsupported cases. In all cases, we have produce an empty date time
