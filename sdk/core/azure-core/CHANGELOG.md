@@ -41,6 +41,8 @@
 - Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
 - Moved `Azure::Core::DateTime` to `Azure::DateTime`.
+- Renamed `Azure::Core::Http::TokenRequestOptions` to `Azure::Core::Credentials::TokenRequestContext`.
+- Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
 
 ### Bug Fixes
 
