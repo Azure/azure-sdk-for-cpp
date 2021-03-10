@@ -66,7 +66,7 @@ namespace Azure { namespace Core {
 
       explicit ContextSharedState()
           : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)())), Value(nullptr),
-            ValueType(typeid(nullptr_t))
+            ValueType(typeid(std::nullptr_t))
       {
       }
 
@@ -74,7 +74,7 @@ namespace Azure { namespace Core {
           const std::shared_ptr<ContextSharedState>& parent,
           time_point cancelAt)
           : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Value(nullptr),
-            ValueType(typeid(nullptr_t))
+            ValueType(typeid(std::nullptr_t))
       {
       }
 
