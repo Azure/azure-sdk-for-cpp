@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string LowercaseRandomString(size_t size)
   {
-    return Azure::Core::_internal::Strings::ToLower(RandomString(size));
+    return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
   Storage::Metadata RandomMetadata(size_t size)

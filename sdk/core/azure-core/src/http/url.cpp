@@ -22,7 +22,7 @@ Url::Url(const std::string& url)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
       return static_cast<char>(
-          Azure::Core::_internal::Strings::ToLower(static_cast<unsigned char>(c)));
+          Azure::Core::_internal::StringExtensions::ToLower(static_cast<unsigned char>(c)));
     });
 
     pos = url.begin() + schemeIter + schemeEnd.length();

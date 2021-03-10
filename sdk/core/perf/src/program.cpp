@@ -41,7 +41,8 @@ inline Azure::Perf::TestMetadata const* GetTestMetadata(
 
   for (auto& test : tests)
   {
-    if (Azure::Core::_internal::Strings::LocaleInvariantCaseInsensitiveEqual(test.Name, testName))
+    if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+            test.Name, testName))
     {
       return &test;
     }
