@@ -57,8 +57,9 @@ TEST(Context, BasicChar)
   Context context;
   // New context from previous
   auto c2 = context.WithValue("key", str);
-  auto& value = c2.Get<std::string>("key");
+  auto& value = c2.Get<const char*>("key");
   EXPECT_TRUE(value == s);
+  EXPECT_TRUE(value == str);
 }
 
 TEST(Context, IsCancelled)
@@ -143,18 +144,18 @@ TEST(Context, Chain)
   auto& valueT2 = finalContext.Get<int>("c2");
   auto& valueT3 = finalContext.Get<int>("c3");
   auto& valueT4 = finalContext.Get<int>("c4");
-  auto& valueT5 = finalContext.Get<std::string>("c5");
-  auto& valueT6 = finalContext.Get<std::string>("c6");
-  auto& valueT7 = finalContext.Get<std::string>("c7");
-  auto& valueT8 = finalContext.Get<std::string>("finalContext");
+  auto& valueT5 = finalContext.Get<const char*>("c5");
+  auto& valueT6 = finalContext.Get<const char*>("c6");
+  auto& valueT7 = finalContext.Get<const char*>("c7");
+  auto& valueT8 = finalContext.Get<const char*>("finalContext");
 
   EXPECT_TRUE(valueT2 == 123);
   EXPECT_TRUE(valueT3 == 456);
   EXPECT_TRUE(valueT4 == 789);
-  EXPECT_TRUE(valueT5 == "5");
-  EXPECT_TRUE(valueT6 == "6");
-  EXPECT_TRUE(valueT7 == "7");
-  EXPECT_TRUE(valueT8 == "Final");
+  EXPECT_TRUE(valueT5 == std::string("5"));
+  EXPECT_TRUE(valueT6 == std::string("6"));
+  EXPECT_TRUE(valueT7 == std::string("7"));
+  EXPECT_TRUE(valueT8 == std::string("Final"));
 }
 
 TEST(Context, MatchingKeys)
