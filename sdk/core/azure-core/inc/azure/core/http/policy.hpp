@@ -393,7 +393,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   namespace _detail {
-    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet g_defaultAllowedHttpHeaders;
+    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   }
 
   /**
