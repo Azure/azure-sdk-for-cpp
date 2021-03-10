@@ -17,7 +17,7 @@
 #include <locale>
 #include <stdexcept>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
@@ -150,4 +150,4 @@ namespace Azure { namespace Storage { namespace Details {
   }
 #endif
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

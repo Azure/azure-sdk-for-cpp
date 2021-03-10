@@ -7,7 +7,7 @@
 
 TEST(String, invariantCompare)
 {
-  using Azure::Core::Internal::Strings::LocaleInvariantCaseInsensitiveEqual;
+  using Azure::Core::_internal::Strings::LocaleInvariantCaseInsensitiveEqual;
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("", ""));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "a"));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("A", "a"));
@@ -22,7 +22,7 @@ TEST(String, invariantCompare)
 
 TEST(String, toLower)
 {
-  using Azure::Core::Internal::Strings::ToLower;
+  using Azure::Core::_internal::Strings::ToLower;
   EXPECT_TRUE(ToLower("") == "");
   EXPECT_TRUE(ToLower("a") == "a");
   EXPECT_TRUE(ToLower("A") == "a");

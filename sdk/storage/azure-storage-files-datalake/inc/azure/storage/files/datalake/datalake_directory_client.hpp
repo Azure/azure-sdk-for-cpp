@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit DataLakeDirectoryClient(
         Azure::Core::Http::Url directoryUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : DataLakePathClient(std::move(directoryUrl), std::move(blobClient), pipeline)
     {
     }

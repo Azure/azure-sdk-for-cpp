@@ -50,10 +50,10 @@ namespace Azure { namespace Storage {
     HashAlgorithm Algorithm = HashAlgorithm::Md5;
   };
 
-  namespace Details {
+  namespace _detail {
     ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm);
     std::string ToBase64String(const ContentHash& hash);
-  } // namespace Details
+  } // namespace _detail
   using Metadata = Azure::Core::CaseInsensitiveMap;
 
 }} // namespace Azure::Storage

@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Test {
 
   class TransportAdapter : public testing::TestWithParam<TransportAdaptersTestParameter> {
   protected:
-    std::unique_ptr<Azure::Core::Http::Internal::HttpPipeline> m_pipeline;
+    std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     // Befor each test, create pipeline
     virtual void SetUp() override
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Test {
       policies.push_back(
           std::make_unique<Azure::Core::Http::TransportPolicy>(GetParam().TransportAdapter));
 
-      m_pipeline = std::make_unique<Azure::Core::Http::Internal::HttpPipeline>(policies);
+      m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(policies);
     }
 
     static void CheckBodyFromBuffer(

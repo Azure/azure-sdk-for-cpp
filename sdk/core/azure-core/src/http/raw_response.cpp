@@ -30,7 +30,7 @@ void RawResponse::SetHeader(uint8_t const* const first, uint8_t const* const las
   }
 
   // Always toLower() headers
-  auto headerName = Azure::Core::Internal::Strings::ToLower(std::string(start, end));
+  auto headerName = Azure::Core::_internal::Strings::ToLower(std::string(start, end));
   start = end + 1; // start value
   while (start < last && (*start == ' ' || *start == '\t'))
   {
@@ -52,7 +52,7 @@ void RawResponse::SetHeader(std::string const& header)
 
 void RawResponse::SetHeader(std::string const& name, std::string const& value)
 {
-  return Details::InsertHeaderWithValidation(this->m_headers, name, value);
+  return _detail::InsertHeaderWithValidation(this->m_headers, name, value);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)

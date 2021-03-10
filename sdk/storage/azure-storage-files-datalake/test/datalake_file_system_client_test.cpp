@@ -317,7 +317,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(pathName));
+          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(pathName));
     }
     {
       std::string directoryName = baseName + RandomString();
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(directoryName));
+          m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
@@ -334,7 +334,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(fileName));
+          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(fileName));
     }
   }
 

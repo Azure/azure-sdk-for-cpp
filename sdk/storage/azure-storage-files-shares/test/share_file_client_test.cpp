@@ -347,7 +347,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::string tempFilename = RandomString();
       {
-        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+        Azure::Storage::_detail::FileWriter fileWriter(tempFilename);
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
 
@@ -861,7 +861,7 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.Resource = Sas::ShareSasResource::File;
     fileSasBuilder.SetPermissions(Sas::ShareSasPermissions::Read);
     std::string sourceSas = fileSasBuilder.GenerateSasToken(
-        *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+        *_detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
 
     Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
     EXPECT_NO_THROW(

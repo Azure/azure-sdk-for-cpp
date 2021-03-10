@@ -16,7 +16,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  namespace Details {
+  namespace _detail {
     // Return a simple key as response so keyvault can parse it to create the T response
     // Fake key from https://docs.microsoft.com/en-us/rest/api/keyvault/GetKey/GetKey#examples
     constexpr static const char FakeKey[]
@@ -29,7 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           "\"Recoverable+Purgeable\"  },  \"tags\": {              \"purpose\" "
           ": "
           "\"unit test\", \"test name \" : \"CreateGetDeleteKeyTest\"}}";
-  } // namespace Details
+  } // namespace _detail
 
   // A transport adapter which only echo a request headers back as a response.
   class MockedTransportAdapter : public Azure::Core::Http::HttpTransport {
@@ -46,9 +46,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       {
         response->SetHeader(header.first, header.second);
       }
-      std::string bodyCount(Details::FakeKey);
+      std::string bodyCount(_detail::FakeKey);
       response->SetBodyStream(std::make_unique<Azure::IO::MemoryBodyStream>(
-          reinterpret_cast<const uint8_t*>(Details::FakeKey), bodyCount.size()));
+          reinterpret_cast<const uint8_t*>(_detail::FakeKey), bodyCount.size()));
       return response;
     } // namespace Azure
   }; // namespace Test
@@ -63,10 +63,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       auto apiVersion = options.GetVersionString();
 
-      m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
+      m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>(
           Azure::Core::Http::Url(vaultUrl),
           apiVersion,
-          Azure::Core::Http::Internal::HttpPipeline(options, "test", "version", {}, {}));
+          Azure::Core::Http::_internal::HttpPipeline(options, "test", "version", {}, {}));
     }
   };
 

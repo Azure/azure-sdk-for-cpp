@@ -8,15 +8,15 @@
 
 #include <string>
 
-using namespace Azure::Security::KeyVault::Keys::Details;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 
 std::string KeyRequestParameters::Serialize() const
 {
 
-  Azure::Core::Internal::Json::json payload;
+  Azure::Core::_internal::Json::json payload;
   /* Mandatory */
   // kty
-  payload[Details::KeyTypePropertyName] = KeyTypeToString(m_keyType);
+  payload[_detail::KeyTypePropertyName] = KeyTypeToString(m_keyType);
 
   /* Optional */
   // key_size
@@ -24,20 +24,20 @@ std::string KeyRequestParameters::Serialize() const
   // key_ops
   for (KeyOperation op : m_options.KeyOperations)
   {
-    payload[Details::KeyOpsPropertyName].push_back(op.ToString());
+    payload[_detail::KeyOpsPropertyName].push_back(op.ToString());
   }
 
   // attributes
   // tags
   for (auto tag : m_options.Tags)
   {
-    payload[Details::TagsPropertyName][tag.first] = tag.second;
+    payload[_detail::TagsPropertyName][tag.first] = tag.second;
   }
 
   // crv
   if (Curve.HasValue())
   {
-    payload[Details::CurveNamePropertyName] = Curve.GetValue().ToString();
+    payload[_detail::CurveNamePropertyName] = Curve.GetValue().ToString();
   }
 
   // release_policy

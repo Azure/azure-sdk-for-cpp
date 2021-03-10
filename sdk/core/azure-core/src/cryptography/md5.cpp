@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Cryptography {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  namespace Details {
+  namespace _detail {
     struct AlgorithmProviderInstance
     {
       BCRYPT_ALG_HANDLE Handle;
@@ -72,13 +72,13 @@ namespace Azure { namespace Core { namespace Cryptography {
       BCRYPT_HASH_HANDLE hashHandle = nullptr;
       std::size_t hashLength = 0;
     };
-  } // namespace Details
+  } // namespace _detail
 
   Md5Hash::Md5Hash()
   {
-    static Details::AlgorithmProviderInstance AlgorithmProvider{};
+    static _detail::AlgorithmProviderInstance AlgorithmProvider{};
 
-    Details::Md5HashContext* md5Context = new Details::Md5HashContext;
+    _detail::Md5HashContext* md5Context = new _detail::Md5HashContext;
     m_md5Context = md5Context;
     md5Context->buffer.resize(AlgorithmProvider.ContextSize);
     md5Context->hashLength = AlgorithmProvider.HashLength;
@@ -99,14 +99,14 @@ namespace Azure { namespace Core { namespace Cryptography {
 
   Md5Hash::~Md5Hash()
   {
-    Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
+    _detail::Md5HashContext* md5Context = static_cast<_detail::Md5HashContext*>(m_md5Context);
     BCryptDestroyHash(md5Context->hashHandle);
     delete md5Context;
   }
 
   void Md5Hash::OnAppend(const uint8_t* data, std::size_t length)
   {
-    Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
+    _detail::Md5HashContext* md5Context = static_cast<_detail::Md5HashContext*>(m_md5Context);
 
     NTSTATUS status = BCryptHashData(
         md5Context->hashHandle,
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Cryptography {
   std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, std::size_t length)
   {
     OnAppend(data, length);
-    Details::Md5HashContext* md5Context = static_cast<Details::Md5HashContext*>(m_md5Context);
+    _detail::Md5HashContext* md5Context = static_cast<_detail::Md5HashContext*>(m_md5Context);
     std::vector<uint8_t> hash;
     hash.resize(md5Context->hashLength);
     NTSTATUS status = BCryptFinishHash(

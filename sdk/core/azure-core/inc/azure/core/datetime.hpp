@@ -15,7 +15,7 @@
 #include <string>
 
 namespace Azure { namespace Core {
-  namespace Details {
+  namespace _detail {
     class Clock {
     public:
       using rep = int64_t;
@@ -40,7 +40,7 @@ namespace Azure { namespace Core {
       static constexpr bool is_steady = std::chrono::system_clock::is_steady;
       static time_point now() noexcept;
     };
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Manages date and time in standardized string formats.
@@ -50,7 +50,7 @@ namespace Azure { namespace Core {
    * for the date range and precision.
    * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
    */
-  class DateTime : public Details::Clock::time_point {
+  class DateTime : public _detail::Clock::time_point {
     AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
 
   public:
@@ -198,7 +198,7 @@ namespace Azure { namespace Core {
     std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
   };
 
-  inline Details::Clock::time_point Details::Clock::now() noexcept
+  inline _detail::Clock::time_point _detail::Clock::now() noexcept
   {
     return DateTime(std::chrono::system_clock::now());
   }

@@ -291,13 +291,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     Azure::Core::Http::Url m_blobContainerUrl;
-    std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
         Azure::Core::Http::Url blobContainerUrl,
-        std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> pipeline,
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
         : m_blobContainerUrl(std::move(blobContainerUrl)), m_pipeline(std::move(pipeline)),

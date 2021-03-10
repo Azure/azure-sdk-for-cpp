@@ -24,10 +24,10 @@ static Azure::Core::CaseInsensitiveMap MergeMaps(
 
 void Request::SetHeader(std::string const& name, std::string const& value)
 {
-  auto headerNameLowerCase = Azure::Core::Internal::Strings::ToLower(name);
+  auto headerNameLowerCase = Azure::Core::_internal::Strings::ToLower(name);
   return this->m_retryModeEnabled
-      ? Details::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
-      : Details::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);
+      ? _detail::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
+      : _detail::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);
 }
 
 void Request::RemoveHeader(std::string const& name)

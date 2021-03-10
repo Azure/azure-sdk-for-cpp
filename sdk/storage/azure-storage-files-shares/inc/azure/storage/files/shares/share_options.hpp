@@ -20,12 +20,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Client options used to initalize ShareServiceClient, ShareClient, ShareFileClient and
    * ShareDirectoryClient.
    */
-  struct ShareClientOptions : Azure::Core::Internal::ClientOptions
+  struct ShareClientOptions : Azure::Core::_internal::ClientOptions
   {
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = Details::DefaultServiceApiVersion;
+    std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
   struct ListSharesSinglePageOptions

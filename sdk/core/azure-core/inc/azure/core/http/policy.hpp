@@ -28,7 +28,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
   }
 
@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace Http {
      * `AzureSdkGetCustomHttpTransport` must be linked in the end-user application.
      *
      */
-    std::shared_ptr<HttpTransport> Transport = Details::GetTransportAdapter();
+    std::shared_ptr<HttpTransport> Transport = _detail::GetTransportAdapter();
   };
 
   /**
@@ -392,7 +392,7 @@ namespace Azure { namespace Core { namespace Http {
         Context const& context) const override;
   };
 
-  namespace Details {
+  namespace _detail {
     AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet g_defaultAllowedHttpHeaders;
   }
 
@@ -409,7 +409,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief HTTP headers that are allowed to be logged.
      */
-    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = Details::g_defaultAllowedHttpHeaders;
+    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
   };
 
   /**
@@ -438,9 +438,9 @@ namespace Azure { namespace Core { namespace Http {
         Context const& ctx) const override;
   };
 
-  namespace Internal {
+  namespace _internal {
     /**
-     * @brief #Azure::Core::Http::Internal::ValuePolicy options.
+     * @brief #Azure::Core::Http::_internal::ValuePolicy options.
      */
     struct ValueOptions
     {
@@ -460,9 +460,9 @@ namespace Azure { namespace Core { namespace Http {
 
     public:
       /**
-       * @brief Construct a #Azure::Core::Http::Internal::ValuePolicy with the
-       * #Azure::Core::Http::Internal::ValueOptions provided.
-       * @param options #Azure::Core::Http::Internal::ValueOptions.
+       * @brief Construct a #Azure::Core::Http::_internal::ValuePolicy with the
+       * #Azure::Core::Http::_internal::ValueOptions provided.
+       * @param options #Azure::Core::Http::_internal::ValueOptions.
        */
       explicit ValuePolicy(ValueOptions options) : m_options(std::move(options)) {}
 
@@ -492,5 +492,5 @@ namespace Azure { namespace Core { namespace Http {
         return nextHttpPolicy.Send(request, ctx);
       }
     };
-  } // namespace Internal
+  } // namespace _internal
 }}} // namespace Azure::Core::Http

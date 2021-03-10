@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   ConnectionStringParts ParseConnectionString(const std::string& connectionString)
   {
@@ -104,4 +104,4 @@ namespace Azure { namespace Storage { namespace Details {
 
     return connectionStringParts;
   }
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

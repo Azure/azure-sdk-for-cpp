@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    int64_t m_innerBufferSize = Details::DefaultLibcurlReaderSize;
+    int64_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
 
     bool m_isChunkedResponseType = false;
 
@@ -277,7 +277,7 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[Details::DefaultLibcurlReaderSize]
+    uint8_t m_readBuffer[_detail::DefaultLibcurlReaderSize]
         = {0}; // to work with libcurl custom read.
 
     /**

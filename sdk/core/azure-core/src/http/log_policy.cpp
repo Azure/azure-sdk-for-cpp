@@ -73,7 +73,7 @@ inline std::string GetRequestLogMessage(
         }
       }
 
-      log << Details::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
+      log << _detail::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
     }
   }
   AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);
@@ -97,7 +97,7 @@ inline std::string GetResponseLogMessage(
 }
 } // namespace
 
-Azure::Core::CaseInsensitiveSet Azure::Core::Http::Details::g_defaultAllowedHttpHeaders
+Azure::Core::CaseInsensitiveSet Azure::Core::Http::_detail::g_defaultAllowedHttpHeaders
     = {"x-ms-client-request-id",
        "x-ms-return-client-request-id",
        "traceparent",
@@ -126,7 +126,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  using Azure::Core::Internal::Log;
+  using Azure::Core::_internal::Log;
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {

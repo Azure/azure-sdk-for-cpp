@@ -10,15 +10,15 @@
 
 #include <memory>
 
-using namespace Azure::Security::KeyVault::Common::Internal;
+using namespace Azure::Security::KeyVault::Common::_internal;
 
 TEST(KeyVaultPipeline, initPipeline)
 {
   std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
   policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
   Azure::Core::Http::Url url("urlTest");
-  Azure::Core::Internal::ClientOptions options;
-  Azure::Core::Http::Internal::HttpPipeline pipeline(
+  Azure::Core::_internal::ClientOptions options;
+  Azure::Core::Http::_internal::HttpPipeline pipeline(
       options, "service-name", "service-version", std::move(policies), {});
   EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", std::move(pipeline)));
 }

@@ -83,7 +83,7 @@ SOFTWARE.
 
 #include <cstddef> // size_t
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   /// struct to capture the start position of the current token
   struct position_t
   {
@@ -98,7 +98,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     constexpr operator size_t() const { return chars_read_total; }
   };
 
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
@@ -2140,7 +2140,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
 
     namespace Azure
 {
-  namespace Core { namespace Internal { namespace Json { namespace detail {
+  namespace Core { namespace _internal { namespace Json { namespace detail {
     ////////////////
     // exceptions //
     ////////////////
@@ -2551,7 +2551,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
       {
       }
     };
-  }}}} // namespace Core::Internal::Json::detail
+  }}}} // namespace Core::_internal::Json::detail
 } // namespace Azure
 
 // #include <nlohmann/detail/macro_scope.hpp>
@@ -2563,7 +2563,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
 
 // #include <nlohmann/detail/boolean_operators.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   // alias templates to reduce boilerplate
   template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
 
@@ -2618,7 +2618,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   };
 
   template <typename T> constexpr T static_const<T>::value;
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/meta/type_traits.hpp>
 
@@ -2634,17 +2634,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/meta/void_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   template <typename... Ts> struct make_void
   {
     using type = void;
   };
   template <typename... Ts> using void_t = typename make_void<Ts...>::type;
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/meta/cpp_future.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   template <typename It, typename = void> struct iterator_types
   {
   };
@@ -2685,7 +2685,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     using pointer = T*;
     using reference = T&;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
@@ -2698,7 +2698,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 // #include <nlohmann/detail/meta/void_t.hpp>
 
 // https://en.cppreference.com/w/cpp/experimental/is_detected
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   struct nonesuch
   {
     nonesuch() = delete;
@@ -2740,7 +2740,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
   template <class To, template <class...> class Op, class... Args>
   using is_detected_convertible = std::is_convertible<detected_t<Op, Args...>, To>;
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 #include <cstdint> // int64_t, uint64_t
 #include <map> // map
@@ -2753,7 +2753,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 @see https://github.com/nlohmann
 @since version 1.0.0
 */
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
   /*!
   @brief default JSONSerializer template argument
 
@@ -2798,9 +2798,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   @since version 1.0.0
   */
   using json = basic_json<>;
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
   /*!
   @brief detail namespace with internal helper functions
 
@@ -3216,7 +3216,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     {
     };
   } // namespace detail
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 // #include <nlohmann/detail/value_t.hpp>
 
@@ -3227,7 +3227,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
 // #include <nlohmann/detail/boolean_operators.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   ///////////////////////////
   // JSON type enumeration //
   ///////////////////////////
@@ -3301,9 +3301,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     const auto r_index = static_cast<std::size_t>(rhs);
     return l_index < order.size() && r_index < order.size() && order[l_index] < order[r_index];
   }
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
   namespace detail {
     template <typename BasicJsonType>
     void from_json(const BasicJsonType& j, typename std::nullptr_t& n)
@@ -3725,7 +3725,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   namespace {
     constexpr const auto& from_json = detail::static_const<detail::from_json_fn>::value;
   } // namespace
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 // #include <nlohmann/detail/conversions/to_json.hpp>
 
@@ -3751,7 +3751,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   template <typename string_type> void int_to_string(string_type& target, std::size_t value)
   {
     target = std::to_string(value);
@@ -3856,7 +3856,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   // For further reference see https://blog.tartanllama.xyz/structured-bindings/
   // And see https://github.com/nlohmann/json/pull/1391
   template <std::size_t N, typename IteratorType, enable_if_t<N == 0, int> = 0>
-  auto get(const Azure::Core::Internal::Json::detail::iteration_proxy_value<IteratorType>& i)
+  auto get(const Azure::Core::_internal::Json::detail::iteration_proxy_value<IteratorType>& i)
       -> decltype(i.key())
   {
     return i.key();
@@ -3865,12 +3865,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   // For further reference see https://blog.tartanllama.xyz/structured-bindings/
   // And see https://github.com/nlohmann/json/pull/1391
   template <std::size_t N, typename IteratorType, enable_if_t<N == 1, int> = 0>
-  auto get(const Azure::Core::Internal::Json::detail::iteration_proxy_value<IteratorType>& i)
+  auto get(const Azure::Core::_internal::Json::detail::iteration_proxy_value<IteratorType>& i)
       -> decltype(i.value())
   {
     return i.value();
   }
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // The Addition to the STD Namespace is required to add
 // Structured Bindings Support to the iteration_proxy_value class
@@ -3883,15 +3883,17 @@ namespace std {
 #pragma clang diagnostic ignored "-Wmismatched-tags"
 #endif
 template <typename IteratorType>
-class tuple_size<::Azure::Core::Internal::Json::detail::iteration_proxy_value<IteratorType>>
+class tuple_size<::Azure::Core::_internal::Json::detail::iteration_proxy_value<IteratorType>>
     : public std::integral_constant<std::size_t, 2> {
 };
 
 template <std::size_t N, typename IteratorType>
-class tuple_element<N, ::Azure::Core::Internal::Json::detail::iteration_proxy_value<IteratorType>> {
+class tuple_element<
+    N,
+    ::Azure::Core::_internal::Json::detail::iteration_proxy_value<IteratorType>> {
 public:
   using type = decltype(get<N>(
-      std::declval<::Azure::Core::Internal::Json::detail::iteration_proxy_value<IteratorType>>()));
+      std::declval<::Azure::Core::_internal::Json::detail::iteration_proxy_value<IteratorType>>()));
 };
 #if defined(__clang__)
 #pragma clang diagnostic pop
@@ -3904,7 +3906,7 @@ public:
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
   namespace detail {
     //////////////////
     // constructors //
@@ -4315,9 +4317,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   namespace {
     constexpr const auto& to_json = detail::static_const<detail::to_json_fn>::value;
   } // namespace
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
 
   template <typename, typename> struct adl_serializer
   {
@@ -4332,12 +4334,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     template <typename BasicJsonType, typename ValueType>
     static auto from_json(BasicJsonType&& j, ValueType& val) noexcept(
-        noexcept(::Azure::Core::Internal::Json::from_json(std::forward<BasicJsonType>(j), val)))
+        noexcept(::Azure::Core::_internal::Json::from_json(std::forward<BasicJsonType>(j), val)))
         -> decltype(
-            ::Azure::Core::Internal::Json::from_json(std::forward<BasicJsonType>(j), val),
+            ::Azure::Core::_internal::Json::from_json(std::forward<BasicJsonType>(j), val),
             void())
     {
-      ::Azure::Core::Internal::Json::from_json(std::forward<BasicJsonType>(j), val);
+      ::Azure::Core::_internal::Json::from_json(std::forward<BasicJsonType>(j), val);
     }
 
     /*!
@@ -4351,14 +4353,16 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     */
     template <typename BasicJsonType, typename ValueType>
     static auto to_json(BasicJsonType& j, ValueType&& val) noexcept(
-        noexcept(::Azure::Core::Internal::Json::to_json(j, std::forward<ValueType>(val))))
-        -> decltype(::Azure::Core::Internal::Json::to_json(j, std::forward<ValueType>(val)), void())
+        noexcept(::Azure::Core::_internal::Json::to_json(j, std::forward<ValueType>(val))))
+        -> decltype(
+            ::Azure::Core::_internal::Json::to_json(j, std::forward<ValueType>(val)),
+            void())
     {
-      ::Azure::Core::Internal::Json::to_json(j, std::forward<ValueType>(val));
+      ::Azure::Core::_internal::Json::to_json(j, std::forward<ValueType>(val));
     }
   };
 
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 // #include <nlohmann/byte_container_with_subtype.hpp>
 
@@ -4366,7 +4370,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 #include <tuple> // tie
 #include <utility> // move
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
 
   /*!
   @brief an internal type for a backed binary type
@@ -4513,7 +4517,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     bool m_has_subtype = false;
   };
 
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 // #include <nlohmann/detail/boolean_operators.hpp>
 
@@ -4559,7 +4563,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   /// the supported input formats
   enum class input_format_t
   {
@@ -5002,7 +5006,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   private:
     contiguous_bytes_input_adapter ia;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/input/json_sax.hpp>
 
@@ -5016,12 +5020,12 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
 
   /*!
   @brief SAX interface
 
-  This class describes the SAX interface used by @ref Azure::Core::Internal::Json::json::sax_parse.
+  This class describes the SAX interface used by @ref Azure::Core::_internal::Json::json::sax_parse.
   Each function is called in different situations while the input is parsed. The
   boolean return value informs the parser whether to continue processing the
   input.
@@ -5700,7 +5704,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     };
   } // namespace detail
 
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
@@ -5714,7 +5718,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
 // #include <nlohmann/detail/meta/type_traits.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   template <typename T> using null_function_t = decltype(std::declval<T&>().null());
 
   template <typename T>
@@ -5839,11 +5843,11 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
         "Missing/invalid function: bool parse_error(std::size_t, const "
         "std::string&, const exception&)");
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
 
   /*!
   @brief determine system byte order
@@ -8274,7 +8278,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// the SAX parser
     json_sax_t* sax = nullptr;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/input/input_adapters.hpp>
 
@@ -8296,7 +8300,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   ///////////
   // lexer //
   ///////////
@@ -9765,7 +9769,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// the decimal point
     const char_int_type decimal_point_char = '.';
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/input/parser.hpp>
 
@@ -9791,7 +9795,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   ////////////
   // parser //
   ////////////
@@ -10281,7 +10285,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// whether to throw exceptions in case of errors
     const bool allow_exceptions = true;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/iterators/internal_iterator.hpp>
 
@@ -10290,7 +10294,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #include <cstddef> // ptrdiff_t
 #include <limits> // numeric_limits
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   /*
   @brief an iterator for primitive JSON types
 
@@ -10386,9 +10390,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       return *this;
     }
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   /*!
   @brief an iterator value
 
@@ -10406,7 +10410,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// generic iterator for all other types
     primitive_iterator_t primitive_iterator{};
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/iterators/iter_impl.hpp>
 
@@ -10429,7 +10433,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   // forward declare, to be able to friend it later on
   template <typename IteratorType> class iteration_proxy;
   template <typename IteratorType> class iteration_proxy_value;
@@ -11013,7 +11017,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// the actual iterator of the associated instance
     internal_iterator<typename std::remove_const<BasicJsonType>::type> m_it{};
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/iterators/iteration_proxy.hpp>
 
@@ -11023,7 +11027,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #include <iterator> // reverse_iterator
 #include <utility> // declval
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   //////////////////////
   // reverse_iterator //
   //////////////////////
@@ -11128,7 +11132,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
       return it.operator*();
     }
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/iterators/primitive_iterator.hpp>
 
@@ -11148,7 +11152,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
   template <typename BasicJsonType> class json_pointer {
     // allow basic_json to access private members
     _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION friend class basic_json;
@@ -12069,7 +12073,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     /// the reference tokens
     std::vector<std::string> reference_tokens;
   };
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 // #include <nlohmann/detail/json_ref.hpp>
 
@@ -12078,7 +12082,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
 // #include <nlohmann/detail/meta/type_traits.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   template <typename BasicJsonType> class json_ref {
   public:
     using value_type = BasicJsonType;
@@ -12130,7 +12134,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     value_type* value_ref = nullptr;
     const bool is_rvalue;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
@@ -12164,7 +12168,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 #include <vector> // vector
 // #include <nlohmann/detail/macro_scope.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   /// abstract output adapter interface
   template <typename CharType> struct output_adapter_protocol
   {
@@ -12254,9 +12258,9 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
   private:
     output_adapter_t<CharType> oa = nullptr;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   ///////////////////
   // binary writer //
   ///////////////////
@@ -13797,7 +13801,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// the output
     output_adapter_t<CharType> oa = nullptr;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/output/output_adapters.hpp>
 
@@ -13832,7 +13836,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
 
   /*!
   @brief implements the Grisu2 algorithm for binary to decimal floating-point
@@ -14899,7 +14903,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     return dtoa_impl::format_buffer(first, len, decimal_exponent, kMinExp, kMaxExp);
   }
 
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/exceptions.hpp>
 
@@ -14913,7 +14917,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 
 // #include <nlohmann/detail/value_t.hpp>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json { namespace detail {
+namespace Azure { namespace Core { namespace _internal { namespace Json { namespace detail {
   ///////////////////
   // serialization //
   ///////////////////
@@ -15673,8 +15677,8 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     void dump_float(number_float_t x, std::true_type /*is_ieee_single_or_double*/)
     {
       char* begin = number_buffer.data();
-      char* end
-          = ::Azure::Core::Internal::Json::detail::to_chars(begin, begin + number_buffer.size(), x);
+      char* end = ::Azure::Core::_internal::Json::detail::to_chars(
+          begin, begin + number_buffer.size(), x);
 
       o->write_characters(begin, static_cast<size_t>(end - begin));
     }
@@ -15842,7 +15846,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
     /// error_handler how to react on decoding errors
     const error_handler_t error_handler;
   };
-}}}}} // namespace Azure::Core::Internal::Json::detail
+}}}}} // namespace Azure::Core::_internal::Json::detail
 
 // #include <nlohmann/detail/value_t.hpp>
 
@@ -15853,7 +15857,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json { namespa
 @see https://github.com/nlohmann
 @since version 1.0.0
 */
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
 
   /*!
   @brief a class to store JSON values
@@ -15942,65 +15946,66 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   _az_NLOHMANN_BASIC_JSON_TPL_DECLARATION class basic_json {
   private:
     template <detail::value_t> friend struct detail::external_constructor;
-    friend ::Azure::Core::Internal::Json::json_pointer<basic_json>;
+    friend ::Azure::Core::_internal::Json::json_pointer<basic_json>;
 
     template <typename BasicJsonType, typename InputType>
-    friend class ::Azure::Core::Internal::Json::detail::parser;
-    friend ::Azure::Core::Internal::Json::detail::serializer<basic_json>;
-    template <typename BasicJsonType> friend class ::Azure::Core::Internal::Json::detail::iter_impl;
+    friend class ::Azure::Core::_internal::Json::detail::parser;
+    friend ::Azure::Core::_internal::Json::detail::serializer<basic_json>;
+    template <typename BasicJsonType>
+    friend class ::Azure::Core::_internal::Json::detail::iter_impl;
     template <typename BasicJsonType, typename CharType>
-    friend class ::Azure::Core::Internal::Json::detail::binary_writer;
+    friend class ::Azure::Core::_internal::Json::detail::binary_writer;
     template <typename BasicJsonType, typename InputType, typename SAX>
-    friend class ::Azure::Core::Internal::Json::detail::binary_reader;
+    friend class ::Azure::Core::_internal::Json::detail::binary_reader;
     template <typename BasicJsonType>
-    friend class ::Azure::Core::Internal::Json::detail::json_sax_dom_parser;
+    friend class ::Azure::Core::_internal::Json::detail::json_sax_dom_parser;
     template <typename BasicJsonType>
-    friend class ::Azure::Core::Internal::Json::detail::json_sax_dom_callback_parser;
+    friend class ::Azure::Core::_internal::Json::detail::json_sax_dom_callback_parser;
 
     /// workaround type for MSVC
     using basic_json_t = _az_NLOHMANN_BASIC_JSON_TPL;
 
     // convenience aliases for types residing in namespace detail;
-    using lexer = ::Azure::Core::Internal::Json::detail::lexer_base<basic_json>;
+    using lexer = ::Azure::Core::_internal::Json::detail::lexer_base<basic_json>;
 
     template <typename InputAdapterType>
-    static ::Azure::Core::Internal::Json::detail::parser<basic_json, InputAdapterType> parser(
+    static ::Azure::Core::_internal::Json::detail::parser<basic_json, InputAdapterType> parser(
         InputAdapterType adapter,
         detail::parser_callback_t<basic_json> cb = nullptr,
         bool allow_exceptions = true)
     {
-      return ::Azure::Core::Internal::Json::detail::parser<basic_json, InputAdapterType>(
+      return ::Azure::Core::_internal::Json::detail::parser<basic_json, InputAdapterType>(
           std::move(adapter), std::move(cb), allow_exceptions);
     }
 
-    using primitive_iterator_t = ::Azure::Core::Internal::Json::detail::primitive_iterator_t;
+    using primitive_iterator_t = ::Azure::Core::_internal::Json::detail::primitive_iterator_t;
     template <typename BasicJsonType>
     using internal_iterator
-        = ::Azure::Core::Internal::Json::detail::internal_iterator<BasicJsonType>;
+        = ::Azure::Core::_internal::Json::detail::internal_iterator<BasicJsonType>;
     template <typename BasicJsonType>
-    using iter_impl = ::Azure::Core::Internal::Json::detail::iter_impl<BasicJsonType>;
+    using iter_impl = ::Azure::Core::_internal::Json::detail::iter_impl<BasicJsonType>;
     template <typename Iterator>
-    using iteration_proxy = ::Azure::Core::Internal::Json::detail::iteration_proxy<Iterator>;
+    using iteration_proxy = ::Azure::Core::_internal::Json::detail::iteration_proxy<Iterator>;
     template <typename Base>
     using json_reverse_iterator
-        = ::Azure::Core::Internal::Json::detail::json_reverse_iterator<Base>;
+        = ::Azure::Core::_internal::Json::detail::json_reverse_iterator<Base>;
 
     template <typename CharType>
-    using output_adapter_t = ::Azure::Core::Internal::Json::detail::output_adapter_t<CharType>;
+    using output_adapter_t = ::Azure::Core::_internal::Json::detail::output_adapter_t<CharType>;
 
     template <typename InputType>
     using binary_reader
-        = ::Azure::Core::Internal::Json::detail::binary_reader<basic_json, InputType>;
+        = ::Azure::Core::_internal::Json::detail::binary_reader<basic_json, InputType>;
     template <typename CharType>
     using binary_writer
-        = ::Azure::Core::Internal::Json::detail::binary_writer<basic_json, CharType>;
+        = ::Azure::Core::_internal::Json::detail::binary_writer<basic_json, CharType>;
 
-    using serializer = ::Azure::Core::Internal::Json::detail::serializer<basic_json>;
+    using serializer = ::Azure::Core::_internal::Json::detail::serializer<basic_json>;
 
   public:
     using value_t = detail::value_t;
     /// JSON Pointer, see @ref nlohmann::json_pointer
-    using json_pointer = ::Azure::Core::Internal::Json::json_pointer<basic_json>;
+    using json_pointer = ::Azure::Core::_internal::Json::json_pointer<basic_json>;
     template <typename T, typename SFINAE> using json_serializer = JSONSerializer<T, SFINAE>;
     /// how to treat decoding errors
     using error_handler_t = detail::error_handler_t;
@@ -16008,7 +16013,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     using initializer_list_t = std::initializer_list<detail::json_ref<basic_json>>;
 
     using input_format_t = detail::input_format_t;
-    /// SAX interface type, see @ref Azure::Core::Internal::Json::json_sax
+    /// SAX interface type, see @ref Azure::Core::_internal::Json::json_sax
     using json_sax_t = json_sax<basic_json>;
 
     ////////////////
@@ -16679,7 +16684,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 
     @since version 3.8.0
     */
-    using binary_t = Azure::Core::Internal::Json::byte_container_with_subtype<BinaryType>;
+    using binary_t = Azure::Core::_internal::Json::byte_container_with_subtype<BinaryType>;
     /// @}
 
   private:
@@ -24339,7 +24344,7 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
   {
     return j.dump();
   }
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json
 
 ///////////////////////
 // nonmember support //
@@ -24349,17 +24354,17 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
 namespace std {
 
 /// hash value for JSON objects
-template <> struct hash<Azure::Core::Internal::Json::json>
+template <> struct hash<Azure::Core::_internal::Json::json>
 {
   /*!
   @brief return a hash value for a JSON object
 
   @since version 1.0.0
   */
-  std::size_t operator()(const Azure::Core::Internal::Json::json& j) const
+  std::size_t operator()(const Azure::Core::_internal::Json::json& j) const
   {
     // a naive hashing via the string representation
-    const auto& h = hash<Azure::Core::Internal::Json::json::string_t>();
+    const auto& h = hash<Azure::Core::_internal::Json::json::string_t>();
     return h(j.dump());
   }
 };
@@ -24367,17 +24372,17 @@ template <> struct hash<Azure::Core::Internal::Json::json>
 /// specialization for std::less<value_t>
 /// @note: do not remove the space after '<',
 ///        see https://github.com/nlohmann/json/pull/679
-template <> struct less<::Azure::Core::Internal::Json::detail::value_t>
+template <> struct less<::Azure::Core::_internal::Json::detail::value_t>
 {
   /*!
   @brief compare two value_t enum values
   @since version 3.0.0
   */
   bool operator()(
-      Azure::Core::Internal::Json::detail::value_t lhs,
-      Azure::Core::Internal::Json::detail::value_t rhs) const noexcept
+      Azure::Core::_internal::Json::detail::value_t lhs,
+      Azure::Core::_internal::Json::detail::value_t rhs) const noexcept
   {
-    return Azure::Core::Internal::Json::detail::operator<(lhs, rhs);
+    return Azure::Core::_internal::Json::detail::operator<(lhs, rhs);
   }
 };
 
@@ -24387,11 +24392,11 @@ template <> struct less<::Azure::Core::Internal::Json::detail::value_t>
 @since version 1.0.0
 */
 template <>
-inline void swap<Azure::Core::Internal::Json::json>(
-    Azure::Core::Internal::Json::json& j1,
-    Azure::Core::Internal::Json::json&
-        j2) noexcept(is_nothrow_move_constructible<Azure::Core::Internal::Json::json>::value&&
-                         is_nothrow_move_assignable<Azure::Core::Internal::Json::json>::value)
+inline void swap<Azure::Core::_internal::Json::json>(
+    Azure::Core::_internal::Json::json& j1,
+    Azure::Core::_internal::Json::json&
+        j2) noexcept(is_nothrow_move_constructible<Azure::Core::_internal::Json::json>::value&&
+                         is_nothrow_move_assignable<Azure::Core::_internal::Json::json>::value)
 {
   j1.swap(j2);
 }
@@ -24412,9 +24417,9 @@ if no parse error occurred.
 @since version 1.0.0
 */
 // _az_JSON_HEDLEY_NON_NULL(1)
-// inline Azure::Core::Internal::Json::json operator"" _json(const char* s, std::size_t n)
+// inline Azure::Core::_internal::Json::json operator"" _json(const char* s, std::size_t n)
 // {
-//   return Azure::Core::Internal::Json::json::parse(s, s + n);
+//   return Azure::Core::_internal::Json::json::parse(s, s + n);
 // }
 
 /*!
@@ -24431,11 +24436,11 @@ object if no parse error occurred.
 @since version 2.0.0
 */
 // _az_JSON_HEDLEY_NON_NULL(1)
-// inline Azure::Core::Internal::Json::json::json_pointer operator"" _json_pointer(
+// inline Azure::Core::_internal::Json::json::json_pointer operator"" _json_pointer(
 //     const char* s,
 //     std::size_t n)
 // {
-//   return Azure::Core::Internal::Json::json::json_pointer(std::string(s, n));
+//   return Azure::Core::_internal::Json::json::json_pointer(std::string(s, n));
 // }
 
 // #include <nlohmann/detail/macro_unscope.hpp>

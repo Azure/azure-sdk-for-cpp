@@ -615,7 +615,7 @@ namespace Azure { namespace Storage { namespace Test {
           AadTenantId(), AadClientId(), AadClientSecret());
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(
-          Azure::Storage::Files::DataLake::Details::GetDfsUrlFromUrl(
+          Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
                   AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
                   .GetUrl()),

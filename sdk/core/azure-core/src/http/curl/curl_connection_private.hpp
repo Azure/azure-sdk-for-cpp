@@ -17,7 +17,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
     constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Interface for the connection to the network with Curl.
@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= Details::DefaultConnectionExpiredMilliseconds;
+        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
       }
 
       /**

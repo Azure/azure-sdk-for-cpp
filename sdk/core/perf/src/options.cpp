@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-void Azure::Perf::to_json(Azure::Core::Internal::Json::json& j, const GlobalTestOptions& p)
+void Azure::Perf::to_json(Azure::Core::_internal::Json::json& j, const GlobalTestOptions& p)
 {
-  j = Azure::Core::Internal::Json::json{
+  j = Azure::Core::_internal::Json::json{
       {"Duration", p.Duration},
       {"Host", p.Host},
       {"Insecure", p.Insecure},

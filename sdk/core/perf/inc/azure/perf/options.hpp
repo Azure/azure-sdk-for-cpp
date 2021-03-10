@@ -105,7 +105,7 @@ namespace Azure { namespace Perf {
   };
 
   /**
-   * @brief Define a #Azure::Core::Internal::Json::json to
+   * @brief Define a #Azure::Core::_internal::Json::json to
    * Azure::Perf::GlobalTestOptions convertion.
    *
    * @remark The Json library consumes this implementation for parsing
@@ -114,5 +114,5 @@ namespace Azure { namespace Perf {
    * @param j A Json reference to be written.
    * @param p A #Azure::Perf::GlobalTestOptions reference to be parsed.
    */
-  void to_json(Azure::Core::Internal::Json::json& j, const GlobalTestOptions& p);
+  void to_json(Azure::Core::_internal::Json::json& j, const GlobalTestOptions& p);
 }} // namespace Azure::Perf
