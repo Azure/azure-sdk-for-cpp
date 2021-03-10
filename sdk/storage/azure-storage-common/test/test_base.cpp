@@ -25,14 +25,20 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  constexpr static const char* StandardStorageConnectionStringValue = "";
+  constexpr static const char* StandardStorageConnectionStringValue
+      = "DefaultEndpointsProtocol=https;AccountName=storageunittestahkha;AccountKey="
+        "juzH7ITp1FJ1Nr1OZPB3P8b9iJPP/ajMsYVs/"
+        "kQCaiuursVx8txPstvyC3XxeC6R9SaqmWq0mQ4hRLEJRggK+w==;EndpointSuffix=core.windows.net";
   constexpr static const char* PremiumStorageConnectionStringValue = "";
   constexpr static const char* BlobStorageConnectionStringValue = "";
   constexpr static const char* PremiumFileConnectionStringValue = "";
-  constexpr static const char* AdlsGen2ConnectionStringValue = "";
-  constexpr static const char* AadTenantIdValue = "";
-  constexpr static const char* AadClientIdValue = "";
-  constexpr static const char* AadClientSecretValue = "";
+  constexpr static const char* AdlsGen2ConnectionStringValue
+      = "DefaultEndpointsProtocol=https;AccountName=storageunittestdatalake;AccountKey="
+        "Ew7VSFkQy1HUMcnN+t+Fgvn9RbxQYnVicGglVKtbt28N/"
+        "nVfB0N57IyK5jzymU7F5542RKSqmBeNSH91XTzIkg==;EndpointSuffix=core.windows.net";
+  constexpr static const char* AadTenantIdValue = "72f988bf-86f1-41af-91ab-2d7cd011db47";
+  constexpr static const char* AadClientIdValue = "381229fa-de11-41dc-813f-f7d2d784d907";
+  constexpr static const char* AadClientSecretValue = "-.4HT.01.560acJ~7-rsC8z0r3-n2Kgh-j";
 
   std::string GetEnv(const std::string& name)
   {

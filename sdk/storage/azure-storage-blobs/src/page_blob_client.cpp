@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
       int64_t offset,
-      Azure::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream* content,
       const UploadPageBlobPagesOptions& options,
       const Azure::Core::Context& context) const
   {

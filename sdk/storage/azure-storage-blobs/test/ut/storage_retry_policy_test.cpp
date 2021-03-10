@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Test {
                   Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
               int64_t bodyLength = std::min(
                   static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
-              auto bodyStream = std::make_unique<IO::MemoryBodyStream>(
+              auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
                   bodyLength);
               response->SetBodyStream(std::move(bodyStream));
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Test {
                 Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
             int64_t bodyLength = std::min(
                 static_cast<int64_t>(m_secondaryContent->length()) - requestOffset, requestLength);
-            auto bodyStream = std::make_unique<IO::MemoryBodyStream>(
+            auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
                 bodyLength);
             response->SetBodyStream(std::move(bodyStream));
@@ -256,7 +256,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
   }
 
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto ret = blobClient.Download();
     auto timeEnd = std::chrono::steady_clock::now();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
     EXPECT_EQ(numTrial, 2);
 
@@ -329,7 +329,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), secondaryContent);
   }
 
@@ -378,7 +378,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
     EXPECT_EQ(numPrimaryTrial, 3);
     EXPECT_EQ(numSecondaryTrial, 1);

@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    class WinHttpStream : public Azure::IO::BodyStream {
+    class WinHttpStream : public Azure::Core::IO::BodyStream {
     private:
       std::unique_ptr<HandleManager> m_handleManager;
       bool m_isEOF;
@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Http {
       int64_t m_streamTotalRead;
 
       /**
-       * @brief Implement #Azure::IO::BodyStream::OnRead(). Calling this function pulls data
+       * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
        * from the wire.
        *
        * @param context #Azure::Core::Context so that operation can be cancelled.
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       /**
-       * @brief Implement #Azure::IO::BodyStream length.
+       * @brief Implement #Azure::Core::IO::BodyStream length.
        *
        * @return The size of the payload.
        */

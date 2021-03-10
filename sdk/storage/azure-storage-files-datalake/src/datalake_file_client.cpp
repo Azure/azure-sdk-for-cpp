@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
-      Azure::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream* content,
       int64_t offset,
       const AppendDataLakeFileOptions& options,
       const Azure::Core::Context& context) const

@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_blob_add = [&](const std::string& sas) {
       blobClient0.Create();
       std::string content = "Hello world";
-      auto blockContent = Azure::IO::MemoryBodyStream(
+      auto blockContent = Azure::Core::IO::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(content.data()), content.size());
       auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       EXPECT_NO_THROW(blobClient.AppendBlock(&blockContent));

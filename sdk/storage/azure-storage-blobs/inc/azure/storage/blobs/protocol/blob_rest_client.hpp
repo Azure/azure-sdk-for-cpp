@@ -1127,7 +1127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct DownloadBlobResult
     {
       std::string RequestId;
-      std::unique_ptr<Azure::IO::BodyStream> BodyStream;
+      std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
       Azure::Core::Http::Range ContentRange;
       int64_t BlobSize = 0;
       Models::BlobType BlobType;
@@ -1316,7 +1316,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
           }
-          Azure::IO::MemoryBodyStream xml_body_stream(
+          Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Post, url, &xml_body_stream);
@@ -1412,7 +1412,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
           }
-          Azure::IO::MemoryBodyStream xml_body_stream(
+          Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -3591,7 +3591,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
           }
-          Azure::IO::MemoryBodyStream xml_body_stream(
+          Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -6325,7 +6325,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
           }
-          Azure::IO::MemoryBodyStream xml_body_stream(
+          Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -6896,7 +6896,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream* requestBody,
             const UploadBlockBlobOptions& options)
         {
           (void)options;
@@ -7081,7 +7081,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream* requestBody,
             const StageBlockOptions& options)
         {
           (void)options;
@@ -7374,7 +7374,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             xml_body = writer.GetDocument();
             writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
           }
-          Azure::IO::MemoryBodyStream xml_body_stream(
+          Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
@@ -7905,7 +7905,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream* requestBody,
             const UploadPageBlobPagesOptions& options)
         {
           (void)options;
@@ -9049,7 +9049,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream* requestBody,
             const AppendBlockOptions& options)
         {
           (void)options;
@@ -9464,7 +9464,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream* requestBody,
             const SubmitBlobBatchOptions& options)
         {
           (void)options;
