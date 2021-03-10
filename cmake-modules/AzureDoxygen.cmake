@@ -24,7 +24,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
             json.hpp
             test
             *private*)
-        # Skip documenting internal symbols (all from ::_detail/_::internal namespaces)
+        # Skip documenting internal and private symbols (all from ::_detail/_::internal namespaces)
         set(DOXYGEN_EXCLUDE_SYMBOLS _detail _internal)
         set(DOXYGEN_IGNORE_PREFIX az_ AZ_)
         set(DOXYGEN_HTML_HEADER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/header.html)
