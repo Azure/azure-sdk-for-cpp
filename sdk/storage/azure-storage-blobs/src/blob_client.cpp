@@ -192,10 +192,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       // In case network failure during reading the body
       const Azure::ETag eTag = downloadResponse->Details.ETag;
 
-      auto retryFunction
-          = [this, options, eTag](
-                const HttpGetterInfo& retryInfo,
-                const Azure::Core::Context& context) -> std::unique_ptr<Azure::IO::BodyStream> {
+      auto retryFunction =
+          [this, options, eTag](
+              const HttpGetterInfo& retryInfo,
+              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::Range();
         newOptions.Range.GetValue().Offset
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
     }
 
-    int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
+    int64_t bytesRead = Azure::Core::IO::BodyStream::ReadToCount(
         *(firstChunk->BodyStream), buffer, firstChunkLength, context);
     if (bytesRead != firstChunkLength)
     {
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               chunkOptions.AccessConditions.IfMatch = eTag;
             }
             auto chunk = Download(chunkOptions, context);
-            int64_t bytesRead = Azure::IO::BodyStream::ReadToCount(
+            int64_t bytesRead = Azure::Core::IO::BodyStream::ReadToCount(
                 *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
                 chunkOptions.Range.GetValue().Length.GetValue(),
@@ -384,7 +384,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
 
-    auto bodyStreamToFile = [](Azure::IO::BodyStream& stream,
+    auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                Storage::_detail::FileWriter& fileWriter,
                                int64_t offset,
                                int64_t length,
@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
         int64_t bytesRead
-            = Azure::IO::BodyStream::ReadToCount(stream, buffer.data(), readSize, context);
+            = Azure::Core::IO::BodyStream::ReadToCount(stream, buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
