@@ -33,7 +33,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   if (!IsDone())
   {
     m_rawResponse = m_pipeline->GetResponse(
-        context, Azure::Core::Http::HttpMethod::Get, {Details::DeletedKeysPath, m_value.Name()});
+        context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
     m_status = CheckCompleted(*m_rawResponse);
   }
 
@@ -44,7 +44,8 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
-    std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> keyvaultPipeline,
+    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
+        keyvaultPipeline,
     Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
     : m_pipeline(keyvaultPipeline)
 {
@@ -62,7 +63,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
   // Build the full url for continuation token. It is only used in case customers wants to use
   // it on their own. The Operation uses the KeyVaultPipeline from the client which knows how to
   // build this url.
-  m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(Details::DeletedKeysPath)
+  m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(_detail::DeletedKeysPath)
       + "/" + m_value.Name();
 
   // The recoveryId is only returned if soft-delete is enabled.

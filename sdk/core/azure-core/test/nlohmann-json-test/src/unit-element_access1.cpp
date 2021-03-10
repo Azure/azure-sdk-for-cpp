@@ -30,7 +30,7 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::_internal::Json::json;
 
 TEST_CASE("element access 1")
 {

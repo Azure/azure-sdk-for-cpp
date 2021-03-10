@@ -31,7 +31,7 @@
 
 namespace Azure { namespace Storage {
 
-  namespace Details {
+  namespace _detail {
     static const char* Subdelimiters = "!$&'()*+,;=";
 
     std::string UrlEncodeQueryParameter(const std::string& value)
@@ -76,11 +76,11 @@ namespace Azure { namespace Storage {
       }();
       return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
-  } // namespace Details
+  } // namespace _detail
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  namespace Details {
+  namespace _detail {
 
     enum class AlgorithmType
     {
@@ -241,11 +241,11 @@ namespace Azure { namespace Storage {
 
       return hash;
     }
-  } // namespace Details
+  } // namespace _detail
 
 #elif defined(AZ_PLATFORM_POSIX)
 
-  namespace Details {
+  namespace _detail {
 
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
@@ -275,7 +275,7 @@ namespace Azure { namespace Storage {
       return std::vector<uint8_t>(std::begin(hash), std::begin(hash) + hashLength);
     }
 
-  } // namespace Details
+  } // namespace _detail
 
 #endif
 

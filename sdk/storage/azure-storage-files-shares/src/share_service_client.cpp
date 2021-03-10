@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& connectionString,
       const ShareClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
+    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
     auto serviceUrl = std::move(parsedConnectionString.FileServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
@@ -41,21 +41,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
+        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::Internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
     }
-    m_pipeline = std::make_shared<Azure::Core::Http::Internal::HttpPipeline>(
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        Storage::Details::FileServicePackageName,
-        Details::Version::VersionString(),
+        Storage::_detail::FileServicePackageName,
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -67,17 +67,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::Internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::Details::HttpHeaderXMsVersion] = options.ApiVersion;
+      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
     }
-    m_pipeline = std::make_shared<Azure::Core::Http::Internal::HttpPipeline>(
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::Details::FileServicePackageName,
-        Details::Version::VersionString(),
+        Storage::_detail::FileServicePackageName,
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareClient ShareServiceClient::GetShareClient(const std::string& shareName) const
   {
     auto builder = m_serviceUrl;
-    builder.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    builder.AppendPath(Storage::_detail::UrlEncodePath(shareName));
     return ShareClient(builder, m_pipeline);
   }
 
@@ -93,12 +93,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListSharesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesIncludeFlags;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
-    return Details::ShareRestClient::Service::ListSharesSinglePage(
+    return _detail::ShareRestClient::Service::ListSharesSinglePage(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -108,9 +108,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::Service::SetPropertiesOptions();
     protocolLayerOptions.ServiceProperties = std::move(properties);
-    return Details::ShareRestClient::Service::SetProperties(
+    return _detail::ShareRestClient::Service::SetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -119,8 +119,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
-    auto result = Details::ShareRestClient::Service::GetProperties(
+    auto protocolLayerOptions = _detail::ShareRestClient::Service::GetPropertiesOptions();
+    auto result = _detail::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
     Models::FileServiceProperties ret;
     ret.Cors = std::move(result->Cors);

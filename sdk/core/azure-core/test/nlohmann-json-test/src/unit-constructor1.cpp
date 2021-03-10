@@ -32,7 +32,7 @@ DOCTEST_GCC_SUPPRESS_WARNING("-Wfloat-equal")
 
 #define private public
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::_internal::Json::json;
 #undef private
 
 #include <deque>

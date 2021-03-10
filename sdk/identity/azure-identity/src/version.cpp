@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>
 
-using namespace Azure::Identity::Details;
+using namespace Azure::Identity::_detail;
 
 std::string const Version::PreRelease = secret;
 

@@ -18,10 +18,10 @@ namespace Azure { namespace Storage { namespace Test {
   TEST(CryptFunctionsTest, Sha256)
   {
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::Sha256(ToBinaryVector(""))),
+        Azure::Core::Base64Encode(_detail::Sha256(ToBinaryVector(""))),
         "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::Sha256(ToBinaryVector("Hello Azure!"))),
+        Azure::Core::Base64Encode(_detail::Sha256(ToBinaryVector("Hello Azure!"))),
         "Mjzwx2mqGHb9FSgjm33ShNmXYndkgvwA6tQmEiskOHg=");
   }
 
@@ -30,10 +30,10 @@ namespace Azure { namespace Storage { namespace Test {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";
     std::vector<uint8_t> binaryKey(key.begin(), key.end());
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::HmacSha256(ToBinaryVector(""), binaryKey)),
+        Azure::Core::Base64Encode(_detail::HmacSha256(ToBinaryVector(""), binaryKey)),
         "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
+        Azure::Core::Base64Encode(_detail::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
         "+SBESxQVhI53mSEdZJcCBpdBkaqwzfPaVYZMAf5LP3c=");
   }
 

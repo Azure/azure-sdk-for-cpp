@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <string>
 
-namespace Azure { namespace Core { namespace Internal { namespace Strings {
+namespace Azure { namespace Core { namespace _internal { namespace Strings {
 
   bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept;
   std::string const ToLower(const std::string& src) noexcept;
@@ -28,4 +28,4 @@ namespace Azure { namespace Core { namespace Internal { namespace Strings {
     }
   };
 
-}}}} // namespace Azure::Core::Internal::Strings
+}}}} // namespace Azure::Core::_internal::Strings

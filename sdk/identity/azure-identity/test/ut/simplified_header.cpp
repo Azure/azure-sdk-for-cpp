@@ -19,5 +19,5 @@ TEST(SimplifiedHeader, identity)
 {
   EXPECT_NO_THROW(Azure::Identity::ClientSecretCredential clientSecretCredential("", "", ""));
   EXPECT_NO_THROW(Azure::Identity::EnvironmentCredential environmentCredential);
-  EXPECT_NO_THROW(Azure::Identity::Details::Version::VersionString());
+  EXPECT_NO_THROW(Azure::Identity::_detail::Version::VersionString());
 }

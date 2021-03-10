@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     filesystemSasBuilder.Path.clear();
     filesystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
 
-    auto keyCredential = Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto keyCredential = _detail::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
         AdlsGen2ConnectionString());
@@ -52,11 +52,11 @@ namespace Azure { namespace Storage { namespace Test {
     directory1Client0.Create();
     directory2Client0.Create();
 
-    auto serviceUrl = Files::DataLake::Details::GetDfsUrlFromUrl(serviceClient0.GetUrl());
-    auto filesystemUrl = Files::DataLake::Details::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
-    auto directory1Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory1Client0.GetUrl());
-    auto directory2Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory2Client0.GetUrl());
-    auto fileUrl = Files::DataLake::Details::GetDfsUrlFromUrl(fileClient0.GetUrl());
+    auto serviceUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(serviceClient0.GetUrl());
+    auto filesystemUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
+    auto directory1Url = Files::DataLake::_detail::GetDfsUrlFromUrl(directory1Client0.GetUrl());
+    auto directory2Url = Files::DataLake::_detail::GetDfsUrlFromUrl(directory2Client0.GetUrl());
+    auto fileUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(fileClient0.GetUrl());
 
     auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
         serviceUrl,
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
       newFileClient0.Create();
       auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
-          Files::DataLake::Details::GetDfsUrlFromUrl(directory2Client0.GetUrl()) + sas);
+          Files::DataLake::_detail::GetDfsUrlFromUrl(directory2Client0.GetUrl()) + sas);
       EXPECT_NO_THROW(directoryClient.RenameFile(
           newFilename, directory1Name + "/" + directory2Name + "/" + fileName));
     };

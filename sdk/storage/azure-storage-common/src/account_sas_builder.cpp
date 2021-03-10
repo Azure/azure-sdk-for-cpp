@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Sas {
 
   std::string AccountSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
 
     std::string services;
     if ((Services & AccountSasServices::Blobs) == AccountSasServices::Blobs)
@@ -102,18 +102,18 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
         + resourceTypes + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::DefaultSasVersion + "\n";
+        + Storage::_detail::DefaultSasVersion + "\n";
 
-    std::string signature = Azure::Core::Base64Encode(Storage::Details::HmacSha256(
+    std::string signature = Azure::Core::Base64Encode(Storage::_detail::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
-        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
-    builder.AppendQueryParameter("ss", Storage::Details::UrlEncodeQueryParameter(services));
-    builder.AppendQueryParameter("srt", Storage::Details::UrlEncodeQueryParameter(resourceTypes));
-    builder.AppendQueryParameter("sp", Storage::Details::UrlEncodeQueryParameter(Permissions));
+        "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
+    builder.AppendQueryParameter("ss", Storage::_detail::UrlEncodeQueryParameter(services));
+    builder.AppendQueryParameter("srt", Storage::_detail::UrlEncodeQueryParameter(resourceTypes));
+    builder.AppendQueryParameter("sp", Storage::_detail::UrlEncodeQueryParameter(Permissions));
     if (!startsOnStr.empty())
     {
       builder.AppendQueryParameter("st", startsOnStr);
@@ -122,10 +122,10 @@ namespace Azure { namespace Storage { namespace Sas {
     if (IPRange.HasValue())
     {
       builder.AppendQueryParameter(
-          "sip", Storage::Details::UrlEncodeQueryParameter(IPRange.GetValue()));
+          "sip", Storage::_detail::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
-    builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
-    builder.AppendQueryParameter("sig", Storage::Details::UrlEncodeQueryParameter(signature));
+    builder.AppendQueryParameter("spr", Storage::_detail::UrlEncodeQueryParameter(protocol));
+    builder.AppendQueryParameter("sig", Storage::_detail::UrlEncodeQueryParameter(signature));
 
     return builder.GetAbsoluteUrl();
   }

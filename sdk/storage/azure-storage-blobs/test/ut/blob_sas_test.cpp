@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerSasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
 
     auto keyCredential
-        = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto blobServiceClient0
         = Blobs::BlobServiceClient::CreateFromConnectionString(StandardStorageConnectionString());

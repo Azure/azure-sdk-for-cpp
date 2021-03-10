@@ -11,7 +11,7 @@
 
 #include <string>
 
-namespace Azure { namespace Core { namespace Internal { namespace Json {
+namespace Azure { namespace Core { namespace _internal { namespace Json {
 
   /**
    * @brief Interface for json-serializable components.
@@ -27,4 +27,4 @@ namespace Azure { namespace Core { namespace Internal { namespace Json {
     virtual std::string Serialize() const = 0;
   };
 
-}}}} // namespace Azure::Core::Internal::Json
+}}}} // namespace Azure::Core::_internal::Json

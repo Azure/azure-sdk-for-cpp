@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
         response->SetHeader("content-type", "application/xml");
         response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+        response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
         response->SetHeader("x-ms-error-code", "BlobNotFound");
         response->SetHeader(
             "date",
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
         response->SetHeader("content-type", "application/xml");
         response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+        response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
         response->SetHeader("x-ms-error-code", "ConditionNotMet");
         response->SetHeader(
             "date",
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Test {
               response->SetHeader("etag", m_primaryETag.ToString());
               response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
               response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-              response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+              response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
               response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
               response->SetHeader("x-ms-lease-status", "unlocked");
               response->SetHeader("x-ms-lease-state", "available");
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Test {
             response->SetHeader("etag", m_secondaryETag.ToString());
             response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
             response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-            response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+            response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
             response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
             response->SetHeader("x-ms-lease-status", "unlocked");
             response->SetHeader("x-ms-lease-state", "available");

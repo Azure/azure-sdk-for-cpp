@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Test {
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     /**
      * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
      * characters.
@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Http {
         return queryStr;
       }
     }
-  } // namespace Details
+  } // namespace _detail
 
   /*********************  Exceptions  **********************/
   /**

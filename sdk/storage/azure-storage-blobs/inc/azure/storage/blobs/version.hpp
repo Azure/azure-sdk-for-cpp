@@ -16,7 +16,7 @@
 #define AZURE_STORAGE_BLOBS_VERSION_PATCH 0
 #define AZURE_STORAGE_BLOBS_VERSION_PRERELEASE "beta.9"
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Details {
+namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   /**
    * @brief Provides version information.
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Details {
     }
   };
 
-}}}} // namespace Azure::Storage::Blobs::Details
+}}}} // namespace Azure::Storage::Blobs::_detail
 
 #undef AZURE_STORAGE_BLOBS_VERSION_MAJOR
 #undef AZURE_STORAGE_BLOBS_VERSION_MINOR
