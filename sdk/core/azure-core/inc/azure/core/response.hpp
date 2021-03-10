@@ -11,6 +11,7 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/nullable.hpp"
 #include <memory> // for unique_ptr
+#include <stdexcept>
 #include <utility> // for move
 
 namespace Azure {
@@ -50,7 +51,14 @@ public:
    * @brief Get raw HTTP response.
    */
   // Do not give up raw response ownership.
-  Azure::Core::Http::RawResponse& GetRawResponse() { return *this->m_rawResponse; }
+  Azure::Core::Http::RawResponse& GetRawResponse() const
+  {
+    if (!m_rawResponse)
+    {
+      throw std::runtime_error("The raw response was extracted before.");
+    }
+    return *this->m_rawResponse;
+  }
 
   /**
    * @brief Check whether a value is contained.
