@@ -591,8 +591,8 @@ namespace Azure { namespace Core { namespace Test {
     auto body = response.GetBodyStream();
     EXPECT_NE(body, nullptr);
 
-    std::vector<uint8_t> bodyVector
-        = Azure::Core::IO::BodyStream::ReadToEnd(*body, Azure::Core::Context::GetApplicationContext());
+    std::vector<uint8_t> bodyVector = Azure::Core::IO::BodyStream::ReadToEnd(
+        *body, Azure::Core::Context::GetApplicationContext());
     int64_t bodySize = body->Length();
     EXPECT_EQ(bodySize, size);
     bodySize = bodyVector.size();

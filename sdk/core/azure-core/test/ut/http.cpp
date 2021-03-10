@@ -192,7 +192,8 @@ namespace Azure { namespace Core { namespace Test {
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
       EXPECT_EQ(
-          Azure::Core::IO::BodyStream::ReadToCount(stream, temp.data(), 1, Context::GetApplicationContext()),
+          Azure::Core::IO::BodyStream::ReadToCount(
+              stream, temp.data(), 1, Context::GetApplicationContext()),
           1);
 
       EXPECT_EQ(temp[0], 1);

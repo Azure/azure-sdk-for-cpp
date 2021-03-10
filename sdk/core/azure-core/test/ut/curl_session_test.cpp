@@ -123,7 +123,8 @@ namespace Azure { namespace Core { namespace Test {
 
       // Read the bodyStream to get all chunks
       EXPECT_THROW(
-          Azure::Core::IO::BodyStream::ReadToEnd(*bodyS, Azure::Core::Context::GetApplicationContext()),
+          Azure::Core::IO::BodyStream::ReadToEnd(
+              *bodyS, Azure::Core::Context::GetApplicationContext()),
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
@@ -199,8 +200,8 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyS = response->GetBodyStream();
 
       // Read the bodyStream to get all chunks
-      EXPECT_NO_THROW(
-          Azure::Core::IO::BodyStream::ReadToEnd(*bodyS, Azure::Core::Context::GetApplicationContext()));
+      EXPECT_NO_THROW(Azure::Core::IO::BodyStream::ReadToEnd(
+          *bodyS, Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
