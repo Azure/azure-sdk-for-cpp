@@ -274,10 +274,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       // In case network failure during reading the body
       auto eTag = downloadResponse->ETag;
 
-      auto retryFunction
-          = [this, options, eTag](
-                const HttpGetterInfo& retryInfo,
-                const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      auto retryFunction =
+          [this, options, eTag](
+              const HttpGetterInfo& retryInfo,
+              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadShareFileOptions newOptions = options;
         newOptions.Range = Core::Http::Range();
         newOptions.Range.GetValue().Offset

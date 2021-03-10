@@ -31,7 +31,8 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identify";
     m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
     m_appendBlobClient->Create(m_blobUploadOptions);
-    auto blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blockContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_appendBlobClient->AppendBlock(&blockContent);
     m_blobUploadOptions.HttpHeaders.ContentHash
         = m_appendBlobClient->GetProperties()->HttpHeaders.ContentHash;
@@ -58,7 +59,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 0);
     EXPECT_EQ(properties.BlobSize, 0);
 
-    auto blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blockContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     auto appendResponse = appendBlobClient.AppendBlock(&blockContent);
     EXPECT_FALSE(appendResponse->RequestId.empty());
     properties = *appendBlobClient.GetProperties();
@@ -267,7 +269,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::string blobName = RandomString();
     auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
     blobClient.Create();
-    auto blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blockContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blobClient.AppendBlock(&blockContent);
 
     auto downloadResult = blobClient.Download();
@@ -357,7 +360,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(response->RequestId.empty());
       EXPECT_TRUE(response->Created);
     }
-    auto blobContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blobClient.AppendBlock(&blobContent);
     {
       auto response = blobClient.CreateIfNotExists();
@@ -366,7 +370,8 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(
-        Azure::Core::IO::BodyStream::ReadToEnd(*downloadStream, Azure::Core::Context()), m_blobContent);
+        Azure::Core::IO::BodyStream::ReadToEnd(*downloadStream, Azure::Core::Context()),
+        m_blobContent);
   }
 
 }}} // namespace Azure::Storage::Test

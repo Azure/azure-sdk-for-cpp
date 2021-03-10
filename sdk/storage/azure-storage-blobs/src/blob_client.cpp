@@ -192,10 +192,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       // In case network failure during reading the body
       const Azure::ETag eTag = downloadResponse->Details.ETag;
 
-      auto retryFunction
-          = [this, options, eTag](
-                const HttpGetterInfo& retryInfo,
-                const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      auto retryFunction =
+          [this, options, eTag](
+              const HttpGetterInfo& retryInfo,
+              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::Range();
         newOptions.Range.GetValue().Offset

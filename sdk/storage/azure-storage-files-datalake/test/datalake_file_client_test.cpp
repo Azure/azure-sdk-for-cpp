@@ -303,8 +303,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
     auto buffer = RandomBuffer(bufferSize);
-    auto bufferStream
-        = std::make_unique<Azure::Core::IO::MemoryBodyStream>(Azure::Core::IO::MemoryBodyStream(buffer));
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
     auto properties1 = m_fileClient->GetProperties();
 
     // Append
@@ -330,8 +330,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
     auto buffer = RandomBuffer(bufferSize);
-    auto bufferStream
-        = std::make_unique<Azure::Core::IO::MemoryBodyStream>(Azure::Core::IO::MemoryBodyStream(buffer));
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
     auto newFileName = RandomString(10);
     auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(newFileName));

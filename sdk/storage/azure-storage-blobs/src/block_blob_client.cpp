@@ -179,7 +179,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     if (fileReader.GetFileSize() <= options.TransferOptions.SingleUploadThreshold)
     {
-      Azure::Core::IO::FileBodyStream contentStream(fileReader.GetHandle(), 0, fileReader.GetFileSize());
+      Azure::Core::IO::FileBodyStream contentStream(
+          fileReader.GetHandle(), 0, fileReader.GetFileSize());
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;

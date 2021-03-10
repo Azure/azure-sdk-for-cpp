@@ -37,7 +37,8 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
     m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
-    auto pageContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto pageContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_pageBlobClient->UploadPages(0, &pageContent);
     m_blobUploadOptions.HttpHeaders.ContentHash
         = m_pageBlobClient->GetProperties()->HttpHeaders.ContentHash;
@@ -306,7 +307,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(response->Created);
     }
 
-    auto blobContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blobClient.UploadPages(0, &blobContent);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
@@ -314,7 +316,8 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);
     EXPECT_EQ(
-        Azure::Core::IO::BodyStream::ReadToEnd(*downloadStream, Azure::Core::Context()), m_blobContent);
+        Azure::Core::IO::BodyStream::ReadToEnd(*downloadStream, Azure::Core::Context()),
+        m_blobContent);
   }
 
 }}} // namespace Azure::Storage::Test
