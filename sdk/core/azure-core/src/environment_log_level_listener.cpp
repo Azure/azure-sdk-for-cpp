@@ -51,7 +51,7 @@ Logger::Level const* GetEnvironmentLogLevel()
 
     if (envVar)
     {
-      auto const logLevelStr = _internal::Strings::ToLower(envVar);
+      auto const logLevelStr = _internal::StringExtensions::ToLower(envVar);
 
       // See https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK
       // And
@@ -133,7 +133,7 @@ Logger::Listener EnvironmentLogLevelListener::GetLogListener()
 
   static Logger::Listener const consoleLogger = [](auto level, auto message) {
     std::cerr << '['
-              << Azure::Core::DateTime(std::chrono::system_clock::now())
+              << Azure::DateTime(std::chrono::system_clock::now())
                      .ToString(
                          DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
               << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;

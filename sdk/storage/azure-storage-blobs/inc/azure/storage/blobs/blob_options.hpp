@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Start time for the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      */
-    Azure::Core::DateTime startsOn = std::chrono::system_clock::now();
+    Azure::DateTime startsOn = std::chrono::system_clock::now();
   };
 
   /**
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Specify this header to perform the operation only if the resource has been
        * modified since the specified time. This timestamp will be truncated to second.
        */
-      Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
+      Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
     } AccessConditions;
   };
 

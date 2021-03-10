@@ -624,7 +624,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief The expiry time in RFC1123 format. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
      */
-    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
+    Azure::Core::Nullable<DateTime> ExpiresOn;
   };
 
   using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;

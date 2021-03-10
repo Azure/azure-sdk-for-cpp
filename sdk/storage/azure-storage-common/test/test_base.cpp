@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string LowercaseRandomString(size_t size)
   {
-    return Azure::Core::_internal::Strings::ToLower(RandomString(size));
+    return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
   Storage::Metadata RandomMetadata(size_t size)
@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Test {
     return secondaryUri.GetAbsoluteUrl();
   }
 
-  bool IsValidTime(const Azure::Core::DateTime& datetime)
+  bool IsValidTime(const Azure::DateTime& datetime)
   {
     // We assume datetime within a week is valid.
     const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);

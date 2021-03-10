@@ -390,7 +390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (options.ExpiresOn.HasValue())
     {
       protocolLayerOptions.ExpiryTime
-          = options.ExpiresOn.GetValue().ToString(Azure::Core::DateTime::DateFormat::Rfc1123);
+          = options.ExpiresOn.GetValue().ToString(Azure::DateTime::DateFormat::Rfc1123);
     }
     else if (options.TimeToExpire.HasValue())
     {

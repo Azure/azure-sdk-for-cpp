@@ -40,6 +40,7 @@
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
 - Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
+- Moved `Azure::Core::DateTime` to `Azure::DateTime`.
 
 ### Bug Fixes
 
