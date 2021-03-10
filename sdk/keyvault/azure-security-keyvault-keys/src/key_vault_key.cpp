@@ -38,7 +38,7 @@ void _detail::KeyVaultKeyDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto body = rawResponse.GetBody();
-  auto jsonParser = Azure::Core::_internal::Json::json::parse(body);
+  auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
   // "Key"
   auto const& jsonKey = jsonParser[_detail::KeyPropertyName];

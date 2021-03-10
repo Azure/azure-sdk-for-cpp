@@ -31,7 +31,7 @@ SOFTWARE.
 
 #define private public
 #include <azure/core/internal/json.hpp>
-using Azure::Core::_internal::Json::json;
+using Azure::Core::Json::_internal::json;
 #undef private
 
 #include <sstream>
@@ -41,7 +41,7 @@ void check_escaped(const char* original, const char* escaped = "", const bool en
 void check_escaped(const char* original, const char* escaped, const bool ensure_ascii)
 {
   std::stringstream ss;
-  json::serializer s(Azure::Core::_internal::Json::detail::output_adapter<char>(ss), ' ');
+  json::serializer s(Azure::Core::Json::_internal::detail::output_adapter<char>(ss), ' ');
   s.dump_escaped(original, ensure_ascii);
   CHECK(ss.str() == escaped);
 }
