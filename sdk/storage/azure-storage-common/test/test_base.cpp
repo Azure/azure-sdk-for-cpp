@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Test {
     return secondaryUri.GetAbsoluteUrl();
   }
 
-  bool IsValidTime(const Azure::Core::DateTime& datetime)
+  bool IsValidTime(const Azure::DateTime& datetime)
   {
     // We assume datetime within a week is valid.
     const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);

@@ -38,6 +38,7 @@
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
+- Moved `Azure::Core::DateTime` to `Azure::DateTime`.
 
 ### Bug Fixes
 

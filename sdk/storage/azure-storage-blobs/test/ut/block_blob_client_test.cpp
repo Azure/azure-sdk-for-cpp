@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(res->LastAccessedOn.GetValue()));
     }
     {
-      Azure::Core::DateTime lastAccessedOn;
+      Azure::DateTime lastAccessedOn;
 
       Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
       options.Prefix = m_blobName;

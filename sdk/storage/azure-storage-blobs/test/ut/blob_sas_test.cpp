@@ -381,7 +381,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Sas::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::Core::DateTime();
+      builder2.ExpiresOn = Azure::DateTime();
       builder2.SetPermissions(static_cast<Sas::BlobContainerSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 

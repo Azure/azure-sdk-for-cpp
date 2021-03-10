@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct FileSystemItemDetails
   {
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     Storage::Metadata Metadata;
     PublicAccessType AccessType = PublicAccessType::None;
     bool HasImmutabilityPolicy = false;
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     PublicAccessType AccessType = PublicAccessType::None;
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
     std::string RequestId;
   }; // struct GetDataLakeFileSystemAccessPolicyResult
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct GetDataLakeFileSystemPropertiesResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     Storage::Metadata Metadata;
     std::string RequestId;
   };
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     bool Created = true;
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct SetDataLakeFileSystemMetadataResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
@@ -147,8 +147,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct GetDataLakePathPropertiesResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
-    Core::DateTime CreatedOn;
+    DateTime LastModified;
+    DateTime CreatedOn;
     int64_t FileSize = 0;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
@@ -158,14 +158,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<bool> IsServerEncrypted;
     Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     Azure::Core::Nullable<bool> IsAccessTierInferred;
-    Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
+    Azure::Core::Nullable<DateTime> AccessTierChangedOn;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
     Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
-    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
-    Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    Azure::Core::Nullable<DateTime> CopyCompletedOn;
+    Azure::Core::Nullable<DateTime> ExpiresOn;
+    Azure::Core::Nullable<DateTime> LastAccessedOn;
     bool IsDirectory = false;
     Azure::Core::Nullable<DataLakeArchiveStatus> ArchiveStatus;
     Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct GetDataLakePathAccessControlListResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string Owner;
     std::string Group;
     std::string Permissions;
@@ -191,14 +191,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct SetDataLakePathHttpHeadersResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
   struct SetDataLakePathMetadataResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     bool Created = true;
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     Azure::Core::Nullable<int64_t> FileSize;
     std::string RequestId;
   };
@@ -225,21 +225,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct DownloadDataLakeFileDetails
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
     PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
-    Core::DateTime CreatedOn;
-    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
-    Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    DateTime CreatedOn;
+    Azure::Core::Nullable<DateTime> ExpiresOn;
+    Azure::Core::Nullable<DateTime> LastAccessedOn;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
     Azure::Core::Nullable<std::string> CopyStatusDescription;
     Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
+    Azure::Core::Nullable<Azure::DateTime> CopyCompletedOn;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> IsCurrentVersion;
     bool IsServerEncrypted = false;
