@@ -64,13 +64,13 @@ void DataLakeGettingStarted()
     std::vector<uint8_t> buffer(str1.begin(), str1.end());
 
     // One way of passing in the buffer, note that the buffer is not copied.
-    auto bufferStream = Azure::IO::MemoryBodyStream(buffer);
+    auto bufferStream = Azure::Core::IO::MemoryBodyStream(buffer);
 
     fileClient.Append(&bufferStream, 0 /* Offset of the position to be appended.*/);
 
     // Another way of passing in the buffer, note that buffer is also not copied.
     bufferStream
-        = Azure::IO::MemoryBodyStream(reinterpret_cast<const uint8_t*>(str2.data()), str2.size());
+        = Azure::Core::IO::MemoryBodyStream(reinterpret_cast<const uint8_t*>(str2.data()), str2.size());
 
     fileClient.Append(&bufferStream, str1.size());
 
@@ -80,7 +80,7 @@ void DataLakeGettingStarted()
     // Read
     auto result = fileClient.Download();
     Azure::Core::Context context;
-    std::vector<uint8_t> downloaded = Azure::IO::BodyStream::ReadToEnd(*(result->Body), context);
+    std::vector<uint8_t> downloaded = Azure::Core::IO::BodyStream::ReadToEnd(*(result->Body), context);
     // downloaded contains your downloaded data.
     std::cout << "Downloaded data was:\n" + std::string(downloaded.begin(), downloaded.end())
               << std::endl;

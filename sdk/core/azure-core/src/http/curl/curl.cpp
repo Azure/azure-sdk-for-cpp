@@ -698,7 +698,7 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   if (this->m_bodyStartInBuffer >= 0)
   {
     // still have data to take from innerbuffer
-    Azure::IO::MemoryBodyStream innerBufferMemoryStream(
+    Azure::Core::IO::MemoryBodyStream innerBufferMemoryStream(
         this->m_readBuffer + this->m_bodyStartInBuffer,
         this->m_innerBufferSize - this->m_bodyStartInBuffer);
 

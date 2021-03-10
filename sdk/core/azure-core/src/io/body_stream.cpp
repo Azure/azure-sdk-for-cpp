@@ -28,7 +28,7 @@
 #include <vector>
 
 using Azure::Core::Context;
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
 int64_t BodyStream::ReadToCount(
