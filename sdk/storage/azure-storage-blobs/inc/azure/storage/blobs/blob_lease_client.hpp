@@ -121,8 +121,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Nullable<BlobClient> m_blobClient;
-    Azure::Core::Nullable<BlobContainerClient> m_blobContainerClient;
+    Azure::Nullable<BlobClient> m_blobClient;
+    Azure::Nullable<BlobContainerClient> m_blobContainerClient;
     std::string m_leaseId;
   };
 

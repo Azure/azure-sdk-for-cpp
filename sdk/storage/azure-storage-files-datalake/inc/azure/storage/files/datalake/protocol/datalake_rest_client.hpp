@@ -326,39 +326,39 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::vector<PathItem> Items;
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct PathCreateResult
     {
       Azure::ETag ETag;
-      Azure::Core::Nullable<DateTime> LastModified;
+      Azure::Nullable<DateTime> LastModified;
       std::string RequestId;
-      Azure::Core::Nullable<int64_t> ContentLength;
+      Azure::Nullable<int64_t> ContentLength;
     };
 
     struct PathGetPropertiesResult
     {
-      Azure::Core::Nullable<std::string> AcceptRanges;
+      Azure::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
       Azure::ETag ETag;
       DateTime LastModified;
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ResourceType;
-      Azure::Core::Nullable<std::string> Properties;
-      Azure::Core::Nullable<std::string> Owner;
-      Azure::Core::Nullable<std::string> Group;
-      Azure::Core::Nullable<std::string> Permissions;
-      Azure::Core::Nullable<std::string> Acl;
-      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<LeaseStateType> LeaseState;
-      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Nullable<std::string> ResourceType;
+      Azure::Nullable<std::string> Properties;
+      Azure::Nullable<std::string> Owner;
+      Azure::Nullable<std::string> Group;
+      Azure::Nullable<std::string> Permissions;
+      Azure::Nullable<std::string> Acl;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Nullable<LeaseStateType> LeaseState;
+      Azure::Nullable<LeaseStatusType> LeaseStatus;
     };
 
     struct PathDeleteResult
     {
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct PathSetAccessControlResult
@@ -374,7 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int32_t NumberOfSuccessfulFiles = int32_t();
       int32_t NumberOfFailures = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::string RequestId;
     };
 
@@ -389,7 +389,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     struct PathAppendDataResult
     {
       std::string RequestId;
-      Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+      Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
       bool IsServerEncrypted = bool();
     };
 
@@ -400,13 +400,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         struct ListPathsOptions
         {
           FileSystemResourceType Resource;
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<std::string> Directory;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<std::string> Directory;
           bool RecursiveRequired = bool();
-          Azure::Core::Nullable<int32_t> MaxResults;
-          Azure::Core::Nullable<bool> Upn;
+          Azure::Nullable<int32_t> MaxResults;
+          Azure::Nullable<bool> Upn;
         };
 
         static Azure::Response<FileSystemListPathsResult> ListPaths(
@@ -535,30 +535,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<PathResourceType> Resource;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<PathRenameMode> Mode;
-          Azure::Core::Nullable<std::string> CacheControl;
-          Azure::Core::Nullable<std::string> ContentEncoding;
-          Azure::Core::Nullable<std::string> ContentLanguage;
-          Azure::Core::Nullable<std::string> ContentDisposition;
-          Azure::Core::Nullable<std::string> ContentType;
-          Azure::Core::Nullable<std::string> RenameSource;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Azure::Core::Nullable<std::string> SourceLeaseId;
-          Azure::Core::Nullable<std::string> Properties;
-          Azure::Core::Nullable<std::string> Permissions;
-          Azure::Core::Nullable<std::string> Umask;
+          Azure::Nullable<PathResourceType> Resource;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<PathRenameMode> Mode;
+          Azure::Nullable<std::string> CacheControl;
+          Azure::Nullable<std::string> ContentEncoding;
+          Azure::Nullable<std::string> ContentLanguage;
+          Azure::Nullable<std::string> ContentDisposition;
+          Azure::Nullable<std::string> ContentType;
+          Azure::Nullable<std::string> RenameSource;
+          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<std::string> SourceLeaseId;
+          Azure::Nullable<std::string> Properties;
+          Azure::Nullable<std::string> Permissions;
+          Azure::Nullable<std::string> Umask;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<DateTime> IfModifiedSince;
-          Azure::Core::Nullable<DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
           Azure::ETag SourceIfMatch;
           Azure::ETag SourceIfNoneMatch;
-          Azure::Core::Nullable<DateTime> SourceIfModifiedSince;
-          Azure::Core::Nullable<DateTime> SourceIfUnmodifiedSince;
+          Azure::Nullable<DateTime> SourceIfModifiedSince;
+          Azure::Nullable<DateTime> SourceIfUnmodifiedSince;
         };
 
         static Azure::Response<PathCreateResult> Create(
@@ -693,15 +693,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<PathGetPropertiesAction> Action;
-          Azure::Core::Nullable<bool> Upn;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<PathGetPropertiesAction> Action;
+          Azure::Nullable<bool> Upn;
+          Azure::Nullable<std::string> LeaseIdOptional;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<DateTime> IfModifiedSince;
-          Azure::Core::Nullable<DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
         };
 
         static Azure::Response<PathGetPropertiesResult> GetProperties(
@@ -766,15 +766,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<bool> RecursiveOptional;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<bool> RecursiveOptional;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<std::string> LeaseIdOptional;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<DateTime> IfModifiedSince;
-          Azure::Core::Nullable<DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
         };
 
         static Azure::Response<PathDeleteResult> Delete(
@@ -835,16 +835,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct SetAccessControlOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Azure::Core::Nullable<std::string> Owner;
-          Azure::Core::Nullable<std::string> Group;
-          Azure::Core::Nullable<std::string> Permissions;
-          Azure::Core::Nullable<std::string> Acl;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<std::string> Owner;
+          Azure::Nullable<std::string> Group;
+          Azure::Nullable<std::string> Permissions;
+          Azure::Nullable<std::string> Acl;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<DateTime> IfModifiedSince;
-          Azure::Core::Nullable<DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -914,12 +914,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct SetAccessControlRecursiveOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> ContinuationToken;
           PathSetAccessControlRecursiveMode Mode;
-          Azure::Core::Nullable<bool> ForceFlag;
-          Azure::Core::Nullable<int32_t> MaxRecords;
-          Azure::Core::Nullable<std::string> Acl;
+          Azure::Nullable<bool> ForceFlag;
+          Azure::Nullable<int32_t> MaxRecords;
+          Azure::Nullable<std::string> Acl;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -974,22 +974,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct FlushDataOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<int64_t> Position;
-          Azure::Core::Nullable<bool> RetainUncommittedData;
-          Azure::Core::Nullable<bool> Close;
-          Azure::Core::Nullable<int64_t> ContentLength;
-          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Azure::Core::Nullable<std::string> CacheControl;
-          Azure::Core::Nullable<std::string> ContentType;
-          Azure::Core::Nullable<std::string> ContentDisposition;
-          Azure::Core::Nullable<std::string> ContentEncoding;
-          Azure::Core::Nullable<std::string> ContentLanguage;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<int64_t> Position;
+          Azure::Nullable<bool> RetainUncommittedData;
+          Azure::Nullable<bool> Close;
+          Azure::Nullable<int64_t> ContentLength;
+          Azure::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<std::string> CacheControl;
+          Azure::Nullable<std::string> ContentType;
+          Azure::Nullable<std::string> ContentDisposition;
+          Azure::Nullable<std::string> ContentEncoding;
+          Azure::Nullable<std::string> ContentLanguage;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<DateTime> IfModifiedSince;
-          Azure::Core::Nullable<DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -1097,12 +1097,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct AppendDataOptions
         {
-          Azure::Core::Nullable<int64_t> Position;
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<int64_t> ContentLength;
-          Azure::Core::Nullable<Storage::ContentHash> TransactionalContentMd5;
-          Azure::Core::Nullable<Storage::ContentHash> TransactionalContentCrc64;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<int64_t> Position;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<int64_t> ContentLength;
+          Azure::Nullable<Storage::ContentHash> TransactionalContentMd5;
+          Azure::Nullable<Storage::ContentHash> TransactionalContentCrc64;
+          Azure::Nullable<std::string> LeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 

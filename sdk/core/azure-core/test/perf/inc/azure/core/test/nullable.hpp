@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     void Run(Azure::Core::Context const&) override
     {
-      Azure::Core::Nullable<uint64_t> n;
+      Azure::Nullable<uint64_t> n;
       if (!n)
       {
         n = 1;

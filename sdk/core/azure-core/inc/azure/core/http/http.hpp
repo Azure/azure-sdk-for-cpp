@@ -208,7 +208,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief The size of the HTTP Range.
      *
      */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Nullable<int64_t> Length;
   };
 
   /**

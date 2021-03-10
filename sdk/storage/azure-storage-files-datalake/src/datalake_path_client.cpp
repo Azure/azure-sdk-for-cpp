@@ -404,7 +404,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = _detail::DataLakeRestClient::Path::GetProperties(
         m_pathUrl, *m_pipeline, Storage::_detail::WithReplicaStatus(context), protocolLayerOptions);
-    Azure::Core::Nullable<std::vector<Models::Acl>> acl;
+    Azure::Nullable<std::vector<Models::Acl>> acl;
     if (result->Acl.HasValue())
     {
       acl = Models::Acl::DeserializeAcls(result->Acl.GetValue());

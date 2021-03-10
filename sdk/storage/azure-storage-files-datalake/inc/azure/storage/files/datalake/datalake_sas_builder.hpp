@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Optionally specify the time at which the shared access signature becomes
      * valid. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<Azure::DateTime> StartsOn;
+    Azure::Nullable<Azure::DateTime> StartsOn;
 
     /**
      * @brief The time at which the shared access signature becomes invalid. This field must
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * or address range specified on the SAS token, the request is not authenticated. When
      * specifying a range of IP addresses, note that the range is inclusive.
      */
-    Azure::Core::Nullable<std::string> IPRange;
+    Azure::Nullable<std::string> IPRange;
 
     /**
      * @brief An optional unique value up to 64 characters in length that correlates to an
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * the directory specified in the canonicalized resource field of the string-to-sign. This is
      * only used for user delegation SAS.
      */
-    Azure::Core::Nullable<int32_t> DirectoryDepth;
+    Azure::Nullable<int32_t> DirectoryDepth;
 
     /**
      * @brief Specifies which resources are accessible via the shared access signature.

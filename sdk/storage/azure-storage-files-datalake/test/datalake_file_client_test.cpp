@@ -449,7 +449,7 @@ namespace Azure { namespace Storage { namespace Test {
           StorageException);
       options.ExpiresOn = Azure::DateTime::Parse(
           "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
-      options.TimeToExpire = Azure::Core::Nullable<std::chrono::milliseconds>();
+      options.TimeToExpire = Azure::Nullable<std::chrono::milliseconds>();
       EXPECT_NO_THROW(client.ScheduleDeletion(
           Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options));
     }

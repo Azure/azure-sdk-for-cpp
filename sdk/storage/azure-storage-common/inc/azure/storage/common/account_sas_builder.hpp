@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Optionally specify the time at which the shared access signature becomes
      * valid.
      */
-    Azure::Core::Nullable<Azure::DateTime> StartsOn;
+    Azure::Nullable<Azure::DateTime> StartsOn;
 
     /**
      * @brief The time at which the shared access signature becomes invalid. This field must
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * or address range specified on the SAS token, the request is not authenticated. When
      * specifying a range of IP addresses, note that the range is inclusive.
      */
-    Azure::Core::Nullable<std::string> IPRange;
+    Azure::Nullable<std::string> IPRange;
 
     /**
      * @brief The services associated with the shared access signature. The user is
