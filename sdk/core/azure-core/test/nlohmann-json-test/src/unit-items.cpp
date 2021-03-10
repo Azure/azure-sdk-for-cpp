@@ -30,7 +30,7 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::_internal::Json::json;
+using Azure::Core::Json::_internal::json;
 
 #if (defined(__cplusplus) && __cplusplus >= 201703L) \
     || (defined(_HAS_CXX17) && _HAS_CXX17 == 1) // fix for issue #464

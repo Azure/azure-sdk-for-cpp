@@ -30,7 +30,7 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::_internal::Json::json;
+using Azure::Core::Json::_internal::json;
 
 namespace {
 enum test
@@ -56,12 +56,12 @@ void from_json(const json&, pod_bis) {}
 static json* j = nullptr;
 
 static_assert(noexcept(json{}), "");
-static_assert(noexcept(Azure::Core::_internal::Json::to_json(*j, 2)), "");
-static_assert(noexcept(Azure::Core::_internal::Json::to_json(*j, 2.5)), "");
-static_assert(noexcept(Azure::Core::_internal::Json::to_json(*j, true)), "");
-static_assert(noexcept(Azure::Core::_internal::Json::to_json(*j, test{})), "");
-static_assert(noexcept(Azure::Core::_internal::Json::to_json(*j, pod{})), "");
-static_assert(not noexcept(Azure::Core::_internal::Json::to_json(*j, pod_bis{})), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, 2)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, 2.5)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, true)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, test{})), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, pod{})), "");
+static_assert(not noexcept(Azure::Core::Json::_internal::to_json(*j, pod_bis{})), "");
 static_assert(noexcept(json(2)), "");
 static_assert(noexcept(json(test{})), "");
 static_assert(noexcept(json(pod{})), "");
