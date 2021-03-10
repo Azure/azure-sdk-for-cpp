@@ -5,6 +5,7 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <errno.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
