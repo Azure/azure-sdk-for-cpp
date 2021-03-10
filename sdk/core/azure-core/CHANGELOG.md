@@ -36,6 +36,7 @@
 - Introduced `Azure::Core::Http::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
 - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
+- Changes the constructor for `Azure::IO::FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
 
