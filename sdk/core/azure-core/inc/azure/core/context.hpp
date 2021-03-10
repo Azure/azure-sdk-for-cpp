@@ -19,16 +19,6 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief A base abstract class for the `std::unique_ptr` value representation in
-   * #Azure::Core::ContextValue.
-   *
-   */
-  struct ValueBase
-  {
-    virtual ~ValueBase() {}
-  };
-
-  /**
    * @brief An exception that gets thrown when some operation is cancelled.
    *
    */
@@ -43,210 +33,6 @@ namespace Azure { namespace Core {
     {
     }
   };
-
-  /**
-   * @brief Represents a value that is associated with context.
-   * @remark Exists as a substitute for variant which isn't available until C++17.
-   */
-  class ContextValue {
-  public:
-    /**
-     * @brief A type of context value.
-     */
-    enum class ContextValueType
-    {
-      Undefined, ///< Undefined.
-      Bool, ///< `bool`.
-      Int, ///< `int`.
-      StdString, ///< `std::string`
-      UniquePtr ///< `std::unique_ptr<ValueBase>`
-    };
-
-  private:
-    ContextValueType m_contextValueType;
-    union
-    {
-      bool m_b; // if m_contextValueType == ContextValueType::Bool
-      int m_i; // if m_contextValueType == ContextValueType::Int
-      std::string m_s; // if m_contextValueType == ContextValueType::StdString
-      std::unique_ptr<ValueBase> m_p; // if m_contextValueType == ContextValueType::UniquePtr
-    };
-
-  public:
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 26495)
-#endif
-
-    /**
-     * @brief Create a context value with undefined value type.
-     */
-    ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
-
-    /**
-     * @brief Create a context value with `bool` value type.
-     *
-     * @param b Boolean value.
-     */
-    ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
-
-    /**
-     * @brief Create a context value with `int` value type.
-     *
-     * @param i Integer value.
-     */
-    ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
-
-    /**
-     * @brief Create a context value with `std::string` value type.
-     *
-     * @param s String value.
-     */
-    ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
-
-    /**
-     * @brief Create a context value with `std::string` value type.
-     *
-     * @param s String value represented as 0-terminated C-string.
-     */
-    ContextValue(const char* s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
-
-    /**
-     * @brief Create a context value with `std::string` value type, using `std::move` semantics.
-     *
-     * @param s String value.
-     */
-    ContextValue(std::string&& s)
-        : m_contextValueType(ContextValueType::StdString), m_s(std::move(s))
-    {
-    }
-
-    /**
-     * @brief Create a context value with `std::unique_ptr<Azure::Core::ValueBase>` value type.
-     *
-     * @param p Smart pointer to #Azure::Core::ValueBase.
-     */
-    template <
-        class DerivedFromValueBase,
-        typename std::
-            enable_if<std::is_convertible<DerivedFromValueBase*, ValueBase*>::value, int>::type
-        = 0>
-    ContextValue(std::unique_ptr<DerivedFromValueBase>&& p)
-        : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
-    {
-    }
-
-    /**
-     * @brief Move constructor.
-     *
-     * @param other An rvalue reference to another instance of #Azure::Core::ContextValue.
-     */
-    ContextValue(ContextValue&& other) noexcept : m_contextValueType(other.m_contextValueType)
-    {
-      switch (m_contextValueType)
-      {
-        case ContextValueType::Bool:
-          m_b = other.m_b;
-          break;
-        case ContextValueType::Int:
-          m_i = other.m_i;
-          break;
-        case ContextValueType::StdString:
-          ::new (&m_s) std::string(std::move(other.m_s));
-          break;
-        case ContextValueType::UniquePtr:
-          ::new (&m_p) std::unique_ptr<ValueBase>(std::move(other.m_p));
-          break;
-        case ContextValueType::Undefined:
-          break;
-      }
-    }
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-    /**
-     * @brief #Azure::Core::ContextValue destructor.
-     */
-    ~ContextValue()
-    {
-      switch (m_contextValueType)
-      {
-        case ContextValueType::StdString:
-          m_s.~basic_string();
-          break;
-        case ContextValueType::UniquePtr:
-          m_p.~unique_ptr<ValueBase>();
-          break;
-        case ContextValueType::Bool:
-        case ContextValueType::Int:
-        case ContextValueType::Undefined:
-          break;
-      }
-    }
-
-    ContextValue& operator=(const ContextValue& other) = delete;
-
-    /**
-     * @brief Get the context value.
-     *
-     * @tparam ExpectedType The type of value to get.
-     */
-    template <class ExpectedType> const ExpectedType& Get() const noexcept;
-
-    /**
-     * @brief Get the context value type.
-     */
-    ContextValueType Alternative() const noexcept { return m_contextValueType; }
-  };
-
-  /**
-   * @brief Get the context value type as boolean (`bool`).
-   */
-  template <> inline const bool& ContextValue::Get() const noexcept
-  {
-    if (m_contextValueType != ContextValueType::Bool)
-    {
-      abort();
-    }
-    return m_b;
-  }
-
-  /**
-   * @brief Get the context value type as integer (`int`).
-   */
-  template <> inline const int& ContextValue::Get() const noexcept
-  {
-    if (m_contextValueType != ContextValueType::Int)
-    {
-      abort();
-    }
-    return m_i;
-  }
-
-  /**
-   * @brief Get the context value type as string (`std::string`).
-   */
-  template <> inline const std::string& ContextValue::Get() const noexcept
-  {
-    if (m_contextValueType != ContextValueType::StdString)
-    {
-      abort();
-    }
-    return m_s;
-  }
-
-  /**
-   * @brief Get the context value type as a pointer (`std::unique_ptr<ValueBase>`).
-   */
-  template <> inline const std::unique_ptr<ValueBase>& ContextValue::Get() const noexcept
-  {
-    if (m_contextValueType != ContextValueType::UniquePtr)
-    {
-      abort();
-    }
-    return m_p;
-  }
 
   /**
    * @brief A context is a node within a tree that represents expiration times and key/value pairs.
@@ -264,7 +50,8 @@ namespace Azure { namespace Core {
       std::shared_ptr<ContextSharedState> Parent;
       std::atomic_int64_t CancelAtMsecSinceEpoch;
       std::string Key;
-      ContextValue Value;
+      std::shared_ptr<void> Value;
+      const std::type_info& ValueType;
 
       static constexpr int64_t ToMsecSinceEpoch(time_point time)
       {
@@ -277,17 +64,28 @@ namespace Azure { namespace Core {
         return time_point() + static_cast<std::chrono::milliseconds>(msec);
       }
 
-      explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)()))
+      explicit ContextSharedState()
+          : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)())), Value(nullptr),
+            ValueType(typeid(std::nullptr_t))
       {
       }
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
+          time_point cancelAt)
+          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Value(nullptr),
+            ValueType(typeid(std::nullptr_t))
+      {
+      }
+
+      template <class T>
+      explicit ContextSharedState(
+          const std::shared_ptr<ContextSharedState>& parent,
           time_point cancelAt,
           const std::string& key,
-          ContextValue&& value)
+          T value) // NOTE, should this be T&&
           : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Key(key),
-            Value(std::move(value))
+            Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
       {
       }
     };
@@ -321,8 +119,7 @@ namespace Azure { namespace Core {
      */
     Context WithDeadline(time_point cancelWhen) const
     {
-      return Context{std::make_shared<ContextSharedState>(
-          m_contextSharedState, cancelWhen, std::string(), ContextValue{})};
+      return Context{std::make_shared<ContextSharedState>(m_contextSharedState, cancelWhen)};
     }
 
     /**
@@ -334,10 +131,10 @@ namespace Azure { namespace Core {
      *
      * @return A child context with no expiration and the \p key and \p value associated with it.
      */
-    Context WithValue(const std::string& key, ContextValue&& value) const
+    template <class T> Context WithValue(const std::string& key, T&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
-          m_contextSharedState, (time_point::max)(), key, std::move(value))};
+          m_contextSharedState, (time_point::max)(), key, std::forward<T>(value))};
     }
 
     /**
@@ -349,7 +146,7 @@ namespace Azure { namespace Core {
      * @return A value associated with the context found; an empty value if a specific value can't
      * be found.
      */
-    const ContextValue& operator[](const std::string& key) const
+    template <class T> const T& Get(const std::string& key) const
     {
       if (!key.empty())
       {
@@ -357,13 +154,18 @@ namespace Azure { namespace Core {
         {
           if (ptr->Key == key)
           {
-            return ptr->Value;
+            if (typeid(T) != ptr->ValueType)
+            {
+              // type mismatch
+              std::abort();
+            }
+            return *reinterpret_cast<const T*>(ptr->Value.get());
           }
         }
       }
-
-      static ContextValue empty;
-      return empty;
+      std::abort();
+      // It should be expected that keys may not exist
+      //  That implies we return T* and NOT a T&
     }
 
     /**
@@ -415,10 +217,10 @@ namespace Azure { namespace Core {
         throw OperationCancelledException("Request was cancelled by context.");
       }
     }
-  };
 
-  /**
-   * @brief Get the application context (root).
-   */
-  Context& GetApplicationContext();
+    /**
+     * @brief Get the application context (root).
+     */
+    static Context& GetApplicationContext();
+  };
 }} // namespace Azure::Core
