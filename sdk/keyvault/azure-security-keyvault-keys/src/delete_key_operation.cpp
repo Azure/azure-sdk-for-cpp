@@ -33,7 +33,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   if (!IsDone())
   {
     m_rawResponse = m_pipeline->GetResponse(
-        context, Azure::Core::Http::HttpMethod::Get, {Details::DeletedKeysPath, m_value.Name()});
+        context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
     m_status = CheckCompleted(*m_rawResponse);
   }
 
