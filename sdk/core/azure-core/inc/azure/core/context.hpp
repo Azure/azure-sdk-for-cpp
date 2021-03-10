@@ -157,15 +157,15 @@ namespace Azure { namespace Core {
             if (typeid(T) != ptr->ValueType)
             {
               // type mismatch
-              std::abort(); // or throw exception, whatever you want
+              std::abort();
             }
             return *reinterpret_cast<const T*>(ptr->Value.get());
           }
         }
       }
-      std::abort(); // we make a default NoValue Object and return that?
-      // static ValueNotPresent empty;
-      // return empty;
+      std::abort();
+      //It should be expected that keys may not exist
+      //  That implies we return T* and NOT a T&
     }
 
     /**
