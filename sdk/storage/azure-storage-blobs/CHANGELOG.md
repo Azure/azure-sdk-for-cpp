@@ -11,6 +11,7 @@
 - Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `BlobClientOptions`.
+- Renamed `Azure::Storage::Blobs::Details::Version` to `Azure::Storage::Blobs::PackageVersion`.
 
 ### Other Changes and Improvements
 
