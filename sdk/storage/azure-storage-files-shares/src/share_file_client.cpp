@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 const HttpGetterInfo& retryInfo,
                 const Azure::Core::Context& context) -> std::unique_ptr<Azure::IO::BodyStream> {
         DownloadShareFileOptions newOptions = options;
-        newOptions.Range = Core::Http::Range();
+        newOptions.Range = Core::Http::HttpRange();
         newOptions.Range.GetValue().Offset
             = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
@@ -698,7 +698,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadShareFileOptions chunkOptions;
-            chunkOptions.Range = Core::Http::Range();
+            chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.GetValue().Offset = offset;
             chunkOptions.Range.GetValue().Length = length;
             auto chunk = Download(chunkOptions, context);
@@ -815,7 +815,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadShareFileOptions chunkOptions;
-            chunkOptions.Range = Core::Http::Range();
+            chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.GetValue().Offset = offset;
             chunkOptions.Range.GetValue().Length = length;
             auto chunk = Download(chunkOptions, context);
@@ -1061,7 +1061,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   Azure::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
       int64_t destinationOffset,
       const std::string& sourceUri,
-      const Azure::Core::Http::Range& sourceRange,
+      const Azure::Core::Http::HttpRange& sourceRange,
       const UploadFileRangeFromUriOptions& options,
       const Azure::Core::Context& context) const
   {

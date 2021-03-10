@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int64_t downloadLength = 1024;
     Blobs::DownloadBlobOptions options;
-    options.Range = Azure::Core::Http::Range();
+    options.Range = Azure::Core::Http::HttpRange();
     options.Range.GetValue().Offset = 0;
     options.Range.GetValue().Length = downloadLength;
     options.RangeHashAlgorithm = HashAlgorithm::Md5;
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
-    options.Range = Core::Http::Range();
+    options.Range = Core::Http::HttpRange();
     options.Range.GetValue().Offset = 0;
     EXPECT_THROW(blockBlobClient.Download(options), StorageException);
     options.Range.GetValue().Length = 1;
@@ -477,7 +477,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue() || length.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -549,7 +549,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue() || length.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -634,7 +634,7 @@ namespace Azure { namespace Storage { namespace Test {
       // buffer not big enough
       Blobs::DownloadBlobToOptions options;
       options.TransferOptions.Concurrency = c;
-      options.Range = Core::Http::Range();
+      options.Range = Core::Http::HttpRange();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
@@ -785,7 +785,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(ReadFile(tempFilename).empty());
       DeleteFile(tempFilename);
 
-      options.Range = Core::Http::Range();
+      options.Range = Core::Http::HttpRange();
       options.Range.GetValue().Offset = 0;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),

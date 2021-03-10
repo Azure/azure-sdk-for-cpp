@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
         int64_t destinationOffset,
         std::string sourceUri,
-        Azure::Core::Http::Range sourceRange,
+        Azure::Core::Http::HttpRange sourceRange,
         const UploadPageBlobPagesFromUriOptions& options = UploadPageBlobPagesFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ClearPageBlobPagesResult describing the state of the updated pages.
      */
     Azure::Response<Models::ClearPageBlobPagesResult> ClearPages(
-        Azure::Core::Http::Range range,
+        Azure::Core::Http::HttpRange range,
         const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

@@ -430,7 +430,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -500,7 +500,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -583,7 +583,7 @@ namespace Azure { namespace Storage { namespace Test {
       // buffer not big enough
       Files::Shares::DownloadShareFileToOptions options;
       options.TransferOptions.Concurrency = c;
-      options.Range = Core::Http::Range();
+      options.Range = Core::Http::HttpRange();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
@@ -629,7 +629,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < numOfChunks; ++i)
       {
         Files::Shares::DownloadShareFileOptions downloadOptions;
-        downloadOptions.Range = Core::Http::Range();
+        downloadOptions.Range = Core::Http::HttpRange();
         downloadOptions.Range.GetValue().Offset = static_cast<int64_t>(rangeSize) * i;
         downloadOptions.Range.GetValue().Length = rangeSize;
         Files::Shares::Models::DownloadShareFileResult result;
@@ -845,8 +845,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString(10));
     destFileClient.Create(fileSize * 4);
-    Azure::Core::Http::Range sourceRange;
-    Azure::Core::Http::Range destRange;
+    Azure::Core::Http::HttpRange sourceRange;
+    Azure::Core::Http::HttpRange destRange;
     sourceRange.Length = fileSize;
     destRange.Offset = fileSize;
     destRange.Length = fileSize;

@@ -361,8 +361,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // The list of file ranges
     struct ShareFileRangeList
     {
-      std::vector<Core::Http::Range> Ranges;
-      std::vector<Core::Http::Range> ClearRanges;
+      std::vector<Core::Http::HttpRange> Ranges;
+      std::vector<Core::Http::HttpRange> ClearRanges;
     };
 
     // Stats for the share.
@@ -897,7 +897,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Core::DateTime LastModified;
       Storage::Metadata Metadata;
       FileHttpHeaders HttpHeaders;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize;
       Azure::ETag ETag;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
@@ -1009,8 +1009,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileGetRangeListResult
     {
-      std::vector<Core::Http::Range> Ranges;
-      std::vector<Core::Http::Range> ClearRanges;
+      std::vector<Core::Http::HttpRange> Ranges;
+      std::vector<Core::Http::HttpRange> ClearRanges;
       Core::DateTime LastModified;
       Azure::ETag ETag;
       int64_t FileSize = int64_t();
@@ -1049,7 +1049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     class ShareRestClient {
     private:
-      static Azure::Core::Http::Range HttpRangeFromXml(Storage::_detail::XmlReader& reader)
+      static Azure::Core::Http::HttpRange HttpRangeFromXml(Storage::_detail::XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -1097,7 +1097,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
           }
         }
-        Azure::Core::Http::Range ret;
+        Azure::Core::Http::HttpRange ret;
         ret.Offset = start;
         ret.Length = end - start + 1;
         return ret;
@@ -6155,12 +6155,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
               int64_t range_end_offset = std::stoll(std::string(
                   content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
-              result.ContentRange = Azure::Core::Http::Range{
+              result.ContentRange = Azure::Core::Http::HttpRange{
                   range_start_offset, range_end_offset - range_start_offset + 1};
             }
             else
             {
-              result.ContentRange = Azure::Core::Http::Range{
+              result.ContentRange = Azure::Core::Http::HttpRange{
                   0, std::stoll(response.GetHeaders().at(_detail::HeaderContentLength))};
             }
             if (content_range_iterator != response.GetHeaders().end())
@@ -6317,12 +6317,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
               int64_t range_end_offset = std::stoll(std::string(
                   content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
-              result.ContentRange = Azure::Core::Http::Range{
+              result.ContentRange = Azure::Core::Http::HttpRange{
                   range_start_offset, range_end_offset - range_start_offset + 1};
             }
             else
             {
-              result.ContentRange = Azure::Core::Http::Range{
+              result.ContentRange = Azure::Core::Http::HttpRange{
                   0, std::stoll(response.GetHeaders().at(_detail::HeaderContentLength))};
             }
             if (content_range_iterator != response.GetHeaders().end())

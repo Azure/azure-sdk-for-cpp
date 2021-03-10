@@ -363,7 +363,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
       Files::DataLake::DownloadDataLakeFileOptions options;
-      options.Range = Azure::Core::Http::Range();
+      options.Range = Azure::Core::Http::HttpRange();
       options.Range.GetValue().Offset = 0;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
       Files::DataLake::DownloadDataLakeFileOptions options;
-      options.Range = Azure::Core::Http::Range();
+      options.Range = Azure::Core::Http::HttpRange();
       options.Range.GetValue().Offset = bufferSize / 2;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
