@@ -42,17 +42,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(
         std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
             m_serviceUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
       valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
@@ -68,24 +68,24 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
       : BlobServiceClient(serviceUrl, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(
         std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
             m_serviceUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::TokenRequestOptions tokenOptions;
+      Azure::Core::Http::Policies::TokenRequestOptions tokenOptions;
       tokenOptions.Scopes.emplace_back(Storage::_detail::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+          std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
               credential, tokenOptions));
     }
     {
-      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
       valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
@@ -101,17 +101,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_serviceUrl(serviceUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(
         std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
             m_serviceUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
       valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,

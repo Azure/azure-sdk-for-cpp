@@ -15,6 +15,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 KeyClient::KeyClient(
     std::string const& vaultUrl,
@@ -25,7 +26,7 @@ KeyClient::KeyClient(
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Http::TokenRequestOptions const tokenOptions
+    Azure::Core::Http::Policies::TokenRequestOptions const tokenOptions
         = {{"https://vault.azure.net/.default"}};
 
     perRetrypolicies.emplace_back(

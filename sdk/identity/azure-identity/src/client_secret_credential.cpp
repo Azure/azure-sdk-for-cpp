@@ -16,7 +16,7 @@ std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
-    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions,
+    Azure::Core::Http::Policies::TokenRequestOptions const& tokenRequestOptions,
     Azure::Core::Context const& context) const
 {
   using namespace Azure::Core;

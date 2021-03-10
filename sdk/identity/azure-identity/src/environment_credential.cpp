@@ -80,7 +80,7 @@ EnvironmentCredential::EnvironmentCredential()
 }
 
 Azure::Core::AccessToken EnvironmentCredential::GetToken(
-    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions,
+    Azure::Core::Http::Policies::TokenRequestOptions const& tokenRequestOptions,
     Azure::Core::Context const& context) const
 {
   using namespace Azure::Core;

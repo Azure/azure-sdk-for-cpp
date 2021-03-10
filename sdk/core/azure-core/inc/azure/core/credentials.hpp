@@ -35,9 +35,9 @@ namespace Azure { namespace Core {
     DateTime ExpiresOn;
   };
 
-  namespace Http {
+  namespace Http { namespace Policies {
     struct TokenRequestOptions;
-  } // namespace Http
+  }} // namespace Http::Policies
 
   /**
    * @brief Token credential.
@@ -52,7 +52,7 @@ namespace Azure { namespace Core {
      *
      */
     virtual AccessToken GetToken(
-        Http::TokenRequestOptions const& tokenRequestOptions,
+        Http::Policies::TokenRequestOptions const& tokenRequestOptions,
         Context const& context) const = 0;
 
     /// Destructor.

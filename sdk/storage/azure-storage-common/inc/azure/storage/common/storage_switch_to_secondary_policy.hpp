@@ -24,21 +24,21 @@ namespace Azure { namespace Storage { namespace _detail {
         SecondaryHostReplicaStatusKey, std::make_unique<SecondaryHostReplicaStatus>());
   }
 
-  class StorageSwitchToSecondaryPolicy : public Azure::Core::Http::HttpPolicy {
+  class StorageSwitchToSecondaryPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   public:
     explicit StorageSwitchToSecondaryPolicy(std::string primaryHost, std::string secondaryHost)
         : m_primaryHost(std::move(primaryHost)), m_secondaryHost(std::move(secondaryHost))
     {
     }
 
-    std::unique_ptr<Azure::Core::Http::HttpPolicy> Clone() const override
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
       return std::make_unique<StorageSwitchToSecondaryPolicy>(*this);
     }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Http::Request& request,
-        Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
         const Azure::Core::Context& ctx) const override;
 
   private:

@@ -7,7 +7,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       const Azure::Core::Context& ctx) const
   {
     SecondaryHostReplicaStatus* replicaStatus = nullptr;
@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace _detail {
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
         && !m_secondaryHost.empty() && replicaStatus && replicaStatus->replicated;
 
-    if (considerSecondary && Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx) > 0)
+    if (considerSecondary && Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(ctx) > 0)
     {
       // switch host
       if (request.GetUrl().GetHost() == m_primaryHost)
