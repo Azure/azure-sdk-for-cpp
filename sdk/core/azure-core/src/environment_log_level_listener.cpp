@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#if defined(AZ_NO_ENV_LOGGER)
 #include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -14,11 +13,9 @@
 
 #include <windows.h>
 #endif
-#endif
 
-#if !defined(AZ_NO_ENV_LOGGER) \
-    && (!defined(WINAPI_PARTITION_DESKTOP) \
-        || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp for explanation.
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
 
 #include "environment_log_level_listener_private.hpp"
 
