@@ -52,7 +52,7 @@ add_executable (
     operation_status.cpp
     pipeline.cpp
     policy.cpp
-    response_T.cpp
+    response_t.cpp
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp
