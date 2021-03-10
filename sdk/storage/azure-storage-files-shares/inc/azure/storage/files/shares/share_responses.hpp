@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DownloadShareFileResult
     {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize = 0;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       FileHttpHeaders HttpHeaders;
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DownloadShareFileToResult
     {
       int64_t FileSize = 0;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       FileHttpHeaders HttpHeaders;
       DownloadShareFileDetails Details;
     };

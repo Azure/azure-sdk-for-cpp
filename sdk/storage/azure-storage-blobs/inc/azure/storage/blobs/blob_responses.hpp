@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct DownloadBlobToResult
     {
       Models::BlobType BlobType;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t BlobSize = 0;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       DownloadBlobDetails Details;

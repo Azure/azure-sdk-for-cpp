@@ -432,8 +432,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       int64_t BlobSize = 0;
-      std::vector<Azure::Core::Http::Range> PageRanges;
-      std::vector<Azure::Core::Http::Range> ClearRanges;
+      std::vector<Azure::Core::Http::HttpRange> PageRanges;
+      std::vector<Azure::Core::Http::HttpRange> ClearRanges;
     }; // struct GetPageBlobPageRangesResult
 
     enum class ListBlobContainersIncludeFlags
@@ -1128,7 +1128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t BlobSize = 0;
       Models::BlobType BlobType;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
@@ -4822,7 +4822,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct DownloadBlobOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<Azure::Core::Http::Range> Range;
+          Azure::Core::Nullable<Azure::Core::Http::HttpRange> Range;
           Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
@@ -4958,12 +4958,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
             int64_t range_end_offset = std::stoll(std::string(
                 content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
-            response.ContentRange = Azure::Core::Http::Range{
+            response.ContentRange = Azure::Core::Http::HttpRange{
                 range_start_offset, range_end_offset - range_start_offset + 1};
           }
           else
           {
-            response.ContentRange = Azure::Core::Http::Range{
+            response.ContentRange = Azure::Core::Http::HttpRange{
                 0, std::stoll(httpResponse.GetHeaders().at("content-length"))};
           }
           if (content_range_iterator != httpResponse.GetHeaders().end())
@@ -7188,7 +7188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string BlockId;
           std::string SourceUri;
-          Azure::Core::Nullable<Azure::Core::Http::Range> SourceRange;
+          Azure::Core::Nullable<Azure::Core::Http::HttpRange> SourceRange;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> EncryptionKey;
@@ -7884,7 +7884,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct UploadPageBlobPagesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Http::Range Range;
+          Azure::Core::Http::HttpRange Range;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
@@ -8068,8 +8068,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string SourceUri;
-          Azure::Core::Http::Range SourceRange;
-          Azure::Core::Http::Range Range;
+          Azure::Core::Http::HttpRange SourceRange;
+          Azure::Core::Http::HttpRange Range;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
@@ -8260,7 +8260,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct ClearPageBlobPagesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Http::Range Range;
+          Azure::Core::Http::HttpRange Range;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -8515,7 +8515,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> PreviousSnapshot;
           Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
-          Azure::Core::Nullable<Azure::Core::Http::Range> Range;
+          Azure::Core::Nullable<Azure::Core::Http::HttpRange> Range;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
@@ -8763,7 +8763,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static Azure::Core::Http::Range ClearRangesFromXml(Storage::_detail::XmlReader& reader)
+        static Azure::Core::Http::HttpRange ClearRangesFromXml(Storage::_detail::XmlReader& reader)
         {
           int depth = 0;
           bool is_start = false;
@@ -8812,13 +8812,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
             }
           }
-          Azure::Core::Http::Range ret;
+          Azure::Core::Http::HttpRange ret;
           ret.Offset = start;
           ret.Length = end - start + 1;
           return ret;
         }
 
-        static Azure::Core::Http::Range PageRangesFromXml(Storage::_detail::XmlReader& reader)
+        static Azure::Core::Http::HttpRange PageRangesFromXml(Storage::_detail::XmlReader& reader)
         {
           int depth = 0;
           bool is_start = false;
@@ -8867,7 +8867,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
             }
           }
-          Azure::Core::Http::Range ret;
+          Azure::Core::Http::HttpRange ret;
           ret.Offset = start;
           ret.Length = end - start + 1;
           return ret;
@@ -9195,7 +9195,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string SourceUri;
-          Azure::Core::Nullable<Azure::Core::Http::Range> SourceRange;
+          Azure::Core::Nullable<Azure::Core::Http::HttpRange> SourceRange;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> MaxSize;

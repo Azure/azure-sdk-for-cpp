@@ -126,29 +126,29 @@ namespace Azure { namespace Core { namespace Test {
   }
 
   // HTTP Range
-  TEST(TestHttp, Range)
+  TEST(TestHttp, HttpRange)
   {
     {
-      Http::Range r{10, 1};
+      Http::HttpRange r{10, 1};
       EXPECT_EQ(r.Offset, 10);
       EXPECT_TRUE(r.Length.HasValue());
       EXPECT_EQ(r.Length.GetValue(), 1);
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       r.Offset = 10;
       EXPECT_EQ(r.Offset, 10);
       EXPECT_FALSE(r.Length.HasValue());
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       r.Length = 10;
       EXPECT_EQ(r.Offset, 0);
       EXPECT_TRUE(r.Length.HasValue());
       EXPECT_EQ(r.Length.GetValue(), 10);
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       EXPECT_EQ(r.Offset, 0);
       EXPECT_FALSE(r.Length.HasValue());
     }

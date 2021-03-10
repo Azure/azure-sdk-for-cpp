@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     std::unique_ptr<Azure::Core::IO::BodyStream> Body;
     int64_t FileSize = int64_t();
-    Azure::Core::Http::Range ContentRange;
+    Azure::Core::Http::HttpRange ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     DownloadDataLakeFileDetails Details;
     std::string RequestId;
@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct DownloadDataLakeFileToResult
   {
     int64_t FileSize = int64_t();
-    Azure::Core::Http::Range ContentRange;
+    Azure::Core::Http::HttpRange ContentRange;
     DownloadDataLakeFileDetails Details;
   };
 
