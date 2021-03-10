@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -93,12 +93,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListSharesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesIncludeFlags;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
-    return Details::ShareRestClient::Service::ListSharesSinglePage(
+    return _detail::ShareRestClient::Service::ListSharesSinglePage(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -108,9 +108,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::Service::SetPropertiesOptions();
     protocolLayerOptions.ServiceProperties = std::move(properties);
-    return Details::ShareRestClient::Service::SetProperties(
+    return _detail::ShareRestClient::Service::SetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -119,8 +119,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
-    auto result = Details::ShareRestClient::Service::GetProperties(
+    auto protocolLayerOptions = _detail::ShareRestClient::Service::GetPropertiesOptions();
+    auto result = _detail::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
     Models::FileServiceProperties ret;
     ret.Cors = std::move(result->Cors);

@@ -54,7 +54,7 @@ Logger::Level const* GetEnvironmentLogLevel()
 
     if (envVar)
     {
-      auto const logLevelStr = Internal::Strings::ToLower(envVar);
+      auto const logLevelStr = _internal::Strings::ToLower(envVar);
 
       // See https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK
       // And

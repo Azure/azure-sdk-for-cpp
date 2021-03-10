@@ -14,14 +14,14 @@ using namespace Azure::Core::_internal;
 
 namespace {
 static std::shared_timed_mutex g_logListenerMutex;
-static Logger::Listener g_logListener(Details::EnvironmentLogLevelListener::GetLogListener());
+static Logger::Listener g_logListener(_detail::EnvironmentLogLevelListener::GetLogListener());
 } // namespace
 
 std::atomic<bool> Log::g_isLoggingEnabled(
-    Details::EnvironmentLogLevelListener::GetLogListener() != nullptr);
+    _detail::EnvironmentLogLevelListener::GetLogListener() != nullptr);
 
 std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(
-    Details::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning)));
+    _detail::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning)));
 
 inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 

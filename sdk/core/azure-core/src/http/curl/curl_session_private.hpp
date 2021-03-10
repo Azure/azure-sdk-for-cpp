@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    int64_t m_innerBufferSize = Details::DefaultLibcurlReaderSize;
+    int64_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
 
     bool m_isChunkedResponseType = false;
 

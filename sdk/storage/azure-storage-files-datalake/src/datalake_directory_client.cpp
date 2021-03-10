@@ -91,14 +91,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       const auto& currentPath = m_pathUrl.GetPath();
       std::string::const_iterator cur = currentPath.begin();
-      destinationFileSystem = Details::GetSubstringTillDelimiter('/', currentPath, cur);
+      destinationFileSystem = _detail::GetSubstringTillDelimiter('/', currentPath, cur);
     }
     auto destinationDfsUrl = m_pathUrl;
     destinationDfsUrl.SetPath(
         destinationFileSystem.GetValue() + '/'
         + Storage::_detail::UrlEncodePath(destinationFilePath));
 
-    Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource
         = "/" + m_pathUrl.GetPath() + Storage::_detail::UrlEncodePath(fileName);
-    auto result = Details::DataLakeRestClient::Path::Create(
+    auto result = _detail::DataLakeRestClient::Path::Create(
         destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     // Initialize the file client.
@@ -135,14 +135,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       const auto& currentPath = m_pathUrl.GetPath();
       std::string::const_iterator cur = currentPath.begin();
-      destinationFileSystem = Details::GetSubstringTillDelimiter('/', currentPath, cur);
+      destinationFileSystem = _detail::GetSubstringTillDelimiter('/', currentPath, cur);
     }
     auto destinationDfsUrl = m_pathUrl;
     destinationDfsUrl.SetPath(
         destinationFileSystem.GetValue() + '/'
         + Storage::_detail::UrlEncodePath(destinationDirectoryPath));
 
-    Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource
         = "/" + m_pathUrl.GetPath() + Storage::_detail::UrlEncodePath(subdirectoryName);
-    auto result = Details::DataLakeRestClient::Path::Create(
+    auto result = _detail::DataLakeRestClient::Path::Create(
         destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     // Initialize the directory client.
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     if (firstSlashPos == 0 || (firstSlashPos == currentPath.size() + 1U))
     {
-      return Details::DataLakeRestClient::FileSystem::ListPaths(
+      return _detail::DataLakeRestClient::FileSystem::ListPaths(
           m_pathUrl,
           *m_pipeline,
           Storage::_detail::WithReplicaStatus(context),
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       auto fileSystemUrl = m_pathUrl;
       fileSystemUrl.SetPath(currentPath.substr(
           0U, currentPath.size() - protocolLayerOptions.Directory.GetValue().size() - 1U));
-      return Details::DataLakeRestClient::FileSystem::ListPaths(
+      return _detail::DataLakeRestClient::FileSystem::ListPaths(
           fileSystemUrl,
           *m_pipeline,
           Storage::_detail::WithReplicaStatus(context),

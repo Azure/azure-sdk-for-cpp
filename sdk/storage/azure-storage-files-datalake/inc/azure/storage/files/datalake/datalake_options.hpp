@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = Details::DefaultServiceApiVersion;
+    std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
   /**

@@ -87,9 +87,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
-                                      Details::GetBlobUrlFromUrl(serviceUrl),
+                                      _detail::GetBlobUrlFromUrl(serviceUrl),
                                       credential,
-                                      Details::GetBlobClientOptions(options))
+                                      _detail::GetBlobClientOptions(options))
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -120,9 +120,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
-                                      Details::GetBlobUrlFromUrl(serviceUrl),
+                                      _detail::GetBlobUrlFromUrl(serviceUrl),
                                       credential,
-                                      Details::GetBlobClientOptions(options))
+                                      _detail::GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -155,8 +155,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUrl,
       const DataLakeClientOptions& options)
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
-                                      Details::GetBlobUrlFromUrl(serviceUrl),
-                                      Details::GetBlobClientOptions(options))
+                                      _detail::GetBlobUrlFromUrl(serviceUrl),
+                                      _detail::GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }

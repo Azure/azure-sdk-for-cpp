@@ -24,16 +24,16 @@ void ParseStringOperationsToKeyOperations(
 }
 } // namespace
 
-KeyVaultKey Details::KeyVaultKeyDeserialize(
+KeyVaultKey _detail::KeyVaultKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   KeyVaultKey key(name);
-  Details::KeyVaultKeyDeserialize(key, rawResponse);
+  _detail::KeyVaultKeyDeserialize(key, rawResponse);
   return key;
 }
 
-void Details::KeyVaultKeyDeserialize(
+void _detail::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
@@ -51,9 +51,9 @@ void Details::KeyVaultKeyDeserialize(
   }
   key.Key.Id = jsonKey[Details::KeyIdPropertyName].get<std::string>();
   key.Key.KeyType
-      = Details::KeyTypeFromString(jsonKey[Details::KeyTypePropertyName].get<std::string>());
+      = _detail::KeyTypeFromString(jsonKey[Details::KeyTypePropertyName].get<std::string>());
 
-  if (jsonKey.contains(Details::CurveNamePropertyName))
+  if (jsonKey.contains(_detail::CurveNamePropertyName))
   {
     key.Key.CurveName = KeyCurveName(jsonKey[Details::CurveNamePropertyName].get<std::string>());
   }

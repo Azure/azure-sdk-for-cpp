@@ -12,7 +12,7 @@
 using namespace Azure::Security::KeyVault::Keys;
 using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
-DeletedKey Details::DeletedKeyDeserialize(
+DeletedKey _detail::DeletedKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
@@ -21,7 +21,7 @@ DeletedKey Details::DeletedKeyDeserialize(
 
   // "Key"
   DeletedKey deletedKey(name);
-  Details::KeyVaultKeyDeserialize(deletedKey, rawResponse);
+  _detail::KeyVaultKeyDeserialize(deletedKey, rawResponse);
 
   // recoveryId
   // deletedDate

@@ -210,13 +210,13 @@ std::string Url::GetUrlWithoutQuery(bool relative) const
 std::string Url::GetRelativeUrl() const
 {
   return GetUrlWithoutQuery(true)
-      + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
+      + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 std::string Url::GetAbsoluteUrl() const
 {
   return GetUrlWithoutQuery(false)
-      + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
+      + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars

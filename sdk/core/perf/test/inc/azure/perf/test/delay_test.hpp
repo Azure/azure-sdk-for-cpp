@@ -56,7 +56,7 @@ namespace Azure { namespace Perf { namespace Test {
     {
       // Increment the counter and fetch the value, then remove 1 to get the previous-increment
       // value
-      auto instanceCount = Details::DelayTestInstanceCount.fetch_add(1) - 1;
+      auto instanceCount = _detail::DelayTestInstanceCount.fetch_add(1) - 1;
       // default value if option is not parsed is 1000
       auto initialDelay = m_options.GetOptionOrDefault("InitialDelayMs", 1000);
       auto instanceGrowFactor = m_options.GetOptionOrDefault("InstanceGrowthFactor", 1);

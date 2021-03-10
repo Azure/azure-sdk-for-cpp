@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -99,7 +99,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DownloadBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::DownloadBlobOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::DownloadBlobOptions protocolLayerOptions;
     protocolLayerOptions.Range = options.Range;
     protocolLayerOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
 
-    auto downloadResponse = Details::BlobRestClient::Blob::Download(
+    auto downloadResponse = _detail::BlobRestClient::Blob::Download(
         Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
 
     {
@@ -465,7 +465,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetBlobPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::GetBlobPropertiesOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::GetBlobPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -478,7 +478,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
-    auto response = Details::BlobRestClient::Blob::GetProperties(
+    auto response = _detail::BlobRestClient::Blob::GetProperties(
         Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
     if (response->Tier.HasValue() && !response->IsAccessTierInferred.HasValue())
     {
@@ -504,7 +504,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobHttpHeadersOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::SetBlobHttpHeadersOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::SetBlobHttpHeadersOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = std::move(httpHeaders);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -512,7 +512,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return Details::BlobRestClient::Blob::SetHttpHeaders(
+    return _detail::BlobRestClient::Blob::SetHttpHeaders(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -521,7 +521,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::SetBlobMetadataOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::SetBlobMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = std::move(metadata);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -536,7 +536,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::Blob::SetMetadata(
+    return _detail::BlobRestClient::Blob::SetMetadata(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -545,10 +545,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobAccessTierOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
     protocolLayerOptions.Tier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
-    return Details::BlobRestClient::Blob::SetAccessTier(
+    return _detail::BlobRestClient::Blob::SetAccessTier(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -557,7 +557,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const StartCopyBlobFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::StartCopyBlobFromUriOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::StartCopyBlobFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.Tier = options.Tier;
@@ -576,7 +576,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
 
-    auto response = Details::BlobRestClient::Blob::StartCopyFromUri(
+    auto response = _detail::BlobRestClient::Blob::StartCopyFromUri(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
     StartCopyBlobOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
@@ -595,10 +595,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const AbortCopyBlobFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::AbortCopyBlobFromUriOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::AbortCopyBlobFromUriOptions protocolLayerOptions;
     protocolLayerOptions.CopyId = copyId;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    return Details::BlobRestClient::Blob::AbortCopyFromUri(
+    return _detail::BlobRestClient::Blob::AbortCopyFromUri(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -606,7 +606,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const CreateBlobSnapshotOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::CreateBlobSnapshotOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::CreateBlobSnapshotOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -621,7 +621,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::Blob::CreateSnapshot(
+    return _detail::BlobRestClient::Blob::CreateSnapshot(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -629,7 +629,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DeleteBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -637,7 +637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return Details::BlobRestClient::Blob::Delete(
+    return _detail::BlobRestClient::Blob::Delete(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -668,8 +668,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    Details::BlobRestClient::Blob::UndeleteBlobOptions protocolLayerOptions;
-    return Details::BlobRestClient::Blob::Undelete(
+    _detail::BlobRestClient::Blob::UndeleteBlobOptions protocolLayerOptions;
+    return _detail::BlobRestClient::Blob::Undelete(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -678,10 +678,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobTagsOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::SetBlobTagsOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::SetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.Tags = std::move(tags);
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return Details::BlobRestClient::Blob::SetTags(
+    return _detail::BlobRestClient::Blob::SetTags(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -689,9 +689,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetBlobTagsOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::Blob::GetBlobTagsOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::GetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return Details::BlobRestClient::Blob::GetTags(
+    return _detail::BlobRestClient::Blob::GetTags(
         Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 

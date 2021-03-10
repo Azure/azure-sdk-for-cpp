@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace Http {
      * `AzureSdkGetCustomHttpTransport` must be linked in the end-user application.
      *
      */
-    std::shared_ptr<HttpTransport> Transport = Details::GetTransportAdapter();
+    std::shared_ptr<HttpTransport> Transport = _detail::GetTransportAdapter();
   };
 
   /**
@@ -409,7 +409,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief HTTP headers that are allowed to be logged.
      */
-    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = Details::g_defaultAllowedHttpHeaders;
+    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
   };
 
   /**

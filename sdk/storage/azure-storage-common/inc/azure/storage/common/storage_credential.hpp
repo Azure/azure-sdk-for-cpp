@@ -58,7 +58,7 @@ namespace Azure { namespace Storage {
     const std::string AccountName;
 
   private:
-    friend class Details::SharedKeyPolicy;
+    friend class _detail::SharedKeyPolicy;
     friend struct Sas::BlobSasBuilder;
     friend struct Sas::ShareSasBuilder;
     friend struct Sas::DataLakeSasBuilder;

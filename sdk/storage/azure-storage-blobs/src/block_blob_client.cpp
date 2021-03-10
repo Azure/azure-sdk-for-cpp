@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::BlockBlob::UploadBlockBlobOptions protocolLayerOptions;
+    _detail::BlobRestClient::BlockBlob::UploadBlockBlobOptions protocolLayerOptions;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::BlockBlob::Upload(
+    return _detail::BlobRestClient::BlockBlob::Upload(
         context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const StageBlockOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
+    _detail::BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::BlockBlob::StageBlock(
+    return _detail::BlobRestClient::BlockBlob::StageBlock(
         context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const StageBlockFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::BlockBlob::StageBlockFromUriOptions protocolLayerOptions;
+    _detail::BlobRestClient::BlockBlob::StageBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.SourceRange = options.SourceRange;
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::BlockBlob::StageBlockFromUri(
+    return _detail::BlobRestClient::BlockBlob::StageBlockFromUri(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const CommitBlockListOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
+    _detail::BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
     protocolLayerOptions.BlockList.reserve(blockIds.size());
     for (const auto& id : blockIds)
     {
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::BlockBlob::CommitBlockList(
+    return _detail::BlobRestClient::BlockBlob::CommitBlockList(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -316,11 +316,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetBlockListOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
+    _detail::BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return Details::BlobRestClient::BlockBlob::GetBlockList(
+    return _detail::BlobRestClient::BlockBlob::GetBlockList(
         Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 

@@ -46,9 +46,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
-                                            Details::GetBlobUrlFromUrl(fileSystemUrl),
+                                            _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            Details::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options))
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -79,9 +79,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
-                                            Details::GetBlobUrlFromUrl(fileSystemUrl),
+                                            _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            Details::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -114,8 +114,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUrl,
       const DataLakeClientOptions& options)
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
-                                            Details::GetBlobUrlFromUrl(fileSystemUrl),
-                                            Details::GetBlobClientOptions(options))
+                                            _detail::GetBlobUrlFromUrl(fileSystemUrl),
+                                            _detail::GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -197,7 +197,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ContainerAlreadyExists)
+      if (e.ErrorCode == _detail::ContainerAlreadyExists)
       {
         Models::CreateDataLakeFileSystemResult ret;
         ret.Created = false;
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ContainerNotFound)
+      if (e.ErrorCode == _detail::ContainerNotFound)
       {
         Models::DeleteDataLakeFileSystemResult ret;
         ret.Deleted = false;
@@ -288,13 +288,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
-    return Details::DataLakeRestClient::FileSystem::ListPaths(
+    return _detail::DataLakeRestClient::FileSystem::ListPaths(
         m_fileSystemUrl,
         *m_pipeline,
         Storage::_detail::WithReplicaStatus(context),

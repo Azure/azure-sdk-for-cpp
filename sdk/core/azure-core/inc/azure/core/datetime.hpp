@@ -50,7 +50,7 @@ namespace Azure { namespace Core {
    * for the date range and precision.
    * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
    */
-  class DateTime : public Details::Clock::time_point {
+  class DateTime : public _detail::Clock::time_point {
     AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
 
   public:
@@ -198,7 +198,7 @@ namespace Azure { namespace Core {
     std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
   };
 
-  inline Details::Clock::time_point Details::Clock::now() noexcept
+  inline _detail::Clock::time_point _detail::Clock::now() noexcept
   {
     return DateTime(std::chrono::system_clock::now());
   }

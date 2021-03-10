@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = Details::ApiVersion;
+    std::string ApiVersion = _detail::ApiVersion;
   };
 
   /**

@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(

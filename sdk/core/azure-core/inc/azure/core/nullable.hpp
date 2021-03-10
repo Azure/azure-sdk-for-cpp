@@ -29,7 +29,7 @@ namespace Azure { namespace Core {
   template <class T> class Nullable {
     union
     {
-      Details::NontrivialEmptyType
+      _detail::NontrivialEmptyType
           m_disengaged; // due to constexpr rules for the default constructor
       T m_value;
     };

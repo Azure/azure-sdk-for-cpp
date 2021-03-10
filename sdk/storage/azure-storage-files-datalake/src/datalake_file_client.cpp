@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const AppendDataLakeFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
     if (options.TransactionalContentHash.HasValue())
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::DataLakeRestClient::Path::AppendData(
+    return _detail::DataLakeRestClient::Path::AppendData(
         m_pathUrl, *content, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const FlushDataLakeFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = position;
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return Details::DataLakeRestClient::Path::FlushData(
+    return _detail::DataLakeRestClient::Path::FlushData(
         m_pathUrl, *m_pipeline, context, protocolLayerOptions);
   }
 

@@ -129,18 +129,18 @@ namespace Azure { namespace Core { namespace Http {
   private:
     WinHttpTransportOptions m_options;
 
-    void CreateSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void CreateConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void Upload(std::unique_ptr<Details::HandleManager>& handleManager);
-    void SendRequest(std::unique_ptr<Details::HandleManager>& handleManager);
-    void ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
+    void CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void CreateConnectionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void Upload(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void SendRequest(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager);
     int64_t GetContentLength(
-        std::unique_ptr<Details::HandleManager>& handleManager,
+        std::unique_ptr<_detail::HandleManager>& handleManager,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
     std::unique_ptr<RawResponse> GetRawResponse(
-        std::unique_ptr<Details::HandleManager> handleManager,
+        std::unique_ptr<_detail::HandleManager> handleManager,
         HttpMethod requestMethod);
 
   public:

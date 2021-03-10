@@ -48,7 +48,7 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
       {Details::KeysPath, name, options.Version});
 }
@@ -62,9 +62,9 @@ Azure::Response<KeyVaultKey> KeyClient::CreateKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(keyType, options),
+      _detail::KeyRequestParameters(keyType, options),
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
       {Details::KeysPath, name, "create"});
 }
@@ -77,9 +77,9 @@ Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(ecKeyOptions),
+      _detail::KeyRequestParameters(ecKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
       {Details::KeysPath, keyName, "create"});
 }
@@ -92,9 +92,9 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(rsaKeyOptions),
+      _detail::KeyRequestParameters(rsaKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
       {Details::KeysPath, keyName, "create"});
 }
@@ -107,9 +107,9 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(octKeyOptions),
+      _detail::KeyRequestParameters(octKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
       {Details::KeysPath, keyName, "create"});
 }
@@ -124,7 +124,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return Details::DeletedKeyDeserialize(name, rawResponse);
+            return _detail::DeletedKeyDeserialize(name, rawResponse);
           },
           {Details::KeysPath, name}));
 }

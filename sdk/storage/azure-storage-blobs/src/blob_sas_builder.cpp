@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;
@@ -211,7 +211,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;

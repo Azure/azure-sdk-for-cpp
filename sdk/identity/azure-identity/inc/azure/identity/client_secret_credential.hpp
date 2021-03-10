@@ -37,7 +37,7 @@ namespace Azure { namespace Identity {
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = Details::g_aadGlobalAuthority;
+    std::string AuthorityHost = _detail::g_aadGlobalAuthority;
   };
 
   /**

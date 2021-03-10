@@ -41,9 +41,9 @@ KeyVaultException KeyVaultException::CreateFromResponse(
   auto httpStatusCode = response.GetStatusCode();
   std::string reasonPhrase = response.GetReasonPhrase();
   auto& headers = response.GetHeaders();
-  std::string requestId = GetHeaderOrEmptyString(headers, Details::MsRequestId);
-  std::string clientRequestId = GetHeaderOrEmptyString(headers, Details::MsClientRequestId);
-  std::string contentType = GetHeaderOrEmptyString(headers, Details::ContentType);
+  std::string requestId = GetHeaderOrEmptyString(headers, _detail::MsRequestId);
+  std::string clientRequestId = GetHeaderOrEmptyString(headers, _detail::MsClientRequestId);
+  std::string contentType = GetHeaderOrEmptyString(headers, _detail::ContentType);
   std::string errorCode;
   std::string message;
 

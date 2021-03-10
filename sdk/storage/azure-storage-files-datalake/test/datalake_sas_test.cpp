@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     filesystemSasBuilder.Path.clear();
     filesystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
 
-    auto keyCredential = Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto keyCredential = _detail::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
         AdlsGen2ConnectionString());

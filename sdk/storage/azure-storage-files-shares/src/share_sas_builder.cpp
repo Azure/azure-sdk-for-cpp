@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + FilePath;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = ShareSasResourceToString(Resource);
 
     std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(

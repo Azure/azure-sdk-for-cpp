@@ -52,7 +52,7 @@ void RawResponse::SetHeader(std::string const& header)
 
 void RawResponse::SetHeader(std::string const& name, std::string const& value)
 {
-  return Details::InsertHeaderWithValidation(this->m_headers, name, value);
+  return _detail::InsertHeaderWithValidation(this->m_headers, name, value);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)

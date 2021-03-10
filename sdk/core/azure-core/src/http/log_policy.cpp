@@ -73,7 +73,7 @@ inline std::string GetRequestLogMessage(
         }
       }
 
-      log << Details::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
+      log << _detail::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
     }
   }
   AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);

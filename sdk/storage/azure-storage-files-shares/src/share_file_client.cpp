@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        Details::Version::VersionString(),
+        _detail::Version::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -96,12 +96,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareFileClient newClient(*this);
     if (shareSnapshot.empty())
     {
-      newClient.m_shareFileUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
+      newClient.m_shareFileUrl.RemoveQueryParameter(_detail::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareFileUrl.AppendQueryParameter(
-          Details::ShareSnapshotQueryParameter,
+          _detail::ShareSnapshotQueryParameter,
           Storage::_detail::UrlEncodeQueryParameter(shareSnapshot));
     }
     return newClient;
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const CreateShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::CreateOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto result = Details::ShareRestClient::File::Create(
+    auto result = _detail::ShareRestClient::File::Create(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreateShareFileResult ret;
     ret.Created = true;
@@ -200,9 +200,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::DeleteOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::DeleteOptions();
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto result = Details::ShareRestClient::File::Delete(
+    auto result = _detail::ShareRestClient::File::Delete(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteShareFileResult ret;
     ret.Deleted = true;
@@ -221,8 +221,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ShareNotFound || e.ErrorCode == Details::ParentNotFound
-          || e.ErrorCode == Details::ResourceNotFound)
+      if (e.ErrorCode == _detail::ShareNotFound || e.ErrorCode == _detail::ParentNotFound
+          || e.ErrorCode == _detail::ResourceNotFound)
       {
         Models::DeleteShareFileResult ret;
         ret.Deleted = false;
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DownloadShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::DownloadOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::DownloadOptions();
     if (options.Range.HasValue())
     {
       if (options.Range.GetValue().Length.HasValue())
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
 
-    auto downloadResponse = Details::ShareRestClient::File::Download(
+    auto downloadResponse = _detail::ShareRestClient::File::Download(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     {
@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const StartCopyShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::StartCopyOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::StartCopyOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.CopySource = std::move(copySource);
     protocolLayerOptions.FileCopyFileAttributes = options.SmbProperties.Attributes.ToString();
@@ -385,7 +385,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.FileCopySetArchiveAttribute = options.SetArchiveAttribute;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto response = Details::ShareRestClient::File::StartCopy(
+    auto response = _detail::ShareRestClient::File::StartCopy(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     StartCopyShareFileOperation res;
@@ -404,10 +404,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const AbortCopyShareFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::AbortCopyOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::AbortCopyOptions();
     protocolLayerOptions.CopyId = std::move(copyId);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::AbortCopy(
+    return _detail::ShareRestClient::File::AbortCopy(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -415,9 +415,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetShareFilePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::GetPropertiesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetPropertiesOptions();
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::GetProperties(
+    return _detail::ShareRestClient::File::GetProperties(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetShareFilePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::SetHttpHeadersOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::SetHttpHeadersOptions();
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
@@ -489,7 +489,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileContentDisposition = httpHeaders.ContentDisposition;
     }
 
-    return Details::ShareRestClient::File::SetHttpHeaders(
+    return _detail::ShareRestClient::File::SetHttpHeaders(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -498,10 +498,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetShareFileMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::SetMetadataOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::SetMetadataOptions();
     protocolLayerOptions.Metadata = std::move(metadata);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::SetMetadata(
+    return _detail::ShareRestClient::File::SetMetadata(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -511,7 +511,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const UploadShareFileRangeOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
     protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Update;
     protocolLayerOptions.ContentLength = content->Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
@@ -523,7 +523,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::UploadRange(
+    return _detail::ShareRestClient::File::UploadRange(
         m_shareFileUrl, *content, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -533,14 +533,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ClearShareFileRangeOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
     protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Clear;
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + length - 1);
 
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto response = Details::ShareRestClient::File::UploadRange(
+    auto response = _detail::ShareRestClient::File::UploadRange(
         m_shareFileUrl,
         *Azure::IO::_internal::NullBodyStream::GetNullBodyStream(),
         *m_pipeline,
@@ -559,7 +559,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetShareFileRangeListOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::GetRangeListOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
     if (options.Range.HasValue())
     {
       if (options.Range.GetValue().Length.HasValue())
@@ -578,7 +578,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     protocolLayerOptions.PrevShareSnapshot = options.PreviousShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::GetRangeList(
+    return _detail::ShareRestClient::File::GetRangeList(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -587,10 +587,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListShareFileHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::ListHandlesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ListHandlesOptions();
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto result = Details::ShareRestClient::File::ListHandles(
+    auto result = _detail::ShareRestClient::File::ListHandles(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ListShareFileHandlesSinglePageResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
@@ -606,9 +606,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
-    auto result = Details::ShareRestClient::File::ForceCloseHandles(
+    auto result = _detail::ShareRestClient::File::ForceCloseHandles(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     return Azure::Response<Models::ForceCloseShareFileHandleResult>(
         Models::ForceCloseShareFileHandleResult(), result.ExtractRawResponse());
@@ -619,10 +619,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseAllShareFileHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    return Details::ShareRestClient::File::ForceCloseHandles(
+    return _detail::ShareRestClient::File::ForceCloseHandles(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
@@ -852,7 +852,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const UploadShareFileFromOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
+    _detail::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = bufferSize;
     protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
@@ -922,7 +922,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
-    auto createResult = Details::ShareRestClient::File::Create(
+    auto createResult = _detail::ShareRestClient::File::Create(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
@@ -958,7 +958,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     Storage::_detail::FileReader fileReader(fileName);
 
-    Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
+    _detail::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();
     protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
@@ -1028,7 +1028,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
-    auto createResult = Details::ShareRestClient::File::Create(
+    auto createResult = _detail::ShareRestClient::File::Create(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
@@ -1072,7 +1072,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     int64_t rangeLength = sourceRange.Length.GetValue();
 
-    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeFromUrlOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeFromUrlOptions();
     protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(destinationOffset)
         + std::string("-") + std::to_string(destinationOffset + rangeLength - 1);
     protocolLayerOptions.ContentLength = 0;
@@ -1106,7 +1106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.GetValue() - 1);
     protocolLayerOptions.XMsWrite = Models::FileRangeWriteFromUrlType::Update;
 
-    return Details::ShareRestClient::File::UploadRangeFromUrl(
+    return _detail::ShareRestClient::File::UploadRangeFromUrl(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 }}}} // namespace Azure::Storage::Files::Shares
