@@ -31,7 +31,7 @@ SOFTWARE.
 
 #define private public
 #include <azure/core/internal/json.hpp>
-using Azure::Core::_internal::Json::json;
+using Azure::Core::Json::_internal::json;
 #undef private
 
 TEST_CASE("iterator class")

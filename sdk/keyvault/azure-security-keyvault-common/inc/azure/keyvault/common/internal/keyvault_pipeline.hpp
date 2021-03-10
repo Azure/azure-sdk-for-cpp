@@ -119,7 +119,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     Azure::Response<T> SendRequest(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
-        Azure::Core::_internal::Json::JsonSerializable const& content,
+        Azure::Core::Json::_internal::JsonSerializable const& content,
         std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
         std::vector<std::string> const& path)
     {
