@@ -9,6 +9,7 @@
 #include <iterator>
 #include <limits>
 #include <vector>
+#include <stdexcept>
 
 using namespace Azure::Core;
 
