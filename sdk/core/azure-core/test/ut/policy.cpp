@@ -147,6 +147,8 @@ TEST(Policy, RetryPolicyCounter)
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
   using namespace Azure::Core::Http::Internal;
+  // Clean the validation global state
+  retryCounterState = 0;
 
   // Check when there's no info about retry on the context
   auto initialContext = Context::GetApplicationContext();
@@ -155,6 +157,8 @@ TEST(Policy, RetryPolicyCounter)
   // Pipeline with retry test
   std::vector<std::unique_ptr<HttpPolicy>> policies;
   RetryOptions opt;
+  // Make retry policy not to take too much time for this test
+  opt.RetryDelay = std::chrono::milliseconds(10);
   policies.push_back(std::make_unique<RetryPolicy>(opt));
   policies.push_back(std::make_unique<TestRetryPolicySharedState>());
   policies.push_back(std::make_unique<SuccessAfter>());
@@ -169,6 +173,8 @@ TEST(Policy, RetryPolicyRetryCycle)
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
   using namespace Azure::Core::Http::Internal;
+  // Clean the validation global state
+  retryCounterState = 0;
 
   // Pipeline with retry test
   std::vector<std::unique_ptr<HttpPolicy>> policies;
