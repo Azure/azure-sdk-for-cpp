@@ -27,9 +27,8 @@ namespace Azure { namespace Core { namespace _detail {
     static Logger::Listener GetLogListener();
   };
 
-#if defined(AZ_NO_ENV_LOGGER) \
-    || (defined(WINAPI_PARTITION_DESKTOP) \
-        && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp for explanation.
+#if (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
   inline Logger::Level EnvironmentLogLevelListener::GetLogLevel(Logger::Level defaultValue)
   {
     return defaultValue;
