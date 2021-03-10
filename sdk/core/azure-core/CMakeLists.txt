@@ -57,6 +57,8 @@ set(
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/hkeyholder.hpp
     inc/azure/core/internal/http/pipeline.hpp
+    inc/azure/core/internal/io/filehandleholder.hpp
+    inc/azure/core/internal/io/parallel_file_body_stream.hpp
     inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
@@ -100,6 +102,7 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/io/body_stream.cpp
+    src/io/parallel_file_body_stream.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp

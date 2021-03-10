@@ -13,10 +13,13 @@
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
+#include <io.h>
 #include <windows.h>
 #endif
 
 #include "azure/core/context.hpp"
+#include "azure/core/internal/io/filehandleholder.hpp"
+#include "azure/core/internal/io/parallel_file_body_stream.hpp"
 #include "azure/core/io/body_stream.hpp"
 
 #include <algorithm>
@@ -82,54 +85,58 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
   return copy_length;
 }
 
-#if defined(AZ_PLATFORM_POSIX)
-int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
-{
-  (void)context;
-  auto result = pread(
-      this->m_fd,
-      buffer,
-      std::min(count, this->m_length - this->m_offset),
-      this->m_baseOffset + this->m_offset);
-
-  if (result < 0)
-  {
-    throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
-  }
-
-  this->m_offset += result;
-  return result;
-}
-#elif defined(AZ_PLATFORM_WINDOWS)
-int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
-{
-  (void)context;
-  DWORD numberOfBytesRead;
-  auto o = OVERLAPPED();
-  o.Offset = static_cast<DWORD>(this->m_baseOffset + this->m_offset);
-  o.OffsetHigh = static_cast<DWORD>((this->m_baseOffset + this->m_offset) >> 32);
-
-  auto result = ReadFile(
-      this->m_hFile,
-      buffer,
-      // at most 4Gb to be read
-      static_cast<DWORD>(std::min(
-          static_cast<uint64_t>(0xFFFFFFFFUL),
-          static_cast<uint64_t>(std::min(count, (this->m_length - this->m_offset))))),
-      &numberOfBytesRead,
-      &o);
-
-  if (!result)
-  {
-    // Check error. of EOF, return bytes read to EOF
-    auto error = GetLastError();
-    if (error != ERROR_HANDLE_EOF)
-    {
-      throw std::runtime_error("Reading error. (Code Number: " + std::to_string(error) + ")");
-    }
-  }
-
-  this->m_offset += numberOfBytesRead;
-  return numberOfBytesRead;
-}
+#if defined(AZ_PLATFORM_WINDOWS)
+#pragma warning(push)
+// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
+#pragma warning(disable : 4996)
 #endif
+
+FileBodyStream::FileBodyStream(const std::string& filename) : m_offset(0)
+{
+  m_fileStreamHolder = fopen(filename.c_str(), "rb");
+  if (m_fileStreamHolder.GetValue() == nullptr)
+  {
+    throw std::runtime_error("Failed to open file for reading.");
+  }
+
+#if defined(AZ_PLATFORM_WINDOWS)
+  m_filehandle = (HANDLE)_get_osfhandle(_fileno(m_fileStreamHolder.GetValue()));
+
+  LARGE_INTEGER fileSize;
+  if (!GetFileSizeEx(m_filehandle, &fileSize))
+  {
+    throw std::runtime_error("Failed to get size of file.");
+  }
+  m_length = fileSize.QuadPart;
+
+  m_parallelBodyStream = new Internal::ParallelFileBodyStream(m_filehandle, 0, m_length);
+
+#elif defined(AZ_PLATFORM_POSIX)
+  m_fileDescriptor = fileno(m_fileStreamHolder.GetValue());
+
+  struct stat finfo;
+  if (fstat(m_fileDescriptor, &finfo))
+  {
+    throw std::runtime_error("Failed to get size of file.");
+  }
+  m_length = finfo.st_size;
+
+  m_parallelBodyStream = new Internal::ParallelFileBodyStream(m_fileDescriptor, 0, m_length);
+
+#endif
+}
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#pragma warning(pop)
+#endif
+
+FileBodyStream::~FileBodyStream()
+{
+  delete m_parallelBodyStream;
+  // The file handle is closed by the FileHandleHolder so it doesn't need to be closed here.
+}
+
+int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
+{
+  return m_parallelBodyStream->Read(buffer, count, context);
+}

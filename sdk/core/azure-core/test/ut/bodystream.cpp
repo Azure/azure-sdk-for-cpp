@@ -39,26 +39,39 @@ TEST(BodyStream, Rewind)
 
 #if defined(AZ_PLATFORM_POSIX)
   testDataPath.append("/fileData");
-  int f = open(testDataPath.data(), O_RDONLY);
-  EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
   testDataPath.append("\\fileData");
-  HANDLE f = CreateFile(
-      testDataPath.data(),
-      GENERIC_READ,
-      FILE_SHARE_READ,
-      NULL,
-      OPEN_EXISTING,
-      FILE_FLAG_SEQUENTIAL_SCAN,
-      NULL);
-  EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
-  auto fileBodyStream = Azure::IO::FileBodyStream(f, 0, 0);
+
+  auto fileBodyStream = Azure::IO::FileBodyStream(testDataPath);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
   Azure::IO::MemoryBodyStream ms(data);
   EXPECT_NO_THROW(ms.Rewind());
+}
+
+TEST(FileBodyStream, BadInput)
+{
+  EXPECT_THROW((Azure::IO::FileBodyStream("")), std::runtime_error);
+  EXPECT_THROW((Azure::IO::FileBodyStream("fileNotFound")), std::runtime_error);
+}
+
+constexpr int64_t FileSize = 1024 * 100;
+
+TEST(FileBodyStream, Length)
+{
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  auto stream = Azure::IO::FileBodyStream(testDataPath);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  auto readResult = Azure::IO::BodyStream::ReadToEnd(stream, Azure::Core::GetApplicationContext());
+  EXPECT_EQ(readResult.size(), FileSize);
+
+  stream.Rewind();
+  EXPECT_EQ(stream.Length(), FileSize);
 }
