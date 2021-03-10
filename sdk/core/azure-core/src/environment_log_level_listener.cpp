@@ -133,7 +133,7 @@ Logger::Listener EnvironmentLogLevelListener::GetLogListener()
 
   static Logger::Listener const consoleLogger = [](auto level, auto message) {
     std::cerr << '['
-              << Azure::Core::DateTime(std::chrono::system_clock::now())
+              << Azure::DateTime(std::chrono::system_clock::now())
                      .ToString(
                          DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
               << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
