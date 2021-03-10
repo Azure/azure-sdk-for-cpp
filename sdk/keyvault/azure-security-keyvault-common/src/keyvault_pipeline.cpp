@@ -10,7 +10,7 @@ using namespace Azure::Security::KeyVault::Common;
 namespace {
 inline Azure::Core::Http::Request InitRequest(
     Azure::Core::Http::HttpMethod method,
-    Azure::IO::BodyStream* content,
+    Azure::Core::IO::BodyStream* content,
     Azure::Core::Http::Url const& url)
 {
   if (content == nullptr)
@@ -23,7 +23,7 @@ inline Azure::Core::Http::Request InitRequest(
 
 Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
     Azure::Core::Http::HttpMethod method,
-    Azure::IO::BodyStream* content,
+    Azure::Core::IO::BodyStream* content,
     std::vector<std::string> const& path) const
 {
 

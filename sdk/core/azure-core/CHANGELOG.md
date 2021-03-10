@@ -38,6 +38,7 @@
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 - Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
+- Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
 
 ### Bug Fixes
