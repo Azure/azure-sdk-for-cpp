@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/block_blob_client.hpp"
 
-#include <azure/core/internal/io/random_access_file_body_stream.hpp>
+#include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>

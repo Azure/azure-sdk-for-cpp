@@ -5,6 +5,7 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <errno.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
@@ -14,16 +15,14 @@
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
-#include <io.h>
 #include <windows.h>
 #endif
 
 #include "azure/core/context.hpp"
-#include "azure/core/internal/io/file_handle_holder.hpp"
-#include "azure/core/internal/io/random_access_file_body_stream.hpp"
 #include "azure/core/io/body_stream.hpp"
 
 #include <algorithm>
+#include <codecvt>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -86,58 +85,95 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
   return copy_length;
 }
 
+FileBodyStream::FileBodyStream(const std::string& filename)
+    : m_randomAccessFileBodyStream(
+        NULL,
+        0,
+        0) // Required as a placeholder because no default ctor exists.
+{
 #if defined(AZ_PLATFORM_WINDOWS)
-#pragma warning(push)
-// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
-#pragma warning(disable : 4996)
+
+  try
+  {
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+    m_filehandle = CreateFile(
+        filename.data(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        nullptr,
+        OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN, // Using this as an optimization since we know file access is
+                                   // intended to be sequential from beginning to end.
+        NULL);
+#else
+    m_filehandle = CreateFile2(
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        OPEN_EXISTING,
+        NULL);
 #endif
 
-FileBodyStream::FileBodyStream(const std::string& filename) : m_offset(0)
-{
-  m_fileStreamHolder = fopen(filename.c_str(), "rb");
-  if (m_fileStreamHolder.GetValue() == nullptr)
-  {
-    throw std::runtime_error("Failed to open file for reading.");
+    if (m_filehandle == INVALID_HANDLE_VALUE)
+    {
+      throw std::runtime_error("Failed to open file for reading. File name: '" + filename + "'");
+    }
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(m_filehandle, &fileSize))
+    {
+      throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
+    }
+    m_randomAccessFileBodyStream
+        = _internal::RandomAccessFileBodyStream(m_filehandle, 0, fileSize.QuadPart);
   }
-
-#if defined(AZ_PLATFORM_WINDOWS)
-  m_filehandle = (HANDLE)_get_osfhandle(_fileno(m_fileStreamHolder.GetValue()));
-
-  LARGE_INTEGER fileSize;
-  if (!GetFileSizeEx(m_filehandle, &fileSize))
+  catch (std::exception&)
   {
-    throw std::runtime_error("Failed to get size of file.");
+    CloseHandle(m_filehandle);
+    throw;
   }
-  m_length = fileSize.QuadPart;
-
-  m_parallelBodyStream = new _internal::RandomAccessFileBodyStream(m_filehandle, 0, m_length);
 
 #elif defined(AZ_PLATFORM_POSIX)
-  m_fileDescriptor = fileno(m_fileStreamHolder.GetValue());
 
-  struct stat finfo;
-  if (fstat(m_fileDescriptor, &finfo))
+  try
   {
-    throw std::runtime_error("Failed to get size of file.");
-  }
-  m_length = finfo.st_size;
+    m_fileDescriptor = open(filename.data(), O_RDONLY);
+    if (m_fileDescriptor == -1)
+    {
+      throw std::runtime_error("Failed to open file for reading. File name: '" + filename + "'");
+    }
+    int64_t fileSize = lseek(m_fileDescriptor, 0, SEEK_END);
+    if (fileSize == -1)
+    {
+      throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
+    }
 
-  m_parallelBodyStream = new _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, m_length);
+    m_randomAccessFileBodyStream
+        = _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, finfo.st_size);
+  }
+  catch (std::exception&)
+  {
+    close(m_fileDescriptor);
+    throw;
+  }
 
 #endif
 }
 
-#if defined(AZ_PLATFORM_WINDOWS)
-#pragma warning(pop)
-#endif
-
 FileBodyStream::~FileBodyStream()
 {
-  delete m_parallelBodyStream;
-  // The file handle is closed by the FileHandleHolder so it doesn't need to be closed here.
+#if defined(AZ_PLATFORM_WINDOWS)
+  CloseHandle(m_filehandle);
+#elif defined(AZ_PLATFORM_POSIX)
+  close(m_fileDescriptor);
+#endif
 }
 
 int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
 {
-  return m_parallelBodyStream->Read(buffer, count, context);
+  return m_randomAccessFileBodyStream.Read(buffer, count, context);
 }
+
+void FileBodyStream::Rewind() { m_randomAccessFileBodyStream.Rewind(); }
+
+int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream.Length(); };

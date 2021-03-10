@@ -74,4 +74,7 @@ TEST(FileBodyStream, Length)
 
   stream.Rewind();
   EXPECT_EQ(stream.Length(), FileSize);
+
+  stream = Azure::IO::FileBodyStream(testDataPath);
+  EXPECT_EQ(stream.Length(), FileSize);
 }

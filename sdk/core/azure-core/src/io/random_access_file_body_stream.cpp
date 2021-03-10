@@ -17,7 +17,7 @@
 #endif
 
 #include "azure/core/context.hpp"
-#include "azure/core/internal/io/random_access_file_body_stream.hpp"
+#include "azure/core/io/body_stream.hpp"
 
 #include <cstdint>
 #include <stdexcept>
