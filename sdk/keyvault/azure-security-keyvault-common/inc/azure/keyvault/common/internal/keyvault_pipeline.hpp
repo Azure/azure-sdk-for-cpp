@@ -52,7 +52,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      */
     Azure::Core::Http::Request CreateRequest(
         Azure::Core::Http::HttpMethod method,
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         std::vector<std::string> const& path) const;
 
     /**
@@ -124,7 +124,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         std::vector<std::string> const& path)
     {
       auto serialContent = content.Serialize();
-      auto streamContent = Azure::IO::MemoryBodyStream(
+      auto streamContent = Azure::Core::IO::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
 
       auto request = CreateRequest(method, &streamContent, path);

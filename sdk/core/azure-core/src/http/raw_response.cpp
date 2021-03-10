@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
 
 HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }

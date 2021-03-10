@@ -60,7 +60,7 @@ namespace Azure { namespace Perf { namespace Test {
       auto response = _detail::HttpClient->Send(request, ctx);
       // Read the body from network
       auto bodyStream = response->GetBodyStream();
-      response->SetBody(Azure::IO::BodyStream::ReadToEnd(*bodyStream, ctx));
+      response->SetBody(Azure::Core::IO::BodyStream::ReadToEnd(*bodyStream, ctx));
     }
 
     /**
