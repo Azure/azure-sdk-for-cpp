@@ -21,11 +21,11 @@ namespace Azure { namespace Core {
    * comparison.
    */
   using CaseInsensitiveMap
-      = std::map<std::string, std::string, Internal::Strings::CaseInsensitiveComparator>;
+      = std::map<std::string, std::string, _internal::Strings::CaseInsensitiveComparator>;
 
   /**
    * @brief A type alias of `std::set<std::string>` with case-insensitive element comparison.
    */
-  using CaseInsensitiveSet = std::set<std::string, Internal::Strings::CaseInsensitiveComparator>;
+  using CaseInsensitiveSet = std::set<std::string, _internal::Strings::CaseInsensitiveComparator>;
 
 }} // namespace Azure::Core

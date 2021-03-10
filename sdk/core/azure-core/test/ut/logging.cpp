@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 using Azure::Core::Logger;
-using Azure::Core::Internal::Log;
+using Azure::Core::_internal::Log;
 
 TEST(Logger, Levels)
 {

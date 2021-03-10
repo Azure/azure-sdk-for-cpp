@@ -114,9 +114,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
       EXPECT_FALSE(res->RequestId.empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
       options.ContinuationToken = res->ContinuationToken;
@@ -136,9 +136,9 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
       options.ContinuationToken = res->ContinuationToken;
@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.MinuteMetrics.RetentionPolicy.Days = 4;
     properties.MinuteMetrics.IncludeApis = true;
 
-    properties.DefaultServiceVersion = Blobs::Details::ApiVersion;
+    properties.DefaultServiceVersion = Blobs::_detail::ApiVersion;
 
     properties.StaticWebsite.IsEnabled = true;
     properties.StaticWebsite.IndexDocument = "index.html";
@@ -338,7 +338,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageException);
 
     auto keyCredential
-        = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto secondaryServiceClient
         = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();

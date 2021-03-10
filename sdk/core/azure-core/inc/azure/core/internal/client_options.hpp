@@ -15,7 +15,7 @@
 #include <memory>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Internal {
+namespace Azure { namespace Core { namespace _internal {
 
   /**
    * @brief  Base type for all client option types, exposes various common client options like Retry
@@ -102,4 +102,4 @@ namespace Azure { namespace Core { namespace Internal {
     Azure::Core::Http::LogOptions Log;
   };
 
-}}} // namespace Azure::Core::Internal
+}}} // namespace Azure::Core::_internal

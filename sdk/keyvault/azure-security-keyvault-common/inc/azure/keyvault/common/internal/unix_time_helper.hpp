@@ -12,7 +12,7 @@
 
 #include <chrono>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace Internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _internal {
 
   /**
    * @brief Provides convertion methods for unix time to Azure Core Datetime.
@@ -30,4 +30,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
       return Azure::Core::DateTime(1970) + std::chrono::seconds(unixTime);
     }
   };
-}}}}} // namespace Azure::Security::KeyVault::Common::Internal
+}}}}} // namespace Azure::Security::KeyVault::Common::_internal

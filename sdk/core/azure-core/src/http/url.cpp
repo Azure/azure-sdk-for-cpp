@@ -22,7 +22,7 @@ Url::Url(const std::string& url)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
       return static_cast<char>(
-          Azure::Core::Internal::Strings::ToLower(static_cast<unsigned char>(c)));
+          Azure::Core::_internal::Strings::ToLower(static_cast<unsigned char>(c)));
     });
 
     pos = url.begin() + schemeIter + schemeEnd.length();
@@ -210,13 +210,13 @@ std::string Url::GetUrlWithoutQuery(bool relative) const
 std::string Url::GetRelativeUrl() const
 {
   return GetUrlWithoutQuery(true)
-      + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
+      + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 std::string Url::GetAbsoluteUrl() const
 {
   return GetUrlWithoutQuery(false)
-      + Details::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
+      + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars

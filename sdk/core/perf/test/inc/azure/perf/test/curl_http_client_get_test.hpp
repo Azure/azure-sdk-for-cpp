@@ -39,7 +39,7 @@ namespace Azure { namespace Perf { namespace Test {
     void GlobalSetup() override
     {
       curl_global_init(CURL_GLOBAL_ALL);
-      Details::HttpClient = std::make_unique<Azure::Core::Http::CurlTransport>();
+      _detail::HttpClient = std::make_unique<Azure::Core::Http::CurlTransport>();
     }
 
     void GlobalCleanup() override { curl_global_cleanup(); }

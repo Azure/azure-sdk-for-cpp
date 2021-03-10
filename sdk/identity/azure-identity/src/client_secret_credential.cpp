@@ -10,9 +10,9 @@
 #include <sstream>
 
 using namespace Azure::Identity;
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 
-std::string const Azure::Identity::Details::g_aadGlobalAuthority
+std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
@@ -21,7 +21,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Internal;
+  using namespace Azure::Core::Http::_internal;
 
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try

@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   // FileSystemClient models:
 
-  using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
+  using ListPathsSinglePageResult = _detail::FileSystemListPathsResult;
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
   using ListDataLakeFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
 
@@ -211,14 +211,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  using SetDataLakePathAccessControlListResult = Details::PathSetAccessControlResult;
-  using SetDataLakePathPermissionsResult = Details::PathSetAccessControlResult;
+  using SetDataLakePathAccessControlListResult = _detail::PathSetAccessControlResult;
+  using SetDataLakePathPermissionsResult = _detail::PathSetAccessControlResult;
 
   // FileClient models:
 
   using UploadDataLakeFileFromResult = Blobs::Models::UploadBlockBlobResult;
-  using AppendDataLakeFileResult = Details::PathAppendDataResult;
-  using FlushDataLakeFileResult = Details::PathFlushDataResult;
+  using AppendDataLakeFileResult = _detail::PathAppendDataResult;
+  using FlushDataLakeFileResult = _detail::PathFlushDataResult;
   using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
   using CopyStatus = Blobs::Models::CopyStatus;
 
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct DownloadDataLakeFileResult
   {
-    std::unique_ptr<Azure::IO::BodyStream> Body;
+    std::unique_ptr<Azure::Core::IO::BodyStream> Body;
     int64_t FileSize = int64_t();
     Azure::Core::Http::Range ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
@@ -281,7 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   };
 
   using SetDataLakePathAccessControlListRecursiveSinglePageResult
-      = Details::PathSetAccessControlRecursiveResult;
+      = _detail::PathSetAccessControlRecursiveResult;
   using UpdateDataLakePathAccessControlListRecursiveSinglePageResult
       = SetDataLakePathAccessControlListRecursiveSinglePageResult;
   using RemoveDataLakePathAccessControlListRecursiveSinglePageResult

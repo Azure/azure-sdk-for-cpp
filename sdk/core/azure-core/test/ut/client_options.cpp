@@ -12,7 +12,7 @@
 #include <vector>
 
 using namespace Azure::Core;
-using namespace Azure::Core::Internal;
+using namespace Azure::Core::_internal;
 using namespace Azure::Core::Http;
 
 struct FakeTransport : public HttpTransport

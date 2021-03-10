@@ -55,10 +55,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /***********************  Deserializer / Serializer ******************************/
-  namespace Details {
+  namespace _detail {
     DeletedKey DeletedKeyDeserialize(
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
-  } // namespace Details
+  } // namespace _detail
 
 }}}} // namespace Azure::Security::KeyVault::Keys

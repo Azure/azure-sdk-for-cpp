@@ -32,7 +32,7 @@ std::string GetOSVersion()
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
-    Azure::Core::Internal::HKEYHolder regKey;
+    Azure::Core::_internal::HKEYHolder regKey;
     if (RegOpenKeyExA(
             HKEY_LOCAL_MACHINE,
             "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",

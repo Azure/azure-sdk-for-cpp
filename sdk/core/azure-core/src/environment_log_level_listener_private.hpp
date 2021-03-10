@@ -16,7 +16,7 @@
 #include <windows.h>
 #endif
 
-namespace Azure { namespace Core { namespace Details {
+namespace Azure { namespace Core { namespace _detail {
 
   class EnvironmentLogLevelListener {
     EnvironmentLogLevelListener() = delete;
@@ -27,9 +27,8 @@ namespace Azure { namespace Core { namespace Details {
     static Logger::Listener GetLogListener();
   };
 
-#if defined(AZ_NO_ENV_LOGGER) \
-    || (defined(WINAPI_PARTITION_DESKTOP) \
-        && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp for explanation.
+#if (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
   inline Logger::Level EnvironmentLogLevelListener::GetLogLevel(Logger::Level defaultValue)
   {
     return defaultValue;
@@ -37,4 +36,4 @@ namespace Azure { namespace Core { namespace Details {
 
   inline Logger::Listener EnvironmentLogLevelListener::GetLogListener() { return nullptr; }
 #endif
-}}} // namespace Azure::Core::Details
+}}} // namespace Azure::Core::_detail

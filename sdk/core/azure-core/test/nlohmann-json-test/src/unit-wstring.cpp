@@ -30,7 +30,7 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::Json::_internal::json;
 
 namespace {
 bool wstring_is_utf16();

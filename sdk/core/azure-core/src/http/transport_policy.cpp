@@ -12,10 +12,10 @@
 #endif
 
 using Azure::Core::Context;
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
 
-std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
+std::shared_ptr<HttpTransport> Azure::Core::Http::_detail::GetTransportAdapter()
 {
   // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
   // both are defined.

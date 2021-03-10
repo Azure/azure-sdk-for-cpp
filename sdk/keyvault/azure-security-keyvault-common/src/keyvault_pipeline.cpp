@@ -10,7 +10,7 @@ using namespace Azure::Security::KeyVault::Common;
 namespace {
 inline Azure::Core::Http::Request InitRequest(
     Azure::Core::Http::HttpMethod method,
-    Azure::IO::BodyStream* content,
+    Azure::Core::IO::BodyStream* content,
     Azure::Core::Http::Url const& url)
 {
   if (content == nullptr)
@@ -21,18 +21,18 @@ inline Azure::Core::Http::Request InitRequest(
 }
 } // namespace
 
-Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
+Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
     Azure::Core::Http::HttpMethod method,
-    Azure::IO::BodyStream* content,
+    Azure::Core::IO::BodyStream* content,
     std::vector<std::string> const& path) const
 {
 
   auto request = ::InitRequest(method, content, m_vaultUrl);
 
-  request.SetHeader(Details::ContentType, Details::ApplicationJson);
-  request.SetHeader(Details::Accept, Details::ApplicationJson);
+  request.SetHeader(_detail::ContentType, _detail::ApplicationJson);
+  request.SetHeader(_detail::Accept, _detail::ApplicationJson);
 
-  request.GetUrl().AppendQueryParameter(Details::ApiVersion, m_apiVersion);
+  request.GetUrl().AppendQueryParameter(_detail::ApiVersion, m_apiVersion);
 
   for (std::string const& p : path)
   {
@@ -44,14 +44,14 @@ Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
   return request;
 }
 
-Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
+Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
     Azure::Core::Http::HttpMethod method,
     std::vector<std::string> const& path) const
 {
   return CreateRequest(method, nullptr, path);
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> Internal::KeyVaultPipeline::SendRequest(
+std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::SendRequest(
     Azure::Core::Context const& context,
     Azure::Core::Http::Request& request) const
 {

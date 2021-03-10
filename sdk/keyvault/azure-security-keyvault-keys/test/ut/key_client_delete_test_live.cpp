@@ -63,7 +63,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
     auto expectedStatusToken = m_keyVaultUrl + "/"
-        + std::string(Azure::Security::KeyVault::Keys::Details::DeletedKeysPath) + "/" + keyName;
+        + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
     EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
     // poll each second until key is soft-deleted
     // Will throw and fail test if test takes more than 3 minutes (token cancelled)

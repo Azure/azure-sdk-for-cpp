@@ -34,7 +34,7 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::detail::dtoa_impl::reinterpret_bits;
+using Azure::Core::Json::_internal::detail::dtoa_impl::reinterpret_bits;
 
 namespace {
 static float make_float(uint32_t sign_bit, uint32_t biased_exponent, uint32_t significand)
@@ -154,7 +154,7 @@ TEST_CASE("digit gen")
       char buf[32];
       int len = 0;
       int exponent = 0;
-      Azure::Core::Internal::Json::detail::dtoa_impl::grisu2(buf, len, exponent, number);
+      Azure::Core::Json::_internal::detail::dtoa_impl::grisu2(buf, len, exponent, number);
 
       CHECK(digits == std::string(buf, buf + len));
       CHECK(expected_exponent == exponent);
@@ -229,7 +229,7 @@ TEST_CASE("digit gen")
       char buf[32];
       int len = 0;
       int exponent = 0;
-      Azure::Core::Internal::Json::detail::dtoa_impl::grisu2(buf, len, exponent, number);
+      Azure::Core::Json::_internal::detail::dtoa_impl::grisu2(buf, len, exponent, number);
 
       CHECK(digits == std::string(buf, buf + len));
       CHECK(expected_exponent == exponent);
@@ -528,7 +528,7 @@ TEST_CASE("formatting")
     auto check_float = [](float number, const std::string& expected) {
       std::array<char, 33> buf{};
       char* end
-          = Azure::Core::Internal::Json::detail::to_chars(buf.data(), buf.data() + 32, number);
+          = Azure::Core::Json::_internal::detail::to_chars(buf.data(), buf.data() + 32, number);
       std::string actual(buf.data(), end);
 
       CHECK(actual == expected);
@@ -588,7 +588,7 @@ TEST_CASE("formatting")
     auto check_double = [](double number, const std::string& expected) {
       std::array<char, 33> buf{};
       char* end
-          = Azure::Core::Internal::Json::detail::to_chars(buf.data(), buf.data() + 32, number);
+          = Azure::Core::Json::_internal::detail::to_chars(buf.data(), buf.data() + 32, number);
       std::string actual(buf.data(), end);
 
       CHECK(actual == expected);
@@ -677,7 +677,7 @@ TEST_CASE("formatting")
   SECTION("integer")
   {
     auto check_integer = [](std::int64_t number, const std::string& expected) {
-      Azure::Core::Internal::Json::json j = number;
+      Azure::Core::Json::_internal::json j = number;
       CHECK(j.dump() == expected);
     };
 

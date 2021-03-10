@@ -31,7 +31,7 @@ SOFTWARE.
 DOCTEST_GCC_SUPPRESS_WARNING("-Wfloat-equal")
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::Json::_internal::json;
 
 TEST_CASE("reference access")
 {

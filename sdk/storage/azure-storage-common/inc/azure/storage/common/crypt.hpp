@@ -26,12 +26,12 @@ namespace Azure { namespace Storage {
     std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override;
   };
 
-  namespace Details {
+  namespace _detail {
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data);
     std::vector<uint8_t> HmacSha256(
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key);
     std::string UrlEncodeQueryParameter(const std::string& value);
     std::string UrlEncodePath(const std::string& value);
-  } // namespace Details
+  } // namespace _detail
 }} // namespace Azure::Storage

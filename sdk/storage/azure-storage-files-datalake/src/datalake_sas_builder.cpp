@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
@@ -134,63 +134,63 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
-        + "\n" + protocol + "\n" + Storage::Details::DefaultSasVersion + "\n" + resource + "\n"
+        + "\n" + protocol + "\n" + Storage::_detail::DefaultSasVersion + "\n" + resource + "\n"
         + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n"
         + ContentLanguage + "\n" + ContentType;
 
-    std::string signature = Azure::Core::Base64Encode(Storage::Details::HmacSha256(
+    std::string signature = Azure::Core::Base64Encode(Storage::_detail::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
-        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
-    builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
+        "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
+    builder.AppendQueryParameter("spr", Storage::_detail::UrlEncodeQueryParameter(protocol));
     if (!startsOnStr.empty())
     {
-      builder.AppendQueryParameter("st", Storage::Details::UrlEncodeQueryParameter(startsOnStr));
+      builder.AppendQueryParameter("st", Storage::_detail::UrlEncodeQueryParameter(startsOnStr));
     }
     if (!expiresOnStr.empty())
     {
-      builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(expiresOnStr));
+      builder.AppendQueryParameter("se", Storage::_detail::UrlEncodeQueryParameter(expiresOnStr));
     }
     if (IPRange.HasValue())
     {
       builder.AppendQueryParameter(
-          "sip", Storage::Details::UrlEncodeQueryParameter(IPRange.GetValue()));
+          "sip", Storage::_detail::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
     if (!Identifier.empty())
     {
-      builder.AppendQueryParameter("si", Storage::Details::UrlEncodeQueryParameter(Identifier));
+      builder.AppendQueryParameter("si", Storage::_detail::UrlEncodeQueryParameter(Identifier));
     }
-    builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
+    builder.AppendQueryParameter("sr", Storage::_detail::UrlEncodeQueryParameter(resource));
     if (!Permissions.empty())
     {
-      builder.AppendQueryParameter("sp", Storage::Details::UrlEncodeQueryParameter(Permissions));
+      builder.AppendQueryParameter("sp", Storage::_detail::UrlEncodeQueryParameter(Permissions));
     }
-    builder.AppendQueryParameter("sig", Storage::Details::UrlEncodeQueryParameter(signature));
+    builder.AppendQueryParameter("sig", Storage::_detail::UrlEncodeQueryParameter(signature));
     if (!CacheControl.empty())
     {
-      builder.AppendQueryParameter("rscc", Storage::Details::UrlEncodeQueryParameter(CacheControl));
+      builder.AppendQueryParameter("rscc", Storage::_detail::UrlEncodeQueryParameter(CacheControl));
     }
     if (!ContentDisposition.empty())
     {
       builder.AppendQueryParameter(
-          "rscd", Storage::Details::UrlEncodeQueryParameter(ContentDisposition));
+          "rscd", Storage::_detail::UrlEncodeQueryParameter(ContentDisposition));
     }
     if (!ContentEncoding.empty())
     {
       builder.AppendQueryParameter(
-          "rsce", Storage::Details::UrlEncodeQueryParameter(ContentEncoding));
+          "rsce", Storage::_detail::UrlEncodeQueryParameter(ContentEncoding));
     }
     if (!ContentLanguage.empty())
     {
       builder.AppendQueryParameter(
-          "rscl", Storage::Details::UrlEncodeQueryParameter(ContentLanguage));
+          "rscl", Storage::_detail::UrlEncodeQueryParameter(ContentLanguage));
     }
     if (!ContentType.empty())
     {
-      builder.AppendQueryParameter("rsct", Storage::Details::UrlEncodeQueryParameter(ContentType));
+      builder.AppendQueryParameter("rsct", Storage::_detail::UrlEncodeQueryParameter(ContentType));
     }
 
     return builder.GetAbsoluteUrl();
@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = Details::SasProtocolToString(Protocol);
+    std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
@@ -228,86 +228,86 @@ namespace Azure { namespace Storage { namespace Sas {
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n"
         + PreauthorizedAgentObjectId + "\n" + AgentObjectId + "\n" + CorrelationId + "\n"
         + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
+        + Storage::_detail::DefaultSasVersion + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
-    std::string signature = Azure::Core::Base64Encode(Storage::Details::HmacSha256(
+    std::string signature = Azure::Core::Base64Encode(Storage::_detail::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Base64Decode(userDelegationKey.Value)));
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
-        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
-    builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
+        "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
+    builder.AppendQueryParameter("sr", Storage::_detail::UrlEncodeQueryParameter(resource));
     if (!startsOnStr.empty())
     {
-      builder.AppendQueryParameter("st", Storage::Details::UrlEncodeQueryParameter(startsOnStr));
+      builder.AppendQueryParameter("st", Storage::_detail::UrlEncodeQueryParameter(startsOnStr));
     }
-    builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(expiresOnStr));
+    builder.AppendQueryParameter("se", Storage::_detail::UrlEncodeQueryParameter(expiresOnStr));
     builder.AppendQueryParameter("sp", Permissions);
     if (IPRange.HasValue())
     {
       builder.AppendQueryParameter(
-          "sip", Storage::Details::UrlEncodeQueryParameter(IPRange.GetValue()));
+          "sip", Storage::_detail::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
-    builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
+    builder.AppendQueryParameter("spr", Storage::_detail::UrlEncodeQueryParameter(protocol));
     builder.AppendQueryParameter(
-        "skoid", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedObjectId));
+        "skoid", Storage::_detail::UrlEncodeQueryParameter(userDelegationKey.SignedObjectId));
     builder.AppendQueryParameter(
-        "sktid", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));
+        "sktid", Storage::_detail::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));
     builder.AppendQueryParameter(
-        "skt", Storage::Details::UrlEncodeQueryParameter(signedStartsOnStr));
+        "skt", Storage::_detail::UrlEncodeQueryParameter(signedStartsOnStr));
     builder.AppendQueryParameter(
-        "ske", Storage::Details::UrlEncodeQueryParameter(signedExpiresOnStr));
+        "ske", Storage::_detail::UrlEncodeQueryParameter(signedExpiresOnStr));
     builder.AppendQueryParameter(
-        "sks", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedService));
+        "sks", Storage::_detail::UrlEncodeQueryParameter(userDelegationKey.SignedService));
     builder.AppendQueryParameter(
-        "skv", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
+        "skv", Storage::_detail::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
     if (!PreauthorizedAgentObjectId.empty())
     {
       builder.AppendQueryParameter(
-          "saoid", Storage::Details::UrlEncodeQueryParameter(PreauthorizedAgentObjectId));
+          "saoid", Storage::_detail::UrlEncodeQueryParameter(PreauthorizedAgentObjectId));
     }
     if (!AgentObjectId.empty())
     {
       builder.AppendQueryParameter(
-          "suoid", Storage::Details::UrlEncodeQueryParameter(AgentObjectId));
+          "suoid", Storage::_detail::UrlEncodeQueryParameter(AgentObjectId));
     }
     if (!CorrelationId.empty())
     {
       builder.AppendQueryParameter(
-          "scid", Storage::Details::UrlEncodeQueryParameter(CorrelationId));
+          "scid", Storage::_detail::UrlEncodeQueryParameter(CorrelationId));
     }
     if (DirectoryDepth.HasValue())
     {
       builder.AppendQueryParameter(
           "sdd",
-          Storage::Details::UrlEncodeQueryParameter(std::to_string(DirectoryDepth.GetValue())));
+          Storage::_detail::UrlEncodeQueryParameter(std::to_string(DirectoryDepth.GetValue())));
     }
     if (!CacheControl.empty())
     {
-      builder.AppendQueryParameter("rscc", Storage::Details::UrlEncodeQueryParameter(CacheControl));
+      builder.AppendQueryParameter("rscc", Storage::_detail::UrlEncodeQueryParameter(CacheControl));
     }
     if (!ContentDisposition.empty())
     {
       builder.AppendQueryParameter(
-          "rscd", Storage::Details::UrlEncodeQueryParameter(ContentDisposition));
+          "rscd", Storage::_detail::UrlEncodeQueryParameter(ContentDisposition));
     }
     if (!ContentEncoding.empty())
     {
       builder.AppendQueryParameter(
-          "rsce", Storage::Details::UrlEncodeQueryParameter(ContentEncoding));
+          "rsce", Storage::_detail::UrlEncodeQueryParameter(ContentEncoding));
     }
     if (!ContentLanguage.empty())
     {
       builder.AppendQueryParameter(
-          "rscl", Storage::Details::UrlEncodeQueryParameter(ContentLanguage));
+          "rscl", Storage::_detail::UrlEncodeQueryParameter(ContentLanguage));
     }
     if (!ContentType.empty())
     {
-      builder.AppendQueryParameter("rsct", Storage::Details::UrlEncodeQueryParameter(ContentType));
+      builder.AppendQueryParameter("rsct", Storage::_detail::UrlEncodeQueryParameter(ContentType));
     }
-    builder.AppendQueryParameter("sig", Storage::Details::UrlEncodeQueryParameter(signature));
+    builder.AppendQueryParameter("sig", Storage::_detail::UrlEncodeQueryParameter(signature));
 
     return builder.GetAbsoluteUrl();
   }

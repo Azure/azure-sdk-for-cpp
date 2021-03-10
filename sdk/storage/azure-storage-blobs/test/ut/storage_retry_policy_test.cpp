@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
         response->SetHeader("content-type", "application/xml");
         response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+        response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
         response->SetHeader("x-ms-error-code", "BlobNotFound");
         response->SetHeader(
             "date",
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
         response->SetHeader("content-type", "application/xml");
         response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+        response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
         response->SetHeader("x-ms-error-code", "ConditionNotMet");
         response->SetHeader(
             "date",
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Test {
                   Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
               int64_t bodyLength = std::min(
                   static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
-              auto bodyStream = std::make_unique<IO::MemoryBodyStream>(
+              auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
                   bodyLength);
               response->SetBodyStream(std::move(bodyStream));
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Test {
               response->SetHeader("etag", m_primaryETag.ToString());
               response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
               response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-              response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+              response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
               response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
               response->SetHeader("x-ms-lease-status", "unlocked");
               response->SetHeader("x-ms-lease-state", "available");
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Test {
                 Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
             int64_t bodyLength = std::min(
                 static_cast<int64_t>(m_secondaryContent->length()) - requestOffset, requestLength);
-            auto bodyStream = std::make_unique<IO::MemoryBodyStream>(
+            auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
                 bodyLength);
             response->SetBodyStream(std::move(bodyStream));
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Test {
             response->SetHeader("etag", m_secondaryETag.ToString());
             response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
             response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-            response->SetHeader("x-ms-version", Blobs::Details::ApiVersion);
+            response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
             response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
             response->SetHeader("x-ms-lease-status", "unlocked");
             response->SetHeader("x-ms-lease-state", "available");
@@ -256,7 +256,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
   }
 
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto ret = blobClient.Download();
     auto timeEnd = std::chrono::steady_clock::now();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
     EXPECT_EQ(numTrial, 2);
 
@@ -329,7 +329,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), secondaryContent);
   }
 
@@ -378,7 +378,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
     EXPECT_EQ(numPrimaryTrial, 3);
     EXPECT_EQ(numSecondaryTrial, 1);

@@ -32,10 +32,10 @@ KeyClient::KeyClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>(
       Azure::Core::Http::Url(vaultUrl),
       apiVersion,
-      Azure::Core::Http::Internal::HttpPipeline(
+      Azure::Core::Http::_internal::HttpPipeline(
           options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
@@ -48,9 +48,9 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
-      {Details::KeysPath, name, options.Version});
+      {_detail::KeysPath, name, options.Version});
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateKey(
@@ -62,11 +62,11 @@ Azure::Response<KeyVaultKey> KeyClient::CreateKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(keyType, options),
+      _detail::KeyRequestParameters(keyType, options),
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
-      {Details::KeysPath, name, "create"});
+      {_detail::KeysPath, name, "create"});
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
@@ -77,11 +77,11 @@ Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(ecKeyOptions),
+      _detail::KeyRequestParameters(ecKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
-      {Details::KeysPath, keyName, "create"});
+      {_detail::KeysPath, keyName, "create"});
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
@@ -92,11 +92,11 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(rsaKeyOptions),
+      _detail::KeyRequestParameters(rsaKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
-      {Details::KeysPath, keyName, "create"});
+      {_detail::KeysPath, keyName, "create"});
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
@@ -107,11 +107,11 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(octKeyOptions),
+      _detail::KeyRequestParameters(octKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
-      {Details::KeysPath, keyName, "create"});
+      {_detail::KeysPath, keyName, "create"});
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -124,7 +124,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return Details::DeletedKeyDeserialize(name, rawResponse);
+            return _detail::DeletedKeyDeserialize(name, rawResponse);
           },
-          {Details::KeysPath, name}));
+          {_detail::KeysPath, name}));
 }

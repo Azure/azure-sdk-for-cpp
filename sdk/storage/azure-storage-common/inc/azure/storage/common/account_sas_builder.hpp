@@ -31,12 +31,12 @@ namespace Azure { namespace Storage { namespace Sas {
     HttpsOnly,
   };
 
-  namespace Details {
+  namespace _detail {
     inline std::string SasProtocolToString(SasProtocol protocol)
     {
       return protocol == SasProtocol::HttpsAndHttp ? "https,http" : "https";
     }
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Specifies the resource types accessible from an account level shared access
