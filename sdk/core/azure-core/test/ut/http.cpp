@@ -126,29 +126,29 @@ namespace Azure { namespace Core { namespace Test {
   }
 
   // HTTP Range
-  TEST(TestHttp, Range)
+  TEST(TestHttp, HttpRange)
   {
     {
-      Http::Range r{10, 1};
+      Http::HttpRange r{10, 1};
       EXPECT_EQ(r.Offset, 10);
       EXPECT_TRUE(r.Length.HasValue());
       EXPECT_EQ(r.Length.GetValue(), 1);
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       r.Offset = 10;
       EXPECT_EQ(r.Offset, 10);
       EXPECT_FALSE(r.Length.HasValue());
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       r.Length = 10;
       EXPECT_EQ(r.Offset, 0);
       EXPECT_TRUE(r.Length.HasValue());
       EXPECT_EQ(r.Length.GetValue(), 10);
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       EXPECT_EQ(r.Offset, 0);
       EXPECT_FALSE(r.Length.HasValue());
     }
@@ -192,7 +192,8 @@ namespace Azure { namespace Core { namespace Test {
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
       EXPECT_EQ(
-          Azure::Core::IO::BodyStream::ReadToCount(stream, temp.data(), 1, GetApplicationContext()),
+          Azure::Core::IO::BodyStream::ReadToCount(
+              stream, temp.data(), 1, Context::GetApplicationContext()),
           1);
 
       EXPECT_EQ(temp[0], 1);
@@ -213,7 +214,7 @@ namespace Azure { namespace Core { namespace Test {
       auto getStream = req.GetBodyStream();
       EXPECT_EQ(
           Azure::Core::IO::BodyStream::ReadToCount(
-              *getStream, temp.data(), 2, GetApplicationContext()),
+              *getStream, temp.data(), 2, Context::GetApplicationContext()),
           2);
 
       EXPECT_EQ(temp[0], 1);

@@ -188,14 +188,14 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Optionally specify the time at which the shared access signature becomes
      * valid. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<Azure::Core::DateTime> StartsOn;
+    Azure::Core::Nullable<Azure::DateTime> StartsOn;
 
     /**
      * @brief The time at which the shared access signature becomes invalid. This field must
      * be omitted if it has been specified in an associated stored access policy. This timestamp
      * will be truncated to second.
      */
-    Azure::Core::DateTime ExpiresOn;
+    Azure::DateTime ExpiresOn;
 
     /**
      * @brief Specifies an IP address or a range of IP addresses from which to accept

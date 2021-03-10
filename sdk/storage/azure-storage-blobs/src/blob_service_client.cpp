@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
-      const Azure::Core::DateTime& expiresOn,
+      const Azure::DateTime& expiresOn,
       const GetUserDelegationKeyOptions& options,
       const Azure::Core::Context& context) const
   {

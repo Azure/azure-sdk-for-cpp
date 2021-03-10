@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       bool Created = true;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
     };
 
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct CreateShareDirectoryResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       bool Created = true;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       std::string RequestId;
@@ -119,10 +119,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DownloadShareFileDetails
     {
-      Core::DateTime LastModified;
+      DateTime LastModified;
       Storage::Metadata Metadata;
       Azure::ETag ETag;
-      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopyProgress;
@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DownloadShareFileResult
     {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize = 0;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       FileHttpHeaders HttpHeaders;
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ClearShareFileRangeResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
     };
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DownloadShareFileToResult
     {
       int64_t FileSize = 0;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       FileHttpHeaders HttpHeaders;
       DownloadShareFileDetails Details;
     };
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   public:
     std::string RequestId;
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatusType CopyStatus;
     Azure::Core::Nullable<std::string> VersionId;

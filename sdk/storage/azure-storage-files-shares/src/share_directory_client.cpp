@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -133,8 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
-          Azure::Core::DateTime::DateFormat::Rfc3339,
-          Core::DateTime::TimeFractionFormat::AllDigits);
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -144,8 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime
           = options.SmbProperties.LastWrittenOn.GetValue().ToString(
-              Azure::Core::DateTime::DateFormat::Rfc3339,
-              Core::DateTime::TimeFractionFormat::AllDigits);
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -257,8 +255,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().ToString(
-          Azure::Core::DateTime::DateFormat::Rfc3339,
-          Core::DateTime::TimeFractionFormat::AllDigits);
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -267,8 +264,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (smbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.GetValue().ToString(
-          Azure::Core::DateTime::DateFormat::Rfc3339,
-          Core::DateTime::TimeFractionFormat::AllDigits);
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {

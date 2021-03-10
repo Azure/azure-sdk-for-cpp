@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct DownloadBlobToResult
     {
       Models::BlobType BlobType;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t BlobSize = 0;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       DownloadBlobDetails Details;
@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       Azure::ETag ETag;
-      Azure::Core::DateTime LastModified;
+      Azure::DateTime LastModified;
       std::string LeaseId;
     };
 
@@ -42,14 +42,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       Azure::ETag ETag;
-      Azure::Core::DateTime LastModified;
+      Azure::DateTime LastModified;
     };
 
     struct ChangeBlobLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;
-      Azure::Core::DateTime LastModified;
+      Azure::DateTime LastModified;
       std::string LeaseId;
     };
 
@@ -57,14 +57,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string RequestId;
       Azure::ETag ETag;
-      Azure::Core::DateTime LastModified;
+      Azure::DateTime LastModified;
     };
 
     struct RenewBlobLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;
-      Azure::Core::DateTime LastModified;
+      Azure::DateTime LastModified;
       std::string LeaseId;
     };
 
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   public:
     std::string RequestId;
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatus CopyStatus;
     Azure::Core::Nullable<std::string> VersionId;

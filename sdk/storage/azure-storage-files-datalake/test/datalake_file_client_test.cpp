@@ -363,7 +363,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
       Files::DataLake::DownloadDataLakeFileOptions options;
-      options.Range = Azure::Core::Http::Range();
+      options.Range = Azure::Core::Http::HttpRange();
       options.Range.GetValue().Offset = 0;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
       Files::DataLake::DownloadDataLakeFileOptions options;
-      options.Range = Azure::Core::Http::Range();
+      options.Range = Azure::Core::Http::HttpRange();
       options.Range.GetValue().Offset = bufferSize / 2;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
@@ -447,8 +447,8 @@ namespace Azure { namespace Storage { namespace Test {
           client.ScheduleDeletion(
               Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options),
           StorageException);
-      options.ExpiresOn = Azure::Core::DateTime::Parse(
-          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::Core::DateTime::DateFormat::Rfc1123);
+      options.ExpiresOn = Azure::DateTime::Parse(
+          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
       options.TimeToExpire = Azure::Core::Nullable<std::chrono::milliseconds>();
       EXPECT_NO_THROW(client.ScheduleDeletion(
           Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options));
