@@ -8,8 +8,8 @@
 #include <cctype>
 #include <iterator>
 #include <limits>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 using namespace Azure::Core;
 
