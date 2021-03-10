@@ -56,5 +56,5 @@ TEST(ResponseT, value)
   Azure::Response<std::string> const constResponse(constFakeT, std::move(rawResponse));
   // Use * and -> on const Response
   EXPECT_EQ(constFakeT, *constResponse);
-  EXPECT_EQ(constFakeT.data(), constResponse->data());
+  EXPECT_EQ(*constFakeT.data(), *constResponse->data());
 }
