@@ -10,7 +10,7 @@
 
 #include <cstdio>
 
-namespace Azure { namespace IO { namespace Internal {
+namespace Azure { namespace IO { namespace _internal {
 
   /**
    * @brief FileHandleHolder ensures native handle resource is released.
@@ -42,4 +42,4 @@ namespace Azure { namespace IO { namespace Internal {
     FILE* GetValue() noexcept { return m_value; }
   };
 
-}}} // namespace Azure::IO::Internal
+}}} // namespace Azure::IO::_internal

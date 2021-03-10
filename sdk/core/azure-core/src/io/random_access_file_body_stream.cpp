@@ -17,16 +17,16 @@
 #endif
 
 #include "azure/core/context.hpp"
-#include "azure/core/internal/io/parallel_file_body_stream.hpp"
+#include "azure/core/internal/io/random_access_file_body_stream.hpp"
 
 #include <cstdint>
 #include <stdexcept>
 #include <string>
 
 using Azure::Core::Context;
-using namespace Azure::IO::Internal;
+using namespace Azure::IO::_internal;
 
-int64_t ParallelFileBodyStream::OnRead(
+int64_t RandomAccessFileBodyStream::OnRead(
     uint8_t* buffer,
     int64_t count,
     Azure::Core::Context const& context)

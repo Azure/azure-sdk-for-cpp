@@ -23,7 +23,7 @@
 #endif
 
 #include "azure/core/context.hpp"
-#include "azure/core/internal/io/filehandleholder.hpp"
+#include "azure/core/internal/io/file_handle_holder.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -162,12 +162,12 @@ namespace Azure { namespace IO {
   };
 
   /**
-   * @brief #Azure::IO::BodyStream used for reading data from a file.
+   * @brief A concrete implementation of #Azure::IO::BodyStream used for reading data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
     // immutable
-    Azure::IO::Internal::FileHandleHolder m_fileStreamHolder;
+    Azure::IO::_internal::FileHandleHolder m_fileStreamHolder;
 #if defined(AZ_PLATFORM_WINDOWS)
     HANDLE m_filehandle;
 #elif defined(AZ_PLATFORM_POSIX)

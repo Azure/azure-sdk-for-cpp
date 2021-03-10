@@ -19,8 +19,8 @@
 #endif
 
 #include "azure/core/context.hpp"
-#include "azure/core/internal/io/filehandleholder.hpp"
-#include "azure/core/internal/io/parallel_file_body_stream.hpp"
+#include "azure/core/internal/io/file_handle_holder.hpp"
+#include "azure/core/internal/io/random_access_file_body_stream.hpp"
 #include "azure/core/io/body_stream.hpp"
 
 #include <algorithm>
@@ -110,7 +110,7 @@ FileBodyStream::FileBodyStream(const std::string& filename) : m_offset(0)
   }
   m_length = fileSize.QuadPart;
 
-  m_parallelBodyStream = new Internal::ParallelFileBodyStream(m_filehandle, 0, m_length);
+  m_parallelBodyStream = new _internal::RandomAccessFileBodyStream(m_filehandle, 0, m_length);
 
 #elif defined(AZ_PLATFORM_POSIX)
   m_fileDescriptor = fileno(m_fileStreamHolder.GetValue());
@@ -122,7 +122,7 @@ FileBodyStream::FileBodyStream(const std::string& filename) : m_offset(0)
   }
   m_length = finfo.st_size;
 
-  m_parallelBodyStream = new Internal::ParallelFileBodyStream(m_fileDescriptor, 0, m_length);
+  m_parallelBodyStream = new _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, m_length);
 
 #endif
 }
