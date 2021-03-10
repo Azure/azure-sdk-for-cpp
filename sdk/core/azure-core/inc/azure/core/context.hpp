@@ -164,7 +164,7 @@ namespace Azure { namespace Core {
         }
       }
       std::abort();
-      //It should be expected that keys may not exist
+      // It should be expected that keys may not exist
       //  That implies we return T* and NOT a T&
     }
 

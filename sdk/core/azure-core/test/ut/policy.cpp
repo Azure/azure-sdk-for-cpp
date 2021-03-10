@@ -89,7 +89,8 @@ TEST(Policy, throwWhenNoTransportPolicy)
   Azure::Core::Http::Internal::HttpPipeline pipeline(policies);
   Azure::Core::Http::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-  EXPECT_THROW(pipeline.Send(request, Azure::Core::Context::GetApplicationContext()), std::invalid_argument);
+  EXPECT_THROW(
+      pipeline.Send(request, Azure::Core::Context::GetApplicationContext()), std::invalid_argument);
 }
 
 TEST(Policy, throwWhenNoTransportPolicyMessage)
