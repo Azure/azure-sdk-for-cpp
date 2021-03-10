@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       bool Created = true;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
     };
 
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct CreateShareDirectoryResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       bool Created = true;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       std::string RequestId;
@@ -119,10 +119,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DownloadShareFileDetails
     {
-      Core::DateTime LastModified;
+      DateTime LastModified;
       Storage::Metadata Metadata;
       Azure::ETag ETag;
-      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopyProgress;
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ClearShareFileRangeResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
     };
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   public:
     std::string RequestId;
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatusType CopyStatus;
     Azure::Core::Nullable<std::string> VersionId;

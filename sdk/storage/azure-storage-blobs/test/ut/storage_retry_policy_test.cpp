@@ -90,8 +90,8 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader("x-ms-error-code", "BlobNotFound");
         response->SetHeader(
             "date",
-            Azure::Core::DateTime(std::chrono::system_clock::now())
-                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            Azure::DateTime(std::chrono::system_clock::now())
+                .ToString(Azure::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPreconditionFailedResponse = []() {
@@ -115,8 +115,8 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader("x-ms-error-code", "ConditionNotMet");
         response->SetHeader(
             "date",
-            Azure::Core::DateTime(std::chrono::system_clock::now())
-                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            Azure::DateTime(std::chrono::system_clock::now())
+                .ToString(Azure::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPrimaryResponse
@@ -145,8 +145,8 @@ namespace Azure { namespace Storage { namespace Test {
               response->SetHeader("x-ms-server-encrypted", "true");
               response->SetHeader(
                   "date",
-                  Azure::Core::DateTime(std::chrono::system_clock::now())
-                      .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                  Azure::DateTime(std::chrono::system_clock::now())
+                      .ToString(Azure::DateTime::DateFormat::Rfc1123));
               return response;
             };
       auto ConstructSecondaryResponse =
@@ -175,8 +175,8 @@ namespace Azure { namespace Storage { namespace Test {
             response->SetHeader("x-ms-server-encrypted", "true");
             response->SetHeader(
                 "date",
-                Azure::Core::DateTime(std::chrono::system_clock::now())
-                    .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                Azure::DateTime(std::chrono::system_clock::now())
+                    .ToString(Azure::DateTime::DateFormat::Rfc1123));
             return response;
           };
 

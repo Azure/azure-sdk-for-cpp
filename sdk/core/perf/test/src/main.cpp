@@ -34,7 +34,7 @@ int main(int argc, char** argv)
   tests.emplace_back(Azure::Perf::Test::WinHttpClientGetTest::GetTestMetadata());
 #endif
 
-  Azure::Perf::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
+  Azure::Perf::Program::Run(Azure::Core::Context::GetApplicationContext(), tests, argc, argv);
 
   return 0;
 }

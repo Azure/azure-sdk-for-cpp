@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string InferSecondaryUrl(const std::string primaryUri);
 
-  bool IsValidTime(const Azure::Core::DateTime& datetime);
+  bool IsValidTime(const Azure::DateTime& datetime);
 
   inline std::string Base64EncodeText(const std::string& text)
   {

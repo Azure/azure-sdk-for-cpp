@@ -12,7 +12,7 @@
 #include <sstream>
 #include <stdexcept>
 
-using namespace Azure::Core;
+using namespace Azure;
 
 namespace {
 DateTime GetSystemClockEpoch()
@@ -61,7 +61,7 @@ void ValidateDateElementRange(
   if (outOfRange != 0)
   {
     throw std::invalid_argument(
-        "Azure::Core::DateTime " + valueName + " (" + std::to_string(value) + ") cannot be "
+        "Azure::DateTime " + valueName + " (" + std::to_string(value) + ") cannot be "
         + (outOfRange < 0 ? std::string("less than ") + std::to_string(minValue)
                           : std::string("greater than ") + std::to_string(maxValue))
         + ".");
@@ -174,14 +174,14 @@ void ValidateDate(
   if (day > maxDay)
   {
     throw std::invalid_argument(
-        "Azure::Core::DateTime: invalid month day number (month: " + std::to_string(month)
+        "Azure::DateTime: invalid month day number (month: " + std::to_string(month)
         + ", day: " + std::to_string(day) + ", maximum: " + std::to_string(maxDay) + ").");
   }
 
   if (!IsLeapYear(year) && month == 2 && day == 29)
   {
     throw std::invalid_argument(
-        "Azure::Core::DateTime: year " + std::to_string(year)
+        "Azure::DateTime: year " + std::to_string(year)
         + "is not a leap year, and therefore does not have February 29th.");
   }
 
@@ -192,8 +192,8 @@ void ValidateDate(
     if (dayOfWeek != expectedDayOfWeek)
     {
       throw std::invalid_argument(
-          "Azure::Core::DateTime: incorrect day of week specified (actual: "
-          + std::to_string(dayOfWeek) + ", expected: " + std::to_string(expectedDayOfWeek) + ").");
+          "Azure::DateTime: incorrect day of week specified (actual: " + std::to_string(dayOfWeek)
+          + ", expected: " + std::to_string(expectedDayOfWeek) + ").");
     }
   }
 
@@ -424,7 +424,7 @@ DateTime::operator std::chrono::system_clock::time_point() const
   if (outOfRange != 0)
   {
     throw std::invalid_argument(
-        std::string("Cannot represent Azure::Core::DateTime as "
+        std::string("Cannot represent Azure::DateTime as "
                     "std::chrono::system_clock::time_point: value is too ")
         + (outOfRange < 0 ? "small." : "big."));
   }
@@ -747,7 +747,7 @@ void DateTime::ThrowIfUnsupportedYear() const
   if (outOfRange != 0)
   {
     throw std::invalid_argument(
-        std::string("Cannot represent Azure::Core::DateTime as std::string: the date is ")
+        std::string("Cannot represent Azure::DateTime as std::string: the date is ")
         + (outOfRange < 0 ? "before 0001-01-01." : "after 9999-12-31 23:59:59.9999999."));
   }
 }

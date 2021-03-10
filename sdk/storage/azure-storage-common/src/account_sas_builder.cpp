@@ -91,13 +91,12 @@ namespace Azure { namespace Storage { namespace Sas {
       resourceTypes += "o";
     }
 
-    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
-                                  Azure::Core::DateTime::DateFormat::Rfc3339,
-                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
-                                                  : "";
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
     std::string expiresOnStr = ExpiresOn.ToString(
-        Azure::Core::DateTime::DateFormat::Rfc3339,
-        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
 
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
         + resourceTypes + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"

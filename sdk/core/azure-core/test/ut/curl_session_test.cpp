@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
         request, std::move(uniqueCurlMock), true);
 
-    EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+    EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
   }
 
   TEST_F(CurlSession, chunkResponseSizeZero)
@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
@@ -116,14 +116,15 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
       auto r = session->GetResponse();
       r->SetBodyStream(std::move(session));
       auto bodyS = r->GetBodyStream();
 
       // Read the bodyStream to get all chunks
       EXPECT_THROW(
-          Azure::Core::IO::BodyStream::ReadToEnd(*bodyS, Azure::Core::GetApplicationContext()),
+          Azure::Core::IO::BodyStream::ReadToEnd(
+              *bodyS, Azure::Core::Context::GetApplicationContext()),
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
@@ -193,14 +194,14 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
       auto response = session->GetResponse();
       response->SetBodyStream(std::move(session));
       auto bodyS = response->GetBodyStream();
 
       // Read the bodyStream to get all chunks
-      EXPECT_NO_THROW(
-          Azure::Core::IO::BodyStream::ReadToEnd(*bodyS, Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(Azure::Core::IO::BodyStream::ReadToEnd(
+          *bodyS, Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
@@ -228,7 +229,7 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      auto returnCode = session->Perform(Azure::Core::GetApplicationContext());
+      auto returnCode = session->Perform(Azure::Core::Context::GetApplicationContext());
       EXPECT_EQ(CURLE_SEND_ERROR, returnCode);
     }
     // Check connection pool is empty (connection was not moved to the pool)
