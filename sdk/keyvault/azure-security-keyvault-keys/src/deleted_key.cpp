@@ -26,11 +26,11 @@ DeletedKey _detail::DeletedKeyDeserialize(
   // recoveryId
   // deletedDate
   // scheduledPurgeDate
-  deletedKey.RecoveryId = jsonParser[Details::RecoveryIdPropertyName].get<std::string>();
+  deletedKey.RecoveryId = jsonParser[_detail::RecoveryIdPropertyName].get<std::string>();
   deletedKey.DeletedDate = UnixTimeConverter::UnixTimeToDatetime(
-      jsonParser[Details::DeletedOnPropertyName].get<uint64_t>());
+      jsonParser[_detail::DeletedOnPropertyName].get<uint64_t>());
   deletedKey.ScheduledPurgeDate = UnixTimeConverter::UnixTimeToDatetime(
-      jsonParser[Details::ScheduledPurgeDatePropertyName].get<uint64_t>());
+      jsonParser[_detail::ScheduledPurgeDatePropertyName].get<uint64_t>());
 
   return deletedKey;
 }

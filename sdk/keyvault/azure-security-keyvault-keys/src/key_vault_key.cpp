@@ -41,32 +41,32 @@ void _detail::KeyVaultKeyDeserialize(
   auto jsonParser = Azure::Core::_internal::Json::json::parse(body);
 
   // "Key"
-  auto const& jsonKey = jsonParser[Details::KeyPropertyName];
+  auto const& jsonKey = jsonParser[_detail::KeyPropertyName];
   {
     // key_ops
-    auto keyOperationVector = jsonKey[Details::KeyOpsPropertyName].get<std::vector<std::string>>();
+    auto keyOperationVector = jsonKey[_detail::KeyOpsPropertyName].get<std::vector<std::string>>();
     std::vector<KeyOperation> keyOperations;
     ParseStringOperationsToKeyOperations(keyOperations, keyOperationVector);
     key.Key.SetKeyOperations(keyOperations);
   }
-  key.Key.Id = jsonKey[Details::KeyIdPropertyName].get<std::string>();
+  key.Key.Id = jsonKey[_detail::KeyIdPropertyName].get<std::string>();
   key.Key.KeyType
-      = _detail::KeyTypeFromString(jsonKey[Details::KeyTypePropertyName].get<std::string>());
+      = _detail::KeyTypeFromString(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
 
   if (jsonKey.contains(_detail::CurveNamePropertyName))
   {
-    key.Key.CurveName = KeyCurveName(jsonKey[Details::CurveNamePropertyName].get<std::string>());
+    key.Key.CurveName = KeyCurveName(jsonKey[_detail::CurveNamePropertyName].get<std::string>());
   }
 
   // "Attributes"
   {
-    auto attributes = jsonParser[Details::AttributesPropertyName];
+    auto attributes = jsonParser[_detail::AttributesPropertyName];
     key.Properties.CreatedOn
         = UnixTimeConverter::UnixTimeToDatetime(attributes["created"].get<uint64_t>());
   }
 
   // "Tags"
-  auto const& tags = jsonParser[Details::TagsPropertyName];
+  auto const& tags = jsonParser[_detail::TagsPropertyName];
   {
     for (auto tag = tags.begin(); tag != tags.end(); ++tag)
     {
