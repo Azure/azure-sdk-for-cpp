@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("http://httpbin.org/get"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
       std::string const expectedConnectionKey = "httpbin.org0011";
 
       {

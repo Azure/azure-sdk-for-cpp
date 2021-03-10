@@ -3,13 +3,14 @@
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/internal/null_body_stream.hpp"
+#include "azure/core/url.hpp"
 
 #include <utility>
 
 using namespace Azure::Core::Http;
 using namespace Azure::Core::IO::_internal;
 
-void Azure::Core::Http::_detail::InsertHeaderWithValidation(
+void Azure::Core::_detail::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)

@@ -11,6 +11,7 @@
 #include <type_traits>
 
 using Azure::Core::Context;
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
 
 namespace {
@@ -73,7 +74,8 @@ inline std::string GetRequestLogMessage(
         }
       }
 
-      log << _detail::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
+      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(
+          encodedAllowedRequestQueryParams);
     }
   }
   AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);

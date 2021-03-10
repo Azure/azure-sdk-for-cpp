@@ -108,7 +108,7 @@ namespace Azure { namespace Storage { namespace Sas {
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Base64Decode(credential.GetAccountKey())));
 
-    Azure::Core::Http::Url builder;
+    Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
     builder.AppendQueryParameter("ss", Storage::_detail::UrlEncodeQueryParameter(services));

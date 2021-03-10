@@ -69,8 +69,8 @@ namespace Azure { namespace Storage { namespace _detail {
     for (const auto& query : request.GetUrl().GetQueryParameters())
     {
       std::string key = Azure::Core::_internal::Strings::ToLower(query.first);
-      ordered_kv.emplace_back(std::make_pair(
-          Azure::Core::Http::Url::Decode(key), Azure::Core::Http::Url::Decode(query.second)));
+      ordered_kv.emplace_back(
+          std::make_pair(Azure::Core::Url::Decode(key), Azure::Core::Url::Decode(query.second)));
     }
     std::sort(ordered_kv.begin(), ordered_kv.end());
     for (const auto& p : ordered_kv)

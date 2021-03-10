@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
                 StandardStorageConnectionString(), RandomString(), RandomString())
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
-      std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
+      std::string secondaryHost = Core::Url(secondaryUrl).GetHost();
       clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
                 StandardStorageConnectionString(), RandomString(), RandomString())
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
-      std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
+      std::string secondaryHost = Core::Url(secondaryUrl).GetHost();
       clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -426,7 +426,7 @@ namespace Azure { namespace Storage { namespace Test {
                 StandardStorageConnectionString(), RandomString(), RandomString())
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
-      std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
+      std::string secondaryHost = Core::Url(secondaryUrl).GetHost();
       clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(

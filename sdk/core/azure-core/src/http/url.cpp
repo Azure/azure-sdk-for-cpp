@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/http.hpp"
+#include "azure/core/url.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <algorithm>
@@ -10,7 +10,7 @@
 #include <limits>
 #include <vector>
 
-using namespace Azure::Core::Http;
+using namespace Azure::Core;
 
 Url::Url(const std::string& url)
 {

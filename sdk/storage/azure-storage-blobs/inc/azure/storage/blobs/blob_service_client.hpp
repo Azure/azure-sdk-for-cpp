@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
+    Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;

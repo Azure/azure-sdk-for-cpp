@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
+    Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::Shares

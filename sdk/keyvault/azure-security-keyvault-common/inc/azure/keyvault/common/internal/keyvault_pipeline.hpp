@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
    * @brief The HTTP pipeline used by KeyVault clients.
    */
   class KeyVaultPipeline {
-    Azure::Core::Http::Url m_vaultUrl;
+    Azure::Core::Url m_vaultUrl;
     Azure::Core::Http::_internal::HttpPipeline m_pipeline;
     std::string m_apiVersion;
 
@@ -75,7 +75,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @param pipeline The Http pipeline for sending requests with.
      */
     explicit KeyVaultPipeline(
-        Azure::Core::Http::Url vaultUrl,
+        Azure::Core::Url vaultUrl,
         std::string apiVersion,
         Azure::Core::Http::_internal::HttpPipeline&& pipeline)
         : m_vaultUrl(std::move(vaultUrl)), m_pipeline(pipeline), m_apiVersion(std::move(apiVersion))

@@ -76,6 +76,7 @@ set(
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
     inc/azure/core/uuid.hpp
+    inc/azure/core/url.hpp
     inc/azure/core/version.hpp
     inc/azure/core.hpp
 )

@@ -244,7 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string InferSecondaryUrl(const std::string primaryUrl)
   {
-    Azure::Core::Http::Url secondaryUri(primaryUrl);
+    Azure::Core::Url secondaryUri(primaryUrl);
     std::string primaryHost = secondaryUri.GetHost();
     auto dotPos = primaryHost.find(".");
     std::string accountName = primaryHost.substr(0, dotPos);

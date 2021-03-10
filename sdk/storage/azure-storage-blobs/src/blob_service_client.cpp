@@ -262,10 +262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.DeletedBlobContainerName = deletedBlobContainerName;
     protocolLayerOptions.DeletedBlobContainerVersion = deletedBlobContainerVersion;
     auto response = _detail::BlobRestClient::BlobContainer::Undelete(
-        context,
-        *m_pipeline,
-        Azure::Core::Http::Url(blobContainerClient.GetUrl()),
-        protocolLayerOptions);
+        context, *m_pipeline, Azure::Core::Url(blobContainerClient.GetUrl()), protocolLayerOptions);
 
     return Azure::Response<BlobContainerClient>(
         std::move(blobContainerClient), response.ExtractRawResponse());

@@ -87,7 +87,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
-  Azure::Core::Http::Url url("");
+  Azure::Core::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
   EXPECT_THROW(pipeline.Send(request, Azure::Core::GetApplicationContext()), std::invalid_argument);
 }
@@ -102,7 +102,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   policies.push_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
-  Azure::Core::Http::Url url("");
+  Azure::Core::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
   try

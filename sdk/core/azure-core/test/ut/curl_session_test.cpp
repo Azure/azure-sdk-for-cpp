@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     // Move the curlMock to build a session and then send the request
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -185,7 +185,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -220,7 +220,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
