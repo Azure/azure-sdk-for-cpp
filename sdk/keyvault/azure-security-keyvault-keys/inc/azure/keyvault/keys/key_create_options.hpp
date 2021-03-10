@@ -39,13 +39,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Indicates when the key will be valid and can be used for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<Azure::Core::DateTime> NotBefore;
+    Azure::Core::Nullable<Azure::DateTime> NotBefore;
 
     /**
      * @brief Indicates when the key will expire and cannot be used for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
+    Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
      * @brief whether the key is enabled and useable for cryptographic operations.

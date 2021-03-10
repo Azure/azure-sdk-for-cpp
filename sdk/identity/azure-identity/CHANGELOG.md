@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Removed `TransportPolicyOptions` from `ClientSecretCredentialOptions`. Updated the options to derive from ClientOptions.
+- Renamed `Azure::Identity::Details::Version` to `Azure::Identity::PackageVersion`.
 
 ## 1.0.0-beta.3 (2021-02-02)
 

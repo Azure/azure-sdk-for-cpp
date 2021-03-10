@@ -157,7 +157,7 @@ Context inline CreateRetryContext(Context const& parent)
   int retryCount = 0;
   if (parent.HasKey(RetryKey))
   {
-    retryCount = parent[RetryKey].Get<int>() + 1;
+    retryCount = parent.Get<int>(RetryKey) + 1;
   }
   return parent.WithValue(RetryKey, retryCount);
 }
@@ -174,7 +174,7 @@ int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
     // ...
     return -1;
   }
-  return context[RetryKey].Get<int>();
+  return context.Get<int>(RetryKey);
 }
 
 std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(

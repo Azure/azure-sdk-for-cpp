@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Http {
    * `Offset + Length - 1` inclusively.
    *
    */
-  struct Range
+  struct HttpRange
   {
     /**
      * @brief The starting point of the HTTP Range.

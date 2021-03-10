@@ -10,6 +10,7 @@
 
 - Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyShareFileOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+- Renamed `Azure::Storage::Files::Shares::Details::Version` to `Azure::Storage::Files::Shares::PackageVersion`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
