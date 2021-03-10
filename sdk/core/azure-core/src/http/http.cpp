@@ -7,15 +7,15 @@
 #include <utility>
 
 using namespace Azure::Core::Http;
-using namespace Azure::IO::Internal;
+using namespace Azure::Core::IO::_internal;
 
-void Azure::Core::Http::Details::InsertHeaderWithValidation(
+void Azure::Core::Http::_detail::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
 {
   // Static table for validating header names. It is created just once for the program and reused
-  // each time AddHeader is called
+  // each time SetHeader is called
   static const uint8_t validChars[256] = {
       0, /* 0 - null */
       0, /* 1 - start of heading */

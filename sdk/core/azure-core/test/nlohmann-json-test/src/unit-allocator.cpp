@@ -31,7 +31,7 @@ SOFTWARE.
 
 #define private public
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+using Azure::Core::Json::_internal::json;
 #undef private
 
 namespace {
@@ -47,7 +47,7 @@ TEST_CASE("bad_alloc")
   SECTION("bad_alloc")
   {
     // create JSON type using the throwing allocator
-    using bad_json = Azure::Core::Internal::Json::basic_json<
+    using bad_json = Azure::Core::Json::_internal::basic_json<
         std::map,
         std::vector,
         std::string,
@@ -129,7 +129,7 @@ template <class T> void my_allocator_clean_up(T* p)
 TEST_CASE("controlled bad_alloc")
 {
   // create JSON type using the throwing allocator
-  using my_json = Azure::Core::Internal::Json::basic_json<
+  using my_json = Azure::Core::Json::_internal::basic_json<
       std::map,
       std::vector,
       std::string,
@@ -251,7 +251,7 @@ TEST_CASE("bad my_allocator::construct")
 {
   SECTION("my_allocator::construct doesn't forward")
   {
-    using bad_alloc_json = Azure::Core::Internal::Json::basic_json<
+    using bad_alloc_json = Azure::Core::Json::_internal::basic_json<
         std::map,
         std::vector,
         std::string,

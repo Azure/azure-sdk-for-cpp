@@ -23,31 +23,23 @@ KeyClient::KeyClient(
 {
   auto apiVersion = options.GetVersionString();
 
-  // Base Pipeline
-  std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(
-      std::make_unique<TelemetryPolicy>("KeyVault", apiVersion, options.TelemetryPolicyOptions));
-  policies.emplace_back(std::make_unique<RequestIdPolicy>());
-  policies.emplace_back(std::make_unique<RetryPolicy>(options.RetryOptions));
-
+  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Http::TokenRequestOptions const tokenOptions
         = {{"https://vault.azure.net/.default"}};
 
-    policies.emplace_back(
+    perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }
 
-  policies.emplace_back(std::make_unique<LoggingPolicy>());
-  policies.emplace_back(
-      std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-  Azure::Core::Http::Url url(vaultUrl);
-
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
-      url, apiVersion, std::move(policies));
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>(
+      Azure::Core::Http::Url(vaultUrl),
+      apiVersion,
+      Azure::Core::Http::_internal::HttpPipeline(
+          options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
+Azure::Response<KeyVaultKey> KeyClient::GetKey(
     std::string const& name,
     GetKeyOptions const& options,
     Azure::Core::Context const& context) const
@@ -56,12 +48,12 @@ Azure::Core::Response<KeyVaultKey> KeyClient::GetKey(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
-      {Details::KeysPath, name, options.Version});
+      {_detail::KeysPath, name, options.Version});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateKey(
     std::string const& name,
     JsonWebKeyType keyType,
     CreateKeyOptions const& options,
@@ -70,14 +62,14 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(keyType, options),
+      _detail::KeyRequestParameters(keyType, options),
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(name, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
-      {Details::KeysPath, name, "create"});
+      {_detail::KeysPath, name, "create"});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateEcKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
     CreateEcKeyOptions const& ecKeyOptions,
     Azure::Core::Context const& context) const
 {
@@ -85,14 +77,14 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateEcKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(ecKeyOptions),
+      _detail::KeyRequestParameters(ecKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
-      {Details::KeysPath, keyName, "create"});
+      {_detail::KeysPath, keyName, "create"});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateRsaKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
     CreateRsaKeyOptions const& rsaKeyOptions,
     Azure::Core::Context const& context) const
 {
@@ -100,14 +92,14 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateRsaKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(rsaKeyOptions),
+      _detail::KeyRequestParameters(rsaKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
-      {Details::KeysPath, keyName, "create"});
+      {_detail::KeysPath, keyName, "create"});
 }
 
-Azure::Core::Response<KeyVaultKey> KeyClient::CreateOctKey(
+Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
     CreateOctKeyOptions const& octKeyOptions,
     Azure::Core::Context const& context) const
 {
@@ -115,11 +107,11 @@ Azure::Core::Response<KeyVaultKey> KeyClient::CreateOctKey(
   return m_pipeline->SendRequest<KeyVaultKey>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      Details::KeyRequestParameters(octKeyOptions),
+      _detail::KeyRequestParameters(octKeyOptions),
       [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return Details::KeyVaultKeyDeserialize(keyName, rawResponse);
+        return _detail::KeyVaultKeyDeserialize(keyName, rawResponse);
       },
-      {Details::KeysPath, keyName, "create"});
+      {_detail::KeysPath, keyName, "create"});
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -132,7 +124,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return Details::DeletedKeyDeserialize(name, rawResponse);
+            return _detail::DeletedKeyDeserialize(name, rawResponse);
           },
-          {Details::KeysPath, name}));
+          {_detail::KeysPath, name}));
 }

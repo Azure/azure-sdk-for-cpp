@@ -47,12 +47,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::HttpQuerySnapshot, Storage::Details::UrlEncodeQueryParameter(snapshot));
+          Storage::_detail::HttpQuerySnapshot, Storage::_detail::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -62,22 +62,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::HttpQueryVersionId,
-          Storage::Details::UrlEncodeQueryParameter(versionId));
+          Storage::_detail::HttpQueryVersionId,
+          Storage::_detail::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
 
-  Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::Create(
+  Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::Create(
       const CreateAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
+    _detail::BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -93,16 +93,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::AppendBlob::Create(
+    return _detail::BlobRestClient::AppendBlob::Create(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
+  Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
       const CreateAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
     auto optionsCopy = options;
-    optionsCopy.AccessConditions.IfNoneMatch = Azure::Core::ETag::Any();
+    optionsCopy.AccessConditions.IfNoneMatch = Azure::ETag::Any();
     try
     {
       return Create(optionsCopy, context);
@@ -115,19 +115,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::CreateAppendBlobResult ret;
         ret.RequestId = e.RequestId;
         ret.Created = false;
-        return Azure::Core::Response<Models::CreateAppendBlobResult>(
+        return Azure::Response<Models::CreateAppendBlobResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
-      Azure::IO::BodyStream* content,
+  Azure::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
+      Azure::Core::IO::BodyStream* content,
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
+    _detail::BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
@@ -144,16 +144,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::AppendBlob::AppendBlock(
+    return _detail::BlobRestClient::AppendBlob::AppendBlock(
         context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
+  Azure::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
       const AppendBlockFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
+    _detail::BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.SourceRange = options.SourceRange;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
@@ -172,15 +172,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return Details::BlobRestClient::AppendBlob::AppendBlockFromUri(
+    return _detail::BlobRestClient::AppendBlob::AppendBlockFromUri(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
+  Azure::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
       const SealAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    Details::BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
+    _detail::BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return Details::BlobRestClient::AppendBlob::Seal(
+    return _detail::BlobRestClient::AppendBlob::Seal(
         context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 

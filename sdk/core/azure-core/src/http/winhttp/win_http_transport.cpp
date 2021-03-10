@@ -154,7 +154,7 @@ void ParseHttpVersion(
  *
  * @throw if \p headers has an invalid header name or if the delimiter is missing.
  */
-void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
+void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
 {
   auto begin = headers.data();
   auto end = begin + headers.size();
@@ -164,7 +164,7 @@ void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->AddHeader(
+      rawResponse->SetHeader(
           reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
     }
     else
@@ -184,7 +184,7 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
       exceptionMessage + " Error Code: " + std::to_string(error) + ".");
 }
 
-void WinHttpTransport::CreateSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
@@ -206,7 +206,7 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<Details::HandleManage
 }
 
 void WinHttpTransport::CreateConnectionHandle(
-    std::unique_ptr<Details::HandleManager>& handleManager)
+    std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
   uint16_t port = handleManager->m_request.GetUrl().GetPort();
@@ -233,7 +233,7 @@ void WinHttpTransport::CreateConnectionHandle(
   }
 }
 
-void WinHttpTransport::CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = handleManager->m_request.GetMethod();
@@ -264,7 +264,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<Details::HandleManage
 }
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
-void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   auto streamBody = handleManager->m_request.GetBodyStream();
   int64_t streamLength = streamBody->Length();
@@ -273,13 +273,13 @@ void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleMan
   if (uploadChunkSize <= 0)
   {
     // use default size
-    if (streamLength < Details::MaximumUploadChunkSize)
+    if (streamLength < _detail::MaximumUploadChunkSize)
     {
       uploadChunkSize = streamLength;
     }
     else
     {
-      uploadChunkSize = Details::DefaultUploadChunkSize;
+      uploadChunkSize = _detail::DefaultUploadChunkSize;
     }
   }
 
@@ -288,7 +288,7 @@ void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleMan
   while (true)
   {
     auto rawRequestLen
-        = streamBody->Read(handleManager->m_context, unique_buffer.get(), uploadChunkSize);
+        = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
     if (rawRequestLen == 0)
     {
       break;
@@ -308,7 +308,7 @@ void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleMan
   }
 }
 
-void WinHttpTransport::SendRequest(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   std::wstring encodedHeaders;
   int encodedHeadersLength = 0;
@@ -371,7 +371,7 @@ void WinHttpTransport::SendRequest(std::unique_ptr<Details::HandleManager>& hand
   }
 }
 
-void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
@@ -391,7 +391,7 @@ void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& 
 }
 
 int64_t WinHttpTransport::GetContentLength(
-    std::unique_ptr<Details::HandleManager>& handleManager,
+    std::unique_ptr<_detail::HandleManager>& handleManager,
     HttpMethod requestMethod,
     HttpStatusCode responseStatusCode)
 {
@@ -427,7 +427,7 @@ int64_t WinHttpTransport::GetContentLength(
 }
 
 std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
-    std::unique_ptr<Details::HandleManager> handleManager,
+    std::unique_ptr<_detail::HandleManager> handleManager,
     HttpMethod requestMethod)
 {
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
@@ -537,19 +537,19 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   auto rawResponse
       = std::make_unique<RawResponse>(majorVersion, minorVersion, httpStatusCode, reasonPhrase);
 
-  AddHeaders(responseHeaders, rawResponse);
+  SetHeaders(responseHeaders, rawResponse);
 
   int64_t contentLength
       = GetContentLength(handleManager, requestMethod, rawResponse->GetStatusCode());
 
   rawResponse->SetBodyStream(
-      std::make_unique<Details::WinHttpStream>(std::move(handleManager), contentLength));
+      std::make_unique<_detail::WinHttpStream>(std::move(handleManager), contentLength));
   return rawResponse;
 }
 
-std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Request& request)
+std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
-  auto handleManager = std::make_unique<Details::HandleManager>(context, request);
+  auto handleManager = std::make_unique<_detail::HandleManager>(request, context);
 
   CreateSessionHandle(handleManager);
   CreateConnectionHandle(handleManager);
@@ -563,7 +563,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 }
 
 // Read the response from the sent request.
-int64_t Details::WinHttpStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
+int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
 {
   if (count <= 0 || this->m_isEOF)
   {

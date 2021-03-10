@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
 
 HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
@@ -18,7 +18,7 @@ std::string const& RawResponse::GetReasonPhrase() const { return m_reasonPhrase;
 
 Azure::Core::CaseInsensitiveMap const& RawResponse::GetHeaders() const { return this->m_headers; }
 
-void RawResponse::AddHeader(uint8_t const* const first, uint8_t const* const last)
+void RawResponse::SetHeader(uint8_t const* const first, uint8_t const* const last)
 {
   // get name and value from header
   auto start = first;
@@ -30,7 +30,7 @@ void RawResponse::AddHeader(uint8_t const* const first, uint8_t const* const las
   }
 
   // Always toLower() headers
-  auto headerName = Azure::Core::Internal::Strings::ToLower(std::string(start, end));
+  auto headerName = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
   start = end + 1; // start value
   while (start < last && (*start == ' ' || *start == '\t'))
   {
@@ -40,19 +40,19 @@ void RawResponse::AddHeader(uint8_t const* const first, uint8_t const* const las
   end = std::find(start, last, '\r');
   auto headerValue = std::string(start, end); // remove \r
 
-  AddHeader(headerName, headerValue);
+  SetHeader(headerName, headerValue);
 }
 
-void RawResponse::AddHeader(std::string const& header)
+void RawResponse::SetHeader(std::string const& header)
 {
-  return AddHeader(
+  return SetHeader(
       reinterpret_cast<uint8_t const*>(header.data()),
       reinterpret_cast<uint8_t const*>(header.data() + header.size()));
 }
 
-void RawResponse::AddHeader(std::string const& name, std::string const& value)
+void RawResponse::SetHeader(std::string const& name, std::string const& value)
 {
-  return Details::InsertHeaderWithValidation(this->m_headers, name, value);
+  return _detail::InsertHeaderWithValidation(this->m_headers, name, value);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)

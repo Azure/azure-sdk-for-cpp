@@ -94,11 +94,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::CreateDataLakeFileSystemResult> containing the
+     * @return Azure::Response<Models::CreateDataLakeFileSystemResult> containing the
      * information of create a file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::CreateDataLakeFileSystemResult> Create(
+    Azure::Response<Models::CreateDataLakeFileSystemResult> Create(
         const CreateDataLakeFileSystemOptions& options = CreateDataLakeFileSystemOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -106,11 +106,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates the file system if it does not exists.
      * @param options Optional parameters to create this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::CreateDataLakeFileSystemResult> containing the
+     * @return Azure::Response<Models::CreateDataLakeFileSystemResult> containing the
      * information of create a file system. Only valid when successfully created the file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::CreateDataLakeFileSystemResult> CreateIfNotExists(
+    Azure::Response<Models::CreateDataLakeFileSystemResult> CreateIfNotExists(
         const CreateDataLakeFileSystemOptions& options = CreateDataLakeFileSystemOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -118,11 +118,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> containing the
+     * @return Azure::Response<Models::DeleteDataLakeFileSystemResult> containing the
      * information returned when deleting file systems.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> Delete(
+    Azure::Response<Models::DeleteDataLakeFileSystemResult> Delete(
         const DeleteDataLakeFileSystemOptions& options = DeleteDataLakeFileSystemOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -130,12 +130,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the file system if it exists.
      * @param options Optional parameters to delete this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> containing the
+     * @return Azure::Response<Models::DeleteDataLakeFileSystemResult> containing the
      * information returned when deleting file systems. Only valid when successfully deleted the
      * file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> DeleteIfExists(
+    Azure::Response<Models::DeleteDataLakeFileSystemResult> DeleteIfExists(
         const DeleteDataLakeFileSystemOptions& options = DeleteDataLakeFileSystemOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -145,11 +145,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult> containing the
+     * @return Azure::Response<Models::SetDataLakeFileSystemMetadataResult> containing the
      * information returned when setting the metadata onto the file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult> SetMetadata(
+    Azure::Response<Models::SetDataLakeFileSystemMetadataResult> SetMetadata(
         Storage::Metadata metadata,
         const SetDataLakeFileSystemMetadataOptions& options
         = SetDataLakeFileSystemMetadataOptions(),
@@ -159,11 +159,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult> containing the
+     * @return Azure::Response<Models::GetDataLakeFileSystemPropertiesResult> containing the
      * information when getting the file system's properties.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult> GetProperties(
+    Azure::Response<Models::GetDataLakeFileSystemPropertiesResult> GetProperties(
         const GetDataLakeFileSystemPropertiesOptions& options
         = GetDataLakeFileSystemPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -174,11 +174,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                  filesystem are listed.
      * @param options Optional parameters to list the paths in file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<Models::ListPathsSinglePageResult> containing the
+     * @return Azure::Response<Models::ListPathsSinglePageResult> containing the
      * results when listing the paths under a file system.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
+    Azure::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
         bool recursive,
         const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return A GetDataLakeFileSystemAccessPolicyResult describing the container's access policy.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::GetDataLakeFileSystemAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::GetDataLakeFileSystemAccessPolicyResult> GetAccessPolicy(
         const GetDataLakeFileSystemAccessPolicyOptions& options
         = GetDataLakeFileSystemAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return A SetDataLakeFileSystemAccessPolicyResult describing the updated file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::SetDataLakeFileSystemAccessPolicyResult> SetAccessPolicy(
+    Azure::Response<Models::SetDataLakeFileSystemAccessPolicyResult> SetAccessPolicy(
         const SetDataLakeFileSystemAccessPolicyOptions& options
         = SetDataLakeFileSystemAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -218,10 +218,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param destinationFilePath The path of the file the source file is renaming to.
      * @param options Optional parameters to rename a file
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<DataLakeFileClient> The client targets the renamed file.
+     * @return Azure::Response<DataLakeFileClient> The client targets the renamed file.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<DataLakeFileClient> RenameFile(
+    Azure::Response<DataLakeFileClient> RenameFile(
         const std::string& fileName,
         const std::string& destinationFilePath,
         const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions(),
@@ -234,11 +234,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param destinationDirectoryPath The destinationPath the source directory is renaming to.
      * @param options Optional parameters to rename a directory.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Core::Response<DataLakeDirectoryClient> The client targets the renamed
+     * @return Azure::Response<DataLakeDirectoryClient> The client targets the renamed
      * directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<DataLakeDirectoryClient> RenameDirectory(
+    Azure::Response<DataLakeDirectoryClient> RenameDirectory(
         const std::string& directoryName,
         const std::string& destinationDirectoryPath,
         const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions(),
@@ -247,12 +247,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   private:
     Azure::Core::Http::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
-    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     explicit DataLakeFileSystemClient(
         Azure::Core::Http::Url fileSystemUrl,
         Blobs::BlobContainerClient blobContainerClient,
-        std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : m_fileSystemUrl(std::move(fileSystemUrl)),
           m_blobContainerClient(std::move(blobContainerClient)), m_pipeline(std::move(pipeline))
     {

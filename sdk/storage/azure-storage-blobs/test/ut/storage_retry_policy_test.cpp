@@ -37,9 +37,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
-        Core::Context const& context,
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override
+        Core::Http::NextHttpPolicy nextHttpPolicy,
+        Core::Context const& context) const override
     {
       (void)context;
       (void)nextHttpPolicy;
@@ -83,15 +83,15 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = std::make_unique<Core::Http::RawResponse>(Core::Http::RawResponse(
             1, 1, Core::Http::HttpStatusCode::NotFound, "The specified blob does not exist."));
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
-        response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
-        response->AddHeader("content-type", "application/xml");
-        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-        response->AddHeader("x-ms-error-code", "BlobNotFound");
-        response->AddHeader(
+        response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
+        response->SetHeader("content-type", "application/xml");
+        response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+        response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
+        response->SetHeader("x-ms-error-code", "BlobNotFound");
+        response->SetHeader(
             "date",
-            Azure::Core::DateTime(std::chrono::system_clock::now())
-                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            Azure::DateTime(std::chrono::system_clock::now())
+                .ToString(Azure::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPreconditionFailedResponse = []() {
@@ -108,15 +108,15 @@ namespace Azure { namespace Storage { namespace Test {
             Core::Http::HttpStatusCode::PreconditionFailed,
             "The condition specified using HTTP conditional header(s) is not met."));
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
-        response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
-        response->AddHeader("content-type", "application/xml");
-        response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-        response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-        response->AddHeader("x-ms-error-code", "ConditionNotMet");
-        response->AddHeader(
+        response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
+        response->SetHeader("content-type", "application/xml");
+        response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+        response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
+        response->SetHeader("x-ms-error-code", "ConditionNotMet");
+        response->SetHeader(
             "date",
-            Azure::Core::DateTime(std::chrono::system_clock::now())
-                .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            Azure::DateTime(std::chrono::system_clock::now())
+                .ToString(Azure::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPrimaryResponse
@@ -129,24 +129,24 @@ namespace Azure { namespace Storage { namespace Test {
                   Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
               int64_t bodyLength = std::min(
                   static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
-              auto bodyStream = std::make_unique<IO::MemoryBodyStream>(
+              auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
                   bodyLength);
               response->SetBodyStream(std::move(bodyStream));
-              response->AddHeader("content-length", std::to_string(bodyLength));
-              response->AddHeader("etag", m_primaryETag.ToString());
-              response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
-              response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-              response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-              response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
-              response->AddHeader("x-ms-lease-status", "unlocked");
-              response->AddHeader("x-ms-lease-state", "available");
-              response->AddHeader("x-ms-blob-type", "BlockBlob");
-              response->AddHeader("x-ms-server-encrypted", "true");
-              response->AddHeader(
+              response->SetHeader("content-length", std::to_string(bodyLength));
+              response->SetHeader("etag", m_primaryETag.ToString());
+              response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
+              response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+              response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
+              response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
+              response->SetHeader("x-ms-lease-status", "unlocked");
+              response->SetHeader("x-ms-lease-state", "available");
+              response->SetHeader("x-ms-blob-type", "BlockBlob");
+              response->SetHeader("x-ms-server-encrypted", "true");
+              response->SetHeader(
                   "date",
-                  Azure::Core::DateTime(std::chrono::system_clock::now())
-                      .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                  Azure::DateTime(std::chrono::system_clock::now())
+                      .ToString(Azure::DateTime::DateFormat::Rfc1123));
               return response;
             };
       auto ConstructSecondaryResponse =
@@ -159,24 +159,24 @@ namespace Azure { namespace Storage { namespace Test {
                 Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
             int64_t bodyLength = std::min(
                 static_cast<int64_t>(m_secondaryContent->length()) - requestOffset, requestLength);
-            auto bodyStream = std::make_unique<IO::MemoryBodyStream>(
+            auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
                 bodyLength);
             response->SetBodyStream(std::move(bodyStream));
-            response->AddHeader("content-length", std::to_string(bodyLength));
-            response->AddHeader("etag", m_secondaryETag.ToString());
-            response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
-            response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
-            response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-            response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
-            response->AddHeader("x-ms-lease-status", "unlocked");
-            response->AddHeader("x-ms-lease-state", "available");
-            response->AddHeader("x-ms-blob-type", "BlockBlob");
-            response->AddHeader("x-ms-server-encrypted", "true");
-            response->AddHeader(
+            response->SetHeader("content-length", std::to_string(bodyLength));
+            response->SetHeader("etag", m_secondaryETag.ToString());
+            response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
+            response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
+            response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
+            response->SetHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
+            response->SetHeader("x-ms-lease-status", "unlocked");
+            response->SetHeader("x-ms-lease-state", "available");
+            response->SetHeader("x-ms-blob-type", "BlockBlob");
+            response->SetHeader("x-ms-server-encrypted", "true");
+            response->SetHeader(
                 "date",
-                Azure::Core::DateTime(std::chrono::system_clock::now())
-                    .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                Azure::DateTime(std::chrono::system_clock::now())
+                    .ToString(Azure::DateTime::DateFormat::Rfc1123));
             return response;
           };
 
@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Test {
       if (region == Region::Primary)
       {
         if (requestHeaders.find("if-match") == requestHeaders.end()
-            || Azure::Core::ETag(requestHeaders.at("if-match")) == m_primaryETag)
+            || Azure::ETag(requestHeaders.at("if-match")) == m_primaryETag)
         {
           return ConstructPrimaryResponse();
         }
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Test {
       else
       {
         if (requestHeaders.find("if-match") == requestHeaders.end()
-            || Azure::Core::ETag(requestHeaders.at("if-match")) == m_secondaryETag)
+            || Azure::ETag(requestHeaders.at("if-match")) == m_secondaryETag)
         {
           return ConstructSecondaryResponse();
         }
@@ -240,8 +240,8 @@ namespace Azure { namespace Storage { namespace Test {
   private:
     std::shared_ptr<std::string> m_primaryContent;
     std::shared_ptr<std::string> m_secondaryContent;
-    Azure::Core::ETag m_primaryETag;
-    Azure::Core::ETag m_secondaryETag;
+    Azure::ETag m_primaryETag;
+    Azure::ETag m_secondaryETag;
 
     std::function<ResponseType(Region)> m_failPolicy;
   };
@@ -256,7 +256,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(Azure::Core::Context(), *(ret->BodyStream));
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
   }
 
@@ -279,21 +279,21 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
     int64_t delayMs = 1000;
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(delayMs);
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(delayMs);
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto timeBegin = std::chrono::steady_clock::now();
     auto ret = blobClient.Download();
     auto timeEnd = std::chrono::steady_clock::now();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(Azure::Core::Context(), *(ret->BodyStream));
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
     EXPECT_EQ(numTrial, 2);
 
     int64_t elapsedTime
         = std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeBegin).count();
     EXPECT_GE(elapsedTime, delayMs * 0.5);
-    EXPECT_LE(elapsedTime, delayMs * 2);
+    EXPECT_LE(elapsedTime, delayMs * 4);
   }
 
   TEST(StorageRetryPolicyTest, Failover)
@@ -315,7 +315,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(0);
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(0);
     {
       std::string primaryUrl
           = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -323,13 +323,13 @@ namespace Azure { namespace Storage { namespace Test {
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
       std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
-      clientOptions.RetryOptions.SecondaryHostForRetryReads = secondaryHost;
+      clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(Azure::Core::Context(), *(ret->BodyStream));
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), secondaryContent);
   }
 
@@ -363,8 +363,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
-    clientOptions.RetryOptions.MaxRetries = 3;
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(0);
+    clientOptions.Retry.MaxRetries = 3;
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(0);
     {
       std::string primaryUrl
           = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -372,13 +372,13 @@ namespace Azure { namespace Storage { namespace Test {
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
       std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
-      clientOptions.RetryOptions.SecondaryHostForRetryReads = secondaryHost;
+      clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     auto ret = blobClient.Download();
     auto responseBody
-        = Azure::IO::BodyStream::ReadToEnd(Azure::Core::Context(), *(ret->BodyStream));
+        = Azure::Core::IO::BodyStream::ReadToEnd(*(ret->BodyStream), Azure::Core::Context());
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
     EXPECT_EQ(numPrimaryTrial, 3);
     EXPECT_EQ(numSecondaryTrial, 1);
@@ -418,8 +418,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(transportPolicyPtr));
-    clientOptions.RetryOptions.MaxRetries = 3;
-    clientOptions.RetryOptions.RetryDelay = std::chrono::milliseconds(0);
+    clientOptions.Retry.MaxRetries = 3;
+    clientOptions.Retry.RetryDelay = std::chrono::milliseconds(0);
     {
       std::string primaryUrl
           = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Test {
                 .GetUrl();
       std::string secondaryUrl = InferSecondaryUrl(primaryUrl);
       std::string secondaryHost = Core::Http::Url(secondaryUrl).GetHost();
-      clientOptions.RetryOptions.SecondaryHostForRetryReads = secondaryHost;
+      clientOptions.SecondaryHostForRetryReads = secondaryHost;
     }
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);

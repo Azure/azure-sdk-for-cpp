@@ -44,7 +44,7 @@ set(
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_exception.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
-    inc/azure/storage/common/storage_retry_policy.hpp
+    inc/azure/storage/common/storage_switch_to_secondary_policy.hpp
     inc/azure/storage/common/version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
 )
@@ -60,7 +60,7 @@ set(
     src/storage_credential.cpp
     src/storage_exception.cpp
     src/storage_per_retry_policy.cpp
-    src/storage_retry_policy.cpp
+    src/storage_switch_to_secondary_policy.cpp
     src/xml_wrapper.cpp
 )
 

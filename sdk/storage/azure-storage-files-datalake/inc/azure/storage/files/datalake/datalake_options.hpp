@@ -24,53 +24,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Client options used to initalize DataLakeServiceClient, FileSystemClient, PathClient,
    * FileClient and DirectoryClient.
    */
-  struct DataLakeClientOptions
+  struct DataLakeClientOptions : Azure::Core::_internal::ClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-
-    /**
-     * @brief The last part of the user agent for telemetry.
-     */
-    std::string ApplicationId;
+    std::string SecondaryHostForRetryReads;
 
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = Details::DefaultServiceApiVersion;
+    std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
   /**
    * @brief Specifies access conditions for a file system.
    */
-  struct FileSystemAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct FileSystemAccessConditions : public Azure::ModifiedConditions, public LeaseAccessConditions
   {
   };
 
   /**
    * @brief Specifies access conditions for a path.
    */
-  struct PathAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct PathAccessConditions : public Azure::ModifiedConditions,
+                                public Azure::MatchConditions,
                                 public LeaseAccessConditions
   {
   };
@@ -488,7 +470,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the range of the resource to be retrieved.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief The hash algorithm used to calculate the hash for the returned content.
@@ -642,7 +624,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief The expiry time in RFC1123 format. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
      */
-    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
+    Azure::Core::Nullable<DateTime> ExpiresOn;
   };
 
   using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;

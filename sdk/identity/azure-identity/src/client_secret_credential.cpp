@@ -10,18 +10,18 @@
 #include <sstream>
 
 using namespace Azure::Identity;
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 
-std::string const Azure::Identity::Details::g_aadGlobalAuthority
+std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 Azure::Core::AccessToken ClientSecretCredential::GetToken(
-    Azure::Core::Context const& context,
-    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions) const
+    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions,
+    Azure::Core::Context const& context) const
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Internal::Http;
+  using namespace Azure::Core::Http::_internal;
 
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
@@ -54,22 +54,12 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     Request request(HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
 
-    request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.AddHeader("Content-Length", std::to_string(bodyString.size()));
+    request.SetHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.SetHeader("Content-Length", std::to_string(bodyString.size()));
 
-    std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<RequestIdPolicy>());
+    HttpPipeline httpPipeline(m_options, "Identity-client-secret-credential", "", {}, {});
 
-    {
-      RetryOptions retryOptions;
-      policies.emplace_back(std::make_unique<RetryPolicy>(retryOptions));
-    }
-
-    policies.emplace_back(std::make_unique<TransportPolicy>(m_options.TransportPolicyOptions));
-
-    HttpPipeline httpPipeline(policies);
-
-    std::shared_ptr<RawResponse> response = httpPipeline.Send(context, request);
+    std::shared_ptr<RawResponse> response = httpPipeline.Send(request, context);
 
     if (!response)
     {

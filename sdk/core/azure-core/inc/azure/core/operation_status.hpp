@@ -53,7 +53,8 @@ namespace Azure { namespace Core {
      */
     bool operator==(const OperationStatus& other) const noexcept
     {
-      return Internal::Strings::LocaleInvariantCaseInsensitiveEqual(m_value, other.m_value);
+      return _internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+          m_value, other.m_value);
     }
 
     /**

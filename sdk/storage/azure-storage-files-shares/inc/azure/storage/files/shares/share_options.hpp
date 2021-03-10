@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/internal/client_options.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/access_conditions.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
@@ -20,39 +20,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Client options used to initalize ShareServiceClient, ShareClient, ShareFileClient and
    * ShareDirectoryClient.
    */
-  struct ShareClientOptions
+  struct ShareClientOptions : Azure::Core::_internal::ClientOptions
   {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    Core::Http::RetryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-
-    /**
-     * @brief The last part of the user agent for telemetry.
-     */
-    std::string ApplicationId;
-
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = Details::DefaultServiceApiVersion;
+    std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
   struct ListSharesSinglePageOptions
@@ -365,7 +338,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Downloads only the bytes of the file from this range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief When specified together with Range, service returns hash for the range as long as the
@@ -512,7 +485,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The range to be get from service.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
@@ -567,7 +540,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Downloads only the bytes of the file from this range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     struct
     {

@@ -21,9 +21,9 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Details {
+namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
 
-  class KeyRequestParameters : public Azure::Core::Internal::Json::JsonSerializable {
+  class KeyRequestParameters : public Azure::Core::Json::_internal::JsonSerializable {
   private:
     JsonWebKeyType m_keyType;
     CreateKeyOptions const& m_options;
@@ -71,4 +71,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     std::string Serialize() const override;
   };
-}}}}} // namespace Azure::Security::KeyVault::Keys::Details
+}}}}} // namespace Azure::Security::KeyVault::Keys::_detail

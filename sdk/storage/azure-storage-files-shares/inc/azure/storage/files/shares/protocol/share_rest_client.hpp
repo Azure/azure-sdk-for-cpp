@@ -57,17 +57,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * @brief Creation time for the file/directory.
        */
-      Azure::Core::Nullable<Core::DateTime> CreatedOn;
+      Azure::Core::Nullable<DateTime> CreatedOn;
 
       /**
        * @brief Last write time for the file/directory.
        */
-      Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
+      Azure::Core::Nullable<DateTime> LastWrittenOn;
 
       /**
        * @brief Changed time for the file/directory.
        */
-      Azure::Core::Nullable<Core::DateTime> ChangedOn;
+      Azure::Core::Nullable<DateTime> ChangedOn;
 
       /**
        * @brief The fileId of the file.
@@ -158,8 +158,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // An Access policy.
     struct AccessPolicy
     {
-      Core::DateTime StartsOn; // The date-time the policy is active.
-      Core::DateTime ExpiresOn; // The date-time the policy expires.
+      DateTime StartsOn; // The date-time the policy is active.
+      DateTime ExpiresOn; // The date-time the policy expires.
       std::string Permission; // The permissions for the ACL policy.
     };
 
@@ -217,9 +217,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ParentId; // ParentId uniquely identifies the parent directory of the object.
       std::string SessionId; // SMB session ID in context of which the file handle was opened
       std::string ClientIp; // Client IP that opened the handle
-      Core::DateTime OpenedOn; // Time when the session that previously opened the handle has last
-                               // been reconnected. (UTC)
-      Core::DateTime LastReconnectedOn; // Time handle was last connected to (UTC)
+      DateTime OpenedOn; // Time when the session that previously opened the handle has last
+                         // been reconnected. (UTC)
+      DateTime LastReconnectedOn; // Time handle was last connected to (UTC)
     };
 
     // When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
@@ -276,17 +276,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // Properties of a share.
     struct ShareItemDetails
     {
-      Core::DateTime LastModified;
-      Core::ETag Etag;
+      DateTime LastModified;
+      Azure::ETag Etag;
       int64_t Quota = int64_t();
       Azure::Core::Nullable<int32_t> ProvisionedIops;
       Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
       Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Core::Nullable<Core::DateTime> NextAllowedQuotaDowngradeTime;
-      Azure::Core::Nullable<Core::DateTime> DeletedOn;
+      Azure::Core::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
+      Azure::Core::Nullable<DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
       Azure::Core::Nullable<ShareAccessTier> AccessTier; // The access tier of the share.
-      Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
+      Azure::Core::Nullable<DateTime> AccessTierChangedOn;
       Azure::Core::Nullable<std::string> AccessTierTransitionState;
       LeaseStatusType LeaseStatus;
       LeaseStateType LeaseState;
@@ -361,8 +361,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // The list of file ranges
     struct ShareFileRangeList
     {
-      std::vector<Core::Http::Range> Ranges;
-      std::vector<Core::Http::Range> ClearRanges;
+      std::vector<Core::Http::HttpRange> Ranges;
+      std::vector<Core::Http::HttpRange> ClearRanges;
     };
 
     // Stats for the share.
@@ -514,7 +514,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
   } // namespace Models
-  namespace Details {
+  namespace _detail {
     using namespace Models;
     constexpr static const char* DefaultServiceApiVersion = "2020-02-10";
     constexpr static const char* QueryCopyId = "copyid";
@@ -681,27 +681,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ShareCreateResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareGetPropertiesResult
     {
       Storage::Metadata Metadata;
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
       int64_t Quota = int64_t();
       Azure::Core::Nullable<int32_t> ProvisionedIops;
       Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
       Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Core::Nullable<Core::DateTime> NextAllowedQuotaDowngradeTime;
+      Azure::Core::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<LeaseStateType> LeaseState;
       Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
       Azure::Core::Nullable<ShareAccessTier> AccessTier;
-      Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
+      Azure::Core::Nullable<DateTime> AccessTierChangedOn;
       Azure::Core::Nullable<std::string> AccessTierTransitionState;
     };
 
@@ -712,47 +712,47 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ShareAcquireLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string LeaseId;
       std::string RequestId;
     };
 
     struct ShareReleaseLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareChangeLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string LeaseId;
       std::string RequestId;
     };
 
     struct ShareRenewLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string LeaseId;
       std::string RequestId;
     };
 
     struct ShareBreakLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareCreateSnapshotResult
     {
       std::string Snapshot;
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
@@ -770,52 +770,52 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ShareSetPropertiesResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareSetMetadataResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareGetAccessPolicyResult
     {
       std::vector<SignedIdentifier> SignedIdentifiers;
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareSetAccessPolicyResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareGetStatisticsResult
     {
       int64_t ShareUsageInBytes = int64_t();
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct ShareRestoreResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct DirectoryCreateResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -824,8 +824,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryGetPropertiesResult
     {
       Storage::Metadata Metadata;
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -838,16 +838,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DirectorySetPropertiesResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       std::string RequestId;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
     };
 
     struct DirectorySetMetadataResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       std::string RequestId;
       bool IsServerEncrypted = bool();
     };
@@ -884,8 +884,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileCreateResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -893,17 +893,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileDownloadResult
     {
-      std::unique_ptr<Azure::IO::BodyStream> BodyStream;
-      Core::DateTime LastModified;
+      std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
+      DateTime LastModified;
       Storage::Metadata Metadata;
       FileHttpHeaders HttpHeaders;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize;
-      Core::ETag ETag;
+      Azure::ETag ETag;
       Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       std::string RequestId;
       std::string AcceptRanges;
-      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopyProgress;
@@ -918,13 +918,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileGetPropertiesResult
     {
-      Core::DateTime LastModified;
+      DateTime LastModified;
       Storage::Metadata Metadata;
       int64_t FileSize = int64_t();
       FileHttpHeaders HttpHeaders;
-      Core::ETag ETag;
+      Azure::ETag ETag;
       std::string RequestId;
-      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopyProgress;
@@ -944,8 +944,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileSetHttpHeadersResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -953,46 +953,46 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileSetMetadataResult
     {
-      Core::ETag ETag;
+      Azure::ETag ETag;
       std::string RequestId;
       bool IsServerEncrypted = bool();
     };
 
     struct FileAcquireLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string LeaseId;
       std::string RequestId;
     };
 
     struct FileReleaseLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
     };
 
     struct FileChangeLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string LeaseId;
       std::string RequestId;
     };
 
     struct FileBreakLeaseResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       Azure::Core::Nullable<std::string> LeaseId;
       std::string RequestId;
     };
 
     struct FileUploadRangeResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       Storage::ContentHash TransactionalContentHash;
       std::string RequestId;
       bool IsServerEncrypted = bool();
@@ -1000,8 +1000,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileUploadRangeFromUrlResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       Storage::ContentHash TransactionalContentHash;
       std::string RequestId;
       bool IsServerEncrypted = bool();
@@ -1009,18 +1009,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileGetRangeListResult
     {
-      std::vector<Core::Http::Range> Ranges;
-      std::vector<Core::Http::Range> ClearRanges;
-      Core::DateTime LastModified;
-      Core::ETag ETag;
+      std::vector<Core::Http::HttpRange> Ranges;
+      std::vector<Core::Http::HttpRange> ClearRanges;
+      DateTime LastModified;
+      Azure::ETag ETag;
       int64_t FileSize = int64_t();
       std::string RequestId;
     };
 
     struct FileStartCopyResult
     {
-      Core::ETag ETag;
-      Core::DateTime LastModified;
+      Azure::ETag ETag;
+      DateTime LastModified;
       std::string RequestId;
       std::string CopyId;
       CopyStatusType CopyStatus;
@@ -1049,7 +1049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     class ShareRestClient {
     private:
-      static Azure::Core::Http::Range HttpRangeFromXml(Storage::Details::XmlReader& reader)
+      static Azure::Core::Http::HttpRange HttpRangeFromXml(Storage::_detail::XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -1059,24 +1059,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         while (true)
         {
           auto node = reader.Read();
-          if (node.Type == Storage::Details::XmlNodeType::End)
+          if (node.Type == Storage::_detail::XmlNodeType::End)
           {
             break;
           }
           else if (
-              node.Type == Storage::Details::XmlNodeType::StartTag
+              node.Type == Storage::_detail::XmlNodeType::StartTag
               && strcmp(node.Name, "Start") == 0)
           {
             ++depth;
             is_start = true;
           }
           else if (
-              node.Type == Storage::Details::XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
+              node.Type == Storage::_detail::XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
           {
             ++depth;
             is_end = true;
           }
-          else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+          else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
           {
             is_start = false;
             is_end = false;
@@ -1085,7 +1085,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               break;
             }
           }
-          if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
+          if (depth == 1 && node.Type == Storage::_detail::XmlNodeType::Text)
           {
             if (is_start)
             {
@@ -1097,7 +1097,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
           }
         }
-        Azure::Core::Http::Range ret;
+        Azure::Core::Http::HttpRange ret;
         ret.Offset = start;
         ret.Length = end - start + 1;
         return ret;
@@ -1110,64 +1110,64 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           FileServiceProperties ServiceProperties;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<ServiceSetPropertiesResult> SetProperties(
+        static Azure::Response<ServiceSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
 
           std::string xml_body;
           {
-            Storage::Details::XmlWriter writer;
+            Storage::_detail::XmlWriter writer;
             FileServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
-          auto body = Azure::IO::MemoryBodyStream(
+          auto body = Azure::Core::IO::MemoryBodyStream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
-          request.AddHeader("Content-Length", std::to_string(body.Length()));
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "service");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "properties");
+          request.SetHeader("Content-Length", std::to_string(body.Length()));
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "service");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "properties");
           if (setPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
-          return SetPropertiesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
+          return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<ServiceGetPropertiesResult> GetProperties(
+        static Azure::Response<ServiceGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "service");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "properties");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "service");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "properties");
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct ListSharesSinglePageOptions
@@ -1177,59 +1177,59 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> MaxResults;
           Azure::Core::Nullable<ListSharesIncludeType> ListSharesInclude;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<ServiceListSharesSinglePageResult> ListSharesSinglePage(
+        static Azure::Response<ServiceListSharesSinglePageResult> ListSharesSinglePage(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListSharesSinglePageOptions& listSharesSinglePageOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "list");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "list");
           if (listSharesSinglePageOptions.Prefix.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPrefix,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryPrefix,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listSharesSinglePageOptions.Prefix.GetValue()));
           }
           if (listSharesSinglePageOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryContinuationToken,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listSharesSinglePageOptions.ContinuationToken.GetValue()));
           }
           if (listSharesSinglePageOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryPageSizeHint,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listSharesSinglePageOptions.MaxResults.GetValue())));
           }
           if (listSharesSinglePageOptions.ListSharesInclude.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryListSharesInclude,
-                Storage::Details::UrlEncodeQueryParameter(ListSharesIncludeTypeToString(
+                _detail::QueryListSharesInclude,
+                Storage::_detail::UrlEncodeQueryParameter(ListSharesIncludeTypeToString(
                     listSharesSinglePageOptions.ListSharesInclude.GetValue())));
           }
           if (listSharesSinglePageOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listSharesSinglePageOptions.Timeout.GetValue())));
           }
-          request.AddHeader(
-              Details::HeaderVersion, listSharesSinglePageOptions.ApiVersionParameter);
-          return ListSharesSinglePageParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(
+              _detail::HeaderVersion, listSharesSinglePageOptions.ApiVersionParameter);
+          return ListSharesSinglePageParseResult(context, pipeline.Send(request, context));
         }
 
       private:
-        static Azure::Core::Response<ServiceSetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Response<ServiceSetPropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1238,8 +1238,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Accepted)
             ServiceSetPropertiesResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ServiceSetPropertiesResult>(
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ServiceSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1250,150 +1250,150 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void ShareRetentionPolicyToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const ShareRetentionPolicy& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           if (object.Days.HasValue())
           {
             writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Days"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
+                Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Days"});
+            writer.Write(Storage::_detail::XmlNode{
+                Storage::_detail::XmlNodeType::Text,
                 nullptr,
                 std::to_string(object.Days.GetValue()).data()});
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           }
         }
 
-        static void MetricsToXml(Storage::Details::XmlWriter& writer, const Metrics& object)
+        static void MetricsToXml(Storage::_detail::XmlWriter& writer, const Metrics& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Version"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Version.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Version"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Version.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           if (object.IncludeApis.HasValue())
           {
             writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
+                Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "IncludeAPIs"});
+            writer.Write(Storage::_detail::XmlNode{
+                Storage::_detail::XmlNodeType::Text,
                 nullptr,
                 object.IncludeApis.GetValue() ? "true" : "false"});
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           }
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "RetentionPolicy"});
           ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
-        static void CorsRuleToXml(Storage::Details::XmlWriter& writer, const CorsRule& object)
+        static void CorsRuleToXml(Storage::_detail::XmlWriter& writer, const CorsRule& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "CorsRule"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "CorsRule"});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedOrigins"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AllowedOrigins"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedMethods"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AllowedMethods"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedHeaders"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AllowedHeaders"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "ExposedHeaders"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "ExposedHeaders"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "MaxAgeInSeconds"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text,
               nullptr,
               std::to_string(object.MaxAgeInSeconds).data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void SmbMultichannelToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const SmbMultichannel& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Multichannel"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Multichannel"});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
-        static void SmbSettingsToXml(Storage::Details::XmlWriter& writer, const SmbSettings& object)
+        static void SmbSettingsToXml(Storage::_detail::XmlWriter& writer, const SmbSettings& object)
         {
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "SMB"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "SMB"});
           SmbMultichannelToXml(writer, object.Multichannel);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void ShareProtocolSettingsToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const ShareProtocolSettings& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "ProtocolSettings"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "ProtocolSettings"});
           SmbSettingsToXml(writer, object.Settings);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void FileServicePropertiesToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const FileServiceProperties& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "StorageServiceProperties"});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "HourMetrics"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "HourMetrics"});
           MetricsToXml(writer, object.HourMetrics);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "MinuteMetrics"});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "MinuteMetrics"});
           MetricsToXml(writer, object.MinuteMetrics);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           if (object.Cors.size() > 0)
           {
             writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Cors"});
+                Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Cors"});
             for (const auto& item : object.Cors)
             {
               CorsRuleToXml(writer, item);
             }
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           }
           if (object.Protocol.HasValue())
           {
             ShareProtocolSettingsToXml(writer, object.Protocol.GetValue());
           }
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
-        static Azure::Core::Response<ServiceGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<ServiceGetPropertiesResult> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1402,14 +1402,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceGetPropertiesResult result = bodyBuffer.empty()
                 ? ServiceGetPropertiesResult()
                 : ServiceGetPropertiesResultFromFileServiceProperties(
                     FileServicePropertiesFromXml(reader));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ServiceGetPropertiesResult>(
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ServiceGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1419,7 +1419,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareRetentionPolicy ShareRetentionPolicyFromXml(Storage::Details::XmlReader& reader)
+        static ShareRetentionPolicy ShareRetentionPolicyFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareRetentionPolicy();
           enum class XmlTagName
@@ -1433,11 +1433,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1448,7 +1448,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Days") == 0)
@@ -1464,7 +1464,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Days)
               {
@@ -1479,7 +1479,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Metrics MetricsFromXml(Storage::Details::XmlReader& reader)
+        static Metrics MetricsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = Metrics();
           enum class XmlTagName
@@ -1495,11 +1495,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1510,7 +1510,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Enabled") == 0)
@@ -1540,7 +1540,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
@@ -1559,7 +1559,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static CorsRule CorsRuleFromXml(Storage::Details::XmlReader& reader)
+        static CorsRule CorsRuleFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = CorsRule();
           enum class XmlTagName
@@ -1576,11 +1576,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1591,7 +1591,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AllowedHeaders") == 0)
@@ -1619,7 +1619,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::AllowedHeaders)
               {
@@ -1646,7 +1646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SmbMultichannel SmbMultichannelFromXml(Storage::Details::XmlReader& reader)
+        static SmbMultichannel SmbMultichannelFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = SmbMultichannel();
           enum class XmlTagName
@@ -1659,11 +1659,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1674,7 +1674,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Enabled") == 0)
@@ -1686,7 +1686,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
@@ -1697,7 +1697,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SmbSettings SmbSettingsFromXml(Storage::Details::XmlReader& reader)
+        static SmbSettings SmbSettingsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = SmbSettings();
           enum class XmlTagName
@@ -1710,11 +1710,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1725,7 +1725,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Multichannel") == 0)
@@ -1743,7 +1743,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -1751,7 +1751,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static ShareProtocolSettings ShareProtocolSettingsFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = ShareProtocolSettings();
           enum class XmlTagName
@@ -1764,11 +1764,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1779,7 +1779,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "SMB") == 0)
@@ -1797,7 +1797,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -1805,7 +1805,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static FileServiceProperties FileServicePropertiesFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = FileServiceProperties();
           enum class XmlTagName
@@ -1823,11 +1823,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1838,7 +1838,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Cors") == 0)
@@ -1898,7 +1898,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -1916,8 +1916,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<ServiceListSharesSinglePageResult>
-        ListSharesSinglePageParseResult(
+        static Azure::Response<ServiceListSharesSinglePageResult> ListSharesSinglePageParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1926,14 +1925,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceListSharesSinglePageResult result = bodyBuffer.empty()
                 ? ServiceListSharesSinglePageResult()
                 : ServiceListSharesSinglePageResultFromListSharesResponse(
                     ListSharesResponseFromXml(reader));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ServiceListSharesSinglePageResult>(
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ServiceListSharesSinglePageResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1943,7 +1942,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static LeaseStatusType LeaseStatusTypeFromXml(Storage::Details::XmlReader& reader)
+        static LeaseStatusType LeaseStatusTypeFromXml(Storage::_detail::XmlReader& reader)
         {
           LeaseStatusType result;
           enum class XmlTagName
@@ -1956,11 +1955,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1971,7 +1970,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseStatus") == 0)
@@ -1983,7 +1982,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseStatus)
               {
@@ -1994,7 +1993,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static LeaseStateType LeaseStateTypeFromXml(Storage::Details::XmlReader& reader)
+        static LeaseStateType LeaseStateTypeFromXml(Storage::_detail::XmlReader& reader)
         {
           LeaseStateType result;
           enum class XmlTagName
@@ -2007,11 +2006,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2022,7 +2021,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseState") == 0)
@@ -2034,7 +2033,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseState)
               {
@@ -2045,7 +2044,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static LeaseDurationType LeaseDurationTypeFromXml(Storage::Details::XmlReader& reader)
+        static LeaseDurationType LeaseDurationTypeFromXml(Storage::_detail::XmlReader& reader)
         {
           LeaseDurationType result;
           enum class XmlTagName
@@ -2058,11 +2057,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2073,7 +2072,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseDuration") == 0)
@@ -2085,7 +2084,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseDuration)
               {
@@ -2096,7 +2095,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareItemDetails ShareItemDetailsFromXml(Storage::Details::XmlReader& reader)
+        static ShareItemDetails ShareItemDetailsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareItemDetails();
           enum class XmlTagName
@@ -2123,11 +2122,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2138,7 +2137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AccessTier") == 0)
@@ -2222,7 +2221,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::AccessTier)
               {
@@ -2231,7 +2230,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               else if (path.size() == 1 && path[0] == XmlTagName::AccessTierChangeTime)
               {
                 result.AccessTierChangedOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                    = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::AccessTierTransitionState)
               {
@@ -2239,22 +2238,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::DeletedTime)
               {
-                result.DeletedOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                result.DeletedOn = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Etag)
               {
-                result.Etag = Core::ETag(node.Value);
+                result.Etag = Azure::ETag(node.Value);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::LastModified)
               {
-                result.LastModified
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                result.LastModified = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::NextAllowedQuotaDowngradeTime)
               {
                 result.NextAllowedQuotaDowngradeTime
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                    = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::ProvisionedEgressMBps)
               {
@@ -2281,7 +2278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Metadata MetadataFromXml(Storage::Details::XmlReader& reader)
+        static Metadata MetadataFromXml(Storage::_detail::XmlReader& reader)
         {
           Metadata result;
           int depth = 0;
@@ -2289,25 +2286,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
               if (depth++ == 0)
               {
                 key = node.Name;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            else if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
+            else if (depth == 1 && node.Type == Storage::_detail::XmlNodeType::Text)
             {
               result.emplace(std::move(key), std::string(node.Value));
             }
@@ -2315,7 +2312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareItem ShareItemFromXml(Storage::Details::XmlReader& reader)
+        static ShareItem ShareItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareItem();
           enum class XmlTagName
@@ -2333,11 +2330,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2348,7 +2345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Deleted") == 0)
@@ -2391,7 +2388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Deleted)
               {
@@ -2414,7 +2411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListSharesResponse ListSharesResponseFromXml(Storage::Details::XmlReader& reader)
+        static ListSharesResponse ListSharesResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListSharesResponse();
           enum class XmlTagName
@@ -2432,11 +2429,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2447,7 +2444,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
@@ -2485,7 +2482,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -2505,7 +2502,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 result.Prefix = node.Value;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
+            else if (node.Type == Storage::_detail::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::EnumerationResults
                   && (std::strcmp(node.Name, "ServiceEndpoint") == 0))
@@ -2539,124 +2536,124 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Storage::Metadata Metadata;
           Azure::Core::Nullable<int64_t> ShareQuota;
           Azure::Core::Nullable<ShareAccessTier> XMsAccessTier;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<ShareCreateResult> Create(
+        static Azure::Response<ShareCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (createOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
           for (const auto& pair : createOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
           if (createOptions.ShareQuota.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderQuota, std::to_string(createOptions.ShareQuota.GetValue()));
+            request.SetHeader(
+                _detail::HeaderQuota, std::to_string(createOptions.ShareQuota.GetValue()));
           }
           if (createOptions.XMsAccessTier.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderAccessTier, (createOptions.XMsAccessTier.GetValue().ToString()));
+            request.SetHeader(
+                _detail::HeaderAccessTier, (createOptions.XMsAccessTier.GetValue().ToString()));
           }
-          request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
-          return CreateParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, createOptions.ApiVersionParameter);
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
         {
           Azure::Core::Nullable<std::string> ShareSnapshot;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareGetPropertiesResult> GetProperties(
+        static Azure::Response<ShareGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (getPropertiesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     getPropertiesOptions.ShareSnapshot.GetValue()));
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
           if (getPropertiesOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
           }
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
         {
           Azure::Core::Nullable<std::string> ShareSnapshot;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<DeleteSnapshotsOptionType> XMsDeleteSnapshots;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareDeleteResult> Delete(
+        static Azure::Response<ShareDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (deleteOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(deleteOptions.ShareSnapshot.GetValue()));
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(deleteOptions.ShareSnapshot.GetValue()));
           }
           if (deleteOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, deleteOptions.ApiVersionParameter);
           if (deleteOptions.XMsDeleteSnapshots.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderDeleteSnapshots,
+            request.SetHeader(
+                _detail::HeaderDeleteSnapshots,
                 (deleteOptions.XMsDeleteSnapshots.GetValue().ToString()));
           }
           if (deleteOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
           }
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct AcquireLeaseOptions
@@ -2664,83 +2661,83 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           int32_t LeaseDuration = int32_t();
           Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Core::Response<ShareAcquireLeaseResult> AcquireLease(
+        static Azure::Response<ShareAcquireLeaseResult> AcquireLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AcquireLeaseOptions& acquireLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "acquire");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "acquire");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (acquireLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(acquireLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(
-              Details::HeaderDuration, std::to_string(acquireLeaseOptions.LeaseDuration));
+          request.SetHeader(
+              _detail::HeaderDuration, std::to_string(acquireLeaseOptions.LeaseDuration));
           if (acquireLeaseOptions.ProposedLeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderProposedLeaseId,
+            request.SetHeader(
+                _detail::HeaderProposedLeaseId,
                 acquireLeaseOptions.ProposedLeaseIdOptional.GetValue());
           }
-          request.AddHeader(Details::HeaderVersion, acquireLeaseOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, acquireLeaseOptions.ApiVersionParameter);
           if (acquireLeaseOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     acquireLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return AcquireLeaseParseResult(context, pipeline.Send(context, request));
+          return AcquireLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ReleaseLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Core::Response<ShareReleaseLeaseResult> ReleaseLease(
+        static Azure::Response<ShareReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ReleaseLeaseOptions& releaseLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "release");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "release");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (releaseLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(releaseLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
-          request.AddHeader(Details::HeaderVersion, releaseLeaseOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
+          request.SetHeader(_detail::HeaderVersion, releaseLeaseOptions.ApiVersionParameter);
           if (releaseLeaseOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     releaseLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return ReleaseLeaseParseResult(context, pipeline.Send(context, request));
+          return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ChangeLeaseOptions
@@ -2748,82 +2745,82 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
           Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Core::Response<ShareChangeLeaseResult> ChangeLease(
+        static Azure::Response<ShareChangeLeaseResult> ChangeLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ChangeLeaseOptions& changeLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "change");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "change");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (changeLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(changeLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderLeaseId, changeLeaseOptions.LeaseIdRequired);
+          request.SetHeader(_detail::HeaderLeaseId, changeLeaseOptions.LeaseIdRequired);
           if (changeLeaseOptions.ProposedLeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderProposedLeaseId,
+            request.SetHeader(
+                _detail::HeaderProposedLeaseId,
                 changeLeaseOptions.ProposedLeaseIdOptional.GetValue());
           }
-          request.AddHeader(Details::HeaderVersion, changeLeaseOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, changeLeaseOptions.ApiVersionParameter);
           if (changeLeaseOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     changeLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return ChangeLeaseParseResult(context, pipeline.Send(context, request));
+          return ChangeLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct RenewLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Core::Response<ShareRenewLeaseResult> RenewLease(
+        static Azure::Response<ShareRenewLeaseResult> RenewLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const RenewLeaseOptions& renewLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "renew");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "renew");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (renewLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(renewLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderLeaseId, renewLeaseOptions.LeaseIdRequired);
-          request.AddHeader(Details::HeaderVersion, renewLeaseOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderLeaseId, renewLeaseOptions.LeaseIdRequired);
+          request.SetHeader(_detail::HeaderVersion, renewLeaseOptions.ApiVersionParameter);
           if (renewLeaseOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     renewLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return RenewLeaseParseResult(context, pipeline.Send(context, request));
+          return RenewLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct BreakLeaseOptions
@@ -2831,380 +2828,380 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<int32_t> LeaseBreakPeriod;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Core::Response<ShareBreakLeaseResult> BreakLease(
+        static Azure::Response<ShareBreakLeaseResult> BreakLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const BreakLeaseOptions& breakLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "break");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "break");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
           if (breakLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(breakLeaseOptions.Timeout.GetValue())));
           }
           if (breakLeaseOptions.LeaseBreakPeriod.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderBreakPeriod,
+            request.SetHeader(
+                _detail::HeaderBreakPeriod,
                 std::to_string(breakLeaseOptions.LeaseBreakPeriod.GetValue()));
           }
           if (breakLeaseOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, breakLeaseOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, breakLeaseOptions.LeaseIdOptional.GetValue());
           }
-          request.AddHeader(Details::HeaderVersion, breakLeaseOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, breakLeaseOptions.ApiVersionParameter);
           if (breakLeaseOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     breakLeaseOptions.ShareSnapshot.GetValue()));
           }
-          return BreakLeaseParseResult(context, pipeline.Send(context, request));
+          return BreakLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct CreateSnapshotOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<ShareCreateSnapshotResult> CreateSnapshot(
+        static Azure::Response<ShareCreateSnapshotResult> CreateSnapshot(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateSnapshotOptions& createSnapshotOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "snapshot");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "snapshot");
           if (createSnapshotOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createSnapshotOptions.Timeout.GetValue())));
           }
           for (const auto& pair : createSnapshotOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          request.AddHeader(Details::HeaderVersion, createSnapshotOptions.ApiVersionParameter);
-          return CreateSnapshotParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, createSnapshotOptions.ApiVersionParameter);
+          return CreateSnapshotParseResult(context, pipeline.Send(request, context));
         }
 
         struct CreatePermissionOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           SharePermission Permission;
         };
 
-        static Azure::Core::Response<ShareCreatePermissionResult> CreatePermission(
+        static Azure::Response<ShareCreatePermissionResult> CreatePermission(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreatePermissionOptions& createPermissionOptions)
         {
 
           std::string json_body;
           {
-            Azure::Core::Internal::Json::json json;
+            Azure::Core::Json::_internal::json json;
             SharePermissionToJson(json, createPermissionOptions.Permission);
             json_body = json.dump();
           }
-          auto body = Azure::IO::MemoryBodyStream(
+          auto body = Azure::Core::IO::MemoryBodyStream(
               reinterpret_cast<const uint8_t*>(json_body.data()), json_body.length());
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
-          request.AddHeader("Content-Length", std::to_string(body.Length()));
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "filepermission");
+          request.SetHeader("Content-Length", std::to_string(body.Length()));
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "filepermission");
           if (createPermissionOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createPermissionOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, createPermissionOptions.ApiVersionParameter);
-          return CreatePermissionParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, createPermissionOptions.ApiVersionParameter);
+          return CreatePermissionParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPermissionOptions
         {
           std::string FilePermissionKeyRequired;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<ShareGetPermissionResult> GetPermission(
+        static Azure::Response<ShareGetPermissionResult> GetPermission(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPermissionOptions& getPermissionOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "filepermission");
-          request.AddHeader(
-              Details::HeaderFilePermissionKey, getPermissionOptions.FilePermissionKeyRequired);
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "filepermission");
+          request.SetHeader(
+              _detail::HeaderFilePermissionKey, getPermissionOptions.FilePermissionKeyRequired);
           if (getPermissionOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPermissionOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getPermissionOptions.ApiVersionParameter);
-          return GetPermissionParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, getPermissionOptions.ApiVersionParameter);
+          return GetPermissionParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetPropertiesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<int64_t> ShareQuota;
           Azure::Core::Nullable<ShareAccessTier> XMsAccessTier;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareSetPropertiesResult> SetProperties(
+        static Azure::Response<ShareSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "properties");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "properties");
           if (setPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
           if (setPropertiesOptions.ShareQuota.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderQuota, std::to_string(setPropertiesOptions.ShareQuota.GetValue()));
+            request.SetHeader(
+                _detail::HeaderQuota, std::to_string(setPropertiesOptions.ShareQuota.GetValue()));
           }
           if (setPropertiesOptions.XMsAccessTier.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderAccessTier,
+            request.SetHeader(
+                _detail::HeaderAccessTier,
                 (setPropertiesOptions.XMsAccessTier.GetValue().ToString()));
           }
           if (setPropertiesOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, setPropertiesOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, setPropertiesOptions.LeaseIdOptional.GetValue());
           }
-          return SetPropertiesParseResult(context, pipeline.Send(context, request));
+          return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetMetadataOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareSetMetadataResult> SetMetadata(
+        static Azure::Response<ShareSetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "metadata");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "metadata");
           if (setMetadataOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
           for (const auto& pair : setMetadataOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, setMetadataOptions.ApiVersionParameter);
           if (setMetadataOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
           }
-          return SetMetadataParseResult(context, pipeline.Send(context, request));
+          return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetAccessPolicyOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
+        static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetAccessPolicyOptions& getAccessPolicyOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "acl");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "acl");
           if (getAccessPolicyOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getAccessPolicyOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getAccessPolicyOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, getAccessPolicyOptions.ApiVersionParameter);
           if (getAccessPolicyOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, getAccessPolicyOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, getAccessPolicyOptions.LeaseIdOptional.GetValue());
           }
-          return GetAccessPolicyParseResult(context, pipeline.Send(context, request));
+          return GetAccessPolicyParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetAccessPolicyOptions
         {
           std::vector<SignedIdentifier> ShareAcl;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
+        static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessPolicyOptions& setAccessPolicyOptions)
         {
 
           std::string xml_body;
           {
-            Storage::Details::XmlWriter writer;
+            Storage::_detail::XmlWriter writer;
             SignedIdentifiersToXml(writer, setAccessPolicyOptions.ShareAcl);
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
+            writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
-          auto body = Azure::IO::MemoryBodyStream(
+          auto body = Azure::Core::IO::MemoryBodyStream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
-          request.AddHeader("Content-Length", std::to_string(body.Length()));
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "acl");
+          request.SetHeader("Content-Length", std::to_string(body.Length()));
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "acl");
           if (setAccessPolicyOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setAccessPolicyOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, setAccessPolicyOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, setAccessPolicyOptions.ApiVersionParameter);
           if (setAccessPolicyOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, setAccessPolicyOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, setAccessPolicyOptions.LeaseIdOptional.GetValue());
           }
-          return SetAccessPolicyParseResult(context, pipeline.Send(context, request));
+          return SetAccessPolicyParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetStatisticsOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<ShareGetStatisticsResult> GetStatistics(
+        static Azure::Response<ShareGetStatisticsResult> GetStatistics(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetStatisticsOptions& getStatisticsOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "stats");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "stats");
           if (getStatisticsOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getStatisticsOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getStatisticsOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, getStatisticsOptions.ApiVersionParameter);
           if (getStatisticsOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, getStatisticsOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, getStatisticsOptions.LeaseIdOptional.GetValue());
           }
-          return GetStatisticsParseResult(context, pipeline.Send(context, request));
+          return GetStatisticsParseResult(context, pipeline.Send(request, context));
         }
 
         struct RestoreOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> DeletedShareName;
           Azure::Core::Nullable<std::string> DeletedShareVersion;
         };
 
-        static Azure::Core::Response<ShareRestoreResult> Restore(
+        static Azure::Response<ShareRestoreResult> Restore(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const RestoreOptions& restoreOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "share");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "undelete");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "share");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "undelete");
           if (restoreOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(restoreOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, restoreOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, restoreOptions.ApiVersionParameter);
           if (restoreOptions.DeletedShareName.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderDeletedShareName, restoreOptions.DeletedShareName.GetValue());
+            request.SetHeader(
+                _detail::HeaderDeletedShareName, restoreOptions.DeletedShareName.GetValue());
           }
           if (restoreOptions.DeletedShareVersion.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderDeletedShareVersion, restoreOptions.DeletedShareVersion.GetValue());
+            request.SetHeader(
+                _detail::HeaderDeletedShareVersion, restoreOptions.DeletedShareVersion.GetValue());
           }
-          return RestoreParseResult(context, pipeline.Send(context, request));
+          return RestoreParseResult(context, pipeline.Send(request, context));
         }
 
       private:
-        static Azure::Core::Response<ShareCreateResult> CreateParseResult(
+        static Azure::Response<ShareCreateResult> CreateParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3213,13 +3210,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success, Share created.
             ShareCreateResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareCreateResult>(
-                std::move(result), std::move(responsePtr));
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareCreateResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -3228,7 +3224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<ShareGetPropertiesResult> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3238,80 +3234,80 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success
             ShareGetPropertiesResult result;
 
-            for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
+            for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
-                 && i->first.substr(0, 9) == Details::HeaderMetadata;
+                 && i->first.substr(0, 9) == _detail::HeaderMetadata;
                  ++i)
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            result.Quota = std::stoll(response.GetHeaders().at(Details::HeaderQuota));
-            if (response.GetHeaders().find(Details::HeaderProvisionedIops)
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            result.Quota = std::stoll(response.GetHeaders().at(_detail::HeaderQuota));
+            if (response.GetHeaders().find(_detail::HeaderProvisionedIops)
                 != response.GetHeaders().end())
             {
               result.ProvisionedIops
-                  = std::stoi(response.GetHeaders().at(Details::HeaderProvisionedIops));
+                  = std::stoi(response.GetHeaders().at(_detail::HeaderProvisionedIops));
             }
-            if (response.GetHeaders().find(Details::HeaderProvisionedIngressMBps)
+            if (response.GetHeaders().find(_detail::HeaderProvisionedIngressMBps)
                 != response.GetHeaders().end())
             {
               result.ProvisionedIngressMBps
-                  = std::stoi(response.GetHeaders().at(Details::HeaderProvisionedIngressMBps));
+                  = std::stoi(response.GetHeaders().at(_detail::HeaderProvisionedIngressMBps));
             }
-            if (response.GetHeaders().find(Details::HeaderProvisionedEgressMBps)
+            if (response.GetHeaders().find(_detail::HeaderProvisionedEgressMBps)
                 != response.GetHeaders().end())
             {
               result.ProvisionedEgressMBps
-                  = std::stoi(response.GetHeaders().at(Details::HeaderProvisionedEgressMBps));
+                  = std::stoi(response.GetHeaders().at(_detail::HeaderProvisionedEgressMBps));
             }
-            if (response.GetHeaders().find(Details::HeaderNextAllowedQuotaDowngradeTime)
+            if (response.GetHeaders().find(_detail::HeaderNextAllowedQuotaDowngradeTime)
                 != response.GetHeaders().end())
             {
-              result.NextAllowedQuotaDowngradeTime = Core::DateTime::Parse(
-                  response.GetHeaders().at(Details::HeaderNextAllowedQuotaDowngradeTime),
-                  Core::DateTime::DateFormat::Rfc1123);
+              result.NextAllowedQuotaDowngradeTime = DateTime::Parse(
+                  response.GetHeaders().at(_detail::HeaderNextAllowedQuotaDowngradeTime),
+                  DateTime::DateFormat::Rfc1123);
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseDuration)
+            if (response.GetHeaders().find(_detail::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
               result.LeaseDuration
-                  = LeaseDurationType(response.GetHeaders().at(Details::HeaderLeaseDuration));
+                  = LeaseDurationType(response.GetHeaders().at(_detail::HeaderLeaseDuration));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseState)
+            if (response.GetHeaders().find(_detail::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = LeaseStateType(response.GetHeaders().at(_detail::HeaderLeaseState));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseStatus)
+            if (response.GetHeaders().find(_detail::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = LeaseStatusType(response.GetHeaders().at(_detail::HeaderLeaseStatus));
             }
             if (response.GetHeaders().find("x-ms-access-tier") != response.GetHeaders().end())
             {
               result.AccessTier = ShareAccessTier(response.GetHeaders().at("x-ms-access-tier"));
             }
-            if (response.GetHeaders().find(Details::HeaderAccessTierChangedOn)
+            if (response.GetHeaders().find(_detail::HeaderAccessTierChangedOn)
                 != response.GetHeaders().end())
             {
-              result.AccessTierChangedOn = Core::DateTime::Parse(
-                  response.GetHeaders().at(Details::HeaderAccessTierChangedOn),
-                  Core::DateTime::DateFormat::Rfc1123);
+              result.AccessTierChangedOn = DateTime::Parse(
+                  response.GetHeaders().at(_detail::HeaderAccessTierChangedOn),
+                  DateTime::DateFormat::Rfc1123);
             }
-            if (response.GetHeaders().find(Details::HeaderAccessTierTransitionState)
+            if (response.GetHeaders().find(_detail::HeaderAccessTierTransitionState)
                 != response.GetHeaders().end())
             {
               result.AccessTierTransitionState
-                  = response.GetHeaders().at(Details::HeaderAccessTierTransitionState);
+                  = response.GetHeaders().at(_detail::HeaderAccessTierTransitionState);
             }
-            return Azure::Core::Response<ShareGetPropertiesResult>(
+            return Azure::Response<ShareGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3321,7 +3317,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareDeleteResult> DeleteParseResult(
+        static Azure::Response<ShareDeleteResult> DeleteParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3330,9 +3326,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Accepted
             ShareDeleteResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareDeleteResult>(
-                std::move(result), std::move(responsePtr));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareDeleteResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -3341,7 +3336,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareAcquireLeaseResult> AcquireLeaseParseResult(
+        static Azure::Response<ShareAcquireLeaseResult> AcquireLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3350,13 +3345,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Acquire operation completed successfully.
             ShareAcquireLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareAcquireLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareAcquireLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3366,7 +3361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareReleaseLeaseResult> ReleaseLeaseParseResult(
+        static Azure::Response<ShareReleaseLeaseResult> ReleaseLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3375,12 +3370,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Release operation completed successfully.
             ShareReleaseLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareReleaseLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareReleaseLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3390,7 +3385,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareChangeLeaseResult> ChangeLeaseParseResult(
+        static Azure::Response<ShareChangeLeaseResult> ChangeLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3399,13 +3394,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Change operation completed successfully.
             ShareChangeLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareChangeLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareChangeLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3415,7 +3410,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareRenewLeaseResult> RenewLeaseParseResult(
+        static Azure::Response<ShareRenewLeaseResult> RenewLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3424,13 +3419,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Renew operation completed successfully.
             ShareRenewLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareRenewLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareRenewLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3440,7 +3435,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareBreakLeaseResult> BreakLeaseParseResult(
+        static Azure::Response<ShareBreakLeaseResult> BreakLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3449,12 +3444,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Break operation completed successfully.
             ShareBreakLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareBreakLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareBreakLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3464,7 +3459,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareCreateSnapshotResult> CreateSnapshotParseResult(
+        static Azure::Response<ShareCreateSnapshotResult> CreateSnapshotParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3473,13 +3468,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success, Share snapshot created.
             ShareCreateSnapshotResult result;
-            result.Snapshot = response.GetHeaders().at(Details::HeaderSnapshot);
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareCreateSnapshotResult>(
+            result.Snapshot = response.GetHeaders().at(_detail::HeaderSnapshot);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareCreateSnapshotResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3489,7 +3484,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareCreatePermissionResult> CreatePermissionParseResult(
+        static Azure::Response<ShareCreatePermissionResult> CreatePermissionParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3498,9 +3493,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success, Share level permission created.
             ShareCreatePermissionResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
-            return Azure::Core::Response<ShareCreatePermissionResult>(
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            result.FilePermissionKey = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
+            return Azure::Response<ShareCreatePermissionResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3511,13 +3506,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void SharePermissionToJson(
-            Azure::Core::Internal::Json::json& node,
+            Azure::Core::Json::_internal::json& node,
             const SharePermission& object)
         {
           node["permission"] = object.FilePermission;
         }
 
-        static Azure::Core::Response<ShareGetPermissionResult> GetPermissionParseResult(
+        static Azure::Response<ShareGetPermissionResult> GetPermissionParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3529,9 +3524,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareGetPermissionResult result = bodyBuffer.empty()
                 ? ShareGetPermissionResult()
                 : ShareGetPermissionResultFromSharePermission(
-                    SharePermissionFromJson(Azure::Core::Internal::Json::json::parse(bodyBuffer)));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareGetPermissionResult>(
+                    SharePermissionFromJson(Azure::Core::Json::_internal::json::parse(bodyBuffer)));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareGetPermissionResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3542,7 +3537,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static SharePermission SharePermissionFromJson(
-            const Azure::Core::Internal::Json::json& node)
+            const Azure::Core::Json::_internal::json& node)
         {
           SharePermission result;
           result.FilePermission = node["permission"].get<std::string>();
@@ -3557,7 +3552,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<ShareSetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Response<ShareSetPropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3566,12 +3561,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             ShareSetPropertiesResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareSetPropertiesResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3581,7 +3576,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareSetMetadataResult> SetMetadataParseResult(
+        static Azure::Response<ShareSetMetadataResult> SetMetadataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3590,12 +3585,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             ShareSetMetadataResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareSetMetadataResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareSetMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3605,7 +3600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<ShareGetAccessPolicyResult> GetAccessPolicyParseResult(
+        static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3614,17 +3609,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ShareGetAccessPolicyResult result = bodyBuffer.empty()
                 ? ShareGetAccessPolicyResult()
                 : ShareGetAccessPolicyResultFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareGetAccessPolicyResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareGetAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3634,7 +3629,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static AccessPolicy AccessPolicyFromXml(Storage::Details::XmlReader& reader)
+        static AccessPolicy AccessPolicyFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = AccessPolicy();
           enum class XmlTagName
@@ -3649,11 +3644,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3664,7 +3659,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Expiry") == 0)
@@ -3684,12 +3679,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Expiry)
               {
-                result.ExpiresOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc3339);
+                result.ExpiresOn = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc3339);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Permission)
               {
@@ -3697,15 +3691,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Start)
               {
-                result.StartsOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc3339);
+                result.StartsOn = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc3339);
               }
             }
           }
           return result;
         }
 
-        static SignedIdentifier SignedIdentifierFromXml(Storage::Details::XmlReader& reader)
+        static SignedIdentifier SignedIdentifierFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = SignedIdentifier();
           enum class XmlTagName
@@ -3719,11 +3712,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3734,7 +3727,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AccessPolicy") == 0)
@@ -3756,7 +3749,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Id)
               {
@@ -3768,7 +3761,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static std::vector<SignedIdentifier> SignedIdentifiersFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = std::vector<SignedIdentifier>();
           enum class XmlTagName
@@ -3782,11 +3775,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3797,7 +3790,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "SignedIdentifier") == 0)
@@ -3820,7 +3813,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -3835,7 +3828,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<ShareSetAccessPolicyResult> SetAccessPolicyParseResult(
+        static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3844,12 +3837,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             ShareSetAccessPolicyResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareSetAccessPolicyResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareSetAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3860,61 +3853,65 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static void AccessPolicyToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const AccessPolicy& object)
         {
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AccessPolicy"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Start"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "AccessPolicy"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Start"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text,
               nullptr,
-              object.StartsOn.GetRfc3339String(Core::DateTime::TimeFractionFormat::AllDigits)
+              object.StartsOn
+                  .ToString(
+                      Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
                   .data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Expiry"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Expiry"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text,
               nullptr,
-              object.ExpiresOn.GetRfc3339String(Core::DateTime::TimeFractionFormat::AllDigits)
+              object.ExpiresOn
+                  .ToString(
+                      Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
                   .data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           writer.Write(
-              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Permission"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Permission.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+              Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Permission"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Permission.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void SignedIdentifierToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const SignedIdentifier& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Id"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Id.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "SignedIdentifier"});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::StartTag, "Id"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::Text, nullptr, object.Id.data()});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
           AccessPolicyToXml(writer, object.Policy);
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
 
         static void SignedIdentifiersToXml(
-            Storage::Details::XmlWriter& writer,
+            Storage::_detail::XmlWriter& writer,
             const std::vector<SignedIdentifier>& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
+          writer.Write(Storage::_detail::XmlNode{
+              Storage::_detail::XmlNodeType::StartTag, "SignedIdentifiers"});
           for (const auto& item : object)
           {
             SignedIdentifierToXml(writer, item);
           }
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::_detail::XmlNode{Storage::_detail::XmlNodeType::EndTag});
         }
-        static Azure::Core::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
+        static Azure::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3923,17 +3920,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ShareGetStatisticsResult result = bodyBuffer.empty()
                 ? ShareGetStatisticsResult()
                 : ShareGetStatisticsResultFromShareStats(ShareStatsFromXml(reader));
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareGetStatisticsResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareGetStatisticsResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3943,7 +3940,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareStats ShareStatsFromXml(Storage::Details::XmlReader& reader)
+        static ShareStats ShareStatsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareStats();
           enum class XmlTagName
@@ -3957,11 +3954,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3972,7 +3969,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ShareStats") == 0)
@@ -3988,7 +3985,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::ShareStats
                   && path[1] == XmlTagName::ShareUsageBytes)
@@ -4007,7 +4004,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<ShareRestoreResult> RestoreParseResult(
+        static Azure::Response<ShareRestoreResult> RestoreParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4016,13 +4013,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Created
             ShareRestoreResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<ShareRestoreResult>(
-                std::move(result), std::move(responsePtr));
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<ShareRestoreResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -4038,7 +4034,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> FilePermission;
           Azure::Core::Nullable<std::string> FilePermissionKey;
           std::string FileAttributes;
@@ -4046,105 +4042,105 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string FileLastWriteTime;
         };
 
-        static Azure::Core::Response<DirectoryCreateResult> Create(
+        static Azure::Response<DirectoryCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "directory");
           if (createOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
           for (const auto& pair : createOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, createOptions.ApiVersionParameter);
           if (createOptions.FilePermission.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermission, createOptions.FilePermission.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermission, createOptions.FilePermission.GetValue());
           }
           if (createOptions.FilePermissionKey.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermissionKey, createOptions.FilePermissionKey.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermissionKey, createOptions.FilePermissionKey.GetValue());
           }
-          request.AddHeader(Details::HeaderFileAttributes, createOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreatedOn, createOptions.FileCreationTime);
-          request.AddHeader(Details::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
-          return CreateParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderFileAttributes, createOptions.FileAttributes);
+          request.SetHeader(_detail::HeaderFileCreatedOn, createOptions.FileCreationTime);
+          request.SetHeader(_detail::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
         {
           Azure::Core::Nullable<std::string> ShareSnapshot;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<DirectoryGetPropertiesResult> GetProperties(
+        static Azure::Response<DirectoryGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "directory");
           if (getPropertiesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     getPropertiesOptions.ShareSnapshot.GetValue()));
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<DirectoryDeleteResult> Delete(
+        static Azure::Response<DirectoryDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "directory");
           if (deleteOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, deleteOptions.ApiVersionParameter);
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetPropertiesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> FilePermission;
           Azure::Core::Nullable<std::string> FilePermissionKey;
           std::string FileAttributes;
@@ -4152,72 +4148,72 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string FileLastWriteTime;
         };
 
-        static Azure::Core::Response<DirectorySetPropertiesResult> SetProperties(
+        static Azure::Response<DirectorySetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetPropertiesOptions& setPropertiesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "properties");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "directory");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "properties");
           if (setPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, setPropertiesOptions.ApiVersionParameter);
           if (setPropertiesOptions.FilePermission.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermission, setPropertiesOptions.FilePermission.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermission, setPropertiesOptions.FilePermission.GetValue());
           }
           if (setPropertiesOptions.FilePermissionKey.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermissionKey,
+            request.SetHeader(
+                _detail::HeaderFilePermissionKey,
                 setPropertiesOptions.FilePermissionKey.GetValue());
           }
-          request.AddHeader(Details::HeaderFileAttributes, setPropertiesOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreatedOn, setPropertiesOptions.FileCreationTime);
-          request.AddHeader(
-              Details::HeaderFileLastWrittenOn, setPropertiesOptions.FileLastWriteTime);
-          return SetPropertiesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderFileAttributes, setPropertiesOptions.FileAttributes);
+          request.SetHeader(_detail::HeaderFileCreatedOn, setPropertiesOptions.FileCreationTime);
+          request.SetHeader(
+              _detail::HeaderFileLastWrittenOn, setPropertiesOptions.FileLastWriteTime);
+          return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetMetadataOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<DirectorySetMetadataResult> SetMetadata(
+        static Azure::Response<DirectorySetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "metadata");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "directory");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "metadata");
           if (setMetadataOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
           for (const auto& pair : setMetadataOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
-          return SetMetadataParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, setMetadataOptions.ApiVersionParameter);
+          return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
         struct ListFilesAndDirectoriesSinglePageOptions
@@ -4227,59 +4223,59 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<DirectoryListFilesAndDirectoriesSinglePageResult>
+        static Azure::Response<DirectoryListFilesAndDirectoriesSinglePageResult>
         ListFilesAndDirectoriesSinglePage(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListFilesAndDirectoriesSinglePageOptions&
                 listFilesAndDirectoriesSinglePageOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "list");
+          request.GetUrl().AppendQueryParameter(_detail::QueryRestype, "directory");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "list");
           if (listFilesAndDirectoriesSinglePageOptions.Prefix.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPrefix,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryPrefix,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listFilesAndDirectoriesSinglePageOptions.Prefix.GetValue()));
           }
           if (listFilesAndDirectoriesSinglePageOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listFilesAndDirectoriesSinglePageOptions.ShareSnapshot.GetValue()));
           }
           if (listFilesAndDirectoriesSinglePageOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryContinuationToken,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listFilesAndDirectoriesSinglePageOptions.ContinuationToken.GetValue()));
           }
           if (listFilesAndDirectoriesSinglePageOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(std::to_string(
+                _detail::QueryPageSizeHint,
+                Storage::_detail::UrlEncodeQueryParameter(std::to_string(
                     listFilesAndDirectoriesSinglePageOptions.MaxResults.GetValue())));
           }
           if (listFilesAndDirectoriesSinglePageOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listFilesAndDirectoriesSinglePageOptions.Timeout.GetValue())));
           }
-          request.AddHeader(
-              Details::HeaderVersion, listFilesAndDirectoriesSinglePageOptions.ApiVersionParameter);
+          request.SetHeader(
+              _detail::HeaderVersion, listFilesAndDirectoriesSinglePageOptions.ApiVersionParameter);
           return ListFilesAndDirectoriesSinglePageParseResult(
-              context, pipeline.Send(context, request));
+              context, pipeline.Send(request, context));
         }
 
         struct ListHandlesOptions
@@ -4289,53 +4285,53 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> ShareSnapshot;
           Azure::Core::Nullable<bool> Recursive;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<DirectoryListHandlesResult> ListHandles(
+        static Azure::Response<DirectoryListHandlesResult> ListHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListHandlesOptions& listHandlesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "listhandles");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "listhandles");
           if (listHandlesOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryContinuationToken,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ContinuationToken.GetValue()));
           }
           if (listHandlesOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryPageSizeHint,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.MaxResults.GetValue())));
           }
           if (listHandlesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.Timeout.GetValue())));
           }
           if (listHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ShareSnapshot.GetValue()));
           }
           if (listHandlesOptions.Recursive.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderRecursive,
+            request.SetHeader(
+                _detail::HeaderRecursive,
                 (listHandlesOptions.Recursive.GetValue() ? "true" : "false"));
           }
-          request.AddHeader(Details::HeaderVersion, listHandlesOptions.ApiVersionParameter);
-          return ListHandlesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, listHandlesOptions.ApiVersionParameter);
+          return ListHandlesParseResult(context, pipeline.Send(request, context));
         }
 
         struct ForceCloseHandlesOptions
@@ -4345,52 +4341,52 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> ShareSnapshot;
           std::string HandleId;
           Azure::Core::Nullable<bool> Recursive;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<DirectoryForceCloseHandlesResult> ForceCloseHandles(
+        static Azure::Response<DirectoryForceCloseHandlesResult> ForceCloseHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ForceCloseHandlesOptions& forceCloseHandlesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "forceclosehandles");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "forceclosehandles");
           if (forceCloseHandlesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(forceCloseHandlesOptions.Timeout.GetValue())));
           }
           if (forceCloseHandlesOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryContinuationToken,
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ContinuationToken.GetValue()));
           }
           if (forceCloseHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ShareSnapshot.GetValue()));
           }
-          request.AddHeader(Details::HeaderHandleId, forceCloseHandlesOptions.HandleId);
+          request.SetHeader(_detail::HeaderHandleId, forceCloseHandlesOptions.HandleId);
           if (forceCloseHandlesOptions.Recursive.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderRecursive,
+            request.SetHeader(
+                _detail::HeaderRecursive,
                 (forceCloseHandlesOptions.Recursive.GetValue() ? "true" : "false"));
           }
-          request.AddHeader(Details::HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
-          return ForceCloseHandlesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
+          return ForceCloseHandlesParseResult(context, pipeline.Send(request, context));
         }
 
       private:
-        static Azure::Core::Response<DirectoryCreateResult> CreateParseResult(
+        static Azure::Response<DirectoryCreateResult> CreateParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4399,30 +4395,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success, Directory created.
             DirectoryCreateResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            return Azure::Core::Response<DirectoryCreateResult>(
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            return Azure::Response<DirectoryCreateResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4432,7 +4426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<DirectoryGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<DirectoryGetPropertiesResult> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4442,37 +4436,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success.
             DirectoryGetPropertiesResult result;
 
-            for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
+            for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
-                 && i->first.substr(0, 9) == Details::HeaderMetadata;
+                 && i->first.substr(0, 9) == _detail::HeaderMetadata;
                  ++i)
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
+                = response.GetHeaders().at(_detail::HeaderIsServerEncrypted) == "true";
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            return Azure::Core::Response<DirectoryGetPropertiesResult>(
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            return Azure::Response<DirectoryGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4482,7 +4474,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<DirectoryDeleteResult> DeleteParseResult(
+        static Azure::Response<DirectoryDeleteResult> DeleteParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4491,8 +4483,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Accepted).
             DirectoryDeleteResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<DirectoryDeleteResult>(
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<DirectoryDeleteResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4502,7 +4494,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<DirectorySetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Response<DirectorySetPropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4511,30 +4503,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             DirectorySetPropertiesResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            return Azure::Core::Response<DirectorySetPropertiesResult>(
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            return Azure::Response<DirectorySetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4544,7 +4534,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<DirectorySetMetadataResult> SetMetadataParseResult(
+        static Azure::Response<DirectorySetMetadataResult> SetMetadataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4553,11 +4543,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (OK).
             DirectorySetMetadataResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Core::Response<DirectorySetMetadataResult>(
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
+            return Azure::Response<DirectorySetMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4567,7 +4557,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<DirectoryListFilesAndDirectoriesSinglePageResult>
+        static Azure::Response<DirectoryListFilesAndDirectoriesSinglePageResult>
         ListFilesAndDirectoriesSinglePageParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
@@ -4577,15 +4567,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             DirectoryListFilesAndDirectoriesSinglePageResult result = bodyBuffer.empty()
                 ? DirectoryListFilesAndDirectoriesSinglePageResult()
                 : DirectoryListFilesAndDirectoriesSinglePageResultFromListFilesAndDirectoriesSinglePageResponse(
                     ListFilesAndDirectoriesSinglePageResponseFromXml(reader));
-            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<DirectoryListFilesAndDirectoriesSinglePageResult>(
+            result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<DirectoryListFilesAndDirectoriesSinglePageResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4595,7 +4585,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static DirectoryItem DirectoryItemFromXml(Storage::Details::XmlReader& reader)
+        static DirectoryItem DirectoryItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = DirectoryItem();
           enum class XmlTagName
@@ -4608,11 +4598,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4623,7 +4613,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Name") == 0)
@@ -4635,7 +4625,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Name)
               {
@@ -4646,7 +4636,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileItemDetails FileItemDetailsFromXml(Storage::Details::XmlReader& reader)
+        static FileItemDetails FileItemDetailsFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = FileItemDetails();
           enum class XmlTagName
@@ -4659,11 +4649,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4674,7 +4664,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Content-Length") == 0)
@@ -4686,7 +4676,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::ContentLength)
               {
@@ -4697,7 +4687,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileItem FileItemFromXml(Storage::Details::XmlReader& reader)
+        static FileItem FileItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = FileItem();
           enum class XmlTagName
@@ -4711,11 +4701,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4726,7 +4716,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Name") == 0)
@@ -4748,7 +4738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::Name)
               {
@@ -4760,7 +4750,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static FilesAndDirectoriesListSinglePage FilesAndDirectoriesListSinglePageFromXml(
-            Storage::Details::XmlReader& reader)
+            Storage::_detail::XmlReader& reader)
         {
           auto result = FilesAndDirectoriesListSinglePage();
           enum class XmlTagName
@@ -4774,11 +4764,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4789,7 +4779,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Directory") == 0)
@@ -4815,7 +4805,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -4823,7 +4813,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static ListFilesAndDirectoriesSinglePageResponse
-        ListFilesAndDirectoriesSinglePageResponseFromXml(Storage::Details::XmlReader& reader)
+        ListFilesAndDirectoriesSinglePageResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListFilesAndDirectoriesSinglePageResponse();
           enum class XmlTagName
@@ -4840,11 +4830,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4855,7 +4845,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -4890,7 +4880,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -4910,7 +4900,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 result.Prefix = node.Value;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
+            else if (node.Type == Storage::_detail::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::EnumerationResults
                   && (std::strcmp(node.Name, "DirectoryPath") == 0))
@@ -4956,7 +4946,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<DirectoryListHandlesResult> ListHandlesParseResult(
+        static Azure::Response<DirectoryListHandlesResult> ListHandlesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4965,15 +4955,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             DirectoryListHandlesResult result = bodyBuffer.empty()
                 ? DirectoryListHandlesResult()
                 : DirectoryListHandlesResultFromListHandlesResponse(
                     ListHandlesResponseFromXml(reader));
-            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<DirectoryListHandlesResult>(
+            result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<DirectoryListHandlesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4983,7 +4973,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static HandleItem HandleItemFromXml(Storage::Details::XmlReader& reader)
+        static HandleItem HandleItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = HandleItem();
           enum class XmlTagName
@@ -5003,11 +4993,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5018,7 +5008,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClientIp") == 0)
@@ -5058,7 +5048,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::ClientIp)
               {
@@ -5075,12 +5065,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               else if (path.size() == 1 && path[0] == XmlTagName::LastReconnectTime)
               {
                 result.LastReconnectedOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                    = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::OpenTime)
               {
-                result.OpenedOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                result.OpenedOn = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::ParentId)
               {
@@ -5099,7 +5088,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListHandlesResponse ListHandlesResponseFromXml(Storage::Details::XmlReader& reader)
+        static ListHandlesResponse ListHandlesResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListHandlesResponse();
           enum class XmlTagName
@@ -5115,11 +5104,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5130,7 +5119,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -5160,7 +5149,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -5181,7 +5170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<DirectoryForceCloseHandlesResult> ForceCloseHandlesParseResult(
+        static Azure::Response<DirectoryForceCloseHandlesResult> ForceCloseHandlesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -5190,17 +5179,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             DirectoryForceCloseHandlesResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            if (response.GetHeaders().find(Details::HeaderContinuationToken)
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
-              result.ContinuationToken = response.GetHeaders().at(Details::HeaderContinuationToken);
+              result.ContinuationToken = response.GetHeaders().at(_detail::HeaderContinuationToken);
             }
             result.NumberOfHandlesClosed
-                = std::stoi(response.GetHeaders().at(Details::HeaderNumberOfHandlesClosed));
+                = std::stoi(response.GetHeaders().at(_detail::HeaderNumberOfHandlesClosed));
             result.NumberOfHandlesFailedToClose
-                = std::stoi(response.GetHeaders().at(Details::HeaderNumberOfHandlesFailedToClose));
-            return Azure::Core::Response<DirectoryForceCloseHandlesResult>(
+                = std::stoi(response.GetHeaders().at(_detail::HeaderNumberOfHandlesFailedToClose));
+            return Azure::Response<DirectoryForceCloseHandlesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -5216,7 +5205,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         struct CreateOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           int64_t XMsContentLength = int64_t();
           Azure::Core::Nullable<std::string> FileContentType;
           Azure::Core::Nullable<std::string> FileContentEncoding;
@@ -5233,93 +5222,93 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileCreateResult> Create(
+        static Azure::Response<FileCreateResult> Create(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
+          request.SetHeader(_detail::HeaderContentLength, "0");
           if (createOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
-          request.AddHeader(
-              Details::HeaderXMsContentLength, std::to_string(createOptions.XMsContentLength));
-          request.AddHeader(Details::HeaderFileTypeConstant, "file");
+          request.SetHeader(_detail::HeaderVersion, createOptions.ApiVersionParameter);
+          request.SetHeader(
+              _detail::HeaderXMsContentLength, std::to_string(createOptions.XMsContentLength));
+          request.SetHeader(_detail::HeaderFileTypeConstant, "file");
           if (createOptions.FileContentType.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentType, createOptions.FileContentType.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileContentType, createOptions.FileContentType.GetValue());
           }
           if (createOptions.FileContentEncoding.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentEncoding, createOptions.FileContentEncoding.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileContentEncoding, createOptions.FileContentEncoding.GetValue());
           }
           if (createOptions.FileContentLanguage.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentLanguage, createOptions.FileContentLanguage.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileContentLanguage, createOptions.FileContentLanguage.GetValue());
           }
           if (createOptions.FileCacheControl.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileCacheControl, createOptions.FileCacheControl.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileCacheControl, createOptions.FileCacheControl.GetValue());
           }
           if (createOptions.ContentMd5.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderContentHashMd5,
-                Storage::Details::ToBase64String(createOptions.ContentMd5.GetValue()));
+            request.SetHeader(
+                _detail::HeaderContentHashMd5,
+                Storage::_detail::ToBase64String(createOptions.ContentMd5.GetValue()));
           }
           if (createOptions.FileContentDisposition.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentDisposition,
+            request.SetHeader(
+                _detail::HeaderFileContentDisposition,
                 createOptions.FileContentDisposition.GetValue());
           }
           for (const auto& pair : createOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
           if (createOptions.FilePermission.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermission, createOptions.FilePermission.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermission, createOptions.FilePermission.GetValue());
           }
           if (createOptions.FilePermissionKey.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermissionKey, createOptions.FilePermissionKey.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermissionKey, createOptions.FilePermissionKey.GetValue());
           }
-          request.AddHeader(Details::HeaderFileAttributes, createOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreatedOn, createOptions.FileCreationTime);
-          request.AddHeader(Details::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
+          request.SetHeader(_detail::HeaderFileAttributes, createOptions.FileAttributes);
+          request.SetHeader(_detail::HeaderFileCreatedOn, createOptions.FileCreationTime);
+          request.SetHeader(_detail::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
           if (createOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, createOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, createOptions.LeaseIdOptional.GetValue());
           }
-          return CreateParseResult(context, pipeline.Send(context, request));
+          return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct DownloadOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> Range;
           Azure::Core::Nullable<bool> GetRangeContentMd5;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileDownloadResult> Download(
+        static Azure::Response<FileDownloadResult> Download(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DownloadOptions& downloadOptions)
         {
@@ -5327,39 +5316,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (downloadOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(downloadOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, downloadOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, downloadOptions.ApiVersionParameter);
           if (downloadOptions.Range.HasValue())
           {
-            request.AddHeader(Details::HeaderRange, downloadOptions.Range.GetValue());
+            request.SetHeader(_detail::HeaderRange, downloadOptions.Range.GetValue());
           }
           if (downloadOptions.GetRangeContentMd5.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderRangeGetContentMd5,
+            request.SetHeader(
+                _detail::HeaderRangeGetContentMd5,
                 (downloadOptions.GetRangeContentMd5.GetValue() ? "true" : "false"));
           }
           if (downloadOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, downloadOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, downloadOptions.LeaseIdOptional.GetValue());
           }
-          return DownloadParseResult(context, pipeline.Send(context, request));
+          return DownloadParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
         {
           Azure::Core::Nullable<std::string> ShareSnapshot;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileGetPropertiesResult> GetProperties(
+        static Azure::Response<FileGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
         {
@@ -5367,36 +5356,36 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (getPropertiesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     getPropertiesOptions.ShareSnapshot.GetValue()));
           }
           if (getPropertiesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getPropertiesOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, getPropertiesOptions.ApiVersionParameter);
           if (getPropertiesOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
           }
-          return GetPropertiesParseResult(context, pipeline.Send(context, request));
+          return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileDeleteResult> Delete(
+        static Azure::Response<FileDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
         {
@@ -5404,22 +5393,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (deleteOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(deleteOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, deleteOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, deleteOptions.ApiVersionParameter);
           if (deleteOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
           }
-          return DeleteParseResult(context, pipeline.Send(context, request));
+          return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetHttpHeadersOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<int64_t> XMsContentLength;
           Azure::Core::Nullable<std::string> FileContentType;
           Azure::Core::Nullable<std::string> FileContentEncoding;
@@ -5435,121 +5424,121 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileSetHttpHeadersResult> SetHttpHeaders(
+        static Azure::Response<FileSetHttpHeadersResult> SetHttpHeaders(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetHttpHeadersOptions& setHttpHeadersOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "properties");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "properties");
           if (setHttpHeadersOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setHttpHeadersOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, setHttpHeadersOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, setHttpHeadersOptions.ApiVersionParameter);
           if (setHttpHeadersOptions.XMsContentLength.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderXMsContentLength,
+            request.SetHeader(
+                _detail::HeaderXMsContentLength,
                 std::to_string(setHttpHeadersOptions.XMsContentLength.GetValue()));
           }
           if (setHttpHeadersOptions.FileContentType.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentType, setHttpHeadersOptions.FileContentType.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileContentType, setHttpHeadersOptions.FileContentType.GetValue());
           }
           if (setHttpHeadersOptions.FileContentEncoding.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentEncoding,
+            request.SetHeader(
+                _detail::HeaderFileContentEncoding,
                 setHttpHeadersOptions.FileContentEncoding.GetValue());
           }
           if (setHttpHeadersOptions.FileContentLanguage.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentLanguage,
+            request.SetHeader(
+                _detail::HeaderFileContentLanguage,
                 setHttpHeadersOptions.FileContentLanguage.GetValue());
           }
           if (setHttpHeadersOptions.FileCacheControl.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileCacheControl, setHttpHeadersOptions.FileCacheControl.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileCacheControl, setHttpHeadersOptions.FileCacheControl.GetValue());
           }
           if (setHttpHeadersOptions.ContentMd5.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderContentHashMd5,
-                Storage::Details::ToBase64String(setHttpHeadersOptions.ContentMd5.GetValue()));
+            request.SetHeader(
+                _detail::HeaderContentHashMd5,
+                Storage::_detail::ToBase64String(setHttpHeadersOptions.ContentMd5.GetValue()));
           }
           if (setHttpHeadersOptions.FileContentDisposition.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileContentDisposition,
+            request.SetHeader(
+                _detail::HeaderFileContentDisposition,
                 setHttpHeadersOptions.FileContentDisposition.GetValue());
           }
           if (setHttpHeadersOptions.FilePermission.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermission, setHttpHeadersOptions.FilePermission.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermission, setHttpHeadersOptions.FilePermission.GetValue());
           }
           if (setHttpHeadersOptions.FilePermissionKey.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermissionKey,
+            request.SetHeader(
+                _detail::HeaderFilePermissionKey,
                 setHttpHeadersOptions.FilePermissionKey.GetValue());
           }
-          request.AddHeader(Details::HeaderFileAttributes, setHttpHeadersOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreatedOn, setHttpHeadersOptions.FileCreationTime);
-          request.AddHeader(
-              Details::HeaderFileLastWrittenOn, setHttpHeadersOptions.FileLastWriteTime);
+          request.SetHeader(_detail::HeaderFileAttributes, setHttpHeadersOptions.FileAttributes);
+          request.SetHeader(_detail::HeaderFileCreatedOn, setHttpHeadersOptions.FileCreationTime);
+          request.SetHeader(
+              _detail::HeaderFileLastWrittenOn, setHttpHeadersOptions.FileLastWriteTime);
           if (setHttpHeadersOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, setHttpHeadersOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, setHttpHeadersOptions.LeaseIdOptional.GetValue());
           }
-          return SetHttpHeadersParseResult(context, pipeline.Send(context, request));
+          return SetHttpHeadersParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetMetadataOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileSetMetadataResult> SetMetadata(
+        static Azure::Response<FileSetMetadataResult> SetMetadata(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetMetadataOptions& setMetadataOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "metadata");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "metadata");
           if (setMetadataOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
           for (const auto& pair : setMetadataOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, setMetadataOptions.ApiVersionParameter);
           if (setMetadataOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
           }
-          return SetMetadataParseResult(context, pipeline.Send(context, request));
+          return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
         struct AcquireLeaseOptions
@@ -5557,65 +5546,65 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           int32_t LeaseDuration = int32_t();
           Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<FileAcquireLeaseResult> AcquireLease(
+        static Azure::Response<FileAcquireLeaseResult> AcquireLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AcquireLeaseOptions& acquireLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "acquire");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "acquire");
           if (acquireLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(acquireLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(
-              Details::HeaderDuration, std::to_string(acquireLeaseOptions.LeaseDuration));
+          request.SetHeader(
+              _detail::HeaderDuration, std::to_string(acquireLeaseOptions.LeaseDuration));
           if (acquireLeaseOptions.ProposedLeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderProposedLeaseId,
+            request.SetHeader(
+                _detail::HeaderProposedLeaseId,
                 acquireLeaseOptions.ProposedLeaseIdOptional.GetValue());
           }
-          request.AddHeader(Details::HeaderVersion, acquireLeaseOptions.ApiVersionParameter);
-          return AcquireLeaseParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, acquireLeaseOptions.ApiVersionParameter);
+          return AcquireLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ReleaseLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<FileReleaseLeaseResult> ReleaseLease(
+        static Azure::Response<FileReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ReleaseLeaseOptions& releaseLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "release");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "release");
           if (releaseLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(releaseLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
-          request.AddHeader(Details::HeaderVersion, releaseLeaseOptions.ApiVersionParameter);
-          return ReleaseLeaseParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderLeaseId, releaseLeaseOptions.LeaseIdRequired);
+          request.SetHeader(_detail::HeaderVersion, releaseLeaseOptions.ApiVersionParameter);
+          return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct ChangeLeaseOptions
@@ -5623,67 +5612,67 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
           Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<FileChangeLeaseResult> ChangeLease(
+        static Azure::Response<FileChangeLeaseResult> ChangeLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ChangeLeaseOptions& changeLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "change");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "change");
           if (changeLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(changeLeaseOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderLeaseId, changeLeaseOptions.LeaseIdRequired);
+          request.SetHeader(_detail::HeaderLeaseId, changeLeaseOptions.LeaseIdRequired);
           if (changeLeaseOptions.ProposedLeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderProposedLeaseId,
+            request.SetHeader(
+                _detail::HeaderProposedLeaseId,
                 changeLeaseOptions.ProposedLeaseIdOptional.GetValue());
           }
-          request.AddHeader(Details::HeaderVersion, changeLeaseOptions.ApiVersionParameter);
-          return ChangeLeaseParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, changeLeaseOptions.ApiVersionParameter);
+          return ChangeLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct BreakLeaseOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<FileBreakLeaseResult> BreakLease(
+        static Azure::Response<FileBreakLeaseResult> BreakLease(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const BreakLeaseOptions& breakLeaseOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "lease");
-          request.AddHeader(Details::HeaderAction, "break");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "lease");
+          request.SetHeader(_detail::HeaderAction, "break");
           if (breakLeaseOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(breakLeaseOptions.Timeout.GetValue())));
           }
           if (breakLeaseOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, breakLeaseOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, breakLeaseOptions.LeaseIdOptional.GetValue());
           }
-          request.AddHeader(Details::HeaderVersion, breakLeaseOptions.ApiVersionParameter);
-          return BreakLeaseParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, breakLeaseOptions.ApiVersionParameter);
+          return BreakLeaseParseResult(context, pipeline.Send(request, context));
         }
 
         struct UploadRangeOptions
@@ -5693,44 +5682,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileRangeWriteType XMsWrite;
           int64_t ContentLength = int64_t();
           Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileUploadRangeResult> UploadRange(
+        static Azure::Response<FileUploadRangeResult> UploadRange(
             const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream& bodyStream,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::IO::BodyStream& bodyStream,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeOptions& uploadRangeOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url, &bodyStream);
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "range");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "range");
           if (uploadRangeOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(uploadRangeOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderXMsRange, uploadRangeOptions.XMsRange);
-          request.AddHeader(
-              Details::HeaderFileRangeWrite, (uploadRangeOptions.XMsWrite.ToString()));
-          request.AddHeader(
-              Details::HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
+          request.SetHeader(_detail::HeaderXMsRange, uploadRangeOptions.XMsRange);
+          request.SetHeader(
+              _detail::HeaderFileRangeWrite, (uploadRangeOptions.XMsWrite.ToString()));
+          request.SetHeader(
+              _detail::HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
           if (uploadRangeOptions.ContentMd5.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderContentHashMd5,
-                Storage::Details::ToBase64String(uploadRangeOptions.ContentMd5.GetValue()));
+            request.SetHeader(
+                _detail::HeaderContentHashMd5,
+                Storage::_detail::ToBase64String(uploadRangeOptions.ContentMd5.GetValue()));
           }
-          request.AddHeader(Details::HeaderVersion, uploadRangeOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, uploadRangeOptions.ApiVersionParameter);
           if (uploadRangeOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, uploadRangeOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, uploadRangeOptions.LeaseIdOptional.GetValue());
           }
-          return UploadRangeParseResult(context, pipeline.Send(context, request));
+          return UploadRangeParseResult(context, pipeline.Send(request, context));
         }
 
         struct UploadRangeFromUrlOptions
@@ -5744,67 +5733,67 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<Storage::ContentHash> SourceContentCrc64;
           Azure::Core::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
           Azure::Core::Nullable<Storage::ContentHash> SourceIfNoneMatchCrc64;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
+        static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const UploadRangeFromUrlOptions& uploadRangeFromUrlOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "range");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "range");
           if (uploadRangeFromUrlOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(uploadRangeFromUrlOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderRange, uploadRangeFromUrlOptions.TargetRange);
-          request.AddHeader(Details::HeaderCopySource, uploadRangeFromUrlOptions.CopySource);
+          request.SetHeader(_detail::HeaderRange, uploadRangeFromUrlOptions.TargetRange);
+          request.SetHeader(_detail::HeaderCopySource, uploadRangeFromUrlOptions.CopySource);
           if (uploadRangeFromUrlOptions.SourceRange.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderSourceRange, uploadRangeFromUrlOptions.SourceRange.GetValue());
+            request.SetHeader(
+                _detail::HeaderSourceRange, uploadRangeFromUrlOptions.SourceRange.GetValue());
           }
-          request.AddHeader(
-              Details::HeaderFileRangeWriteFromUrl,
+          request.SetHeader(
+              _detail::HeaderFileRangeWriteFromUrl,
               (uploadRangeFromUrlOptions.XMsWrite.ToString()));
-          request.AddHeader(
-              Details::HeaderContentLength,
+          request.SetHeader(
+              _detail::HeaderContentLength,
               std::to_string(uploadRangeFromUrlOptions.ContentLength));
           if (uploadRangeFromUrlOptions.SourceContentCrc64.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderSourceContentHashCrc64,
-                Storage::Details::ToBase64String(
+            request.SetHeader(
+                _detail::HeaderSourceContentHashCrc64,
+                Storage::_detail::ToBase64String(
                     uploadRangeFromUrlOptions.SourceContentCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfMatchCrc64.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderSourceIfMatchHashCrc64,
-                Storage::Details::ToBase64String(
+            request.SetHeader(
+                _detail::HeaderSourceIfMatchHashCrc64,
+                Storage::_detail::ToBase64String(
                     uploadRangeFromUrlOptions.SourceIfMatchCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderSourceIfNoneMatchHashCrc64,
-                Storage::Details::ToBase64String(
+            request.SetHeader(
+                _detail::HeaderSourceIfNoneMatchHashCrc64,
+                Storage::_detail::ToBase64String(
                     uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.GetValue()));
           }
-          request.AddHeader(Details::HeaderVersion, uploadRangeFromUrlOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, uploadRangeFromUrlOptions.ApiVersionParameter);
           if (uploadRangeFromUrlOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, uploadRangeFromUrlOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, uploadRangeFromUrlOptions.LeaseIdOptional.GetValue());
           }
-          return UploadRangeFromUrlParseResult(context, pipeline.Send(context, request));
+          return UploadRangeFromUrlParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetRangeListOptions
@@ -5812,57 +5801,57 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> ShareSnapshot;
           Azure::Core::Nullable<std::string> PrevShareSnapshot;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> XMsRange;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileGetRangeListResult> GetRangeList(
+        static Azure::Response<FileGetRangeListResult> GetRangeList(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetRangeListOptions& getRangeListOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "rangelist");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "rangelist");
           if (getRangeListOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     getRangeListOptions.ShareSnapshot.GetValue()));
           }
           if (getRangeListOptions.PrevShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPrevShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryPrevShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     getRangeListOptions.PrevShareSnapshot.GetValue()));
           }
           if (getRangeListOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(getRangeListOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, getRangeListOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, getRangeListOptions.ApiVersionParameter);
           if (getRangeListOptions.XMsRange.HasValue())
           {
-            request.AddHeader(Details::HeaderXMsRange, getRangeListOptions.XMsRange.GetValue());
+            request.SetHeader(_detail::HeaderXMsRange, getRangeListOptions.XMsRange.GetValue());
           }
           if (getRangeListOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderLeaseId, getRangeListOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(
+                _detail::HeaderLeaseId, getRangeListOptions.LeaseIdOptional.GetValue());
           }
-          return GetRangeListParseResult(context, pipeline.Send(context, request));
+          return GetRangeListParseResult(context, pipeline.Send(request, context));
         }
 
         struct StartCopyOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Storage::Metadata Metadata;
           std::string CopySource;
           Azure::Core::Nullable<std::string> FilePermission;
@@ -5876,112 +5865,112 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileStartCopyResult> StartCopy(
+        static Azure::Response<FileStartCopyResult> StartCopy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const StartCopyOptions& startCopyOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
+          request.SetHeader(_detail::HeaderContentLength, "0");
           if (startCopyOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(startCopyOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, startCopyOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderVersion, startCopyOptions.ApiVersionParameter);
           for (const auto& pair : startCopyOptions.Metadata)
           {
-            request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
+            request.SetHeader(_detail::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          request.AddHeader(Details::HeaderCopySource, startCopyOptions.CopySource);
+          request.SetHeader(_detail::HeaderCopySource, startCopyOptions.CopySource);
           if (startCopyOptions.FilePermission.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermission, startCopyOptions.FilePermission.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermission, startCopyOptions.FilePermission.GetValue());
           }
           if (startCopyOptions.FilePermissionKey.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermissionKey, startCopyOptions.FilePermissionKey.GetValue());
+            request.SetHeader(
+                _detail::HeaderFilePermissionKey, startCopyOptions.FilePermissionKey.GetValue());
           }
           if (startCopyOptions.XMsFilePermissionCopyMode.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFilePermissionCopyMode,
+            request.SetHeader(
+                _detail::HeaderFilePermissionCopyMode,
                 (startCopyOptions.XMsFilePermissionCopyMode.GetValue().ToString()));
           }
           if (startCopyOptions.FileCopyIgnoreReadOnly.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderIgnoreReadOnly,
+            request.SetHeader(
+                _detail::HeaderIgnoreReadOnly,
                 (startCopyOptions.FileCopyIgnoreReadOnly.GetValue() ? "true" : "false"));
           }
           if (startCopyOptions.FileCopyFileAttributes.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileAttributes, startCopyOptions.FileCopyFileAttributes.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileAttributes, startCopyOptions.FileCopyFileAttributes.GetValue());
           }
           if (startCopyOptions.FileCopyFileCreationTime.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileCreatedOn, startCopyOptions.FileCopyFileCreationTime.GetValue());
+            request.SetHeader(
+                _detail::HeaderFileCreatedOn, startCopyOptions.FileCopyFileCreationTime.GetValue());
           }
           if (startCopyOptions.FileCopyFileLastWriteTime.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderFileLastWrittenOn,
+            request.SetHeader(
+                _detail::HeaderFileLastWrittenOn,
                 startCopyOptions.FileCopyFileLastWriteTime.GetValue());
           }
           if (startCopyOptions.FileCopySetArchiveAttribute.HasValue())
           {
-            request.AddHeader(
-                Details::HeaderSetArchiveAttribute,
+            request.SetHeader(
+                _detail::HeaderSetArchiveAttribute,
                 (startCopyOptions.FileCopySetArchiveAttribute.GetValue() ? "true" : "false"));
           }
           if (startCopyOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, startCopyOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, startCopyOptions.LeaseIdOptional.GetValue());
           }
-          return StartCopyParseResult(context, pipeline.Send(context, request));
+          return StartCopyParseResult(context, pipeline.Send(request, context));
         }
 
         struct AbortCopyOptions
         {
           std::string CopyId;
           Azure::Core::Nullable<int32_t> Timeout;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Core::Response<FileAbortCopyResult> AbortCopy(
+        static Azure::Response<FileAbortCopyResult> AbortCopy(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AbortCopyOptions& abortCopyOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "copy");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "copy");
           request.GetUrl().AppendQueryParameter(
-              Details::QueryCopyId,
-              Storage::Details::UrlEncodeQueryParameter(abortCopyOptions.CopyId));
+              _detail::QueryCopyId,
+              Storage::_detail::UrlEncodeQueryParameter(abortCopyOptions.CopyId));
           if (abortCopyOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(abortCopyOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderCopyActionAbortConstant, "abort");
-          request.AddHeader(Details::HeaderVersion, abortCopyOptions.ApiVersionParameter);
+          request.SetHeader(_detail::HeaderCopyActionAbortConstant, "abort");
+          request.SetHeader(_detail::HeaderVersion, abortCopyOptions.ApiVersionParameter);
           if (abortCopyOptions.LeaseIdOptional.HasValue())
           {
-            request.AddHeader(Details::HeaderLeaseId, abortCopyOptions.LeaseIdOptional.GetValue());
+            request.SetHeader(_detail::HeaderLeaseId, abortCopyOptions.LeaseIdOptional.GetValue());
           }
-          return AbortCopyParseResult(context, pipeline.Send(context, request));
+          return AbortCopyParseResult(context, pipeline.Send(request, context));
         }
 
         struct ListHandlesOptions
@@ -5990,47 +5979,47 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<int32_t> MaxResults;
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> ShareSnapshot;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<FileListHandlesResult> ListHandles(
+        static Azure::Response<FileListHandlesResult> ListHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListHandlesOptions& listHandlesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "listhandles");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "listhandles");
           if (listHandlesOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryContinuationToken,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ContinuationToken.GetValue()));
           }
           if (listHandlesOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryPageSizeHint,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryPageSizeHint,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.MaxResults.GetValue())));
           }
           if (listHandlesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.Timeout.GetValue())));
           }
           if (listHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     listHandlesOptions.ShareSnapshot.GetValue()));
           }
-          request.AddHeader(Details::HeaderVersion, listHandlesOptions.ApiVersionParameter);
-          return ListHandlesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderVersion, listHandlesOptions.ApiVersionParameter);
+          return ListHandlesParseResult(context, pipeline.Send(request, context));
         }
 
         struct ForceCloseHandlesOptions
@@ -6039,46 +6028,46 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<std::string> ShareSnapshot;
           std::string HandleId;
-          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<FileForceCloseHandlesResult> ForceCloseHandles(
+        static Azure::Response<FileForceCloseHandlesResult> ForceCloseHandles(
             const Azure::Core::Http::Url& url,
-            Azure::Core::Internal::Http::HttpPipeline& pipeline,
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ForceCloseHandlesOptions& forceCloseHandlesOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-          request.AddHeader(Details::HeaderContentLength, "0");
-          request.GetUrl().AppendQueryParameter(Details::QueryComp, "forceclosehandles");
+          request.SetHeader(_detail::HeaderContentLength, "0");
+          request.GetUrl().AppendQueryParameter(_detail::QueryComp, "forceclosehandles");
           if (forceCloseHandlesOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryTimeout,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryTimeout,
+                Storage::_detail::UrlEncodeQueryParameter(
                     std::to_string(forceCloseHandlesOptions.Timeout.GetValue())));
           }
           if (forceCloseHandlesOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryContinuationToken,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryContinuationToken,
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ContinuationToken.GetValue()));
           }
           if (forceCloseHandlesOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryShareSnapshot,
-                Storage::Details::UrlEncodeQueryParameter(
+                _detail::QueryShareSnapshot,
+                Storage::_detail::UrlEncodeQueryParameter(
                     forceCloseHandlesOptions.ShareSnapshot.GetValue()));
           }
-          request.AddHeader(Details::HeaderHandleId, forceCloseHandlesOptions.HandleId);
-          request.AddHeader(Details::HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
-          return ForceCloseHandlesParseResult(context, pipeline.Send(context, request));
+          request.SetHeader(_detail::HeaderHandleId, forceCloseHandlesOptions.HandleId);
+          request.SetHeader(_detail::HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
+          return ForceCloseHandlesParseResult(context, pipeline.Send(request, context));
         }
 
       private:
-        static Azure::Core::Response<FileCreateResult> CreateParseResult(
+        static Azure::Response<FileCreateResult> CreateParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6087,31 +6076,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success, File created.
             FileCreateResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            return Azure::Core::Response<FileCreateResult>(
-                std::move(result), std::move(responsePtr));
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            return Azure::Response<FileCreateResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6120,7 +6106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileDownloadResult> DownloadParseResult(
+        static Azure::Response<FileDownloadResult> DownloadParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6130,20 +6116,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Succeeded to read the entire file.
             FileDownloadResult result;
             result.BodyStream = response.GetBodyStream();
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
 
-            for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
+            for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
-                 && i->first.substr(0, 9) == Details::HeaderMetadata;
+                 && i->first.substr(0, 9) == _detail::HeaderMetadata;
                  ++i)
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
+            result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
 
-            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            auto content_range_iterator = response.GetHeaders().find(_detail::HeaderContentRange);
             if (content_range_iterator != response.GetHeaders().end())
             {
               const std::string& content_range = content_range_iterator->second;
@@ -6154,13 +6140,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
               int64_t range_end_offset = std::stoll(std::string(
                   content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
-              result.ContentRange = Azure::Core::Http::Range{
+              result.ContentRange = Azure::Core::Http::HttpRange{
                   range_start_offset, range_end_offset - range_start_offset + 1};
             }
             else
             {
-              result.ContentRange = Azure::Core::Http::Range{
-                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+              result.ContentRange = Azure::Core::Http::HttpRange{
+                  0, std::stoll(response.GetHeaders().at(_detail::HeaderContentLength))};
             }
             if (content_range_iterator != response.GetHeaders().end())
             {
@@ -6170,143 +6156,140 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else
             {
-              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
+              result.FileSize = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
             }
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            if (response.GetHeaders().find(_detail::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+              result.TransactionalContentHash = Storage::_detail::FromBase64String(
+                  response.GetHeaders().at(_detail::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
-            if (response.GetHeaders().find(Details::HeaderContentEncoding)
+            if (response.GetHeaders().find(_detail::HeaderContentEncoding)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentEncoding
-                  = response.GetHeaders().at(Details::HeaderContentEncoding);
+                  = response.GetHeaders().at(_detail::HeaderContentEncoding);
             }
-            if (response.GetHeaders().find(Details::HeaderCacheControl)
+            if (response.GetHeaders().find(_detail::HeaderCacheControl)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.CacheControl
-                  = response.GetHeaders().at(Details::HeaderCacheControl);
+                  = response.GetHeaders().at(_detail::HeaderCacheControl);
             }
-            if (response.GetHeaders().find(Details::HeaderContentDisposition)
+            if (response.GetHeaders().find(_detail::HeaderContentDisposition)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentDisposition
-                  = response.GetHeaders().at(Details::HeaderContentDisposition);
+                  = response.GetHeaders().at(_detail::HeaderContentDisposition);
             }
-            if (response.GetHeaders().find(Details::HeaderContentLanguage)
+            if (response.GetHeaders().find(_detail::HeaderContentLanguage)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentLanguage
-                  = response.GetHeaders().at(Details::HeaderContentLanguage);
+                  = response.GetHeaders().at(_detail::HeaderContentLanguage);
             }
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            result.AcceptRanges = response.GetHeaders().at(Details::HeaderAcceptRanges);
-            if (response.GetHeaders().find(Details::HeaderCopyCompletedOn)
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            result.AcceptRanges = response.GetHeaders().at(_detail::HeaderAcceptRanges);
+            if (response.GetHeaders().find(_detail::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
             {
-              result.CopyCompletedOn = Core::DateTime::Parse(
-                  response.GetHeaders().at(Details::HeaderCopyCompletedOn),
-                  Core::DateTime::DateFormat::Rfc1123);
+              result.CopyCompletedOn = DateTime::Parse(
+                  response.GetHeaders().at(_detail::HeaderCopyCompletedOn),
+                  DateTime::DateFormat::Rfc1123);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatusDescription)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatusDescription)
                 != response.GetHeaders().end())
             {
               result.CopyStatusDescription
-                  = response.GetHeaders().at(Details::HeaderCopyStatusDescription);
+                  = response.GetHeaders().at(_detail::HeaderCopyStatusDescription);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyId) != response.GetHeaders().end())
+            if (response.GetHeaders().find(_detail::HeaderCopyId) != response.GetHeaders().end())
             {
-              result.CopyId = response.GetHeaders().at(Details::HeaderCopyId);
+              result.CopyId = response.GetHeaders().at(_detail::HeaderCopyId);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyProgress)
+            if (response.GetHeaders().find(_detail::HeaderCopyProgress)
                 != response.GetHeaders().end())
             {
-              result.CopyProgress = response.GetHeaders().at(Details::HeaderCopyProgress);
+              result.CopyProgress = response.GetHeaders().at(_detail::HeaderCopyProgress);
             }
-            if (response.GetHeaders().find(Details::HeaderCopySource)
+            if (response.GetHeaders().find(_detail::HeaderCopySource)
                 != response.GetHeaders().end())
             {
-              result.CopySource = response.GetHeaders().at(Details::HeaderCopySource);
+              result.CopySource = response.GetHeaders().at(_detail::HeaderCopySource);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatus)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderContentHashMd5)
+            if (response.GetHeaders().find(_detail::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
+              result.HttpHeaders.ContentHash = Storage::_detail::FromBase64String(
+                  response.GetHeaders().at(_detail::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
-            if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
+            if (response.GetHeaders().find(_detail::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
             {
               result.IsServerEncrypted
-                  = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
+                  = response.GetHeaders().at(_detail::HeaderIsServerEncrypted) == "true";
             }
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            if (response.GetHeaders().find(Details::HeaderLeaseDuration)
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            if (response.GetHeaders().find(_detail::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
               result.LeaseDuration
-                  = LeaseDurationType(response.GetHeaders().at(Details::HeaderLeaseDuration));
+                  = LeaseDurationType(response.GetHeaders().at(_detail::HeaderLeaseDuration));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseState)
+            if (response.GetHeaders().find(_detail::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = LeaseStateType(response.GetHeaders().at(_detail::HeaderLeaseState));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseStatus)
+            if (response.GetHeaders().find(_detail::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = LeaseStatusType(response.GetHeaders().at(_detail::HeaderLeaseStatus));
             }
-            return Azure::Core::Response<FileDownloadResult>(
-                std::move(result), std::move(responsePtr));
+            return Azure::Response<FileDownloadResult>(std::move(result), std::move(responsePtr));
           }
           else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::PartialContent)
           {
             // Succeeded to read a specified range of the file.
             FileDownloadResult result;
             result.BodyStream = response.GetBodyStream();
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
 
-            for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
+            for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
-                 && i->first.substr(0, 9) == Details::HeaderMetadata;
+                 && i->first.substr(0, 9) == _detail::HeaderMetadata;
                  ++i)
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
+            result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
 
-            auto content_range_iterator = response.GetHeaders().find(Details::HeaderContentRange);
+            auto content_range_iterator = response.GetHeaders().find(_detail::HeaderContentRange);
             if (content_range_iterator != response.GetHeaders().end())
             {
               const std::string& content_range = content_range_iterator->second;
@@ -6317,13 +6300,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   content_range.begin() + bytes_pos + 6, content_range.begin() + dash_pos));
               int64_t range_end_offset = std::stoll(std::string(
                   content_range.begin() + dash_pos + 1, content_range.begin() + slash_pos));
-              result.ContentRange = Azure::Core::Http::Range{
+              result.ContentRange = Azure::Core::Http::HttpRange{
                   range_start_offset, range_end_offset - range_start_offset + 1};
             }
             else
             {
-              result.ContentRange = Azure::Core::Http::Range{
-                  0, std::stoll(response.GetHeaders().at(Details::HeaderContentLength))};
+              result.ContentRange = Azure::Core::Http::HttpRange{
+                  0, std::stoll(response.GetHeaders().at(_detail::HeaderContentLength))};
             }
             if (content_range_iterator != response.GetHeaders().end())
             {
@@ -6333,123 +6316,120 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else
             {
-              result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
+              result.FileSize = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
             }
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            if (response.GetHeaders().find(_detail::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+              result.TransactionalContentHash = Storage::_detail::FromBase64String(
+                  response.GetHeaders().at(_detail::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
-            if (response.GetHeaders().find(Details::HeaderContentEncoding)
+            if (response.GetHeaders().find(_detail::HeaderContentEncoding)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentEncoding
-                  = response.GetHeaders().at(Details::HeaderContentEncoding);
+                  = response.GetHeaders().at(_detail::HeaderContentEncoding);
             }
-            if (response.GetHeaders().find(Details::HeaderCacheControl)
+            if (response.GetHeaders().find(_detail::HeaderCacheControl)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.CacheControl
-                  = response.GetHeaders().at(Details::HeaderCacheControl);
+                  = response.GetHeaders().at(_detail::HeaderCacheControl);
             }
-            if (response.GetHeaders().find(Details::HeaderContentDisposition)
+            if (response.GetHeaders().find(_detail::HeaderContentDisposition)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentDisposition
-                  = response.GetHeaders().at(Details::HeaderContentDisposition);
+                  = response.GetHeaders().at(_detail::HeaderContentDisposition);
             }
-            if (response.GetHeaders().find(Details::HeaderContentLanguage)
+            if (response.GetHeaders().find(_detail::HeaderContentLanguage)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentLanguage
-                  = response.GetHeaders().at(Details::HeaderContentLanguage);
+                  = response.GetHeaders().at(_detail::HeaderContentLanguage);
             }
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            result.AcceptRanges = response.GetHeaders().at(Details::HeaderAcceptRanges);
-            if (response.GetHeaders().find(Details::HeaderCopyCompletedOn)
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            result.AcceptRanges = response.GetHeaders().at(_detail::HeaderAcceptRanges);
+            if (response.GetHeaders().find(_detail::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
             {
-              result.CopyCompletedOn = Core::DateTime::Parse(
-                  response.GetHeaders().at(Details::HeaderCopyCompletedOn),
-                  Core::DateTime::DateFormat::Rfc1123);
+              result.CopyCompletedOn = DateTime::Parse(
+                  response.GetHeaders().at(_detail::HeaderCopyCompletedOn),
+                  DateTime::DateFormat::Rfc1123);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatusDescription)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatusDescription)
                 != response.GetHeaders().end())
             {
               result.CopyStatusDescription
-                  = response.GetHeaders().at(Details::HeaderCopyStatusDescription);
+                  = response.GetHeaders().at(_detail::HeaderCopyStatusDescription);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyId) != response.GetHeaders().end())
+            if (response.GetHeaders().find(_detail::HeaderCopyId) != response.GetHeaders().end())
             {
-              result.CopyId = response.GetHeaders().at(Details::HeaderCopyId);
+              result.CopyId = response.GetHeaders().at(_detail::HeaderCopyId);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyProgress)
+            if (response.GetHeaders().find(_detail::HeaderCopyProgress)
                 != response.GetHeaders().end())
             {
-              result.CopyProgress = response.GetHeaders().at(Details::HeaderCopyProgress);
+              result.CopyProgress = response.GetHeaders().at(_detail::HeaderCopyProgress);
             }
-            if (response.GetHeaders().find(Details::HeaderCopySource)
+            if (response.GetHeaders().find(_detail::HeaderCopySource)
                 != response.GetHeaders().end())
             {
-              result.CopySource = response.GetHeaders().at(Details::HeaderCopySource);
+              result.CopySource = response.GetHeaders().at(_detail::HeaderCopySource);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatus)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderContentHashMd5)
+            if (response.GetHeaders().find(_detail::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
+              result.HttpHeaders.ContentHash = Storage::_detail::FromBase64String(
+                  response.GetHeaders().at(_detail::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
-            if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
+            if (response.GetHeaders().find(_detail::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
             {
               result.IsServerEncrypted
-                  = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
+                  = response.GetHeaders().at(_detail::HeaderIsServerEncrypted) == "true";
             }
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            if (response.GetHeaders().find(Details::HeaderLeaseDuration)
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            if (response.GetHeaders().find(_detail::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
               result.LeaseDuration
-                  = LeaseDurationType(response.GetHeaders().at(Details::HeaderLeaseDuration));
+                  = LeaseDurationType(response.GetHeaders().at(_detail::HeaderLeaseDuration));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseState)
+            if (response.GetHeaders().find(_detail::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = LeaseStateType(response.GetHeaders().at(_detail::HeaderLeaseState));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseStatus)
+            if (response.GetHeaders().find(_detail::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = LeaseStatusType(response.GetHeaders().at(_detail::HeaderLeaseStatus));
             }
-            return Azure::Core::Response<FileDownloadResult>(
-                std::move(result), std::move(responsePtr));
+            return Azure::Response<FileDownloadResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6458,7 +6438,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<FileGetPropertiesResult> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6467,130 +6447,128 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             FileGetPropertiesResult result;
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
 
-            for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
+            for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
-                 && i->first.substr(0, 9) == Details::HeaderMetadata;
+                 && i->first.substr(0, 9) == _detail::HeaderMetadata;
                  ++i)
             {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
-            result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderContentLength));
-            if (response.GetHeaders().find(Details::HeaderContentType)
+            result.FileSize = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
+            if (response.GetHeaders().find(_detail::HeaderContentType)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
+              result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
             }
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            if (response.GetHeaders().find(_detail::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+              result.HttpHeaders.ContentHash = Storage::_detail::FromBase64String(
+                  response.GetHeaders().at(_detail::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
-            if (response.GetHeaders().find(Details::HeaderContentEncoding)
+            if (response.GetHeaders().find(_detail::HeaderContentEncoding)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentEncoding
-                  = response.GetHeaders().at(Details::HeaderContentEncoding);
+                  = response.GetHeaders().at(_detail::HeaderContentEncoding);
             }
-            if (response.GetHeaders().find(Details::HeaderCacheControl)
+            if (response.GetHeaders().find(_detail::HeaderCacheControl)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.CacheControl
-                  = response.GetHeaders().at(Details::HeaderCacheControl);
+                  = response.GetHeaders().at(_detail::HeaderCacheControl);
             }
-            if (response.GetHeaders().find(Details::HeaderContentDisposition)
+            if (response.GetHeaders().find(_detail::HeaderContentDisposition)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentDisposition
-                  = response.GetHeaders().at(Details::HeaderContentDisposition);
+                  = response.GetHeaders().at(_detail::HeaderContentDisposition);
             }
-            if (response.GetHeaders().find(Details::HeaderContentLanguage)
+            if (response.GetHeaders().find(_detail::HeaderContentLanguage)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentLanguage
-                  = response.GetHeaders().at(Details::HeaderContentLanguage);
+                  = response.GetHeaders().at(_detail::HeaderContentLanguage);
             }
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            if (response.GetHeaders().find(Details::HeaderCopyCompletedOn)
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            if (response.GetHeaders().find(_detail::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
             {
-              result.CopyCompletedOn = Core::DateTime::Parse(
-                  response.GetHeaders().at(Details::HeaderCopyCompletedOn),
-                  Core::DateTime::DateFormat::Rfc1123);
+              result.CopyCompletedOn = DateTime::Parse(
+                  response.GetHeaders().at(_detail::HeaderCopyCompletedOn),
+                  DateTime::DateFormat::Rfc1123);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatusDescription)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatusDescription)
                 != response.GetHeaders().end())
             {
               result.CopyStatusDescription
-                  = response.GetHeaders().at(Details::HeaderCopyStatusDescription);
+                  = response.GetHeaders().at(_detail::HeaderCopyStatusDescription);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyId) != response.GetHeaders().end())
+            if (response.GetHeaders().find(_detail::HeaderCopyId) != response.GetHeaders().end())
             {
-              result.CopyId = response.GetHeaders().at(Details::HeaderCopyId);
+              result.CopyId = response.GetHeaders().at(_detail::HeaderCopyId);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyProgress)
+            if (response.GetHeaders().find(_detail::HeaderCopyProgress)
                 != response.GetHeaders().end())
             {
-              result.CopyProgress = response.GetHeaders().at(Details::HeaderCopyProgress);
+              result.CopyProgress = response.GetHeaders().at(_detail::HeaderCopyProgress);
             }
-            if (response.GetHeaders().find(Details::HeaderCopySource)
+            if (response.GetHeaders().find(_detail::HeaderCopySource)
                 != response.GetHeaders().end())
             {
-              result.CopySource = response.GetHeaders().at(Details::HeaderCopySource);
+              result.CopySource = response.GetHeaders().at(_detail::HeaderCopySource);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatus)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
+            if (response.GetHeaders().find(_detail::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
             {
               result.IsServerEncrypted
-                  = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
+                  = response.GetHeaders().at(_detail::HeaderIsServerEncrypted) == "true";
             }
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            if (response.GetHeaders().find(Details::HeaderLeaseDuration)
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            if (response.GetHeaders().find(_detail::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
               result.LeaseDuration
-                  = LeaseDurationType(response.GetHeaders().at(Details::HeaderLeaseDuration));
+                  = LeaseDurationType(response.GetHeaders().at(_detail::HeaderLeaseDuration));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseState)
+            if (response.GetHeaders().find(_detail::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = LeaseStateType(response.GetHeaders().at(_detail::HeaderLeaseState));
             }
-            if (response.GetHeaders().find(Details::HeaderLeaseStatus)
+            if (response.GetHeaders().find(_detail::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = LeaseStatusType(response.GetHeaders().at(_detail::HeaderLeaseStatus));
             }
-            return Azure::Core::Response<FileGetPropertiesResult>(
+            return Azure::Response<FileGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6600,7 +6578,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileDeleteResult> DeleteParseResult(
+        static Azure::Response<FileDeleteResult> DeleteParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6609,9 +6587,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Accepted).
             FileDeleteResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileDeleteResult>(
-                std::move(result), std::move(responsePtr));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileDeleteResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6620,7 +6597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileSetHttpHeadersResult> SetHttpHeadersParseResult(
+        static Azure::Response<FileSetHttpHeadersResult> SetHttpHeadersParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6629,30 +6606,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             FileSetHttpHeadersResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
-                = response.GetHeaders().at(Details::HeaderFilePermissionKey);
+                = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
             result.SmbProperties.Attributes
-                = FileAttributes(response.GetHeaders().at(Details::HeaderAttributes));
-            result.SmbProperties.CreatedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderCreatedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.LastWrittenOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastWrittenOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.ChangedOn = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderChangedOn),
-                Core::DateTime::DateFormat::Rfc3339);
-            result.SmbProperties.FileId = response.GetHeaders().at(Details::HeaderFileId);
+                = FileAttributes(response.GetHeaders().at(_detail::HeaderAttributes));
+            result.SmbProperties.CreatedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderCreatedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.LastWrittenOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastWrittenOn),
+                DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.ChangedOn = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderChangedOn), DateTime::DateFormat::Rfc3339);
+            result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
-                = response.GetHeaders().at(Details::HeaderParentFileId);
-            return Azure::Core::Response<FileSetHttpHeadersResult>(
+                = response.GetHeaders().at(_detail::HeaderParentFileId);
+            return Azure::Response<FileSetHttpHeadersResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6662,7 +6637,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileSetMetadataResult> SetMetadataParseResult(
+        static Azure::Response<FileSetMetadataResult> SetMetadataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6671,11 +6646,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (OK).
             FileSetMetadataResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Core::Response<FileSetMetadataResult>(
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
+            return Azure::Response<FileSetMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6685,7 +6660,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileAcquireLeaseResult> AcquireLeaseParseResult(
+        static Azure::Response<FileAcquireLeaseResult> AcquireLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6694,13 +6669,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Acquire operation completed successfully.
             FileAcquireLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileAcquireLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileAcquireLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6710,7 +6685,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileReleaseLeaseResult> ReleaseLeaseParseResult(
+        static Azure::Response<FileReleaseLeaseResult> ReleaseLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6719,12 +6694,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Release operation completed successfully.
             FileReleaseLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileReleaseLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileReleaseLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6734,7 +6709,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileChangeLeaseResult> ChangeLeaseParseResult(
+        static Azure::Response<FileChangeLeaseResult> ChangeLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6743,13 +6718,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Change operation completed successfully.
             FileChangeLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileChangeLeaseResult>(
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileChangeLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6759,7 +6734,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileBreakLeaseResult> BreakLeaseParseResult(
+        static Azure::Response<FileBreakLeaseResult> BreakLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6768,17 +6743,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The Break operation completed successfully.
             FileBreakLeaseResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            if (response.GetHeaders().find(Details::HeaderLeaseId) != response.GetHeaders().end())
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            if (response.GetHeaders().find(_detail::HeaderLeaseId) != response.GetHeaders().end())
             {
-              result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
+              result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
             }
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileBreakLeaseResult>(
-                std::move(result), std::move(responsePtr));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileBreakLeaseResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6787,7 +6761,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileUploadRangeResult> UploadRangeParseResult(
+        static Azure::Response<FileUploadRangeResult> UploadRangeParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6796,25 +6770,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Created).
             FileUploadRangeResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            if (response.GetHeaders().find(_detail::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+              result.TransactionalContentHash = Storage::_detail::FromBase64String(
+                  response.GetHeaders().at(_detail::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            if (response.GetHeaders().find(Details::HeaderRequestIsServerEncrypted)
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            if (response.GetHeaders().find(_detail::HeaderRequestIsServerEncrypted)
                 != response.GetHeaders().end())
             {
               result.IsServerEncrypted
-                  = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
+                  = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             }
-            return Azure::Core::Response<FileUploadRangeResult>(
+            return Azure::Response<FileUploadRangeResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6824,7 +6798,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrlParseResult(
+        static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrlParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6833,17 +6807,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Created).
             FileUploadRangeFromUrlResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.TransactionalContentHash = Storage::Details::FromBase64String(
-                response.GetHeaders().at(Details::HeaderTransactionalContentHashCrc64),
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.TransactionalContentHash = Storage::_detail::FromBase64String(
+                response.GetHeaders().at(_detail::HeaderTransactionalContentHashCrc64),
                 HashAlgorithm::Crc64);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
-                = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Core::Response<FileUploadRangeFromUrlResult>(
+                = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
+            return Azure::Response<FileUploadRangeFromUrlResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6853,7 +6827,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileGetRangeListResult> GetRangeListParseResult(
+        static Azure::Response<FileGetRangeListResult> GetRangeListParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6862,18 +6836,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileGetRangeListResult result = bodyBuffer.empty()
                 ? FileGetRangeListResult()
                 : FileGetRangeListResultFromShareFileRangeList(ShareFileRangeListFromXml(reader));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.FileSize = std::stoll(response.GetHeaders().at(Details::HeaderXMsContentLength));
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileGetRangeListResult>(
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.FileSize = std::stoll(response.GetHeaders().at(_detail::HeaderXMsContentLength));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileGetRangeListResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6883,7 +6857,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareFileRangeList ShareFileRangeListFromXml(Storage::Details::XmlReader& reader)
+        static ShareFileRangeList ShareFileRangeListFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ShareFileRangeList();
           enum class XmlTagName
@@ -6898,11 +6872,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -6913,7 +6887,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClearRange") == 0)
@@ -6945,7 +6919,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
             }
           }
@@ -6961,7 +6935,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<FileStartCopyResult> StartCopyParseResult(
+        static Azure::Response<FileStartCopyResult> StartCopyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6970,23 +6944,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The copy file has been accepted with the specified copy status.
             FileStartCopyResult result;
-            result.ETag = Core::ETag(response.GetHeaders().at(Details::HeaderETag));
-            result.LastModified = Core::DateTime::Parse(
-                response.GetHeaders().at(Details::HeaderLastModified),
-                Core::DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            if (response.GetHeaders().find(Details::HeaderCopyId) != response.GetHeaders().end())
+            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
+            result.LastModified = DateTime::Parse(
+                response.GetHeaders().at(_detail::HeaderLastModified),
+                DateTime::DateFormat::Rfc1123);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            if (response.GetHeaders().find(_detail::HeaderCopyId) != response.GetHeaders().end())
             {
-              result.CopyId = response.GetHeaders().at(Details::HeaderCopyId);
+              result.CopyId = response.GetHeaders().at(_detail::HeaderCopyId);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyStatus)
+            if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
-            return Azure::Core::Response<FileStartCopyResult>(
-                std::move(result), std::move(responsePtr));
+            return Azure::Response<FileStartCopyResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6995,7 +6968,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileAbortCopyResult> AbortCopyParseResult(
+        static Azure::Response<FileAbortCopyResult> AbortCopyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -7004,9 +6977,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The delete request was accepted and the file will be deleted.
             FileAbortCopyResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileAbortCopyResult>(
-                std::move(result), std::move(responsePtr));
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileAbortCopyResult>(std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -7015,7 +6987,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<FileListHandlesResult> ListHandlesParseResult(
+        static Azure::Response<FileListHandlesResult> ListHandlesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -7024,14 +6996,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader = Storage::Details::XmlReader(
+            auto reader = Storage::_detail::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileListHandlesResult result = bodyBuffer.empty()
                 ? FileListHandlesResult()
                 : FileListHandlesResultFromListHandlesResponse(ListHandlesResponseFromXml(reader));
-            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            return Azure::Core::Response<FileListHandlesResult>(
+            result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            return Azure::Response<FileListHandlesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -7041,7 +7013,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static HandleItem HandleItemFromXml(Storage::Details::XmlReader& reader)
+        static HandleItem HandleItemFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = HandleItem();
           enum class XmlTagName
@@ -7061,11 +7033,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7076,7 +7048,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClientIp") == 0)
@@ -7116,7 +7088,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::Unknown);
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::ClientIp)
               {
@@ -7133,12 +7105,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               else if (path.size() == 1 && path[0] == XmlTagName::LastReconnectTime)
               {
                 result.LastReconnectedOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                    = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::OpenTime)
               {
-                result.OpenedOn
-                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
+                result.OpenedOn = DateTime::Parse(node.Value, DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::ParentId)
               {
@@ -7157,7 +7128,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListHandlesResponse ListHandlesResponseFromXml(Storage::Details::XmlReader& reader)
+        static ListHandlesResponse ListHandlesResponseFromXml(Storage::_detail::XmlReader& reader)
         {
           auto result = ListHandlesResponse();
           enum class XmlTagName
@@ -7173,11 +7144,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
+            if (node.Type == Storage::_detail::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7188,7 +7159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            else if (node.Type == Storage::_detail::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -7218,7 +7189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
+            else if (node.Type == Storage::_detail::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::NextMarker)
@@ -7239,7 +7210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<FileForceCloseHandlesResult> ForceCloseHandlesParseResult(
+        static Azure::Response<FileForceCloseHandlesResult> ForceCloseHandlesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -7248,17 +7219,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             FileForceCloseHandlesResult result;
-            result.RequestId = response.GetHeaders().at(Details::HeaderRequestId);
-            if (response.GetHeaders().find(Details::HeaderContinuationToken)
+            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
+            if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
-              result.ContinuationToken = response.GetHeaders().at(Details::HeaderContinuationToken);
+              result.ContinuationToken = response.GetHeaders().at(_detail::HeaderContinuationToken);
             }
             result.NumberOfHandlesClosed
-                = std::stoi(response.GetHeaders().at(Details::HeaderNumberOfHandlesClosed));
+                = std::stoi(response.GetHeaders().at(_detail::HeaderNumberOfHandlesClosed));
             result.NumberOfHandlesFailedToClose
-                = std::stoi(response.GetHeaders().at(Details::HeaderNumberOfHandlesFailedToClose));
-            return Azure::Core::Response<FileForceCloseHandlesResult>(
+                = std::stoi(response.GetHeaders().at(_detail::HeaderNumberOfHandlesFailedToClose));
+            return Azure::Response<FileForceCloseHandlesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -7271,6 +7242,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     }; // class ShareRestClient
 
-  } // namespace Details
+  } // namespace _detail
 
 }}}} // namespace Azure::Storage::Files::Shares

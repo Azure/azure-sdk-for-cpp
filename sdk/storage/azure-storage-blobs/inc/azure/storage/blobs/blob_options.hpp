@@ -9,8 +9,10 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/internal/client_options.hpp>
+#include <azure/core/match_conditions.hpp>
+#include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
@@ -19,7 +21,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct BlobContainerAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct BlobContainerAccessConditions : public Azure::ModifiedConditions,
+                                         public LeaseAccessConditions
   {
   };
 
@@ -39,8 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct BlobAccessConditions : public Azure::ModifiedConditions,
+                                public Azure::MatchConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions
   {
@@ -49,8 +52,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for blob lease operations.
    */
-  struct LeaseBlobAccessConditions : public ModifiedTimeConditions,
-                                     public ETagAccessConditions,
+  struct LeaseBlobAccessConditions : public Azure::ModifiedConditions,
+                                     public Azure::MatchConditions,
                                      public TagAccessConditions
   {
   };
@@ -122,20 +125,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Client options used to initalize all kinds of blob clients.
    */
-  struct BlobClientOptions
+  struct BlobClientOptions : Azure::Core::_internal::ClientOptions
   {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
     /**
      * @brief Holds the customer provided key used when making requests.
      */
@@ -147,24 +138,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionScope;
 
     /**
-     * @brief Specify the number of retries and other retry-related options.
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
      */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-
-    /**
-     * @brief The last part of the user agent for telemetry.
-     */
-    std::string ApplicationId;
+    std::string SecondaryHostForRetryReads;
 
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = Details::ApiVersion;
+    std::string ApiVersion = _detail::ApiVersion;
   };
 
   /**
@@ -208,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Start time for the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      */
-    Azure::Core::DateTime startsOn = std::chrono::system_clock::now();
+    Azure::DateTime startsOn = std::chrono::system_clock::now();
   };
 
   /**
@@ -334,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Specify this header to perform the operation only if the resource has been
        * modified since the specified time. This timestamp will be truncated to second.
        */
-      Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
+      Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
     } AccessConditions;
   };
 
@@ -512,7 +497,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief When specified together with Range, service returns hash for the range as long as the
@@ -534,7 +519,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     struct
     {
@@ -787,7 +772,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
+    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -804,7 +789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    struct : public ModifiedTimeConditions, public ETagAccessConditions
+    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
     } SourceAccessConditions;
   };
@@ -901,7 +886,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
+    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -1026,7 +1011,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
      * omitted, then all ranges for the blob are returned.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

@@ -8,7 +8,7 @@
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 
   const static std::string DfsEndPointIdentifier = ".dfs.";
   const static std::string BlobEndPointIdentifier = ".blob.";
@@ -76,21 +76,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options)
   {
     Blobs::BlobClientOptions blobOptions;
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      blobOptions.PerOperationPolicies.emplace_back(p->Clone());
-    }
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      blobOptions.PerRetryPolicies.emplace_back(p->Clone());
-    }
-    blobOptions.RetryOptions = options.RetryOptions;
-    blobOptions.RetryOptions.SecondaryHostForRetryReads
-        = Details::GetBlobUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    blobOptions.TransportPolicyOptions = options.TransportPolicyOptions;
-    blobOptions.ApplicationId = options.ApplicationId;
+    *(static_cast<Azure::Core::_internal::ClientOptions*>(&blobOptions)) = options;
+    blobOptions.SecondaryHostForRetryReads
+        = _detail::GetBlobUrlFromUrl(options.SecondaryHostForRetryReads);
     blobOptions.ApiVersion = options.ApiVersion;
     return blobOptions;
   }
 
-}}}}} // namespace Azure::Storage::Files::DataLake::Details
+}}}}} // namespace Azure::Storage::Files::DataLake::_detail

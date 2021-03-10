@@ -24,6 +24,9 @@ steps:
         not(eq(variables['${{ parameters.DependenciesVariableName }}'], ''))
       )
 
+  # This task times out after 10 minutes. An analysis of a subset of Vcpkg Cache
+  # runs showed that after 10 minutes the cache step is very unlikely to 
+  # succeed.
   - task: Cache@2
     inputs:
       key: >-
@@ -34,6 +37,7 @@ steps:
       path: $(VCPKG_INSTALLATION_ROOT)
       cacheHitVar: VcpkgRestoredFromCache
     displayName: Vcpkg Cache
+    timeoutInMinutes: 10
     condition: >-
       and(
         succeeded(),

@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A CreatePageBlobResult describing the newly created page blob.
      */
-    Azure::Core::Response<Models::CreatePageBlobResult> Create(
+    Azure::Response<Models::CreatePageBlobResult> Create(
         int64_t blobSize,
         const CreatePageBlobOptions& options = CreatePageBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A CreatePageBlobResult describing the newly created page blob.
      * CreatePageBlobResult.Created is false if the blob already exists.
      */
-    Azure::Core::Response<Models::CreatePageBlobResult> CreateIfNotExists(
+    Azure::Response<Models::CreatePageBlobResult> CreateIfNotExists(
         int64_t blobContentLength,
         const CreatePageBlobOptions& options = CreatePageBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -147,9 +147,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A UploadPageBlobPagesResult describing the state of the updated pages.
      */
-    Azure::Core::Response<Models::UploadPageBlobPagesResult> UploadPages(
+    Azure::Response<Models::UploadPageBlobPagesResult> UploadPages(
         int64_t offset,
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -169,10 +169,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
-    Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
+    Azure::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
         int64_t destinationOffset,
         std::string sourceUri,
-        Azure::Core::Http::Range sourceRange,
+        Azure::Core::Http::HttpRange sourceRange,
         const UploadPageBlobPagesFromUriOptions& options = UploadPageBlobPagesFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -188,8 +188,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A ClearPageBlobPagesResult describing the state of the updated pages.
      */
-    Azure::Core::Response<Models::ClearPageBlobPagesResult> ClearPages(
-        Azure::Core::Http::Range range,
+    Azure::Response<Models::ClearPageBlobPagesResult> ClearPages(
+        Azure::Core::Http::HttpRange range,
         const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A ResizePageBlobResult describing the resized page blob.
      */
-    Azure::Core::Response<Models::ResizePageBlobResult> Resize(
+    Azure::Response<Models::ResizePageBlobResult> Resize(
         int64_t blobSize,
         const ResizePageBlobOptions& options = ResizePageBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRanges(
+    Azure::Response<Models::GetPageBlobPageRangesResult> GetPageRanges(
         const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRangesDiff(
+    Azure::Response<Models::GetPageBlobPageRangesResult> GetPageRangesDiff(
         const std::string& previousSnapshot,
         const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetManagedDiskPageRangesDiff(
+    Azure::Response<Models::GetPageBlobPageRangesResult> GetManagedDiskPageRangesDiff(
         const std::string& previousSnapshotUrl,
         const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;

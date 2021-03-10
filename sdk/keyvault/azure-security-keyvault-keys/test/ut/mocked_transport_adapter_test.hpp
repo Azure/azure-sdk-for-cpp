@@ -16,7 +16,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  namespace Details {
+  namespace _detail {
     // Return a simple key as response so keyvault can parse it to create the T response
     // Fake key from https://docs.microsoft.com/en-us/rest/api/keyvault/GetKey/GetKey#examples
     constexpr static const char FakeKey[]
@@ -29,13 +29,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           "\"Recoverable+Purgeable\"  },  \"tags\": {              \"purpose\" "
           ": "
           "\"unit test\", \"test name \" : \"CreateGetDeleteKeyTest\"}}";
-  } // namespace Details
+  } // namespace _detail
 
   // A transport adapter which only echo a request headers back as a response.
   class MockedTransportAdapter : public Azure::Core::Http::HttpTransport {
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        Azure::Core::Context const& context,
-        Azure::Core::Http::Request& request) override
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) override
     {
       (void)context;
       auto response = std::make_unique<Azure::Core::Http::RawResponse>(
@@ -44,11 +44,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Copy headers
       for (auto header : request.GetHeaders())
       {
-        response->AddHeader(header.first, header.second);
+        response->SetHeader(header.first, header.second);
       }
-      std::string bodyCount(Details::FakeKey);
-      response->SetBodyStream(std::make_unique<Azure::IO::MemoryBodyStream>(
-          reinterpret_cast<const uint8_t*>(Details::FakeKey), bodyCount.size()));
+      std::string bodyCount(_detail::FakeKey);
+      response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          reinterpret_cast<const uint8_t*>(_detail::FakeKey), bodyCount.size()));
       return response;
     } // namespace Azure
   }; // namespace Test
@@ -58,24 +58,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   public:
     explicit KeyClientWithNoAuthenticationPolicy(
         std::string const& vaultUrl,
-        KeyClientOptions options = KeyClientOptions())
+        KeyClientOptions const& options = KeyClientOptions())
         : KeyClient(vaultUrl, nullptr, options)
     {
       auto apiVersion = options.GetVersionString();
 
-      // Base Pipeline
-      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-      policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-          "KeyVault", apiVersion, options.TelemetryPolicyOptions));
-      policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-      policies.emplace_back(std::make_unique<Azure::Core::Http::RetryPolicy>(options.RetryOptions));
-      policies.emplace_back(std::make_unique<Azure::Core::Http::LoggingPolicy>());
-      policies.emplace_back(
-          std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-      Azure::Core::Http::Url url(vaultUrl);
-
-      m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>(
-          url, apiVersion, std::move(policies));
+      m_pipeline = std::make_unique<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>(
+          Azure::Core::Http::Url(vaultUrl),
+          apiVersion,
+          Azure::Core::Http::_internal::HttpPipeline(options, "test", "version", {}, {}));
     }
   };
 
@@ -87,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      m_clientOptions.TransportPolicyOptions.Transport = std::make_shared<MockedTransportAdapter>();
+      m_clientOptions.Transport.Transport = std::make_shared<MockedTransportAdapter>();
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test

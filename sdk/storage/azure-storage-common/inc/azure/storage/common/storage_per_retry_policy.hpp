@@ -7,7 +7,7 @@
 
 #include <azure/core/http/policy.hpp>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   class StoragePerRetryPolicy : public Core::Http::HttpPolicy {
   public:
@@ -19,9 +19,9 @@ namespace Azure { namespace Storage { namespace Details {
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
-        Core::Context const& ctx,
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override;
+        Core::Http::NextHttpPolicy nextHttpPolicy,
+        Core::Context const& ctx) const override;
   };
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

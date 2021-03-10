@@ -8,7 +8,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 
-JsonWebKeyType Details::KeyTypeFromString(std::string const& name)
+JsonWebKeyType _detail::KeyTypeFromString(std::string const& name)
 {
   if (name == EcValue)
   {
@@ -37,7 +37,7 @@ JsonWebKeyType Details::KeyTypeFromString(std::string const& name)
   throw std::runtime_error("cannot convert " + name + " to key type (kty)");
 }
 
-std::string Details::KeyTypeToString(JsonWebKeyType kty)
+std::string _detail::KeyTypeToString(JsonWebKeyType kty)
 {
   if (kty == JsonWebKeyType::Ec)
   {

@@ -2,23 +2,51 @@
 
 ## 1.0.0-beta.7 (Unreleased)
 
+### New Features
+
+- Added `HttpPolicyOrder` for adding custom Http policies to sdk clients.
+
 ### Breaking Changes
 
 - Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
-- Split `Azure::Core::RequestConditions` into `Azure::Core::MatchConditions` and `Azure::Core::ModifiedConditions`.
+- Split `Azure::Core::RequestConditions` into `Azure::MatchConditions` and `Azure::ModifiedConditions`.
 - Removed `TransportKind` enum from `Azure::Core::Http`.
+- Added `Azure::Core::Operation<T>::GetRawResponse().`
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
+- Renamed `Azure::Core::Details::Version` to `Azure::Core::PackageVersion`.
 - Moved `BodyStream` and its derived types from `Azure::Core::Http` namespace to `Azure::IO`, and moved the `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
 - Moved `NullBodyStream` to internal usage only. It is not meant for public use.
 - Removed `LimitBodyStream`.
+- Renamed `AddHeader()` from `Request` and `RawResponse` to `SetHeader()`.
 - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
+- Renamed `TransportPolicyOptions` to `TransportOptions`.
+- Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
+- Renamed `ValuePolicyOptions` to `ValueOptions`.
+- Removed `StartTry()` from `Azure::Core::Http::Request`.
+- Move `Azure::Core::Context` to be the last parameter for consistency, instead of first in various azure-core types. For example:
+  - `BodyStream::Read(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)`
+  - `BodyStream::ReadToEnd(BodyStream& body, Azure::Core::Context const& context)`
+  - `HttpPolicy::Send(Request& request, NextHttpPolicy policy, Azure::Core::Context const& context)`
+  - `Operation<T>::PollUntilDone(std::chrono::milliseconds period, Azure::Core::Context& context)`
+  - `TokenCredential::GetToken(Http::TokenRequestOptions const& tokenRequestOptions, Azure::Core::Context const& context)`
+- Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
+- Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.
+- Introduced `Azure::Core::Http::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
+- Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
+- Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
+- Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
+- Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
+- Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
+- Moved `Azure::Core::ETag` to `Azure::ETag`.
+- Moved `Azure::Core::DateTime` to `Azure::DateTime`.
 
 ### Bug Fixes
 
 - Make sure to rewind the body stream at the start of each request retry attempt, including the first.
 - Let connection pool to reset the pool when all connections are closed.
+- Fix `Azure::Context` to support unique_ptr.
 
 ## 1.0.0-beta.6 (2021-02-09)
 

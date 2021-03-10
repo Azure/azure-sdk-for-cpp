@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetBlobPropertiesResult describing the blob's properties.
      */
-    Azure::Core::Response<Models::GetBlobPropertiesResult> GetProperties(
+    Azure::Response<Models::GetBlobPropertiesResult> GetProperties(
         const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetBlobHttpHeadersResult describing the updated blob.
      */
-    Azure::Core::Response<Models::SetBlobHttpHeadersResult> SetHttpHeaders(
+    Azure::Response<Models::SetBlobHttpHeadersResult> SetHttpHeaders(
         Models::BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetBlobMetadataResult describing the updated blob.
      */
-    Azure::Core::Response<Models::SetBlobMetadataResult> SetMetadata(
+    Azure::Response<Models::SetBlobMetadataResult> SetMetadata(
         Metadata metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetBlobAccessTierResult on successfully setting the tier.
      */
-    Azure::Core::Response<Models::SetBlobAccessTierResult> SetAccessTier(
+    Azure::Response<Models::SetBlobAccessTierResult> SetAccessTier(
         Models::AccessTier tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A AbortCopyBlobFromUriResult on successfully aborting.
      */
-    Azure::Core::Response<Models::AbortCopyBlobFromUriResult> AbortCopyFromUri(
+    Azure::Response<Models::AbortCopyBlobFromUriResult> AbortCopyFromUri(
         const std::string& copyId,
         const AbortCopyBlobFromUriOptions& options = AbortCopyBlobFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -236,7 +236,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A DownloadBlobResult describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
-    Azure::Core::Response<Models::DownloadBlobResult> Download(
+    Azure::Response<Models::DownloadBlobResult> Download(
         const DownloadBlobOptions& options = DownloadBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
-    Azure::Core::Response<Models::DownloadBlobToResult> DownloadTo(
+    Azure::Response<Models::DownloadBlobToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
         const DownloadBlobToOptions& options = DownloadBlobToOptions(),
@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
-    Azure::Core::Response<Models::DownloadBlobToResult> DownloadTo(
+    Azure::Response<Models::DownloadBlobToResult> DownloadTo(
         const std::string& fileName,
         const DownloadBlobToOptions& options = DownloadBlobToOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A CreateBlobSnapshotResult describing the new blob snapshot.
      */
-    Azure::Core::Response<Models::CreateBlobSnapshotResult> CreateSnapshot(
+    Azure::Response<Models::CreateBlobSnapshotResult> CreateSnapshot(
         const CreateBlobSnapshotOptions& options = CreateBlobSnapshotOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A DeleteBlobResult on successfully deleting.
      */
-    Azure::Core::Response<Models::DeleteBlobResult> Delete(
+    Azure::Response<Models::DeleteBlobResult> Delete(
         const DeleteBlobOptions& options = DeleteBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A DeleteBlobResult on successfully deleting. DeleteBlobResult.Deleted is false if the
      * blob doesn't exist.
      */
-    Azure::Core::Response<Models::DeleteBlobResult> DeleteIfExists(
+    Azure::Response<Models::DeleteBlobResult> DeleteIfExists(
         const DeleteBlobOptions& options = DeleteBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -315,7 +315,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A UndeleteBlobResult on successfully deleting.
      */
-    Azure::Core::Response<Models::UndeleteBlobResult> Undelete(
+    Azure::Response<Models::UndeleteBlobResult> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A SetBlobTagsInfo on successfully setting tags.
      */
-    Azure::Core::Response<Models::SetBlobTagsResult> SetTags(
+    Azure::Response<Models::SetBlobTagsResult> SetTags(
         std::map<std::string, std::string> tags,
         const SetBlobTagsOptions& options = SetBlobTagsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -339,20 +339,20 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return Tags on successfully getting tags.
      */
-    Azure::Core::Response<Models::GetBlobTagsResult> GetTags(
+    Azure::Response<Models::GetBlobTagsResult> GetTags(
         const GetBlobTagsOptions& options = GetBlobTagsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   protected:
     Azure::Core::Http::Url m_blobUrl;
-    std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     explicit BlobClient(
         Azure::Core::Http::Url blobUrl,
-        std::shared_ptr<Azure::Core::Internal::Http::HttpPipeline> pipeline,
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
         : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),

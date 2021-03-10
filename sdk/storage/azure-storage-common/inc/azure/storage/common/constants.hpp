@@ -7,7 +7,7 @@ namespace Azure { namespace Storage {
 
   constexpr static const char* AccountEncryptionKey = "$account-encryption-key";
 
-  namespace Details {
+  namespace _detail {
     constexpr static const char* BlobServicePackageName = "storage-blobs";
     constexpr static const char* DatalakeServicePackageName = "storage-files-datalake";
     constexpr static const char* FileServicePackageName = "storage-files-shares";
@@ -23,5 +23,5 @@ namespace Azure { namespace Storage {
     constexpr static const char* DefaultSasVersion = "2020-02-10";
 
     constexpr int ReliableStreamRetryCount = 3;
-  } // namespace Details
+  } // namespace _detail
 }} // namespace Azure::Storage

@@ -18,7 +18,7 @@ namespace Azure { namespace Storage {
     struct DataLakeSasBuilder;
   } // namespace Sas
 
-  namespace Details {
+  namespace _detail {
     class SharedKeyPolicy;
   }
 
@@ -58,7 +58,7 @@ namespace Azure { namespace Storage {
     const std::string AccountName;
 
   private:
-    friend class Details::SharedKeyPolicy;
+    friend class _detail::SharedKeyPolicy;
     friend struct Sas::BlobSasBuilder;
     friend struct Sas::ShareSasBuilder;
     friend struct Sas::DataLakeSasBuilder;
@@ -73,7 +73,7 @@ namespace Azure { namespace Storage {
     std::string m_accountKey;
   };
 
-  namespace Details {
+  namespace _detail {
 
     struct ConnectionStringParts
     {
@@ -86,6 +86,6 @@ namespace Azure { namespace Storage {
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);
 
-  } // namespace Details
+  } // namespace _detail
 
 }} // namespace Azure::Storage

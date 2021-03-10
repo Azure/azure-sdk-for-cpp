@@ -36,7 +36,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * constructor is private and requires internal components.*/
     friend class KeyClient;
 
-    std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
     Azure::Security::KeyVault::Keys::DeletedKey m_value;
     std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
     std::string m_continuationToken;
@@ -47,9 +47,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
-        Azure::Core::Context& context,
-        std::chrono::milliseconds period) override
+    Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override
     {
       while (true)
       {
@@ -61,7 +61,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::this_thread::sleep_for(period);
       }
 
-      return Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey>(
+      return Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey>(
           m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
     }
 
@@ -72,11 +72,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     DeleteKeyOperation(
-        std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>
+        std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
             keyvaultPipeline,
-        Azure::Core::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
+        Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
   public:
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A pointer to #Azure::Core::Http::RawResponse or null.
+     */
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
      *

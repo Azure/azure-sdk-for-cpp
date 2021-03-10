@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   constexpr static const char* FilePreserveSmbProperties = "preserve";
   constexpr static const char* FileAllHandles = "*";
 
-  namespace Details {
+  namespace _detail {
     constexpr static const char* ShareSnapshotQueryParameter = "sharesnapshot";
 
     // Error codes:
@@ -21,6 +21,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* ShareAlreadyExists = "ShareAlreadyExists";
     constexpr static const char* ShareNotFound = "ShareNotFound";
     constexpr static const char* ResourceAlreadyExists = "ResourceAlreadyExists";
-  } // namespace Details
+  } // namespace _detail
 
 }}}} // namespace Azure::Storage::Files::Shares

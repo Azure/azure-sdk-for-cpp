@@ -7,7 +7,7 @@
 
 #include <limits>
 
-using namespace Azure::Core;
+using namespace Azure;
 
 TEST(ETag, ToString)
 {

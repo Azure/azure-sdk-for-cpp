@@ -21,14 +21,14 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace Internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _internal {
 
   /**
    * @brief The HTTP pipeline used by KeyVault clients.
    */
   class KeyVaultPipeline {
     Azure::Core::Http::Url m_vaultUrl;
-    Azure::Core::Internal::Http::HttpPipeline m_pipeline;
+    Azure::Core::Http::_internal::HttpPipeline m_pipeline;
     std::string m_apiVersion;
 
     /**
@@ -52,7 +52,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      */
     Azure::Core::Http::Request CreateRequest(
         Azure::Core::Http::HttpMethod method,
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         std::vector<std::string> const& path) const;
 
     /**
@@ -71,13 +71,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @brief Construct a new Key Vault Pipeline.
      *
      * @param vaultUrl The url address for the Key Vault.
-     * @param policies The policies to use for building the KeyVaultPipeline.
+     * @param apiVersion The service Api version.
+     * @param pipeline The Http pipeline for sending requests with.
      */
     explicit KeyVaultPipeline(
         Azure::Core::Http::Url vaultUrl,
         std::string apiVersion,
-        std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> const& policies)
-        : m_vaultUrl(std::move(vaultUrl)), m_pipeline(policies), m_apiVersion(std::move(apiVersion))
+        Azure::Core::Http::_internal::HttpPipeline&& pipeline)
+        : m_vaultUrl(std::move(vaultUrl)), m_pipeline(pipeline), m_apiVersion(std::move(apiVersion))
     {
     }
 
@@ -92,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>
-    Azure::Core::Response<T> SendRequest(
+    Azure::Response<T> SendRequest(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
@@ -100,7 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     {
       auto request = CreateRequest(method, path);
       auto response = SendRequest(context, request);
-      return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
+      return Azure::Response<T>(factoryFn(*response), std::move(response));
     }
 
     /**
@@ -115,20 +116,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>
-    Azure::Core::Response<T> SendRequest(
+    Azure::Response<T> SendRequest(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
-        Azure::Core::Internal::Json::JsonSerializable const& content,
+        Azure::Core::Json::_internal::JsonSerializable const& content,
         std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
         std::vector<std::string> const& path)
     {
       auto serialContent = content.Serialize();
-      auto streamContent = Azure::IO::MemoryBodyStream(
+      auto streamContent = Azure::Core::IO::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
-      return Azure::Core::Response<T>(factoryFn(*response), std::move(response));
+      return Azure::Response<T>(factoryFn(*response), std::move(response));
     }
 
     /**
@@ -147,15 +148,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     {
       auto request = CreateRequest(method, path);
       // Use the core pipeline directly to avoid checking the response code.
-      return m_pipeline.Send(context, request);
+      return m_pipeline.Send(request, context);
     }
 
     /**
      * @brief Get the Vault Url which was used to create the
-     * #Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline.
+     * #Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline.
      *
      * @return The vault Url as string.
      */
     std::string GetVaultUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
   };
-}}}}} // namespace Azure::Security::KeyVault::Common::Internal
+}}}}} // namespace Azure::Security::KeyVault::Common::_internal

@@ -22,7 +22,7 @@ Url::Url(const std::string& url)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
       return static_cast<char>(
-          Azure::Core::Internal::Strings::ToLower(static_cast<unsigned char>(c)));
+          Azure::Core::_internal::StringExtensions::ToLower(static_cast<unsigned char>(c)));
     });
 
     pos = url.begin() + schemeIter + schemeEnd.length();
@@ -177,43 +177,46 @@ void Url::AppendQueryParameters(const std::string& query)
   }
 }
 
-std::string Url::GetRelativeUrl() const
+std::string Url::GetUrlWithoutQuery(bool relative) const
 {
-  std::string relative_url;
-  if (!m_encodedPath.empty())
+  std::string url;
+
+  if (!relative)
   {
-    relative_url += m_encodedPath;
-  }
-  {
-    relative_url += '?';
-    for (const auto& q : m_encodedQueryParameters)
+    if (!m_scheme.empty())
     {
-      relative_url += q.first + '=' + q.second + '&';
+      url += m_scheme + "://";
     }
-    relative_url.pop_back();
+    url += m_host;
+    if (m_port != 0)
+    {
+      url += ":" + std::to_string(m_port);
+    }
   }
 
-  return relative_url;
+  if (!m_encodedPath.empty())
+  {
+    if (!relative)
+    {
+      url += "/";
+    }
+
+    url += m_encodedPath;
+  }
+
+  return url;
+}
+
+std::string Url::GetRelativeUrl() const
+{
+  return GetUrlWithoutQuery(true)
+      + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 std::string Url::GetAbsoluteUrl() const
 {
-  std::string full_url;
-  if (!m_scheme.empty())
-  {
-    full_url += m_scheme + "://";
-  }
-  full_url += m_host;
-  if (m_port != 0)
-  {
-    full_url += ":" + std::to_string(m_port);
-  }
-  if (!m_encodedPath.empty())
-  {
-    full_url += "/";
-  }
-  full_url += GetRelativeUrl();
-  return full_url;
+  return GetUrlWithoutQuery(false)
+      + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
 
 const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars

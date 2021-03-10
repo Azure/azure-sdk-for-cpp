@@ -34,7 +34,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     void GlobalSetup() override
     {
-      Details::HttpClient = std::make_unique<Azure::Core::Http::WinHttpTransport>();
+      _detail::HttpClient = std::make_unique<Azure::Core::Http::WinHttpTransport>();
     }
 
     /**

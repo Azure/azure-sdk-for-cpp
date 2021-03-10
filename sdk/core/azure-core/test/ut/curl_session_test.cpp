@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response.data(), response.data() + response.size()),
+            SetArrayArgument<0>(response.data(), response.data() + response.size()),
             Return(response.size())));
 
     // Create the unique ptr to take care about memory free at the end
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
         request, std::move(uniqueCurlMock), true);
 
-    EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+    EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
   }
 
   TEST_F(CurlSession, chunkResponseSizeZero)
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response.data(), response.data() + response.size()),
+            SetArrayArgument<0>(response.data(), response.data() + response.size()),
             Return(response.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, updateLastUsageTime());
@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
@@ -95,10 +95,10 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response.data(), response.data() + response.size()),
+            SetArrayArgument<0>(response.data(), response.data() + response.size()),
             Return(response.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response2.data(), response2.data() + response2.size()),
+            SetArrayArgument<0>(response2.data(), response2.data() + response2.size()),
             Return(response2.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, updateLastUsageTime());
@@ -116,14 +116,15 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
       auto r = session->GetResponse();
       r->SetBodyStream(std::move(session));
       auto bodyS = r->GetBodyStream();
 
       // Read the bodyStream to get all chunks
       EXPECT_THROW(
-          Azure::IO::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *bodyS),
+          Azure::Core::IO::BodyStream::ReadToEnd(
+              *bodyS, Azure::Core::Context::GetApplicationContext()),
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
@@ -151,31 +152,31 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response0.data(), response0.data() + response0.size()),
+            SetArrayArgument<0>(response0.data(), response0.data() + response0.size()),
             Return(response0.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response1.data(), response1.data() + response1.size()),
+            SetArrayArgument<0>(response1.data(), response1.data() + response1.size()),
             Return(response1.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response2.data(), response2.data() + response2.size()),
+            SetArrayArgument<0>(response2.data(), response2.data() + response2.size()),
             Return(response2.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response3.data(), response3.data() + response3.size()),
+            SetArrayArgument<0>(response3.data(), response3.data() + response3.size()),
             Return(response3.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response4.data(), response4.data() + response4.size()),
+            SetArrayArgument<0>(response4.data(), response4.data() + response4.size()),
             Return(response4.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response5.data(), response5.data() + response5.size()),
+            SetArrayArgument<0>(response5.data(), response5.data() + response5.size()),
             Return(response5.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response6.data(), response6.data() + response6.size()),
+            SetArrayArgument<0>(response6.data(), response6.data() + response6.size()),
             Return(response6.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response7.data(), response7.data() + response7.size()),
+            SetArrayArgument<0>(response7.data(), response7.data() + response7.size()),
             Return(response7.size())))
         .WillOnce(DoAll(
-            SetArrayArgument<1>(response8.data(), response8.data() + response8.size()),
+            SetArrayArgument<0>(response8.data(), response8.data() + response8.size()),
             Return(response8.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, updateLastUsageTime());
@@ -193,14 +194,14 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
+      EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
       auto response = session->GetResponse();
       response->SetBodyStream(std::move(session));
       auto bodyS = response->GetBodyStream();
 
       // Read the bodyStream to get all chunks
-      EXPECT_NO_THROW(
-          Azure::IO::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *bodyS));
+      EXPECT_NO_THROW(Azure::Core::IO::BodyStream::ReadToEnd(
+          *bodyS, Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
@@ -228,7 +229,7 @@ namespace Azure { namespace Core { namespace Test {
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           request, std::move(uniqueCurlMock), true);
 
-      auto returnCode = session->Perform(Azure::Core::GetApplicationContext());
+      auto returnCode = session->Perform(Azure::Core::Context::GetApplicationContext());
       EXPECT_EQ(CURLE_SEND_ERROR, returnCode);
     }
     // Check connection pool is empty (connection was not moved to the pool)

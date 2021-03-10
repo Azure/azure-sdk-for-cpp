@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
     shareSasBuilder.Resource = Sas::ShareSasResource::Share;
 
     auto keyCredential
-        = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto fileServiceClient0 = Files::Shares::ShareServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::Core::DateTime();
+      builder2.ExpiresOn = Azure::DateTime();
       builder2.SetPermissions(static_cast<Sas::ShareSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 

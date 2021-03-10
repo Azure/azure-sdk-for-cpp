@@ -103,7 +103,11 @@ stages:
                       - pwsh: |
                           $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
                           $version = $packageSpec.version
-                          $title = "[${{ artifact.VcpkgPortName }}] publish version $version"
+                          Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
+                        displayName: Set PackageVersion variable
+
+                      - pwsh: |
+                          $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
 
                           if ('$(VcpkgPRTitle)') { 
                             Write-Host "Using queue time PR title"
@@ -111,12 +115,6 @@ stages:
                           }
                           Write-Host "##vso[task.setvariable variable=PrTitle]$title"
                         displayName: Set PR title
-
-                      - pwsh: |
-                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
-                          $version = $packageSpec.version
-                          Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
-                        displayName: Set PackageVersion variable
 
                       - task: Powershell@2
                         inputs:
@@ -133,66 +131,56 @@ stages:
                       # in parallel against the same branch name. Release only 
                       # one package at a time.
                       - pwsh: |
-                          Write-Host "git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg"
-                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+                          Write-Host "git clone https://github.com/azure-sdk/vcpkg $(Pipeline.Workspace)/vcpkg"
+                          git clone https://github.com/azure-sdk/vcpkg $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
-                            Write-Error "Unable to check out vcpkg repo"
+                            Write-Error "Unable to check out vcpkg fork repo"
                             exit $LASTEXITCODE
                           }
-                          
-                          Write-Host "cd $(Pipeline.Workspace)/vcpkg"
-                          cd $(Pipeline.Workspace)/vcpkg
+                          Write-Host "##vso[task.setvariable variable=VcpkgWorkspace]$(Pipeline.Workspace)/vcpkg"
+                        displayName: Clone vcpkg from upstream
 
-                          # Clean out the folder so that template files removed
-                          # are not inadvertently re-added
-                          if (Test-Path "ports/${{ artifact.VcpkgPortName }}") {
-                            Remove-Item -v -r "ports/${{ artifact.VcpkgPortName }}"
-                          }
-
-                          New-Item -Type Directory ports/${{ artifact.VcpkgPortName }}
-                          Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.VcpkgPortName }}
-
-                          # Show artifacts copied into ports folder for PR
-                          Get-ChildItem -Recurse ports/${{ artifact.VcpkgPortName }}
-                          
-                          Write-Host "git status"
+                      # Check out the PR branch if it's already in remote. 
+                      # Ignore failures.
+                      - pwsh: |
+                          $ErrorActionPreference = "Continue"
+                          git checkout "origin/$(PrBranchName)" 2>&1 | Out-Null
+                          $LASTEXITCODE = 0 # This ignores any error from git checkout
                           git status
+                        displayName: Checkout Previous PRBranch if it exist.
+                        workingDirectory: $(VcpkgWorkspace)
 
-                          # Commit changes
-                          Write-Host "git add -A"
-                          git add -A 
-                          Write-Host "git -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" commit -m `"Initial vcpkg commit for ${{ artifact.VcpkgPortName }}`""
-                          git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" commit  -m "Initial vcpkg commit for ${{ artifact.VcpkgPortName }}" 
+                      - task: Powershell@2
+                        inputs:
+                          pwsh: true
+                          targetType: filePath
+                          filePath: eng/scripts/Update-VcpkgPort.ps1
+                          arguments: >-
+                            -ReleaseArtifactSourceDirectory "$(Pipeline.Workspace)/packages/${{ artifact.Name }}"
+                            -PortDestinationDirectory 'ports/${{ artifact.VcpkgPortName }}'
+                            -VcpkgPortName '${{ artifact.VcpkgPortName }}'
+                            -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
+                          workingDirectory: $(VcpkgWorkspace)
+                        displayName: Update vcpkg port
 
-                          # Run vcpkg x-add-version to add version to vcpkg file
-                          Write-Host "./bootstrap-vcpkg.bat"
-                          ./bootstrap-vcpkg.bat
-                          Write-Host "./vcpkg.exe x-add-version ${{ artifact.VcpkgPortName }}"
-                          ./vcpkg.exe x-add-version ${{ artifact.VcpkgPortName }}
+                      # Set $(HasChanges) to $true so that 
+                      # create-pull-request.yml completes the push and PR 
+                      # submission steps
+                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
+                        displayName: Set $(HasChanges) to $true for create-pull-request.yml
 
-                          # Amend commit to include results of x-add-version
-                          Write-Host "git status"
-                          git status
-                          Write-Host "git add -A"
-                          git add -A
-                          Write-Host "git -c user.name=`"azure-sdk`" -c user.email=`"azuresdk@microsoft.com`" commit --amend -m `"[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)`""
-                          git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" commit --amend -m "[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)"
-
-                          # Work around create-pull-request.yml logic that 
-                          # checks for changes
-                          Write-Host "##vso[task.setvariable variable=HasChanges]$true"
-                        displayName: Commit changes for PR
-
+                      # SkipCheckingForChanges is true to skip the commit step 
+                      # (which is already done by Update-VcpkgPort.ps1)
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoOwner: Microsoft
                           RepoName: vcpkg
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
-                          CommitMsg: "[${{ artifact.VcpkgPortName }}] Update to $(PackageVersion)"
                           PRTitle: $(PrTitle)
-                          BaseBranchName: master
+                          PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
                           SkipCheckingForChanges: true
+                          BaseBranchName: master
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

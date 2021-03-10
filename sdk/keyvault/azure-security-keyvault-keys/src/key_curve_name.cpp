@@ -6,10 +6,10 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 
-KeyCurveName KeyCurveName::P256() { return KeyCurveName(Details::P256Value); }
+KeyCurveName KeyCurveName::P256() { return KeyCurveName(_detail::P256Value); }
 
-KeyCurveName KeyCurveName::P256K() { return KeyCurveName(Details::P256KValue); }
+KeyCurveName KeyCurveName::P256K() { return KeyCurveName(_detail::P256KValue); }
 
-KeyCurveName KeyCurveName::P384() { return KeyCurveName(Details::P384Value); }
+KeyCurveName KeyCurveName::P384() { return KeyCurveName(_detail::P384Value); }
 
-KeyCurveName KeyCurveName::P521() { return KeyCurveName(Details::P521Value); }
+KeyCurveName KeyCurveName::P521() { return KeyCurveName(_detail::P521Value); }

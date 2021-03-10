@@ -43,12 +43,12 @@ namespace Azure { namespace Core { namespace Test {
     MOCK_METHOD(
         int64_t,
         ReadFromSocket,
-        (Context const& context, uint8_t* buffer, int64_t bufferSize),
+        (uint8_t * buffer, int64_t bufferSize, Context const& context),
         (override));
     MOCK_METHOD(
         CURLcode,
         SendBuffer,
-        (Context const& context, uint8_t const* buffer, size_t bufferSize),
+        (uint8_t const* buffer, size_t bufferSize, Context const& context),
         (override));
 
     /* This is a way to test we are calling the destructor

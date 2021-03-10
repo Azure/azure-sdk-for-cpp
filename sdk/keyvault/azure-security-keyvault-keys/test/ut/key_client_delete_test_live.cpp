@@ -59,15 +59,15 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     // Setting 3 min as timeout just because I like number 3. We just want to prevent test running
     // for so long if something happens and no exception is thrown (paranoid scenario)
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
-    auto cancelToken = Azure::Core::GetApplicationContext().WithDeadline(duration);
+    auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
     auto expectedStatusToken = m_keyVaultUrl + "/"
-        + std::string(Azure::Security::KeyVault::Keys::Details::DeletedKeysPath) + "/" + keyName;
+        + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
     EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
     // poll each second until key is soft-deleted
     // Will throw and fail test if test takes more than 3 minutes (token cancelled)
-    auto keyResponse = keyResponseLRO.PollUntilDone(cancelToken, std::chrono::milliseconds(1000));
+    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
 }
 
@@ -133,9 +133,9 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
-    auto cancelToken = Azure::Core::GetApplicationContext().WithDeadline(duration);
+    auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto keyResponse = keyResponseLRO.PollUntilDone(cancelToken, std::chrono::milliseconds(1000));
+    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
   // delete same key again
   auto wasThrown = false;
@@ -207,9 +207,9 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
-    auto cancelToken = Azure::Core::GetApplicationContext().WithDeadline(duration);
+    auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto keyResponse = keyResponseLRO.PollUntilDone(cancelToken, std::chrono::milliseconds(1000));
+    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
   // Create a key with same name
   auto wasThrown = false;

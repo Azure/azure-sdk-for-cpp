@@ -49,6 +49,7 @@ set(
     inc/azure/core/http/http.hpp
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/hkeyholder.hpp
     inc/azure/core/internal/http/pipeline.hpp
@@ -58,15 +59,15 @@ set(
     inc/azure/core/internal/null_body_stream.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
-    inc/azure/core/logging/logging.hpp
     inc/azure/core/base64.hpp
-    inc/azure/core/case_insensitive_map.hpp
+    inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
+    inc/azure/core/logger.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
@@ -86,7 +87,7 @@ set(
     src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/http.cpp
-    src/http/logging_policy.cpp
+    src/http/log_policy.cpp
     src/http/policy.cpp
     src/http/raw_response.cpp
     src/http/request.cpp
@@ -95,10 +96,12 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/io/body_stream.cpp
-    src/logging/logging.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/environment_log_level_listener.cpp
+    src/environment_log_level_listener_private.hpp
+    src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
     src/version.cpp

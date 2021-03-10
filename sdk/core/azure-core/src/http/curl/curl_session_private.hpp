@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
    * transporter to be reusable in multiple pipelines while every call to network is unique.
    */
-  class CurlSession : public Azure::IO::BodyStream {
+  class CurlSession : public Azure::Core::IO::BodyStream {
 #ifdef TESTING_BUILD
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Read one expected byte and throw if it is different than the \p expected
      *
      */
-    void ReadExpected(Context const& context, uint8_t expected);
+    void ReadExpected(uint8_t expected, Context const& context);
 
     /**
      * @brief Read `\\r\\n` from internal buffer or from the wire.
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    int64_t m_innerBufferSize = Details::DefaultLibcurlReaderSize;
+    int64_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
 
     bool m_isChunkedResponseType = false;
 
@@ -277,7 +277,7 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[Details::DefaultLibcurlReaderSize]
+    uint8_t m_readBuffer[_detail::DefaultLibcurlReaderSize]
         = {0}; // to work with libcurl custom read.
 
     /**
@@ -354,7 +354,7 @@ namespace Azure { namespace Core { namespace Http {
     bool m_keepAlive = true;
 
     /**
-     * @brief Implement #Azure::IO::BodyStream::OnRead(). Calling this function pulls data
+     * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
      * from the wire.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
@@ -362,7 +362,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param count The number of bytes to read from the network.
      * @return The actual number of bytes read from the network.
      */
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
     /**
@@ -407,7 +407,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse();
 
     /**
-     * @brief Implement #Azure::IO::BodyStream length.
+     * @brief Implement #Azure::Core::IO::BodyStream length.
      *
      * @return The size of the payload.
      */

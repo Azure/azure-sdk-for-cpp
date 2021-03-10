@@ -32,7 +32,7 @@ std::string GetOSVersion()
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
-    Azure::Core::Internal::HKEYHolder regKey;
+    Azure::Core::_internal::HKEYHolder regKey;
     if (RegOpenKeyExA(
             HKEY_LOCAL_MACHINE,
             "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
@@ -115,10 +115,10 @@ std::string TelemetryPolicy::BuildTelemetryId(
 }
 
 std::unique_ptr<RawResponse> TelemetryPolicy::Send(
-    Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
 {
-  request.AddHeader("User-Agent", m_telemetryId);
-  return nextHttpPolicy.Send(ctx, request);
+  request.SetHeader("User-Agent", m_telemetryId);
+  return nextHttpPolicy.Send(request, ctx);
 }

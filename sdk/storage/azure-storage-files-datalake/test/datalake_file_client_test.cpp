@@ -303,8 +303,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
     auto buffer = RandomBuffer(bufferSize);
-    auto bufferStream
-        = std::make_unique<Azure::IO::MemoryBodyStream>(Azure::IO::MemoryBodyStream(buffer));
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
     auto properties1 = m_fileClient->GetProperties();
 
     // Append
@@ -330,8 +330,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
     auto buffer = RandomBuffer(bufferSize);
-    auto bufferStream
-        = std::make_unique<Azure::IO::MemoryBodyStream>(Azure::IO::MemoryBodyStream(buffer));
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
     auto newFileName = RandomString(10);
     auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(newFileName));
@@ -363,7 +363,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
       Files::DataLake::DownloadDataLakeFileOptions options;
-      options.Range = Azure::Core::Http::Range();
+      options.Range = Azure::Core::Http::HttpRange();
       options.Range.GetValue().Offset = 0;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
       Files::DataLake::DownloadDataLakeFileOptions options;
-      options.Range = Azure::Core::Http::Range();
+      options.Range = Azure::Core::Http::HttpRange();
       options.Range.GetValue().Offset = bufferSize / 2;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
@@ -447,8 +447,8 @@ namespace Azure { namespace Storage { namespace Test {
           client.ScheduleDeletion(
               Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options),
           StorageException);
-      options.ExpiresOn = Azure::Core::DateTime::Parse(
-          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::Core::DateTime::DateFormat::Rfc1123);
+      options.ExpiresOn = Azure::DateTime::Parse(
+          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
       options.TimeToExpire = Azure::Core::Nullable<std::chrono::milliseconds>();
       EXPECT_NO_THROW(client.ScheduleDeletion(
           Files::DataLake::ScheduleDataLakeFileExpiryOriginType::Absolute, options));
@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::string tempFilename = RandomString();
       {
-        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+        Azure::Storage::_detail::FileWriter fileWriter(tempFilename);
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
@@ -521,7 +521,7 @@ namespace Azure { namespace Storage { namespace Test {
               fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
       std::string tempFileDestinationName = RandomString();
       fileClient.DownloadTo(tempFileDestinationName);
-      Azure::Storage::Details::FileReader fileReader(tempFileDestinationName);
+      Azure::Storage::_detail::FileReader fileReader(tempFileDestinationName);
       auto size = fileReader.GetFileSize();
       EXPECT_EQ(fileSize, size);
       DeleteFile(tempFileDestinationName);
@@ -564,7 +564,7 @@ namespace Azure { namespace Storage { namespace Test {
           AadTenantId(), AadClientId(), AadClientSecret());
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
-          Azure::Storage::Files::DataLake::Details::GetDfsUrlFromUrl(
+          Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
                   AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
                   .GetUrl()),
@@ -586,7 +586,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Blob;
       containerClient.SetAccessPolicy(options);
       auto blobClient = containerClient.GetBlockBlobClient(objectName);
-      auto memoryStream = Azure::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+      auto memoryStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
       EXPECT_NO_THROW(blobClient.Upload(&memoryStream));
 
       auto anonymousClient = Azure::Storage::Files::DataLake::DataLakeFileClient(

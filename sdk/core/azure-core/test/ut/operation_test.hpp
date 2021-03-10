@@ -19,9 +19,9 @@ namespace Azure { namespace Core { namespace Test {
   class StringOperation : public Operation<std::string> {
 
   private:
-    StringClient* m_client;
     std::string m_operationToken;
     std::string m_value;
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
   private:
     int m_count = 0;
@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
     }
 
-    Response<std::string> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
+    Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         override
     {
       std::unique_ptr<Http::RawResponse> response;
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
   public:
-    StringOperation(StringClient* client) : m_client(client) { (void)m_client; }
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
 
     std::string GetResumeToken() const override { return m_operationToken; }
 
@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Test {
     StringOperation StartStringUpdate()
     {
       // Make initial String call
-      StringOperation operation = StringOperation(this);
+      StringOperation operation = StringOperation();
       return operation;
     }
   };
