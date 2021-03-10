@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
     return sasBuilder.GenerateSasToken(
-        *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+        *_detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
   }
 
   TEST_F(BlobContainerClientTest, CreateDelete)

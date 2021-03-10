@@ -861,7 +861,7 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.Resource = Sas::ShareSasResource::File;
     fileSasBuilder.SetPermissions(Sas::ShareSasPermissions::Read);
     std::string sourceSas = fileSasBuilder.GenerateSasToken(
-        *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+        *_detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
 
     Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
     EXPECT_NO_THROW(
