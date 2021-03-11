@@ -69,8 +69,7 @@ TEST(FileBodyStream, Length)
   Azure::Core::IO::FileBodyStream stream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 
-  auto readResult = Azure::Core::IO::BodyStream::ReadToEnd(
-      stream, Azure::Core::Context::GetApplicationContext());
+  auto readResult = stream.ReadToEnd(Azure::Core::Context::GetApplicationContext());
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
