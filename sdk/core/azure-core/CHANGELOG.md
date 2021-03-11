@@ -34,7 +34,7 @@
 - Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
 - Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.
 - Introduced `Azure::Core::Http::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
-- Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
+- Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Diagnostics::Logger` class.
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 - Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
