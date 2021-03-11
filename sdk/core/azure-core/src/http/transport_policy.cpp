@@ -12,7 +12,7 @@
 #endif
 
 using Azure::Core::Context;
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
 
 std::shared_ptr<HttpTransport> Azure::Core::Http::_detail::GetTransportAdapter()

@@ -152,7 +152,7 @@ int main(int argc, char** argv)
            }}};
 
   // Call the `Run` method with a context, the tests and the application arguments to launch the program.
-  Azure::Perf::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
+  Azure::Perf::Program::Run(Azure::Core::Context::GetApplicationContext(), tests, argc, argv);
 
   return 0;
 }

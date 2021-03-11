@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Start time for the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      */
-    Azure::Core::DateTime startsOn = std::chrono::system_clock::now();
+    Azure::DateTime startsOn = std::chrono::system_clock::now();
   };
 
   /**
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Specify this header to perform the operation only if the resource has been
        * modified since the specified time. This timestamp will be truncated to second.
        */
-      Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
+      Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
     } AccessConditions;
   };
 
@@ -497,7 +497,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief When specified together with Range, service returns hash for the range as long as the
@@ -519,7 +519,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     struct
     {
@@ -772,7 +772,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
+    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -886,7 +886,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
+    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -1011,7 +1011,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
      * omitted, then all ranges for the blob are returned.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

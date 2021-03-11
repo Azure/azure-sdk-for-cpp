@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlockBlobClient(
         const std::string& blobUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
     Azure::Response<Models::UploadBlockBlobResult> Upload(
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<Models::StageBlockResult> StageBlock(
         const std::string& blockId,
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

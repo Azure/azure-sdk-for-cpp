@@ -11,21 +11,31 @@
 #include <algorithm>
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal { namespace Strings {
+namespace Azure { namespace Core { namespace _internal {
 
-  bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept;
-  std::string const ToLower(const std::string& src) noexcept;
-  unsigned char ToLower(const unsigned char src) noexcept;
-
-  struct CaseInsensitiveComparator
+  /**
+   * @brief Extend the functionality of std::string by offering static methods for string
+   * operations.
+   *
+   */
+  struct StringExtensions
   {
-    bool operator()(const std::string& lhs, const std::string& rhs) const
+    struct CaseInsensitiveComparator
     {
-      return std::lexicographical_compare(
-          lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-            return ToLower(c1) < ToLower(c2);
-          });
-    }
+      bool operator()(const std::string& lhs, const std::string& rhs) const
+      {
+        return std::lexicographical_compare(
+            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
+              return ToLower(c1) < ToLower(c2);
+            });
+      }
+    };
+
+    static bool LocaleInvariantCaseInsensitiveEqual(
+        const std::string& lhs,
+        const std::string& rhs) noexcept;
+    static std::string const ToLower(const std::string& src) noexcept;
+    static unsigned char ToLower(const unsigned char src) noexcept;
   };
 
-}}}} // namespace Azure::Core::_internal::Strings
+}}} // namespace Azure::Core::_internal

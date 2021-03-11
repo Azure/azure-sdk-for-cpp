@@ -19,7 +19,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  class Version {
+  class PackageVersion {
   public:
     static constexpr int Major = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR;
     static constexpr int Minor = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR;

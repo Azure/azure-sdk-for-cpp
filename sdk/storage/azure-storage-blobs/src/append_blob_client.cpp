@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   AppendBlobClient::AppendBlobClient(
       const std::string& blobUrl,
-      std::shared_ptr<Core::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobClientOptions& options)
       : BlobClient(blobUrl, std::move(credential), options)
   {
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
-      Azure::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream* content,
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
   {

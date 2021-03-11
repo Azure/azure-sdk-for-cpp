@@ -49,7 +49,7 @@ KeyVaultException KeyVaultException::CreateFromResponse(
 
   if (contentType.find("json") != std::string::npos)
   {
-    auto jsonParser = Azure::Core::_internal::Json::json::parse(bodyBuffer);
+    auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
     auto& error = jsonParser["error"];
     errorCode = error["code"].get<std::string>();
     message = error["message"].get<std::string>();

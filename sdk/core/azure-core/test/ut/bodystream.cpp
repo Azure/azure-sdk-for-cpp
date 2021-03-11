@@ -21,7 +21,7 @@
 
 #include <azure/core/io/body_stream.hpp>
 
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core;
 
 // Used to test virtual, default behavior of BodyStream.
@@ -45,11 +45,11 @@ TEST(BodyStream, Rewind)
 #error "Unknown platform"
 #endif
 
-  auto fileBodyStream = Azure::IO::FileBodyStream(testDataPath);
+  auto fileBodyStream = Azure::Core::IO::FileBodyStream(testDataPath);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
-  Azure::IO::MemoryBodyStream ms(data);
+  Azure::Core::IO::MemoryBodyStream ms(data);
   EXPECT_NO_THROW(ms.Rewind());
 }
 

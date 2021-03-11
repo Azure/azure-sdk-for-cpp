@@ -31,7 +31,7 @@
 #include <memory>
 #include <vector>
 
-namespace Azure { namespace IO {
+namespace Azure { namespace Core { namespace IO {
 
   /**
    *@brief Used to read data to/from a service.
@@ -91,10 +91,10 @@ namespace Azure { namespace IO {
     };
 
     /**
-     * @brief Read #Azure::IO::BodyStream into a buffer until the buffer is filled, or until
+     * @brief Read #Azure::Core::IO::BodyStream into a buffer until the buffer is filled, or until
      * the stream is read to end.
      *
-     * @param body #Azure::IO::BodyStream to read.
+     * @param body #Azure::Core::IO::BodyStream to read.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      * @param context #Azure::Core::Context so that operation can be cancelled.
@@ -108,11 +108,11 @@ namespace Azure { namespace IO {
         Azure::Core::Context const& context);
 
     /**
-     * @brief Read #Azure::IO::BodyStream until the stream is read to end, allocating memory
+     * @brief Read #Azure::Core::IO::BodyStream until the stream is read to end, allocating memory
      * for the entirety of contents.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
-     * @param body #Azure::IO::BodyStream to read.
+     * @param body #Azure::Core::IO::BodyStream to read.
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */
@@ -120,7 +120,7 @@ namespace Azure { namespace IO {
   };
 
   /**
-   * @brief #Azure::IO::BodyStream providing data from an initialized memory buffer.
+   * @brief #Azure::Core::IO::BodyStream providing data from an initialized memory buffer.
    */
   class MemoryBodyStream : public BodyStream {
   private:
@@ -230,7 +230,7 @@ namespace Azure { namespace IO {
   } // namespace _internal
 
   /**
-   * @brief A concrete implementation of #Azure::IO::BodyStream used for reading data from a file.
+   * @brief A concrete implementation of #Azure::Core::IO::BodyStream used for reading data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
@@ -271,4 +271,4 @@ namespace Azure { namespace IO {
     int64_t Length() const override;
   };
 
-}} // namespace Azure::IO
+}}} // namespace Azure::Core::IO

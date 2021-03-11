@@ -15,7 +15,7 @@
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
-- Moved `Version` from `Azure::Core::Details` to `Azure::Core`.
+- Renamed `Azure::Core::Details::Version` to `Azure::Core::PackageVersion`.
 - Moved `BodyStream` and its derived types from `Azure::Core::Http` namespace to `Azure::IO`, and moved the `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
 - Moved `NullBodyStream` to internal usage only. It is not meant for public use.
 - Removed `LimitBodyStream`.
@@ -37,8 +37,13 @@
 - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 - Changed the constructor of `Azure::IO::FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
+- Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
+- Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
+- Moved `Azure::Core::DateTime` to `Azure::DateTime`.
+- Renamed `Azure::Core::Http::TokenRequestOptions` to `Azure::Core::Credentials::TokenRequestContext`.
+- Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
 
 ### Bug Fixes
 

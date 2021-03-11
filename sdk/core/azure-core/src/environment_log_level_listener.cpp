@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#if defined(AZ_NO_ENV_LOGGER)
 #include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -14,11 +13,9 @@
 
 #include <windows.h>
 #endif
-#endif
 
-#if !defined(AZ_NO_ENV_LOGGER) \
-    && (!defined(WINAPI_PARTITION_DESKTOP) \
-        || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp for explanation.
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
 
 #include "environment_log_level_listener_private.hpp"
 
@@ -54,7 +51,7 @@ Logger::Level const* GetEnvironmentLogLevel()
 
     if (envVar)
     {
-      auto const logLevelStr = _internal::Strings::ToLower(envVar);
+      auto const logLevelStr = _internal::StringExtensions::ToLower(envVar);
 
       // See https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK
       // And
@@ -136,7 +133,7 @@ Logger::Listener EnvironmentLogLevelListener::GetLogListener()
 
   static Logger::Listener const consoleLogger = [](auto level, auto message) {
     std::cerr << '['
-              << Azure::Core::DateTime(std::chrono::system_clock::now())
+              << Azure::DateTime(std::chrono::system_clock::now())
                      .ToString(
                          DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
               << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;

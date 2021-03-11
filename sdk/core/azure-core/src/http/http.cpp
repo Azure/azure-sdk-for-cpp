@@ -7,7 +7,7 @@
 #include <utility>
 
 using namespace Azure::Core::Http;
-using namespace Azure::IO::_internal;
+using namespace Azure::Core::IO::_internal;
 
 void Azure::Core::Http::_detail::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,

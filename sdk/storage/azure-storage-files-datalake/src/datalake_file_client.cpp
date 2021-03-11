@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakeFileClient::DataLakeFileClient(
       const std::string& fileUrl,
-      std::shared_ptr<Core::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : DataLakePathClient(fileUrl, credential, options)
   {
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
-      Azure::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream* content,
       int64_t offset,
       const AppendDataLakeFileOptions& options,
       const Azure::Core::Context& context) const
@@ -390,7 +390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (options.ExpiresOn.HasValue())
     {
       protocolLayerOptions.ExpiryTime
-          = options.ExpiresOn.GetValue().ToString(Azure::Core::DateTime::DateFormat::Rfc1123);
+          = options.ExpiresOn.GetValue().ToString(Azure::DateTime::DateFormat::Rfc1123);
     }
     else if (options.TimeToExpire.HasValue())
     {

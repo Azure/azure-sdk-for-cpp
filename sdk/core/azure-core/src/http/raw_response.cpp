@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
 
 HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
@@ -30,7 +30,7 @@ void RawResponse::SetHeader(uint8_t const* const first, uint8_t const* const las
   }
 
   // Always toLower() headers
-  auto headerName = Azure::Core::_internal::Strings::ToLower(std::string(start, end));
+  auto headerName = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
   start = end + 1; // start value
   while (start < last && (*start == ' ' || *start == '\t'))
   {

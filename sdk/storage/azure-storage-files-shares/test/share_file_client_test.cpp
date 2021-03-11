@@ -430,7 +430,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -500,7 +500,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -583,7 +583,7 @@ namespace Azure { namespace Storage { namespace Test {
       // buffer not big enough
       Files::Shares::DownloadShareFileToOptions options;
       options.TransferOptions.Concurrency = c;
-      options.Range = Core::Http::Range();
+      options.Range = Core::Http::HttpRange();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
@@ -613,7 +613,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto rangeSize = 1 * 1024 * 1024;
     auto numOfChunks = 3;
     auto rangeContent = RandomBuffer(rangeSize);
-    auto memBodyStream = IO::MemoryBodyStream(rangeContent);
+    auto memBodyStream = Core::IO::MemoryBodyStream(rangeContent);
     {
       // Simple upload/download.
       auto fileClient
@@ -629,12 +629,12 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < numOfChunks; ++i)
       {
         Files::Shares::DownloadShareFileOptions downloadOptions;
-        downloadOptions.Range = Core::Http::Range();
+        downloadOptions.Range = Core::Http::HttpRange();
         downloadOptions.Range.GetValue().Offset = static_cast<int64_t>(rangeSize) * i;
         downloadOptions.Range.GetValue().Length = rangeSize;
         Files::Shares::Models::DownloadShareFileResult result;
         EXPECT_NO_THROW(result = fileClient.Download(downloadOptions).ExtractValue());
-        auto resultBuffer = IO::BodyStream::ReadToEnd(*(result.BodyStream), Core::Context());
+        auto resultBuffer = Core::IO::BodyStream::ReadToEnd(*(result.BodyStream), Core::Context());
         EXPECT_EQ(rangeContent, resultBuffer);
         EXPECT_EQ(
             downloadOptions.Range.GetValue().Length.GetValue(),
@@ -670,7 +670,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     size_t fileSize = 1 * 1024 * 1024;
     auto fileContent = RandomBuffer(fileSize);
-    auto memBodyStream = IO::MemoryBodyStream(fileContent);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
     {
       // Simple copy works.
       auto fileClient
@@ -706,7 +706,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     size_t fileSize = 1 * 1024 * 1024;
     auto fileContent = RandomBuffer(fileSize);
-    auto memBodyStream = IO::MemoryBodyStream(fileContent);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
     auto halfContent
         = std::vector<uint8_t>(fileContent.begin(), fileContent.begin() + fileSize / 2);
     halfContent.resize(fileSize);
@@ -736,7 +736,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     size_t fileSize = 1 * 1024 * 1024;
     auto fileContent = RandomBuffer(fileSize);
-    auto memBodyStream = IO::MemoryBodyStream(fileContent);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
     auto halfContent
         = std::vector<uint8_t>(fileContent.begin(), fileContent.begin() + fileSize / 2);
     halfContent.resize(fileSize);
@@ -838,15 +838,15 @@ namespace Azure { namespace Storage { namespace Test {
     size_t fileSize = 1 * 1024 * 1024;
     std::string fileName = RandomString();
     auto fileContent = RandomBuffer(fileSize);
-    auto memBodyStream = IO::MemoryBodyStream(fileContent);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
     auto sourceFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
     sourceFileClient.Create(fileSize);
     EXPECT_NO_THROW(sourceFileClient.UploadRange(0, &memBodyStream));
 
     auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString(10));
     destFileClient.Create(fileSize * 4);
-    Azure::Core::Http::Range sourceRange;
-    Azure::Core::Http::Range destRange;
+    Azure::Core::Http::HttpRange sourceRange;
+    Azure::Core::Http::HttpRange destRange;
     sourceRange.Length = fileSize;
     destRange.Offset = fileSize;
     destRange.Length = fileSize;
@@ -872,7 +872,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::DownloadShareFileOptions downloadOptions;
     downloadOptions.Range = destRange;
     EXPECT_NO_THROW(result = destFileClient.Download(downloadOptions).ExtractValue());
-    auto resultBuffer = IO::BodyStream::ReadToEnd(*(result.BodyStream), Core::Context());
+    auto resultBuffer = Core::IO::BodyStream::ReadToEnd(*(result.BodyStream), Core::Context());
     EXPECT_EQ(fileContent, resultBuffer);
     Files::Shares::Models::GetShareFileRangeListResult getRangeResult;
     EXPECT_NO_THROW(getRangeResult = destFileClient.GetRangeList().ExtractValue());

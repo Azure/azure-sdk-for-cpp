@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobContainerClient(
         const std::string& blobContainerUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<BlockBlobClient> UploadBlob(
         const std::string& blobName,
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
