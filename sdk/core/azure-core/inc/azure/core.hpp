@@ -26,6 +26,7 @@
 #include "azure/core/operation_status.hpp"
 #include "azure/core/platform.hpp"
 #include "azure/core/response.hpp"
+#include "azure/core/url.hpp"
 #include "azure/core/uuid.hpp"
 #include "azure/core/version.hpp"
 

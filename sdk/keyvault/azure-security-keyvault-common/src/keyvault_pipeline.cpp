@@ -11,7 +11,7 @@ namespace {
 inline Azure::Core::Http::Request InitRequest(
     Azure::Core::Http::HttpMethod method,
     Azure::Core::IO::BodyStream* content,
-    Azure::Core::Http::Url const& url)
+    Azure::Core::Url const& url)
 {
   if (content == nullptr)
   {

@@ -243,11 +243,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_shareUrl;
+    Azure::Core::Url m_shareUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     explicit ShareClient(
-        Azure::Core::Http::Url shareUrl,
+        Azure::Core::Url shareUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : m_shareUrl(std::move(shareUrl)), m_pipeline(std::move(pipeline))
     {

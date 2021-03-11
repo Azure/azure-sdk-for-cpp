@@ -77,10 +77,10 @@ namespace Azure { namespace Storage {
 
     struct ConnectionStringParts
     {
-      Azure::Core::Http::Url BlobServiceUrl;
-      Azure::Core::Http::Url FileServiceUrl;
-      Azure::Core::Http::Url QueueServiceUrl;
-      Azure::Core::Http::Url DataLakeServiceUrl;
+      Azure::Core::Url BlobServiceUrl;
+      Azure::Core::Url FileServiceUrl;
+      Azure::Core::Url QueueServiceUrl;
+      Azure::Core::Url DataLakeServiceUrl;
       std::shared_ptr<StorageSharedKeyCredential> KeyCredential;
     };
 

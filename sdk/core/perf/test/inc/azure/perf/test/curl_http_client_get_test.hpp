@@ -22,7 +22,7 @@ namespace Azure { namespace Perf { namespace Test {
    */
   class CurlHttpClientGetTest : public Azure::Perf::Test::HttpClientGetTest {
   private:
-    Azure::Core::Http::Url m_url;
+    Azure::Core::Url m_url;
 
   public:
     /**

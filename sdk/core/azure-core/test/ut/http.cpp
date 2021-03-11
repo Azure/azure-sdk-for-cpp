@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestHttp, add_headers)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-    Http::Url url("http://test.com");
+    Url url("http://test.com");
     Http::Request req(httpMethod, url);
     std::pair<std::string, std::string> expected("valid", "header");
 
@@ -158,7 +158,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     {
       Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-      Http::Url url("http://test.com");
+      Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
       Azure::Core::IO::_internal::NullBodyStream* d
@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-      Http::Url url("http://test.com");
+      Url url("http://test.com");
 
       std::vector<uint8_t> data = {1, 2, 3, 4};
       Azure::Core::IO::MemoryBodyStream stream(data);
