@@ -16,7 +16,7 @@
 #include <windows.h>
 #endif
 
-namespace Azure { namespace Core { namespace _detail {
+namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
 
   class EnvironmentLogLevelListener {
     EnvironmentLogLevelListener() = delete;
@@ -36,4 +36,4 @@ namespace Azure { namespace Core { namespace _detail {
 
   inline Logger::Listener EnvironmentLogLevelListener::GetLogListener() { return nullptr; }
 #endif
-}}} // namespace Azure::Core::_detail
+}}}} // namespace Azure::Core::Diagnostics::_detail

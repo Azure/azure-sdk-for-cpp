@@ -4,8 +4,8 @@
 #include <azure/core/internal/log.hpp>
 #include <gtest/gtest.h>
 
-using Azure::Core::Logger;
-using Azure::Core::_internal::Log;
+using Azure::Core::Diagnostics::Logger;
+using Azure::Core::Diagnostics::_internal::Log;
 
 TEST(Logger, Levels)
 {
