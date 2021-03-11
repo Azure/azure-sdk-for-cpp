@@ -15,7 +15,6 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Http::Policies;
 
 KeyClient::KeyClient(
     std::string const& vaultUrl,
