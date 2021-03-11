@@ -125,8 +125,7 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      m_rawResponse = PollInternal(Context::GetApplicationContext());
-      return *m_rawResponse;
+      return Poll(Context::GetApplicationContext());
     }
 
     /**
