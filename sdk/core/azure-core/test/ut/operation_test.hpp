@@ -21,13 +21,12 @@ namespace Azure { namespace Core { namespace Test {
   private:
     std::string m_operationToken;
     std::string m_value;
-    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
   private:
     int m_count = 0;
 
   private:
-    Http::RawResponse const& PollInternal(Context&) override
+    std::unique_ptr<Http::RawResponse> PollInternal(Context&) override
     {
       // Artificial delay to require 2 polls
       if (++m_count == 2)
@@ -38,24 +37,28 @@ namespace Azure { namespace Core { namespace Test {
 
       // The contents of the response are irrelevant for testing purposes
       // Need only ensure that a RawResponse is returned
-      m_rawResponse = std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
-      return *m_rawResponse;
+      return std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
     }
 
     Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         override
     {
-      std::unique_ptr<Http::RawResponse> response;
       while (!IsDone())
       {
         // Sleep for the period
         // Actual clients should respect the retry after header if present
         std::this_thread::sleep_for(period);
 
-        response = std::make_unique<Http::RawResponse>(Poll(context));
+        // Poll gets a new rawResponse and replace it inside the Operation. Then return a ref to
+        // that raw response.
+        auto const& response = Poll(context);
+        // We can use the rawResponse from the Operation here
+        // Major and minor version are mocked on `PollInternal`
+        EXPECT_EQ(response.GetMajorVersion(), 1);
+        EXPECT_EQ(response.GetMajorVersion(), 0);
       }
 
-      return Response<std::string>(m_value, std::move(response));
+      return Response<std::string>(m_value, std::make_unique<Http::RawResponse>(*m_rawResponse));
     }
 
   public:

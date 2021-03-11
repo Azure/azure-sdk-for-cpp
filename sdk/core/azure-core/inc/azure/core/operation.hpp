@@ -26,18 +26,51 @@ namespace Azure { namespace Core {
   template <class T> class Operation {
   private:
     // These are pure virtual b/c the derived class must provide an implementation
-    virtual Http::RawResponse const& PollInternal(Context& context) = 0;
+    virtual std::unique_ptr<Http::RawResponse> PollInternal(Context& context) = 0;
     virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
 
   protected:
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse = nullptr;
     OperationStatus m_status = OperationStatus::NotStarted;
+
+    Operation() = default;
+
+    // Define how an Operation<T> can be moved-constructed from rvalue other. Parameter `other`
+    // gave up ownership for the rawResponse.
+    Operation(Operation&& other)
+        : m_rawResponse(std::move(other.m_rawResponse)), m_status(other.m_status)
+    {
+    }
+
+    // Define how an Operation<T> can be copy-constructed from some other Operation reference.
+    // Operation will create a clone of the rawResponse from `other`.
+    Operation(Operation const& other)
+        : m_rawResponse(std::make_unique<Http::RawResponse>(other.GetRawResponse()))
+    {
+    }
+
+    // Define how an Operation<T> can be moved-assigned from rvalue other. Parameter `other`
+    // gave up ownership for the rawResponse.
+    void operator=(Operation&& other)
+    {
+      this->m_rawResponse = std::move(other.m_rawResponse);
+      this->m_status = other.m_status;
+    }
+
+    // Define how an Operation<T> can be copy-assigned from some other Operation reference.
+    // Operation will create a clone of the rawResponse from `other`.
+    void operator=(Operation const& other)
+    {
+      this->m_rawResponse = std::make_unique<Http::RawResponse>(other.GetRawResponse());
+      this->m_status = other.m_status;
+    }
 
   public:
     virtual ~Operation() {}
 
     /**
-     * @brief Final reuslt of the long-running operation.
+     * @brief Final result of the long-running operation.
      *
      * @return Response<T> the final result of the long-running operation.
      */
@@ -92,7 +125,8 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollInternal(Context::GetApplicationContext());
+      m_rawResponse = PollInternal(Context::GetApplicationContext());
+      return *m_rawResponse;
     }
 
     /**
@@ -102,7 +136,12 @@ namespace Azure { namespace Core {
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
-    Http::RawResponse const& Poll(Context& context) { return PollInternal(context); }
+    Http::RawResponse const& Poll(Context& context)
+    {
+      context.ThrowIfCancelled();
+      m_rawResponse = PollInternal(context);
+      return *m_rawResponse;
+    }
 
     /**
      * @brief Periodically calls the server till the long-running operation completes.
@@ -128,6 +167,7 @@ namespace Azure { namespace Core {
      */
     Response<T> PollUntilDone(std::chrono::milliseconds period, Context& context)
     {
+      context.ThrowIfCancelled();
       return PollUntilDoneInternal(period, context);
     }
   };

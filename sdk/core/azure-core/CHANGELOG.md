@@ -49,6 +49,7 @@
 - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
 - Moved the Http policies from `Azure::Core::Http` to `Azure::Core::Http::Policies`.
 - Moved `Azure::Core::Http::Url` to `Azure::Core::Url`.
+- Changed return type from `std::unique_ptr<RawResponse>Operation::Poll()` to `RawResponse const& Operation::Poll()`.
 
 ### Bug Fixes
 
