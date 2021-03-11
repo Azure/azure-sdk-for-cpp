@@ -120,8 +120,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const RenewShareLeaseOptions& options = RenewShareLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
-    Azure::Core::Nullable<ShareFileClient> m_fileClient;
-    Azure::Core::Nullable<ShareClient> m_shareClient;
+    Azure::Nullable<ShareFileClient> m_fileClient;
+    Azure::Nullable<ShareClient> m_shareClient;
     std::string m_leaseId;
   };
 

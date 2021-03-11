@@ -208,7 +208,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief The size of the HTTP Range.
      *
      */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Nullable<int64_t> Length;
   };
 
   /**
@@ -466,11 +466,15 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetAbsoluteUrl() const;
   };
 
+  namespace Policies {
+    class RetryPolicy;
+  }
+
   /**
    * @brief HTTP request.
    */
   class Request {
-    friend class RetryPolicy;
+    friend class Azure::Core::Http::Policies::RetryPolicy;
 #if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;

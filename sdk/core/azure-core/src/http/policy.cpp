@@ -6,6 +6,7 @@
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 // The NextHttpPolicy can't be created from a nullptr because it is a reference. So we don't need to
 // check if m_policies is nullptr.

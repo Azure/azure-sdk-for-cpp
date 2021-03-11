@@ -388,10 +388,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->UploadFrom(m_fileContent.data(), 8 * 1024 * 1024);
     auto testDownloadToBuffer = [](int concurrency,
                                    int64_t downloadSize,
-                                   Azure::Core::Nullable<int64_t> offset = {},
-                                   Azure::Core::Nullable<int64_t> length = {},
-                                   Azure::Core::Nullable<int64_t> initialChunkSize = {},
-                                   Azure::Core::Nullable<int64_t> chunkSize = {}) {
+                                   Azure::Nullable<int64_t> offset = {},
+                                   Azure::Nullable<int64_t> length = {},
+                                   Azure::Nullable<int64_t> initialChunkSize = {},
+                                   Azure::Nullable<int64_t> chunkSize = {}) {
       std::vector<uint8_t> downloadBuffer;
       std::vector<uint8_t> expectedData = m_fileContent;
       int64_t fileSize = m_fileContent.size();
@@ -459,10 +459,10 @@ namespace Azure { namespace Storage { namespace Test {
     };
     auto testDownloadToFile = [](int concurrency,
                                  int64_t downloadSize,
-                                 Azure::Core::Nullable<int64_t> offset = {},
-                                 Azure::Core::Nullable<int64_t> length = {},
-                                 Azure::Core::Nullable<int64_t> initialChunkSize = {},
-                                 Azure::Core::Nullable<int64_t> chunkSize = {}) {
+                                 Azure::Nullable<int64_t> offset = {},
+                                 Azure::Nullable<int64_t> length = {},
+                                 Azure::Nullable<int64_t> initialChunkSize = {},
+                                 Azure::Nullable<int64_t> chunkSize = {}) {
       std::string tempFilename = RandomString();
       std::vector<uint8_t> expectedData = m_fileContent;
       int64_t fileSize = m_fileContent.size();
@@ -794,7 +794,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, StorageExceptionAdditionalInfo)
   {
     Azure::Storage::Files::Shares::ShareClientOptions options;
-    class InvalidQueryParameterPolicy : public Azure::Core::Http::HttpPolicy {
+    class InvalidQueryParameterPolicy : public Azure::Core::Http::Policies::HttpPolicy {
     public:
       ~InvalidQueryParameterPolicy() override {}
 
@@ -805,7 +805,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::unique_ptr<Core::Http::RawResponse> Send(
           Core::Http::Request& request,
-          Core::Http::NextHttpPolicy nextHttpPolicy,
+          Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
           Core::Context const& ctx) const override
       {
         request.GetUrl().AppendQueryParameter("comp", "lease1");

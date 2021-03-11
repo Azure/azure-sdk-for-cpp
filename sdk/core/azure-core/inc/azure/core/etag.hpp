@@ -20,7 +20,7 @@ namespace Azure {
 class ETag {
   // ETag is a validator based on https://tools.ietf.org/html/rfc7232#section-2.3.2
 private:
-  Azure::Core::Nullable<std::string> m_value;
+  Azure::Nullable<std::string> m_value;
 
 public:
   /**
