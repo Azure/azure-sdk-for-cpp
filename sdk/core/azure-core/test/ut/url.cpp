@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestURL, getters)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Get;
-    Http::Url url("http://test.url.com");
+    Core::Url url("http://test.url.com");
     Http::Request req(httpMethod, url);
 
     // EXPECT_PRED works better than just EQ because it will print values in log
@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestURL, query_parameter)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Put;
-    Http::Url url("http://test.com");
+    Core::Url url("http://test.com");
     EXPECT_NO_THROW(url.AppendQueryParameter("query", "value"));
 
     Http::Request req(httpMethod, url);
@@ -99,7 +99,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetUrl().GetAbsoluteUrl(),
         url.GetAbsoluteUrl());
 
-    Http::Url url_with_query("http://test.com?query=1");
+    Core::Url url_with_query("http://test.com?query=1");
     Http::Request req_with_query(httpMethod, url_with_query);
 
     // override if adding same query parameter key that is already in url
@@ -122,8 +122,8 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(URL, query_parameter_encode_decode)
   {
-    Http::Url url("http://test.com");
-    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=lue")));
+    Core::Url url("http://test.com");
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Core::Url::Encode("va=lue")));
 
     // Default encoder from URL won't encode an equal symbol
     EXPECT_PRED2(
@@ -132,21 +132,21 @@ namespace Azure { namespace Core { namespace Test {
         "http://test.com?query=va%3Dlue");
 
     // Provide symbol to do not encode
-    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=lue", "=")));
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Core::Url::Encode("va=lue", "=")));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
         url.GetAbsoluteUrl(),
         "http://test.com?query=va=lue");
 
     // Provide more than one extra symbol to be encoded
-    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=l u?e", " ?")));
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Core::Url::Encode("va=l u?e", " ?")));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
         url.GetAbsoluteUrl(),
         "http://test.com?query=va%3Dl u?e");
 
     // default, encode it all
-    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=l u?e")));
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Core::Url::Encode("va=l u?e")));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
         url.GetAbsoluteUrl(),
@@ -156,7 +156,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(URL, add_path)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-    Http::Url url("http://test.com");
+    Core::Url url("http://test.com");
     Http::Request req(httpMethod, url);
 
     EXPECT_NO_THROW(req.GetUrl().AppendPath("path"));
@@ -186,7 +186,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(URL, getPort)
   {
-    Http::Url url("http://test.com:9090");
+    Core::Url url("http://test.com:9090");
     uint16_t expected = 9090;
 
     EXPECT_PRED2(
@@ -197,7 +197,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(URL, getPortConst)
   {
-    Http::Url const url("https://test.com:500");
+    Core::Url const url("https://test.com:500");
     uint16_t expected = 500;
 
     EXPECT_PRED2(
@@ -206,11 +206,11 @@ namespace Azure { namespace Core { namespace Test {
         expected);
   }
 
-  TEST(URL, getPortMax) { EXPECT_THROW(Http::Url url("http://test.com:65540"), std::out_of_range); }
+  TEST(URL, getPortMax) { EXPECT_THROW(Core::Url url("http://test.com:65540"), std::out_of_range); }
 
   TEST(URL, getPortAfterSet)
   {
-    Http::Url url("http://test.com");
+    Core::Url url("http://test.com");
 
     uint16_t expected = 0;
 
@@ -238,7 +238,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(URL, getPortDefault)
   {
-    Http::Url url("http://test.com");
+    Core::Url url("http://test.com");
     uint16_t expected = 0;
 
     EXPECT_PRED2(
@@ -249,21 +249,21 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(URL, getPorStartAsNonDigit)
   {
-    EXPECT_THROW(Http::Url url("http://test.com:A1"), std::invalid_argument);
+    EXPECT_THROW(Core::Url url("http://test.com:A1"), std::invalid_argument);
   }
 
   TEST(URL, getPortInvalidInput)
   {
-    EXPECT_THROW(Http::Url url("http://test.com:4A"), std::invalid_argument);
+    EXPECT_THROW(Core::Url url("http://test.com:4A"), std::invalid_argument);
   }
 
   TEST(URL, getPortInvalidArg)
   {
-    EXPECT_THROW(Http::Url url("http://test.com:ThisIsNotAPort"), std::invalid_argument);
+    EXPECT_THROW(Core::Url url("http://test.com:ThisIsNotAPort"), std::invalid_argument);
   }
 
   TEST(URL, getPortOutfRange)
   {
-    EXPECT_THROW(Http::Url url("http://test.com:99999999999999999"), std::out_of_range);
+    EXPECT_THROW(Core::Url url("http://test.com:99999999999999999"), std::out_of_range);
   }
 }}} // namespace Azure::Core::Test

@@ -11,6 +11,7 @@
 #include <type_traits>
 
 using Azure::Core::Context;
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 
@@ -72,7 +73,7 @@ inline std::string GetRequestLogMessage(LogOptions const& options, Request const
         }
       }
 
-      log << Azure::Core::Http::_detail::FormatEncodedUrlQueryParameters(
+      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(
           encodedAllowedRequestQueryParams);
     }
   }
