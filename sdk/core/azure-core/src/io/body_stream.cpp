@@ -143,9 +143,8 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     {
       throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
     }
-
-    m_randomAccessFileBodyStream
-        = std::make_unique<_internal::RandomAccessFileBodyStream>(_internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize)_;
+    m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
+        _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize));
   }
   catch (std::exception&)
   {
