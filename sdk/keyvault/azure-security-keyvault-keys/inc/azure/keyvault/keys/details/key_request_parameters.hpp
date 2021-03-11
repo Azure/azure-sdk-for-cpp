@@ -29,9 +29,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     CreateKeyOptions const& m_options;
 
   public:
-    Azure::Core::Nullable<KeyCurveName> Curve;
-    Azure::Core::Nullable<uint64_t> KeySize;
-    Azure::Core::Nullable<uint64_t> PublicExponent;
+    Azure::Nullable<KeyCurveName> Curve;
+    Azure::Nullable<uint64_t> KeySize;
+    Azure::Nullable<uint64_t> PublicExponent;
 
     explicit KeyRequestParameters(JsonWebKeyType keyType, CreateKeyOptions const& options)
         : m_keyType(keyType), m_options(options)

@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::BlobType BlobType;
       Azure::Core::Http::HttpRange ContentRange;
       int64_t BlobSize = 0;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       DownloadBlobDetails Details;
     };
 
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatus CopyStatus;
-    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Nullable<std::string> VersionId;
 
   public:
     Models::GetBlobPropertiesResult Value() const override { return m_pollResult; }

@@ -39,19 +39,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Indicates when the key will be valid and can be used for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<Azure::DateTime> NotBefore;
+    Azure::Nullable<Azure::DateTime> NotBefore;
 
     /**
      * @brief Indicates when the key will expire and cannot be used for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
+    Azure::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
      * @brief whether the key is enabled and useable for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<bool> Enabled;
+    Azure::Nullable<bool> Enabled;
 
     /**
      * @brief Specific metadata about the key.
@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark If null, the service default is used.
      *
      */
-    Azure::Core::Nullable<KeyCurveName> CurveName;
+    Azure::Nullable<KeyCurveName> CurveName;
 
     /**
      * @brief Create a Ec Key Options object.
@@ -143,7 +143,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark If null, the service default is used.
      *
      */
-    Azure::Core::Nullable<uint64_t> KeySize;
+    Azure::Nullable<uint64_t> KeySize;
 
     /**
      * @brief Gets or sets the public exponent for a RSA key.
@@ -151,7 +151,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark If null, the service default is used.
      *
      */
-    Azure::Core::Nullable<uint64_t> PublicExponent;
+    Azure::Nullable<uint64_t> PublicExponent;
 
     /**
      * @brief Create a RSA Key Options object.
@@ -215,7 +215,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark If null, the service default is used.
      *
      */
-    Azure::Core::Nullable<uint64_t> KeySize;
+    Azure::Nullable<uint64_t> KeySize;
 
     /**
      * @brief Create a AES Key Options object.

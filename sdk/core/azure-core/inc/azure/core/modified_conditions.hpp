@@ -24,11 +24,11 @@ struct ModifiedConditions
    * @brief Optionally limit requests to resources that have only been modified since this point
    * in time.
    */
-  Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
+  Azure::Nullable<Azure::DateTime> IfModifiedSince;
 
   /**
    * @brief Optionally limit requests to resources that have remained unmodified.
    */
-  Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+  Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
 };
 } // namespace Azure

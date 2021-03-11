@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Filters results to filesystems within the specified prefix.
      */
-    Azure::Core::Nullable<std::string> Prefix;
+    Azure::Nullable<std::string> Prefix;
 
     /**
      * @brief The number of filesystems returned with each invocation is
@@ -75,14 +75,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the filesystems.
      */
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    Azure::Core::Nullable<int32_t> PageSizeHint;
+    Azure::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Specifies that the filesystem's metadata be returned.
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        Note that group and application Object IDs are not translated because they
      *        do not have unique friendly names.
      */
-    Azure::Core::Nullable<bool> UserPrincipalName;
+    Azure::Nullable<bool> UserPrincipalName;
 
     /**
      * @brief The number of paths returned with each invocation is
@@ -166,14 +166,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the paths.
      */
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    Azure::Core::Nullable<int32_t> PageSizeHint;
+    Azure::Nullable<int32_t> PageSizeHint;
   };
 
   /**
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
-    Azure::Core::Nullable<std::string> DestinationFileSystem;
+    Azure::Nullable<std::string> DestinationFileSystem;
 
     /**
      * @brief Specify the access condition for the path.
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the transactional hash for the body, to be validated by the service.
      */
-    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+    Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
 
     /**
      * @brief Specify the lease access conditions.
@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        written to the file when flush succeeds, but this optional parameter allows
      *        data after the flush position to be retained for a future flush operation.
      */
-    Azure::Core::Nullable<bool> RetainUncommittedData;
+    Azure::Nullable<bool> RetainUncommittedData;
 
     /**
      * @brief Azure Storage Events allow applications to receive notifications when files
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        The default is false. This query parameter is set to true by the Hadoop ABFS driver to
      *        indicate that the file stream has been closed."
      */
-    Azure::Core::Nullable<bool> Close;
+    Azure::Nullable<bool> Close;
 
     /**
      * @brief The service stores this value and is returned for "Read & Get Properties" operations.
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        for the file. Subsequent calls to "Read & Get Properties" will not return this
      *        property unless it is explicitly set on that file again.
      */
-    Azure::Core::Nullable<Storage::ContentHash> ContentHash;
+    Azure::Nullable<Storage::ContentHash> ContentHash;
 
     /**
      * @brief Specify the http headers for this path.
@@ -307,12 +307,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The owner of the path or directory.
      */
-    Azure::Core::Nullable<std::string> Owner;
+    Azure::Nullable<std::string> Owner;
 
     /**
      * @brief The owning group of the path or directory.
      */
-    Azure::Core::Nullable<std::string> Group;
+    Azure::Nullable<std::string> Group;
 
     /**
      * @brief Specify the access condition for the path.
@@ -328,12 +328,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The owner of the path or directory.
      */
-    Azure::Core::Nullable<std::string> Owner;
+    Azure::Nullable<std::string> Owner;
 
     /**
      * @brief The owning group of the path or directory.
      */
-    Azure::Core::Nullable<std::string> Group;
+    Azure::Nullable<std::string> Group;
 
     /**
      * @brief Specify the access condition for the path.
@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        The default umask is 0027.  The umask must be specified in 4-digit octal
      *        notation (e.g. 0766).
      */
-    Azure::Core::Nullable<std::string> Umask;
+    Azure::Nullable<std::string> Umask;
 
     /**
      * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
@@ -405,7 +405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
      *        notation (e.g. 0766) are supported.
      */
-    Azure::Core::Nullable<std::string> Permissions;
+    Azure::Nullable<std::string> Permissions;
 
     /**
      * @brief Specify the access condition for the path.
@@ -426,7 +426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
      */
-    Azure::Core::Nullable<bool> Recursive;
+    Azure::Nullable<bool> Recursive;
 
     /**
      * @brief Specify the access condition for the path.
@@ -470,12 +470,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the range of the resource to be retrieved.
      */
-    Azure::Core::Nullable<Core::Http::HttpRange> Range;
+    Azure::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief The hash algorithm used to calculate the hash for the returned content.
      */
-    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
+    Azure::Nullable<HashAlgorithm> RangeHashAlgorithm;
 
     /**
      * @brief Specify the access condition for the path.
@@ -492,7 +492,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
-    Azure::Core::Nullable<std::string> DestinationFileSystem;
+    Azure::Nullable<std::string> DestinationFileSystem;
 
     /**
      * @brief Specify the access condition for the path.
@@ -542,14 +542,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        invocation of the setAccessControlRecursive operation to continue the
      *        setAccessControlRecursive operation on the directory.
      */
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief It specifies the maximum number of files or directories on which the acl change will
      *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
      *        items.
      */
-    Azure::Core::Nullable<int32_t> PageSizeHint;
+    Azure::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief  Optional. If set to false, the operation will terminate quickly on encountering user
@@ -558,7 +558,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * ContinueOnFailure is true in case of user errors. If not set the default value is false for
      * this.
      */
-    Azure::Core::Nullable<bool> ContinueOnFailure;
+    Azure::Nullable<bool> ContinueOnFailure;
   };
 
   using UpdateDataLakePathAccessControlListRecursiveSinglePageOptions
@@ -618,13 +618,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * ScheduleFileExpiryOriginType::RelativeToCreation or
      * ScheduleFileExpiryOriginType::RelativeToNow.
      */
-    Azure::Core::Nullable<std::chrono::milliseconds> TimeToExpire;
+    Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
 
     /**
      * @brief The expiry time in RFC1123 format. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
      */
-    Azure::Core::Nullable<DateTime> ExpiresOn;
+    Azure::Nullable<DateTime> ExpiresOn;
   };
 
   using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;

@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const RenameDataLakeFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
+    Azure::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
     {
       const auto& currentPath = m_pathUrl.GetPath();
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const RenameDataLakeSubdirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
+    Azure::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
     {
       const auto& currentPath = m_pathUrl.GetPath();

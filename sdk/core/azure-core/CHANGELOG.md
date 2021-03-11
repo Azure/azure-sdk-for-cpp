@@ -40,6 +40,7 @@
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
 - Moved `Azure::Core::DateTime` to `Azure::DateTime`.
+- Moved `Azure::Core::Nullable<T>` to `Azure::Nullable<T>`.
 - Renamed `Azure::Core::Http::TokenRequestOptions` to `Azure::Core::Credentials::TokenRequestContext`.
 - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
 
