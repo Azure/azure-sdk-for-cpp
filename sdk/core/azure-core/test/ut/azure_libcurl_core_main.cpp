@@ -22,6 +22,7 @@
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 
 #include <http/curl/curl_connection_pool_private.hpp>
@@ -43,14 +44,18 @@ namespace Azure { namespace Core { namespace Test {
 
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           req, std::move(connection), options.HttpKeepAlive);
-      auto result = session->Perform(Azure::Core::GetApplicationContext());
+      auto result = session->Perform(Azure::Core::Context::GetApplicationContext());
+      (void)result;
       // Reading all the response
-      Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::GetApplicationContext(), *session);
+
+      Azure::Core::IO::BodyStream::ReadToEnd(
+          *session, Azure::Core::Context::GetApplicationContext());
     }
     // Check that after the connection is gone, it is moved back to the pool
     EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
     auto connectionFromPool
         = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin()->second.begin()->get();
+    (void)connectionFromPool;
   }
 }}} // namespace Azure::Core::Test
 
