@@ -70,14 +70,14 @@ inline void PrintOptions(
 {
   {
     std::cout << std::endl << "=== Global Options ===" << std::endl;
-    Azure::Core::Json::_internal::json optionsAsJson = options;
+    Azure::Core::_internal::Json::json optionsAsJson = options;
     std::cout << ReplaceAll(optionsAsJson.dump(), ",", ",\n") << std::endl;
   }
 
   if (testOptions.size() > 0)
   {
     std::cout << std::endl << "=== Test Options ===" << std::endl;
-    Azure::Core::Json::_internal::json optionsAsJson;
+    Azure::Core::_internal::Json::json optionsAsJson;
     for (auto option : testOptions)
     {
       try
