@@ -47,7 +47,7 @@ public:
   {
   }
 
-    /**
+  /**
    * @brief Get the raw HTTP response.
    * @return A reference to an #Azure::Core::Http::RawResponse.
    * @note Does not give up ownership of the RawResponse.
