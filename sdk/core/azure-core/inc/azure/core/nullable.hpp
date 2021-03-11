@@ -14,12 +14,12 @@
 #include <utility> // for swap and move
 
 namespace Azure { namespace Core {
-  namespace Details {
+  namespace _detail {
     struct NontrivialEmptyType
     {
       constexpr NontrivialEmptyType() noexcept {}
     };
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Manages an optional contained value, i.e. a value that may or may not be present.
@@ -29,7 +29,7 @@ namespace Azure { namespace Core {
   template <class T> class Nullable {
     union
     {
-      Details::NontrivialEmptyType
+      _detail::NontrivialEmptyType
           m_disengaged; // due to constexpr rules for the default constructor
       T m_value;
     };
@@ -38,12 +38,12 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct a #Nullable that represents the absence of value.
+     * @brief Construct a #Azure::Core::Nullable that represents the absence of value.
      */
     constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
 
     /**
-     * @brief Construct a #Nullable having an \p initialValue.
+     * @brief Construct a #Azure::Core::Nullable having an \p initialValue.
      *
      * @param initialValue A non-absent value to initialize with.
      */
@@ -127,8 +127,8 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Invokes #Swap while having a lowercase name that satisfies `swappable` requirements
-     * (see details).
+     * @brief Invokes #Azure::Core::Nullable::Swap while having a lowercase name that satisfies
+     * `swappable` requirements (see details).
      *
      * @details Swappable requirements: https://en.cppreference.com/w/cpp/named_req/Swappable
      */
@@ -159,9 +159,9 @@ namespace Azure { namespace Core {
     /**
      * @brief Assignment operator from another type.
      *
-     * @tparam U
+     * @tparam U Type of \p other.
      *
-     * @param other
+     * @param other Other #Azure::Core::Nullable.
      */
     template <
         class U = T,
@@ -198,7 +198,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct the contained value in-place.
      *
-     * @detail If this instance already contains a value before the call, the contained value is
+     * @details If this instance already contains a value before the call, the contained value is
      * destroyed by calling its destructor.
      */
     template <class... U>
@@ -261,10 +261,72 @@ namespace Azure { namespace Core {
       return std::move(m_value);
     }
 
+    // observers
+
     /**
-     * @brief `operator bool` on the condition of #HasValue.
+     * @brief `operator bool` on the condition of #Azure::Core::Nullable::HasValue.
      */
-    explicit operator bool() const noexcept { return HasValue(); }
+    constexpr explicit operator bool() const noexcept { return HasValue(); }
+
+    /**
+     * @brief Accesses the contained value.
+     * @return Returns a pointer to the contained value.
+     * @warning The behavior is undefined if `*this` does not contain a value.
+     * @note This operator does not check whether the #Nullable contains a value!
+             You can do so manually by using #HasValue() or simply operator #bool().
+             Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
+     */
+    constexpr const T* operator->() const { return std::addressof(m_value); }
+
+    /**
+     * @brief Accesses the contained value.
+     * @return Returns a pointer to the contained value.
+     * @warning The behavior is undefined if `*this` does not contain a value.
+     * @note This operator does not check whether the #Nullable contains a value!
+             You can do so manually by using #HasValue() or simply operator #bool().
+             Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
+     */
+    constexpr T* operator->() { return std::addressof(m_value); }
+
+    /**
+     * @brief Accesses the contained value.
+     * @return Returns a reference to the contained value.
+     * @warning The behavior is undefined if `*this` does not contain a value.
+     * @note This operator does not check whether the #Nullable contains a value!
+             You can do so manually by using #HasValue() or simply operator #bool().
+             Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
+     */
+    constexpr const T& operator*() const& { return m_value; }
+
+    /**
+     * @brief Accesses the contained value.
+     * @return Returns a reference to the contained value.
+     * @warning The behavior is undefined if `*this` does not contain a value.
+     * @note This operator does not check whether the #Nullable contains a value!
+             You can do so manually by using #HasValue() or simply operator #bool().
+             Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
+     */
+    constexpr T& operator*() & { return m_value; }
+
+    /**
+     * @brief Accesses the contained value.
+     * @return Returns a reference to the contained value.
+     * @warning The behavior is undefined if `*this` does not contain a value.
+     * @note This operator does not check whether the #Nullable contains a value!
+             You can do so manually by using #HasValue() or simply operator #bool().
+             Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
+     */
+    constexpr T&& operator*() && { return std::move(m_value); }
+
+    /**
+     * @brief Accesses the contained value.
+     * @return Returns a reference to the contained value.
+     * @warning The behavior is undefined if `*this` does not contain a value.
+     * @note This operator does not check whether the #Nullable contains a value!
+             You can do so manually by using #HasValue() or simply operator #bool().
+             Alternatively, if checked access is needed, #GetValue() or #ValueOr() may be used.
+     */
+    constexpr const T&& operator*() const&& { return std::move(m_value); }
 
     /**
      * @brief Get the contained value, returns \p other if value is absent.

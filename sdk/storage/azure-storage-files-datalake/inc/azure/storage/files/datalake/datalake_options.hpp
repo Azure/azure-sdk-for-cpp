@@ -24,43 +24,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Client options used to initalize DataLakeServiceClient, FileSystemClient, PathClient,
    * FileClient and DirectoryClient.
    */
-  struct DataLakeClientOptions
+  struct DataLakeClientOptions : Azure::Core::_internal::ClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::string SecondaryHostForRetryReads;
 
     /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
+     * API version used by this client.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+    std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
   /**
    * @brief Specifies access conditions for a file system.
    */
-  struct FileSystemAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct FileSystemAccessConditions : public Azure::ModifiedConditions, public LeaseAccessConditions
   {
   };
 
   /**
    * @brief Specifies access conditions for a path.
    */
-  struct PathAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct PathAccessConditions : public Azure::ModifiedConditions,
+                                public Azure::MatchConditions,
                                 public LeaseAccessConditions
   {
   };
@@ -70,11 +62,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct ListFileSystemsSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Filters results to filesystems within the specified prefix.
      */
@@ -100,8 +87,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specifies that the filesystem's metadata be returned.
      */
-    Models::ListDataLakeFileSystemsIncludeItem Include
-        = Models::ListDataLakeFileSystemsIncludeItem::None;
+    Models::ListDataLakeFileSystemsIncludeFlags Include
+        = Models::ListDataLakeFileSystemsIncludeFlags::None;
   };
 
   /**
@@ -109,11 +96,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct CreateDataLakeFileSystemOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief User-defined metadata to be stored with the filesystem.
      *        Note that the string may only contain ASCII characters in the
@@ -133,11 +115,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct DeleteDataLakeFileSystemOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specify the access condition for the file system.
      */
     FileSystemAccessConditions AccessConditions;
@@ -148,11 +125,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct GetDataLakeFileSystemPropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the lease access conditions.
      */
@@ -165,11 +137,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct SetDataLakeFileSystemMetadataOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specify the access condition for the file system.
      */
     FileSystemAccessConditions AccessConditions;
@@ -180,11 +147,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct ListPathsSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Valid only when Hierarchical Namespace is enabled for the account.
      *        If "true", the user identity values returned in the owner and group
@@ -220,11 +182,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct GetDataLakeFileSystemAccessPolicyOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     LeaseAccessConditions AccessConditions;
@@ -235,11 +192,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct SetDataLakeFileSystemAccessPolicyOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies whether data in the file system may be accessed publicly and the level
      * of access.
@@ -259,15 +211,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
+   * @brief Optional parameters for DataLakeFileSystemClient::RenameDirectory
+   * @remark Some optional parameter is mandatory in certain combination.
+   *         More details:
+   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
+   */
+  struct RenameDataLakeDirectoryOptions
+  {
+    /**
+     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
+     *        file system.
+     */
+    Azure::Core::Nullable<std::string> DestinationFileSystem;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+
+    /**
+     * @brief The access condition for source path.
+     */
+    PathAccessConditions SourceAccessConditions;
+  };
+
+  /**
    * @brief Optional parameters for PathClient::Append
    */
   struct AppendDataLakeFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the transactional hash for the body, to be validated by the service.
      */
@@ -284,11 +256,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct FlushDataLakeFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief If "true", uncommitted data is retained after the flush operation completes;
      *        otherwise, the uncommitted data is deleted after the flush operation.  The
@@ -338,11 +305,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct SetDataLakePathAccessControlListOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The owner of the path or directory.
      */
     Azure::Core::Nullable<std::string> Owner;
@@ -363,11 +325,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct SetDataLakePathPermissionsOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief The owner of the path or directory.
      */
@@ -390,11 +347,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct SetDataLakePathHttpHeadersOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
@@ -405,11 +357,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct SetDataLakePathMetadataOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the access condition for the path.
      */
@@ -424,11 +371,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct CreateDataLakePathOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the http headers for this path.
      */
@@ -480,20 +422,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct DeleteDataLakePathOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief When deleting a directory, the number of paths that are deleted with each invocation
-     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
-     *        token is returned in this response header.  When a continuation token is returned in
-     *        the response, it must be specified in a subsequent invocation of the delete operation
-     *        to continue deleting the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
      * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
@@ -515,11 +443,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct GetDataLakePathPropertiesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
@@ -530,11 +453,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct GetDataLakePathAccessControlListOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the access condition for the path.
      */
@@ -547,27 +465,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
    */
-  struct ReadDataLakeFileOptions
+  struct DownloadDataLakeFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specify the range of the resource to be retrieved.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
-     * @brief When this header is set to "true" and specified together with the Range header,
-     *        the service returns the MD5 hash for the range, as long as the range is less than
-     *        or equal to 4MB in size. If this header is specified without the Range header,
-     *        the service returns status code 400 (Bad Request). If this header is set to true
-     *        when the range exceeds 4 MB in size, the service returns status code 400 (Bad
-     *        Request).
+     * @brief The hash algorithm used to calculate the hash for the returned content.
      */
-    Azure::Core::Nullable<bool> RangeGetContentMd5;
+    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
 
     /**
      * @brief Specify the access condition for the path.
@@ -580,18 +488,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    */
   struct RenameDataLakeFileOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
-
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
@@ -615,61 +511,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct DeleteDataLakeFileOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
   };
 
-  /**
-   * @brief Optional parameters for PathClient::Create
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
-   */
-  struct RenameDataLakeDirectoryOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief When renaming a directory, the number of paths that are renamed with each
-     *        invocation is limited. If the number of paths to be renamed exceeds this limit,
-     *        a continuation token is returned in this response header. When a continuation token
-     *        is returned in the response, it must be specified in a subsequent invocation of the
-     *        rename operation to continue renaming the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief This parameter determines the behavior of the rename operation. The value must be
-     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
-     *        PathRenameMode::Posix.
-     */
-    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
-
-    /**
-     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
-     *        file system.
-     */
-    Azure::Core::Nullable<std::string> DestinationFileSystem;
-
-    /**
-     * @brief Specify the access condition for the path.
-     */
-    PathAccessConditions AccessConditions;
-
-    /**
-     * @brief The access condition for source path.
-     */
-    PathAccessConditions SourceAccessConditions;
-  };
+  using RenameDataLakeSubdirectoryOptions = RenameDataLakeDirectoryOptions;
 
   /**
    * @brief Optional parameters for DirectoryClient::Delete
@@ -677,35 +524,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct DeleteDataLakeDirectoryOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief When deleting a directory, the number of paths that are deleted with each invocation
-     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
-     *        token is returned in this response header.  When a continuation token is returned in
-     *        the response, it must be specified in a subsequent invocation of the delete operation
-     *        to continue deleting the directory.
-     */
-    Azure::Core::Nullable<std::string> ContinuationToken;
-
-    /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControlRecursive
+   * @brief Optional parameters for DirectoryClient::SetAccessControlListRecursiveSinglePage
    */
-  struct SetDataLakeDirectoryAccessControlRecursiveOptions
+  struct SetDataLakePathAccessControlListRecursiveSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief When performing setAccessControlRecursive on a directory, the number of paths that
      *        are processed with each invocation is limited.  If the number of paths to be processed
@@ -721,17 +549,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
      *        items.
      */
-    Azure::Core::Nullable<int32_t> MaxRecords;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
-     * @brief  Optional. Valid for "SetAccessControlRecursive" operation. If set to false, the
-     * operation will terminate quickly on encountering user errors (4XX). If true, the operation
-     * will ignore user errors and proceed with the operation on other sub-entities of the
-     * directory. Continuation token will only be returned when forceFlag is true in case of user
-     * errors. If not set the default value is false for this.
+     * @brief  Optional. If set to false, the operation will terminate quickly on encountering user
+     * errors (4XX). If true, the operation will ignore user errors and proceed with the operation
+     * on other sub-entities of the directory. Continuation token will only be returned when
+     * ContinueOnFailure is true in case of user errors. If not set the default value is false for
+     * this.
      */
-    Azure::Core::Nullable<bool> ForceFlag;
+    Azure::Core::Nullable<bool> ContinueOnFailure;
   };
+
+  using UpdateDataLakePathAccessControlListRecursiveSinglePageOptions
+      = SetDataLakePathAccessControlListRecursiveSinglePageOptions;
+
+  using RemoveDataLakePathAccessControlListRecursiveSinglePageOptions
+      = SetDataLakePathAccessControlListRecursiveSinglePageOptions;
 
   using CreateDataLakeFileOptions = CreateDataLakePathOptions;
   using CreateDataLakeDirectoryOptions = CreateDataLakePathOptions;
@@ -742,11 +576,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct UploadDataLakeFileFromOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The standard HTTP header system properties to set.
      */
     Models::PathHttpHeaders HttpHeaders;
@@ -756,15 +585,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Storage::Metadata Metadata;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+    struct
+    {
+      /**
+       * @brief File smaller than this will be uploaded with a single upload operation. This value
+       * cannot be larger than 5000 MiB.
+       */
+      int64_t SingleUploadThreshold = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of bytes in a single request. This value cannot be larger than
+       * 4000 MiB.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
+
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   using ScheduleDataLakeFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
@@ -775,22 +614,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct ScheduleDataLakeFileDeletionOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The expiry time from the specified origin. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::RelativeToCreation or
      * ScheduleFileExpiryOriginType::RelativeToNow.
      */
-    Azure::Core::Nullable<int64_t> TimeToExpireInMs;
+    Azure::Core::Nullable<std::chrono::milliseconds> TimeToExpire;
 
     /**
      * @brief The expiry time in RFC1123 format. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
      */
-    Azure::Core::Nullable<std::string> ExpiresOn;
+    Azure::Core::Nullable<DateTime> ExpiresOn;
   };
 
   using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;

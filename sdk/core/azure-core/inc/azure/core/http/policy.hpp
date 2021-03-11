@@ -8,11 +8,12 @@
 
 #pragma once
 
+#include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/credentials.hpp"
+#include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
@@ -20,15 +21,34 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
   }
+
+  /**
+   * @brief Define the order of execution of and Http policy when a request is sent to the server.
+   *
+   */
+  enum class HttpPolicyOrder
+  {
+    /**
+     * @brief The policy would be invoked once per request invocation (service call).
+     *
+     */
+    PerCall,
+    /**
+     * @brief The policy would be invoked every time the request is retried.
+     *
+     */
+    PerRetry
+  };
 
   class NextHttpPolicy;
 
@@ -45,17 +65,18 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Apply this HTTP policy.
      *
-     * @param context #Context so that operation can be cancelled.
-     * @param request An HTTP #Request being sent.
-     * @param policy #NextHttpPolicy to invoke after this policy has been applied.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param request An #Azure::Core::Http::Request being sent.
+     * @param policy #Azure::Core::Http::NextHttpPolicy to invoke after this policy has been
+     * applied.
      *
-     * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
-     * sequence of policies have been applied.
+     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
+     * policies in the stack sequence of policies have been applied.
      */
     virtual std::unique_ptr<RawResponse> Send(
-        Context const& context,
         Request& request,
-        NextHttpPolicy policy) const = 0;
+        NextHttpPolicy policy,
+        Context const& context) const = 0;
 
     /// Destructor.
     virtual ~HttpPolicy() {}
@@ -73,19 +94,22 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
   };
 
-  // Represents the next HTTP policy in the stack sequence of policies.
+  /**
+   * @brief Represents the next HTTP policy in the stack sequence of policies.
+   *
+   */
   class NextHttpPolicy {
     const std::size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
 
   public:
     /**
-     * @brief Construct an abstraction representing a next line in the stack sequence  of policies,
-     * from the caller's perspective.
+     * @brief Construct an abstraction representing a next line in the stack sequence  of
+     * policies, from the caller's perspective.
      *
      * @param index An sequential index of this policy in the stack sequence of policies.
-     * @param policies A vector of unique pointers next in the line to be invoked after the current
-     * policy.
+     * @param policies A vector of unique pointers next in the line to be invoked after the
+     * current policy.
      */
     explicit NextHttpPolicy(
         std::size_t index,
@@ -97,33 +121,33 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Apply this HTTP policy.
      *
-     * @param context #Context so that operation can be cancelled.
-     * @param request An HTTP #Request being sent.
+     * @param request An #Azure::Core::Http::Request being sent.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
-     * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
-     * sequence of policies have been applied.
+     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
+     * policies in the stack sequence of policies have been applied.
      */
-    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
+    std::unique_ptr<RawResponse> Send(Request& request, Context const& context);
   };
 
   /**
-   * @brief The options for the #TransportPolicy.
+   * @brief The options for the #Azure::Core::Http::TransportPolicy.
    *
    */
-  struct TransportPolicyOptions
+  struct TransportOptions
   {
     /**
-     * @brief Set the #HttpTransport that the transport policy will use to send and receive requests
-     * and responses over the wire.
+     * @brief Set the #Azure::Core::Http::HttpTransport that the transport policy will use to send
+     * and receive requests and responses over the wire.
      *
-     * @remark When no option is set, the default transport adapter on non-Windows platforms is the
-     * curl transport adapter and winhttp transport adapter on Windows.
+     * @remark When no option is set, the default transport adapter on non-Windows platforms is
+     * the curl transport adapter and winhttp transport adapter on Windows.
      *
      * @remark When using a custom transport adapter, the implementation for
      * `AzureSdkGetCustomHttpTransport` must be linked in the end-user application.
      *
      */
-    std::shared_ptr<HttpTransport> Transport = Details::GetTransportAdapter();
+    std::shared_ptr<HttpTransport> Transport = _detail::GetTransportAdapter();
   };
 
   /**
@@ -132,16 +156,15 @@ namespace Azure { namespace Core { namespace Http {
    */
   class TransportPolicy : public HttpPolicy {
   private:
-    TransportPolicyOptions m_options;
+    TransportOptions m_options;
 
   public:
     /**
      * @brief Construct an HTTP transport policy.
      *
-     * @param transport A pointer to the #HttpTransport implementation to use when this policy gets
-     * applied (#Send).
+     * @param options #Azure::Core::Http::TransportOptions.
      */
-    explicit TransportPolicy(TransportPolicyOptions options = TransportPolicyOptions())
+    explicit TransportPolicy(TransportOptions options = TransportOptions())
         : m_options(std::move(options))
     {
     }
@@ -152,13 +175,13 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     std::unique_ptr<RawResponse> Send(
-        Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        NextHttpPolicy nextHttpPolicy,
+        Context const& ctx) const override;
   };
 
   /**
-   * @brief Options for the #RetryPolicy.
+   * @brief Options for the #Azure::Core::Http::RetryPolicy.
    */
   struct RetryOptions
   {
@@ -180,7 +203,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief HTTP status codes to retry on.
      */
-    std::vector<HttpStatusCode> StatusCodes{
+    std::set<HttpStatusCode> StatusCodes{
         HttpStatusCode::RequestTimeout,
         HttpStatusCode::InternalServerError,
         HttpStatusCode::BadGateway,
@@ -198,9 +221,9 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * Constructs HTTP retry policy with the provided #RetryOptions.
+     * Constructs HTTP retry policy with the provided #Azure::Core::Http::RetryOptions.
      *
-     * @param options HTTP #RetryOptions.
+     * @param options #Azure::Core::Http::RetryOptions.
      */
     explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
@@ -210,16 +233,29 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     std::unique_ptr<RawResponse> Send(
-        Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        NextHttpPolicy nextHttpPolicy,
+        Context const& ctx) const override;
+
+    /**
+     * @brief Get the Retry Count from the context.
+     *
+     * @remark The sentinel `-1` is returned if there is no information in the \p Context about
+     * #RetryPolicy is trying to send a request. Then `0` is returned for the first try of sending
+     * a request by the #RetryPolicy. Any subsequent retry will be referenced with a number
+     * greater than 0.
+     *
+     * @param context The context used to call send request.
+     * @return A positive number indicating the current intent to send the request.
+     */
+    static int GetRetryNumber(Context const& context);
   };
 
   /**
    * @brief HTTP Request ID policy.
    *
-   * @details Applies an HTTP header with a unique ID to each HTTP request, so that each individual
-   * request can be traced for troubleshooting.
+   * @details Applies an HTTP header with a unique ID to each HTTP request, so that each
+   * individual request can be traced for troubleshooting.
    */
   class RequestIdPolicy : public HttpPolicy {
   private:
@@ -237,22 +273,22 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     std::unique_ptr<RawResponse> Send(
-        Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override
+        NextHttpPolicy nextHttpPolicy,
+        Context const& ctx) const override
     {
-      auto uuid = Uuid::CreateUuid().GetUuidString();
+      auto uuid = Uuid::CreateUuid().ToString();
 
-      request.AddHeader(RequestIdHeader, uuid);
-      return nextHttpPolicy.Send(ctx, request);
+      request.SetHeader(RequestIdHeader, uuid);
+      return nextHttpPolicy.Send(request, ctx);
     }
   };
 
   /**
-   * @brief The options for the #TelemetryPolicy
+   * @brief The options for the #Azure::Core::Http::TelemetryPolicy
    *
    */
-  struct TelemetryPolicyOptions
+  struct TelemetryOptions
   {
     /**
      * @brief The Application id is the last part of the user agent for telemetry.
@@ -290,7 +326,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit TelemetryPolicy(
         std::string const& componentName,
         std::string const& componentVersion,
-        TelemetryPolicyOptions options = TelemetryPolicyOptions())
+        TelemetryOptions options = TelemetryOptions())
         : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
     {
     }
@@ -301,9 +337,20 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     std::unique_ptr<RawResponse> Send(
-        Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        NextHttpPolicy nextHttpPolicy,
+        Context const& ctx) const override;
+  };
+
+  /**
+   * @brief Defines options for getting token.
+   */
+  struct TokenRequestOptions
+  {
+    /**
+     * @brief Authentication scopes.
+     */
+    std::vector<std::string> Scopes;
   };
 
   /**
@@ -312,7 +359,7 @@ namespace Azure { namespace Core { namespace Http {
   class BearerTokenAuthenticationPolicy : public HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
-    std::vector<std::string> m_scopes;
+    TokenRequestOptions m_tokenRequestOptions;
 
     mutable AccessToken m_accessToken;
     mutable std::mutex m_accessTokenMutex;
@@ -322,112 +369,82 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct a Bearer Token authentication policy with single authentication scope.
+     * @brief Construct a Bearer Token authentication policy.
      *
-     * @param credential A #TokenCredential to use with this policy.
-     * @param scope Authentication scope.
+     * @param credential A #Azure::Core::TokenCredential to use with this policy.
+     * @param tokenRequestOptions #Azure::Core::Http::TokenRequestOptions.
      */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
-        std::string scope)
-        : m_credential(std::move(credential))
-    {
-      m_scopes.emplace_back(std::move(scope));
-    }
-
-    /**
-     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
-     *
-     * @param credential A #TokenCredential to use with this policy.
-     * @param scopes A vector of authentication scopes.
-     */
-    explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> credential,
-        std::vector<std::string> scopes)
-        : m_credential(std::move(credential)), m_scopes(std::move(scopes))
-    {
-    }
-
-    /**
-     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
-     *
-     * @tparam A type of scopes sequence iterator.
-     *
-     * @param credential A #TokenCredential to use with this policy.
-     * @param scopesBegin An iterator pointing to begin of the sequence of scopes to use.
-     * @param scopesEnd An iterator pointing to an element after the last element in sequence of
-     * scopes to use.
-     */
-    template <typename ScopesIterator>
-    explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> credential,
-        ScopesIterator const& scopesBegin,
-        ScopesIterator const& scopesEnd)
-        : m_credential(std::move(credential)), m_scopes(scopesBegin, scopesEnd)
+        TokenRequestOptions tokenRequestOptions)
+        : m_credential(std::move(credential)), m_tokenRequestOptions(std::move(tokenRequestOptions))
     {
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_scopes);
+      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestOptions);
     }
 
     std::unique_ptr<RawResponse> Send(
-        Context const& context,
         Request& request,
-        NextHttpPolicy policy) const override;
+        NextHttpPolicy policy,
+        Context const& context) const override;
+  };
+
+  namespace _detail {
+    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet g_defaultAllowedHttpHeaders;
+  }
+
+  /**
+   * @brief Options for Azure::Core::Http::LogPolicy.
+   */
+  struct LogOptions
+  {
+    /**
+     * @brief HTTP query parameters that are allowed to be logged.
+     */
+    std::set<std::string> AllowedHttpQueryParameters;
+
+    /**
+     * @brief HTTP headers that are allowed to be logged.
+     */
+    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
   };
 
   /**
    * @brief Logs every HTTP request.
    *
-   * @detail Logs every HTTP request, response, or retry attempt (see #LogClassification)
-   * @remark See #logging.hpp
+   * @details Logs every HTTP request and response.
+   * @remark See Azure::Core::Logger.
    */
-  class LoggingPolicy : public HttpPolicy {
+  class LogPolicy : public HttpPolicy {
+    LogOptions m_options;
+
   public:
     /**
      * @brief Constructs HTTP logging policy.
      */
-    explicit LoggingPolicy() {}
+    explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<LoggingPolicy>(*this);
+      return std::make_unique<LogPolicy>(*this);
     }
 
     std::unique_ptr<RawResponse> Send(
-        Context const& ctx,
         Request& request,
-        NextHttpPolicy nextHttpPolicy) const override;
+        NextHttpPolicy nextHttpPolicy,
+        Context const& ctx) const override;
   };
 
-  /**
-   * @brief Log classigications being used to designate log messages from HTTP #LoggingPolicy.
-   */
-  class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
-                                Azure::Core::Logging::Details::Facility::Core> {
-  public:
-    /// HTTP request.
-    static constexpr auto const Request = Classification(1);
-
-    /// HTTP response.
-    static constexpr auto const Response = Classification(2);
-
-    /// HTTP retry attempt.
-    static constexpr auto const Retry = Classification(3);
-
-    /// HTTP Transport adapter.
-    static constexpr auto const HttpTransportAdapter = Classification(4);
-  };
-
-  namespace Internal {
+  namespace _internal {
     /**
-     * @brief @ValuePolicy options.
+     * @brief #Azure::Core::Http::_internal::ValuePolicy options.
      */
-    struct ValuePolicyOptions
+    struct ValueOptions
     {
-      std::map<std::string, std::string> HeaderValues;
+      CaseInsensitiveMap HeaderValues;
       std::map<std::string, std::string> QueryValues;
     };
 
@@ -439,14 +456,15 @@ namespace Azure { namespace Core { namespace Http {
      */
     class ValuePolicy : public HttpPolicy {
     private:
-      ValuePolicyOptions m_options;
+      ValueOptions m_options;
 
     public:
       /**
-       * @brief Construct a @ValuePolicy with the @ValuePolicyOptions provided.
-       * @param options @ValuePolicyOptions.
+       * @brief Construct a #Azure::Core::Http::_internal::ValuePolicy with the
+       * #Azure::Core::Http::_internal::ValueOptions provided.
+       * @param options #Azure::Core::Http::_internal::ValueOptions.
        */
-      explicit ValuePolicy(ValuePolicyOptions options) : m_options(std::move(options)) {}
+      explicit ValuePolicy(ValueOptions options) : m_options(std::move(options)) {}
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {
@@ -454,13 +472,13 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       std::unique_ptr<RawResponse> Send(
-          Context const& ctx,
           Request& request,
-          NextHttpPolicy nextHttpPolicy) const override
+          NextHttpPolicy nextHttpPolicy,
+          Context const& ctx) const override
       {
         for (auto const& hdrPair : m_options.HeaderValues)
         {
-          request.AddHeader(hdrPair.first, hdrPair.second);
+          request.SetHeader(hdrPair.first, hdrPair.second);
         }
 
         {
@@ -471,8 +489,8 @@ namespace Azure { namespace Core { namespace Http {
           }
         }
 
-        return nextHttpPolicy.Send(ctx, request);
+        return nextHttpPolicy.Send(request, ctx);
       }
     };
-  } // namespace Internal
+  } // namespace _internal
 }}} // namespace Azure::Core::Http

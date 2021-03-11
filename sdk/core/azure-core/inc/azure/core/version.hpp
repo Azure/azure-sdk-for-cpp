@@ -15,14 +15,14 @@
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
-#define AZURE_CORE_VERSION_PRERELEASE "beta.5"
+#define AZURE_CORE_VERSION_PRERELEASE "beta.7"
 
-namespace Azure { namespace Core { namespace Details {
+namespace Azure { namespace Core {
 
   /**
    * @brief Provides version information.
    */
-  class Version {
+  class PackageVersion {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_CORE_VERSION_MAJOR;
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Details {
     static constexpr const char* secret = AZURE_CORE_VERSION_PRERELEASE;
   };
 
-}}} // namespace Azure::Core::Details
+}} // namespace Azure::Core
 
 #undef AZURE_CORE_VERSION_MAJOR
 #undef AZURE_CORE_VERSION_MINOR

@@ -8,7 +8,7 @@
 #include <vector>
 
 #include <azure/core/credentials.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
@@ -37,33 +37,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param directoryUri The URI of the file system this client's request targets.
+     * @param directoryUrl The URL of the file system this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeDirectoryClient(
-        const std::string& directoryUri,
+        const std::string& directoryUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param directoryUri The URI of the file system this client's request targets.
+     * @param directoryUrl The URL of the file system this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeDirectoryClient(
-        const std::string& directoryUri,
+        const std::string& directoryUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param directoryUri The URI of the file system this client's request targets.
+     * @param directoryUrl The URL of the file system this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeDirectoryClient(
-        const std::string& directoryUri,
+        const std::string& directoryUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -92,114 +92,162 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the directory the path points to.
-     * @return Azure::Core::Response<Models::CreateDataLakeDirectoryResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::CreateDataLakeDirectoryResult> containing the
      * information of the created directory
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::CreateDataLakeDirectoryResult> Create(
-        const CreateDataLakeDirectoryOptions& options = CreateDataLakeDirectoryOptions()) const
+    Azure::Response<Models::CreateDataLakeDirectoryResult> Create(
+        const CreateDataLakeDirectoryOptions& options = CreateDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return DataLakePathClient::Create(Models::PathResourceType::Directory, options);
+      return DataLakePathClient::Create(Models::PathResourceType::Directory, options, context);
     }
 
     /**
      * @brief Create a directory. If it already exists, nothing will happen.
      * @param options Optional parameters to create the directory the path points to.
-     * @return Azure::Core::Response<Models::CreateDataLakeDirectoryResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::CreateDataLakeDirectoryResult> containing the
      * information of the created directory
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::CreateDataLakeDirectoryResult> CreateIfNotExists(
-        const CreateDataLakeDirectoryOptions& options = CreateDataLakeDirectoryOptions()) const
+    Azure::Response<Models::CreateDataLakeDirectoryResult> CreateIfNotExists(
+        const CreateDataLakeDirectoryOptions& options = CreateDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return DataLakePathClient::CreateIfNotExists(Models::PathResourceType::Directory, options);
+      return DataLakePathClient::CreateIfNotExists(
+          Models::PathResourceType::Directory, options, context);
     }
+
+    /**
+     * @brief Renames a file. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param fileName The file that gets renamed.
+     * @param destinationFilePath The path of the file the source file is renaming to.
+     * @param options Optional parameters to rename a file.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<DataLakeFileClient> The client targets the renamed file.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Response<DataLakeFileClient> RenameFile(
+        const std::string& fileName,
+        const std::string& destinationFilePath,
+        const RenameDataLakeFileOptions& options = RenameDataLakeFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Renames a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
-     * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
-     * @param options Optional parameters to rename a resource to the resource the destination
-     * directory points to.
-     * @return Azure::Core::Response<Models::RenameDataLakeDirectoryResult> containing the
-     * information returned when renaming the directory.
-     * @remark This operation will not change the URL this directory client points too, to use the
-     *         new name, customer needs to initialize a new directory client with the new name/path.
+     * @param subdirectoryName The subdirectory that gets renamed.
+     * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
+     * @param options Optional parameters to rename a directory.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<DataLakeDirectoryClient> The client targets the renamed
+     * directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::RenameDataLakeDirectoryResult> Rename(
+    Azure::Response<DataLakeDirectoryClient> RenameSubdirectory(
+        const std::string& subdirectoryName,
         const std::string& destinationDirectoryPath,
-        const RenameDataLakeDirectoryOptions& options = RenameDataLakeDirectoryOptions()) const;
+        const RenameDataLakeSubdirectoryOptions& options = RenameDataLakeSubdirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Deletes the directory.
-     * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
-     *                  the directory is non-empty, an error occurs.
+     * @brief Deletes the empty directory. Throws exception if directory is not empty.
      * @param options Optional parameters to delete the directory the path points to.
-     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> Delete(
-        bool recursive,
-        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
+    Azure::Response<Models::DeleteDataLakeDirectoryResult> DeleteEmpty(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      return this->Delete(false, options, context);
+    }
 
     /**
-     * @brief Deletes the directory if it already exists.
-     * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
-     *                  the directory is non-empty, an error occurs.
+     * @brief Deletes the empty directory if it already exists. Throws exception if directory is not
+     * empty.
      * @param options Optional parameters to delete the directory the path points to.
-     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfExists(
-        bool recursive,
-        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions()) const;
+    Azure::Response<Models::DeleteDataLakeDirectoryResult> DeleteEmptyIfExists(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      return this->DeleteIfExists(false, options, context);
+    }
 
     /**
-     * @brief Sets POSIX access control rights on files and directories under given directory
-     * recursively.
-     * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
-     * files and directories, PathSetAccessControlRecursiveMode::Modify modifies one or more POSIX
-     * access control rights  that pre-exist on files and directories,
-     * PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access control rights
-     * that were present earlier on files and directories
-     * @param acls Sets POSIX access control rights on files and directories. Each access control
-     * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     * directory points to.
-     * @return Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
+     * @brief Deletes the directory and all its subdirectories and files.
+     * @param options Optional parameters to delete the directory the path points to.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
+     * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::SetDataLakeDirectoryAccessControlRecursiveResult>
-    SetAccessControlRecursive(
-        Models::PathSetAccessControlRecursiveMode mode,
-        std::vector<Models::Acl> acls,
-        const SetDataLakeDirectoryAccessControlRecursiveOptions& options
-        = SetDataLakeDirectoryAccessControlRecursiveOptions()) const;
+    Azure::Response<Models::DeleteDataLakeDirectoryResult> DeleteRecursive(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      return this->Delete(true, options, context);
+    }
+
+    /**
+     * @brief Deletes the directory and all its subdirectories and files if the directory exists.
+     * @param options Optional parameters to delete the directory the path points to.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
+     * returned when deleting the directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Response<Models::DeleteDataLakeDirectoryResult> DeleteRecursiveIfExists(
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      return this->DeleteIfExists(true, options, context);
+    }
 
     /**
      * @brief List the paths in this file system.
      * @param recursive If "true", all paths are listed; otherwise, the list will only
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
-     * @return Azure::Core::Response<Models::ListPathsSinglePageResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::ListPathsSinglePageResult> containing the
      * results when listing the paths under a file system.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
+    Azure::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
         bool recursive,
-        const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions()) const;
+        const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     explicit DataLakeDirectoryClient(
-        Azure::Core::Http::Url dfsUrl,
+        Azure::Core::Http::Url directoryUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(dfsUrl), std::move(blobClient), pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+        : DataLakePathClient(std::move(directoryUrl), std::move(blobClient), pipeline)
     {
     }
+
+    Azure::Response<Models::DeleteDataLakeDirectoryResult> Delete(
+        bool recursive,
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    Azure::Response<Models::DeleteDataLakeDirectoryResult> DeleteIfExists(
+        bool recursive,
+        const DeleteDataLakeDirectoryOptions& options = DeleteDataLakeDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
     friend class DataLakeFileSystemClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

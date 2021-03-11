@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief #HttpTransport implementation via WinHttp.
+ * @file
+ * @brief #Azure::Core::Http::HttpTransport implementation via WinHttp.
  */
 
 #pragma once
@@ -17,7 +18,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
 
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
     constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024;
@@ -30,8 +31,8 @@ namespace Azure { namespace Core { namespace Http {
       HINTERNET m_connectionHandle;
       HINTERNET m_requestHandle;
 
-      HandleManager(Context const& context, Request& request)
-          : m_context(context), m_request(request)
+      HandleManager(Request& request, Context const& context)
+          : m_request(request), m_context(context)
       {
         m_sessionHandle = NULL;
         m_connectionHandle = NULL;
@@ -62,7 +63,7 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    class WinHttpStream : public BodyStream {
+    class WinHttpStream : public Azure::Core::IO::BodyStream {
     private:
       std::unique_ptr<HandleManager> m_handleManager;
       bool m_isEOF;
@@ -83,14 +84,15 @@ namespace Azure { namespace Core { namespace Http {
       int64_t m_streamTotalRead;
 
       /**
-       * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
+       * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
+       * from the wire.
        *
-       * @param context #Context so that operation can be cancelled.
+       * @param context #Azure::Core::Context so that operation can be cancelled.
        * @param buffer Buffer where data from wire is written to.
        * @param count The number of bytes to read from the network.
        * @return The actual number of bytes read from the network.
        */
-      int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
     public:
       WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)
@@ -100,13 +102,13 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       /**
-       * @brief Implement #BodyStream length.
+       * @brief Implement #Azure::Core::IO::BodyStream length.
        *
        * @return The size of the payload.
        */
       int64_t Length() const override { return this->m_contentLength; }
     };
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
@@ -127,18 +129,18 @@ namespace Azure { namespace Core { namespace Http {
   private:
     WinHttpTransportOptions m_options;
 
-    void CreateSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void CreateConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void Upload(std::unique_ptr<Details::HandleManager>& handleManager);
-    void SendRequest(std::unique_ptr<Details::HandleManager>& handleManager);
-    void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
-    int64_t WinHttpTransport::GetContentLength(
-        std::unique_ptr<Details::HandleManager>& handleManager,
+    void CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void CreateConnectionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void Upload(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void SendRequest(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager);
+    int64_t GetContentLength(
+        std::unique_ptr<_detail::HandleManager>& handleManager,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
     std::unique_ptr<RawResponse> GetRawResponse(
-        std::unique_ptr<Details::HandleManager> handleManager,
+        std::unique_ptr<_detail::HandleManager> handleManager,
         HttpMethod requestMethod);
 
   public:
@@ -156,11 +158,11 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Implements the Http transport interface to send an HTTP Request and produce an HTTP
      * RawResponse.
      *
-     * @param context #Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request an HTTP request to be send.
      * @return A unique pointer to an HTTP RawResponse.
      */
-    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
+    virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
   };
 
 }}} // namespace Azure::Core::Http

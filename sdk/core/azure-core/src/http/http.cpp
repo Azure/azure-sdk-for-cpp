@@ -2,16 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
+#include "azure/core/internal/null_body_stream.hpp"
 
 #include <utility>
 
-void Azure::Core::Http::Details::InsertHeaderWithValidation(
-    std::map<std::string, std::string>& headers,
+using namespace Azure::Core::Http;
+using namespace Azure::Core::IO::_internal;
+
+void Azure::Core::Http::_detail::InsertHeaderWithValidation(
+    Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
 {
   // Static table for validating header names. It is created just once for the program and reused
-  // each time AddHeader is called
+  // each time SetHeader is called
   static const uint8_t validChars[256] = {
       0, /* 0 - null */
       0, /* 1 - start of heading */
@@ -154,4 +158,14 @@ void Azure::Core::Http::Details::InsertHeaderWithValidation(
   }
   // insert (override if duplicated)
   headers[headerName] = headerValue;
+}
+
+Request::Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), downloadViaStream)
+{
+}
+
+Request::Request(HttpMethod httpMethod, Url url)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
+{
 }

@@ -14,7 +14,7 @@
 namespace Azure { namespace Core { namespace Http {
 
   /**
-   * @brief Base class for all HTTP transport implementaions.
+   * @brief Base class for all HTTP transport implementations.
    */
   class HttpTransport {
   public:
@@ -25,11 +25,11 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Send an HTTP request over the wire.
      *
-     * @param context #Context so that operation can be cancelled.
-     * @param request An HTTP #Request to send.
+     * @param request An #Azure::Core::Http::Request to send.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      */
     // TODO - Should this be const
-    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request) = 0;
+    virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) = 0;
 
     /// Destructor.
     virtual ~HttpTransport() {}

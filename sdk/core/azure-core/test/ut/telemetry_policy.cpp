@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::_internal;
 
 namespace {
 
 class NoOpPolicy : public HttpPolicy {
-  std::unique_ptr<RawResponse> Send(Context const& context, Request& request, NextHttpPolicy policy)
+  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
       const override
   {
     (void)context;
@@ -42,21 +43,21 @@ TEST(TelemetryPolicy, telemetryString)
   HttpPipeline pipeline1(policy1);
 
   std::string const expected2 = "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
-  Azure::Core::Http::TelemetryPolicyOptions options2;
+  Azure::Core::Http::TelemetryOptions options2;
   options2.ApplicationId = "AzCopy/10.0.4-Preview";
   policy2.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options2));
   policy2.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline2(policy2);
 
   std::string const expected3 = "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
-  Azure::Core::Http::TelemetryPolicyOptions options3;
+  Azure::Core::Http::TelemetryOptions options3;
   options3.ApplicationId = "  AzCopy / 10.0.4-Preview  ";
   policy3.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options3));
   policy3.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline3(policy3);
 
   std::string const expected4 = "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 (";
-  Azure::Core::Http::TelemetryPolicyOptions options4;
+  Azure::Core::Http::TelemetryOptions options4;
   options4.ApplicationId = "  01234567890123456789abcde  ";
   policy4.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options4));
   policy4.emplace_back(std::make_unique<NoOpPolicy>());
@@ -72,10 +73,10 @@ TEST(TelemetryPolicy, telemetryString)
   auto request4 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
 
   Context context;
-  pipeline1.Send(context, request1);
-  pipeline2.Send(context, request2);
-  pipeline3.Send(context, request3);
-  pipeline4.Send(context, request4);
+  pipeline1.Send(request1, context);
+  pipeline2.Send(request2, context);
+  pipeline3.Send(request3, context);
+  pipeline4.Send(request4, context);
 
   auto const headers1 = request1.GetHeaders();
   auto const headers2 = request2.GetHeaders();

@@ -14,14 +14,14 @@
 #define AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR 12
 #define AZURE_STORAGE_FILES_SHARES_VERSION_MINOR 0
 #define AZURE_STORAGE_FILES_SHARES_VERSION_PATCH 0
-#define AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE "beta.7"
+#define AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE "beta.9"
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Details {
+namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
    * @brief Provides version information.
    */
-  struct Version
+  struct PackageVersion
   {
   public:
     /// Major numeric identifier.
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     }
   };
 
-}}}}} // namespace Azure::Storage::Files::Shares::Details
+}}}} // namespace Azure::Storage::Files::Shares
 
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_MINOR

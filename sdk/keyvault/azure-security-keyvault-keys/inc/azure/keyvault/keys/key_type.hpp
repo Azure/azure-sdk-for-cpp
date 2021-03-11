@@ -1,34 +1,60 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Defines the JsonWebKey types.
+ *
+ */
+
 #pragma once
 
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  namespace Details {
-    constexpr static const char* EcValue = "EC";
-    constexpr static const char* EcHsmValue = "EC-HSM";
-    constexpr static const char* RsaValue = "RSA";
-    constexpr static const char* RsaHsmValue = "RSA-HSM";
-    constexpr static const char* OctValue = "oct";
-    constexpr static const char* OctHsmValue = "oct-HSM";
-  } // namespace Details
-
-  enum class KeyTypeEnum
+  /**
+   * @brief The JsonWebKey types.
+   *
+   */
+  enum class JsonWebKeyType
   {
+    /**
+     * @brief An Elliptic Curve Cryptographic (ECC) algorithm.
+     *
+     */
     Ec,
+    /**
+     * @brief An Elliptic Curve Cryptographic (ECC) algorithm backed by a Hardware Security Module
+     * (HSM).
+     *
+     */
     EcHsm,
+    /**
+     * @brief An RSA cryptographic algorithm.
+     *
+     */
     Rsa,
+    /**
+     * @brief An RSA cryptographic algorithm backed by a Hardware Security Module (HSM).
+     *
+     */
     RsaHsm,
+    /**
+     * @brief An AES cryptographic algorithm.
+     *
+     */
     Oct,
+    /**
+     * @brief An AES cryptographic algorithm backed by a Hardware Security Module (HSM).
+     *
+     */
     OctHsm,
   };
 
-  namespace Details {
-    KeyTypeEnum KeyTypeFromString(std::string const& name);
-    std::string KeyTypeToString(KeyTypeEnum kty);
-  } // namespace Details
+  namespace _detail {
+    JsonWebKeyType KeyTypeFromString(std::string const& name);
+    std::string KeyTypeToString(JsonWebKeyType kty);
+  } // namespace _detail
 
 }}}} // namespace Azure::Security::KeyVault::Keys

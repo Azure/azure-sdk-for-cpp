@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "datalake_path_client_test.hpp"
@@ -7,6 +7,7 @@
 #include <thread>
 
 #include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/files/datalake/datalake_utilities.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -18,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
     DataLakeFileSystemClientTest::SetUpTestSuite();
     m_pathName = LowercaseRandomString(10);
     m_pathClient = std::make_shared<Files::DataLake::DataLakePathClient>(
-        m_fileSystemClient->GetPathClient(m_pathName));
+        m_fileSystemClient->GetFileClient(m_pathName));
     m_fileSystemClient->GetFileClient(m_pathName).Create();
   }
 
@@ -107,6 +108,7 @@ namespace Azure { namespace Storage { namespace Test {
       // Last modified Etag works.
       auto properties1 = m_pathClient->GetProperties();
       auto properties2 = m_pathClient->GetProperties();
+      EXPECT_FALSE(properties1->IsDirectory);
       EXPECT_EQ(properties1->ETag, properties2->ETag);
       EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
@@ -363,9 +365,10 @@ namespace Azure { namespace Storage { namespace Test {
           AadTenantId(), AadClientId(), AadClientSecret());
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakePathClient(
-          Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
-              .GetUrl(),
+          Files::DataLake::_detail::GetDfsUrlFromUrl(
+              Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
+                  AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+                  .GetUrl()),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));

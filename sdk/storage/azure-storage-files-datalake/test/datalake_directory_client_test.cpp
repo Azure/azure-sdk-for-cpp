@@ -8,6 +8,7 @@
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/files/datalake/datalake_utilities.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -43,7 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : directoryClient)
       {
-        EXPECT_NO_THROW(client.Delete(false));
+        EXPECT_NO_THROW(client.DeleteEmpty());
       }
     }
     {
@@ -61,10 +62,10 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
-        EXPECT_THROW(client.Delete(false, options1), StorageException);
+        EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
         Files::DataLake::DeleteDataLakeDirectoryOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-        EXPECT_NO_THROW(client.Delete(false, options2));
+        EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
     }
     {
@@ -79,12 +80,13 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
+        EXPECT_TRUE(response->IsDirectory);
         Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Delete(false, options1), StorageException);
+        EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
         Files::DataLake::DeleteDataLakeDirectoryOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
-        EXPECT_NO_THROW(client.Delete(false, options2));
+        EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
     }
 
@@ -100,8 +102,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
-      EXPECT_THROW(rootDirClient.Delete(false), StorageException);
-      EXPECT_NO_THROW(rootDirClient.Delete(true));
+      EXPECT_THROW(rootDirClient.DeleteEmpty(), StorageException);
+      EXPECT_NO_THROW(rootDirClient.DeleteRecursive());
     }
   }
 
@@ -115,16 +117,16 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(created);
       EXPECT_NO_THROW(created = client.CreateIfNotExists()->Created);
       EXPECT_FALSE(created);
-      EXPECT_NO_THROW(deleted = client.Delete(false)->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmpty()->Deleted);
       EXPECT_TRUE(deleted);
-      EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists()->Deleted);
       EXPECT_FALSE(deleted);
     }
     {
       auto client = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), RandomString());
       bool deleted = false;
-      EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists()->Deleted);
       EXPECT_FALSE(deleted);
     }
   }
@@ -140,20 +142,20 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
-      std::vector<std::string> newPaths;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> newDirectoryClients;
       for (auto& client : directoryClients)
       {
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath));
-        newPaths.push_back(newPath);
+        EXPECT_NO_THROW(newDirectoryClients.emplace_back(
+            client.RenameSubdirectory("", newPath).ExtractValue()));
       }
       for (const auto& client : directoryClients)
       {
-        EXPECT_THROW(client.Delete(false), StorageException);
+        EXPECT_THROW(client.DeleteEmpty(), StorageException);
       }
-      for (const auto& newPath : newPaths)
+      for (const auto& client : newDirectoryClients)
       {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(client.DeleteEmpty());
       }
     }
     {
@@ -171,12 +173,12 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::RenameDataLakeDirectoryOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
+        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
         Files::DataLake::RenameDataLakeDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(
+            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteEmpty());
       }
     }
     {
@@ -193,12 +195,12 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameDataLakeDirectoryOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
+        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
         Files::DataLake::RenameDataLakeDirectoryOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(
+            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteEmpty());
       }
     }
     {
@@ -216,7 +218,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
         {
-          EXPECT_THROW(client.Rename(RandomString(), options), StorageException);
+          EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options), StorageException);
           EXPECT_NO_THROW(client.GetProperties());
         }
       }
@@ -232,8 +234,8 @@ namespace Azure { namespace Storage { namespace Test {
         for (auto& client : directoryClient)
         {
           auto newPath = RandomString();
-          EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
+          EXPECT_NO_THROW(
+              client.RenameSubdirectory("", newPath, options).ExtractValue().DeleteEmpty());
         }
       }
     }
@@ -321,12 +323,12 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(httpHeader.ContentDisposition, result->HttpHeaders.ContentDisposition);
         EXPECT_EQ(httpHeader.ContentLanguage, result->HttpHeaders.ContentLanguage);
         EXPECT_EQ(httpHeader.ContentType, result->HttpHeaders.ContentType);
-        EXPECT_NO_THROW(client.Delete(false));
+        EXPECT_NO_THROW(client.DeleteEmpty());
       }
     }
   }
 
-  TEST_F(DataLakeDirectoryClientTest, DirectorySetAccessControlRecursive)
+  TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursive)
   {
     // Setup directories.
     auto rootDirectoryName = RandomString();
@@ -342,11 +344,9 @@ namespace Azure { namespace Storage { namespace Test {
     directoryClient2.Create();
 
     {
-      // Set/Get Acls recursive works.
+      // Set Acls recursive.
       std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
-      EXPECT_NO_THROW(directoryClient1.SetAccessControlList(acls));
-      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
-          Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
+      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
@@ -364,18 +364,249 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
     }
+    {
+      // Update Acls recursive.
+      std::vector<Files::DataLake::Models::Acl> originalAcls = GetValidAcls();
+      Files::DataLake::Models::Acl newAcl;
+      newAcl.Type = "group";
+      newAcl.Id = "";
+      newAcl.Permissions = "rw-";
+      std::vector<Files::DataLake::Models::Acl> acls;
+      acls.emplace_back(std::move(newAcl));
+      EXPECT_NO_THROW(rootDirectoryClient.UpdateAccessControlListRecursiveSinglePage(acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+      {
+        // verify group has changed
+        auto groupFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "group";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), groupFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), groupFinder);
+        EXPECT_TRUE(iter != resultAcls2.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+      }
+      {
+        // verify other has not changed
+        {
+          auto otherFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "other";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+        }
+        {
+          auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "user";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          if (iter->Id == originalAcls[0].Id)
+          {
+            EXPECT_EQ(originalAcls[0].Permissions, iter->Permissions);
+          }
+          else
+          {
+            EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+          }
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          if (iter->Id == originalAcls[0].Id)
+          {
+            EXPECT_EQ(originalAcls[0].Permissions, iter->Permissions);
+          }
+          else
+          {
+            EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+          }
+        }
+      }
+    }
+    {
+      // Remove Acls recursive.
+      std::vector<Files::DataLake::Models::Acl> originalAcls = GetValidAcls();
+      Files::DataLake::Models::Acl removeAcl;
+      removeAcl.Type = "user";
+      removeAcl.Id = "72a3f86f-271f-439e-b031-25678907d381";
+      std::vector<Files::DataLake::Models::Acl> acls;
+      acls.emplace_back(std::move(removeAcl));
+      EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlListRecursiveSinglePage(acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+      {
+        // verify group policy has been removed.
+        auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "user" && targetAcl.Id == "72a3f86f-271f-439e-b031-25678907d381";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls1.end());
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls2.end());
+      }
+      {
+        // verify other has not changed
+        {
+          auto otherFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "other";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
+        }
+        {
+          auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+            return targetAcl.Type == "user";
+          };
+          auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_EQ(originalAcls[1].Id, iter->Id);
+          EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+          iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_EQ(originalAcls[1].Id, iter->Id);
+          EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
+        }
+      }
+    }
+    {
+      // Set Acls recursive, with new set of acls
+      std::vector<Files::DataLake::Models::Acl> acls;
+      {
+        Files::DataLake::Models::Acl newAcl;
+        newAcl.Type = "user";
+        newAcl.Permissions = "rw-";
+        acls.emplace_back(std::move(newAcl));
+      }
+      {
+        Files::DataLake::Models::Acl newAcl;
+        newAcl.Type = "group";
+        newAcl.Permissions = "rw-";
+        acls.emplace_back(std::move(newAcl));
+      }
+      {
+        Files::DataLake::Models::Acl newAcl;
+        newAcl.Type = "other";
+        newAcl.Permissions = "rw-";
+        acls.emplace_back(std::move(newAcl));
+      }
+      (rootDirectoryClient.SetAccessControlListRecursiveSinglePage(acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+      {
+        // verify group has changed
+        auto groupFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "group";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), groupFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), groupFinder);
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+      }
+      {
+        // verify other has changed
+        auto otherFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "other";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+      }
+      {
+        // verify user has only one entry
+        std::vector<Files::DataLake::Models::Acl> originalAcls = GetValidAcls();
+        auto userFinder = [&originalAcls](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "user" && targetAcl.Id == originalAcls[0].Id;
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls1.end());
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+        EXPECT_TRUE(iter == resultAcls2.end());
+      }
+      {
+        // verify user has changed
+        auto userFinder = [](const Files::DataLake::Models::Acl& targetAcl) {
+          return targetAcl.Type == "user";
+        };
+        auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+        iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
+        EXPECT_EQ("rw-", iter->Permissions);
+        EXPECT_EQ("", iter->Id);
+      }
+    }
   }
 
   TEST_F(DataLakeDirectoryClientTest, ConstructorsWorks)
   {
     {
-      // Create from connection string validates static creator function and shared key constructor.
+      // Create from connection string validates static creator function and shared key
+      // constructor.
       auto directoryName = RandomString(10);
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
       EXPECT_NO_THROW(connectionStringClient.Create());
-      EXPECT_NO_THROW(connectionStringClient.Delete(true));
+      EXPECT_NO_THROW(connectionStringClient.DeleteRecursive());
     }
 
     {
@@ -384,13 +615,14 @@ namespace Azure { namespace Storage { namespace Test {
           AadTenantId(), AadClientId(), AadClientSecret());
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(
-          Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
-              .GetUrl(),
+          Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
+              Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
+                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
+                  .GetUrl()),
           credential);
 
       EXPECT_NO_THROW(clientSecretClient.Create());
-      EXPECT_NO_THROW(clientSecretClient.Delete(true));
+      EXPECT_NO_THROW(clientSecretClient.DeleteRecursive());
     }
 
     {
@@ -415,5 +647,4 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(anonymousClient.GetProperties());
     }
   }
-
 }}} // namespace Azure::Storage::Test

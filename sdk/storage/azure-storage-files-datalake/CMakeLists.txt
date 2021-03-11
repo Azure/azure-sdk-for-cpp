@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -100,6 +100,7 @@ if(BUILD_TESTING)
         test/datalake_sas_test.cpp
         test/datalake_service_client_test.cpp
         test/datalake_service_client_test.hpp
+        test/macro_guard.cpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)

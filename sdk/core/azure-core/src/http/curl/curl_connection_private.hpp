@@ -17,7 +17,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
     constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Interface for the connection to the network with Curl.
@@ -69,13 +69,13 @@ namespace Azure { namespace Core { namespace Http {
      * there is no more data to get from the socket.
      *
      */
-    virtual int64_t ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize) = 0;
+    virtual int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context) = 0;
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
      *
      */
-    virtual CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize)
+    virtual CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
         = 0;
   };
 
@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Destructor.
-       * @detail Cleans up CURL (invokes `curl_easy_cleanup()`).
+       * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
        */
       ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
 
@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= Details::DefaultConnectionExpiredMilliseconds;
+        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
       }
 
       /**
@@ -150,25 +150,25 @@ namespace Azure { namespace Core { namespace Http {
        * Function will try to keep pulling data from socket until the buffer is all written or until
        * there is no more data to get from the socket.
        *
-       * @param context #Context so that operation can be cancelled.
+       * @param context #Azure::Core::Context so that operation can be cancelled.
        * @param buffer ptr to buffer where to copy bytes from socket.
        * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
        * @return return the numbers of bytes pulled from socket. It can be less than what it was
        * requested.
        */
-      int64_t ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize) override;
+      int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context) override;
 
       /**
        * @brief This method will use libcurl socket to write all the bytes from buffer.
        *
        * @remarks Hardcoded timeout is used in case a socket stop responding.
        *
-       * @param context #Context so that operation can be cancelled.
+       * @param context #Azure::Core::Context so that operation can be cancelled.
        * @param buffer ptr to the data to be sent to wire.
        * @param bufferSize size of the buffer to send.
        * @return CURL_OK when response is sent successfully.
        */
-      CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize)
+      CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
           override;
     };
 }}} // namespace Azure::Core::Http

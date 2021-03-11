@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -33,7 +33,7 @@ set(
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp
-    inc/azure/storage/files/shares/share_file_attribute.hpp
+    inc/azure/storage/files/shares/share_file_attributes.hpp
     inc/azure/storage/files/shares/share_file_client.hpp
     inc/azure/storage/files/shares/share_lease_client.hpp
     inc/azure/storage/files/shares/share_options.hpp
@@ -48,8 +48,10 @@ set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
     src/share_client.cpp
     src/share_directory_client.cpp
+    src/share_file_attributes.cpp
     src/share_file_client.cpp
     src/share_lease_client.cpp
+    src/share_responses.cpp
     src/share_rest_client.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
@@ -85,10 +87,12 @@ if(BUILD_TESTING)
   target_sources(
     azure-storage-test
       PRIVATE
+        test/macro_guard.cpp
         test/share_client_test.cpp
         test/share_client_test.hpp
         test/share_directory_client_test.cpp
         test/share_directory_client_test.hpp
+        test/share_file_attributes_test.cpp
         test/share_file_client_test.cpp
         test/share_file_client_test.hpp
         test/share_sas_test.cpp

@@ -31,7 +31,7 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, Delay& retryAfter)
     return true;
   }
 
-  if ((header = responseHeaders.find("Retry-After")) != responseHeadersEnd)
+  if ((header = responseHeaders.find("retry-after")) != responseHeadersEnd)
   {
     // This header is in seconds.
     retryAfter = std::chrono::seconds(std::stoi(header->second));
@@ -101,6 +101,8 @@ bool ShouldRetryOnResponse(
     RetryNumber attempt,
     Delay& retryAfter)
 {
+  using Azure::Core::Logger;
+  using Azure::Core::_internal::Log;
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
   {
@@ -108,11 +110,28 @@ bool ShouldRetryOnResponse(
   }
 
   // Should we retry on the given response retry code?
-  auto const& statusCodes = retryOptions.StatusCodes;
-  auto const statusCodesEnd = statusCodes.end();
-  if (std::find(statusCodes.begin(), statusCodesEnd, response.GetStatusCode()) == statusCodesEnd)
   {
-    return false;
+    auto const& statusCodes = retryOptions.StatusCodes;
+    auto const sc = response.GetStatusCode();
+    if (statusCodes.find(sc) == statusCodes.end())
+    {
+      if (Log::ShouldWrite(Logger::Level::Warning))
+      {
+        Log::Write(
+            Logger::Level::Warning,
+            std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
+                + " won't be retried.");
+      }
+
+      return false;
+    }
+    else if (Log::ShouldWrite(Logger::Level::Informational))
+    {
+      Log::Write(
+          Logger::Level::Informational,
+          std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
+              + " will be retried.");
+    }
   }
 
   if (!GetResponseHeaderBasedDelay(response, retryAfter))
@@ -122,14 +141,51 @@ bool ShouldRetryOnResponse(
 
   return true;
 }
+
+static constexpr char RetryKey[] = "AzureSdkRetryPolicyCounter";
+
+/**
+ * @brief Creates a new #Context node from \p parent with the information about the retrying while
+ * sending an Http request.
+ *
+ * @param parent The parent context for the new created.
+ * @return Context with information about retry counter.
+ */
+Context inline CreateRetryContext(Context const& parent)
+{
+  // First try as default
+  int retryCount = 0;
+  if (parent.HasKey(RetryKey))
+  {
+    retryCount = parent.Get<int>(RetryKey) + 1;
+  }
+  return parent.WithValue(RetryKey, retryCount);
+}
 } // namespace
 
-std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
-    Context const& ctx,
-    Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
 {
-  auto const shouldLog = Logging::Details::ShouldWrite(LogClassification::Retry);
+  if (!context.HasKey(RetryKey))
+  {
+    // Context with no data abut sending request with retry policy = -1
+    // First try = 0
+    // Second try = 1
+    // third try = 2
+    // ...
+    return -1;
+  }
+  return context.Get<int>(RetryKey);
+}
+
+std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
+    Request& request,
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
+{
+  using Azure::Core::Logger;
+  using Azure::Core::_internal::Log;
+
+  auto retryContext = CreateRetryContext(ctx);
 
   for (RetryNumber attempt = 1;; ++attempt)
   {
@@ -137,9 +193,10 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     request.StartTry();
     // creates a copy of original query parameters from request
     auto originalQueryParameters = request.GetUrl().GetQueryParameters();
+
     try
     {
-      auto response = nextHttpPolicy.Send(ctx, request);
+      auto response = nextHttpPolicy.Send(request, retryContext);
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
@@ -150,27 +207,27 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
         return response;
       }
     }
-    catch (TransportException const&)
+    catch (const TransportException& e)
     {
+      if (Log::ShouldWrite(Logger::Level::Warning))
+      {
+        Log::Write(Logger::Level::Warning, std::string("HTTP Transport error: ") + e.what());
+      }
+
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
         throw;
       }
     }
 
-    if (auto bodyStream = request.GetBodyStream())
-    {
-      bodyStream->Rewind();
-    }
-
-    if (shouldLog)
+    if (Log::ShouldWrite(Logger::Level::Informational))
     {
       std::ostringstream log;
 
       log << "HTTP Retry attempt #" << attempt << " will be made in "
           << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
 
-      Logging::Details::Write(LogClassification::Retry, log.str());
+      Log::Write(Logger::Level::Informational, log.str());
     }
 
     // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure
@@ -183,5 +240,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
     // Restore the original query parameters before next retry
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
+
+    // Update retry number
+    retryContext = CreateRetryContext(retryContext);
   }
 }

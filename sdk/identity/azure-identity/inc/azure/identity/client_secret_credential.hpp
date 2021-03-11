@@ -11,11 +11,34 @@
 #include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials.hpp>
+#include <azure/core/http/policy.hpp>
+#include <azure/core/internal/client_options.hpp>
 
 #include <string>
 #include <utility>
 
 namespace Azure { namespace Identity {
+  namespace _detail {
+    AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
+  }
+
+  /**
+   * @brief Defines options for token authentication.
+   */
+  struct ClientSecretCredentialOptions : public Azure::Core::_internal::ClientOptions
+  {
+  public:
+    /**
+     * @brief Authentication authority URL.
+     * @details Default value is Azure AD global authority -
+     * "https://login.microsoftonline.com/".
+     *
+     * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
+     * clouds' Azure AD authentication endpoints:
+     * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
+     */
+    std::string AuthorityHost = _detail::g_aadGlobalAuthority;
+  };
 
   /**
    * @brief This class is used by Azure SDK clients to authenticate with the Azure service using a
@@ -23,12 +46,10 @@ namespace Azure { namespace Identity {
    */
   class ClientSecretCredential : public Core::TokenCredential {
   private:
-    AZ_IDENTITY_DLLEXPORT static std::string const g_aadGlobalAuthority;
-
     std::string m_tenantId;
     std::string m_clientId;
     std::string m_clientSecret;
-    std::string m_authority;
+    ClientSecretCredentialOptions m_options;
 
   public:
     /**
@@ -37,25 +58,21 @@ namespace Azure { namespace Identity {
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
      * @param clientSecret Client Secret.
-     * @param authority Authentication authority URL to set. If omitted, initializes credential with
-     * default authority (Azure AD global authority - "https://login.microsoftonline.com/").
-     *
-     * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
-     * clouds' Azure AD authentication endpoints:
-     * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
+     * @param options #Azure::Identity::ClientSecretCredentialOptions.
      */
     explicit ClientSecretCredential(
         std::string tenantId,
         std::string clientId,
         std::string clientSecret,
-        std::string authority = g_aadGlobalAuthority)
+        ClientSecretCredentialOptions options = ClientSecretCredentialOptions())
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(std::move(clientSecret)), m_authority(std::move(authority))
+          m_clientSecret(std::move(clientSecret)), m_options(std::move(options))
     {
     }
 
-    Core::AccessToken GetToken(Core::Context const& context, std::vector<std::string> const& scopes)
-        const override;
+    Core::AccessToken GetToken(
+        Core::Http::TokenRequestOptions const& tokenRequestOptions,
+        Core::Context const& context) const override;
   };
 
 }} // namespace Azure::Identity

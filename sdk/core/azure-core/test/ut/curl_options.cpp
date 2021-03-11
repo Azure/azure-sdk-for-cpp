@@ -5,9 +5,9 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/policy.hpp>
 #include <azure/core/http/transport.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -32,19 +32,20 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.Proxy = "136.228.165.138:8080";
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("http://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
+    EXPECT_NO_THROW(
+        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -58,22 +59,23 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noRevoke)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.NoRevoke = true;
+    curlOptions.SSLOptions.EnableCertificateRevocationListCheck = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
+    EXPECT_NO_THROW(
+        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -99,16 +101,14 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
-    auto responseCode = response->GetStatusCode();
-    int expectedCode = 200;
-    EXPECT_PRED2(
+    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::GetApplicationContext(),
+  request)); auto responseCode = response->GetStatusCode(); int expectedCode = 200; EXPECT_PRED2(
         [](int expected, int code) { return expected == code; },
         expectedCode,
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -126,16 +126,14 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
-    auto responseCode = response->GetStatusCode();
-    int expectedCode = 200;
-    EXPECT_PRED2(
+    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::GetApplicationContext(),
+  request)); auto responseCode = response->GetStatusCode(); int expectedCode = 200; EXPECT_PRED2(
         [](int expected, int code) { return expected == code; },
         expectedCode,
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -153,16 +151,14 @@ namespace Azure { namespace Core { namespace Test {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
-    auto responseCode = response->GetStatusCode();
-    int expectedCode = 200;
-    EXPECT_PRED2(
+    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::GetApplicationContext(),
+  request)); auto responseCode = response->GetStatusCode(); int expectedCode = 200; EXPECT_PRED2(
         [](int expected, int code) { return expected == code; },
         expectedCode,
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -179,20 +175,21 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.CAInfo = "/";
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     // Use https
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
+    EXPECT_NO_THROW(
+        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -209,20 +206,21 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, httpsDefault)
   {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     // Use https
     Azure::Core::Http::Url url("https://httpbin.org/get");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
+    EXPECT_NO_THROW(
+        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -242,7 +240,7 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.HttpKeepAlive = false;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
+    Azure::Core::Http::TransportOptions options;
     options.Transport = transportAdapter;
     auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
@@ -251,13 +249,14 @@ namespace Azure { namespace Core { namespace Test {
       // pool
       std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
       policies.emplace_back(std::move(transportPolicy));
-      Azure::Core::Http::HttpPipeline pipeline(policies);
+      Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
       Azure::Core::Http::Url url("http://httpbin.org/get");
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
       std::unique_ptr<Azure::Core::Http::RawResponse> response;
-      EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
+      EXPECT_NO_THROW(
+          response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
       auto responseCode = response->GetStatusCode();
       int expectedCode = 200;
       EXPECT_PRED2(

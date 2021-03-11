@@ -17,7 +17,8 @@ stages:
             environment: github
 
             pool:
-              vmImage: windows-2019
+              name: azsdk-pool-mms-win-2019-general
+              vmImage: MMS2019
 
             strategy:
               runOnce:
@@ -45,11 +46,14 @@ stages:
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: Publish Docs to GitHub pages
-              condition: ne(variables['Skip.PublishDocs'], 'true')
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
+              # Release tag must exist for link substitution to work
+              dependsOn: TagRepository
 
               pool:
-                vmImage: windows-2019
+                name: azsdk-pool-mms-win-2019-general
+                vmImage: MMS2019
 
               strategy:
                 runOnce:
@@ -73,12 +77,13 @@ stages:
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
             - deployment: PublishVcpkg
               displayName: Publish to vcpkg
-              condition: ne(variables['Skip.PublishVcpkg'], 'true')
+              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
               environment: github
               # This step requires the tag step
               dependsOn: TagRepository
               pool:
-                vmImage: windows-2019
+                name: azsdk-pool-mms-win-2019-general
+                vmImage: MMS2019
 
               strategy:
                 runOnce:
@@ -95,6 +100,22 @@ stages:
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
                         displayName: Set fork branch name
 
+                      - pwsh: |
+                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
+                          $version = $packageSpec.version
+                          Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
+                        displayName: Set PackageVersion variable
+
+                      - pwsh: |
+                          $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
+
+                          if ('$(VcpkgPRTitle)') { 
+                            Write-Host "Using queue time PR title"
+                            $title = '$(VcpkgPRTitle)'
+                          }
+                          Write-Host "##vso[task.setvariable variable=PrTitle]$title"
+                        displayName: Set PR title
+
                       - task: Powershell@2
                         inputs:
                           filePath: eng/scripts/Initialize-VcpkgRelease.ps1
@@ -110,44 +131,55 @@ stages:
                       # in parallel against the same branch name. Release only 
                       # one package at a time.
                       - pwsh: |
-                          Write-Host "git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg"
-                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+                          Write-Host "git clone https://github.com/azure-sdk/vcpkg $(Pipeline.Workspace)/vcpkg"
+                          git clone https://github.com/azure-sdk/vcpkg $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
-                            Write-Error "Unable to check out vcpkg repo"
+                            Write-Error "Unable to check out vcpkg fork repo"
                             exit $LASTEXITCODE
                           }
-                          
-                          Write-Host "cd $(Pipeline.Workspace)/vcpkg"
-                          cd $(Pipeline.Workspace)/vcpkg
+                          Write-Host "##vso[task.setvariable variable=VcpkgWorkspace]$(Pipeline.Workspace)/vcpkg"
+                        displayName: Clone vcpkg from upstream
 
-                          # Clean out the folder so that template files removed
-                          # are not inadvertently re-added
-                          if (Test-Path "ports/${{ artifact.VcpkgPortName }}") {
-                            Remove-Item -v -r "ports/${{ artifact.VcpkgPortName }}"
-                          }
-
-                          New-Item -Type Directory ports/${{ artifact.VcpkgPortName }}
-                          Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.VcpkgPortName }}
-
-                          # Show artifacts copied into ports folder for PR
-                          Get-ChildItem -Recurse ports/${{ artifact.VcpkgPortName }}
-                          
-                          Write-Host "git status"
+                      # Check out the PR branch if it's already in remote. 
+                      # Ignore failures.
+                      - pwsh: |
+                          $ErrorActionPreference = "Continue"
+                          git checkout "origin/$(PrBranchName)" 2>&1 | Out-Null
+                          $LASTEXITCODE = 0 # This ignores any error from git checkout
                           git status
-                        displayName: Copy updated files into vcpkg fork for PR
-                        condition: ne(variables['SkipVcpkgUpdate'], 'true')
+                        displayName: Checkout Previous PRBranch if it exist.
+                        workingDirectory: $(VcpkgWorkspace)
 
-                      # This template does not need to check the 
-                      # SkipVcpkgUpdate variable, it will stop if there are no
-                      # changes in the git repo.
+                      - task: Powershell@2
+                        inputs:
+                          pwsh: true
+                          targetType: filePath
+                          filePath: eng/scripts/Update-VcpkgPort.ps1
+                          arguments: >-
+                            -ReleaseArtifactSourceDirectory "$(Pipeline.Workspace)/packages/${{ artifact.Name }}"
+                            -PortDestinationDirectory 'ports/${{ artifact.VcpkgPortName }}'
+                            -VcpkgPortName '${{ artifact.VcpkgPortName }}'
+                            -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
+                          workingDirectory: $(VcpkgWorkspace)
+                        displayName: Update vcpkg port
+
+                      # Set $(HasChanges) to $true so that 
+                      # create-pull-request.yml completes the push and PR 
+                      # submission steps
+                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
+                        displayName: Set $(HasChanges) to $true for create-pull-request.yml
+
+                      # SkipCheckingForChanges is true to skip the commit step 
+                      # (which is already done by Update-VcpkgPort.ps1)
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoOwner: Microsoft
                           RepoName: vcpkg
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
-                          CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
-                          PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
+                          PRTitle: $(PrTitle)
+                          PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
+                          SkipCheckingForChanges: true
                           BaseBranchName: master
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
@@ -157,7 +189,8 @@ stages:
               environment: github
 
               pool:
-                vmImage: windows-2019
+                name: azsdk-pool-mms-win-2019-general
+                vmImage: MMS2019
 
               strategy:
                 runOnce:

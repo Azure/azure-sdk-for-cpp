@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -45,23 +45,31 @@ set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
-    inc/azure/core/http/body_stream.hpp
+    inc/azure/core/cryptography/hash.hpp
     inc/azure/core/http/http.hpp
-    inc/azure/core/http/pipeline.hpp
     inc/azure/core/http/policy.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/hkeyholder.hpp
+    inc/azure/core/internal/http/pipeline.hpp
+    inc/azure/core/internal/json_serializable.hpp
     inc/azure/core/internal/json.hpp
     inc/azure/core/internal/log.hpp
+    inc/azure/core/internal/null_body_stream.hpp
     inc/azure/core/internal/strings.hpp
-    inc/azure/core/logging/logging.hpp
+    inc/azure/core/io/body_stream.hpp
     inc/azure/core/base64.hpp
+    inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
+    inc/azure/core/logger.hpp
+    inc/azure/core/match_conditions.hpp
+    inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/operation_status.hpp
@@ -76,10 +84,10 @@ set(
   AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
+    src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
-    src/http/body_stream.cpp
     src/http/http.cpp
-    src/http/logging_policy.cpp
+    src/http/log_policy.cpp
     src/http/policy.cpp
     src/http/raw_response.cpp
     src/http/request.cpp
@@ -87,10 +95,13 @@ set(
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
-    src/logging/logging.cpp
+    src/io/body_stream.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/environment_log_level_listener.cpp
+    src/environment_log_level_listener_private.hpp
+    src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
     src/version.cpp
@@ -111,20 +122,17 @@ add_library(Azure::azure-core ALIAS azure-core)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core azure-core-test)
 
-# ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
-target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
-if(MSVC)
-    target_link_libraries(azure-core PRIVATE crypt32)
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
-    message("Find the OpenSSL package on MacOS, used for Base64 encoding.")
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()
 
 if(BUILD_TRANSPORT_CURL)
-  target_link_libraries(azure-core PRIVATE CURL::libcurl)
+  target_link_libraries(azure-core PUBLIC CURL::libcurl)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   target_link_libraries(azure-core PRIVATE winhttp)
@@ -138,3 +146,22 @@ az_vcpkg_export(
     CORE
     "azure/core/dll_import_export.hpp"
   )
+
+if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+  
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+  
+  add_subdirectory(test/ut)
+  if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
+    add_subdirectory(test/nlohmann-json-test)
+  endif()
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
+endif()

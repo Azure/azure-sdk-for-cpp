@@ -16,7 +16,6 @@
 #include <mutex>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace Azure { namespace Core {
 
@@ -36,6 +35,10 @@ namespace Azure { namespace Core {
     DateTime ExpiresOn;
   };
 
+  namespace Http {
+    struct TokenRequestOptions;
+  } // namespace Http
+
   /**
    * @brief Token credential.
    */
@@ -44,11 +47,13 @@ namespace Azure { namespace Core {
     /**
      * @brief Get an authentication token.
      *
-     * @param context #Context so that operation can be cancelled.
-     * @param scopes Authentication scopes.
+     * @param tokenRequestOptions Options to get the token.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     *
      */
-    virtual AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
-        const = 0;
+    virtual AccessToken GetToken(
+        Http::TokenRequestOptions const& tokenRequestOptions,
+        Context const& context) const = 0;
 
     /// Destructor.
     virtual ~TokenCredential() = default;

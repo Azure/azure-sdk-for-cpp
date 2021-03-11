@@ -10,7 +10,6 @@
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
@@ -23,69 +22,65 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareName,
       const ShareClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto shareUri = std::move(parsedConnectionString.FileServiceUrl);
-    shareUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto shareUrl = std::move(parsedConnectionString.FileServiceUrl);
+    shareUrl.AppendPath(Storage::_detail::UrlEncodePath(shareName));
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ShareClient(shareUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+      return ShareClient(shareUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareClient(shareUri.GetAbsoluteUrl(), options);
+      return ShareClient(shareUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareClient::ShareClient(
-      const std::string& shareUri,
+      const std::string& shareUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareUrl(shareUri)
+      : m_shareUrl(shareUrl)
   {
+    ShareClientOptions newOptions = options;
+    newOptions.PerRetryPolicies.emplace_back(
+        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      policies.emplace_back(p->Clone());
+      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
     }
-    policies.emplace_back(
-        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+        newOptions,
+        Storage::_detail::FileServicePackageName,
+        PackageVersion::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
-  ShareClient::ShareClient(const std::string& shareUri, const ShareClientOptions& options)
-      : m_shareUrl(shareUri)
+  ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
+      : m_shareUrl(shareUrl)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      policies.emplace_back(p->Clone());
+      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
     }
-    policies.emplace_back(
-        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+        options,
+        Storage::_detail::FileServicePackageName,
+        PackageVersion::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
@@ -98,187 +93,205 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_shareUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
+      newClient.m_shareUrl.RemoveQueryParameter(_detail::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareUrl.AppendQueryParameter(
-          Details::ShareSnapshotQueryParameter,
-          Storage::Details::UrlEncodeQueryParameter(snapshot));
+          _detail::ShareSnapshotQueryParameter,
+          Storage::_detail::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
 
-  Azure::Core::Response<Models::CreateShareResult> ShareClient::Create(
-      const CreateShareOptions& options) const
+  Azure::Response<Models::CreateShareResult> ShareClient::Create(
+      const CreateShareOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::CreateOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.ShareQuota = options.ShareQuotaInGiB;
-    auto result = Details::ShareRestClient::Share::Create(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    protocolLayerOptions.XMsAccessTier = options.AccessTier;
+    auto result = _detail::ShareRestClient::Share::Create(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreateShareResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::CreateShareResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::CreateShareResult>(std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::CreateShareResult> ShareClient::CreateIfNotExists(
-      const CreateShareOptions& options) const
+  Azure::Response<Models::CreateShareResult> ShareClient::CreateIfNotExists(
+      const CreateShareOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Create(options);
+      return Create(options, context);
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ShareAlreadyExists)
+      if (e.ErrorCode == _detail::ShareAlreadyExists)
       {
         Models::CreateShareResult ret;
         ret.Created = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Core::Response<Models::CreateShareResult>(
-            std::move(ret), std::move(e.RawResponse));
+        return Azure::Response<Models::CreateShareResult>(std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::DeleteShareResult> ShareClient::Delete(
-      const DeleteShareOptions& options) const
+  Azure::Response<Models::DeleteShareResult> ShareClient::Delete(
+      const DeleteShareOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::DeleteOptions();
-    if (options.IncludeSnapshots.HasValue() && options.IncludeSnapshots.GetValue())
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::DeleteOptions();
+    if (options.DeleteSnapshots.HasValue() && options.DeleteSnapshots.GetValue())
     {
       protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOptionType::Include;
     }
-    auto result = Details::ShareRestClient::Share::Delete(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto result = _detail::ShareRestClient::Share::Delete(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteShareResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::DeleteShareResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeleteShareResult>(std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteShareResult> ShareClient::DeleteIfExists(
-      const DeleteShareOptions& options) const
+  Azure::Response<Models::DeleteShareResult> ShareClient::DeleteIfExists(
+      const DeleteShareOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Delete(options);
+      return Delete(options, context);
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ShareNotFound)
+      if (e.ErrorCode == _detail::ShareNotFound)
       {
         Models::DeleteShareResult ret;
         ret.Deleted = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Core::Response<Models::DeleteShareResult>(
-            std::move(ret), std::move(e.RawResponse));
+        return Azure::Response<Models::DeleteShareResult>(std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::CreateShareSnapshotResult> ShareClient::CreateSnapshot(
-      const CreateShareSnapshotOptions& options) const
+  Azure::Response<Models::CreateShareSnapshotResult> ShareClient::CreateSnapshot(
+      const CreateShareSnapshotOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::CreateSnapshotOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::CreateSnapshotOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    return Details::ShareRestClient::Share::CreateSnapshot(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::Share::CreateSnapshot(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetSharePropertiesResult> ShareClient::GetProperties(
-      const GetSharePropertiesOptions& options) const
+  Azure::Response<Models::GetSharePropertiesResult> ShareClient::GetProperties(
+      const GetSharePropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::GetPropertiesOptions();
-    return Details::ShareRestClient::Share::GetProperties(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::GetPropertiesOptions();
+    return _detail::ShareRestClient::Share::GetProperties(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareQuotaResult> ShareClient::SetQuota(
-      int32_t quotaInGiB,
-      const SetShareQuotaOptions& options) const
+  Azure::Response<Models::SetSharePropertiesResult> ShareClient::SetProperties(
+      const SetSharePropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::SetQuotaOptions();
-    protocolLayerOptions.ShareQuota = quotaInGiB;
-    return Details::ShareRestClient::Share::SetQuota(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::SetPropertiesOptions();
+    protocolLayerOptions.ShareQuota = options.ShareQuotaInGiB;
+    protocolLayerOptions.XMsAccessTier = options.AccessTier;
+    return _detail::ShareRestClient::Share::SetProperties(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareMetadataResult> ShareClient::SetMetadata(
+  Azure::Response<Models::SetShareMetadataResult> ShareClient::SetMetadata(
       Storage::Metadata metadata,
-      const SetShareMetadataOptions& options) const
+      const SetShareMetadataOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::SetMetadataOptions();
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::SetMetadataOptions();
     protocolLayerOptions.Metadata = metadata;
-    return Details::ShareRestClient::Share::SetMetadata(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::Share::SetMetadata(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
-      const GetShareAccessPolicyOptions& options) const
+  Azure::Response<Models::GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
+      const GetShareAccessPolicyOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::GetAccessPolicyOptions();
-    return Details::ShareRestClient::Share::GetAccessPolicy(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::GetAccessPolicyOptions();
+    return _detail::ShareRestClient::Share::GetAccessPolicy(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareAccessPolicyResult> ShareClient::SetAccessPolicy(
+  Azure::Response<Models::SetShareAccessPolicyResult> ShareClient::SetAccessPolicy(
       const std::vector<Models::SignedIdentifier>& accessPolicy,
-      const SetShareAccessPolicyOptions& options) const
+      const SetShareAccessPolicyOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::SetAccessPolicyOptions();
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::SetAccessPolicyOptions();
     protocolLayerOptions.ShareAcl = accessPolicy;
-    return Details::ShareRestClient::Share::SetAccessPolicy(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::Share::SetAccessPolicy(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetShareStatisticsResult> ShareClient::GetStatistics(
-      const GetShareStatsOptions& options) const
+  Azure::Response<Models::GetShareStatisticsResult> ShareClient::GetStatistics(
+      const GetShareStatsOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::GetStatisticsOptions();
-    return Details::ShareRestClient::Share::GetStatistics(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::GetStatisticsOptions();
+    return _detail::ShareRestClient::Share::GetStatistics(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::CreateSharePermissionResult> ShareClient::CreatePermission(
+  Azure::Response<Models::CreateSharePermissionResult> ShareClient::CreatePermission(
       const std::string& permission,
-      const CreateSharePermissionOptions& options) const
+      const CreateSharePermissionOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::CreatePermissionOptions();
-    protocolLayerOptions.Permission.Permission = permission;
-    return Details::ShareRestClient::Share::CreatePermission(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::CreatePermissionOptions();
+    protocolLayerOptions.Permission.FilePermission = permission;
+    return _detail::ShareRestClient::Share::CreatePermission(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetSharePermissionResult> ShareClient::GetPermission(
+  Azure::Response<Models::GetSharePermissionResult> ShareClient::GetPermission(
       const std::string& permissionKey,
-      const GetSharePermissionOptions& options) const
+      const GetSharePermissionOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Share::GetPermissionOptions();
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::Share::GetPermissionOptions();
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
-    return Details::ShareRestClient::Share::GetPermission(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::Share::GetPermission(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>
+  Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
   ShareClient::ListFilesAndDirectoriesSinglePage(
-      const ListFilesAndDirectoriesSinglePageOptions& options) const
+      const ListFilesAndDirectoriesSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions
-        = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
+        = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto result = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
-        m_shareUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto result = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
+        m_shareUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ListFilesAndDirectoriesSinglePageResult ret;
     ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
     ret.ShareName = std::move(result->ShareName);
@@ -291,7 +304,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileItems = std::move(result->SinglePage.FileItems);
     ret.RequestId = std::move(result->RequestId);
 
-    return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
+    return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 

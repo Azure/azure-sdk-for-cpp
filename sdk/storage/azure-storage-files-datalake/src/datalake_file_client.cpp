@@ -3,17 +3,11 @@
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 
-#include <limits>
-#include <stdexcept>
-#include <utility>
-
 #include <azure/core/http/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
@@ -90,119 +84,52 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileName,
       const DataLakeClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileUri = std::move(parsedConnectionString.DataLakeServiceUrl);
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(fileName));
+    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto fileUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
+    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(fileSystemName));
+    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(fileName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return DataLakeFileClient(
-          fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          fileUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DataLakeFileClient(fileUri.GetAbsoluteUrl(), options);
+      return DataLakeFileClient(fileUrl.GetAbsoluteUrl(), options);
     }
   }
 
   DataLakeFileClient::DataLakeFileClient(
-      const std::string& fileUri,
+      const std::string& fileUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUri, credential, options),
-        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, credential, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient::DataLakeFileClient(
-      const std::string& fileUri,
+      const std::string& fileUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUri, credential, options),
-        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, credential, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::Http::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::StorageScope));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   DataLakeFileClient::DataLakeFileClient(
-      const std::string& fileUri,
+      const std::string& fileUrl,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUri, options), m_blockBlobClient(m_blobClient.AsBlockBlobClient())
+      : DataLakePathClient(fileUrl, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
-    dfsRetryOptions.SecondaryHostForRetryReads
-        = Details::GetDfsUrlFromUrl(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  Azure::Core::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
-      Azure::Core::Http::BodyStream* content,
+  Azure::Response<Models::AppendDataLakeFileResult> DataLakeFileClient::Append(
+      Azure::Core::IO::BodyStream* content,
       int64_t offset,
-      const AppendDataLakeFileOptions& options) const
+      const AppendDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
     if (options.TransactionalContentHash.HasValue())
@@ -217,15 +144,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::DataLakeRestClient::Path::AppendData(
-        m_dfsUrl, *content, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::DataLakeRestClient::Path::AppendData(
+        m_pathUrl, *content, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::FlushDataLakeFileResult> DataLakeFileClient::Flush(
+  Azure::Response<Models::FlushDataLakeFileResult> DataLakeFileClient::Flush(
       int64_t position,
-      const FlushDataLakeFileOptions& options) const
+      const FlushDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
+    _detail::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = position;
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
@@ -246,197 +174,230 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return Details::DataLakeRestClient::Path::FlushData(
-        m_dfsUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::DataLakeRestClient::Path::FlushData(
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::RenameDataLakeFileResult> DataLakeFileClient::Rename(
-      const std::string& destinationPath,
-      const RenameDataLakeFileOptions& options) const
-  {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
-    if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
-    {
-      const auto& currentPath = m_dfsUrl.GetPath();
-      std::string::const_iterator cur = currentPath.begin();
-      destinationFileSystem = Details::GetSubstringTillDelimiter('/', currentPath, cur);
-    }
-    auto destinationDfsUri = m_dfsUrl;
-    destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
-
-    Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = options.Mode;
-    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
-    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
-    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource = "/" + m_dfsUrl.GetPath();
-    auto result = Details::DataLakeRestClient::Path::Create(
-        destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
-    // At this point, there is not more exception thrown, meaning the rename is successful.
-    Models::RenameDataLakeFileResult ret;
-    ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::RenameDataLakeFileResult>(
-        std::move(ret), result.ExtractRawResponse());
-  }
-
-  Azure::Core::Response<Models::DeleteDataLakeFileResult> DataLakeFileClient::Delete(
-      const DeleteDataLakeFileOptions& options) const
+  Azure::Response<Models::DeleteDataLakeFileResult> DataLakeFileClient::Delete(
+      const DeleteDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
-    deleteOptions.Context = options.Context;
-    auto result = DataLakePathClient::Delete(deleteOptions);
+    auto result = DataLakePathClient::Delete(deleteOptions, context);
     Models::DeleteDataLakeFileResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::DeleteDataLakeFileResult>(
+    return Azure::Response<Models::DeleteDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteDataLakeFileResult> DataLakeFileClient::DeleteIfExists(
-      const DeleteDataLakeFileOptions& options) const
+  Azure::Response<Models::DeleteDataLakeFileResult> DataLakeFileClient::DeleteIfExists(
+      const DeleteDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     DeleteDataLakePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
-    deleteOptions.Context = options.Context;
-    auto result = DataLakePathClient::DeleteIfExists(deleteOptions);
+    auto result = DataLakePathClient::DeleteIfExists(deleteOptions, context);
     Models::DeleteDataLakeFileResult ret;
     ret.Deleted = result->Deleted;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::DeleteDataLakeFileResult>(
+    return Azure::Response<Models::DeleteDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ReadDataLakeFileResult> DataLakeFileClient::Read(
-      const ReadDataLakeFileOptions& options) const
+  Azure::Response<Models::DownloadDataLakeFileResult> DataLakeFileClient::Download(
+      const DownloadDataLakeFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::DownloadBlobOptions blobOptions;
-    blobOptions.Context = options.Context;
+    blobOptions.Range = options.Range;
+    blobOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     blobOptions.Range = options.Range;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.Download(blobOptions);
-    Models::ReadDataLakeFileResult ret;
+    auto result = m_blobClient.Download(blobOptions, context);
+    Models::DownloadDataLakeFileResult ret;
     ret.Body = std::move(result->BodyStream);
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
+    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
     ret.ContentRange = std::move(result->ContentRange);
     ret.FileSize = result->BlobSize;
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
-    if (result->LeaseDuration.HasValue())
+    ret.Details.ETag = std::move(result->Details.ETag);
+    ret.Details.LastModified = std::move(result->Details.LastModified);
+    if (result->Details.LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().Get());
+      ret.Details.LeaseDuration
+          = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().ToString());
     }
-    ret.LeaseState = result->LeaseState.HasValue()
-        ? FromBlobLeaseState(result->LeaseState.GetValue())
-        : ret.LeaseState;
-    ret.LeaseStatus = result->LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
-        : ret.LeaseStatus;
-    ret.Metadata = std::move(result->Metadata);
-    ret.CreatedOn = std::move(result->CreatedOn);
-    ret.ExpiresOn = std::move(result->ExpiresOn);
-    ret.LastAccessedOn = std::move(result->LastAccessedOn);
+    ret.Details.LeaseState = result->Details.LeaseState.HasValue()
+        ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
+        : ret.Details.LeaseState;
+    ret.Details.LeaseStatus = result->Details.LeaseStatus.HasValue()
+        ? FromBlobLeaseStatus(result->Details.LeaseStatus.GetValue())
+        : ret.Details.LeaseStatus;
+    ret.Details.Metadata = std::move(result->Details.Metadata);
+    ret.Details.CreatedOn = std::move(result->Details.CreatedOn);
+    ret.Details.ExpiresOn = std::move(result->Details.ExpiresOn);
+    ret.Details.LastAccessedOn = std::move(result->Details.LastAccessedOn);
+    ret.Details.CopyId = std::move(result->Details.CopyId);
+    ret.Details.CopySource = std::move(result->Details.CopySource);
+    ret.Details.CopyStatus = std::move(result->Details.CopyStatus);
+    ret.Details.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
+    ret.Details.CopyProgress = std::move(result->Details.CopyProgress);
+    ret.Details.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
+    ret.Details.VersionId = std::move(result->Details.VersionId);
+    ret.Details.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
+    ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
+    ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
+    ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::ReadDataLakeFileResult>(
+    return Azure::Response<Models::DownloadDataLakeFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
+  Azure::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
       const std::string& fileName,
-      const UploadDataLakeFileFromOptions& options) const
+      const UploadDataLakeFileFromOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
-    blobOptions.Context = options.Context;
-    blobOptions.ChunkSize = options.ChunkSize;
+    blobOptions.TransferOptions.SingleUploadThreshold
+        = options.TransferOptions.SingleUploadThreshold;
+    blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
+    blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    blobOptions.Concurrency = options.Concurrency;
-    return m_blockBlobClient.UploadFrom(fileName, blobOptions);
+    return m_blobClient.AsBlockBlobClient().UploadFrom(fileName, blobOptions, context);
   }
 
-  Azure::Core::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
+  Azure::Response<Models::UploadDataLakeFileFromResult> DataLakeFileClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
-      const UploadDataLakeFileFromOptions& options) const
+      const UploadDataLakeFileFromOptions& options,
+      const Azure::Core::Context& context) const
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
-    blobOptions.Context = options.Context;
-    blobOptions.ChunkSize = options.ChunkSize;
+    blobOptions.TransferOptions.SingleUploadThreshold
+        = options.TransferOptions.SingleUploadThreshold;
+    blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
+    blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
-    blobOptions.Concurrency = options.Concurrency;
-    return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);
+    return m_blobClient.AsBlockBlobClient().UploadFrom(buffer, bufferSize, blobOptions, context);
   }
 
-  Azure::Core::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
+  Azure::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
-      const DownloadDataLakeFileToOptions& options) const
+      const DownloadDataLakeFileToOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto result = m_blockBlobClient.DownloadTo(buffer, bufferSize, options);
+    auto result = m_blobClient.AsBlockBlobClient().DownloadTo(buffer, bufferSize, options, context);
     Models::DownloadDataLakeFileToResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
-    ret.ContentLength = result->ContentLength;
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
-    ret.Metadata = std::move(result->Metadata);
-    ret.ServerEncrypted = result->IsServerEncrypted;
-    ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    return Azure::Core::Response<Models::DownloadDataLakeFileToResult>(
-        std::move(ret), result.ExtractRawResponse());
-  }
-
-  Azure::Core::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
-      const std::string& fileName,
-      const DownloadDataLakeFileToOptions& options) const
-  {
-    auto result = m_blockBlobClient.DownloadTo(fileName, options);
-    Models::DownloadDataLakeFileToResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
-    ret.ContentLength = result->ContentLength;
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
-    ret.Metadata = std::move(result->Metadata);
-    ret.ServerEncrypted = result->IsServerEncrypted;
-    ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    return Azure::Core::Response<Models::DownloadDataLakeFileToResult>(
-        std::move(ret), result.ExtractRawResponse());
-  }
-
-  Azure::Core::Response<Models::ScheduleDataLakeFileDeletionResult>
-  DataLakeFileClient::ScheduleDeletion(
-      ScheduleDataLakeFileExpiryOriginType expiryOrigin,
-      const ScheduleDataLakeFileDeletionOptions& options) const
-  {
-    Blobs::Details::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
-    protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-    if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
+    ret.ContentRange = std::move(result->ContentRange);
+    ret.FileSize = result->BlobSize;
+    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
+    ret.Details.ETag = std::move(result->Details.ETag);
+    ret.Details.LastModified = std::move(result->Details.LastModified);
+    if (result->Details.LeaseDuration.HasValue())
     {
-      // ExpiresOn and TimeToExpireInMs should be mutually exlusive.
+      ret.Details.LeaseDuration
+          = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().ToString());
+    }
+    ret.Details.LeaseState = result->Details.LeaseState.HasValue()
+        ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
+        : ret.Details.LeaseState;
+    ret.Details.LeaseStatus = result->Details.LeaseStatus.HasValue()
+        ? FromBlobLeaseStatus(result->Details.LeaseStatus.GetValue())
+        : ret.Details.LeaseStatus;
+    ret.Details.Metadata = std::move(result->Details.Metadata);
+    ret.Details.CreatedOn = std::move(result->Details.CreatedOn);
+    ret.Details.ExpiresOn = std::move(result->Details.ExpiresOn);
+    ret.Details.LastAccessedOn = std::move(result->Details.LastAccessedOn);
+    ret.Details.CopyId = std::move(result->Details.CopyId);
+    ret.Details.CopySource = std::move(result->Details.CopySource);
+    ret.Details.CopyStatus = std::move(result->Details.CopyStatus);
+    ret.Details.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
+    ret.Details.CopyProgress = std::move(result->Details.CopyProgress);
+    ret.Details.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
+    ret.Details.VersionId = std::move(result->Details.VersionId);
+    ret.Details.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
+    ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
+    ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
+    ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
+    return Azure::Response<Models::DownloadDataLakeFileToResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Response<Models::DownloadDataLakeFileToResult> DataLakeFileClient::DownloadTo(
+      const std::string& fileName,
+      const DownloadDataLakeFileToOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto result = m_blobClient.AsBlockBlobClient().DownloadTo(fileName, options, context);
+    Models::DownloadDataLakeFileToResult ret;
+    ret.ContentRange = std::move(result->ContentRange);
+    ret.FileSize = result->BlobSize;
+    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(result->Details.HttpHeaders));
+    ret.Details.ETag = std::move(result->Details.ETag);
+    ret.Details.LastModified = std::move(result->Details.LastModified);
+    if (result->Details.LeaseDuration.HasValue())
+    {
+      ret.Details.LeaseDuration
+          = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().ToString());
+    }
+    ret.Details.LeaseState = result->Details.LeaseState.HasValue()
+        ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
+        : ret.Details.LeaseState;
+    ret.Details.LeaseStatus = result->Details.LeaseStatus.HasValue()
+        ? FromBlobLeaseStatus(result->Details.LeaseStatus.GetValue())
+        : ret.Details.LeaseStatus;
+    ret.Details.Metadata = std::move(result->Details.Metadata);
+    ret.Details.CreatedOn = std::move(result->Details.CreatedOn);
+    ret.Details.ExpiresOn = std::move(result->Details.ExpiresOn);
+    ret.Details.LastAccessedOn = std::move(result->Details.LastAccessedOn);
+    ret.Details.CopyId = std::move(result->Details.CopyId);
+    ret.Details.CopySource = std::move(result->Details.CopySource);
+    ret.Details.CopyStatus = std::move(result->Details.CopyStatus);
+    ret.Details.CopyStatusDescription = std::move(result->Details.CopyStatusDescription);
+    ret.Details.CopyProgress = std::move(result->Details.CopyProgress);
+    ret.Details.CopyCompletedOn = std::move(result->Details.CopyCompletedOn);
+    ret.Details.VersionId = std::move(result->Details.VersionId);
+    ret.Details.IsCurrentVersion = std::move(result->Details.IsCurrentVersion);
+    ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
+    ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
+    ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
+    return Azure::Response<Models::DownloadDataLakeFileToResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Response<Models::ScheduleDataLakeFileDeletionResult> DataLakeFileClient::ScheduleDeletion(
+      ScheduleDataLakeFileExpiryOriginType expiryOrigin,
+      const ScheduleDataLakeFileDeletionOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    Blobs::_detail::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
+    protocolLayerOptions.ExpiryOrigin = expiryOrigin;
+    if (options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue())
+    {
+      // ExpiresOn and TimeToExpire should be mutually exlusive.
       std::abort();
     }
     if (options.ExpiresOn.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = options.ExpiresOn;
+      protocolLayerOptions.ExpiryTime
+          = options.ExpiresOn.GetValue().ToString(Azure::DateTime::DateFormat::Rfc1123);
     }
-    else if (options.TimeToExpireInMs.HasValue())
+    else if (options.TimeToExpire.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpireInMs.GetValue());
+      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpire.GetValue().count());
     }
-    return Blobs::Details::BlobRestClient::Blob::ScheduleDeletion(
-        options.Context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
+    return Blobs::_detail::BlobRestClient::Blob::ScheduleDeletion(
+        context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

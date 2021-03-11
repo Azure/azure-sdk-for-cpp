@@ -5,9 +5,12 @@
 
 #include <string>
 
+#include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
+#include "azure/storage/files/datalake/datalake_options.hpp"
+
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 
   std::string GetBlobUrlFromUrl(const std::string& url);
   std::string GetDfsUrlFromUrl(const std::string& url);
@@ -19,4 +22,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       const std::string& string,
       std::string::const_iterator& cur);
 
-}}}}} // namespace Azure::Storage::Files::DataLake::Details
+  bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata);
+
+  Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options);
+
+}}}}} // namespace Azure::Storage::Files::DataLake::_detail

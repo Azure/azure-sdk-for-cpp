@@ -30,6 +30,9 @@ include(GoogleTest)
 add_executable (
   azure-core-test
     base64.cpp
+    bodystream.cpp
+    case_insensitive_containers.cpp
+    client_options.cpp
     context.cpp
     ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}
@@ -39,12 +42,17 @@ add_executable (
     http.cpp
     json.cpp
     logging.cpp
+    macro_guard.cpp
     main.cpp
+    match_conditions.cpp
+    md5.cpp
+    modified_conditions.cpp
     nullable.cpp
     operation.cpp
     operation_status.cpp
     pipeline.cpp
     policy.cpp
+    response_t.cpp
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp
@@ -66,13 +74,25 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812)
+  # - C6323: Google comparisons 
+  target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
 target_include_directories (azure-core-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
 target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock)
+
+## Global context test
+add_executable (
+  azure-core-global-context-test
+  global_context.cpp
+)
+if (MSVC)
+  # Disable gtest warnings for msvc
+  target_compile_options(azure-core-global-context-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
+endif()
+target_link_libraries(azure-core-global-context-test PRIVATE azure-core gtest_main)
 
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
@@ -105,3 +125,7 @@ if(BUILD_TRANSPORT_CURL)
         TEST_PREFIX azure-core.)
 
 endif()
+gtest_discover_tests(azure-core-global-context-test
+     TEST_PREFIX azure-core.
+     NO_PRETTY_TYPES
+     NO_PRETTY_VALUES)

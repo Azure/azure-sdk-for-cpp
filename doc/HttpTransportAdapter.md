@@ -65,7 +65,7 @@ The example below shows how to override the default HTTP transport adapter when 
   BlobClientOptions options;
     // Setting the libcurl transport adapter as an example.
   // Any HTTP transport adapter can be specified here.
-  options.TransportPolicyOptions.Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
+  options.TransportOptions.Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
 
   auto storageClient = BlobServiceClient(url, credential, options);
 ```
@@ -80,11 +80,11 @@ Note that the HTTP transport adapter is a `shared_ptr`. This is because you can 
   */
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
   BlobClientOptions optionsA;
-  optionsA.TransportPolicyOptions.Transport = curlTransportAdapter;
+  optionsA.TransportOptions.Transport = curlTransportAdapter;
   auto storageClientA = BlobServiceClient(url, credential, optionsA);
   // The second client.
   BlobClientOptions optionsB;
-  optionsB.TransportPolicyOptions.Transport = curlTransportAdapter;
+  optionsB.TransportOptions.Transport = curlTransportAdapter;
   auto storageClientB = BlobServiceClient(url, credential, optionsB);
 
   /* 
@@ -92,7 +92,7 @@ Note that the HTTP transport adapter is a `shared_ptr`. This is because you can 
   */
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
   BlobClientOptions options;
-  options.TransportPolicyOptions.Transport = curlTransportAdapter;
+  options.TransportOptions.Transport = curlTransportAdapter;
   auto storageClient = BlobServiceClient(url, credential, options);
   // Create specific child client from the parent service client.
   auto blobContainerClient = storageClient.GetBlobContainerClient(containerName)
@@ -115,7 +115,7 @@ The libcurl and WinHTTP transport adapters can also be initialized with specific
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlTransportOptions);
 
   BlobClientOptions options;
-  options.TransportPolicyOptions.Transport = curlTransportAdapter; 
+  options.TransportOptions.Transport = curlTransportAdapter; 
   auto storageClient = BlobServiceClient(url, credential, options);
 ```
 

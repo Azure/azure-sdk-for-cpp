@@ -19,15 +19,15 @@ namespace Azure { namespace Core { namespace Test {
   class StringOperation : public Operation<std::string> {
 
   private:
-    StringClient* m_client;
     std::string m_operationToken;
     std::string m_value;
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
   private:
     int m_count = 0;
 
   private:
-    std::unique_ptr<Http::RawResponse> PollInternal(Context& context) override
+    std::unique_ptr<Http::RawResponse> PollInternal(Context&) override
     {
       // Artificial delay to require 2 polls
       if (++m_count == 2)
@@ -38,11 +38,10 @@ namespace Azure { namespace Core { namespace Test {
 
       // The contents of the response are irrelevant for testing purposes
       // Need only ensure that a RawResponse is returned
-      return std::make_unique<Http::RawResponse>(
-          (uint16_t)1, (uint16_t)0, Http::HttpStatusCode(200), "OK");
+      return std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
     }
 
-    Response<std::string> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
+    Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         override
     {
       std::unique_ptr<Http::RawResponse> response;
@@ -59,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
   public:
-    StringOperation(StringClient* client) : m_client(client) {}
+    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
 
     std::string GetResumeToken() const override { return m_operationToken; }
 
@@ -83,7 +82,7 @@ namespace Azure { namespace Core { namespace Test {
     StringOperation StartStringUpdate()
     {
       // Make initial String call
-      StringOperation operation = StringOperation(this);
+      StringOperation operation = StringOperation();
       return operation;
     }
   };

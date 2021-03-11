@@ -10,7 +10,7 @@
 
 #include "azure/storage/common/storage_credential.hpp"
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   class SharedKeyPolicy : public Core::Http::HttpPolicy {
   public:
@@ -27,13 +27,13 @@ namespace Azure { namespace Storage { namespace Details {
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
-        Core::Context const& ctx,
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy) const override
+        Core::Http::NextHttpPolicy nextHttpPolicy,
+        Core::Context const& ctx) const override
     {
-      request.AddHeader(
+      request.SetHeader(
           "Authorization", "SharedKey " + m_credential->AccountName + ":" + GetSignature(request));
-      return nextHttpPolicy.Send(ctx, request);
+      return nextHttpPolicy.Send(request, ctx);
     }
 
   private:
@@ -42,4 +42,4 @@ namespace Azure { namespace Storage { namespace Details {
     std::shared_ptr<StorageSharedKeyCredential> m_credential;
   };
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

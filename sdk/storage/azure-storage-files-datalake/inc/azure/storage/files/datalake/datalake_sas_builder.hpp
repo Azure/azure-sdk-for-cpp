@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Sas {
     Create = 32,
 
     /**
-     * @beirf Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Sas {
     ManageAccessControl = 512,
 
     /**
-     * @beirf Indicates that all permissions are set.
+     * @brief Indicates that all permissions are set.
      */
     All = ~0,
   };
@@ -188,14 +188,14 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Optionally specify the time at which the shared access signature becomes
      * valid. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<Azure::Core::DateTime> StartsOn;
+    Azure::Core::Nullable<Azure::DateTime> StartsOn;
 
     /**
      * @brief The time at which the shared access signature becomes invalid. This field must
      * be omitted if it has been specified in an associated stored access policy. This timestamp
      * will be truncated to second.
      */
-    Azure::Core::DateTime ExpiresOn;
+    Azure::DateTime ExpiresOn;
 
     /**
      * @brief Specifies an IP address or a range of IP addresses from which to accept
@@ -327,7 +327,8 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Uses an account's user delegation key to sign this shared access signature, to
      * produce the proper SAS query parameters for authentication requests.
      *
-     * @param credential UserDelegationKey retruned from BlobServiceClient.GetUserDelegationKey.
+     * @param userDelegationKey UserDelegationKey retruned from
+     * BlobServiceClient.GetUserDelegationKey.
      * @param accountName The name of the storage account.
      * @return The SAS query parameters used for authenticating requests.
      */

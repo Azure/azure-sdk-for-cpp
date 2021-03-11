@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -28,12 +28,17 @@ endif()
 
 set(
   AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/delete_key_operation.hpp
+    inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
+    inc/azure/keyvault/keys/details/key_constants.hpp
+    inc/azure/keyvault/keys/key_create_options.hpp
+    inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/key_operation.hpp
     inc/azure/keyvault/keys/key_properties.hpp
-    inc/azure/keyvault/keys/key_release_policy.hpp
+    inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
     inc/azure/keyvault/keys/version.hpp
@@ -41,7 +46,11 @@ set(
 
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
+    src/delete_key_operation.cpp
+    src/deleted_key.cpp
     src/key_client.cpp
+    src/key_curve_name.cpp
+    src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
 )
@@ -67,7 +76,17 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/keys/version.hpp"
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-  add_subdirectory(test)
+
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+  
+  add_subdirectory(test/ut)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
 endif()
 
 if(BUILD_SAMPLES)

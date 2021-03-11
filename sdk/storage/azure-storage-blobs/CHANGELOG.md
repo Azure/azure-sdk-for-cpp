@@ -1,10 +1,38 @@
 # Release History
 
-## 12.0.0-beta.7 (Unreleased)
+## 12.0.0-beta.9 (Unreleased)
+
+### New Features
+
+- Added support for telemetry options.
+
+### Breaking Changes
+
+- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
+- String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+- Moved `SecondaryHostForRetryReads` out of retry options, now it's under `BlobClientOptions`.
+- Renamed `Azure::Storage::Blobs::Details::Version` to `Azure::Storage::Blobs::PackageVersion`.
+
+### Other Changes and Improvements
+
+- Changed return type of `BlobServiceClient::DeleteBlobContainer` to `Azure::Core::Response<Models::DeleteBlobContainerResult>`.
+- Changed return type of `BlobContainerClient::DeleteBlob` to `Azure::Core::Response<Models::DeleteBlobResult>`.
+
+## 12.0.0-beta.8 (2021-02-12)
+
+### Breaking Changes
+
+- Removed `BreakBlobLeaseResult::Leasetime`.
+- Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
+
+## 12.0.0-beta.7 (2021-02-03)
 
 ### New Features
 
 - Added `RequestId` in API return types.
+- Added some new properties in `GetBlobPropertiesResult`, `DownloadBlobResult` and `DownloadBlobToResult`.
+- Added `RangeHashAlgorithm` in `DownloadBlobOptions`.
+- Added `UploadBlob` in `BlobContainerClient`.
 
 ### Breaking Changes
 
@@ -19,6 +47,14 @@
 - Return types of `BlobClient::StartCopyFromUri` and `PageBlobClient::StartCopyIncremental` were changed to `StartCopyBlobResult`, supporting poll operations.
 - Fixed typo `Expiries` in model types.
 - Removed `PreviousContinuationToken` from `ListBlobContainersSinglePageResult`, `ListBlobsByHierarchySinglePageResult` and `ListBlobsSinglePageResult`.
+- `ListBlobContainersIncludeItem` was renamed to `ListBlobContainersIncludeFlags`.
+- `ListBlobsIncludeItem` was renamed to `ListBlobsIncludeFlags`.
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadBlobToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadBlockBlobFromOptions::TransferOptions`.
+- Removed `TagValue` from `FilterBlobItem`, removed `Where` from `FindBlobsByTagsSinglePageResult`.
+- Type for ETag was changed to `Azure::Core::ETag`.
+- Removed `BlobPrefix` struct, use `std::string` instead.
+- Refined `BlobContainerItem`, `BlobItem`, `DownloadBlobResult` and `DownloadBlobToResult`.
 
 ## 12.0.0-beta.6 (2020-01-14)
 

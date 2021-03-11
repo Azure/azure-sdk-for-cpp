@@ -34,8 +34,9 @@ namespace Azure { namespace Identity {
      */
     explicit EnvironmentCredential();
 
-    Core::AccessToken GetToken(Core::Context const& context, std::vector<std::string> const& scopes)
-        const override;
+    Core::AccessToken GetToken(
+        Core::Http::TokenRequestOptions const& tokenRequestOptions,
+        Core::Context const& context) const override;
   };
 
 }} // namespace Azure::Identity

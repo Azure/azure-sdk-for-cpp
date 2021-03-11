@@ -1,6 +1,71 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 1.0.0-beta.7 (Unreleased)
+
+### New Features
+
+- Added `HttpPolicyOrder` for adding custom Http policies to sdk clients.
+
+### Breaking Changes
+
+- Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
+- Split `Azure::Core::RequestConditions` into `Azure::MatchConditions` and `Azure::ModifiedConditions`.
+- Removed `TransportKind` enum from `Azure::Core::Http`.
+- Added `Azure::Core::Operation<T>::GetRawResponse().`
+- Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
+- Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
+- Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
+- Renamed `Azure::Core::Details::Version` to `Azure::Core::PackageVersion`.
+- Moved `BodyStream` and its derived types from `Azure::Core::Http` namespace to `Azure::IO`, and moved the `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
+- Moved `NullBodyStream` to internal usage only. It is not meant for public use.
+- Removed `LimitBodyStream`.
+- Renamed `AddHeader()` from `Request` and `RawResponse` to `SetHeader()`.
+- Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
+- Renamed `TransportPolicyOptions` to `TransportOptions`.
+- Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
+- Renamed `ValuePolicyOptions` to `ValueOptions`.
+- Removed `StartTry()` from `Azure::Core::Http::Request`.
+- Move `Azure::Core::Context` to be the last parameter for consistency, instead of first in various azure-core types. For example:
+  - `BodyStream::Read(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)`
+  - `BodyStream::ReadToEnd(BodyStream& body, Azure::Core::Context const& context)`
+  - `HttpPolicy::Send(Request& request, NextHttpPolicy policy, Azure::Core::Context const& context)`
+  - `Operation<T>::PollUntilDone(std::chrono::milliseconds period, Azure::Core::Context& context)`
+  - `TokenCredential::GetToken(Http::TokenRequestOptions const& tokenRequestOptions, Azure::Core::Context const& context)`
+- Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
+- Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.
+- Introduced `Azure::Core::Http::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
+- Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Logger` class.
+- Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
+- Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
+- Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
+- Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
+- Moved `Azure::Core::ETag` to `Azure::ETag`.
+- Moved `Azure::Core::DateTime` to `Azure::DateTime`.
+
+### Bug Fixes
+
+- Make sure to rewind the body stream at the start of each request retry attempt, including the first.
+- Fix `Azure::Context` to support unique_ptr.
+
+## 1.0.0-beta.6 (2021-02-09)
+
+### New Features
+
+- Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
+- Added the `Hash` base class and MD5 hashing APIs to the `Azure::Core::Cryptography` namespace available from `azure/core/cryptography/hash.hpp`.
+
+### Breaking Changes
+
+- Removed `Context::CancelWhen()`.
+- Removed `LogClassification` and related functionality, added `LogLevel` instead.
+
+### Bug Fixes
+
+- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+- Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.
+- Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.
+
+## 1.0.0-beta.5 (2021-02-02)
 
 ### New Features
 
@@ -8,11 +73,17 @@
 
 ### Breaking Changes
 
-- Make `ToLower` and `LocaleInvariantCaseInsensitiveEqual` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
+- `BearerTokenAuthenticationPolicy` constructor takes `TokenRequestOptions` struct instead of scopes vector. `TokenRequestOptions` struct has scopes vector as data member.
+- `TokenCredential::GetToken()` takes `TokenRequestOptions` instead of scopes vector.
 
 ### Bug Fixes
 
 - Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
+- Fixed reading the value from `retry-after` header in `RetryPolicy`.
+- Fix link errors when producing a DLL and add UWP compilation support.
+- Do not pass a placeholder user-agent string as a fallback when using WinHttp.
+- Initialize local variables in implementation to fix warning within release builds on Linux.
 
 ## 1.0.0-beta.4 (2021-01-13)
 

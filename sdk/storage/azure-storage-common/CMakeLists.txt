@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -44,7 +44,7 @@ set(
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_exception.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
-    inc/azure/storage/common/storage_retry_policy.hpp
+    inc/azure/storage/common/storage_switch_to_secondary_policy.hpp
     inc/azure/storage/common/version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
 )
@@ -60,7 +60,7 @@ set(
     src/storage_credential.cpp
     src/storage_exception.cpp
     src/storage_per_retry_policy.cpp
-    src/storage_retry_policy.cpp
+    src/storage_switch_to_secondary_policy.cpp
     src/xml_wrapper.cpp
 )
 
@@ -80,7 +80,7 @@ target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
 target_include_directories(azure-storage-common PRIVATE ${LIBXML2_INCLUDE_DIRS})
 target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
 
-if(MSVC)
+if(WIN32)
     target_link_libraries(azure-storage-common PRIVATE bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
     target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)

@@ -6,7 +6,7 @@
 #include <memory>
 
 #include <azure/core/context.hpp>
-#include <azure/core/http/body_stream.hpp>
+#include <azure/core/io/body_stream.hpp>
 
 namespace Azure { namespace Storage {
 
@@ -17,9 +17,9 @@ namespace Azure { namespace Storage {
   };
 
   // Defines a fn signature to be use to get a bodyStream from a specific offset.
-  typedef std::function<std::unique_ptr<Azure::Core::Http::BodyStream>(
-      Azure::Core::Context const&,
-      HttpGetterInfo const&)>
+  typedef std::function<std::unique_ptr<Azure::Core::IO::BodyStream>(
+      HttpGetterInfo const&,
+      Azure::Core::Context const&)>
       HTTPGetter;
 
   // Options used by reliable stream
@@ -41,10 +41,10 @@ namespace Azure { namespace Storage {
    * offset provided by the ReliableStream.
    *
    */
-  class ReliableStream : public Azure::Core::Http::BodyStream {
+  class ReliableStream : public Azure::Core::IO::BodyStream {
   private:
     // initial bodyStream.
-    std::unique_ptr<Azure::Core::Http::BodyStream> m_inner;
+    std::unique_ptr<Azure::Core::IO::BodyStream> m_inner;
     // Configuration for the re-triable stream
     ReliableStreamOptions const m_options;
     // callback to get a bodyStream in case Read operation fails
@@ -52,11 +52,11 @@ namespace Azure { namespace Storage {
     // Options to use when getting a new bodyStream like current offset
     HttpGetterInfo m_retryInfo;
 
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
     explicit ReliableStream(
-        std::unique_ptr<Azure::Core::Http::BodyStream> inner,
+        std::unique_ptr<Azure::Core::IO::BodyStream> inner,
         ReliableStreamOptions const options,
         HTTPGetter httpGetter)
         : m_inner(std::move(inner)), m_options(options), m_httpGetter(std::move(httpGetter))

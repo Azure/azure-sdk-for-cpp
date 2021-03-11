@@ -8,9 +8,10 @@
 
 #pragma once
 
+#include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/exception.hpp"
-#include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
+#include "azure/core/io/body_stream.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <algorithm>
@@ -28,12 +29,15 @@
 namespace Azure { namespace Core { namespace Test {
   class TestHttp_getters_Test;
   class TestHttp_query_parameter_Test;
+  class TestHttp_RequestStartTry_Test;
+  class TestURL_getters_Test;
+  class TestURL_query_parameter_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     /**
      * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
      * characters.
@@ -45,10 +49,29 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if \p headerName is invalid.
      */
     void InsertHeaderWithValidation(
-        std::map<std::string, std::string>& headers,
+        CaseInsensitiveMap& headers,
         std::string const& headerName,
         std::string const& headerValue);
-  } // namespace Details
+
+    inline std::string FormatEncodedUrlQueryParameters(
+        std::map<std::string, std::string> const& encodedQueryParameters)
+    {
+      {
+        std::string queryStr;
+        if (!encodedQueryParameters.empty())
+        {
+          auto separ = '?';
+          for (const auto& q : encodedQueryParameters)
+          {
+            queryStr += separ + q.first + '=' + q.second;
+            separ = '&';
+          }
+        }
+
+        return queryStr;
+      }
+    }
+  } // namespace _detail
 
   /*********************  Exceptions  **********************/
   /**
@@ -71,7 +94,8 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief An invalid header key name in @Request or @RawResponse.
+   * @brief An invalid header key name in #Azure::Core::Http::Request or
+   * #Azure::Core::Http::RawResponse.
    *
    */
   class InvalidHeaderException : public Azure::Core::RequestFailedException {
@@ -85,16 +109,6 @@ namespace Azure { namespace Core { namespace Http {
         : Azure::Core::RequestFailedException(message)
     {
     }
-  };
-
-  /**
-   * @brief HTTP transport implementation used.
-   */
-  enum class TransportKind
-  {
-    // TODO move this to Factory
-    Curl, ///< CURL.
-    WinHttp ///< WinHTTP.
   };
 
   /**
@@ -182,7 +196,7 @@ namespace Azure { namespace Core { namespace Http {
    * `Offset + Length - 1` inclusively.
    *
    */
-  struct Range
+  struct HttpRange
   {
     /**
      * @brief The starting point of the HTTP Range.
@@ -213,9 +227,9 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Get a string representation for a value of #HttpMethod.
    *
-   * @param method A value of #HttpMethod value.
+   * @param method A value of #Azure::Core::Http::HttpMethod value.
    *
-   * @return String name that corresponds to a value of #HttpMethod type.
+   * @return String name that corresponds to a value of #Azure::Core::Http::HttpMethod type.
    */
   inline std::string HttpMethodToString(const HttpMethod& method)
   {
@@ -263,7 +277,9 @@ namespace Azure { namespace Core { namespace Http {
 
     // List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
     // this set.
-    static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
+    const static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
+
+    std::string GetUrlWithoutQuery(bool relative) const;
 
   public:
     /**
@@ -282,7 +298,7 @@ namespace Azure { namespace Core { namespace Http {
      * ` and `-`.
      *
      * @param value Non URL-encoded string.
-     * @param doNotEncodeSymbols
+     * @param doNotEncodeSymbols A string consisting of characters that do not need to be encoded.
      * @return std::string
      */
     static std::string Encode(const std::string& value, const std::string& doNotEncodeSymbols = "");
@@ -418,11 +434,11 @@ namespace Azure { namespace Core { namespace Http {
     uint16_t GetPort() const { return m_port; }
 
     /**
-     * @brief Provides a copy to the list of query parameters from the URL.
+     * @brief Get a copy of the list of query parameters from the URL.
      *
      * @remark The query parameters are URL-encoded.
      *
-     * @return const std::map<std::string, std::string>&
+     * @return A copy of the query parameters map.
      */
     std::map<std::string, std::string> GetQueryParameters() const
     {
@@ -430,16 +446,22 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Gets the path and query parameters.
+     * @brief Get Scheme, host, and path, without query parameters.
+     * @return Absolute URL without query parameters.
+     */
+    std::string GetUrlWithoutQuery() const { return GetUrlWithoutQuery(false); }
+
+    /**
+     * @brief Get the path and query parameters.
      *
-     * @return std::string The string is URL encoded.
+     * @return Relative URL with URL-encoded query parameters.
      */
     std::string GetRelativeUrl() const;
 
     /**
-     * @brief Gets Scheme, host, path and query parameters.
+     * @brief Get Scheme, host, path and query parameters.
      *
-     * @return std::string The string is URL encoded.
+     * @return Absolute URL with URL-encoded query parameters.
      */
     std::string GetAbsoluteUrl() const;
   };
@@ -453,15 +475,18 @@ namespace Azure { namespace Core { namespace Http {
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;
+    friend class Azure::Core::Test::TestHttp_RequestStartTry_Test;
+    friend class Azure::Core::Test::TestURL_getters_Test;
+    friend class Azure::Core::Test::TestURL_query_parameter_Test;
 #endif
 
   private:
     HttpMethod m_method;
     Url m_url;
-    std::map<std::string, std::string> m_headers;
-    std::map<std::string, std::string> m_retryHeaders;
+    CaseInsensitiveMap m_headers;
+    CaseInsensitiveMap m_retryHeaders;
 
-    BodyStream* m_bodyStream;
+    Azure::Core::IO::BodyStream* m_bodyStream;
 
     // flag to know where to insert header
     bool m_retryModeEnabled{false};
@@ -472,69 +497,72 @@ namespace Azure { namespace Core { namespace Http {
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
 
+    // Expected to be called by a Retry policy to reset all headers set after this function was
+    // previously called
+    void StartTry();
+
   public:
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param bodyStream HTTP #BodyStream.
-     * @param downloadViaStream
+     * @param bodyStream #Azure::Core::IO::BodyStream.
+     * @param downloadViaStream A boolean value indicating whether download should happen via
+     * stream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream, bool downloadViaStream)
+    explicit Request(
+        HttpMethod httpMethod,
+        Url url,
+        Azure::Core::IO::BodyStream* bodyStream,
+        bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
     {
     }
 
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param bodyStream HTTP #BodyStream.
+     * @param bodyStream #Azure::Core::IO::BodyStream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream)
+    explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, false)
     {
     }
 
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param downloadViaStream
+     * @param downloadViaStream A boolean value indicating whether download should happen via
+     * stream.
      */
-    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
-        : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
-    {
-    }
+    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream);
 
     /**
-     * @brief Construct an HTTP @request.
+     * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
      */
-    explicit Request(HttpMethod httpMethod, Url url)
-        : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
-    {
-    }
+    explicit Request(HttpMethod httpMethod, Url url);
 
     /**
-     * @brief Add HTTP header to the @Request.
+     * @brief Set an HTTP header to the #Azure::Core::Http::Request.
      *
-     * @param name The name for the header to be added.
-     * @param value The value for the header to be added.
+     * @remark If the header key does not exists, it is added.
+     *
+     *
+     * @param name The name for the header to be set or added.
+     * @param value The value for the header to be set or added.
      *
      * @throw if \p name is an invalid header key.
      */
-    void AddHeader(std::string const& name, std::string const& value);
+    void SetHeader(std::string const& name, std::string const& value);
 
     /**
      * @brief Remove an HTTP header.
@@ -559,12 +587,12 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP headers.
      */
-    std::map<std::string, std::string> GetHeaders() const;
+    CaseInsensitiveMap GetHeaders() const;
 
     /**
-     * @brief Get HTTP body as #BodyStream.
+     * @brief Get HTTP body as #Azure::Core::IO::BodyStream.
      */
-    BodyStream* GetBodyStream() { return this->m_bodyStream; }
+    Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
      * @brief Get the list of headers prior to HTTP body.
@@ -582,7 +610,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
 
     /**
-     * @brief
+     * @brief A value indicating whether download is happening via stream.
      */
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
 
@@ -595,9 +623,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get URL.
      */
     Url const& GetUrl() const { return this->m_url; }
-    // Expected to be called by a Retry policy to reset all headers set after this function was
-    // previously called
-    void StartTry();
   };
 
   /**
@@ -610,9 +635,9 @@ namespace Azure { namespace Core { namespace Http {
     int32_t m_minorVersion;
     HttpStatusCode m_statusCode;
     std::string m_reasonPhrase;
-    std::map<std::string, std::string> m_headers;
+    CaseInsensitiveMap m_headers;
 
-    std::unique_ptr<BodyStream> m_bodyStream;
+    std::unique_ptr<Azure::Core::IO::BodyStream> m_bodyStream;
     std::vector<uint8_t> m_body;
 
     explicit RawResponse(
@@ -620,7 +645,7 @@ namespace Azure { namespace Core { namespace Http {
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase,
-        std::unique_ptr<BodyStream> BodyStream)
+        std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream)
         : m_majorVersion(majorVersion), m_minorVersion(minorVersion), m_statusCode(statusCode),
           m_reasonPhrase(reasonPhrase), m_bodyStream(std::move(BodyStream))
     {
@@ -644,22 +669,40 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+    /**
+     * @brief Copy a raw response to construct a new one.
+     *
+     * @remark The body stream won't be copied.
+     *
+     * @param response A reference for copying the raw response.
+     */
+    RawResponse(RawResponse const& response)
+        : RawResponse(
+            response.m_majorVersion,
+            response.m_minorVersion,
+            response.m_statusCode,
+            response.m_reasonPhrase)
+    {
+      // Copy body
+      m_body = response.GetBody();
+    }
+
     // ===== Methods used to build HTTP response =====
 
     /**
-     * @brief Add HTTP header to the @RawResponse.
+     * @brief Set an HTTP header to the #RawResponse.
      *
      * @remark The \p name must contain valid header name characters (RFC 7230).
      *
-     * @param name The name for the header to be added.
-     * @param value The value for the header to be added.
+     * @param name The name for the header to be set or added.
+     * @param value The value for the header to be set or added.
      *
      * @throw if \p name contains invalid characters.
      */
-    void AddHeader(std::string const& name, std::string const& value);
+    void SetHeader(std::string const& name, std::string const& value);
 
     /**
-     * @brief Add HTTP header to the @RawResponse.
+     * @brief Set an HTTP header to the #RawResponse.
      *
      * @remark The \p header must contain valid header name characters (RFC 7230).
      * @remark Header name, value and delimiter are expected to be in \p header.
@@ -668,10 +711,10 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw if \p header has an invalid header name or if the delimiter is missing.
      */
-    void AddHeader(std::string const& header);
+    void SetHeader(std::string const& header);
 
     /**
-     * @brief Add HTTP header to the @RawResponse.
+     * @brief Set an HTTP header to the #RawResponse.
      *
      * @remark The string referenced by \p first and \p last must contain valid header name
      * characters (RFC 7230).
@@ -684,14 +727,14 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if the string referenced by \p first and \p last contains an invalid header name or if
      * the delimiter is missing.
      */
-    void AddHeader(uint8_t const* const first, uint8_t const* const last);
+    void SetHeader(uint8_t const* const first, uint8_t const* const last);
 
     /**
-     * @brief Set #BodyStream for this HTTP response.
+     * @brief Set #Azure::Core::IO::BodyStream for this HTTP response.
      *
-     * @param stream HTTP #BodyStream.
+     * @param stream #Azure::Core::IO::BodyStream.
      */
-    void SetBodyStream(std::unique_ptr<BodyStream> stream);
+    void SetBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream> stream);
 
     /**
      * @brief Set HTTP response body for this HTTP response.
@@ -726,12 +769,12 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response headers.
      */
-    std::map<std::string, std::string> const& GetHeaders() const;
+    CaseInsensitiveMap const& GetHeaders() const;
 
     /**
-     * @brief Get HTTP response body as #BodyStream.
+     * @brief Get HTTP response body as #Azure::Core::IO::BodyStream.
      */
-    std::unique_ptr<BodyStream> GetBodyStream()
+    std::unique_ptr<Azure::Core::IO::BodyStream> GetBodyStream()
     {
       // If m_bodyStream was moved before. nullptr is returned
       return std::move(this->m_bodyStream);

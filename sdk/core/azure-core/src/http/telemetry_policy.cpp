@@ -16,6 +16,9 @@
 #endif
 
 #include <windows.h>
+
+#include "azure/core/internal/hkeyholder.hpp"
+
 #elif defined(AZ_PLATFORM_POSIX)
 #include <sys/utsname.h>
 #endif
@@ -29,51 +32,34 @@ std::string GetOSVersion()
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
-    HKEY regKey{};
-    auto regKeyOpened = false;
-    try
+    Azure::Core::_internal::HKEYHolder regKey;
+    if (RegOpenKeyExA(
+            HKEY_LOCAL_MACHINE,
+            "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+            0,
+            KEY_READ,
+            &regKey)
+        == ERROR_SUCCESS)
     {
-      if (RegOpenKeyExA(
-              HKEY_LOCAL_MACHINE,
-              "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
-              0,
-              KEY_READ,
-              &regKey)
-          == ERROR_SUCCESS)
+      auto first = true;
+      static constexpr char const* regValues[]{
+          "ProductName", "CurrentVersion", "CurrentBuildNumber", "BuildLabEx"};
+      for (auto regValue : regValues)
       {
-        regKeyOpened = true;
+        char valueBuf[200] = {};
+        DWORD valueBufSize = sizeof(valueBuf);
 
-        auto first = true;
-        static constexpr char const* regValues[]{
-            "ProductName", "CurrentVersion", "CurrentBuildNumber", "BuildLabEx"};
-        for (auto regValue : regValues)
+        if (RegQueryValueExA(regKey, regValue, NULL, NULL, (LPBYTE)valueBuf, &valueBufSize)
+            == ERROR_SUCCESS)
         {
-          char valueBuf[200] = {};
-          DWORD valueBufSize = sizeof(valueBuf);
-
-          if (RegQueryValueExA(regKey, regValue, NULL, NULL, (LPBYTE)valueBuf, &valueBufSize)
-              == ERROR_SUCCESS)
+          if (valueBufSize > 0)
           {
-            if (valueBufSize > 0)
-            {
-              osVersionInfo << (first ? "" : " ")
-                            << std::string(valueBuf, valueBuf + (valueBufSize - 1));
-              first = false;
-            }
+            osVersionInfo << (first ? "" : " ")
+                          << std::string(valueBuf, valueBuf + (valueBufSize - 1));
+            first = false;
           }
         }
-
-        RegCloseKey(regKey);
       }
-    }
-    catch (...)
-    {
-      if (regKeyOpened)
-      {
-        RegCloseKey(regKey);
-      }
-
-      throw;
     }
   }
 #else
@@ -129,10 +115,10 @@ std::string TelemetryPolicy::BuildTelemetryId(
 }
 
 std::unique_ptr<RawResponse> TelemetryPolicy::Send(
-    Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
 {
-  request.AddHeader("User-Agent", m_telemetryId);
-  return nextHttpPolicy.Send(ctx, request);
+  request.SetHeader("User-Agent", m_telemetryId);
+  return nextHttpPolicy.Send(request, ctx);
 }

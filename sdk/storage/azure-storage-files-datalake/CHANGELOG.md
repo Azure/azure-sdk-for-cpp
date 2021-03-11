@@ -1,11 +1,40 @@
 # Release History
 
-## 12.0.0-beta.7 (Unreleased)
+## 12.0.0-beta.9 (Unreleased)
+
+### New Features
+
+- Added support for telemetry options.
+
+### Breaking Changes
+
+- DataLake client constructors won't automatically convert blob url to dfs url anymore.
+- String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+- Moved `SecondaryHostForRetryReads` out of retry options, now it's under `DataLakeClientOptions`.
+- Renamed `Azure::Storage::Files::DataLake::Details::Version` to `Azure::Storage::Files::DataLake::PackageVersion`.
+
+## 12.0.0-beta.8 (2021-02-12)
+
+### Breaking Changes
+
+- Removed `DataLakeFileSystemClient::GetPathClient`.
+- Renamed `SetDataLakePathAccessControlRecursiveListSinglePageOptions::MaxEntries` to `PageSizeHint`.
+- `GetDataLakePathPropertiesResult::ServerEncrypted` was renamed to `IsServerEncrypted`.
+- `GetDataLakePathPropertiesResult::AccessTierInferred` was renamed to `IsAccessTierInferred`.
+- `HttpHeaders` of `DownloadDataLakeFileResult` and `DownloadDataLakeFileToResult` was moved into `Details`, to align with Blob service.
+- Removed `BreakDataLakeLeaseResult::LeaseTime`.
+- Renamed APIs for modifying access list recursively. Used to be with pattern `AccessControlRecursiveList`, now is with pattern `AccessControlListRecursive`.
+- Refined options for `ScheduleDeletion`, to be consistent with other APIs.
+- Renamed `ContentLength` in `PathItem` to `FileSize`.
+- In `PathSetAccessControlRecursiveResult`, `DirectoriesSuccessful` is renamed to `NumberOfSuccessfulDirectories`, `FilesSuccessful` is renamed to `NumberOfSuccessfulFiles`, `FailureCount` is renamed to `NumberOfFailures`.
+- Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
+
+## 12.0.0-beta.7 (2021-02-03)
 
 ### New Features
 
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
-- `ReadDataLakeFileResult` now has a new field `FileSize`.
+- `DownloadDataLakeFileResult` now has a new field `FileSize`.
 - Added support for `GetAccessPolicy` and `SetAccessPolicy` in `DataLakeFileSystemClient`.
 - Moved all protocol layer generated result types to `Details` namespace.
 - Renamed `FileSystem` type returned from `ListDataLakeFileSystems` to be `FileSystemItem`. Member object name `FileSystems` is renamed to `Items`.
@@ -15,13 +44,15 @@
 - Added `Metadata`, `AccessType`, `HasImmutabilityPolicy`, `HasLegalHold`, `LeaseDuration`, `LeaseState` and `LeaseStatus` to `FileSystemItem`.
 - Added new type `LeaseDurationType` to indicate if a lease duration is fixed or infinite.
 - Added `RequestId` in each return type for REST API calls, except for concurrent APIs.
+- Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake path.
+- Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake path.
 
 ### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
 - `DataLakePathClient` can no longer set permissions with `SetAccessControl`, instead, a new API `SetPermissions` is created for such functionality. Renamed the original API to `SetAccessControlList` to be more precise.
-- `ContentRange` in `ReadDataLakeFileResult` is now `Azure::Core::Http::Range`.
+- `ContentRange` in `DownloadDataLakeFileResult` is now `Azure::Core::Http::Range`.
 - Removed `ContentRange` in `PathGetPropertiesResult`.
 - Renamed `ContentLength` in `GetDataLakePathPropertiesResult` and `CreateDataLakePathResult` to `FileSize` to be more accurate.
 - Renamed `GetUri` to `GetUrl`.
@@ -32,7 +63,22 @@
 - Changed all previous `LeaseDuration` members to a new type named `LeaseDurationType`.
 - `startsOn` parameter for `GetUserDelegationKey` was changed to optional.
 - Removed `PreviousContinuationToken` from `ListFileSystemsSinglePageResult`.
-
+- `Concurrency`, `ChunkSize` and `InitialChunkSize` were moved into `DownloadDataLakeFileToOptions::TansferOptions`.
+- `Concurrency`, `ChunkSize` and `SingleUploadThreshold` were moved into `UploadDataLakeFileFromOptions::TransferOptions`.
+- Removed `Rename` from `DataLakeDirectoryClient` and `DataLakeFileClient`. Instead, added `RenameFile` and `RenameSubdirectory` to `DataLakeDirectoryClient` and added `RenameFile` and `RenameDirectory` to `DataLakeFileSystemClient`.
+- Rename APIs now return the client of the resource it is renaming to.
+- Removed `Mode` for rename operations' options, that originally controls the rename mode. Now it is fixed to legacy mode.
+- Changed `SetAccessControlRecursive` to `SetAccessControlRecursiveListSinglePage`, to mark that it is a single page operation, and removed the `mode` parameter, separated the modify/delete functionality to two new APIs.
+- Moved `SetAccessControlRecursiveListSinglePage` to `DataLakePathClient`.
+- Changed `MaxRecord` to `MaxEntries`, `ForceFlag` to `ContinueOnFailure` to be more accurate names.
+- Type for ETag was changed to `Azure::Core::ETag`.
+- Type for `IfMatch` and `IfNoneMatch` was changed to `Azure::Core::ETag`.
+- Renamed `ListDataLakeFileSystemsIncludeItem` to `ListDataLakeFileSystemsIncludeFlags`.
+- Removed `DataLakeDirectoryClient::Delete` and `DataLakeDirectoryClient::DeleteIfExists`. Added `DataLakeDirectoryClient::DeleteEmpty`, `DataLakeDirectoryClient::DeleteEmptyIfExists`, `DataLakeDirectoryClient::DeleteRecursive` and `DataLakeDirectoryClient::DeleteRecursiveIfExists` instead.
+- Removed `ContinuationToken` in `DeleteDataLakePathResult` and `DeleteDataLakeDirectoryResult`, as they will never be returned for HNS enabled accounts.
+- Renamed `DataLakeFileClient::Read` to `DataLakeFileClient::Download`. Also changed the member `Azure::Core::Nullable<bool> RangeGetContentMd5` in the option to be `Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm` instead.
+- Moved some less commonly used properties into a details data structure for `Download`, `DownloadTo` and `ListFileSystemsSinglePage` API, and enriched the content of the mentioned details data structure.
+ 
 ### Other Changes and Improvements
 
 - Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.

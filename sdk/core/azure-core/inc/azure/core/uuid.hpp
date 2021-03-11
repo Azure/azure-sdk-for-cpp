@@ -36,9 +36,9 @@ namespace Azure { namespace Core {
   public:
     /**
      * Gets UUID as a string.
-     * @detail A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
+     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
      */
-    std::string GetUuidString()
+    std::string ToString()
     {
       // Guid is 36 characters
       //  Add one byte for the \0

@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     filesystemSasBuilder.Path.clear();
     filesystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
 
-    auto keyCredential = Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto keyCredential = _detail::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
         AdlsGen2ConnectionString());
@@ -52,11 +52,11 @@ namespace Azure { namespace Storage { namespace Test {
     directory1Client0.Create();
     directory2Client0.Create();
 
-    auto serviceUrl = Files::DataLake::Details::GetDfsUrlFromUrl(serviceClient0.GetUrl());
-    auto filesystemUrl = Files::DataLake::Details::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
-    auto directory1Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory1Client0.GetUrl());
-    auto directory2Url = Files::DataLake::Details::GetDfsUrlFromUrl(directory2Client0.GetUrl());
-    auto fileUrl = fileClient0.GetUrl();
+    auto serviceUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(serviceClient0.GetUrl());
+    auto filesystemUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
+    auto directory1Url = Files::DataLake::_detail::GetDfsUrlFromUrl(directory1Client0.GetUrl());
+    auto directory2Url = Files::DataLake::_detail::GetDfsUrlFromUrl(directory2Client0.GetUrl());
+    auto fileUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(fileClient0.GetUrl());
 
     auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
         serviceUrl,
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto downloadedContent = fileClient.Read();
+      auto downloadedContent = fileClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->Body).empty());
     };
 
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_file_add = [&](const std::string& sas) {
-      unused(sas);
+      (void)sas;
       /*
        * Add test for append block when DataLake supports append blobs.
        */
@@ -123,9 +123,10 @@ namespace Azure { namespace Storage { namespace Test {
       std::string newFilename = RandomString();
       auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
       newFileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(
-          Files::DataLake::Details::GetDfsUrlFromUrl(newFileClient0.GetUrl()) + sas);
-      EXPECT_NO_THROW(fileClient.Rename(directory1Name + "/" + directory2Name + "/" + fileName));
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(directory2Client0.GetUrl()) + sas);
+      EXPECT_NO_THROW(directoryClient.RenameFile(
+          newFilename, directory1Name + "/" + directory2Name + "/" + fileName));
     };
 
     auto verify_file_execute = [&](const std::string& sas) {
@@ -243,7 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_directory_list(sasToken2);
       }
-      unused(verify_file_move);
+      (void)verify_file_move;
       /*
       don't know why, move doesn't work
       if ((permissions & Sas::DataLakeSasPermissions::Move)
@@ -286,7 +287,7 @@ namespace Azure { namespace Storage { namespace Test {
       if ((permissions & Sas::DataLakeFileSystemSasPermissions::All)
           == Sas::DataLakeFileSystemSasPermissions::All)
       {
-        unused(verify_file_move);
+        (void)verify_file_move;
         /*
         don't know why, move doesn't work
         verify_file_move(sasToken);
@@ -375,8 +376,8 @@ namespace Azure { namespace Storage { namespace Test {
     // PreauthorizedAgentObjectId
     {
       Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().GetUuidString();
-      builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().GetUuidString();
+      builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().ToString();
+      builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().ToString();
       auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_NO_THROW(verify_file_read(sasToken2));
     }
@@ -395,7 +396,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::Core::DateTime();
+      builder2.ExpiresOn = Azure::DateTime();
       builder2.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 

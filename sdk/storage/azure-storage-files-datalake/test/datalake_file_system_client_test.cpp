@@ -172,8 +172,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
         EXPECT_FALSE(createResult->Created);
-        EXPECT_TRUE(createResult->ETag.empty());
-        EXPECT_EQ(Core::DateTime(), createResult->LastModified);
+        EXPECT_FALSE(createResult->ETag.HasValue());
+        EXPECT_EQ(DateTime(), createResult->LastModified);
         auto deleted = client.Delete()->Deleted;
         EXPECT_TRUE(deleted);
       }
@@ -313,11 +313,11 @@ namespace Azure { namespace Storage { namespace Test {
     std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
     {
       std::string pathName = baseName + RandomString();
-      auto pathClient = m_fileSystemClient->GetPathClient(pathName);
-      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
-      auto pathUrl = pathClient.GetUrl();
+      auto fileClient = m_fileSystemClient->GetFileClient(pathName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(
-          pathUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(pathName));
+          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(pathName));
     }
     {
       std::string directoryName = baseName + RandomString();
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(directoryName));
+          m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
@@ -334,7 +334,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
       EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::Details::UrlEncodePath(fileName));
+          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(fileName));
     }
   }
 
@@ -388,7 +388,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SignedIdentifiers.emplace_back(identifier);
 
       auto ret = fileSystem.SetAccessPolicy(options);
-      EXPECT_FALSE(ret->ETag.empty());
+      EXPECT_TRUE(ret->ETag.HasValue());
       EXPECT_TRUE(IsValidTime(ret->LastModified));
 
       auto ret2 = fileSystem.GetAccessPolicy();

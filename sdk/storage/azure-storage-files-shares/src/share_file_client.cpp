@@ -5,6 +5,7 @@
 
 #include <azure/core/credentials.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/internal/null_body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -13,7 +14,6 @@
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/version.hpp"
@@ -26,72 +26,69 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& fileName,
       const ShareClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileUri = std::move(parsedConnectionString.FileServiceUrl);
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
-    fileUri.AppendPath(Storage::Details::UrlEncodePath(fileName));
+    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto fileUrl = std::move(parsedConnectionString.FileServiceUrl);
+    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(shareName));
+    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(fileName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return ShareFileClient(
-          fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          fileUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareFileClient(fileUri.GetAbsoluteUrl(), options);
+      return ShareFileClient(fileUrl.GetAbsoluteUrl(), options);
     }
   }
 
   ShareFileClient::ShareFileClient(
-      const std::string& shareFileUri,
+      const std::string& shareFileUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareFileUrl(shareFileUri)
+      : m_shareFileUrl(shareFileUrl)
   {
+    ShareClientOptions newOptions = options;
+    newOptions.PerRetryPolicies.emplace_back(
+        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      policies.emplace_back(p->Clone());
+      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
     }
-    policies.emplace_back(
-        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+        newOptions,
+        Storage::_detail::FileServicePackageName,
+        PackageVersion::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
   ShareFileClient::ShareFileClient(
-      const std::string& shareFileUri,
+      const std::string& shareFileUrl,
       const ShareClientOptions& options)
-      : m_shareFileUrl(shareFileUri)
+      : m_shareFileUrl(shareFileUrl)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Details::Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      policies.emplace_back(p->Clone());
+      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
+      perOperationPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
     }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+        options,
+        Storage::_detail::FileServicePackageName,
+        PackageVersion::VersionString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
   }
 
   ShareFileClient ShareFileClient::WithShareSnapshot(const std::string& shareSnapshot) const
@@ -99,35 +96,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareFileClient newClient(*this);
     if (shareSnapshot.empty())
     {
-      newClient.m_shareFileUrl.RemoveQueryParameter(Details::ShareSnapshotQueryParameter);
+      newClient.m_shareFileUrl.RemoveQueryParameter(_detail::ShareSnapshotQueryParameter);
     }
     else
     {
       newClient.m_shareFileUrl.AppendQueryParameter(
-          Details::ShareSnapshotQueryParameter,
-          Storage::Details::UrlEncodeQueryParameter(shareSnapshot));
+          _detail::ShareSnapshotQueryParameter,
+          Storage::_detail::UrlEncodeQueryParameter(shareSnapshot));
     }
     return newClient;
   }
 
-  Azure::Core::Response<Models::CreateShareFileResult> ShareFileClient::Create(
+  Azure::Response<Models::CreateShareFileResult> ShareFileClient::Create(
       int64_t fileSize,
-      const CreateShareFileOptions& options) const
+      const CreateShareFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::CreateOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime
-          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -136,8 +131,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -185,66 +180,63 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto result = Details::ShareRestClient::File::Create(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto result = _detail::ShareRestClient::File::Create(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreateShareFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.FileAttributes = result->FileAttributes;
-    ret.FileCreatedOn = std::move(result->FileCreatedOn);
-    ret.FileLastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.FilePermissionKey = std::move(result->FilePermissionKey);
-    ret.FileChangedOn = std::move(result->FileChangedOn);
-    ret.FileId = std::move(result->FileId);
-    ret.FileParentId = std::move(result->FileParentId);
+    ret.SmbProperties = std::move(result->SmbProperties);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
 
-    return Azure::Core::Response<Models::CreateShareFileResult>(
+    return Azure::Response<Models::CreateShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteShareFileResult> ShareFileClient::Delete(
-      const DeleteShareFileOptions& options) const
+  Azure::Response<Models::DeleteShareFileResult> ShareFileClient::Delete(
+      const DeleteShareFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::DeleteOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::DeleteOptions();
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    auto result = Details::ShareRestClient::File::Delete(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto result = _detail::ShareRestClient::File::Delete(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteShareFileResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Core::Response<Models::DeleteShareFileResult>(
+    return Azure::Response<Models::DeleteShareFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::DeleteShareFileResult> ShareFileClient::DeleteIfExists(
-      const DeleteShareFileOptions& options) const
+  Azure::Response<Models::DeleteShareFileResult> ShareFileClient::DeleteIfExists(
+      const DeleteShareFileOptions& options,
+      const Azure::Core::Context& context) const
   {
     try
     {
-      return Delete(options);
+      return Delete(options, context);
     }
     catch (StorageException& e)
     {
-      if (e.ErrorCode == Details::ShareNotFound || e.ErrorCode == Details::ParentNotFound
-          || e.ErrorCode == Details::ResourceNotFound)
+      if (e.ErrorCode == _detail::ShareNotFound || e.ErrorCode == _detail::ParentNotFound
+          || e.ErrorCode == _detail::ResourceNotFound)
       {
         Models::DeleteShareFileResult ret;
         ret.Deleted = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Core::Response<Models::DeleteShareFileResult>(
+        return Azure::Response<Models::DeleteShareFileResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Core::Response<Models::DownloadShareFileResult> ShareFileClient::Download(
-      const DownloadShareFileOptions& options) const
+  Azure::Response<Models::DownloadShareFileResult> ShareFileClient::Download(
+      const DownloadShareFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::DownloadOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::DownloadOptions();
     if (options.Range.HasValue())
     {
       if (options.Range.GetValue().Length.HasValue())
@@ -260,24 +252,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             + std::to_string(options.Range.GetValue().Offset) + std::string("-");
       }
     }
-    protocolLayerOptions.GetRangeContentMd5 = options.GetRangeContentMd5;
+    if (options.RangeHashAlgorithm.HasValue())
+    {
+      if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.GetRangeContentMd5 = true;
+      }
+      else
+      {
+        std::abort();
+      }
+    }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
 
-    auto downloadResponse = Details::ShareRestClient::File::Download(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto downloadResponse = _detail::ShareRestClient::File::Download(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     {
       // In case network failure during reading the body
-      std::string eTag = downloadResponse->ETag;
+      auto eTag = downloadResponse->ETag;
 
-      auto retryFunction
-          = [this, options, eTag](
-                const Azure::Core::Context& context,
-                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
-        unused(context);
-
+      auto retryFunction =
+          [this, options, eTag](
+              const HttpGetterInfo& retryInfo,
+              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadShareFileOptions newOptions = options;
-        newOptions.Range = Core::Http::Range();
+        newOptions.Range = Core::Http::HttpRange();
         newOptions.Range.GetValue().Offset
             = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
@@ -286,37 +286,58 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
         }
 
-        auto newResponse = Download(newOptions);
-        if (eTag != newResponse->ETag)
+        auto newResponse = Download(newOptions, context);
+        if (eTag != newResponse->Details.ETag)
         {
           throw Azure::Core::RequestFailedException(
               "File was changed during the download process.");
         }
-        return std::move(Download(newOptions)->BodyStream);
+        return std::move(newResponse->BodyStream);
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = Storage::Details::ReliableStreamRetryCount;
+      reliableStreamOptions.MaxRetryRequests = Storage::_detail::ReliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
-    return downloadResponse;
+    Models::DownloadShareFileResult ret;
+    ret.BodyStream = std::move(downloadResponse->BodyStream);
+    ret.ContentRange = std::move(downloadResponse->ContentRange);
+    ret.FileSize = downloadResponse->FileSize;
+    ret.TransactionalContentHash = std::move(downloadResponse->TransactionalContentHash);
+    ret.HttpHeaders = std::move(downloadResponse->HttpHeaders);
+    ret.Details.LastModified = std::move(downloadResponse->LastModified);
+    ret.Details.Metadata = std::move(downloadResponse->Metadata);
+    ret.Details.ETag = std::move(downloadResponse->ETag);
+    ret.Details.CopyCompletedOn = std::move(downloadResponse->CopyCompletedOn);
+    ret.Details.CopyStatusDescription = std::move(downloadResponse->CopyStatusDescription);
+    ret.Details.CopyId = std::move(downloadResponse->CopyId);
+    ret.Details.CopyProgress = std::move(downloadResponse->CopyProgress);
+    ret.Details.CopySource = std::move(downloadResponse->CopySource);
+    ret.Details.CopyStatus = std::move(downloadResponse->CopyStatus);
+    ret.Details.IsServerEncrypted = downloadResponse->IsServerEncrypted;
+    ret.Details.SmbProperties = std::move(downloadResponse->SmbProperties);
+    ret.Details.LeaseDuration = std::move(downloadResponse->LeaseDuration);
+    ret.Details.LeaseState = std::move(downloadResponse->LeaseState);
+    ret.Details.LeaseStatus = std::move(downloadResponse->LeaseStatus);
+    return Azure::Response<Models::DownloadShareFileResult>(
+        std::move(ret), downloadResponse.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::StartCopyShareFileResult> ShareFileClient::StartCopy(
+  StartCopyShareFileOperation ShareFileClient::StartCopy(
       std::string copySource,
-      const StartCopyShareFileOptions& options) const
+      const StartCopyShareFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::StartCopyOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::StartCopyOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.CopySource = std::move(copySource);
-    protocolLayerOptions.FileCopyFileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileCopyFileAttributes = options.SmbProperties.Attributes.ToString();
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileCreationTime
-          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+          = options.SmbProperties.CreatedOn.GetValue().ToString(
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -325,8 +346,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -360,46 +381,58 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.FileCopySetArchiveAttribute = options.SetArchiveAttribute;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::StartCopy(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto response = _detail::ShareRestClient::File::StartCopy(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+
+    StartCopyShareFileOperation res;
+    res.m_rawResponse = response.ExtractRawResponse();
+    res.RequestId = std::move(response->RequestId);
+    res.ETag = std::move(response->ETag);
+    res.LastModified = std::move(response->LastModified);
+    res.CopyId = std::move(response->CopyId);
+    res.CopyStatus = std::move(response->CopyStatus);
+    res.m_fileClient = std::make_shared<ShareFileClient>(*this);
+    return res;
   }
 
-  Azure::Core::Response<Models::AbortCopyShareFileResult> ShareFileClient::AbortCopy(
+  Azure::Response<Models::AbortCopyShareFileResult> ShareFileClient::AbortCopy(
       std::string copyId,
-      const AbortCopyShareFileOptions& options) const
+      const AbortCopyShareFileOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::AbortCopyOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::AbortCopyOptions();
     protocolLayerOptions.CopyId = std::move(copyId);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::AbortCopy(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::AbortCopy(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::GetShareFilePropertiesResult> ShareFileClient::GetProperties(
-      const GetShareFilePropertiesOptions& options) const
+  Azure::Response<Models::GetShareFilePropertiesResult> ShareFileClient::GetProperties(
+      const GetShareFilePropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::GetPropertiesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetPropertiesOptions();
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::GetProperties(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::GetProperties(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareFilePropertiesResult> ShareFileClient::SetProperties(
-      Models::ShareFileHttpHeaders httpHeaders,
-      Models::FileShareSmbProperties smbProperties,
-      const SetShareFilePropertiesOptions& options) const
+  Azure::Response<Models::SetShareFilePropertiesResult> ShareFileClient::SetProperties(
+      const Models::FileHttpHeaders& httpHeaders,
+      const Models::FileSmbProperties& smbProperties,
+      const SetShareFilePropertiesOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::SetHttpHeadersOptions();
-    protocolLayerOptions.FileAttributes = Details::FileAttributesToString(smbProperties.Attributes);
+    auto protocolLayerOptions = _detail::ShareRestClient::File::SetHttpHeadersOptions();
+    protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (smbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().GetRfc3339String(
-          Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -407,9 +440,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = smbProperties.LastWrittenOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.GetValue().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -451,27 +483,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileContentDisposition = httpHeaders.ContentDisposition;
     }
 
-    return Details::ShareRestClient::File::SetHttpHeaders(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::SetHttpHeaders(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::SetShareFileMetadataResult> ShareFileClient::SetMetadata(
+  Azure::Response<Models::SetShareFileMetadataResult> ShareFileClient::SetMetadata(
       Storage::Metadata metadata,
-      const SetShareFileMetadataOptions& options) const
+      const SetShareFileMetadataOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::SetMetadataOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::SetMetadataOptions();
     protocolLayerOptions.Metadata = std::move(metadata);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::SetMetadata(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::SetMetadata(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::UploadShareFileRangeResult> ShareFileClient::UploadRange(
+  Azure::Response<Models::UploadShareFileRangeResult> ShareFileClient::UploadRange(
       int64_t offset,
-      Azure::Core::Http::BodyStream* content,
-      const UploadShareFileRangeOptions& options) const
+      Azure::Core::IO::BodyStream* content,
+      const UploadShareFileRangeOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
     protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Update;
     protocolLayerOptions.ContentLength = content->Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
@@ -483,34 +517,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::UploadRange(
-        m_shareFileUrl, *content, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::UploadRange(
+        m_shareFileUrl, *content, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ClearShareFileRangeResult> ShareFileClient::ClearRange(
+  Azure::Response<Models::ClearShareFileRangeResult> ShareFileClient::ClearRange(
       int64_t offset,
       int64_t length,
-      const ClearShareFileRangeOptions& options) const
+      const ClearShareFileRangeOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::UploadRangeOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
     protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Clear;
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + length - 1);
 
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::UploadRange(
+    auto response = _detail::ShareRestClient::File::UploadRange(
         m_shareFileUrl,
-        *Azure::Core::Http::NullBodyStream::GetNullBodyStream(),
+        *Azure::Core::IO::_internal::NullBodyStream::GetNullBodyStream(),
         *m_pipeline,
-        options.Context,
+        context,
         protocolLayerOptions);
+    Models::ClearShareFileRangeResult ret;
+    ret.ETag = std::move(response->ETag);
+    ret.IsServerEncrypted = response->IsServerEncrypted;
+    ret.LastModified = std::move(response->LastModified);
+    ret.RequestId = std::move(response->RequestId);
+    return Azure::Response<Models::ClearShareFileRangeResult>(
+        std::move(ret), response.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
-      const GetShareFileRangeListOptions& options) const
+  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
+      const GetShareFileRangeListOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::GetRangeListOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
     if (options.Range.HasValue())
     {
       if (options.Range.GetValue().Length.HasValue())
@@ -527,78 +570,81 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
-    protocolLayerOptions.PrevShareSnapshot = options.PrevShareSnapshot;
+    protocolLayerOptions.PrevShareSnapshot = options.PreviousShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::GetRangeList(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::GetRangeList(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult>
-  ShareFileClient::ListHandlesSinglePage(const ListShareFileHandlesSinglePageOptions& options) const
+  Azure::Response<Models::ListShareFileHandlesSinglePageResult>
+  ShareFileClient::ListHandlesSinglePage(
+      const ListShareFileHandlesSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::ListHandlesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ListHandlesOptions();
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto result = Details::ShareRestClient::File::ListHandles(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    auto result = _detail::ShareRestClient::File::ListHandles(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ListShareFileHandlesSinglePageResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Handles = std::move(result->HandleList);
 
-    return Azure::Core::Response<Models::ListShareFileHandlesSinglePageResult>(
+    return Azure::Response<Models::ListShareFileHandlesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseShareFileHandleResult> ShareFileClient::ForceCloseHandle(
+  Azure::Response<Models::ForceCloseShareFileHandleResult> ShareFileClient::ForceCloseHandle(
       const std::string& handleId,
-      const ForceCloseShareFileHandleOptions& options) const
+      const ForceCloseShareFileHandleOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
+    (void)options;
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
-    auto result = Details::ShareRestClient::File::ForceCloseHandles(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-    return Azure::Core::Response<Models::ForceCloseShareFileHandleResult>(
+    auto result = _detail::ShareRestClient::File::ForceCloseHandles(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+    return Azure::Response<Models::ForceCloseShareFileHandleResult>(
         Models::ForceCloseShareFileHandleResult(), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseAllShareFileHandlesResult>
-  ShareFileClient::ForceCloseAllHandles(const ForceCloseAllShareFileHandlesOptions& options) const
+  Azure::Response<Models::ForceCloseAllShareFileHandlesSinglePageResult>
+  ShareFileClient::ForceCloseAllHandlesSinglePage(
+      const ForceCloseAllShareFileHandlesSinglePageOptions& options,
+      const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    return Details::ShareRestClient::File::ForceCloseHandles(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
+    return _detail::ShareRestClient::File::ForceCloseHandles(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
+  Azure::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
-      const DownloadShareFileToOptions& options) const
+      const DownloadShareFileToOptions& options,
+      const Azure::Core::Context& context) const
   {
     // Just start downloading using an initial chunk. If it's a small file, we'll get the whole
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
-    int64_t firstChunkLength = Details::FileDownloadDefaultChunkSize;
-    if (options.InitialChunkSize.HasValue())
-    {
-      firstChunkLength = options.InitialChunkSize.GetValue();
-    }
+    int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
+
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
     }
 
     DownloadShareFileOptions firstChunkOptions;
-    firstChunkOptions.Context = options.Context;
     firstChunkOptions.Range = options.Range;
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.GetValue().Length = firstChunkLength;
     }
 
-    auto firstChunk = Download(firstChunkOptions);
+    auto firstChunk = Download(firstChunkOptions, context);
 
     int64_t fileSize;
     int64_t fileRangeSize;
@@ -624,41 +670,37 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
     }
 
-    int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
-        firstChunkOptions.Context, *(firstChunk->BodyStream), buffer, firstChunkLength);
+    int64_t bytesRead = Azure::Core::IO::BodyStream::ReadToCount(
+        *(firstChunk->BodyStream), buffer, firstChunkLength, context);
     if (bytesRead != firstChunkLength)
     {
       throw Azure::Core::RequestFailedException("error when reading body stream");
     }
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter
-        = [](Azure::Core::Response<Models::DownloadShareFileResult>& response) {
-            Models::DownloadShareFileToResult ret;
-            ret.ETag = std::move(response->ETag);
-            ret.LastModified = std::move(response->LastModified);
-            ret.HttpHeaders = std::move(response->HttpHeaders);
-            ret.Metadata = std::move(response->Metadata);
-            ret.IsServerEncrypted = response->IsServerEncrypted;
-            return Azure::Core::Response<Models::DownloadShareFileToResult>(
-                std::move(ret), response.ExtractRawResponse());
-          };
+    auto returnTypeConverter = [](Azure::Response<Models::DownloadShareFileResult>& response) {
+      Models::DownloadShareFileToResult ret;
+      ret.FileSize = response->FileSize;
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Details = std::move(response->Details);
+      return Azure::Response<Models::DownloadShareFileToResult>(
+          std::move(ret), response.ExtractRawResponse());
+    };
     auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadShareFileOptions chunkOptions;
-            chunkOptions.Context = options.Context;
-            chunkOptions.Range = Core::Http::Range();
+            chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.GetValue().Offset = offset;
             chunkOptions.Range.GetValue().Length = length;
-            auto chunk = Download(chunkOptions);
-            int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
-                chunkOptions.Context,
+            auto chunk = Download(chunkOptions, context);
+            int64_t bytesRead = Azure::Core::IO::BodyStream::ReadToCount(
                 *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Range.GetValue().Length.GetValue());
+                chunkOptions.Range.GetValue().Length.GetValue(),
+                context);
             if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
             {
               throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -672,54 +714,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
-    int64_t chunkSize;
-    if (options.ChunkSize.HasValue())
-    {
-      chunkSize = options.ChunkSize.GetValue();
-    }
-    else
-    {
-      int64_t GrainSize = 4 * 1024;
-      chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
-      chunkSize = std::min(chunkSize, Details::FileDownloadDefaultChunkSize);
-    }
 
-    Storage::Details::ConcurrentTransfer(
-        remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
-    ret->ContentLength = fileRangeSize;
+    Storage::_detail::ConcurrentTransfer(
+        remainingOffset,
+        remainingSize,
+        options.TransferOptions.ChunkSize,
+        options.TransferOptions.Concurrency,
+        downloadChunkFunc);
+    ret->ContentRange.Offset = firstChunkOffset;
+    ret->ContentRange.Length = fileRangeSize;
     return ret;
   }
 
-  Azure::Core::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
+  Azure::Response<Models::DownloadShareFileToResult> ShareFileClient::DownloadTo(
       const std::string& fileName,
-      const DownloadShareFileToOptions& options) const
+      const DownloadShareFileToOptions& options,
+      const Azure::Core::Context& context) const
   {
     // Just start downloading using an initial chunk. If it's a small file, we'll get the whole
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
-    int64_t firstChunkLength = Details::FileDownloadDefaultChunkSize;
-    if (options.InitialChunkSize.HasValue())
-    {
-      firstChunkLength = options.InitialChunkSize.GetValue();
-    }
+    int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
     }
 
     DownloadShareFileOptions firstChunkOptions;
-    firstChunkOptions.Context = options.Context;
     firstChunkOptions.Range = options.Range;
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.GetValue().Length = firstChunkLength;
     }
 
-    Storage::Details::FileWriter fileWriter(fileName);
+    Storage::_detail::FileWriter fileWriter(fileName);
 
-    auto firstChunk = Download(firstChunkOptions);
+    auto firstChunk = Download(firstChunkOptions, context);
 
     int64_t fileSize;
     int64_t fileRangeSize;
@@ -739,18 +770,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     firstChunkLength = std::min(firstChunkLength, fileRangeSize);
 
-    auto bodyStreamToFile = [](Azure::Core::Http::BodyStream& stream,
-                               Storage::Details::FileWriter& fileWriter,
+    auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
+                               Storage::_detail::FileWriter& fileWriter,
                                int64_t offset,
                                int64_t length,
-                               Azure::Core::Context& context) {
+                               const Azure::Core::Context& context) {
       constexpr std::size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
         int64_t bytesRead
-            = Azure::Core::Http::BodyStream::ReadToCount(context, stream, buffer.data(), readSize);
+            = Azure::Core::IO::BodyStream::ReadToCount(stream, buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -761,38 +792,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     };
 
-    bodyStreamToFile(
-        *(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, firstChunkOptions.Context);
+    bodyStreamToFile(*(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter
-        = [](Azure::Core::Response<Models::DownloadShareFileResult>& response) {
-            Models::DownloadShareFileToResult ret;
-            ret.ETag = std::move(response->ETag);
-            ret.LastModified = std::move(response->LastModified);
-            ret.HttpHeaders = std::move(response->HttpHeaders);
-            ret.Metadata = std::move(response->Metadata);
-            ret.IsServerEncrypted = response->IsServerEncrypted;
-            return Azure::Core::Response<Models::DownloadShareFileToResult>(
-                std::move(ret), response.ExtractRawResponse());
-          };
+    auto returnTypeConverter = [](Azure::Response<Models::DownloadShareFileResult>& response) {
+      Models::DownloadShareFileToResult ret;
+      ret.FileSize = response->FileSize;
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Details = std::move(response->Details);
+      return Azure::Response<Models::DownloadShareFileToResult>(
+          std::move(ret), response.ExtractRawResponse());
+    };
     auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadShareFileOptions chunkOptions;
-            chunkOptions.Context = options.Context;
-            chunkOptions.Range = Core::Http::Range();
+            chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.GetValue().Offset = offset;
             chunkOptions.Range.GetValue().Length = length;
-            auto chunk = Download(chunkOptions);
+            auto chunk = Download(chunkOptions, context);
             bodyStreamToFile(
                 *(chunk->BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
                 chunkOptions.Range.GetValue().Length.GetValue(),
-                chunkOptions.Context);
+                context);
 
             if (chunkId == numChunks - 1)
             {
@@ -802,44 +828,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
-    int64_t chunkSize;
-    if (options.ChunkSize.HasValue())
-    {
-      chunkSize = options.ChunkSize.GetValue();
-    }
-    else
-    {
-      int64_t GrainSize = 4 * 1024;
-      chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
-      chunkSize = std::min(chunkSize, Details::FileDownloadDefaultChunkSize);
-    }
 
-    Storage::Details::ConcurrentTransfer(
-        remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
-    ret->ContentLength = fileRangeSize;
+    Storage::_detail::ConcurrentTransfer(
+        remainingOffset,
+        remainingSize,
+        options.TransferOptions.ChunkSize,
+        options.TransferOptions.Concurrency,
+        downloadChunkFunc);
+    ret->ContentRange.Offset = firstChunkOffset;
+    ret->ContentRange.Length = fileRangeSize;
     return ret;
   }
 
-  Azure::Core::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
+  Azure::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
-      const UploadShareFileFromOptions& options) const
+      const UploadShareFileFromOptions& options,
+      const Azure::Core::Context& context) const
   {
-    Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
+    _detail::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = bufferSize;
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime
-          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -848,8 +865,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -897,49 +914,53 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
-    auto createResult = Details::ShareRestClient::File::Create(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-
-    int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
-                                                     : Details::FileUploadDefaultChunkSize;
+    auto createResult = _detail::ShareRestClient::File::Create(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      unused(chunkId, numChunks);
-      Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
+      (void)chunkId;
+      (void)numChunks;
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
       UploadShareFileRangeOptions uploadRangeOptions;
-      uploadRangeOptions.Context = options.Context;
-      UploadRange(offset, &contentStream, uploadRangeOptions);
+      UploadRange(offset, &contentStream, uploadRangeOptions, context);
     };
 
-    Storage::Details::ConcurrentTransfer(
-        0, bufferSize, chunkSize, options.Concurrency, uploadPageFunc);
+    int64_t chunkSize = options.TransferOptions.ChunkSize;
+    if (bufferSize < static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
+    {
+      chunkSize = bufferSize;
+    }
+
+    if (bufferSize > 0)
+    {
+      Storage::_detail::ConcurrentTransfer(
+          0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    }
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
-    return Azure::Core::Response<Models::UploadShareFileFromResult>(
+    return Azure::Response<Models::UploadShareFileFromResult>(
         std::move(result), createResult.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
+  Azure::Response<Models::UploadShareFileFromResult> ShareFileClient::UploadFrom(
       const std::string& fileName,
-      const UploadShareFileFromOptions& options) const
+      const UploadShareFileFromOptions& options,
+      const Azure::Core::Context& context) const
   {
-    Storage::Details::FileReader fileReader(fileName);
+    Storage::_detail::FileReader fileReader(fileName);
 
-    Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
+    _detail::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();
-    protocolLayerOptions.FileAttributes
-        = Details::FileAttributesToString(options.SmbProperties.Attributes);
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes
-          = Details::FileAttributesToString(Models::FileAttributes::None);
+      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime
-          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -948,8 +969,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
-              Core::DateTime::TimeFractionFormat::AllDigits);
+          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -997,26 +1018,85 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
-    auto createResult = Details::ShareRestClient::File::Create(
-        m_shareFileUrl, *m_pipeline, options.Context, protocolLayerOptions);
-
-    int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
-                                                     : Details::FileUploadDefaultChunkSize;
+    auto createResult = _detail::ShareRestClient::File::Create(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      unused(chunkId, numChunks);
-      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      (void)chunkId;
+      (void)numChunks;
+      Azure::Core::IO::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
       UploadShareFileRangeOptions uploadRangeOptions;
-      uploadRangeOptions.Context = options.Context;
-      UploadRange(offset, &contentStream, uploadRangeOptions);
+      UploadRange(offset, &contentStream, uploadRangeOptions, context);
     };
 
-    Storage::Details::ConcurrentTransfer(
-        0, fileReader.GetFileSize(), chunkSize, options.Concurrency, uploadPageFunc);
+    const int64_t fileSize = fileReader.GetFileSize();
+    int64_t chunkSize = options.TransferOptions.ChunkSize;
+    if (fileSize < options.TransferOptions.SingleUploadThreshold)
+    {
+      chunkSize = fileSize;
+    }
+
+    if (fileSize > 0)
+    {
+      Storage::_detail::ConcurrentTransfer(
+          0, fileSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
+    }
 
     Models::UploadShareFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
-    return Azure::Core::Response<Models::UploadShareFileFromResult>(
+    return Azure::Response<Models::UploadShareFileFromResult>(
         std::move(result), createResult.ExtractRawResponse());
+  }
+
+  Azure::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(
+      int64_t destinationOffset,
+      const std::string& sourceUri,
+      const Azure::Core::Http::HttpRange& sourceRange,
+      const UploadFileRangeFromUriOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    if (!sourceRange.Length.HasValue())
+    {
+      // sourceRange must have length to perform this operation.
+      std::abort();
+    }
+    int64_t rangeLength = sourceRange.Length.GetValue();
+
+    auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeFromUrlOptions();
+    protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(destinationOffset)
+        + std::string("-") + std::to_string(destinationOffset + rangeLength - 1);
+    protocolLayerOptions.ContentLength = 0;
+    protocolLayerOptions.CopySource = sourceUri;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    if (options.TransactionalContentHash.HasValue()
+        && options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
+    {
+      // SourceContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
+    if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
+        && options.SourceAccessCondition.IfMatchContentHash.GetValue().Algorithm
+            == HashAlgorithm::Md5)
+    {
+      // IfMatchContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
+    if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue()
+        && options.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Algorithm
+            == HashAlgorithm::Md5)
+    {
+      // IfNoneMatchContentHash now only supports Crc64 hash algorithm.
+      std::abort();
+    }
+    protocolLayerOptions.SourceIfNoneMatchCrc64
+        = options.SourceAccessCondition.IfNoneMatchContentHash;
+    protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
+        + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.GetValue() - 1);
+    protocolLayerOptions.XMsWrite = Models::FileRangeWriteFromUrlType::Update;
+
+    return _detail::ShareRestClient::File::UploadRangeFromUrl(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 }}}} // namespace Azure::Storage::Files::Shares

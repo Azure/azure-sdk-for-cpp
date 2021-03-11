@@ -9,8 +9,6 @@ Thank you for your interest in contributing to Azure SDK for C++.
 
 - To make code changes, or contribute something new, please follow the [GitHub Forks / Pull requests model](https://help.github.com/articles/fork-a-repo/): Fork the repo, make the change and propose it back by submitting a pull request.
 
-- Refer to the [wiki](https://github.com/Azure/azure-sdk-for-c/wiki) to learn about how Azure SDK for C generates lint checker, doxygen, and code coverage reports.
-
 Pull Requests
 -------------
 
@@ -143,8 +141,18 @@ The following CMake options are available for adding/removing project features.
 <td>OFF</td>
 </tr>
 <tr>
+<td>BUILD_TRANSPORT_WINHTTP</td>
+<td>Build the WinHTTP transport adapter. When building on Windows systems, if no other transport adapter is built, this option will be automatically turned ON. This option is not supported on non-Windows OSes.</td>
+<td>OFF</td>
+</tr>
+<tr>
 <td>BUILD_DOCUMENTATION</td>
 <td>Build Doxygen documentation</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>MSVC_USE_STATIC_CRT</td>
+<td>On MSVC, link SDK with static CRT (use `/MT` or `/MTd` switch)</td>
 <td>OFF</td>
 </tr>
 </table>

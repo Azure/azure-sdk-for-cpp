@@ -10,10 +10,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   Acl Acl::FromString(const std::string& aclString)
   {
     std::string::const_iterator cur = aclString.begin();
-    std::string str1 = Details::GetSubstringTillDelimiter(':', aclString, cur);
-    std::string str2 = Details::GetSubstringTillDelimiter(':', aclString, cur);
-    std::string str3 = Details::GetSubstringTillDelimiter(':', aclString, cur);
-    std::string str4 = Details::GetSubstringTillDelimiter(':', aclString, cur);
+    std::string str1 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
+    std::string str2 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
+    std::string str3 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
+    std::string str4 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
 
     Acl acl;
     if (str4.empty())
@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     while (cur != dataLakeAclsString.end())
     {
       result.emplace_back(
-          FromString(Details::GetSubstringTillDelimiter(',', dataLakeAclsString, cur)));
+          FromString(_detail::GetSubstringTillDelimiter(',', dataLakeAclsString, cur)));
     }
 
     return result;

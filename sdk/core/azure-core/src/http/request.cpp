@@ -13,21 +13,21 @@ using namespace Azure::Core::Http;
 namespace {
 // returns left map plus all items in right
 // when duplicates, left items are preferred
-static std::map<std::string, std::string> MergeMaps(
-    std::map<std::string, std::string> left,
-    std::map<std::string, std::string> const& right)
+static Azure::Core::CaseInsensitiveMap MergeMaps(
+    Azure::Core::CaseInsensitiveMap left,
+    Azure::Core::CaseInsensitiveMap const& right)
 {
   left.insert(right.begin(), right.end());
   return left;
 }
 } // namespace
 
-void Request::AddHeader(std::string const& name, std::string const& value)
+void Request::SetHeader(std::string const& name, std::string const& value)
 {
-  auto headerNameLowerCase = Azure::Core::Internal::Strings::ToLower(name);
+  auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
   return this->m_retryModeEnabled
-      ? Details::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
-      : Details::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);
+      ? _detail::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
+      : _detail::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);
 }
 
 void Request::RemoveHeader(std::string const& name)
@@ -40,11 +40,18 @@ void Request::StartTry()
 {
   this->m_retryModeEnabled = true;
   this->m_retryHeaders.clear();
+
+  // Make sure to rewind the body stream before each attempt, including the first.
+  // It's possible the request doesn't have a body, so make sure to check if a body stream exists.
+  if (auto bodyStream = this->GetBodyStream())
+  {
+    bodyStream->Rewind();
+  }
 }
 
 HttpMethod Request::GetMethod() const { return this->m_method; }
 
-std::map<std::string, std::string> Request::GetHeaders() const
+Azure::Core::CaseInsensitiveMap Request::GetHeaders() const
 {
   // create map with retry headers which are the most important and we don't want
   // to override them with any duplicate header

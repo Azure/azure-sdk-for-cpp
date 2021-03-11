@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -88,17 +88,18 @@ if(BUILD_TESTING)
   target_sources(
     azure-storage-test
       PRIVATE
-        test/append_blob_client_test.cpp
-        test/append_blob_client_test.hpp
-        test/blob_container_client_test.cpp
-        test/blob_container_client_test.hpp
-        test/blob_sas_test.cpp
-        test/blob_service_client_test.cpp
-        test/block_blob_client_test.cpp
-        test/block_blob_client_test.hpp
-        test/page_blob_client_test.cpp
-        test/page_blob_client_test.hpp
-        test/storage_retry_policy_test.cpp
+        test/ut/append_blob_client_test.cpp
+        test/ut/append_blob_client_test.hpp
+        test/ut/blob_container_client_test.cpp
+        test/ut/blob_container_client_test.hpp
+        test/ut/blob_sas_test.cpp
+        test/ut/blob_service_client_test.cpp
+        test/ut/block_blob_client_test.cpp
+        test/ut/block_blob_client_test.hpp
+        test/ut/macro_guard.cpp
+        test/ut/page_blob_client_test.cpp
+        test/ut/page_blob_client_test.hpp
+        test/ut/storage_retry_policy_test.cpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
@@ -112,4 +113,8 @@ if(BUILD_STORAGE_SAMPLES)
   )
 
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
 endif()

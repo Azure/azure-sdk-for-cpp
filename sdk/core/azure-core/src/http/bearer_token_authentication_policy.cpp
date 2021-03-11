@@ -9,20 +9,21 @@ using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
-    Context const& context,
     Request& request,
-    NextHttpPolicy policy) const
+    NextHttpPolicy policy,
+    Context const& context) const
 {
   {
     std::lock_guard<std::mutex> lock(m_accessTokenMutex);
 
-    if (std::chrono::system_clock::now() > m_accessToken.ExpiresOn)
+    // Refresh the token in 2 or less minutes before the actual expiration.
+    if (std::chrono::system_clock::now() > (m_accessToken.ExpiresOn - std::chrono::minutes(2)))
     {
-      m_accessToken = m_credential->GetToken(context, m_scopes);
+      m_accessToken = m_credential->GetToken(m_tokenRequestOptions, context);
     }
 
-    request.AddHeader("authorization", "Bearer " + m_accessToken.Token);
+    request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
   }
 
-  return policy.Send(context, request);
+  return policy.Send(request, context);
 }

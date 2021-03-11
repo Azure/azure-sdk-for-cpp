@@ -20,28 +20,28 @@ namespace Azure { namespace Storage {
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();
     std::string requestId;
-    if (response->GetHeaders().find(Details::HttpHeaderRequestId) != response->GetHeaders().end())
+    if (response->GetHeaders().find(_detail::HttpHeaderRequestId) != response->GetHeaders().end())
     {
-      requestId = response->GetHeaders().at(Details::HttpHeaderRequestId);
+      requestId = response->GetHeaders().at(_detail::HttpHeaderRequestId);
     }
 
     std::string clientRequestId;
-    if (response->GetHeaders().find(Details::HttpHeaderClientRequestId)
+    if (response->GetHeaders().find(_detail::HttpHeaderClientRequestId)
         != response->GetHeaders().end())
     {
-      clientRequestId = response->GetHeaders().at(Details::HttpHeaderClientRequestId);
+      clientRequestId = response->GetHeaders().at(_detail::HttpHeaderClientRequestId);
     }
 
     std::string errorCode;
     std::string message;
     std::map<std::string, std::string> additionalInformation;
 
-    if (response->GetHeaders().find(Details::HttpHeaderContentType) != response->GetHeaders().end())
+    if (response->GetHeaders().find(_detail::HttpHeaderContentType) != response->GetHeaders().end())
     {
-      if (response->GetHeaders().at(Details::HttpHeaderContentType).find("xml")
+      if (response->GetHeaders().at(_detail::HttpHeaderContentType).find("xml")
           != std::string::npos)
       {
-        auto xmlReader = Details::XmlReader(
+        auto xmlReader = _detail::XmlReader(
             reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
 
         enum class XmlTagName
@@ -57,11 +57,11 @@ namespace Azure { namespace Storage {
         while (true)
         {
           auto node = xmlReader.Read();
-          if (node.Type == Details::XmlNodeType::End)
+          if (node.Type == _detail::XmlNodeType::End)
           {
             break;
           }
-          else if (node.Type == Details::XmlNodeType::EndTag)
+          else if (node.Type == _detail::XmlNodeType::EndTag)
           {
             startTagName.clear();
             if (path.size() > 0)
@@ -73,7 +73,7 @@ namespace Azure { namespace Storage {
               break;
             }
           }
-          else if (node.Type == Details::XmlNodeType::StartTag)
+          else if (node.Type == _detail::XmlNodeType::StartTag)
           {
             startTagName = node.Name;
             if (std::strcmp(node.Name, "Error") == 0)
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage {
               path.emplace_back(XmlTagName::XmlTagUnknown);
             }
           }
-          else if (node.Type == Details::XmlNodeType::Text)
+          else if (node.Type == _detail::XmlNodeType::Text)
           {
             if (path.size() == 2 && path[0] == XmlTagName::XmlTagError
                 && path[1] == XmlTagName::XmlTagCode)
@@ -119,17 +119,17 @@ namespace Azure { namespace Storage {
         }
       }
       else if (
-          response->GetHeaders().at(Details::HttpHeaderContentType).find("html")
+          response->GetHeaders().at(_detail::HttpHeaderContentType).find("html")
           != std::string::npos)
       {
         // TODO: add a refined message parsed from result.
         message = std::string(bodyBuffer.begin(), bodyBuffer.end());
       }
       else if (
-          response->GetHeaders().at(Details::HttpHeaderContentType).find("json")
+          response->GetHeaders().at(_detail::HttpHeaderContentType).find("json")
           != std::string::npos)
       {
-        auto jsonParser = Azure::Core::Internal::Json::json::parse(bodyBuffer);
+        auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
         errorCode = jsonParser["error"]["code"].get<std::string>();
         message = jsonParser["error"]["message"].get<std::string>();
       }

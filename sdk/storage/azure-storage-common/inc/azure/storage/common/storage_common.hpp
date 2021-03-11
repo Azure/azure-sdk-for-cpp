@@ -6,18 +6,17 @@
 #include <algorithm>
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <azure/core/internal/strings.hpp>
+#include <azure/core/case_insensitive_containers.hpp>
+#include <azure/core/http/policy.hpp>
+
+#include "azure/storage/common/constants.hpp"
+#include "azure/storage/common/storage_per_retry_policy.hpp"
 
 namespace Azure { namespace Storage {
-
-  template <class... T> void unused(T&&...) {}
-
-  // Remove these two after DataLake lease client and file lease client are done.
-  constexpr int32_t InfiniteLeaseDuration = -1;
-  std::string CreateUniqueLeaseId();
 
   /**
    * @brief The algorithm used for hash.
@@ -51,21 +50,10 @@ namespace Azure { namespace Storage {
     HashAlgorithm Algorithm = HashAlgorithm::Md5;
   };
 
-  namespace Details {
-    struct CaseInsensitiveComparator
-    {
-      bool operator()(const std::string& lhs, const std::string& rhs) const
-      {
-        return std::lexicographical_compare(
-            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-              return Core::Internal::Strings::ToLower(c1) < Core::Internal::Strings::ToLower(c2);
-            });
-      }
-    };
-
+  namespace _detail {
     ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm);
     std::string ToBase64String(const ContentHash& hash);
-  } // namespace Details
-  using Metadata = std::map<std::string, std::string, Details::CaseInsensitiveComparator>;
+  } // namespace _detail
+  using Metadata = Azure::Core::CaseInsensitiveMap;
 
 }} // namespace Azure::Storage

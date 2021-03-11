@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   inline void ConcurrentTransfer(
       int64_t offset,
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Details {
           break;
         }
         int64_t chunkOffset = offset + chunkSize * chunkId;
-        int64_t chunkLength = std::min(length - chunkSize * chunkId, chunkSize);
+        int64_t chunkLength = (std::min)(length - chunkSize * chunkId, chunkSize);
         try
         {
           transferFunc(chunkOffset, chunkLength, chunkId, numChunks);
@@ -70,4 +70,4 @@ namespace Azure { namespace Storage { namespace Details {
     }
   }
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

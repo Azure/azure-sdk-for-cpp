@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
-     * @param directoryPath The path of a directory.
+     * @param directoryName The name of a directory.
      * @param options Optional parameters used to initialize the client.
      * @return ShareClient The client that can be used to manage a share resource.
      */
@@ -38,23 +38,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initialize a new instance of ShareDirectoryClient using shared key authentication.
-     * @param shareDirectoryUri The URI of the directory this client's request targets.
+     * @param shareDirectoryUrl The URL of the directory this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareDirectoryClient(
-        const std::string& shareDirectoryUri,
+        const std::string& shareDirectoryUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareDirectoryClient using anonymous access or shared
      * access signature.
-     * @param shareDirectoryUri The URI of the directory this client's request targets.
+     * @param shareDirectoryUrl The URL of the directory this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareDirectoryClient(
-        const std::string& shareDirectoryUri,
+        const std::string& shareDirectoryUrl,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -75,14 +75,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Create a ShareFileClient from current ShareDirectoryClient
-     * @param filePath The path of the file.
+     * @param fileName The name of the file.
      * @return ShareFileClient A file client that can be used to manage a share file
      * resource.
      */
     ShareFileClient GetFileClient(const std::string& fileName) const;
 
     /**
-     * @brief Initializes a new instance of the ShareDirectoryClient class with an identical uri
+     * @brief Initializes a new instance of the ShareDirectoryClient class with an identical url
      * source but the specified share snapshot timestamp.
      *
      * @param shareSnapshot The snapshot identifier for a share snapshot.
@@ -95,127 +95,148 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates the directory.
      * @param options Optional parameters to create this directory.
-     * @return Azure::Core::Response<Models::CreateShareDirectoryResult> containing the information
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::CreateShareDirectoryResult> containing the information
      * returned when creating the directory.
      */
-    Azure::Core::Response<Models::CreateShareDirectoryResult> Create(
-        const CreateShareDirectoryOptions& options = CreateShareDirectoryOptions()) const;
+    Azure::Response<Models::CreateShareDirectoryResult> Create(
+        const CreateShareDirectoryOptions& options = CreateShareDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Creates the directory if it does not exist.
      * @param options Optional parameters to create this directory.
-     * @return Azure::Core::Response<Models::CreateShareDirectoryResult> containing the information
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::CreateShareDirectoryResult> containing the information
      * returned when creating the directory if successfully created.
      */
-    Azure::Core::Response<Models::CreateShareDirectoryResult> CreateIfNotExists(
-        const CreateShareDirectoryOptions& options = CreateShareDirectoryOptions()) const;
+    Azure::Response<Models::CreateShareDirectoryResult> CreateIfNotExists(
+        const CreateShareDirectoryOptions& options = CreateShareDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the directory.
      * @param options Optional parameters to delete this directory.
-     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory. Currently empty but preserved for future usage.
      */
-    Azure::Core::Response<Models::DeleteShareDirectoryResult> Delete(
-        const DeleteShareDirectoryOptions& options = DeleteShareDirectoryOptions()) const;
+    Azure::Response<Models::DeleteShareDirectoryResult> Delete(
+        const DeleteShareDirectoryOptions& options = DeleteShareDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the directory if it exists.
      * @param options Optional parameters to delete this directory.
-     * @return Azure::Core::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
      * returned when deleting the directory. Currently empty but preserved for future usage.
      * Only when the delete operation if successful, the returned information other than 'Deleted'
      * is valid.
      */
-    Azure::Core::Response<Models::DeleteShareDirectoryResult> DeleteIfExists(
-        const DeleteShareDirectoryOptions& options = DeleteShareDirectoryOptions()) const;
+    Azure::Response<Models::DeleteShareDirectoryResult> DeleteIfExists(
+        const DeleteShareDirectoryOptions& options = DeleteShareDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Gets the properties of the directory.
      * @param options Optional parameters to get this directory's properties.
-     * @return Azure::Core::Response<Models::GetShareDirectoryPropertiesResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::GetShareDirectoryPropertiesResult> containing the
      * properties of the directory returned from the server.
      */
-    Azure::Core::Response<Models::GetShareDirectoryPropertiesResult> GetProperties(
-        const GetShareDirectoryPropertiesOptions& options
-        = GetShareDirectoryPropertiesOptions()) const;
+    Azure::Response<Models::GetShareDirectoryPropertiesResult> GetProperties(
+        const GetShareDirectoryPropertiesOptions& options = GetShareDirectoryPropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the properties of the directory.
      * @param smbProperties The SMB properties to be set to the directory.
      * @param options Optional parameters to set this directory's properties.
-     * @return Azure::Core::Response<Models::SetShareDirectoryPropertiesResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::SetShareDirectoryPropertiesResult> containing the
      * properties of the directory returned from the server.
      */
-    Azure::Core::Response<Models::SetShareDirectoryPropertiesResult> SetProperties(
-        Models::FileShareSmbProperties smbProperties,
-        const SetShareDirectoryPropertiesOptions& options
-        = SetShareDirectoryPropertiesOptions()) const;
+    Azure::Response<Models::SetShareDirectoryPropertiesResult> SetProperties(
+        Models::FileSmbProperties smbProperties,
+        const SetShareDirectoryPropertiesOptions& options = SetShareDirectoryPropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets the metadata of the directory.
      * @param metadata User-defined metadata to be stored with the directory. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set this directory's metadata.
-     * @return Azure::Core::Response<Models::SetShareDirectoryMetadataResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::SetShareDirectoryMetadataResult> containing the
      * information of the directory returned from the server.
      */
-    Azure::Core::Response<Models::SetShareDirectoryMetadataResult> SetMetadata(
+    Azure::Response<Models::SetShareDirectoryMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetShareDirectoryMetadataOptions& options = SetShareDirectoryMetadataOptions()) const;
+        const SetShareDirectoryMetadataOptions& options = SetShareDirectoryMetadataOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>
+    Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
     ListFilesAndDirectoriesSinglePage(
         const ListFilesAndDirectoriesSinglePageOptions& options
-        = ListFilesAndDirectoriesSinglePageOptions()) const;
+        = ListFilesAndDirectoriesSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief List open handles on the directory.
      * @param options Optional parameters to list this directory's open handles.
-     * @return Azure::Core::Response<Models::ListShareDirectoryHandlesSinglePageResult> containing
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::ListShareDirectoryHandlesSinglePageResult> containing
      * the information of the operation and the open handles of this directory
      */
-    Azure::Core::Response<Models::ListShareDirectoryHandlesSinglePageResult> ListHandlesSinglePage(
+    Azure::Response<Models::ListShareDirectoryHandlesSinglePageResult> ListHandlesSinglePage(
         const ListShareDirectoryHandlesSinglePageOptions& options
-        = ListShareDirectoryHandlesSinglePageOptions()) const;
+        = ListShareDirectoryHandlesSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Closes a handle opened on a directory at the service.
      * @param handleId The ID of the handle to be closed.
      * @param options Optional parameters to close one of this directory's open handles.
-     * @return Azure::Core::Response<Models::ForceCloseShareDirectoryHandleResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::ForceCloseShareDirectoryHandleResult> containing the
      * information of the closed handle. Current empty but preserved for future usage.
      */
-    Azure::Core::Response<Models::ForceCloseShareDirectoryHandleResult> ForceCloseHandle(
+    Azure::Response<Models::ForceCloseShareDirectoryHandleResult> ForceCloseHandle(
         const std::string& handleId,
         const ForceCloseShareDirectoryHandleOptions& options
-        = ForceCloseShareDirectoryHandleOptions()) const;
+        = ForceCloseShareDirectoryHandleOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Closes all handles opened on a directory at the service.
      * @param options Optional parameters to close all this directory's open handles.
-     * @return Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesResult> containing
-     * the information of the closed handles
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+     * containing the information of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<Models::ForceCloseAllShareDirectoryHandlesResult> ForceCloseAllHandles(
-        const ForceCloseAllShareDirectoryHandlesOptions& options
-        = ForceCloseAllShareDirectoryHandlesOptions()) const;
+    Azure::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+    ForceCloseAllHandlesSinglePage(
+        const ForceCloseAllShareDirectoryHandlesSinglePageOptions& options
+        = ForceCloseAllShareDirectoryHandlesSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
     Azure::Core::Http::Url m_shareDirectoryUrl;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     explicit ShareDirectoryClient(
-        Azure::Core::Http::Url shareDirectoryUri,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_shareDirectoryUrl(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
+        Azure::Core::Http::Url shareDirectoryUrl,
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+        : m_shareDirectoryUrl(std::move(shareDirectoryUrl)), m_pipeline(std::move(pipeline))
     {
     }
 

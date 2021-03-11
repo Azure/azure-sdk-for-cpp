@@ -2,10 +2,15 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/key_curve_name.hpp"
+
+#include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
 #include <azure/core/internal/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
+using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
 namespace {
 void ParseStringOperationsToKeyOperations(
@@ -19,24 +24,53 @@ void ParseStringOperationsToKeyOperations(
 }
 } // namespace
 
-KeyVaultKey Details::KeyVaultKeyDeserialize(
+KeyVaultKey _detail::KeyVaultKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  auto body = rawResponse.GetBody();
-  auto jsonParser = Azure::Core::Internal::Json::json::parse(body);
-
   KeyVaultKey key(name);
-  auto const& jsonKey = jsonParser["key"];
+  _detail::KeyVaultKeyDeserialize(key, rawResponse);
+  return key;
+}
+
+void _detail::KeyVaultKeyDeserialize(
+    KeyVaultKey& key,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  auto body = rawResponse.GetBody();
+  auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
+
+  // "Key"
+  auto const& jsonKey = jsonParser[_detail::KeyPropertyName];
   {
-    auto keyOperationVector = jsonKey["key_ops"].get<std::vector<std::string>>();
+    // key_ops
+    auto keyOperationVector = jsonKey[_detail::KeyOpsPropertyName].get<std::vector<std::string>>();
     std::vector<KeyOperation> keyOperations;
     ParseStringOperationsToKeyOperations(keyOperations, keyOperationVector);
     key.Key.SetKeyOperations(keyOperations);
   }
+  key.Key.Id = jsonKey[_detail::KeyIdPropertyName].get<std::string>();
+  key.Key.KeyType
+      = _detail::KeyTypeFromString(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
 
-  key.Key.Id = jsonKey["kid"].get<std::string>();
-  key.Key.KeyType = Details::KeyTypeFromString(jsonKey["kty"].get<std::string>());
+  if (jsonKey.contains(_detail::CurveNamePropertyName))
+  {
+    key.Key.CurveName = KeyCurveName(jsonKey[_detail::CurveNamePropertyName].get<std::string>());
+  }
 
-  return key;
+  // "Attributes"
+  {
+    auto attributes = jsonParser[_detail::AttributesPropertyName];
+    key.Properties.CreatedOn
+        = UnixTimeConverter::UnixTimeToDatetime(attributes["created"].get<uint64_t>());
+  }
+
+  // "Tags"
+  auto const& tags = jsonParser[_detail::TagsPropertyName];
+  {
+    for (auto tag = tags.begin(); tag != tags.end(); ++tag)
+    {
+      key.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
+    }
+  }
 }

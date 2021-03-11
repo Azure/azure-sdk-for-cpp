@@ -1,5 +1,5 @@
 # download test data
-include(download_test_data)
+include(DownloadJsonTestData)
 
 # test fixture to download test data
 add_test(NAME "download_test_data" COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target download_test_data)
@@ -10,6 +10,8 @@ set_tests_properties(download_test_data PROPERTIES FIXTURES_SETUP TEST_DATA)
 #############################################################################
 
 add_library(doctest_main OBJECT src/unit.cpp)
+# Remove global compile options from this target.
+set_target_properties(doctest_main PROPERTIES COMPILE_OPTIONS "")
 set_target_properties(doctest_main PROPERTIES
     COMPILE_DEFINITIONS "$<$<CXX_COMPILER_ID:MSVC>:_SCL_SECURE_NO_WARNINGS>"
     COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:MSVC>:/EHsc;$<$<CONFIG:Release>:/Od>>"
@@ -93,6 +95,8 @@ foreach(file ${files})
     string(REGEX REPLACE "unit-([^$]+)" "json-test-\\1" testcase ${file_basename})
 
     add_executable(${testcase} $<TARGET_OBJECTS:doctest_main> ${file})
+    # Remove global compile options from this target.
+    set_target_properties(${testcase} PROPERTIES COMPILE_OPTIONS "")
     target_compile_definitions(${testcase} PRIVATE DOCTEST_CONFIG_SUPER_FAST_ASSERTS)
     target_compile_options(${testcase} PRIVATE
         $<$<CXX_COMPILER_ID:MSVC>:/EHsc;$<$<CONFIG:Release>:/Od>>

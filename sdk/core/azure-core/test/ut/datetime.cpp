@@ -8,7 +8,7 @@
 #include <chrono>
 #include <limits>
 
-using namespace Azure::Core;
+using namespace Azure;
 
 TEST(DateTime, ParseDateAndTimeBasic)
 {
@@ -34,6 +34,7 @@ TEST(DateTime, ParseDateBasic)
   {
     auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
     EXPECT_NE(0, dt.time_since_epoch().count());
+    EXPECT_EQ(dt.ToString(), "2013-05-17T00:00:00Z");
   }
 }
 
@@ -44,14 +45,19 @@ TEST(DateTime, ParseDateExtended)
 }
 
 namespace {
+template <DateTime::TimeFractionFormat TF = DateTime::TimeFractionFormat::DropTrailingZeros>
 void TestDateTimeRoundtrip(std::string const& str, std::string const& strExpected)
 {
   auto dt = DateTime::Parse(str, DateTime::DateFormat::Rfc3339);
-  auto const str2 = dt.GetString(DateTime::DateFormat::Rfc3339);
+  auto const str2 = dt.ToString(DateTime::DateFormat::Rfc3339, TF);
   EXPECT_EQ(str2, strExpected);
 }
 
-void TestDateTimeRoundtrip(std::string const& str) { TestDateTimeRoundtrip(str, str); }
+template <DateTime::TimeFractionFormat TF = DateTime::TimeFractionFormat::DropTrailingZeros>
+void TestDateTimeRoundtrip(std::string const& str)
+{
+  TestDateTimeRoundtrip<TF>(str, str);
+}
 } // namespace
 
 TEST(DateTime, ParseTimeRoundrip1)
@@ -80,21 +86,24 @@ TEST(DateTime, decimals)
   {
     std::string strExpected("2020-10-13T21:06:15.3300000Z");
     auto dt = DateTime::Parse("2020-10-13T21:06:15.33Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    auto const str2
+        = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15.0000000Z");
     auto dt = DateTime::Parse("2020-10-13T21:06:15Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    auto const str2
+        = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15.1234500Z");
     auto dt = DateTime::Parse("2020-10-13T21:06:15.12345Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    auto const str2
+        = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 }
@@ -104,14 +113,16 @@ TEST(DateTime, noDecimals)
   {
     std::string strExpected("2020-10-13T21:06:15Z");
     auto dt = DateTime::Parse("2020-10-13T21:06:15Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::Truncate);
+    auto const str2
+        = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15Z");
     auto dt = DateTime::Parse("2020-10-13T21:06:15.99999Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::Truncate);
+    auto const str2
+        = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
   }
 }
@@ -121,9 +132,11 @@ TEST(DateTime, sameResultFromDefaultRfc3339)
   {
     auto dt = DateTime::Parse("2020-10-13T21:06:15.33000000Z", DateTime::DateFormat::Rfc3339);
     auto dt2 = DateTime::Parse("2020-10-13T21:06:15.330000000Z", DateTime::DateFormat::Rfc3339);
-    auto const str1 = dt.GetRfc3339String(DateTime::TimeFractionFormat::DropTrailingZeros);
-    auto const str2 = dt2.GetString(DateTime::DateFormat::Rfc3339);
+    auto const str1 = dt.ToString(
+        DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::DropTrailingZeros);
+    auto const str2 = dt2.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str1, str2);
+    EXPECT_EQ(str1, dt2.ToString());
   }
 }
 
@@ -159,7 +172,7 @@ TEST(DateTime, EmittingTimeCorrectDay)
 {
   DateTime const test
       = DateTime() + std::chrono::seconds(63691573964LL); // 2019-04-22T23:52:44 is a Monday
-  auto const actual = test.GetString(DateTime::DateFormat::Rfc1123);
+  auto const actual = test.ToString(DateTime::DateFormat::Rfc1123);
   std::string const expected("Mon");
   EXPECT_EQ(actual.substr(0, 3), expected);
 }
@@ -430,9 +443,42 @@ TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
   for (auto const& str : badStrings)
   {
     auto const dt = DateTime::Parse(str, DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetString(DateTime::DateFormat::Rfc3339);
+    auto const str2 = dt.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str2, strCorrected);
   }
+}
+
+TEST(DateTime, ToStringNoArg)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(dt.ToString(), "2013-05-17T01:02:03.123Z");
+}
+
+TEST(DateTime, ToStringOneArg)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc3339), "2013-05-17T01:02:03.123Z");
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc1123), "Fri, 17 May 2013 01:02:03 GMT");
+}
+
+TEST(DateTime, ToStringInvalid)
+{
+  auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
+
+  EXPECT_THROW(dt.ToString(static_cast<DateTime::DateFormat>(2)), std::invalid_argument);
+
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::AllDigits),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::DropTrailingZeros),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, DateTime::TimeFractionFormat::Truncate),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc1123, static_cast<DateTime::TimeFractionFormat>(3)),
+      std::invalid_argument);
 }
 
 TEST(DateTime, ParseTimeInvalid2)
@@ -633,4 +679,124 @@ TEST(DateTime, ComparisonOperators)
   EXPECT_GE(chronoFuture, azcorePast);
   EXPECT_GE(chronoPast, azcorePast);
   EXPECT_GE(chronoFuture, azcoreFuture);
+}
+
+TEST(DateTime, TimeRoundtrip)
+{
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000001Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000002Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000003Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000004Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000005Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000006Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000007Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000008Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000009Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000010Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000020Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000030Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000040Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000050Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000060Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000070Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000080Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000090Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000100Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000200Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000300Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000400Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000500Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000600Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000700Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000800Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0000900Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0001000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0002000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0003000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0004000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0005000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0006000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0007000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0008000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0009000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0010000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0020000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0030000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0040000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0050000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0060000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0070000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0080000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0090000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0100000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0200000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0300000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0400000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0500000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0600000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0700000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0800000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.0900000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.1000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.2000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.3000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.4000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.5000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.6000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.7000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.8000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:00.9000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:01.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:02.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:03.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:04.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:05.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:06.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:07.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:08.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:09.0000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:10.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:20.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:30.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:40.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:00:50.0000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:01:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:02:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:03:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:04:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:05:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:06:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:07:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:08:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:09:00.0000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:10:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:20:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:30:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:40:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T00:50:00.0000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T01:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T02:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T03:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T04:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T05:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T06:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T07:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T08:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T09:00:00.0000000Z");
+
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T10:00:00.0000000Z");
+  TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
 }

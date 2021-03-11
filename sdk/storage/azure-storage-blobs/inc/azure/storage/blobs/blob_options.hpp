@@ -9,8 +9,10 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/internal/client_options.hpp>
+#include <azure/core/match_conditions.hpp>
+#include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
-#include <azure/storage/common/storage_retry_policy.hpp>
 
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
@@ -19,7 +21,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct BlobContainerAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
+  struct BlobContainerAccessConditions : public Azure::ModifiedConditions,
+                                         public LeaseAccessConditions
   {
   };
 
@@ -39,8 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public ModifiedTimeConditions,
-                                public ETagAccessConditions,
+  struct BlobAccessConditions : public Azure::ModifiedConditions,
+                                public Azure::MatchConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions
   {
@@ -49,8 +52,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for blob lease operations.
    */
-  struct LeaseBlobAccessConditions : public ModifiedTimeConditions,
-                                     public ETagAccessConditions,
+  struct LeaseBlobAccessConditions : public Azure::ModifiedConditions,
+                                     public Azure::MatchConditions,
                                      public TagAccessConditions
   {
   };
@@ -122,20 +125,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Client options used to initalize all kinds of blob clients.
    */
-  struct BlobClientOptions
+  struct BlobClientOptions : Azure::Core::_internal::ClientOptions
   {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
     /**
      * @brief Holds the customer provided key used when making requests.
      */
@@ -147,14 +138,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionScope;
 
     /**
-     * @brief Specify the number of retries and other retry-related options.
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
      */
-    StorageRetryWithSecondaryOptions RetryOptions;
+    std::string SecondaryHostForRetryReads;
 
     /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     * API version used by this client.
      */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
+    std::string ApiVersion = _detail::ApiVersion;
   };
 
   /**
@@ -162,11 +157,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct ListBlobContainersSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies a string that filters the results to return only containers whose
      * name begins with the specified prefix.
@@ -191,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    Models::ListBlobContainersIncludeItem Include = Models::ListBlobContainersIncludeItem::None;
+    Models::ListBlobContainersIncludeFlags Include = Models::ListBlobContainersIncludeFlags::None;
   };
 
   /**
@@ -200,15 +190,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetUserDelegationKeyOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Start time for the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      */
-    Azure::Core::DateTime startsOn = std::chrono::system_clock::now();
+    Azure::DateTime startsOn = std::chrono::system_clock::now();
   };
 
   /**
@@ -216,10 +201,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetServicePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -227,10 +208,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetServicePropertiesOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -238,10 +215,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetAccountInfoOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -249,10 +222,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetBlobServiceStatisticsOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -260,11 +229,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct FindBlobsByTagsSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief A string value that identifies the portion of the result set to be returned
      * with the next operation. The operation returns a ContinuationToken value within the response
@@ -284,11 +248,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct CreateBlobContainerOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
@@ -318,11 +277,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DeleteBlobContainerOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobContainerAccessConditions AccessConditions;
@@ -333,11 +287,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct UndeleteBlobContainerOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Use this parameter if you would like to restore the container under a
      * different name.
@@ -351,11 +300,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetBlobContainerPropertiesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     LeaseAccessConditions AccessConditions;
@@ -367,11 +311,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobContainerMetadataOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     struct : public LeaseAccessConditions
@@ -380,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Specify this header to perform the operation only if the resource has been
        * modified since the specified time. This timestamp will be truncated to second.
        */
-      Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
+      Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
     } AccessConditions;
   };
 
@@ -390,11 +329,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct ListBlobsSinglePageOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies a string that filters the results to return only blobs whose
      * name begins with the specified prefix.
@@ -419,7 +353,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies one or more datasets to include in the response.
      */
-    Models::ListBlobsIncludeItem Include = Models::ListBlobsIncludeItem::None;
+    Models::ListBlobsIncludeFlags Include = Models::ListBlobsIncludeFlags::None;
   };
 
   /**
@@ -427,11 +361,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetBlobContainerAccessPolicyOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
@@ -443,11 +372,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetBlobContainerAccessPolicyOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
@@ -472,11 +396,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetBlobPropertiesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
@@ -487,11 +406,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetBlobHttpHeadersOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
@@ -504,11 +418,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobMetadataOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
@@ -520,12 +429,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobAccessTierOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @beirf Indicates the priority with which to rehydrate an archived blob. The priority
+     * @brief Indicates the priority with which to rehydrate an archived blob. The priority
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
@@ -537,11 +441,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct StartCopyBlobFromUriOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies user-defined name-value pairs associated with the blob. If no
      * name-value pairs are specified, the operation will copy the metadata from the source blob or
@@ -567,14 +466,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
-     * @beirf Indicates the priority with which to rehydrate an archived blob. The priority
+     * @brief Indicates the priority with which to rehydrate an archived blob. The priority
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
     Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
 
     /**
-     * @beirf If the destination blob should be sealed. Only applicable for Append Blobs.
+     * @brief If the destination blob should be sealed. Only applicable for Append Blobs.
      */
     Azure::Core::Nullable<bool> ShouldSealDestination;
   };
@@ -584,11 +483,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct AbortCopyBlobFromUriOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
@@ -601,14 +495,15 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DownloadBlobOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
+
+    /**
+     * @brief When specified together with Range, service returns hash for the range as long as the
+     * range is less than or equal to 4 MiB in size.
+     */
+    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -622,31 +517,29 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DownloadBlobToOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
-    /**
-     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
-     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
-     * in chunks of size ChunkSize.
-     */
-    Azure::Core::Nullable<int64_t> InitialChunkSize;
+    struct
+    {
+      /**
+       * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
+       * downloaded in a single request. Blobs larger than this limit will continue being downloaded
+       * in chunks of size ChunkSize.
+       */
+      int64_t InitialChunkSize = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+      /**
+       * @brief The maximum number of bytes in a single request.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   /**
@@ -654,11 +547,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct CreateBlobSnapshotOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Specifies user-defined name-value pairs associated with the blob. If no
      * name-value pairs are specified, the operation will copy the base blob metadata to the
@@ -679,11 +567,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DeleteBlobOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specifies to delete either the base blob
      * and all of its snapshots, or only the blob's snapshots and not the blob itself. Required if
      * the blob has associated snapshots.
@@ -701,10 +584,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct UndeleteBlobOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
   };
 
   /**
@@ -712,11 +591,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct AcquireBlobLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
@@ -729,11 +603,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct RenewBlobLeaseOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     LeaseBlobAccessConditions AccessConditions;
@@ -744,11 +613,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct ChangeBlobLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
@@ -761,11 +625,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct ReleaseBlobLeaseOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     LeaseBlobAccessConditions AccessConditions;
@@ -776,11 +635,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct BreakBlobLeaseOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Proposed duration the lease should continue before it is broken, in seconds,
      * between 0 and 60. This break period is only used if it is shorter than the time remaining on
@@ -802,11 +656,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobTagsOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     TagAccessConditions AccessConditions;
@@ -818,11 +667,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetBlobTagsOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     TagAccessConditions AccessConditions;
@@ -833,11 +677,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct UploadBlockBlobOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
@@ -872,11 +711,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct UploadBlockBlobFromOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief The standard HTTP header system properties to set.
      */
     Models::BlobHttpHeaders HttpHeaders;
@@ -891,15 +725,25 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Nullable<Models::AccessTier> Tier;
 
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
+    struct
+    {
+      /**
+       * @brief Blob smaller than this will be uploaded with a single upload operation. This value
+       * cannot be larger than 5000 MiB.
+       */
+      int64_t SingleUploadThreshold = 256 * 1024 * 1024;
 
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
+      /**
+       * @brief The maximum number of bytes in a single request. This value cannot be larger than
+       * 4000 MiB.
+       */
+      int64_t ChunkSize = 4 * 1024 * 1024;
+
+      /**
+       * @brief The maximum number of threads that may be used in a parallel transfer.
+       */
+      int Concurrency = 5;
+    } TransferOptions;
   };
 
   /**
@@ -907,11 +751,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct StageBlockOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
@@ -931,14 +770,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct StageBlockFromUriOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
+    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -955,7 +789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    struct : public ModifiedTimeConditions, public ETagAccessConditions
+    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
     } SourceAccessConditions;
   };
@@ -965,11 +799,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct CommitBlockListOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief The standard HTTP header system properties to set.
      */
@@ -997,11 +826,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetBlockListOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
@@ -1020,11 +844,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct CreateAppendBlobOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief The standard HTTP header system properties to set.
      */
@@ -1047,11 +866,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct AppendBlockOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
@@ -1070,14 +884,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct AppendBlockFromUriOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::Range> SourceRange;
+    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -1098,11 +907,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SealAppendBlobOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     AppendBlobAccessConditions AccessConditions;
@@ -1113,11 +917,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct CreatePageBlobOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief The sequence number is a user-controlled value that you can use to track requests. The
      * value of the sequence number must be between 0 and 2^63 - 1.
@@ -1151,11 +950,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct UploadPageBlobPagesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
@@ -1173,11 +967,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct UploadPageBlobPagesFromUriOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
@@ -1197,11 +986,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct ClearPageBlobPagesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     PageBlobAccessConditions AccessConditions;
@@ -1212,11 +996,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct ResizePageBlobOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
@@ -1229,15 +1008,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetPageBlobPageRangesOptions
   {
     /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
      * omitted, then all ranges for the blob are returned.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1250,11 +1024,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct StartCopyPageBlobIncrementalOptions
   {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */

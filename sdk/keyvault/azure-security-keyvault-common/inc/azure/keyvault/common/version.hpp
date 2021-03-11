@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief This file is used for automatic release operations.
+ *
+ */
+
 #pragma once
 
 #include <string>
@@ -14,7 +19,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Common {
 
-  class Version {
+  class PackageVersion {
   public:
     static constexpr int Major = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR;
     static constexpr int Minor = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR;

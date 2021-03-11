@@ -6,11 +6,11 @@
 #include <azure/core/http/http.hpp>
 
 using Azure::Core::Context;
-using Azure::Core::Http::BodyStream;
+using Azure::Core::IO::BodyStream;
 
 namespace Azure { namespace Storage {
 
-  int64_t ReliableStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
+  int64_t ReliableStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
   {
     (void)context;
     for (int64_t intent = 1;; intent++)
@@ -22,11 +22,11 @@ namespace Azure { namespace Storage {
         // if this fails, throw bubbles up
         // As m_inner is unique_pr, it will be destructed on reassignment, cleaning up network
         // session.
-        this->m_inner = this->m_httpGetter(context, this->m_retryInfo);
+        this->m_inner = this->m_httpGetter(this->m_retryInfo, context);
       }
       try
       {
-        auto const readBytes = this->m_inner->Read(context, buffer, count);
+        auto const readBytes = this->m_inner->Read(buffer, count, context);
         // update offset
         this->m_retryInfo.Offset += readBytes;
         return readBytes;

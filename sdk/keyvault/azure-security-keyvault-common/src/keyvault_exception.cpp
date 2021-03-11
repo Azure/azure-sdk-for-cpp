@@ -14,7 +14,7 @@ using namespace Azure::Security::KeyVault::Common;
 namespace {
 
 inline std::string GetHeaderOrEmptyString(
-    std::map<std::string, std::string> const& headers,
+    Azure::Core::CaseInsensitiveMap const& headers,
     std::string const& headerName)
 {
   auto header = headers.find(headerName);
@@ -30,20 +30,26 @@ inline std::string GetHeaderOrEmptyString(
 KeyVaultException KeyVaultException::CreateFromResponse(
     std::unique_ptr<Azure::Core::Http::RawResponse> response)
 {
-  std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
+  return CreateFromResponse(*response);
+}
 
-  auto httpStatusCode = response->GetStatusCode();
-  std::string reasonPhrase = response->GetReasonPhrase();
-  auto& headers = response->GetHeaders();
-  std::string requestId = GetHeaderOrEmptyString(headers, Details::MsRequestId);
-  std::string clientRequestId = GetHeaderOrEmptyString(headers, Details::MsClientRequestId);
-  std::string contentType = GetHeaderOrEmptyString(headers, Details::ContentType);
+KeyVaultException KeyVaultException::CreateFromResponse(
+    Azure::Core::Http::RawResponse const& response)
+{
+  std::vector<uint8_t> bodyBuffer = std::move(response.GetBody());
+
+  auto httpStatusCode = response.GetStatusCode();
+  std::string reasonPhrase = response.GetReasonPhrase();
+  auto& headers = response.GetHeaders();
+  std::string requestId = GetHeaderOrEmptyString(headers, _detail::MsRequestId);
+  std::string clientRequestId = GetHeaderOrEmptyString(headers, _detail::MsClientRequestId);
+  std::string contentType = GetHeaderOrEmptyString(headers, _detail::ContentType);
   std::string errorCode;
   std::string message;
 
   if (contentType.find("json") != std::string::npos)
   {
-    auto jsonParser = Azure::Core::Internal::Json::json::parse(bodyBuffer);
+    auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
     auto& error = jsonParser["error"];
     errorCode = error["code"].get<std::string>();
     message = error["message"].get<std::string>();
@@ -62,6 +68,6 @@ KeyVaultException KeyVaultException::CreateFromResponse(
   result.RequestId = std::move(requestId);
   result.ErrorCode = std::move(errorCode);
   result.Message = std::move(message);
-  result.RawResponse = std::move(response);
+  result.RawResponse = std::make_unique<Azure::Core::Http::RawResponse>(response);
   return result;
 }

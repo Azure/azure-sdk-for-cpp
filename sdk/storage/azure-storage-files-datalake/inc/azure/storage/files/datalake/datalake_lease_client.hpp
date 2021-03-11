@@ -60,77 +60,84 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return Lease id of this lease client.
      */
-    std::string GetLeaseId() const { return m_blobLeaseClient.GetLeaseId(); }
+    const std::string& GetLeaseId() const { return m_blobLeaseClient.GetLeaseId(); }
 
     /**
      * @brief Acquires a lease on the datalake path or datalake path container.
      *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of
      * the lease, in seconds, or InfiniteLeaseDuration for a lease that never
      * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
      * changed using renew or change.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A AcquireDataLakeLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::AcquireDataLakeLeaseResult> Acquire(
+    Azure::Response<Models::AcquireDataLakeLeaseResult> Acquire(
         std::chrono::seconds duration,
-        const AcquireDataLakeLeaseOptions& options = AcquireDataLakeLeaseOptions())
+        const AcquireDataLakeLeaseOptions& options = AcquireDataLakeLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return m_blobLeaseClient.Acquire(duration, options);
+      return m_blobLeaseClient.Acquire(duration, options, context);
     }
 
     /**
      * @brief Renews the datalake path or datalake path container's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A RenewDataLakeLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::RenewDataLakeLeaseResult> Renew(
-        const RenewDataLakeLeaseOptions& options = RenewDataLakeLeaseOptions())
+    Azure::Response<Models::RenewDataLakeLeaseResult> Renew(
+        const RenewDataLakeLeaseOptions& options = RenewDataLakeLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return m_blobLeaseClient.Renew(options);
+      return m_blobLeaseClient.Renew(options, context);
     }
 
     /**
      * @brief Releases the datalake path or datalake path container's previously-acquired lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return A ReleaseDataLakeLeaseResult describing the updated container.
+     * @param context Context for cancelling long running operations.
+     * @return A ReleaseDataLakeLeaseResult describing the updated container or blob.
      */
-    Azure::Core::Response<Models::ReleaseDataLakeLeaseResult> Release(
-        const ReleaseDataLakeLeaseOptions& options = ReleaseDataLakeLeaseOptions())
+    Azure::Response<Models::ReleaseDataLakeLeaseResult> Release(
+        const ReleaseDataLakeLeaseOptions& options = ReleaseDataLakeLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return m_blobLeaseClient.Release(options);
+      return m_blobLeaseClient.Release(options, context);
     }
 
     /**
      * @brief Changes the lease of an active lease.
      *
-     * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return A ChangeDataLakeLeaseResult describing the lease.
+     * @param context Context for cancelling long running operations.
+     * @return A ChangeDataLakeLeaseResult describing the changed lease.
+     * @remarks The current DataLakeLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Core::Response<Models::ChangeDataLakeLeaseResult> Change(
+    Azure::Response<Models::ChangeDataLakeLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeDataLakeLeaseOptions& options = ChangeDataLakeLeaseOptions())
+        const ChangeDataLakeLeaseOptions& options = ChangeDataLakeLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return m_blobLeaseClient.Change(proposedLeaseId, options);
+      return m_blobLeaseClient.Change(proposedLeaseId, options, context);
     }
 
     /**
      * @brief Breaks the previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
      * @return A BreakDataLakeLeaseResult describing the broken lease.
      */
-    Azure::Core::Response<Models::BreakDataLakeLeaseResult> Break(
-        const BreakDataLakeLeaseOptions& options = BreakDataLakeLeaseOptions())
+    Azure::Response<Models::BreakDataLakeLeaseResult> Break(
+        const BreakDataLakeLeaseOptions& options = BreakDataLakeLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return m_blobLeaseClient.Break(options);
+      return m_blobLeaseClient.Break(options, context);
     }
 
   private:

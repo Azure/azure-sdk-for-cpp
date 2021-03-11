@@ -10,12 +10,12 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
@@ -24,6 +24,11 @@ if(NOT AZ_ALL_LIBRARIES)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp REQUIRED)
   endif()
+endif()
+
+if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
 endif()
 
 set(
@@ -69,3 +74,17 @@ az_vcpkg_export(
     IDENTITY
     "azure/identity/dll_import_export.hpp"
   )
+
+if(BUILD_TESTING)
+  # tests
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+
+  add_subdirectory(test/ut)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  add_subdirectory(test/perf)
+endif()

@@ -10,22 +10,21 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(az_vcpkg)
-include(az_version)
-include(CodeCoverage)
-include(DefineTransportAdapter)
-include(doxygen_common)
-include(global_compile_options)
+include(AzureVcpkg)
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
 
 az_vcpkg_integrate()
 
-# Disable dependency on azure-core until azure-core has released to vcpkg
-# if(NOT AZ_ALL_LIBRARIES)
-#   find_package(azure-core-cpp CONFIG QUIET)
-#   if(NOT azure-core-cpp_FOUND)
-#     find_package(azure-core-cpp REQUIRED)
-#   endif()
-# endif()
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-core-cpp CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp REQUIRED)
+  endif()
+endif()
 
 set(
   AZURE_TEMPLATE_HEADER

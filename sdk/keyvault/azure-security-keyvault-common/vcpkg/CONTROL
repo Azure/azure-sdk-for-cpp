@@ -1,6 +1,6 @@
 Source: azure-security-keyvault-common-cpp
 Version: @AZ_LIBRARY_VERSION@
-Build-Depends: azure-core-cpp, openssl (!windows)
+Build-Depends: azure-core-cpp
 Description: Microsoft Azure Common Key Vault SDK for C++
   This library provides common Azure KeyVault-related abstractions for Azure SDK.
 Homepage: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/keyvault/azure-security-keyvault-common

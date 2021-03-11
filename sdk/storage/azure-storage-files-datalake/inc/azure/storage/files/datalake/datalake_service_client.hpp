@@ -7,7 +7,7 @@
 #include <string>
 
 #include <azure/core/credentials.hpp>
-#include <azure/core/http/pipeline.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_service_client.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -34,33 +34,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param serviceUri The service URI this client's request targets.
+     * @param serviceUrl The service URL this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DataLakeServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -81,12 +81,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return Azure::Core::Response<Models::ListFileSystemsSinglePageResult> containing the
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::ListFileSystemsSinglePageResult> containing the
      * listed result of file systems and continuation token for unfinished list result.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::ListFileSystemsSinglePageResult> ListFileSystemsSinglePage(
-        const ListFileSystemsSinglePageOptions& options = ListFileSystemsSinglePageOptions()) const;
+    Azure::Response<Models::ListFileSystemsSinglePageResult> ListFileSystemsSinglePage(
+        const ListFileSystemsSinglePageOptions& options = ListFileSystemsSinglePageOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
@@ -94,22 +96,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
-     * @param options Optional parameters to execute
-     * this function.
-     * @return Azure::Core::Response<Models::GetUserDelegationKeyResult> containing the user
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::GetUserDelegationKeyResult> containing the user
      * delegation key related information.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
-        const Azure::Core::DateTime& expiresOn,
-        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const
+    Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
+        const Azure::DateTime& expiresOn,
+        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
     {
-      return m_blobServiceClient.GetUserDelegationKey(expiresOn, options);
+      return m_blobServiceClient.GetUserDelegationKey(expiresOn, options, context);
     }
 
   private:
-    Azure::Core::Http::Url m_dfsUrl;
+    Azure::Core::Http::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
-    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::DataLake
