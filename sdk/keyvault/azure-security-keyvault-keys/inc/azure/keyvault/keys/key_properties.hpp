@@ -71,25 +71,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Indicate when the key will be valid and can be used for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<Azure::DateTime> NotBefore;
+    Azure::Core::Nullable<Azure::Core::DateTime> NotBefore;
 
     /**
      * @brief Indicate when the key will expire and cannot be used for cryptographic operations.
      *
      */
-    Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
+    Azure::Core::Nullable<Azure::Core::DateTime> ExpiresOn;
 
     /**
      * @brief Indicate when the key was created.
      *
      */
-    Azure::Core::Nullable<Azure::DateTime> CreatedOn;
+    Azure::Core::Nullable<Azure::Core::DateTime> CreatedOn;
 
     /**
      * @brief Indicate when the key was updated.
      *
      */
-    Azure::Core::Nullable<Azure::DateTime> UpdatedOn;
+    Azure::Core::Nullable<Azure::Core::DateTime> UpdatedOn;
 
     /**
      * @brief The number of days a key is retained before being deleted for a soft delete-enabled

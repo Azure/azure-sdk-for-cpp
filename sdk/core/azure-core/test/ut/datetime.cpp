@@ -8,7 +8,7 @@
 #include <chrono>
 #include <limits>
 
-using namespace Azure;
+using namespace Azure::Core;
 
 TEST(DateTime, ParseDateAndTimeBasic)
 {

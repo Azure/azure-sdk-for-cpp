@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
-      const Azure::DateTime& expiresOn,
+      const Azure::Core::DateTime& expiresOn,
       const GetUserDelegationKeyOptions& options,
       const Azure::Core::Context& context) const
   {
