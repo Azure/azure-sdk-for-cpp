@@ -26,7 +26,7 @@ void RawResponse::SetHeader(uint8_t const* const first, uint8_t const* const las
 
   if (end == last)
   {
-    throw InvalidHeaderException("Invalid header. No delimiter ':' found.");
+    throw std::invalid_argument("Invalid header. No delimiter ':' found.");
   }
 
   // Always toLower() headers

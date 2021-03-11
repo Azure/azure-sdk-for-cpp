@@ -156,7 +156,7 @@ void Azure::Core::_detail::InsertHeaderWithValidation(
   {
     if (validChars[static_cast<int>(headerName[index])] == 0)
     {
-      throw InvalidHeaderException("Invalid header: " + headerName);
+      throw std::invalid_argument("Invalid header: " + headerName);
     }
   }
   // insert (override if duplicated)
