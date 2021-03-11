@@ -19,7 +19,7 @@ namespace Azure { namespace Core {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  std::string Base64Encode(const std::vector<uint8_t>& data)
+  std::string Convert::Base64Encode(const std::vector<uint8_t>& data)
   {
     std::string encoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4
@@ -36,7 +36,7 @@ namespace Azure { namespace Core {
     return encoded;
   }
 
-  std::vector<uint8_t> Base64Decode(const std::string& text)
+  std::vector<uint8_t> Convert::Base64Decode(const std::string& text)
   {
     std::vector<uint8_t> decoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an

@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   inline std::string Base64EncodeText(const std::string& text)
   {
-    return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
+    return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
   }
 
 }}} // namespace Azure::Storage::Test

@@ -130,7 +130,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
+      return Azure::Core::Convert::Base64Encode(
+          std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
@@ -192,7 +193,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
+      return Azure::Core::Convert::Base64Encode(
+          std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
     Storage::_detail::FileReader fileReader(fileName);
