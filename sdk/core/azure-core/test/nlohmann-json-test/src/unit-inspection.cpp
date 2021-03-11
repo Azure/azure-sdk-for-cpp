@@ -30,7 +30,7 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json.hpp>
-using Azure::Core::Json::_internal::json;
+using Azure::Core::_internal::Json::json;
 
 #include <fstream>
 #include <sstream>
