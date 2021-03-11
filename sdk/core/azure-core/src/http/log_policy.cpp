@@ -73,7 +73,7 @@ inline std::string GetRequestLogMessage(LogOptions const& options, Request const
         }
       }
 
-      log << Azure::Core::Http::_detail::FormatEncodedUrlQueryParameters(
+      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(
           encodedAllowedRequestQueryParams);
     }
   }

@@ -175,7 +175,7 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
     {
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("http://httpbin.org/get"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
 
       Azure::Core::Http::CurlTransportOptions options;
       auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
