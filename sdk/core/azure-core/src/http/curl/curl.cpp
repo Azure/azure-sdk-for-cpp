@@ -15,7 +15,6 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
-#include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
@@ -164,30 +163,23 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
       request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
   CURLcode performing;
 
-  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
-  // the connection is either closed or the socket is not usable any more. In that case, let the
-  // session be destroyed and create a new session to get another connection from connection pool.
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
+  // either closed or the socket is not usable any more. In that case, let the session be destroyed
+  // and create a new session to get another connection from connection pool.
   // Prevent from trying forever by using DefaultMaxOpenNewConnectionIntentsAllowed.
   for (auto getConnectionOpenIntent = 0;
        getConnectionOpenIntent < _detail::DefaultMaxOpenNewConnectionIntentsAllowed;
        getConnectionOpenIntent++)
   {
     performing = session->Perform(context);
-    if (performing != CURLE_UNSUPPORTED_PROTOCOL && performing != CURLE_SEND_ERROR)
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL)
     {
       break;
     }
-    // Let session be destroyed and request a new connection. If the number of
-    // request for connection has reached `RequestPoolResetAfterConnectionFailed`, ask the pool to
-    // clean (remove connections) and create a new one. This is because, keep getting connections
-    // that fail to perform means a general network disconnection where all connections in the pool
-    // won't be no longer valid.
+    // Let session be destroyed and create a new one to get a new connection
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::GetCurlConnection(
-            request,
-            m_options,
-            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
+        CurlConnectionPool::GetCurlConnection(request, m_options),
         m_options.HttpKeepAlive);
   }
 
@@ -754,16 +746,6 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   return totalRead;
 }
 
-void CurlConnection::Shutdown()
-{
-#if defined(AZ_PLATFORM_POSIX)
-  ::shutdown(m_curlSocket, SHUT_RDWR);
-#elif defined(AZ_PLATFORM_WINDOWS)
-  ::shutdown(m_curlSocket, SD_BOTH);
-#endif
-  m_isShutDown = true;
-}
-
 // Read from socket and return the number of bytes taken from socket
 int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
 {
@@ -1070,7 +1052,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
-uint64_t CurlConnectionPool::s_connectionCounter = 0;
+int32_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 namespace {
@@ -1115,8 +1097,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     Request& request,
-    CurlTransportOptions const& options,
-    bool resetPool)
+    CurlTransportOptions const& options)
 {
   std::string const& host = request.GetUrl().GetHost();
   std::string const connectionKey = GetConnectionKey(host, options);
@@ -1128,36 +1109,26 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
 
     // get a ref to the pool from the map of pools
     auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
-
     if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
         && hostPoolIndex->second.size() > 0)
     {
-      if (resetPool)
-      {
-        // Remove all connections for the connection Key and move to spawn new connection below
-        CurlConnectionPool::s_connectionCounter -= hostPoolIndex->second.size();
-        hostPoolIndex->second.clear();
-      }
-      else
-      {
-        // get ref to first connection
-        auto fistConnectionIterator = hostPoolIndex->second.begin();
-        // move the connection ref to temp ref
-        auto connection = std::move(*fistConnectionIterator);
-        // Remove the connection ref from list
-        hostPoolIndex->second.erase(fistConnectionIterator);
-        // reduce number of connections on the pool
-        CurlConnectionPool::s_connectionCounter -= 1;
+      // get ref to first connection
+      auto fistConnectionIterator = hostPoolIndex->second.begin();
+      // move the connection ref to temp ref
+      auto connection = std::move(*fistConnectionIterator);
+      // Remove the connection ref from list
+      hostPoolIndex->second.erase(fistConnectionIterator);
+      // reduce number of connections on the pool
+      CurlConnectionPool::s_connectionCounter -= 1;
 
-        // Remove index if there are no more connections
-        if (hostPoolIndex->second.size() == 0)
-        {
-          CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
-        }
-
-        // return connection ref
-        return connection;
+      // Remove index if there are no more connections
+      if (hostPoolIndex->second.size() == 0)
+      {
+        CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
       }
+
+      // return connection ref
+      return connection;
     }
   }
 
@@ -1278,12 +1249,6 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return;
   }
 
-  if (connection->IsShutdown())
-  {
-    // Can't re-used a shut down connection
-    return;
-  }
-
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
   auto& poolId = connection->GetConnectionKey();
@@ -1341,7 +1306,7 @@ void CurlConnectionPool::CleanUp()
             // size() > 0 so we are safe to go end() - 1 and find the last element in the
             // list
             connection--;
-            if (connection->get()->IsExpired())
+            if (connection->get()->isExpired())
             {
               // remove connection from the pool and update the connection to the next one
               // which is going to be list.end()
