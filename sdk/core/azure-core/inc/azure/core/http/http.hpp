@@ -59,24 +59,6 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief An invalid header key name in #Azure::Core::Http::Request or
-   * #Azure::Core::Http::RawResponse.
-   *
-   */
-  class InvalidHeaderException : public Azure::Core::RequestFailedException {
-  public:
-    /**
-     * @brief An invalid header key name detected in the HTTP request or response.
-     *
-     * @param message The error description.
-     */
-    explicit InvalidHeaderException(std::string const& message)
-        : Azure::Core::RequestFailedException(message)
-    {
-    }
-  };
-
-  /**
    * @brief Defines the possible HTTP status codes.
    */
   enum class HttpStatusCode

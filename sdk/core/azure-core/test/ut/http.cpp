@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    EXPECT_THROW(req.SetHeader("invalid()", "header"), std::runtime_error);
+    EXPECT_THROW(req.SetHeader("invalid()", "header"), std::invalid_argument);
 
     // same header will just override
     std::pair<std::string, std::string> expectedOverride("valid", "override");
@@ -78,8 +78,7 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected);
 
-    EXPECT_THROW(
-        response.SetHeader("invalid()", "header"), Azure::Core::Http::InvalidHeaderException);
+    EXPECT_THROW(response.SetHeader("invalid()", "header"), std::invalid_argument);
 
     // same header will just override
     std::pair<std::string, std::string> expectedOverride("valid", "override");
@@ -107,9 +106,8 @@ namespace Azure { namespace Core { namespace Test {
         expected2);
 
     // Response SetHeader overload method to add from string
-    EXPECT_THROW(response.SetHeader("inv(): header"), Azure::Core::Http::InvalidHeaderException);
-    EXPECT_THROW(
-        response.SetHeader("no delimiter header"), Azure::Core::Http::InvalidHeaderException);
+    EXPECT_THROW(response.SetHeader("inv(): header"), std::invalid_argument);
+    EXPECT_THROW(response.SetHeader("no delimiter header"), std::invalid_argument);
 
     // adding header after previous error just happened on add from string
     EXPECT_NO_THROW(response.SetHeader("valid3: header3"));

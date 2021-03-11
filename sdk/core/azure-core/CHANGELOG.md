@@ -39,6 +39,7 @@
 - Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
 - Changed the constructor of `Azure::IO::FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
 - Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
+- Removed `Azure::Core::Http::InvalidHeaderException` and throw `std::invalid_argument` if the user provides invalid header arguments.
 - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class within the `Azure::Core` namespace.
 - Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
