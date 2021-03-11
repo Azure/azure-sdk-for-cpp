@@ -43,6 +43,7 @@
 - Moved `Azure::Core::Nullable<T>` to `Azure::Nullable<T>`.
 - Renamed `Azure::Core::Http::TokenRequestOptions` to `Azure::Core::Credentials::TokenRequestContext`.
 - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
+- Moved the Http policies from `Azure::Core::Http` to `Azure::Core::Http::Policies`.
 
 ### Bug Fixes
 
