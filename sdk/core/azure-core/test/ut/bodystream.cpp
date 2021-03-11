@@ -55,8 +55,8 @@ TEST(BodyStream, Rewind)
 
 TEST(FileBodyStream, BadInput)
 {
-  EXPECT_THROW(Azure::IO::FileBodyStream(""), std::runtime_error);
-  EXPECT_THROW(Azure::IO::FileBodyStream("FileNotFound"), std::runtime_error);
+  EXPECT_THROW(Azure::Core::IO::FileBodyStream(""), std::runtime_error);
+  EXPECT_THROW(Azure::Core::IO::FileBodyStream("FileNotFound"), std::runtime_error);
 }
 
 constexpr int64_t FileSize = 1024 * 100;
@@ -66,15 +66,16 @@ TEST(FileBodyStream, Length)
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
 
-  auto stream = Azure::IO::FileBodyStream(testDataPath);
+  auto stream = Azure::Core::IO::FileBodyStream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 
-  auto readResult = Azure::IO::BodyStream::ReadToEnd(stream, Azure::Core::GetApplicationContext());
+  auto readResult
+      = Azure::Core::IO::BodyStream::ReadToEnd(stream, Azure::Core::Context::GetApplicationContext());
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
   EXPECT_EQ(stream.Length(), FileSize);
 
-  stream = Azure::IO::FileBodyStream(testDataPath);
+  stream = Azure::Core::IO::FileBodyStream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 }

@@ -162,10 +162,10 @@ namespace Azure { namespace Core { namespace IO {
 
   namespace _internal {
     /**
-     * @brief A concrete implementation of  #Azure::IO::BodyStream used for reading data from a file
-     * from any offset and length within it.
+     * @brief A concrete implementation of  #Azure::Core::IO::BodyStream used for reading data from
+     * a file from any offset and length within it.
      */
-    class RandomAccessFileBodyStream : public Azure::IO::BodyStream {
+    class RandomAccessFileBodyStream : public BodyStream {
     private:
       // immutable
 #if defined(AZ_PLATFORM_POSIX)
@@ -230,7 +230,8 @@ namespace Azure { namespace Core { namespace IO {
   } // namespace _internal
 
   /**
-   * @brief A concrete implementation of #Azure::Core::IO::BodyStream used for reading data from a file.
+   * @brief A concrete implementation of #Azure::Core::IO::BodyStream used for reading data from a
+   * file.
    */
   class FileBodyStream : public BodyStream {
   private:
@@ -252,8 +253,8 @@ namespace Azure { namespace Core { namespace IO {
      * @param filename A reference to a file name string used to identify the file, which needs to
      * have the necessary file path specified to locate the file.
      *
-     * @remark The #Azure::IO::FileBodyStream owns the file object and is responsible for opening
-     * and closing the file.
+     * @remark The #Azure::Core::IO::FileBodyStream owns the file object and is responsible for
+     * opening and closing the file.
      *
      * @remark Do not use the file object to read or write, while it is being used by the stream.
      */

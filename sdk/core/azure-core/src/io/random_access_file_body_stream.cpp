@@ -24,7 +24,7 @@
 #include <string>
 
 using Azure::Core::Context;
-using namespace Azure::IO::_internal;
+using namespace Azure::Core::IO::_internal;
 
 int64_t RandomAccessFileBodyStream::OnRead(
     uint8_t* buffer,
