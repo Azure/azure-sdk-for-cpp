@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-using namespace Azure;
+using namespace Azure::Core;
 
 TEST(Nullable, Basic)
 {
