@@ -201,7 +201,9 @@ namespace Azure { namespace Core { namespace IO {
       {
       }
 
-      RandomAccessFileBodyStream() : m_filehandle(0), m_baseOffset(0), m_length(0), m_offset(0) {}
+      RandomAccessFileBodyStream() : m_fileDescriptor(0), m_baseOffset(0), m_length(0), m_offset(0)
+      {
+      }
 
 #elif defined(AZ_PLATFORM_WINDOWS)
       /**
