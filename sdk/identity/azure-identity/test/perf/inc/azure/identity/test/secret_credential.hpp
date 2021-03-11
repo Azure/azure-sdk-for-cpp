@@ -28,8 +28,8 @@ namespace Azure { namespace Identity { namespace Test {
     std::string m_tenantId;
     std::string m_clientId;
     std::string m_secret;
-    Azure::Core::Http::TokenRequestOptions m_scopes;
-    std::unique_ptr<Azure::Identity::ClientSecretCredential> m_credentail;
+    Core::Credentials::TokenRequestContext m_tokenRequestContext;
+    std::unique_ptr<Azure::Identity::ClientSecretCredential> m_credential;
 
   public:
     /**
@@ -41,8 +41,8 @@ namespace Azure { namespace Identity { namespace Test {
       m_tenantId = m_options.GetMandatoryOption<std::string>("TenantId");
       m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
-      m_scopes.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
-      m_credentail = std::make_unique<Azure::Identity::ClientSecretCredential>(
+      m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
+      m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
           m_tenantId, m_clientId, m_secret);
     }
 
@@ -60,7 +60,7 @@ namespace Azure { namespace Identity { namespace Test {
      */
     void Run(Azure::Core::Context const& context) override
     {
-      auto t = m_credentail->GetToken(m_scopes, context);
+      auto t = m_credential->GetToken(m_tokenRequestContext, context);
     }
 
     /**
