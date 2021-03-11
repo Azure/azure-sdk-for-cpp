@@ -7,19 +7,19 @@
 
 using namespace Azure::Template;
 
-const std::string PackageVersion::PreRelease = secret;
+const std::string Version::PreRelease = secret;
 
-std::string PackageVersion::VersionString()
+std::string Version::VersionString()
 {
   static const std::string versionString = [] {
     std::string version;
     std::stringstream ss;
     std::string dot = ".";
 
-    ss << PackageVersion::Major << dot << PackageVersion::Minor << dot << PackageVersion::Patch;
+    ss << Version::Major << dot << Version::Minor << dot << Version::Patch;
 
-    if (!PackageVersion::PreRelease.empty())
-      ss << "-" << PackageVersion::PreRelease;
+    if (!Version::PreRelease.empty())
+      ss << "-" << Version::PreRelease;
 
     return ss.str();
   }();

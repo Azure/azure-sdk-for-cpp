@@ -11,7 +11,6 @@
 - DataLake client constructors won't automatically convert blob url to dfs url anymore.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `DataLakeClientOptions`.
-- Renamed `Azure::Storage::Files::DataLake::Details::Version` to `Azure::Storage::Files::DataLake::PackageVersion`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
