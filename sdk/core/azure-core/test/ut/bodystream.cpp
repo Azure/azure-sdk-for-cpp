@@ -55,8 +55,8 @@ TEST(BodyStream, Rewind)
 
 TEST(FileBodyStream, BadInput)
 {
-  EXPECT_THROW((Azure::IO::FileBodyStream("")), std::runtime_error);
-  EXPECT_THROW((Azure::IO::FileBodyStream("fileNotFound")), std::runtime_error);
+  EXPECT_THROW(Azure::IO::FileBodyStream(""), std::runtime_error);
+  EXPECT_THROW(Azure::IO::FileBodyStream("FileNotFound"), std::runtime_error);
 }
 
 constexpr int64_t FileSize = 1024 * 100;
