@@ -102,8 +102,8 @@ bool ShouldRetryOnResponse(
     RetryNumber attempt,
     Delay& retryAfter)
 {
-  using Azure::Core::Logger;
-  using Azure::Core::_internal::Log;
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
   {
@@ -183,8 +183,8 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  using Azure::Core::Logger;
-  using Azure::Core::_internal::Log;
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
 
   auto retryContext = CreateRetryContext(ctx);
 

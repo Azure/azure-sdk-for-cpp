@@ -343,25 +343,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   };
 
   /**
-   * @brief Defines options for getting token.
-   */
-  struct TokenRequestOptions
-  {
-    /**
-     * @brief Authentication scopes.
-     */
-    std::vector<std::string> Scopes;
-  };
-
-  /**
    * @brief Bearer Token authentication policy.
    */
   class BearerTokenAuthenticationPolicy : public HttpPolicy {
   private:
-    std::shared_ptr<TokenCredential const> const m_credential;
-    TokenRequestOptions m_tokenRequestOptions;
+    std::shared_ptr<Credentials::TokenCredential const> const m_credential;
+    Credentials::TokenRequestContext m_tokenRequestContext;
 
-    mutable AccessToken m_accessToken;
+    mutable Credentials::AccessToken m_accessToken;
     mutable std::mutex m_accessTokenMutex;
 
     BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
@@ -371,19 +360,19 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief Construct a Bearer Token authentication policy.
      *
-     * @param credential A #Azure::Core::TokenCredential to use with this policy.
-     * @param tokenRequestOptions #Azure::Core::Http::Policies::TokenRequestOptions.
+     * @param credential An #Azure::Core::TokenCredential to use with this policy.
+     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext.
      */
     explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> credential,
-        TokenRequestOptions tokenRequestOptions)
-        : m_credential(std::move(credential)), m_tokenRequestOptions(std::move(tokenRequestOptions))
+        std::shared_ptr<Credentials::TokenCredential const> credential,
+        Credentials::TokenRequestContext tokenRequestContext)
+        : m_credential(std::move(credential)), m_tokenRequestContext(std::move(tokenRequestContext))
     {
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestOptions);
+      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestContext);
     }
 
     std::unique_ptr<RawResponse> Send(
@@ -393,7 +382,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   };
 
   namespace _detail {
-    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet g_defaultAllowedHttpHeaders;
+    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   }
 
   /**
@@ -416,7 +405,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    * @brief Logs every HTTP request.
    *
    * @details Logs every HTTP request and response.
-   * @remark See Azure::Core::Logger.
+   * @remark See Azure::Core::Diagnostics::Logger.
    */
   class LogPolicy : public HttpPolicy {
     LogOptions m_options;

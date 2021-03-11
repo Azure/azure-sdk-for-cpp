@@ -79,11 +79,11 @@ EnvironmentCredential::EnvironmentCredential()
 #endif
 }
 
-Azure::Core::AccessToken EnvironmentCredential::GetToken(
-    Azure::Core::Http::Policies::TokenRequestOptions const& tokenRequestOptions,
+Azure::Core::Credentials::AccessToken EnvironmentCredential::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  using namespace Azure::Core;
+  using namespace Azure::Core::Credentials;
 
   if (!m_credentialImpl)
   {
@@ -91,5 +91,5 @@ Azure::Core::AccessToken EnvironmentCredential::GetToken(
                                   "Environment variables are not fully configured.");
   }
 
-  return m_credentialImpl->GetToken(tokenRequestOptions, context);
+  return m_credentialImpl->GetToken(tokenRequestContext, context);
 }

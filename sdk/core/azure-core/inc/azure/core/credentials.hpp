@@ -16,8 +16,9 @@
 #include <mutex>
 #include <string>
 #include <utility>
+#include <vector>
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace Credentials {
 
   /**
    * @brief Represents an access token.
@@ -35,9 +36,16 @@ namespace Azure { namespace Core {
     DateTime ExpiresOn;
   };
 
-  namespace Http { namespace Policies {
-    struct TokenRequestOptions;
-  }} // namespace Http::Policies
+  /**
+   * @brief Defines context for getting token.
+   */
+  struct TokenRequestContext
+  {
+    /**
+     * @brief Authentication scopes.
+     */
+    std::vector<std::string> Scopes;
+  };
 
   /**
    * @brief Token credential.
@@ -47,12 +55,12 @@ namespace Azure { namespace Core {
     /**
      * @brief Get an authentication token.
      *
-     * @param tokenRequestOptions Options to get the token.
+     * @param tokenRequestContext Context to get the token in.
      * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      */
     virtual AccessToken GetToken(
-        Http::Policies::TokenRequestOptions const& tokenRequestOptions,
+        TokenRequestContext const& tokenRequestContext,
         Context const& context) const = 0;
 
     /// Destructor.
@@ -87,4 +95,4 @@ namespace Azure { namespace Core {
      */
     char const* what() const noexcept override { return m_message.c_str(); }
   };
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::Credentials

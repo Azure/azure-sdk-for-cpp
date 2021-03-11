@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobContainerClient::BlobContainerClient(
       const std::string& blobContainerUrl,
-      std::shared_ptr<Core::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobClientOptions& options)
       : BlobContainerClient(blobContainerUrl, options)
   {
@@ -80,11 +80,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::Policies::TokenRequestOptions tokenOptions;
-      tokenOptions.Scopes.emplace_back(Storage::_detail::StorageScope);
+      Azure::Core::Credentials::TokenRequestContext tokenContext;
+      tokenContext.Scopes.emplace_back(Storage::_detail::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
-              credential, tokenOptions));
+          std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
+              credential, tokenContext));
     }
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
