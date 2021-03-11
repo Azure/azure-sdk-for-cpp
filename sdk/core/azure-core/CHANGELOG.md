@@ -41,6 +41,7 @@
 - Moved types in the `Azure::IO` namespace like `BodyStream` to `Azure::Core::IO`.
 - Moved `Azure::Core::ETag` to `Azure::ETag`.
 - Moved `Azure::Core::DateTime` to `Azure::DateTime`.
+- Moved `Azure::Core::Nullable<T>` to `Azure::Nullable<T>`.
 
 ### Bug Fixes
 
