@@ -151,7 +151,8 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     sourceUri.AppendQueryParameters(GetSas());
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
-    EXPECT_NE(copyInfo.GetRawResponse(), nullptr);
+    EXPECT_EQ(
+        copyInfo.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_FALSE(copyInfo.RequestId.empty());
     EXPECT_TRUE(copyInfo.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(copyInfo.LastModified));
