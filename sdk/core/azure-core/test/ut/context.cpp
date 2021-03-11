@@ -177,9 +177,17 @@ struct SomeStructForContext
   int someField = 12345;
 };
 
-TEST(Context, UniquePtr)
+TEST(Context, InstanceValue)
 {
   auto contextP = Context::GetApplicationContext().WithValue("struct", SomeStructForContext());
   auto& contextValueRef = contextP.Get<SomeStructForContext>("struct");
   EXPECT_EQ(contextValueRef.someField, 12345);
+}
+
+TEST(Context, UniquePtr)
+{
+  auto contextP = Context::GetApplicationContext().WithValue(
+      "struct", std::make_unique<SomeStructForContext>());
+  auto& contextValueRef = contextP.Get<std::unique_ptr<SomeStructForContext>>("struct");
+  EXPECT_EQ(contextValueRef->someField, 12345);
 }
