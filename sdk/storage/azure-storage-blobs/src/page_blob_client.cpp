@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   Azure::Response<Models::UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
       int64_t destinationOffset,
       std::string sourceUri,
-      Azure::Core::Http::HttpRange sourceRange,
+      Azure::Core::Http::Range sourceRange,
       const UploadPageBlobPagesFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::ClearPageBlobPagesResult> PageBlobClient::ClearPages(
-      Azure::Core::Http::HttpRange range,
+      Azure::Core::Http::Range range,
       const ClearPageBlobPagesOptions& options,
       const Azure::Core::Context& context) const
   {
