@@ -47,10 +47,11 @@ public:
   {
   }
 
-  /**
-   * @brief Get raw HTTP response.
+    /**
+   * @brief Get the raw HTTP response.
+   * @return An #Azure::Core::Http::RawResponse.
+   * @note Does not give up ownership of the RawResponse.
    */
-  // Do not give up raw response ownership.
   Azure::Core::Http::RawResponse& GetRawResponse() const
   {
     if (!m_rawResponse)

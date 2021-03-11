@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
   public:
-    Azure::Core::Http::RawResponse& GetRawResponse() const override { return *m_rawResponse.get(); }
+    Azure::Core::Http::RawResponse const& GetRawResponse() const override { return *m_rawResponse; }
 
     std::string GetResumeToken() const override { return m_operationToken; }
 
