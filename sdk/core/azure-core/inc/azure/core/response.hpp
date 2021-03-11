@@ -62,6 +62,20 @@ public:
   }
 
   /**
+   * @brief Get the raw HTTP response.
+   * @return A const reference to an #Azure::Core::Http::RawResponse.
+   * @note Does not give up ownership of the RawResponse.
+   */
+  Azure::Core::Http::RawResponse const& GetRawResponse() const
+  {
+    if (!m_rawResponse)
+    {
+      throw std::runtime_error("The raw response was extracted before.");
+    }
+    return *this->m_rawResponse;
+  }
+
+  /**
    * @brief Check whether a value is contained.
    *
    * @return `true` If a value is contained, `false` if value is absent.
