@@ -207,9 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl());
-    EXPECT_EQ(
-        res.GetRawResponse().GetStatusCode(),
-        Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_EQ(res.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_TRUE(res.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res.LastModified));
