@@ -794,7 +794,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, StorageExceptionAdditionalInfo)
   {
     Azure::Storage::Files::Shares::ShareClientOptions options;
-    class InvalidQueryParameterPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+    class InvalidQueryParameterPolicy : public Azure::Core::Http::HttpPolicy {
     public:
       ~InvalidQueryParameterPolicy() override {}
 
@@ -805,7 +805,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::unique_ptr<Core::Http::RawResponse> Send(
           Core::Http::Request& request,
-          Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+          Core::Http::NextHttpPolicy nextHttpPolicy,
           Core::Context const& ctx) const override
       {
         request.GetUrl().AppendQueryParameter("comp", "lease1");
