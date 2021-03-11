@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace _detail {
 
-  class StoragePerRetryPolicy : public Core::Http::HttpPolicy {
+  class StoragePerRetryPolicy : public Core::Http::Policies::HttpPolicy {
   public:
     ~StoragePerRetryPolicy() override {}
 
@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy,
+        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
         Core::Context const& ctx) const override;
   };
 

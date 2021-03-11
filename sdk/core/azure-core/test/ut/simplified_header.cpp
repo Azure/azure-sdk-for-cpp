@@ -50,7 +50,7 @@ TEST(SimplifiedHeader, core)
     std::vector<uint8_t> buffer(10);
     EXPECT_NO_THROW(Azure::Core::IO::MemoryBodyStream mb(buffer));
   }
-  EXPECT_NO_THROW(Azure::Core::Http::TelemetryPolicy tp("", ""));
+  EXPECT_NO_THROW(Azure::Core::Http::Policies::TelemetryPolicy tp("", ""));
 }
 
 #ifdef _MSC_VER
