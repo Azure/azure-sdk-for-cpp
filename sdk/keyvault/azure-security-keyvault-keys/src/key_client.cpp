@@ -18,18 +18,18 @@ using namespace Azure::Core::Http;
 
 KeyClient::KeyClient(
     std::string const& vaultUrl,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<Core::TokenCredential const> credential,
     KeyClientOptions options)
 {
   auto apiVersion = options.GetVersionString();
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
+    Azure::Core::Http::TokenRequestOptions const tokenOptions
         = {{"https://vault.azure.net/.default"}};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenOptions));
   }
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>(
