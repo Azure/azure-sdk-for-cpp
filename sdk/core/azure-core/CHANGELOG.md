@@ -46,6 +46,7 @@
 ### Bug Fixes
 
 - Make sure to rewind the body stream at the start of each request retry attempt, including the first.
+- Connection pool resets when all connections are closed.
 - Fix `Azure::Context` to support unique_ptr.
 
 ## 1.0.0-beta.6 (2021-02-09)
