@@ -186,7 +186,7 @@ namespace Azure { namespace Core { namespace Test {
         // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
         auto session = std::make_unique<Azure::Core::Http::CurlSession>(
             req, std::move(connection), options.HttpKeepAlive);
-        auto r = session->Perform(Azure::Core::GetApplicationContext());
+        auto r = session->Perform(Azure::Core::Context::GetApplicationContext());
         EXPECT_EQ(CURLE_SEND_ERROR, r);
       }
     }

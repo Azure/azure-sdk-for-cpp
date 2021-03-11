@@ -187,7 +187,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
         CurlConnectionPool::GetCurlConnection(
             request,
             m_options,
-            getConnectionOpenIntent + 1 >= Details::RequestPoolResetAfterConnectionFailed),
+            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
         m_options.HttpKeepAlive);
   }
 
