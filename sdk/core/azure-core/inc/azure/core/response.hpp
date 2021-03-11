@@ -52,7 +52,7 @@ public:
    * @return A reference to an #Azure::Core::Http::RawResponse.
    * @note Does not give up ownership of the RawResponse.
    */
-  Azure::Core::Http::RawResponse& GetRawResponse() const
+  Azure::Core::Http::RawResponse& GetRawResponse()
   {
     if (!m_rawResponse)
     {
