@@ -12,7 +12,6 @@
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Http::Policies;
 
 namespace {
 typedef decltype(RetryOptions::RetryDelay) Delay;
@@ -164,7 +163,7 @@ Context inline CreateRetryContext(Context const& parent)
 }
 } // namespace
 
-int RetryPolicy::GetRetryNumber(Context const& context)
+int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
 {
   if (!context.HasKey(RetryKey))
   {
@@ -178,7 +177,7 @@ int RetryPolicy::GetRetryNumber(Context const& context)
   return context.Get<int>(RetryKey);
 }
 
-std::unique_ptr<RawResponse> RetryPolicy::Send(
+std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const

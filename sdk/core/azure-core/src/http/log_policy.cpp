@@ -12,7 +12,6 @@
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Http::Policies;
 
 namespace {
 std::string RedactedPlaceholder = "REDACTED";
@@ -35,7 +34,9 @@ inline void AppendHeaders(
   }
 }
 
-inline std::string GetRequestLogMessage(LogOptions const& options, Request const& request)
+inline std::string GetRequestLogMessage(
+    Azure::Core::Http::LogOptions const& options,
+    Request const& request)
 {
   auto const& requestUrl = request.GetUrl();
 
@@ -72,8 +73,7 @@ inline std::string GetRequestLogMessage(LogOptions const& options, Request const
         }
       }
 
-      log << Azure::Core::Http::_detail::FormatEncodedUrlQueryParameters(
-          encodedAllowedRequestQueryParams);
+      log << _detail::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
     }
   }
   AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);
@@ -81,7 +81,7 @@ inline std::string GetRequestLogMessage(LogOptions const& options, Request const
 }
 
 inline std::string GetResponseLogMessage(
-    LogOptions const& options,
+    Azure::Core::Http::LogOptions const& options,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
 {
@@ -97,8 +97,7 @@ inline std::string GetResponseLogMessage(
 }
 } // namespace
 
-Azure::Core::CaseInsensitiveSet const
-    Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
+Azure::Core::CaseInsensitiveSet const Azure::Core::Http::_detail::g_defaultAllowedHttpHeaders
     = {"x-ms-client-request-id",
        "x-ms-return-client-request-id",
        "traceparent",
@@ -122,7 +121,7 @@ Azure::Core::CaseInsensitiveSet const
        "Transfer-Encoding",
        "User-Agent"};
 
-std::unique_ptr<RawResponse> LogPolicy::Send(
+std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const

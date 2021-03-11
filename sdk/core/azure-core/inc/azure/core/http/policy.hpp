@@ -26,7 +26,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies {
+namespace Azure { namespace Core { namespace Http {
 
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
@@ -67,8 +67,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request An #Azure::Core::Http::Request being sent.
-     * @param policy #Azure::Core::Http::Policies::NextHttpPolicy to invoke after this policy has
-     * been applied.
+     * @param policy #Azure::Core::Http::NextHttpPolicy to invoke after this policy has been
+     * applied.
      *
      * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
      * policies in the stack sequence of policies have been applied.
@@ -162,7 +162,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief Construct an HTTP transport policy.
      *
-     * @param options #Azure::Core::Http::Policies::TransportOptions.
+     * @param options #Azure::Core::Http::TransportOptions.
      */
     explicit TransportPolicy(TransportOptions options = TransportOptions())
         : m_options(std::move(options))
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   };
 
   /**
-   * @brief Options for the #Azure::Core::Http::Policies::RetryPolicy.
+   * @brief Options for the #Azure::Core::Http::RetryPolicy.
    */
   struct RetryOptions
   {
@@ -221,9 +221,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   public:
     /**
-     * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
+     * Constructs HTTP retry policy with the provided #Azure::Core::Http::RetryOptions.
      *
-     * @param options #Azure::Core::Http::Policies::RetryOptions.
+     * @param options #Azure::Core::Http::RetryOptions.
      */
     explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
@@ -285,7 +285,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   };
 
   /**
-   * @brief The options for the #Azure::Core::Http::Policies::TelemetryPolicy
+   * @brief The options for the #Azure::Core::Http::TelemetryPolicy
    *
    */
   struct TelemetryOptions
@@ -429,7 +429,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   namespace _internal {
     /**
-     * @brief #Azure::Core::Http::Policies::_internal::ValuePolicy options.
+     * @brief #Azure::Core::Http::_internal::ValuePolicy options.
      */
     struct ValueOptions
     {
@@ -449,9 +449,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     public:
       /**
-       * @brief Construct a #Azure::Core::Http::Policies::_internal::ValuePolicy with the
-       * #Azure::Core::Http::Policies::_internal::ValueOptions provided.
-       * @param options #Azure::Core::Http::Policies::_internal::ValueOptions.
+       * @brief Construct a #Azure::Core::Http::_internal::ValuePolicy with the
+       * #Azure::Core::Http::_internal::ValueOptions provided.
+       * @param options #Azure::Core::Http::_internal::ValueOptions.
        */
       explicit ValuePolicy(ValueOptions options) : m_options(std::move(options)) {}
 
@@ -482,4 +482,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       }
     };
   } // namespace _internal
-}}}} // namespace Azure::Core::Http::Policies
+}}} // namespace Azure::Core::Http
