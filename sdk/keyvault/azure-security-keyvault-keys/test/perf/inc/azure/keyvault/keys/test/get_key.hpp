@@ -31,7 +31,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     std::string m_tenantId;
     std::string m_clientId;
     std::string m_secret;
-    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credentail;
+    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
 
   public:
@@ -46,10 +46,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       m_tenantId = m_options.GetMandatoryOption<std::string>("TenantId");
       m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
-      m_credentail = std::make_shared<Azure::Identity::ClientSecretCredential>(
+      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           m_tenantId, m_clientId, m_secret);
       m_client
-          = std::make_unique<Azure::Security::KeyVault::Keys::KeyClient>(m_vaultUrl, m_credentail);
+          = std::make_unique<Azure::Security::KeyVault::Keys::KeyClient>(m_vaultUrl, m_credential);
     }
 
     /**
