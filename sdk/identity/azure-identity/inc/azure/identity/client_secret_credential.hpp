@@ -44,7 +44,7 @@ namespace Azure { namespace Identity {
    * @brief This class is used by Azure SDK clients to authenticate with the Azure service using a
    * tenant ID, client ID and client secret.
    */
-  class ClientSecretCredential : public Core::Credentials::TokenCredential {
+  class ClientSecretCredential : public Core::TokenCredential {
   private:
     std::string m_tenantId;
     std::string m_clientId;
@@ -70,8 +70,8 @@ namespace Azure { namespace Identity {
     {
     }
 
-    Core::Credentials::AccessToken GetToken(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Core::AccessToken GetToken(
+        Core::Http::TokenRequestOptions const& tokenRequestOptions,
         Core::Context const& context) const override;
   };
 
