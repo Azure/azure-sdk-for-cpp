@@ -11,7 +11,6 @@
 - Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
 - Split `Azure::Core::RequestConditions` into `Azure::MatchConditions` and `Azure::ModifiedConditions`.
 - Removed `TransportKind` enum from `Azure::Core::Http`.
-- Added `Azure::Core::Operation<T>::GetRawResponse().`
 - Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
 - Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
 - Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
@@ -61,6 +60,7 @@
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
 - Added the `Hash` base class and MD5 hashing APIs to the `Azure::Core::Cryptography` namespace available from `azure/core/cryptography/hash.hpp`.
+- Added `Azure::Core::Operation<T>::GetRawResponse()`.
 
 ### Breaking Changes
 
