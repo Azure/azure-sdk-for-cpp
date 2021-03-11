@@ -149,7 +149,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     }
 
     m_randomAccessFileBodyStream
-        = _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, finfo.st_size);
+        = _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize);
   }
   catch (std::exception&)
   {
@@ -176,4 +176,4 @@ int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Cont
 
 void FileBodyStream::Rewind() { m_randomAccessFileBodyStream.Rewind(); }
 
-int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream.Length(); };
+int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream.Length(); }
