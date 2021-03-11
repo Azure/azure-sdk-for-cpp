@@ -68,11 +68,7 @@ public:
    */
   Azure::Core::Http::RawResponse const& GetRawResponse() const
   {
-    if (!m_rawResponse)
-    {
-      throw std::runtime_error("The raw response was extracted before.");
-    }
-    return *this->m_rawResponse;
+    return const_cast<Response*>(this)->GetRawResponse();
   }
 
   /**
