@@ -10,16 +10,17 @@
 #include <sstream>
 
 using namespace Azure::Identity;
-using namespace Azure::Core::IO;
 
 std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
-Azure::Core::AccessToken ClientSecretCredential::GetToken(
-    Azure::Core::Http::TokenRequestOptions const& tokenRequestOptions,
+Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
   using namespace Azure::Core;
+  using namespace Azure::Core::Credentials;
+  using namespace Azure::Core::IO;
   using namespace Azure::Core::Http;
   using namespace Azure::Core::Http::_internal;
 
@@ -34,7 +35,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     body << "grant_type=client_credentials&client_id=" << Url::Encode(m_clientId)
          << "&client_secret=" << Url::Encode(m_clientSecret);
 
-    auto const& scopes = tokenRequestOptions.Scopes;
+    auto const& scopes = tokenRequestContext.Scopes;
     if (!scopes.empty())
     {
       auto scopesIter = scopes.begin();
