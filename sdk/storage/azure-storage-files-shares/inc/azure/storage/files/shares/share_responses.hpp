@@ -200,7 +200,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Get the raw HTTP response.
-     * @return An #Azure::Core::Http::RawResponse.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
     Azure::Core::Http::RawResponse const& GetRawResponse() const override { return *m_rawResponse; }

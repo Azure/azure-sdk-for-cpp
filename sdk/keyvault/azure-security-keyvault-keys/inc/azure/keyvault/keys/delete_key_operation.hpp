@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   public:
     /**
      * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return An #Azure::Core::Http::RawResponse.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
     Azure::Core::Http::RawResponse const& GetRawResponse() const override { return *m_rawResponse; }
