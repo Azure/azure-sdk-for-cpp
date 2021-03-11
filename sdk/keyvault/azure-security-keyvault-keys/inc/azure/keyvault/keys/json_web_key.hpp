@@ -69,7 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark If null, the service default is used.
      *
      */
-    Azure::Nullable<KeyCurveName> CurveName;
+    Azure::Core::Nullable<KeyCurveName> CurveName;
 
   private:
     std::vector<KeyOperation> m_keyOps;
