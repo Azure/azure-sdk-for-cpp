@@ -405,7 +405,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Logs every HTTP request.
    *
    * @details Logs every HTTP request and response.
-   * @remark See Azure::Core::Logger.
+   * @remark See Azure::Core::Diagnostics::Logger.
    */
   class LogPolicy : public HttpPolicy {
     LogOptions m_options;

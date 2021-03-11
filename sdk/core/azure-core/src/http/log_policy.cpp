@@ -126,7 +126,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  using Azure::Core::_internal::Log;
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {
