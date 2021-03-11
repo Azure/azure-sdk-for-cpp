@@ -82,13 +82,13 @@ namespace Azure { namespace Perf {
      * @brief Port to redirect HTTP requests.
      *
      */
-    Azure::Nullable<int> Port;
+    Azure::Core::Nullable<int> Port;
 
     /**
      * @brief Target throughput (ops/sec).
      *
      */
-    Azure::Nullable<int> Rate;
+    Azure::Core::Nullable<int> Rate;
 
     /**
      * @brief Duration of warmup in seconds.

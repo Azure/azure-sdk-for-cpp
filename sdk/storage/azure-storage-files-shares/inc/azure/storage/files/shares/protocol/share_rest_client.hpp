@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * @brief Permission key of the directory or file.
        */
-      Azure::Nullable<std::string> PermissionKey;
+      Azure::Core::Nullable<std::string> PermissionKey;
 
       /**
        * @brief If specified, the provided file attributes shall be set. Default value:
@@ -57,17 +57,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * @brief Creation time for the file/directory.
        */
-      Azure::Nullable<DateTime> CreatedOn;
+      Azure::Core::Nullable<DateTime> CreatedOn;
 
       /**
        * @brief Last write time for the file/directory.
        */
-      Azure::Nullable<DateTime> LastWrittenOn;
+      Azure::Core::Nullable<DateTime> LastWrittenOn;
 
       /**
        * @brief Changed time for the file/directory.
        */
-      Azure::Nullable<DateTime> ChangedOn;
+      Azure::Core::Nullable<DateTime> ChangedOn;
 
       /**
        * @brief The fileId of the file.
@@ -279,15 +279,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
       Azure::ETag Etag;
       int64_t Quota = int64_t();
-      Azure::Nullable<int32_t> ProvisionedIops;
-      Azure::Nullable<int32_t> ProvisionedIngressMBps;
-      Azure::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
-      Azure::Nullable<DateTime> DeletedOn;
+      Azure::Core::Nullable<int32_t> ProvisionedIops;
+      Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
+      Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
+      Azure::Core::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
+      Azure::Core::Nullable<DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
-      Azure::Nullable<ShareAccessTier> AccessTier; // The access tier of the share.
-      Azure::Nullable<DateTime> AccessTierChangedOn;
-      Azure::Nullable<std::string> AccessTierTransitionState;
+      Azure::Core::Nullable<ShareAccessTier> AccessTier; // The access tier of the share.
+      Azure::Core::Nullable<DateTime> AccessTierChangedOn;
+      Azure::Core::Nullable<std::string> AccessTierTransitionState;
       LeaseStatusType LeaseStatus;
       LeaseStateType LeaseState;
       LeaseDurationType LeaseDuration;
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Enabled
           = bool(); // Indicates whether a retention policy is enabled for the File service. If
                     // false, metrics data is retained, and the user is responsible for deleting it.
-      Azure::Nullable<int32_t>
+      Azure::Core::Nullable<int32_t>
           Days; // Indicates the number of days that metrics data should be retained. All data older
                 // than this value will be deleted. Metrics data is deleted on a best-effort basis
                 // after the retention period expires.
@@ -321,8 +321,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::string Version; // The version of Storage Analytics to configure.
       bool Enabled = bool(); // Indicates whether metrics are enabled for the File service.
-      Azure::Nullable<bool> IncludeApis; // Indicates whether metrics should generate summary
-                                         // statistics for called API operations.
+      Azure::Core::Nullable<bool> IncludeApis; // Indicates whether metrics should generate summary
+                                               // statistics for called API operations.
       ShareRetentionPolicy RetentionPolicy;
     };
 
@@ -388,7 +388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Metrics MinuteMetrics; // A summary of request statistics grouped by API in minute aggregates
                              // for files.
       std::vector<CorsRule> Cors; // The set of CORS rules.
-      Azure::Nullable<ShareProtocolSettings> Protocol; // Protocol settings
+      Azure::Core::Nullable<ShareProtocolSettings> Protocol; // Protocol settings
     };
 
     // A permission (a security descriptor) at the share level.
@@ -635,14 +635,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Prefix;
       int32_t PageSizeHint = int32_t();
       FilesAndDirectoriesListSinglePage SinglePage;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
     // An enumeration of handles.
     struct ListHandlesResponse
     {
       std::vector<HandleItem> HandleList;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
     // An enumeration of shares.
@@ -652,7 +652,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Prefix;
       int32_t PageSizeHint = int32_t();
       std::vector<ShareItem> Items;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
     };
 
     struct ServiceSetPropertiesResult
@@ -665,7 +665,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Metrics HourMetrics;
       Metrics MinuteMetrics;
       std::vector<CorsRule> Cors;
-      Azure::Nullable<ShareProtocolSettings> Protocol;
+      Azure::Core::Nullable<ShareProtocolSettings> Protocol;
       std::string RequestId;
     };
 
@@ -675,7 +675,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Prefix;
       int32_t PageSizeHint = int32_t();
       std::vector<ShareItem> Items;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       std::string RequestId;
     };
 
@@ -693,16 +693,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
       std::string RequestId;
       int64_t Quota = int64_t();
-      Azure::Nullable<int32_t> ProvisionedIops;
-      Azure::Nullable<int32_t> ProvisionedIngressMBps;
-      Azure::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Nullable<LeaseStateType> LeaseState;
-      Azure::Nullable<LeaseStatusType> LeaseStatus;
-      Azure::Nullable<ShareAccessTier> AccessTier;
-      Azure::Nullable<DateTime> AccessTierChangedOn;
-      Azure::Nullable<std::string> AccessTierTransitionState;
+      Azure::Core::Nullable<int32_t> ProvisionedIops;
+      Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
+      Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
+      Azure::Core::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
+      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Core::Nullable<LeaseStateType> LeaseState;
+      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Core::Nullable<ShareAccessTier> AccessTier;
+      Azure::Core::Nullable<DateTime> AccessTierChangedOn;
+      Azure::Core::Nullable<std::string> AccessTierTransitionState;
     };
 
     struct ShareDeleteResult
@@ -861,7 +861,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Prefix;
       int32_t PageSizeHint = int32_t();
       FilesAndDirectoriesListSinglePage SinglePage;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       FileHttpHeaders HttpHeaders;
       std::string RequestId;
     };
@@ -869,7 +869,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryListHandlesResult
     {
       std::vector<HandleItem> HandleList;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       FileHttpHeaders HttpHeaders;
       std::string RequestId;
     };
@@ -877,7 +877,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryForceCloseHandlesResult
     {
       std::string RequestId;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       int32_t NumberOfHandlesClosed = int32_t();
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };
@@ -900,20 +900,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize;
       Azure::ETag ETag;
-      Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
+      Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       std::string RequestId;
       std::string AcceptRanges;
-      Azure::Nullable<DateTime> CopyCompletedOn;
-      Azure::Nullable<std::string> CopyStatusDescription;
-      Azure::Nullable<std::string> CopyId;
-      Azure::Nullable<std::string> CopyProgress;
-      Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<CopyStatusType> CopyStatus;
+      Azure::Core::Nullable<DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<std::string> CopyStatusDescription;
+      Azure::Core::Nullable<std::string> CopyId;
+      Azure::Core::Nullable<std::string> CopyProgress;
+      Azure::Core::Nullable<std::string> CopySource;
+      Azure::Core::Nullable<CopyStatusType> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Nullable<LeaseStateType> LeaseState;
-      Azure::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Core::Nullable<LeaseStateType> LeaseState;
+      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     };
 
     struct FileGetPropertiesResult
@@ -924,17 +924,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileHttpHeaders HttpHeaders;
       Azure::ETag ETag;
       std::string RequestId;
-      Azure::Nullable<DateTime> CopyCompletedOn;
-      Azure::Nullable<std::string> CopyStatusDescription;
-      Azure::Nullable<std::string> CopyId;
-      Azure::Nullable<std::string> CopyProgress;
-      Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<CopyStatusType> CopyStatus;
+      Azure::Core::Nullable<DateTime> CopyCompletedOn;
+      Azure::Core::Nullable<std::string> CopyStatusDescription;
+      Azure::Core::Nullable<std::string> CopyId;
+      Azure::Core::Nullable<std::string> CopyProgress;
+      Azure::Core::Nullable<std::string> CopySource;
+      Azure::Core::Nullable<CopyStatusType> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Nullable<LeaseStateType> LeaseState;
-      Azure::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Core::Nullable<LeaseStateType> LeaseState;
+      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     };
 
     struct FileDeleteResult
@@ -985,7 +985,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      Azure::Nullable<std::string> LeaseId;
+      Azure::Core::Nullable<std::string> LeaseId;
       std::string RequestId;
     };
 
@@ -1034,7 +1034,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileListHandlesResult
     {
       std::vector<HandleItem> HandleList;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       FileHttpHeaders HttpHeaders;
       std::string RequestId;
     };
@@ -1042,7 +1042,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileForceCloseHandlesResult
     {
       std::string RequestId;
-      Azure::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       int32_t NumberOfHandlesClosed = int32_t();
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };
@@ -1109,7 +1109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         struct SetPropertiesOptions
         {
           FileServiceProperties ServiceProperties;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -1146,7 +1146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -1172,11 +1172,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListSharesSinglePageOptions
         {
-          Azure::Nullable<std::string> Prefix;
-          Azure::Nullable<std::string> ContinuationToken;
-          Azure::Nullable<int32_t> MaxResults;
-          Azure::Nullable<ListSharesIncludeType> ListSharesInclude;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> Prefix;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<ListSharesIncludeType> ListSharesInclude;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -2532,10 +2532,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          Azure::Nullable<int64_t> ShareQuota;
-          Azure::Nullable<ShareAccessTier> XMsAccessTier;
+          Azure::Core::Nullable<int64_t> ShareQuota;
+          Azure::Core::Nullable<ShareAccessTier> XMsAccessTier;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -2575,10 +2575,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareGetPropertiesResult> GetProperties(
@@ -2614,11 +2614,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<DeleteSnapshotsOptionType> XMsDeleteSnapshots;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<DeleteSnapshotsOptionType> XMsDeleteSnapshots;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareDeleteResult> Delete(
@@ -2658,11 +2658,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AcquireLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           int32_t LeaseDuration = int32_t();
-          Azure::Nullable<std::string> ProposedLeaseIdOptional;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Response<ShareAcquireLeaseResult> AcquireLease(
@@ -2704,10 +2704,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ReleaseLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Response<ShareReleaseLeaseResult> ReleaseLease(
@@ -2742,11 +2742,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ChangeLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
-          Azure::Nullable<std::string> ProposedLeaseIdOptional;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Response<ShareChangeLeaseResult> ChangeLease(
@@ -2787,10 +2787,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct RenewLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Response<ShareRenewLeaseResult> RenewLease(
@@ -2825,11 +2825,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct BreakLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
-          Azure::Nullable<int32_t> LeaseBreakPeriod;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> LeaseBreakPeriod;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Response<ShareBreakLeaseResult> BreakLease(
@@ -2873,7 +2873,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct CreateSnapshotOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
@@ -2905,7 +2905,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct CreatePermissionOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           SharePermission Permission;
         };
@@ -2943,7 +2943,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         struct GetPermissionOptions
         {
           std::string FilePermissionKeyRequired;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -2971,11 +2971,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetPropertiesOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<int64_t> ShareQuota;
-          Azure::Nullable<ShareAccessTier> XMsAccessTier;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<int64_t> ShareQuota;
+          Azure::Core::Nullable<ShareAccessTier> XMsAccessTier;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareSetPropertiesResult> SetProperties(
@@ -3017,10 +3017,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareSetMetadataResult> SetMetadata(
@@ -3055,9 +3055,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetAccessPolicyOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
@@ -3088,9 +3088,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         struct SetAccessPolicyOptions
         {
           std::vector<SignedIdentifier> ShareAcl;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
@@ -3131,9 +3131,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetStatisticsOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<ShareGetStatisticsResult> GetStatistics(
@@ -3163,10 +3163,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct RestoreOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> DeletedShareName;
-          Azure::Nullable<std::string> DeletedShareVersion;
+          Azure::Core::Nullable<std::string> DeletedShareName;
+          Azure::Core::Nullable<std::string> DeletedShareVersion;
         };
 
         static Azure::Response<ShareRestoreResult> Restore(
@@ -4032,11 +4032,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> FilePermission;
-          Azure::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
           std::string FileAttributes;
           std::string FileCreationTime;
           std::string FileLastWriteTime;
@@ -4081,8 +4081,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -4114,7 +4114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -4139,10 +4139,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetPropertiesOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> FilePermission;
-          Azure::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
           std::string FileAttributes;
           std::string FileCreationTime;
           std::string FileLastWriteTime;
@@ -4186,7 +4186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
@@ -4218,11 +4218,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListFilesAndDirectoriesSinglePageOptions
         {
-          Azure::Nullable<std::string> Prefix;
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<std::string> ContinuationToken;
-          Azure::Nullable<int32_t> MaxResults;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> Prefix;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -4280,11 +4280,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListHandlesOptions
         {
-          Azure::Nullable<std::string> ContinuationToken;
-          Azure::Nullable<int32_t> MaxResults;
-          Azure::Nullable<int32_t> Timeout;
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<bool> Recursive;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<bool> Recursive;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -4336,11 +4336,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ForceCloseHandlesOptions
         {
-          Azure::Nullable<int32_t> Timeout;
-          Azure::Nullable<std::string> ContinuationToken;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
           std::string HandleId;
-          Azure::Nullable<bool> Recursive;
+          Azure::Core::Nullable<bool> Recursive;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -5204,22 +5204,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           int64_t XMsContentLength = int64_t();
-          Azure::Nullable<std::string> FileContentType;
-          Azure::Nullable<std::string> FileContentEncoding;
-          Azure::Nullable<std::string> FileContentLanguage;
-          Azure::Nullable<std::string> FileCacheControl;
-          Azure::Nullable<Storage::ContentHash> ContentMd5;
-          Azure::Nullable<std::string> FileContentDisposition;
+          Azure::Core::Nullable<std::string> FileContentType;
+          Azure::Core::Nullable<std::string> FileContentEncoding;
+          Azure::Core::Nullable<std::string> FileContentLanguage;
+          Azure::Core::Nullable<std::string> FileCacheControl;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<std::string> FileContentDisposition;
           Storage::Metadata Metadata;
-          Azure::Nullable<std::string> FilePermission;
-          Azure::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
           std::string FileAttributes;
           std::string FileCreationTime;
           std::string FileLastWriteTime;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileCreateResult> Create(
@@ -5299,11 +5299,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DownloadOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> Range;
-          Azure::Nullable<bool> GetRangeContentMd5;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> Range;
+          Azure::Core::Nullable<bool> GetRangeContentMd5;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileDownloadResult> Download(
@@ -5340,10 +5340,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileGetPropertiesResult> GetProperties(
@@ -5378,9 +5378,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileDeleteResult> Delete(
@@ -5407,21 +5407,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetHttpHeadersOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<int64_t> XMsContentLength;
-          Azure::Nullable<std::string> FileContentType;
-          Azure::Nullable<std::string> FileContentEncoding;
-          Azure::Nullable<std::string> FileContentLanguage;
-          Azure::Nullable<std::string> FileCacheControl;
-          Azure::Nullable<Storage::ContentHash> ContentMd5;
-          Azure::Nullable<std::string> FileContentDisposition;
-          Azure::Nullable<std::string> FilePermission;
-          Azure::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<int64_t> XMsContentLength;
+          Azure::Core::Nullable<std::string> FileContentType;
+          Azure::Core::Nullable<std::string> FileContentEncoding;
+          Azure::Core::Nullable<std::string> FileContentLanguage;
+          Azure::Core::Nullable<std::string> FileCacheControl;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<std::string> FileContentDisposition;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
           std::string FileAttributes;
           std::string FileCreationTime;
           std::string FileLastWriteTime;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileSetHttpHeadersResult> SetHttpHeaders(
@@ -5506,10 +5506,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileSetMetadataResult> SetMetadata(
@@ -5543,9 +5543,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AcquireLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           int32_t LeaseDuration = int32_t();
-          Azure::Nullable<std::string> ProposedLeaseIdOptional;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -5580,7 +5580,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ReleaseLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
@@ -5609,9 +5609,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ChangeLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
-          Azure::Nullable<std::string> ProposedLeaseIdOptional;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -5645,8 +5645,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct BreakLeaseOptions
         {
-          Azure::Nullable<int32_t> Timeout;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -5677,13 +5677,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct UploadRangeOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string XMsRange;
           FileRangeWriteType XMsWrite;
           int64_t ContentLength = int64_t();
-          Azure::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileUploadRangeResult> UploadRange(
@@ -5724,17 +5724,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct UploadRangeFromUrlOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string TargetRange;
           std::string CopySource;
-          Azure::Nullable<std::string> SourceRange;
+          Azure::Core::Nullable<std::string> SourceRange;
           FileRangeWriteFromUrlType XMsWrite;
           int64_t ContentLength = int64_t();
-          Azure::Nullable<Storage::ContentHash> SourceContentCrc64;
-          Azure::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
-          Azure::Nullable<Storage::ContentHash> SourceIfNoneMatchCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceContentCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceIfNoneMatchCrc64;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
@@ -5798,12 +5798,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetRangeListOptions
         {
-          Azure::Nullable<std::string> ShareSnapshot;
-          Azure::Nullable<std::string> PrevShareSnapshot;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> PrevShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> XMsRange;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> XMsRange;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileGetRangeListResult> GetRangeList(
@@ -5850,19 +5850,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct StartCopyOptions
         {
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Storage::Metadata Metadata;
           std::string CopySource;
-          Azure::Nullable<std::string> FilePermission;
-          Azure::Nullable<std::string> FilePermissionKey;
-          Azure::Nullable<PermissionCopyModeType> XMsFilePermissionCopyMode;
-          Azure::Nullable<bool> FileCopyIgnoreReadOnly;
-          Azure::Nullable<std::string> FileCopyFileAttributes;
-          Azure::Nullable<std::string> FileCopyFileCreationTime;
-          Azure::Nullable<std::string> FileCopyFileLastWriteTime;
-          Azure::Nullable<bool> FileCopySetArchiveAttribute;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<PermissionCopyModeType> XMsFilePermissionCopyMode;
+          Azure::Core::Nullable<bool> FileCopyIgnoreReadOnly;
+          Azure::Core::Nullable<std::string> FileCopyFileAttributes;
+          Azure::Core::Nullable<std::string> FileCopyFileCreationTime;
+          Azure::Core::Nullable<std::string> FileCopyFileLastWriteTime;
+          Azure::Core::Nullable<bool> FileCopySetArchiveAttribute;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileStartCopyResult> StartCopy(
@@ -5940,9 +5940,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         struct AbortCopyOptions
         {
           std::string CopyId;
-          Azure::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Response<FileAbortCopyResult> AbortCopy(
@@ -5975,10 +5975,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListHandlesOptions
         {
-          Azure::Nullable<std::string> ContinuationToken;
-          Azure::Nullable<int32_t> MaxResults;
-          Azure::Nullable<int32_t> Timeout;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -6024,9 +6024,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ForceCloseHandlesOptions
         {
-          Azure::Nullable<int32_t> Timeout;
-          Azure::Nullable<std::string> ContinuationToken;
-          Azure::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
           std::string HandleId;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
