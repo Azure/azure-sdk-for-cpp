@@ -92,7 +92,7 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollInternal(Context::GetApplicationContext());
+      return PollInternal(GetApplicationContext());
     }
 
     /**
@@ -115,7 +115,7 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollUntilDoneInternal(period, Context::GetApplicationContext());
+      return PollUntilDoneInternal(period, GetApplicationContext());
     }
 
     /**
