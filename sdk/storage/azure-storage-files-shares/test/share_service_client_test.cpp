@@ -9,7 +9,9 @@
 namespace Azure { namespace Storage { namespace Test {
 
   namespace {
-    bool NullableEquals(const Azure::Nullable<bool>& lhs, const Azure::Nullable<bool>& rhs)
+    bool NullableEquals(
+        const Azure::Core::Nullable<bool>& lhs,
+        const Azure::Core::Nullable<bool>& rhs)
     {
       return (lhs.HasValue() && rhs.HasValue() && (lhs.GetValue() == rhs.GetValue()))
           || (!lhs.HasValue() && !rhs.HasValue());
@@ -153,7 +155,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto properties = *m_fileShareServiceClient->GetProperties();
     // Has to remove before set, otherwise would return failure.
-    properties.Protocol = Azure::Nullable<Files::Shares::Models::ShareProtocolSettings>();
+    properties.Protocol = Core::Nullable<Files::Shares::Models::ShareProtocolSettings>();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;

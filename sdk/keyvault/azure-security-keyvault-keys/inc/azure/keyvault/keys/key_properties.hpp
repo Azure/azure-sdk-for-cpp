@@ -65,38 +65,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Indicate whether the key is enabled and useable for cryptographic operations.
      *
      */
-    Azure::Nullable<bool> Enabled;
+    Azure::Core::Nullable<bool> Enabled;
 
     /**
      * @brief Indicate when the key will be valid and can be used for cryptographic operations.
      *
      */
-    Azure::Nullable<Azure::DateTime> NotBefore;
+    Azure::Core::Nullable<Azure::DateTime> NotBefore;
 
     /**
      * @brief Indicate when the key will expire and cannot be used for cryptographic operations.
      *
      */
-    Azure::Nullable<Azure::DateTime> ExpiresOn;
+    Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
      * @brief Indicate when the key was created.
      *
      */
-    Azure::Nullable<Azure::DateTime> CreatedOn;
+    Azure::Core::Nullable<Azure::DateTime> CreatedOn;
 
     /**
      * @brief Indicate when the key was updated.
      *
      */
-    Azure::Nullable<Azure::DateTime> UpdatedOn;
+    Azure::Core::Nullable<Azure::DateTime> UpdatedOn;
 
     /**
      * @brief The number of days a key is retained before being deleted for a soft delete-enabled
      * Key Vault.
      *
      */
-    Azure::Nullable<int> RecoverableDays;
+    Azure::Core::Nullable<int> RecoverableDays;
 
     /**
      * @brief The recovery level currently in effect for keys in the Key Vault.
