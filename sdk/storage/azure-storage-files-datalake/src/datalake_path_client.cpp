@@ -107,14 +107,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
 
   DataLakePathClient::DataLakePathClient(
       const std::string& pathUrl,
-      std::shared_ptr<Core::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : m_pathUrl(pathUrl), m_blobClient(
                                 _detail::GetBlobUrlFromUrl(pathUrl),
@@ -128,11 +128,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::TokenRequestOptions tokenOptions;
-      tokenOptions.Scopes.emplace_back(Storage::_detail::StorageScope);
+      Azure::Core::Credentials::TokenRequestContext tokenContext;
+      tokenContext.Scopes.emplace_back(Storage::_detail::StorageScope);
       perRetryPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::BearerTokenAuthenticationPolicy>(
-              credential, tokenOptions));
+              credential, tokenContext));
     }
     {
       Azure::Core::Http::_internal::ValueOptions valueOptions;
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }

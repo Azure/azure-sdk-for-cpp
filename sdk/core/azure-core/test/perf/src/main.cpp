@@ -13,7 +13,7 @@ int main(int argc, char** argv)
   // Create the test list
   std::vector<Azure::Perf::TestMetadata> tests{Azure::Core::Test::NullableTest::GetTestMetadata()};
 
-  Azure::Perf::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
+  Azure::Perf::Program::Run(Azure::Core::Context::GetApplicationContext(), tests, argc, argv);
 
   return 0;
 }

@@ -470,7 +470,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the range of the resource to be retrieved.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief The hash algorithm used to calculate the hash for the returned content.

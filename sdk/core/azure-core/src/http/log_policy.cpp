@@ -97,7 +97,7 @@ inline std::string GetResponseLogMessage(
 }
 } // namespace
 
-Azure::Core::CaseInsensitiveSet Azure::Core::Http::_detail::g_defaultAllowedHttpHeaders
+Azure::Core::CaseInsensitiveSet const Azure::Core::Http::_detail::g_defaultAllowedHttpHeaders
     = {"x-ms-client-request-id",
        "x-ms-return-client-request-id",
        "traceparent",

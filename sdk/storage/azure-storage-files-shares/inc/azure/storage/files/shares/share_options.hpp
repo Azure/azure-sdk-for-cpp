@@ -338,7 +338,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Downloads only the bytes of the file from this range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief When specified together with Range, service returns hash for the range as long as the
@@ -485,7 +485,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The range to be get from service.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
@@ -540,7 +540,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Downloads only the bytes of the file from this range.
      */
-    Azure::Core::Nullable<Core::Http::Range> Range;
+    Azure::Core::Nullable<Core::Http::HttpRange> Range;
 
     struct
     {
