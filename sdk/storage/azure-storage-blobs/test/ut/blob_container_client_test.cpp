@@ -553,7 +553,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<uint8_t> aes256Key;
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
-      key.Key = Azure::Core::Base64Encode(aes256Key);
+      key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
       key.KeyHash = _detail::Sha256(aes256Key);
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
