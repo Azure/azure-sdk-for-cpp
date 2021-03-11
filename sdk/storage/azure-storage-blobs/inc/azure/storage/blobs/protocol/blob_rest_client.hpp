@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct BlobRetentionPolicy
     {
       bool IsEnabled = false;
-      Azure::Core::Nullable<int32_t> Days;
+      Azure::Nullable<int32_t> Days;
     }; // struct BlobRetentionPolicy
 
     struct BlobSignedIdentifier
@@ -215,9 +215,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct BlobStaticWebsite
     {
       bool IsEnabled = false;
-      Azure::Core::Nullable<std::string> IndexDocument;
-      Azure::Core::Nullable<std::string> DefaultIndexDocumentPath;
-      Azure::Core::Nullable<std::string> ErrorDocument404Path;
+      Azure::Nullable<std::string> IndexDocument;
+      Azure::Nullable<std::string> DefaultIndexDocumentPath;
+      Azure::Nullable<std::string> ErrorDocument404Path;
     }; // struct BlobStaticWebsite
 
     class BlobType {
@@ -333,10 +333,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool Created = true;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct CreateAppendBlobResult
 
     struct CreateBlobContainerResult
@@ -353,10 +353,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string Snapshot;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct CreateBlobSnapshotResult
 
     struct CreatePageBlobResult
@@ -365,11 +365,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool Created = true;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<int64_t> SequenceNumber;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<int64_t> SequenceNumber;
     }; // struct CreatePageBlobResult
 
     struct DeleteBlobContainerResult
@@ -573,7 +573,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string RequestId;
         Azure::ETag ETag;
         Azure::DateTime LastModified;
-        Azure::Core::Nullable<int64_t> SequenceNumber;
+        Azure::Nullable<int64_t> SequenceNumber;
       }; // struct ReleaseBlobLeaseResult
     } // namespace _detail
 
@@ -661,7 +661,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<int64_t> SequenceNumber;
+      Azure::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobHttpHeadersResult
 
     struct SetBlobMetadataResult
@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<int64_t> SequenceNumber;
+      Azure::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobMetadataResult
 
     struct SetBlobTagsResult
@@ -748,19 +748,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       PublicAccessType AccessType = PublicAccessType::None;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
+      Azure::Nullable<BlobLeaseDurationType> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
       bool PreventEncryptionScopeOverride = false;
-      Azure::Core::Nullable<int32_t> RemainingRetentionDays;
-      Azure::Core::Nullable<Azure::DateTime> DeletedOn;
+      Azure::Nullable<int32_t> RemainingRetentionDays;
+      Azure::Nullable<Azure::DateTime> DeletedOn;
     }; // struct BlobContainerItemDetails
 
     struct BlobGeoReplication
     {
       BlobGeoReplicationStatus Status;
-      Azure::Core::Nullable<Azure::DateTime> LastSyncedOn;
+      Azure::Nullable<Azure::DateTime> LastSyncedOn;
     }; // struct BlobGeoReplication
 
     struct BlobMetrics
@@ -768,14 +768,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string Version;
       bool IsEnabled = false;
       BlobRetentionPolicy RetentionPolicy;
-      Azure::Core::Nullable<bool> IncludeApis;
+      Azure::Nullable<bool> IncludeApis;
     }; // struct BlobMetrics
 
     struct FindBlobsByTagsSinglePageResult
     {
       std::string RequestId;
       std::string ServiceEndpoint;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::vector<FilterBlobItem> Items;
     }; // struct FindBlobsByTagsSinglePageResult
 
@@ -805,7 +805,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       PublicAccessType AccessType = PublicAccessType::None;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
+      Azure::Nullable<BlobLeaseDurationType> LeaseDuration;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       std::string DefaultEncryptionScope;
@@ -843,7 +843,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::DateTime LastModified;
         std::string CopyId;
         Models::CopyStatus CopyStatus;
-        Azure::Core::Nullable<std::string> VersionId;
+        Azure::Nullable<std::string> VersionId;
       }; // struct StartCopyBlobFromUriResult
     } // namespace _detail
 
@@ -855,7 +855,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::DateTime LastModified;
         std::string CopyId;
         Models::CopyStatus CopyStatus;
-        Azure::Core::Nullable<std::string> VersionId;
+        Azure::Nullable<std::string> VersionId;
       }; // struct StartCopyPageBlobIncrementalResult
     } // namespace _detail
 
@@ -864,12 +864,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
       int64_t AppendOffset = 0;
       int64_t CommittedBlockCount = 0;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct AppendBlockFromUriResult
 
     struct AppendBlockResult
@@ -877,19 +877,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
       int64_t AppendOffset = 0;
       int64_t CommittedBlockCount = 0;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct AppendBlockResult
 
     struct BlobContainerItem
     {
       std::string Name;
       bool IsDeleted = false;
-      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Nullable<std::string> VersionId;
       BlobContainerItemDetails Details;
     }; // struct BlobContainerItem
 
@@ -909,7 +909,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobMetrics HourMetrics;
       BlobMetrics MinuteMetrics;
       std::vector<BlobCorsRule> Cors;
-      Azure::Core::Nullable<std::string> DefaultServiceVersion;
+      Azure::Nullable<std::string> DefaultServiceVersion;
       BlobRetentionPolicy DeleteRetentionPolicy;
       BlobStaticWebsite StaticWebsite;
     }; // struct BlobServiceProperties
@@ -919,11 +919,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
     }; // struct CommitBlockListResult
 
     struct GetServicePropertiesResult
@@ -933,7 +933,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobMetrics HourMetrics;
       BlobMetrics MinuteMetrics;
       std::vector<BlobCorsRule> Cors;
-      Azure::Core::Nullable<std::string> DefaultServiceVersion;
+      Azure::Nullable<std::string> DefaultServiceVersion;
       BlobRetentionPolicy DeleteRetentionPolicy;
       BlobStaticWebsite StaticWebsite;
     }; // struct GetServicePropertiesResult
@@ -953,19 +953,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct StageBlockFromUriResult
     {
       std::string RequestId;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct StageBlockFromUriResult
 
     struct StageBlockResult
     {
       std::string RequestId;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct StageBlockResult
 
     struct UploadBlockBlobResult
@@ -973,11 +973,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
+      Azure::Nullable<std::string> VersionId;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
     }; // struct UploadBlockBlobResult
 
     struct UploadPageBlobPagesFromUriResult
@@ -985,11 +985,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
       int64_t SequenceNumber = 0;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct UploadPageBlobPagesFromUriResult
 
     struct UploadPageBlobPagesResult
@@ -997,11 +997,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
       int64_t SequenceNumber = 0;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct UploadPageBlobPagesResult
 
     struct BlobItemDetails
@@ -1009,20 +1009,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobHttpHeaders HttpHeaders;
       Storage::Metadata Metadata;
       Azure::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Azure::DateTime> LastAccessedOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
+      Azure::Nullable<Azure::DateTime> LastAccessedOn;
       Azure::DateTime LastModified;
       Azure::ETag ETag;
-      Azure::Core::Nullable<AccessTier> Tier;
-      Azure::Core::Nullable<bool> IsAccessTierInferred;
+      Azure::Nullable<AccessTier> Tier;
+      Azure::Nullable<bool> IsAccessTierInferred;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
       BlobLeaseState LeaseState = BlobLeaseState::Available;
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
+      Azure::Nullable<BlobLeaseDurationType> LeaseDuration;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blobd
-      Azure::Core::Nullable<bool> IsSealed; // only for append blob
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blobd
+      Azure::Nullable<bool> IsSealed; // only for append blob
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
     }; // struct BlobItemDetails
@@ -1032,32 +1032,32 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       Azure::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Azure::DateTime> LastAccessedOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
+      Azure::Nullable<Azure::DateTime> LastAccessedOn;
       BlobHttpHeaders HttpHeaders;
       Storage::Metadata Metadata;
-      Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
-      Azure::Core::Nullable<bool> IsSealed; // only for append blob
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<BlobLeaseState> LeaseState;
-      Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
+      Azure::Nullable<int64_t> CommittedBlockCount; // only for append blob
+      Azure::Nullable<bool> IsSealed; // only for append blob
+      Azure::Nullable<BlobLeaseDurationType> LeaseDuration;
+      Azure::Nullable<BlobLeaseState> LeaseState;
+      Azure::Nullable<BlobLeaseStatus> LeaseStatus;
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<std::string>
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::string>
           ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
-      Azure::Core::Nullable<int32_t> TagCount;
-      Azure::Core::Nullable<std::string> CopyId;
-      Azure::Core::Nullable<std::string> CopySource;
-      Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
-      Azure::Core::Nullable<std::string> CopyStatusDescription;
-      Azure::Core::Nullable<std::string> CopyProgress;
-      Azure::Core::Nullable<Azure::DateTime> CopyCompletedOn;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<bool> IsCurrentVersion;
+      Azure::Nullable<int32_t> TagCount;
+      Azure::Nullable<std::string> CopyId;
+      Azure::Nullable<std::string> CopySource;
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Nullable<std::string> CopyStatusDescription;
+      Azure::Nullable<std::string> CopyProgress;
+      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      Azure::Nullable<std::string> VersionId;
+      Azure::Nullable<bool> IsCurrentVersion;
     }; // struct DownloadBlobDetails
 
     struct GetBlobPropertiesResult
@@ -1066,41 +1066,41 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       Azure::DateTime CreatedOn;
-      Azure::Core::Nullable<Azure::DateTime> ExpiresOn;
-      Azure::Core::Nullable<Azure::DateTime> LastAccessedOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
+      Azure::Nullable<Azure::DateTime> LastAccessedOn;
       Storage::Metadata Metadata;
       Models::BlobType BlobType;
-      Azure::Core::Nullable<BlobLeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<BlobLeaseState> LeaseState;
-      Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
+      Azure::Nullable<BlobLeaseDurationType> LeaseDuration;
+      Azure::Nullable<BlobLeaseState> LeaseState;
+      Azure::Nullable<BlobLeaseStatus> LeaseStatus;
       int64_t BlobSize = 0;
       BlobHttpHeaders HttpHeaders;
-      Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
-      Azure::Core::Nullable<bool> IsSealed; // only for append blob
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
+      Azure::Nullable<int32_t> CommittedBlockCount; // only for append blob
+      Azure::Nullable<bool> IsSealed; // only for append blob
       bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<AccessTier> Tier;
-      Azure::Core::Nullable<bool> IsAccessTierInferred;
-      Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
-      Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
-      Azure::Core::Nullable<Azure::DateTime> AccessTierChangedOn;
-      Azure::Core::Nullable<std::string> CopyId;
-      Azure::Core::Nullable<std::string> CopySource;
-      Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
-      Azure::Core::Nullable<std::string> CopyStatusDescription;
-      Azure::Core::Nullable<bool> IsIncrementalCopy;
-      Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
-      Azure::Core::Nullable<std::string> CopyProgress;
-      Azure::Core::Nullable<Azure::DateTime> CopyCompletedOn;
-      Azure::Core::Nullable<std::string>
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<AccessTier> Tier;
+      Azure::Nullable<bool> IsAccessTierInferred;
+      Azure::Nullable<BlobArchiveStatus> ArchiveStatus;
+      Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+      Azure::Nullable<Azure::DateTime> AccessTierChangedOn;
+      Azure::Nullable<std::string> CopyId;
+      Azure::Nullable<std::string> CopySource;
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Nullable<std::string> CopyStatusDescription;
+      Azure::Nullable<bool> IsIncrementalCopy;
+      Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+      Azure::Nullable<std::string> CopyProgress;
+      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      Azure::Nullable<std::string>
           ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob
-      Azure::Core::Nullable<int32_t> TagCount;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<bool> IsCurrentVersion;
+      Azure::Nullable<int32_t> TagCount;
+      Azure::Nullable<std::string> VersionId;
+      Azure::Nullable<bool> IsCurrentVersion;
     }; // struct GetBlobPropertiesResult
 
     struct ListBlobContainersSinglePageResult
@@ -1108,7 +1108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
       std::string ServiceEndpoint;
       std::string Prefix;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::vector<BlobContainerItem> Items;
     }; // struct ListBlobContainersSinglePageResult
 
@@ -1119,8 +1119,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::BlobType BlobType;
       bool IsDeleted = false;
       std::string Snapshot;
-      Azure::Core::Nullable<std::string> VersionId;
-      Azure::Core::Nullable<bool> IsCurrentVersion;
+      Azure::Nullable<std::string> VersionId;
+      Azure::Nullable<bool> IsCurrentVersion;
       BlobItemDetails Details;
     }; // struct BlobItem
 
@@ -1131,7 +1131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::HttpRange ContentRange;
       int64_t BlobSize = 0;
       Models::BlobType BlobType;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       DownloadBlobDetails Details;
     }; // struct DownloadBlobResult
 
@@ -1142,7 +1142,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string BlobContainerName;
       std::string Prefix;
       std::string Delimiter;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
       std::vector<std::string> BlobPrefixes;
     }; // struct ListBlobsByHierarchySinglePageResult
@@ -1153,7 +1153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
       std::string Prefix;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
     }; // struct ListBlobsSinglePageResult
 
@@ -1228,10 +1228,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct ListBlobContainersSinglePageOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> Prefix;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> Prefix;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<int32_t> MaxResults;
           ListBlobContainersIncludeFlags Include = ListBlobContainersIncludeFlags::None;
         }; // struct ListBlobContainersSinglePageOptions
 
@@ -1297,7 +1297,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetUserDelegationKeyOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Azure::DateTime StartsOn;
           Azure::DateTime ExpiresOn;
         }; // struct GetUserDelegationKeyOptions
@@ -1352,7 +1352,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetServicePropertiesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
         }; // struct GetServicePropertiesOptions
 
         static Azure::Response<GetServicePropertiesResult> GetProperties(
@@ -1394,7 +1394,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetServicePropertiesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           BlobServiceProperties Properties;
         }; // struct SetServicePropertiesOptions
 
@@ -1442,7 +1442,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetAccountInfoOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
         }; // struct GetAccountInfoOptions
 
         static Azure::Response<GetAccountInfoResult> GetAccountInfo(
@@ -1482,7 +1482,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetServiceStatisticsOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
         }; // struct GetServiceStatisticsOptions
 
         static Azure::Response<GetServiceStatisticsResult> GetStatistics(
@@ -1524,10 +1524,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct FindBlobsByTagsSinglePageOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string Where;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<int32_t> MaxResults;
         }; // struct FindBlobsByTagsSinglePageOptions
 
         static Azure::Response<FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
@@ -3089,11 +3089,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct CreateBlobContainerOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           PublicAccessType AccessType = PublicAccessType::None;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> DefaultEncryptionScope;
-          Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
+          Azure::Nullable<std::string> DefaultEncryptionScope;
+          Azure::Nullable<bool> PreventEncryptionScopeOverride;
         }; // struct CreateBlobContainerOptions
 
         static Azure::Response<CreateBlobContainerResult> Create(
@@ -3151,10 +3151,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct DeleteBlobContainerOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
         }; // struct DeleteBlobContainerOptions
 
         static Azure::Response<DeleteBlobContainerResult> Delete(
@@ -3206,7 +3206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct UndeleteBlobContainerOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string DeletedBlobContainerName;
           std::string DeletedBlobContainerVersion;
         }; // struct UndeleteBlobContainerOptions
@@ -3247,8 +3247,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetBlobContainerPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> LeaseId;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> LeaseId;
         }; // struct GetBlobContainerPropertiesOptions
 
         static Azure::Response<GetBlobContainerPropertiesResult> GetProperties(
@@ -3317,10 +3317,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobContainerMetadataOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
         }; // struct SetBlobContainerMetadataOptions
 
         static Azure::Response<SetBlobContainerMetadataResult> SetMetadata(
@@ -3374,10 +3374,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ListBlobsSinglePageOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> Prefix;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> Prefix;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<int32_t> MaxResults;
           ListBlobsIncludeFlags Include = ListBlobsIncludeFlags::None;
         }; // struct ListBlobsSinglePageOptions
 
@@ -3442,11 +3442,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ListBlobsByHierarchySinglePageOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> Prefix;
-          Azure::Core::Nullable<std::string> Delimiter;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> Prefix;
+          Azure::Nullable<std::string> Delimiter;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<int32_t> MaxResults;
           ListBlobsIncludeFlags Include = ListBlobsIncludeFlags::None;
         }; // struct ListBlobsByHierarchySinglePageOptions
 
@@ -3517,8 +3517,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetBlobContainerAccessPolicyOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> LeaseId;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> LeaseId;
         }; // struct GetBlobContainerAccessPolicyOptions
 
         static Azure::Response<GetBlobContainerAccessPolicyResult> GetAccessPolicy(
@@ -3569,11 +3569,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobContainerAccessPolicyOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           PublicAccessType AccessType = PublicAccessType::None;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           std::vector<BlobSignedIdentifier> SignedIdentifiers;
         }; // struct SetBlobContainerAccessPolicyOptions
 
@@ -3645,11 +3645,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct AcquireBlobContainerLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::chrono::seconds LeaseDuration;
-          Azure::Core::Nullable<std::string> ProposedLeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> ProposedLeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
         }; // struct AcquireBlobContainerLeaseOptions
 
         static Azure::Response<Models::_detail::AcquireBlobContainerLeaseResult> AcquireLease(
@@ -3709,10 +3709,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct RenewBlobContainerLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
         }; // struct RenewBlobContainerLeaseOptions
 
         static Azure::Response<Models::_detail::RenewBlobContainerLeaseResult> RenewLease(
@@ -3768,11 +3768,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ChangeBlobContainerLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
           std::string ProposedLeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
         }; // struct ChangeBlobContainerLeaseOptions
 
         static Azure::Response<Models::_detail::ChangeBlobContainerLeaseResult> ChangeLease(
@@ -3829,10 +3829,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ReleaseBlobContainerLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
         }; // struct ReleaseBlobContainerLeaseOptions
 
         static Azure::Response<Models::_detail::ReleaseBlobContainerLeaseResult> ReleaseLease(
@@ -3887,10 +3887,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct BreakBlobContainerLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::chrono::seconds> BreakPeriod;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
         }; // struct BreakBlobContainerLeaseOptions
 
         static Azure::Response<Models::_detail::BreakBlobContainerLeaseResult> BreakLease(
@@ -4821,18 +4821,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct DownloadBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<Azure::Core::Http::HttpRange> Range;
-          Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<Azure::Core::Http::HttpRange> Range;
+          Azure::Nullable<HashAlgorithm> RangeHashAlgorithm;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct DownloadBlobOptions
 
         static Azure::Response<DownloadBlobResult> Download(
@@ -5180,14 +5180,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct DeleteBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct DeleteBlobOptions
 
         static Azure::Core::Http::Request DeleteCreateMessage(
@@ -5270,9 +5270,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobExpiryOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           ScheduleBlobExpiryOriginType ExpiryOrigin;
-          Azure::Core::Nullable<std::string> ExpiryTime;
+          Azure::Nullable<std::string> ExpiryTime;
         }; // struct SetBlobExpiryOptions
 
         static Azure::Response<SetBlobExpiryResult> ScheduleDeletion(
@@ -5313,7 +5313,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct UndeleteBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
         }; // struct UndeleteBlobOptions
 
         static Azure::Response<UndeleteBlobResult> Undelete(
@@ -5348,16 +5348,16 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetBlobPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct GetBlobPropertiesOptions
 
         static Azure::Response<GetBlobPropertiesResult> GetProperties(
@@ -5678,14 +5678,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobHttpHeadersOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobHttpHeadersOptions
 
         static Azure::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
@@ -5786,18 +5786,18 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobMetadataOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobMetadataOptions
 
         static Azure::Response<SetBlobMetadataResult> SetMetadata(
@@ -5888,10 +5888,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobAccessTierOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           AccessTier Tier;
-          Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+          Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobAccessTierOptions
 
         static Azure::Core::Http::Request SetAccessTierCreateMessage(
@@ -5953,24 +5953,24 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct StartCopyBlobFromUriOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           std::string SourceUri;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> SourceLeaseId;
-          Azure::Core::Nullable<AccessTier> Tier;
-          Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> SourceLeaseId;
+          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
-          Azure::Core::Nullable<Azure::DateTime> SourceIfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
+          Azure::Nullable<std::string> IfTags;
+          Azure::Nullable<Azure::DateTime> SourceIfModifiedSince;
+          Azure::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
           Azure::ETag SourceIfMatch;
           Azure::ETag SourceIfNoneMatch;
-          Azure::Core::Nullable<std::string> SourceIfTags;
-          Azure::Core::Nullable<bool> ShouldSealDestination;
+          Azure::Nullable<std::string> SourceIfTags;
+          Azure::Nullable<bool> ShouldSealDestination;
         }; // struct StartCopyBlobFromUriOptions
 
         static Azure::Response<Models::_detail::StartCopyBlobFromUriResult> StartCopyFromUri(
@@ -6093,9 +6093,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct AbortCopyBlobFromUriOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string CopyId;
-          Azure::Core::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> LeaseId;
         }; // struct AbortCopyBlobFromUriOptions
 
         static Azure::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
@@ -6138,18 +6138,18 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct CreateBlobSnapshotOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct CreateBlobSnapshotOptions
 
         static Azure::Response<CreateBlobSnapshotResult> CreateSnapshot(
@@ -6261,8 +6261,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetBlobTagsOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> IfTags;
         }; // struct GetBlobTagsOptions
 
         static Azure::Response<GetBlobTagsResult> GetTags(
@@ -6306,9 +6306,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SetBlobTagsOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::map<std::string, std::string> Tags;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobTagsOptions
 
         static Azure::Response<SetBlobTagsResult> SetTags(
@@ -6358,14 +6358,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct AcquireBlobLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::chrono::seconds LeaseDuration;
-          Azure::Core::Nullable<std::string> ProposedLeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> ProposedLeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct AcquireBlobLeaseOptions
 
         static Azure::Response<Models::_detail::AcquireBlobLeaseResult> AcquireLease(
@@ -6436,13 +6436,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct RenewBlobLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct RenewBlobLeaseOptions
 
         static Azure::Response<Models::_detail::RenewBlobLeaseResult> RenewLease(
@@ -6509,14 +6509,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ChangeBlobLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
           std::string ProposedLeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct ChangeBlobLeaseOptions
 
         static Azure::Response<Models::_detail::ChangeBlobLeaseResult> ChangeLease(
@@ -6584,13 +6584,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ReleaseBlobLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct ReleaseBlobLeaseOptions
 
         static Azure::Response<Models::_detail::ReleaseBlobLeaseResult> ReleaseLease(
@@ -6662,13 +6662,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct BreakBlobLeaseOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::chrono::seconds> BreakPeriod;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct BreakBlobLeaseOptions
 
         static Azure::Response<Models::_detail::BreakBlobLeaseResult> BreakLease(
@@ -6875,21 +6875,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct UploadBlockBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<AccessTier> Tier;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct UploadBlockBlobOptions
 
         static Azure::Response<UploadBlockBlobResult> Upload(
@@ -7067,14 +7067,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct StageBlockOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string BlockId;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
         }; // struct StageBlockOptions
 
         static Azure::Response<StageBlockResult> StageBlock(
@@ -7185,18 +7185,18 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct StageBlockFromUriOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string BlockId;
           std::string SourceUri;
-          Azure::Core::Nullable<Azure::Core::Http::HttpRange> SourceRange;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> SourceIfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
+          Azure::Nullable<Azure::Core::Http::HttpRange> SourceRange;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> SourceIfModifiedSince;
+          Azure::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
           Azure::ETag SourceIfMatch;
           Azure::ETag SourceIfNoneMatch;
         }; // struct StageBlockFromUriOptions
@@ -7343,21 +7343,21 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct CommitBlockListOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::vector<std::pair<BlockType, std::string>> BlockList;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
-          Azure::Core::Nullable<AccessTier> Tier;
+          Azure::Nullable<std::string> IfTags;
+          Azure::Nullable<AccessTier> Tier;
         }; // struct CommitBlockListOptions
 
         static Azure::Response<CommitBlockListResult> CommitBlockList(
@@ -7509,10 +7509,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetBlockListOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           BlockListTypeOption ListType = BlockListTypeOption::Committed;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> IfTags;
         }; // struct GetBlockListOptions
 
         static Azure::Response<GetBlockListResult> GetBlockList(
@@ -7720,22 +7720,22 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct CreatePageBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           int64_t BlobSize = -1;
-          Azure::Core::Nullable<int64_t> SequenceNumber;
+          Azure::Nullable<int64_t> SequenceNumber;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<AccessTier> Tier;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct CreatePageBlobOptions
 
         static Azure::Response<CreatePageBlobResult> Create(
@@ -7883,22 +7883,22 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct UploadPageBlobPagesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Azure::Core::Http::HttpRange Range;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
+          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct UploadPageBlobPagesOptions
 
         static Azure::Response<UploadPageBlobPagesResult> UploadPages(
@@ -8066,24 +8066,24 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct UploadPageBlobPagesFromUriOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string SourceUri;
           Azure::Core::Http::HttpRange SourceRange;
           Azure::Core::Http::HttpRange Range;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
+          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct UploadPageBlobPagesFromUriOptions
 
         static Azure::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
@@ -8259,21 +8259,21 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ClearPageBlobPagesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           Azure::Core::Http::HttpRange Range;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
+          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct ClearPageBlobPagesOptions
 
         static Azure::Response<ClearPageBlobPagesResult> ClearPages(
@@ -8390,21 +8390,21 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct ResizePageBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           int64_t BlobSize = -1;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-          Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
+          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct ResizePageBlobOptions
 
         static Azure::Response<ResizePageBlobResult> Resize(
@@ -8512,16 +8512,16 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct GetPageBlobPageRangesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> PreviousSnapshot;
-          Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
-          Azure::Core::Nullable<Azure::Core::Http::HttpRange> Range;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> PreviousSnapshot;
+          Azure::Nullable<std::string> PreviousSnapshotUrl;
+          Azure::Nullable<Azure::Core::Http::HttpRange> Range;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct GetPageBlobPageRangesOptions
 
         static Azure::Response<GetPageBlobPageRangesResult> GetPageRanges(
@@ -8616,13 +8616,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct StartCopyPageBlobIncrementalOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string CopySource;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct StartCopyPageBlobIncrementalOptions
 
         static Azure::Response<Models::_detail::StartCopyPageBlobIncrementalResult>
@@ -8879,19 +8879,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct CreateAppendBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct CreateAppendBlobOptions
 
         static Azure::Response<CreateAppendBlobResult> Create(
@@ -9029,20 +9029,20 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct AppendBlockOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<int64_t> MaxSize;
-          Azure::Core::Nullable<int64_t> AppendPosition;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> MaxSize;
+          Azure::Nullable<int64_t> AppendPosition;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct AppendBlockOptions
 
         static Azure::Response<AppendBlockResult> AppendBlock(
@@ -9193,22 +9193,22 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct AppendBlockFromUriOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string SourceUri;
-          Azure::Core::Nullable<Azure::Core::Http::HttpRange> SourceRange;
-          Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<int64_t> MaxSize;
-          Azure::Core::Nullable<int64_t> AppendPosition;
-          Azure::Core::Nullable<std::string> EncryptionKey;
-          Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Core::Nullable<std::string> EncryptionScope;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<Azure::Core::Http::HttpRange> SourceRange;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> MaxSize;
+          Azure::Nullable<int64_t> AppendPosition;
+          Azure::Nullable<std::string> EncryptionKey;
+          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+          Azure::Nullable<std::string> EncryptionScope;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
+          Azure::Nullable<std::string> IfTags;
         }; // struct AppendBlockFromUriOptions
 
         static Azure::Response<AppendBlockFromUriResult> AppendBlockFromUri(
@@ -9371,14 +9371,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         struct SealAppendBlobOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> LeaseId;
-          Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<std::string> IfTags;
-          Azure::Core::Nullable<int64_t> AppendPosition;
+          Azure::Nullable<std::string> IfTags;
+          Azure::Nullable<int64_t> AppendPosition;
         }; // struct SealAppendBlobOptions
 
         static Azure::Response<SealAppendBlobResult> Seal(
@@ -9456,7 +9456,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       public:
         struct SubmitBlobBatchOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ContentType;
         }; // struct SubmitBlobBatchOptions
 

@@ -14,6 +14,7 @@
 using namespace Azure::Core;
 using namespace Azure::Core::_internal;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 struct FakeTransport : public HttpTransport
 {

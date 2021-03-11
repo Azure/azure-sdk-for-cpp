@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobClient(
         const std::string& blobUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -346,15 +346,15 @@ namespace Azure { namespace Storage { namespace Blobs {
   protected:
     Azure::Core::Url m_blobUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
-    Azure::Core::Nullable<std::string> m_encryptionScope;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Nullable<std::string> m_encryptionScope;
 
   private:
     explicit BlobClient(
         Azure::Core::Url blobUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
-        Azure::Core::Nullable<std::string> encryptionScope)
+        Azure::Nullable<EncryptionKey> customerProvidedKey,
+        Azure::Nullable<std::string> encryptionScope)
         : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))

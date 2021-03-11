@@ -42,7 +42,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     explicit KeyClient(
         std::string const& vaultUrl,
-        std::shared_ptr<Core::TokenCredential const> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         KeyClientOptions options = KeyClientOptions());
 
     /**

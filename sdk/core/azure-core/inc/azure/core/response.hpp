@@ -21,7 +21,7 @@ namespace Azure {
  * @tparam T A specific type of value to get from the raw HTTP response type.
  */
 template <class T> class Response {
-  Azure::Core::Nullable<T> m_value;
+  Azure::Nullable<T> m_value;
   std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
 public:

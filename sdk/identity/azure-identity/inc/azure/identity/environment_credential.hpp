@@ -17,7 +17,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief An environment credential.
    */
-  class EnvironmentCredential : public Core::TokenCredential {
+  class EnvironmentCredential : public Core::Credentials::TokenCredential {
     std::unique_ptr<TokenCredential> m_credentialImpl;
 
   public:
@@ -34,8 +34,8 @@ namespace Azure { namespace Identity {
      */
     explicit EnvironmentCredential();
 
-    Core::AccessToken GetToken(
-        Core::Http::TokenRequestOptions const& tokenRequestOptions,
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
   };
 

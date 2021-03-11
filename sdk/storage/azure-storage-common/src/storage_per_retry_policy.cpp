@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
       Core::Http::Request& request,
-      Core::Http::NextHttpPolicy nextHttpPolicy,
+      Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Core::Context const& ctx) const
   {
     const char* HttpHeaderDate = "Date";

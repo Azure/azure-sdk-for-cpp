@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
      * for the format of SQL statements.
      */
-    Azure::Core::Nullable<std::string> TagConditions;
+    Azure::Nullable<std::string> TagConditions;
   };
 
   /**
@@ -67,13 +67,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
      * is less than or equal to this value.
      */
-    Azure::Core::Nullable<int64_t> IfMaxSizeLessThanOrEqual;
+    Azure::Nullable<int64_t> IfMaxSizeLessThanOrEqual;
 
     /**
      * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
      * to this value.
      */
-    Azure::Core::Nullable<int64_t> IfAppendPositionEqual;
+    Azure::Nullable<int64_t> IfAppendPositionEqual;
   };
 
   /**
@@ -85,19 +85,19 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief IfSequenceNumberLessThan ensures that the page blob operation succeeds only if
      * the blob's sequence number is less than a value.
      */
-    Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
+    Azure::Nullable<int64_t> IfSequenceNumberLessThan;
 
     /**
      * @brief IfSequenceNumberLessThanOrEqual ensures that the page blob operation succeeds
      * only if the blob's sequence number is less than or equal to a value.
      */
-    Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqual;
+    Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqual;
 
     /**
      * @brief IfSequenceNumberEqual ensures that the page blob operation succeeds only
      * if the blob's sequence number is equal to a value.
      */
-    Azure::Core::Nullable<int64_t> IfSequenceNumberEqual;
+    Azure::Nullable<int64_t> IfSequenceNumberEqual;
   };
 
   /**
@@ -130,12 +130,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Holds the customer provided key used when making requests.
      */
-    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
+    Azure::Nullable<EncryptionKey> CustomerProvidedKey;
 
     /**
      * @brief Holds the encryption scope used when making requests.
      */
-    Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Nullable<std::string> EncryptionScope;
 
     /**
      * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies a string that filters the results to return only containers whose
      * name begins with the specified prefix.
      */
-    Azure::Core::Nullable<std::string> Prefix;
+    Azure::Nullable<std::string> Prefix;
 
     /**
      * @brief A string value that identifies the portion of the list of containers to be
@@ -171,12 +171,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * be used as the value for the ContinuationToken parameter in a subsequent call to request the
      * next segment of list items.
      */
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of containers to return.
      */
-    Azure::Core::Nullable<int32_t> PageSizeHint;
+    Azure::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Specifies that the container's metadata be returned.
@@ -235,12 +235,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * body if the result set returned was not complete. The ContinuationToken value may then be
      * used in a subsequent call to request the next set of items..
      */
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of blobs to return.
      */
-    Azure::Core::Nullable<int32_t> PageSizeHint;
+    Azure::Nullable<int32_t> PageSizeHint;
   };
 
   /**
@@ -262,13 +262,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The encryption scope to use as the default on the container.
      */
-    Azure::Core::Nullable<std::string> DefaultEncryptionScope;
+    Azure::Nullable<std::string> DefaultEncryptionScope;
 
     /**
      * @brief If true, prevents any blob upload from specifying a different encryption
      * scope.
      */
-    Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
+    Azure::Nullable<bool> PreventEncryptionScopeOverride;
   };
 
   /**
@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Use this parameter if you would like to restore the container under a
      * different name.
      */
-    Azure::Core::Nullable<std::string> DestinationBlobContainerName;
+    Azure::Nullable<std::string> DestinationBlobContainerName;
   };
 
   /**
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Specify this header to perform the operation only if the resource has been
        * modified since the specified time. This timestamp will be truncated to second.
        */
-      Azure::Core::Nullable<Azure::DateTime> IfModifiedSince;
+      Azure::Nullable<Azure::DateTime> IfModifiedSince;
     } AccessConditions;
   };
 
@@ -333,7 +333,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies a string that filters the results to return only blobs whose
      * name begins with the specified prefix.
      */
-    Azure::Core::Nullable<std::string> Prefix;
+    Azure::Nullable<std::string> Prefix;
 
     /**
      * @brief A string value that identifies the portion of the list of blobs to be
@@ -343,12 +343,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the value for the ContinuationToken parameter in a subsequent call to request the next
      * segment of list items.
      */
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of blobs to return.
      */
-    Azure::Core::Nullable<int32_t> PageSizeHint;
+    Azure::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Specifies one or more datasets to include in the response.
@@ -433,7 +433,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
-    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
+    Azure::Nullable<Models::RehydratePriority> RehydratePriority;
   };
 
   /**
@@ -463,19 +463,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Core::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Indicates the priority with which to rehydrate an archived blob. The priority
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
-    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
+    Azure::Nullable<Models::RehydratePriority> RehydratePriority;
 
     /**
      * @brief If the destination blob should be sealed. Only applicable for Append Blobs.
      */
-    Azure::Core::Nullable<bool> ShouldSealDestination;
+    Azure::Nullable<bool> ShouldSealDestination;
   };
 
   /**
@@ -497,13 +497,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::HttpRange> Range;
+    Azure::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief When specified together with Range, service returns hash for the range as long as the
      * range is less than or equal to 4 MiB in size.
      */
-    Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm;
+    Azure::Nullable<HashAlgorithm> RangeHashAlgorithm;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -519,7 +519,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::HttpRange> Range;
+    Azure::Nullable<Core::Http::HttpRange> Range;
 
     struct
     {
@@ -571,7 +571,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * and all of its snapshots, or only the blob's snapshots and not the blob itself. Required if
      * the blob has associated snapshots.
      */
-    Azure::Core::Nullable<Models::DeleteSnapshotsOption> DeleteSnapshots;
+    Azure::Nullable<Models::DeleteSnapshotsOption> DeleteSnapshots;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -642,7 +642,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * available before the break period has expired, but the lease may be held for longer than the
      * break period.
      */
-    Azure::Core::Nullable<std::chrono::seconds> BreakPeriod;
+    Azure::Nullable<std::chrono::seconds> BreakPeriod;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -682,7 +682,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief The standard HTTP header system properties to set.
@@ -697,7 +697,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -723,7 +723,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> Tier;
 
     struct
     {
@@ -756,7 +756,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -772,14 +772,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
+    Azure::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -812,7 +812,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -870,7 +870,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -886,14 +886,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<Core::Http::HttpRange> SourceRange;
+    Azure::Nullable<Core::Http::HttpRange> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -921,7 +921,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief The sequence number is a user-controlled value that you can use to track requests. The
      * value of the sequence number must be between 0 and 2^63 - 1.
      */
-    Azure::Core::Nullable<int64_t> SequenceNumber;
+    Azure::Nullable<int64_t> SequenceNumber;
 
     /**
      * @brief The standard HTTP header system properties to set.
@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -954,7 +954,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -972,7 +972,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1011,7 +1011,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
      * omitted, then all ranges for the blob are returned.
      */
-    Azure::Core::Nullable<Core::Http::HttpRange> Range;
+    Azure::Nullable<Core::Http::HttpRange> Range;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

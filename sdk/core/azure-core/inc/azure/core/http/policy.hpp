@@ -26,7 +26,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Http {
+namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
@@ -67,8 +67,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.
      * @param request An #Azure::Core::Http::Request being sent.
-     * @param policy #Azure::Core::Http::NextHttpPolicy to invoke after this policy has been
-     * applied.
+     * @param policy #Azure::Core::Http::Policies::NextHttpPolicy to invoke after this policy has
+     * been applied.
      *
      * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
      * policies in the stack sequence of policies have been applied.
@@ -162,7 +162,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an HTTP transport policy.
      *
-     * @param options #Azure::Core::Http::TransportOptions.
+     * @param options #Azure::Core::Http::Policies::TransportOptions.
      */
     explicit TransportPolicy(TransportOptions options = TransportOptions())
         : m_options(std::move(options))
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Options for the #Azure::Core::Http::RetryPolicy.
+   * @brief Options for the #Azure::Core::Http::Policies::RetryPolicy.
    */
   struct RetryOptions
   {
@@ -221,9 +221,9 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * Constructs HTTP retry policy with the provided #Azure::Core::Http::RetryOptions.
+     * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
      *
-     * @param options #Azure::Core::Http::RetryOptions.
+     * @param options #Azure::Core::Http::Policies::RetryOptions.
      */
     explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
@@ -285,7 +285,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief The options for the #Azure::Core::Http::TelemetryPolicy
+   * @brief The options for the #Azure::Core::Http::Policies::TelemetryPolicy
    *
    */
   struct TelemetryOptions
@@ -343,25 +343,14 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Defines options for getting token.
-   */
-  struct TokenRequestOptions
-  {
-    /**
-     * @brief Authentication scopes.
-     */
-    std::vector<std::string> Scopes;
-  };
-
-  /**
    * @brief Bearer Token authentication policy.
    */
   class BearerTokenAuthenticationPolicy : public HttpPolicy {
   private:
-    std::shared_ptr<TokenCredential const> const m_credential;
-    TokenRequestOptions m_tokenRequestOptions;
+    std::shared_ptr<Credentials::TokenCredential const> const m_credential;
+    Credentials::TokenRequestContext m_tokenRequestContext;
 
-    mutable AccessToken m_accessToken;
+    mutable Credentials::AccessToken m_accessToken;
     mutable std::mutex m_accessTokenMutex;
 
     BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
@@ -371,19 +360,19 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct a Bearer Token authentication policy.
      *
-     * @param credential A #Azure::Core::TokenCredential to use with this policy.
-     * @param tokenRequestOptions #Azure::Core::Http::TokenRequestOptions.
+     * @param credential An #Azure::Core::TokenCredential to use with this policy.
+     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext.
      */
     explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> credential,
-        TokenRequestOptions tokenRequestOptions)
-        : m_credential(std::move(credential)), m_tokenRequestOptions(std::move(tokenRequestOptions))
+        std::shared_ptr<Credentials::TokenCredential const> credential,
+        Credentials::TokenRequestContext tokenRequestContext)
+        : m_credential(std::move(credential)), m_tokenRequestContext(std::move(tokenRequestContext))
     {
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestOptions);
+      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestContext);
     }
 
     std::unique_ptr<RawResponse> Send(
@@ -393,7 +382,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   namespace _detail {
-    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet g_defaultAllowedHttpHeaders;
+    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   }
 
   /**
@@ -416,7 +405,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Logs every HTTP request.
    *
    * @details Logs every HTTP request and response.
-   * @remark See Azure::Core::Logger.
+   * @remark See Azure::Core::Diagnostics::Logger.
    */
   class LogPolicy : public HttpPolicy {
     LogOptions m_options;
@@ -440,7 +429,7 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace _internal {
     /**
-     * @brief #Azure::Core::Http::_internal::ValuePolicy options.
+     * @brief #Azure::Core::Http::Policies::_internal::ValuePolicy options.
      */
     struct ValueOptions
     {
@@ -460,9 +449,9 @@ namespace Azure { namespace Core { namespace Http {
 
     public:
       /**
-       * @brief Construct a #Azure::Core::Http::_internal::ValuePolicy with the
-       * #Azure::Core::Http::_internal::ValueOptions provided.
-       * @param options #Azure::Core::Http::_internal::ValueOptions.
+       * @brief Construct a #Azure::Core::Http::Policies::_internal::ValuePolicy with the
+       * #Azure::Core::Http::Policies::_internal::ValueOptions provided.
+       * @param options #Azure::Core::Http::Policies::_internal::ValueOptions.
        */
       explicit ValuePolicy(ValueOptions options) : m_options(std::move(options)) {}
 
@@ -493,4 +482,4 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
   } // namespace _internal
-}}} // namespace Azure::Core::Http
+}}}} // namespace Azure::Core::Http::Policies

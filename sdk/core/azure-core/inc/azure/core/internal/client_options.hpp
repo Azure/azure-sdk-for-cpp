@@ -29,13 +29,13 @@ namespace Azure { namespace Core { namespace _internal {
      * @brief Define policies to be called one time for every Http request from an sdk client.
      *
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> PerOperationPolicies;
 
     /**
      * @brief Define policies to be called each time and sdk client tries to send the Http request.
      *
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> PerRetryPolicies;
 
     /**
      * @brief Move each policy from \p options into the new instance.
@@ -83,23 +83,23 @@ namespace Azure { namespace Core { namespace _internal {
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    Azure::Core::Http::RetryOptions Retry;
+    Azure::Core::Http::Policies::RetryOptions Retry;
 
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    Azure::Core::Http::TransportOptions Transport;
+    Azure::Core::Http::Policies::TransportOptions Transport;
 
     /**
      * @brief Telemetry options.
      */
-    Azure::Core::Http::TelemetryOptions Telemetry;
+    Azure::Core::Http::Policies::TelemetryOptions Telemetry;
 
     /**
      * @brief Define the information to be used for logging.
      *
      */
-    Azure::Core::Http::LogOptions Log;
+    Azure::Core::Http::Policies::LogOptions Log;
   };
 
 }}} // namespace Azure::Core::_internal

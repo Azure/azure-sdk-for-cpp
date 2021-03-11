@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     PublicAccessType AccessType = PublicAccessType::None;
     bool HasImmutabilityPolicy = false;
     bool HasLegalHold = false;
-    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Available;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
   }; // struct FileSystemItemDetails
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
     std::string ServiceEndpoint;
     std::string Prefix;
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
     std::vector<FileSystemItem> Items;
   }; // struct ListFileSystemsSinglePageResult
 
@@ -151,29 +151,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     DateTime CreatedOn;
     int64_t FileSize = 0;
     Storage::Metadata Metadata;
-    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-    Azure::Core::Nullable<LeaseStateType> LeaseState;
-    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    Azure::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Nullable<LeaseStateType> LeaseState;
+    Azure::Nullable<LeaseStatusType> LeaseStatus;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<bool> IsServerEncrypted;
-    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Core::Nullable<bool> IsAccessTierInferred;
-    Azure::Core::Nullable<DateTime> AccessTierChangedOn;
-    Azure::Core::Nullable<std::string> CopyId;
-    Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
-    Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<DateTime> CopyCompletedOn;
-    Azure::Core::Nullable<DateTime> ExpiresOn;
-    Azure::Core::Nullable<DateTime> LastAccessedOn;
+    Azure::Nullable<bool> IsServerEncrypted;
+    Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    Azure::Nullable<bool> IsAccessTierInferred;
+    Azure::Nullable<DateTime> AccessTierChangedOn;
+    Azure::Nullable<std::string> CopyId;
+    Azure::Nullable<std::string> CopySource;
+    Azure::Nullable<Blobs::Models::CopyStatus> CopyStatus;
+    Azure::Nullable<std::string> CopyProgress;
+    Azure::Nullable<DateTime> CopyCompletedOn;
+    Azure::Nullable<DateTime> ExpiresOn;
+    Azure::Nullable<DateTime> LastAccessedOn;
     bool IsDirectory = false;
-    Azure::Core::Nullable<DataLakeArchiveStatus> ArchiveStatus;
-    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
-    Azure::Core::Nullable<std::string> CopyStatusDescription;
-    Azure::Core::Nullable<bool> IsIncrementalCopy;
-    Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
-    Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<bool> IsCurrentVersion;
+    Azure::Nullable<DataLakeArchiveStatus> ArchiveStatus;
+    Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+    Azure::Nullable<std::string> CopyStatusDescription;
+    Azure::Nullable<bool> IsIncrementalCopy;
+    Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+    Azure::Nullable<std::string> VersionId;
+    Azure::Nullable<bool> IsCurrentVersion;
     std::string RequestId;
   };
 
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     bool Created = true;
     Azure::ETag ETag;
     DateTime LastModified;
-    Azure::Core::Nullable<int64_t> FileSize;
+    Azure::Nullable<int64_t> FileSize;
     std::string RequestId;
   };
 
@@ -226,25 +226,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     Azure::ETag ETag;
     DateTime LastModified;
-    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
     PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     DateTime CreatedOn;
-    Azure::Core::Nullable<DateTime> ExpiresOn;
-    Azure::Core::Nullable<DateTime> LastAccessedOn;
-    Azure::Core::Nullable<std::string> CopyId;
-    Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
-    Azure::Core::Nullable<std::string> CopyStatusDescription;
-    Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<Azure::DateTime> CopyCompletedOn;
-    Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<bool> IsCurrentVersion;
+    Azure::Nullable<DateTime> ExpiresOn;
+    Azure::Nullable<DateTime> LastAccessedOn;
+    Azure::Nullable<std::string> CopyId;
+    Azure::Nullable<std::string> CopySource;
+    Azure::Nullable<Models::CopyStatus> CopyStatus;
+    Azure::Nullable<std::string> CopyStatusDescription;
+    Azure::Nullable<std::string> CopyProgress;
+    Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+    Azure::Nullable<std::string> VersionId;
+    Azure::Nullable<bool> IsCurrentVersion;
     bool IsServerEncrypted = false;
-    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    Azure::Nullable<std::string> EncryptionScope;
   };
 
   struct DownloadDataLakeFileResult
@@ -252,7 +252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::unique_ptr<Azure::Core::IO::BodyStream> Body;
     int64_t FileSize = int64_t();
     Azure::Core::Http::HttpRange ContentRange;
-    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+    Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
     DownloadDataLakeFileDetails Details;
     std::string RequestId;
   };
@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct RenameDataLakeDirectoryResult
   {
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
     std::string RequestId;
   };
 

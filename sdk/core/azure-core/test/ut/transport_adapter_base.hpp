@@ -22,9 +22,11 @@ namespace Azure { namespace Core { namespace Test {
   struct TransportAdaptersTestParameter
   {
     std::string Suffix;
-    Azure::Core::Http::TransportOptions TransportAdapter;
+    Azure::Core::Http::Policies::TransportOptions TransportAdapter;
 
-    TransportAdaptersTestParameter(std::string suffix, Azure::Core::Http::TransportOptions options)
+    TransportAdaptersTestParameter(
+        std::string suffix,
+        Azure::Core::Http::Policies::TransportOptions options)
         : Suffix(std::move(suffix)), TransportAdapter(std::move(options))
     {
     }
@@ -37,16 +39,16 @@ namespace Azure { namespace Core { namespace Test {
     // Befor each test, create pipeline
     virtual void SetUp() override
     {
-      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-      Azure::Core::Http::RetryOptions opt;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+      Azure::Core::Http::Policies::RetryOptions opt;
       opt.RetryDelay = std::chrono::milliseconds(10);
 
       // Retry policy will help to prevent server-occasionally-errors
-      policies.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(opt));
+      policies.push_back(std::make_unique<Azure::Core::Http::Policies::RetryPolicy>(opt));
       // Will get transport policy options from test param
       // auto param = GetParam();
-      policies.push_back(
-          std::make_unique<Azure::Core::Http::TransportPolicy>(GetParam().TransportAdapter));
+      policies.push_back(std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(
+          GetParam().TransportAdapter));
 
       m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(policies);
     }
