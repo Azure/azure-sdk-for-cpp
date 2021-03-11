@@ -5,9 +5,9 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <errno.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <fcntl.h> // for open and _O_RDONLY
+#include <sys/types.h> // for lseek
+#include <unistd.h> // for lseek
 #elif defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN

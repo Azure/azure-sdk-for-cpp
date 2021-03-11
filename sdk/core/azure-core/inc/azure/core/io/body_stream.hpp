@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace IO {
      * @remark The #Azure::Core::IO::FileBodyStream owns the file object and is responsible for
      * opening and closing the file.
      *
-     * @remark Do not use the file object to read or write, while it is being used by the stream.
+     * @remark Do not write to the file while it is being used by the stream.
      */
     FileBodyStream(const std::string& filename);
 

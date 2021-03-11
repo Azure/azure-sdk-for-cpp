@@ -29,9 +29,8 @@ using namespace Azure::Core::IO::_internal;
 int64_t RandomAccessFileBodyStream::OnRead(
     uint8_t* buffer,
     int64_t count,
-    Azure::Core::Context const& context)
+    Azure::Core::Context const&)
 {
-  (void)context;
 
 #if defined(AZ_PLATFORM_POSIX)
 
