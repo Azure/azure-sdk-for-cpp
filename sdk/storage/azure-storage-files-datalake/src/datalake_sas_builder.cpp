@@ -123,14 +123,14 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
-    std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().ToString(
-            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
-        : "";
-    std::string expiresOnStr = Identifier.empty()
-        ? ExpiresOn.ToString(
-            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
-        : "";
+    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
+                                  Azure::Core::DateTime::DateFormat::Rfc3339,
+                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
+    std::string expiresOnStr = Identifier.empty() ? ExpiresOn.ToString(
+                                   Azure::Core::DateTime::DateFormat::Rfc3339,
+                                   Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
@@ -208,16 +208,19 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
-    std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().ToString(
-            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
-        : "";
+    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
+                                  Azure::Core::DateTime::DateFormat::Rfc3339,
+                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
+                                                  : "";
     std::string expiresOnStr = ExpiresOn.ToString(
-        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+        Azure::Core::DateTime::DateFormat::Rfc3339,
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
     std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
-        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+        Azure::Core::DateTime::DateFormat::Rfc3339,
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
     std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
-        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+        Azure::Core::DateTime::DateFormat::Rfc3339,
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"

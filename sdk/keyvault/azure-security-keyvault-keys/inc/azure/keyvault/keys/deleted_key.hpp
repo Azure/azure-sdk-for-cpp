@@ -45,13 +45,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Indicate when the key was deleted.
      *
      */
-    Azure::DateTime DeletedDate;
+    Azure::Core::DateTime DeletedDate;
 
     /**
      * @brief Indicate when the deleted key will be purged.
      *
      */
-    Azure::DateTime ScheduledPurgeDate;
+    Azure::Core::DateTime ScheduledPurgeDate;
   };
 
   /***********************  Deserializer / Serializer ******************************/
