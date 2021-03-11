@@ -67,14 +67,14 @@ const unsigned char LocaleInvariantLowercaseTable[256] = {
 };
 } // unnamed namespace
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _internal { namespace Strings {
 
-  unsigned char StringExtensions::ToLower(const unsigned char symbol) noexcept
+  unsigned char ToLower(const unsigned char symbol) noexcept
   {
     return LocaleInvariantLowercaseTable[symbol];
   }
 
-  std::string const StringExtensions::ToLower(const std::string& src) noexcept
+  std::string const ToLower(const std::string& src) noexcept
   {
     auto result = std::string(src);
     for (auto i = result.begin(); i < result.end(); i++)
@@ -84,9 +84,7 @@ namespace Azure { namespace Core { namespace _internal {
     return result;
   }
 
-  bool StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-      const std::string& lhs,
-      const std::string& rhs) noexcept
+  bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept
   {
     return std::equal(
         lhs.begin(),
@@ -99,4 +97,4 @@ namespace Azure { namespace Core { namespace _internal {
         });
   }
 
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::_internal::Strings
