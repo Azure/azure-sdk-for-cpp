@@ -58,7 +58,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // Using DownloadViaStream and getting an error code would also get to here to download error from
   // body
   auto bodyStream = response->GetBodyStream();
-  response->SetBody(BodyStream::ReadToEnd(*bodyStream, ctx));
+  response->SetBody(bodyStream->ReadToEnd(ctx));
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.
   return response;

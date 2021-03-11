@@ -670,8 +670,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
     }
 
-    int64_t bytesRead = Azure::Core::IO::BodyStream::ReadToCount(
-        *(firstChunk->BodyStream), buffer, firstChunkLength, context);
+    int64_t bytesRead = firstChunk->BodyStream->ReadToCount(buffer, firstChunkLength, context);
     if (bytesRead != firstChunkLength)
     {
       throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -696,8 +695,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             chunkOptions.Range.GetValue().Offset = offset;
             chunkOptions.Range.GetValue().Length = length;
             auto chunk = Download(chunkOptions, context);
-            int64_t bytesRead = Azure::Core::IO::BodyStream::ReadToCount(
-                *(chunk->BodyStream),
+            int64_t bytesRead = chunk->BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
                 chunkOptions.Range.GetValue().Length.GetValue(),
                 context);
@@ -780,8 +778,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       while (length > 0)
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
-        int64_t bytesRead
-            = Azure::Core::IO::BodyStream::ReadToCount(stream, buffer.data(), readSize, context);
+        int64_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
