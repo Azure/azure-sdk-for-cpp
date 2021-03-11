@@ -46,7 +46,8 @@ namespace Azure { namespace Core {
     // Define how an Operation<T> can be copy-constructed from some other Operation reference.
     // Operation will create a clone of the rawResponse from `other`.
     Operation(Operation const& other)
-        : m_rawResponse(std::make_unique<Http::RawResponse>(other.GetRawResponse()))
+        : m_rawResponse(std::make_unique<Http::RawResponse>(other.GetRawResponse())),
+          m_status(other.m_status)
     {
     }
 
