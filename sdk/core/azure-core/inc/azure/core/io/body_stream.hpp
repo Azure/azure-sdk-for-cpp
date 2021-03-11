@@ -160,55 +160,125 @@ namespace Azure { namespace Core { namespace IO {
     void Rewind() override { m_offset = 0; }
   };
 
+  namespace _internal {
+    /**
+     * @brief A concrete implementation of  #Azure::Core::IO::BodyStream used for reading data from
+     * a file from any offset and length within it.
+     */
+    class RandomAccessFileBodyStream : public BodyStream {
+    private:
+      // immutable
+#if defined(AZ_PLATFORM_POSIX)
+      int m_fileDescriptor;
+#elif defined(AZ_PLATFORM_WINDOWS)
+      HANDLE m_filehandle;
+#endif
+      int64_t m_baseOffset;
+      int64_t m_length;
+      // mutable
+      int64_t m_offset;
+
+      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+
+    public:
+#if defined(AZ_PLATFORM_POSIX)
+      /**
+       * @brief Construct from a file descriptor.
+       *
+       * @param fileDescriptor A file descriptor to an already opened file object that can be used
+       * to identify the file.
+       * @param offset The offset from the beginning of the file from which to start accessing the
+       * data.
+       * @param length The amounts of bytes, starting from the offset, that this stream can access
+       * from the file.
+       *
+       * @remark The caller owns the file handle and needs to open it along with keeping it alive
+       * for the necessary duration. The caller is also responsible for closing it once they are
+       * done.
+       */
+      RandomAccessFileBodyStream(int fileDescriptor, int64_t offset, int64_t length)
+          : m_fileDescriptor(fileDescriptor), m_baseOffset(offset), m_length(length), m_offset(0)
+      {
+      }
+
+      RandomAccessFileBodyStream() : m_fileDescriptor(0), m_baseOffset(0), m_length(0), m_offset(0)
+      {
+      }
+
+#elif defined(AZ_PLATFORM_WINDOWS)
+      /**
+       * @brief Construct from a file handle.
+       *
+       * @param fileHandle A file handle to an already opened file object that can be used to
+       * identify the file.
+       * @param offset The offset from the beginning of the file from which to start accessing the
+       * data.
+       * @param length The amounts of bytes, starting from the offset, that this stream can access
+       * from the file.
+       *
+       * @remark The caller owns the file handle and needs to open it along with keeping it alive
+       * for the necessary duration. The caller is also responsible for closing it once they are
+       * done.
+       */
+      RandomAccessFileBodyStream(HANDLE fileHandle, int64_t offset, int64_t length)
+          : m_filehandle(fileHandle), m_baseOffset(offset), m_length(length), m_offset(0)
+      {
+      }
+
+      RandomAccessFileBodyStream() : m_filehandle(NULL), m_baseOffset(0), m_length(0), m_offset(0)
+      {
+      }
+#endif
+
+      // Rewind seeks back to 0
+      void Rewind() override { this->m_offset = 0; }
+
+      int64_t Length() const override { return this->m_length; };
+    };
+
+  } // namespace _internal
+
   /**
-   * @brief #Azure::Core::IO::BodyStream providing its data from a file.
+   * @brief A concrete implementation of #Azure::Core::IO::BodyStream used for reading data from a
+   * file.
    */
   class FileBodyStream : public BodyStream {
   private:
     // immutable
-#if defined(AZ_PLATFORM_POSIX)
-    int m_fd;
-#elif defined(AZ_PLATFORM_WINDOWS)
-    HANDLE m_hFile;
+#if defined(AZ_PLATFORM_WINDOWS)
+    HANDLE m_filehandle;
+#elif defined(AZ_PLATFORM_POSIX)
+    int m_fileDescriptor;
 #endif
-    int64_t m_baseOffset;
-    int64_t m_length;
     // mutable
-    int64_t m_offset;
+    std::unique_ptr<_internal::RandomAccessFileBodyStream> m_randomAccessFileBodyStream;
 
     int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
-#if defined(AZ_PLATFORM_POSIX)
     /**
-     * @brief Construct from a file.
+     * @brief Construct from a file name.
      *
-     * @param fd File descriptor.
-     * @param offset Offset in the file to start providing the data from.
-     * @param length Length of the data, in bytes, to provide.
+     * @param filename A reference to a file name string used to identify the file, which needs to
+     * have the necessary file path specified to locate the file.
+     *
+     * @remark The #Azure::Core::IO::FileBodyStream owns the file object and is responsible for
+     * opening and closing the file.
+     *
+     * @remark Do not write to the file while it is being used by the stream.
      */
-    FileBodyStream(int fd, int64_t offset, int64_t length)
-        : m_fd(fd), m_baseOffset(offset), m_length(length), m_offset(0)
-    {
-    }
-#elif defined(AZ_PLATFORM_WINDOWS)
+    FileBodyStream(const std::string& filename);
+
     /**
-     * @brief Construct from a file.
+     * @brief Closes the file and cleans up any resources.
      *
-     * @param hFile File handle.
-     * @param offset Offset in the file to start providing the data from.
-     * @param length Length of the data, in bytes, to provide.
      */
-    FileBodyStream(HANDLE hFile, int64_t offset, int64_t length)
-        : m_hFile(hFile), m_baseOffset(offset), m_length(length), m_offset(0)
-    {
-    }
-#endif
+    ~FileBodyStream();
 
-    // Rewind seek back to 0
-    void Rewind() override { this->m_offset = 0; }
+    // Rewind seeks back to 0
+    void Rewind() override;
 
-    int64_t Length() const override { return this->m_length; };
+    int64_t Length() const override;
   };
 
 }}} // namespace Azure::Core::IO

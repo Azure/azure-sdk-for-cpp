@@ -3,6 +3,7 @@
 
 #include "azure/storage/blobs/block_blob_client.hpp"
 
+#include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -173,19 +174,17 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
-    Storage::_detail::FileReader fileReader(fileName);
-
-    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
-
-    if (fileReader.GetFileSize() <= options.TransferOptions.SingleUploadThreshold)
     {
-      Azure::Core::IO::FileBodyStream contentStream(
-          fileReader.GetHandle(), 0, fileReader.GetFileSize());
-      UploadBlockBlobOptions uploadBlockBlobOptions;
-      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
-      uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions, context);
+      Azure::Core::IO::FileBodyStream contentStream(fileName);
+
+      if (contentStream.Length() <= options.TransferOptions.SingleUploadThreshold)
+      {
+        UploadBlockBlobOptions uploadBlockBlobOptions;
+        uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
+        uploadBlockBlobOptions.Metadata = options.Metadata;
+        uploadBlockBlobOptions.Tier = options.Tier;
+        return Upload(&contentStream, uploadBlockBlobOptions, context);
+      }
     }
 
     std::vector<std::string> blockIds;
@@ -196,8 +195,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
+    Storage::_detail::FileReader fileReader(fileName);
+
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::Core::IO::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
+          fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
@@ -205,6 +207,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         blockIds.resize(static_cast<std::size_t>(numChunks));
       }
     };
+
+    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
 
     Storage::_detail::ConcurrentTransfer(
         0,

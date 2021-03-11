@@ -440,24 +440,13 @@ namespace Azure { namespace Core { namespace Test {
 
 #if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
-    auto requestBodyStream
-        = Azure::Core::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+
+    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read all stream content for uploading instead of chunks
@@ -478,25 +467,13 @@ namespace Azure { namespace Core { namespace Test {
 
 #if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::Core::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
@@ -516,25 +493,13 @@ namespace Azure { namespace Core { namespace Test {
 
 #if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::Core::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read more than file size (5Mb)

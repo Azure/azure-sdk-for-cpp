@@ -5,7 +5,9 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <errno.h>
-#include <unistd.h>
+#include <fcntl.h> // for open and _O_RDONLY
+#include <sys/types.h> // for lseek
+#include <unistd.h> // for lseek
 #elif defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -20,6 +22,7 @@
 #include "azure/core/io/body_stream.hpp"
 
 #include <algorithm>
+#include <codecvt>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -82,54 +85,98 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
   return copy_length;
 }
 
-#if defined(AZ_PLATFORM_POSIX)
-int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
+FileBodyStream::FileBodyStream(const std::string& filename)
 {
-  (void)context;
-  auto result = pread(
-      this->m_fd,
-      buffer,
-      std::min(count, this->m_length - this->m_offset),
-      this->m_baseOffset + this->m_offset);
+#if defined(AZ_PLATFORM_WINDOWS)
 
-  if (result < 0)
+  try
   {
-    throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
-  }
-
-  this->m_offset += result;
-  return result;
-}
-#elif defined(AZ_PLATFORM_WINDOWS)
-int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
-{
-  (void)context;
-  DWORD numberOfBytesRead;
-  auto o = OVERLAPPED();
-  o.Offset = static_cast<DWORD>(this->m_baseOffset + this->m_offset);
-  o.OffsetHigh = static_cast<DWORD>((this->m_baseOffset + this->m_offset) >> 32);
-
-  auto result = ReadFile(
-      this->m_hFile,
-      buffer,
-      // at most 4Gb to be read
-      static_cast<DWORD>(std::min(
-          static_cast<uint64_t>(0xFFFFFFFFUL),
-          static_cast<uint64_t>(std::min(count, (this->m_length - this->m_offset))))),
-      &numberOfBytesRead,
-      &o);
-
-  if (!result)
-  {
-    // Check error. of EOF, return bytes read to EOF
-    auto error = GetLastError();
-    if (error != ERROR_HANDLE_EOF)
-    {
-      throw std::runtime_error("Reading error. (Code Number: " + std::to_string(error) + ")");
-    }
-  }
-
-  this->m_offset += numberOfBytesRead;
-  return numberOfBytesRead;
-}
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+    m_filehandle = CreateFile(
+        filename.data(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        nullptr,
+        OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN, // Using this as an optimization since we know file access is
+                                   // intended to be sequential from beginning to end.
+        NULL);
+#else
+    m_filehandle = CreateFile2(
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        OPEN_EXISTING,
+        NULL);
 #endif
+
+    if (m_filehandle == INVALID_HANDLE_VALUE)
+    {
+      throw std::runtime_error("Failed to open file for reading. File name: '" + filename + "'");
+    }
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(m_filehandle, &fileSize))
+    {
+      throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
+    }
+    m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
+        _internal::RandomAccessFileBodyStream(m_filehandle, 0, fileSize.QuadPart));
+  }
+  catch (std::exception&)
+  {
+    CloseHandle(m_filehandle);
+    throw;
+  }
+
+#elif defined(AZ_PLATFORM_POSIX)
+
+  try
+  {
+    m_fileDescriptor = open(filename.data(), O_RDONLY);
+    if (m_fileDescriptor == -1)
+    {
+      throw std::runtime_error("Failed to open file for reading. File name: '" + filename + "'");
+    }
+    int64_t fileSize = lseek(m_fileDescriptor, 0, SEEK_END);
+    if (fileSize == -1)
+    {
+      throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
+    }
+    m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
+        _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize));
+  }
+  catch (std::exception&)
+  {
+    close(m_fileDescriptor);
+    throw;
+  }
+
+#endif
+}
+
+FileBodyStream::~FileBodyStream()
+{
+#if defined(AZ_PLATFORM_WINDOWS)
+  if (m_filehandle)
+  {
+    CloseHandle(m_filehandle);
+    m_filehandle = NULL;
+  }
+#elif defined(AZ_PLATFORM_POSIX)
+  if (m_fileDescriptor)
+  {
+    close(m_fileDescriptor);
+    m_fileDescriptor = 0;
+  }
+#endif
+}
+
+int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
+{
+  return m_randomAccessFileBodyStream->Read(buffer, count, context);
+}
+
+void FileBodyStream::Rewind() { m_randomAccessFileBodyStream->Rewind(); }
+
+int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream->Length(); }
