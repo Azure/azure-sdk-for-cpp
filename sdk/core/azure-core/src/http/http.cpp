@@ -9,6 +9,7 @@
 #include <utility>
 
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http;
 using namespace Azure::Core::IO::_internal;
 
 void Azure::Core::_detail::InsertHeaderWithValidation(
