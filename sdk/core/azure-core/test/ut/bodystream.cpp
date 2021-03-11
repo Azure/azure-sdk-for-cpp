@@ -45,7 +45,7 @@ TEST(BodyStream, Rewind)
 #error "Unknown platform"
 #endif
 
-  auto fileBodyStream = Azure::Core::IO::FileBodyStream(testDataPath);
+  Azure::Core::IO::FileBodyStream fileBodyStream(testDataPath);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
@@ -66,7 +66,7 @@ TEST(FileBodyStream, Length)
   std::string testDataPath(AZURE_TEST_DATA_PATH);
   testDataPath.append("/fileData");
 
-  auto stream = Azure::Core::IO::FileBodyStream(testDataPath);
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 
   auto readResult = Azure::Core::IO::BodyStream::ReadToEnd(
@@ -74,8 +74,5 @@ TEST(FileBodyStream, Length)
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
-  EXPECT_EQ(stream.Length(), FileSize);
-
-  stream = Azure::Core::IO::FileBodyStream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 }

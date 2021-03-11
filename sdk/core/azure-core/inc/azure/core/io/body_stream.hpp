@@ -200,6 +200,9 @@ namespace Azure { namespace Core { namespace IO {
           : m_fileDescriptor(fileDescriptor), m_baseOffset(offset), m_length(length), m_offset(0)
       {
       }
+
+      RandomAccessFileBodyStream() : m_filehandle(0), m_baseOffset(0), m_length(0), m_offset(0) {}
+
 #elif defined(AZ_PLATFORM_WINDOWS)
       /**
        * @brief Construct from a file handle.
@@ -217,6 +220,10 @@ namespace Azure { namespace Core { namespace IO {
        */
       RandomAccessFileBodyStream(HANDLE fileHandle, int64_t offset, int64_t length)
           : m_filehandle(fileHandle), m_baseOffset(offset), m_length(length), m_offset(0)
+      {
+      }
+
+      RandomAccessFileBodyStream() : m_filehandle(NULL), m_baseOffset(0), m_length(0), m_offset(0)
       {
       }
 #endif
@@ -242,7 +249,7 @@ namespace Azure { namespace Core { namespace IO {
     int m_fileDescriptor;
 #endif
     // mutable
-    _internal::RandomAccessFileBodyStream m_randomAccessFileBodyStream;
+    std::unique_ptr<_internal::RandomAccessFileBodyStream> m_randomAccessFileBodyStream;
 
     int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 

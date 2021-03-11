@@ -86,10 +86,6 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
 }
 
 FileBodyStream::FileBodyStream(const std::string& filename)
-    : m_randomAccessFileBodyStream(
-        NULL,
-        0,
-        0) // Required as a placeholder because no default ctor exists.
 {
 #if defined(AZ_PLATFORM_WINDOWS)
 
@@ -124,8 +120,8 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     {
       throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
     }
-    m_randomAccessFileBodyStream
-        = _internal::RandomAccessFileBodyStream(m_filehandle, 0, fileSize.QuadPart);
+    m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
+        _internal::RandomAccessFileBodyStream(m_filehandle, 0, fileSize.QuadPart));
   }
   catch (std::exception&)
   {
@@ -149,7 +145,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     }
 
     m_randomAccessFileBodyStream
-        = _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize);
+        = std::make_unique<_internal::RandomAccessFileBodyStream>(_internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize)_;
   }
   catch (std::exception&)
   {
@@ -163,17 +159,25 @@ FileBodyStream::FileBodyStream(const std::string& filename)
 FileBodyStream::~FileBodyStream()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
-  CloseHandle(m_filehandle);
+  if (m_filehandle)
+  {
+    CloseHandle(m_filehandle);
+    m_filehandle = NULL;
+  }
 #elif defined(AZ_PLATFORM_POSIX)
-  close(m_fileDescriptor);
+  if (m_fileDescriptor)
+  {
+    close(m_fileDescriptor);
+    m_fileDescriptor = 0;
+  }
 #endif
 }
 
 int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
 {
-  return m_randomAccessFileBodyStream.Read(buffer, count, context);
+  return m_randomAccessFileBodyStream->Read(buffer, count, context);
 }
 
-void FileBodyStream::Rewind() { m_randomAccessFileBodyStream.Rewind(); }
+void FileBodyStream::Rewind() { m_randomAccessFileBodyStream->Rewind(); }
 
-int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream.Length(); }
+int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream->Length(); }
