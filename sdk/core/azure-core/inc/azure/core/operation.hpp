@@ -26,7 +26,7 @@ namespace Azure { namespace Core {
   template <class T> class Operation {
   private:
     // These are pure virtual b/c the derived class must provide an implementation
-    virtual std::unique_ptr<Http::RawResponse> PollInternal(Context& context) = 0;
+    virtual Http::RawResponse const& PollInternal(Context& context) = 0;
     virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
 
@@ -88,7 +88,7 @@ namespace Azure { namespace Core {
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
-    std::unique_ptr<Http::RawResponse> Poll()
+    Http::RawResponse const& Poll()
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
@@ -102,7 +102,7 @@ namespace Azure { namespace Core {
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
-    std::unique_ptr<Http::RawResponse> Poll(Context& context) { return PollInternal(context); }
+    Http::RawResponse const& Poll(Context& context) { return PollInternal(context); }
 
     /**
      * @brief Periodically calls the server till the long-running operation completes.

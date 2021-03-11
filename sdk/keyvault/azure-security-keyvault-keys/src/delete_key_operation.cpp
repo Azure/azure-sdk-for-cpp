@@ -27,7 +27,7 @@ inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawRespons
 }
 } // namespace
 
-std::unique_ptr<Azure::Core::Http::RawResponse>
+Azure::Core::Http::RawResponse const&
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::Context& context)
 {
   if (!IsDone())
@@ -40,7 +40,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
   // copy of the raw http response is returned instead of transfering the ownership of the raw
   // response inside the Operation.
-  return std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse);
+  return *m_rawResponse;
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(

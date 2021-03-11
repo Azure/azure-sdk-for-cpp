@@ -44,8 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /* This is the implementation for checking the status of a deleted key. The key is considered
      * deleted if querying /deletedkeys/keyName returns 200 from server. Or whenever soft-delete is
      * disabled.*/
-    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
-        Azure::Core::Context& context) override;
+    Azure::Core::Http::RawResponse const& PollInternal(Azure::Core::Context& context) override;
 
     Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
         std::chrono::milliseconds period,
@@ -53,7 +52,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       while (true)
       {
-        m_rawResponse = Poll(context);
+        m_rawResponse = std::make_unique<Azure::Core::Http::RawResponse>(Poll(context));
         if (IsDone())
         {
           break;

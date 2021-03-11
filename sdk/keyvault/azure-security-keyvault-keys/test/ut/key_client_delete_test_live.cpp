@@ -89,7 +89,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
     // Expected not completed operation
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-            pollResponse->GetStatusCode()),
+            pollResponse.GetStatusCode()),
         404);
   }
 }

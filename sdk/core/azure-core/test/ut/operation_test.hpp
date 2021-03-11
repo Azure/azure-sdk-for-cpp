@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Test {
     int m_count = 0;
 
   private:
-    std::unique_ptr<Http::RawResponse> PollInternal(Context&) override
+    Http::RawResponse const& PollInternal(Context&) override
     {
       // Artificial delay to require 2 polls
       if (++m_count == 2)
@@ -38,7 +38,8 @@ namespace Azure { namespace Core { namespace Test {
 
       // The contents of the response are irrelevant for testing purposes
       // Need only ensure that a RawResponse is returned
-      return std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
+      m_rawResponse = std::make_unique<Http::RawResponse>(1, 0, Http::HttpStatusCode(200), "OK");
+      return *m_rawResponse;
     }
 
     Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
@@ -51,7 +52,7 @@ namespace Azure { namespace Core { namespace Test {
         // Actual clients should respect the retry after header if present
         std::this_thread::sleep_for(period);
 
-        response = Poll(context);
+        response = std::make_unique<Http::RawResponse>(Poll(context));
       }
 
       return Response<std::string>(m_value, std::move(response));
