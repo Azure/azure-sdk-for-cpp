@@ -18,7 +18,7 @@
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 #endif // _MSC_VER
 
-#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/curl_transport.hpp>
 #include <curl/curl.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

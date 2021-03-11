@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/internal/log.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <gtest/gtest.h>
 
 using Azure::Core::Diagnostics::Logger;

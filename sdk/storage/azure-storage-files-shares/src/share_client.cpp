@@ -3,8 +3,8 @@
 
 #include "azure/storage/files/shares/share_client.hpp"
 
-#include <azure/core/credentials.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>

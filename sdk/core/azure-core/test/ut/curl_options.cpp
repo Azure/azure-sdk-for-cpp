@@ -5,13 +5,13 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/curl_transport.hpp"
 #endif
 
 #include <http/curl/curl_connection_private.hpp>

@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/file_io.hpp>

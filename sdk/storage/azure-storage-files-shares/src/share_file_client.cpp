@@ -3,9 +3,9 @@
 
 #include "azure/storage/files/shares/share_file_client.hpp"
 
-#include <azure/core/credentials.hpp>
-#include <azure/core/http/policy.hpp>
-#include <azure/core/internal/null_body_stream.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/io/null_body_stream.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>

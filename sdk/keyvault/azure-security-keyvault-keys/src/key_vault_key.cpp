@@ -7,7 +7,7 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
 using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;

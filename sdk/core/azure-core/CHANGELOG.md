@@ -49,6 +49,11 @@
 - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
 - Moved the Http policies from `Azure::Core::Http` to `Azure::Core::Http::Policies`.
 - Moved `Azure::Core::Http::Url` to `Azure::Core::Url`.
+- Renamed `azure/core/credentials.hpp` to `azure/core/credentials/credentials.hpp`
+- Renamed `azure/core/logger.hpp` to `azure/core/diagnostics/logger.hpp`
+- Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`
+- Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`
+- Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`
 
 ### Bug Fixes
 

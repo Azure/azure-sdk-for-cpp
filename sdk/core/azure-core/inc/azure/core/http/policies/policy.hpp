@@ -10,7 +10,7 @@
 
 #include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/context.hpp"
-#include "azure/core/credentials.hpp"
+#include "azure/core/credentials/credentials.hpp"
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
