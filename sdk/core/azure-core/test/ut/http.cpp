@@ -191,10 +191,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
-      EXPECT_EQ(
-          Azure::Core::IO::BodyStream::ReadToCount(
-              stream, temp.data(), 1, Context::GetApplicationContext()),
-          1);
+      EXPECT_EQ(stream.ReadToCount(temp.data(), 1, Context::GetApplicationContext()), 1);
 
       EXPECT_EQ(temp[0], 1);
       EXPECT_EQ(temp[1], 0);
@@ -212,10 +209,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Verify that StartTry rewound the stream back.
       auto getStream = req.GetBodyStream();
-      EXPECT_EQ(
-          Azure::Core::IO::BodyStream::ReadToCount(
-              *getStream, temp.data(), 2, Context::GetApplicationContext()),
-          2);
+      EXPECT_EQ(getStream->ReadToCount(temp.data(), 2, Context::GetApplicationContext()), 2);
 
       EXPECT_EQ(temp[0], 1);
       EXPECT_EQ(temp[1], 2);

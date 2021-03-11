@@ -80,8 +80,7 @@ void DataLakeGettingStarted()
     // Read
     auto result = fileClient.Download();
     Azure::Core::Context context;
-    std::vector<uint8_t> downloaded
-        = Azure::Core::IO::BodyStream::ReadToEnd(*(result->Body), context);
+    std::vector<uint8_t> downloaded = result->Body->ReadToEnd(context);
     // downloaded contains your downloaded data.
     std::cout << "Downloaded data was:\n" + std::string(downloaded.begin(), downloaded.end())
               << std::endl;
