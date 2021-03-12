@@ -11,6 +11,7 @@
 
 - Renamed `azure/core/credentials.hpp` to `azure/core/credentials/credentials.hpp`.
 - Renamed `azure/core/logger.hpp` to `azure/core/diagnostics/logger.hpp`.
+- Renamed `azure/core/http/body_stream.hpp` to `azure/core/io/body_stream.hpp`.
 - Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`.
 - Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
 - Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
@@ -52,7 +53,6 @@
     - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers.
   - `BodyStream` and the types that derive from it:
     - Moved to `Azure::Core::IO` namespace.
-    - Moved `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
     - Changed the static methods `BodyStream::ReadToCount()` and `BodyStream::ReadToEnd()` into instance methods.
     - Changed the constructor of `FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
   - HTTP policies and their options:
