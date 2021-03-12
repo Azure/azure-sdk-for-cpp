@@ -76,7 +76,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
             keyvaultPipeline,
         Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
-  public:
     /**
      * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
      * @return A reference to an #Azure::Core::Http::RawResponse.
@@ -87,6 +86,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       return *m_rawResponse;
     }
 
+  public:
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
      *
