@@ -15,6 +15,7 @@
   - Removed Response<void>, `ValueBase`, and `ContextValue`.
   - Removed `Context::operator[]`, `Get()` introduced instead.
   - Renamed `Uuid::GetUuidString()` to `ToString()`.
+  - Changed return type of `Operation<T>::Poll()` from `std::unique_ptr<RawResponse>` to `RawResponse const&`.
   - Moved `GetApplicationContext()` to `Context::GetApplicationContext()`
   - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class.
   - Moved `Logging` namespace entities to `Diagnostics::Logger` class.
@@ -57,7 +58,6 @@
   - Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`.
   - Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
   - Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
-
 
 ### Bug Fixes
 
