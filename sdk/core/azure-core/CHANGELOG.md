@@ -54,6 +54,7 @@
 - Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`
 - Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`
 - Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`
+- Changed return type from `std::unique_ptr<RawResponse>Operation::Poll()` to `RawResponse const& Operation::Poll()`.
 
 ### Bug Fixes
 
