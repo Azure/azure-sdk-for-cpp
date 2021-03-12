@@ -82,16 +82,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   public:
     Models::GetBlobPropertiesResult Value() const override { return m_pollResult; }
 
-    /**
-     * @brief Get the raw HTTP response.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
     StartCopyBlobOperation() = default;
 
     StartCopyBlobOperation(StartCopyBlobOperation&&) = default;
@@ -113,6 +103,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
+
+    /**
+     * @brief Get the raw HTTP response.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
 
     std::shared_ptr<BlobClient> m_blobClient;
     Models::GetBlobPropertiesResult m_pollResult;
