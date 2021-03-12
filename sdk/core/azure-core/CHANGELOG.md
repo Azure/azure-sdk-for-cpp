@@ -16,6 +16,8 @@
 - Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
 - Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
 - `Azure::Core` namespace:
+  - Removed `ValueBase`, and `ContextValue`.
+  - Removed `Context::operator[]`, `Get()` introduced instead.
   - Renamed `Azure::Core::Uuid::GetUuidString()` to `ToString()`.
   - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class.
   - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Diagnostics::Logger` class.
@@ -39,7 +41,7 @@
       - Renamed `GetString()` to `ToString()`.
       - Removed `GetRfc3339String()`: `ToString()` was extended to provide the same functionality.
 - `Azure::Core::Http` namespace:
-  - Removed `HttpPipeline`, `TransportKind`, `NullBodyStream`, `LimitBodyStream`.
+  - Removed `HttpPipeline`, `TransportKind`, `NullBodyStream`, and `LimitBodyStream`.
   - Removed `Request::StartTry()`.
   - Removed `InvalidHeaderException` and throw `std::invalid_argument` if the user provides invalid header arguments.
   - Renamed `CurlTransportSSLOptions::NoRevoke` to `EnableCertificateRevocationListCheck`.
