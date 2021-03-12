@@ -35,6 +35,7 @@
 - `Azure::Core::Http` namespace:
   - Removed `HttpPipeline`, `TransportKind`, `NullBodyStream`, `LimitBodyStream`.
   - Removed `Request::StartTry()`.
+  - Removed `InvalidHeaderException` and throw `std::invalid_argument` if the user provides invalid header arguments.
   - Renamed CurlTransportSSLOptions::NoRevoke` to `EnableCertificateRevocationListCheck`.
   - Renamed `Range` to `HttpRange`.
   - Moved `Url` to `Azure::Core` namespace.
