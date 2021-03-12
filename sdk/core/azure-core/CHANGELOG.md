@@ -12,10 +12,10 @@
 ### Breaking Changes
 
 - Changes to `Azure::Core` namespace:
-  - Removed `ValueBase`, and `ContextValue`.
+  - Removed Response<void>, `ValueBase`, and `ContextValue`.
   - Removed `Context::operator[]`, `Get()` introduced instead.
-  - Moved `GetApplicationContext()` to `Context::GetApplicationContext()`
   - Renamed `Uuid::GetUuidString()` to `ToString()`.
+  - Moved `GetApplicationContext()` to `Context::GetApplicationContext()`
   - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class.
   - Moved `Logging` namespace entities to `Diagnostics::Logger` class.
   - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` to `Credentials` namespace.
@@ -35,8 +35,8 @@
   - Removed `InvalidHeaderException` and throw `std::invalid_argument` if the user provides invalid header arguments.
   - Renamed `CurlTransportSSLOptions::NoRevoke` to `EnableCertificateRevocationListCheck`.
   - Renamed `Range` to `HttpRange`.
-  - Moved `Url` to `Azure::Core` namespace.
   - Renamed `TokenRequestOptions` to `TokenRequestContext`, and moved it to `Azure::Core::Credentials` namespace.
+  - Moved `Url` to `Azure::Core` namespace.
   - `Request` and `RawResponse`:
     - Renamed `AddHeader()` to `SetHeader()`.
     - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers.
@@ -64,6 +64,7 @@
 - Make sure to rewind the body stream at the start of each request retry attempt, including the first.
 - Connection pool resets when all connections are closed.
 - Fix `Azure::Context` to support `std::unique_ptr`.
+- Throw `std::runtime_error` from `Response<T>::GetRawResponse()` if the response was already extracted.
 
 ## 1.0.0-beta.6 (2021-02-09)
 
