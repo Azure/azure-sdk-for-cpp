@@ -11,7 +11,7 @@
 
 #include "azure/perf/test/http_client_get_test.hpp"
 
-#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/curl_transport.hpp>
 
 #include <curl/curl.h>
 

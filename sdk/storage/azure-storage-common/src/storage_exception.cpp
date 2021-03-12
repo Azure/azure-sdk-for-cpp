@@ -5,8 +5,8 @@
 
 #include <type_traits>
 
-#include <azure/core/http/policy.hpp>
-#include <azure/core/internal/json.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/xml_wrapper.hpp"

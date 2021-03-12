@@ -11,7 +11,7 @@
 #include <vector>
 
 #include <azure/core/case_insensitive_containers.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"

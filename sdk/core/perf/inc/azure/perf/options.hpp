@@ -16,7 +16,7 @@
 #include "azure/perf/dynamic_test_options.hpp"
 #include "azure/perf/test_options.hpp"
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include <iostream>
 #include <vector>

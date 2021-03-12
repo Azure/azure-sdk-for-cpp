@@ -3,7 +3,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <gtest/gtest.h>

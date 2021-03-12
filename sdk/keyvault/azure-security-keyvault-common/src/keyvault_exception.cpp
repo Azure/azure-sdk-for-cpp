@@ -4,9 +4,9 @@
 #include "azure/keyvault/common/keyvault_exception.hpp"
 #include "azure/keyvault/common/keyvault_constants.hpp"
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <type_traits>
 
 using namespace Azure::Security::KeyVault::Common;

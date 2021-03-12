@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/core/internal/json_serializable.hpp>
+#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_create_options.hpp"
