@@ -6,25 +6,19 @@
 
 - Added `HttpPolicyOrder` for adding custom Http policies to SDK clients.
 - Added `Azure::Core::Operation<T>::GetRawResponse()`.
+- Added `Azure::Core::PackageVersion`.
+- Added support for logging to console when `AZURE_LOG_LEVEL` environment variable is set.
 
 ### Breaking Changes
 
-- Renamed `azure/core/credentials.hpp` to `azure/core/credentials/credentials.hpp`.
-- Renamed `azure/core/logger.hpp` to `azure/core/diagnostics/logger.hpp`.
-- Renamed `azure/core/http/body_stream.hpp` to `azure/core/io/body_stream.hpp`.
-- Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`.
-- Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
-- Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
-- `Azure::Core` namespace:
+- Changes to `Azure::Core` namespace:
   - Removed `ValueBase`, and `ContextValue`.
   - Removed `Context::operator[]`, `Get()` introduced instead.
-  - Renamed `Azure::Core::Uuid::GetUuidString()` to `ToString()`.
+  - Moved `GetApplicationContext()` to `Context::GetApplicationContext()`
+  - Renamed `Uuid::GetUuidString()` to `ToString()`.
   - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class.
-  - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Diagnostics::Logger` class.
-  - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` to `Azure::Core::Credentials` namespace.
-  - `Azure::Core::Details::Version`:
-    - Moved from `Azure::Core::Details` to `Azure::Core` namespace.
-    - Renamed to `PackageVersion`.
+  - Moved `Logging` namespace entities to `Diagnostics::Logger` class.
+  - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` to `Credentials` namespace.
   - Moved `Context` to be the last parameter for consistency, instead of first in various azure-core types. For example:
     - `BodyStream::Read(uint8_t* buffer, int64_t count, Context const& context)`
     - `BodyStream::ReadToEnd(BodyStream& body, Context const& context)`
@@ -32,24 +26,17 @@
     - `Operation<T>::PollUntilDone(std::chrono::milliseconds period, Context& context)`
     - `TokenCredential::GetToken(Http::TokenRequestOptions const& tokenRequestOptions, Context const& context)`
   - Moved from `Azure::Core` to `Azure` namespace:
-    - `Response<T>`.
-    - `ETag`.
-    - `Nullable<T>`.
-    - `RequestConditions`:
-      - Split into `MatchConditions` and `ModifiedConditions`.
-    - `DateTime`:
-      - Renamed `GetString()` to `ToString()`.
-      - Removed `GetRfc3339String()`: `ToString()` was extended to provide the same functionality.
-- `Azure::Core::Http` namespace:
+    - `Response<T>`, `ETag`, and `Nullable<T>`.
+    - Split `RequestConditions` into `MatchConditions` and `ModifiedConditions`.
+    - Renamed `DateTime::GetString()` to `ToString()`, and removed `DateTime::GetRfc3339String()`.
+- Changes to `Azure::Core::Http` namespace:
   - Removed `HttpPipeline`, `TransportKind`, `NullBodyStream`, and `LimitBodyStream`.
   - Removed `Request::StartTry()`.
   - Removed `InvalidHeaderException` and throw `std::invalid_argument` if the user provides invalid header arguments.
   - Renamed `CurlTransportSSLOptions::NoRevoke` to `EnableCertificateRevocationListCheck`.
   - Renamed `Range` to `HttpRange`.
   - Moved `Url` to `Azure::Core` namespace.
-  - `TokenRequestOptions`:
-    - Renamed to `TokenRequestContext`.
-    - Moved to `Azure::Core::Credentials` namespace.
+  - Renamed `TokenRequestOptions` to `TokenRequestContext`, and moved it to `Azure::Core::Credentials` namespace.
   - `Request` and `RawResponse`:
     - Renamed `AddHeader()` to `SetHeader()`.
     - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers.
@@ -58,19 +45,25 @@
     - Changed the static methods `BodyStream::ReadToCount()` and `BodyStream::ReadToEnd()` into instance methods.
     - Changed the constructor of `FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
   - HTTP policies and their options:
-    - Moved to `Azure::Core::Http::Policies` namespace.
+    - Moved to `Policies` namespace.
     - Renamed `TransportPolicyOptions` to `TransportOptions`.
     - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
     - Changed type of `RetryOptions::StatusCodes` from `std::vector` to `std::set`.
-    - `LoggingPolicy`:
-      - Renamed to `LogPolicy`.
-      - Introduced `LogOptions` as mandatory parameter for the constructor.
+    - Renamed `LoggingPolicy` to `LogPolicy`, and introduced `LogOptions` as mandatory parameter for the constructor.
+- Moved header files:
+  - Renamed `azure/core/credentials.hpp` to `azure/core/credentials/credentials.hpp`.
+  - Renamed `azure/core/logger.hpp` to `azure/core/diagnostics/logger.hpp`.
+  - Renamed `azure/core/http/body_stream.hpp` to `azure/core/io/body_stream.hpp`.
+  - Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`.
+  - Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
+  - Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
+
 
 ### Bug Fixes
 
 - Make sure to rewind the body stream at the start of each request retry attempt, including the first.
 - Connection pool resets when all connections are closed.
-- Fix `Azure::Context` to support unique_ptr.
+- Fix `Azure::Context` to support `std::unique_ptr`.
 
 ## 1.0.0-beta.6 (2021-02-09)
 
