@@ -4,7 +4,7 @@
 #include "azure/perf/program.hpp"
 #include "azure/perf/argagg.hpp"
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>
