@@ -4,49 +4,58 @@
 
 ### New Features
 
-- Added `HttpPolicyOrder` for adding custom Http policies to sdk clients.
+- Added `HttpPolicyOrder` for adding custom Http policies to SDK clients.
 
 ### Breaking Changes
 
-- Removed `Azure::Core::Http::HttpPipeline` by making it internal, used only within the SDK.
-- Split `Azure::Core::RequestConditions` into `Azure::MatchConditions` and `Azure::ModifiedConditions`.
-- Removed `TransportKind` enum from `Azure::Core::Http`.
-- Renamed `NoRevoke` to `EnableCertificateRevocationListCheck` for `Azure::Core::Http::CurlTransportSSLOptions`.
-- Renamed `GetString()` to `ToString()` in `Azure::Core::DateTime`.
-- Renamed `GetUuidString()` to `ToString()` in `Azure::Core::Uuid`.
-- Renamed `Azure::Core::Details::Version` to `Azure::Core::PackageVersion`.
-- Moved `BodyStream` and its derived types from `Azure::Core::Http` namespace to `Azure::Core::IO`, and moved the `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
-- Moved `NullBodyStream` to internal usage only. It is not meant for public use.
-- Removed `LimitBodyStream`.
-- Renamed `AddHeader()` from `Request` and `RawResponse` to `SetHeader()`.
-- Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers in `Azure::Core::Http::Request` and `Azure::Core::Http::RawResponse`.
-- Renamed `TransportPolicyOptions` to `TransportOptions`.
-- Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
-- Renamed `ValuePolicyOptions` to `ValueOptions`.
-- Removed `StartTry()` from `Azure::Core::Http::Request`.
-- Move `Azure::Core::Context` to be the last parameter for consistency, instead of first in various azure-core types. For example:
-  - `BodyStream::Read(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)`
-  - `BodyStream::ReadToEnd(BodyStream& body, Azure::Core::Context const& context)`
-  - `HttpPolicy::Send(Request& request, NextHttpPolicy policy, Azure::Core::Context const& context)`
-  - `Operation<T>::PollUntilDone(std::chrono::milliseconds period, Azure::Core::Context& context)`
-  - `TokenCredential::GetToken(Http::TokenRequestOptions const& tokenRequestOptions, Azure::Core::Context const& context)`
-- Changed type of `Azure::Core::Http::RetryOptions::StatusCodes` from `std::vector` to `std::set`.
-- Renamed `Azure::Core::Http::LoggingPolicy` to `LogPolicy`.
-- Introduced `Azure::Core::Http::Policies::LogOptions`, a mandatory parameter for `LogPolicy` construction. Entities that are not specified in the allow lists are hidden in the log.
-- Changed the static methods `BodyStream::ReadToCount()` and `BodyStream::ReadToEnd()` into instance methods.
-- Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Diagnostics::Logger` class.
-- Removed `Azure::Core::DateTime::GetRfc3339String()`: `Azure::Core::DateTime::ToString()` was extended to provide the same functionality.
-- Changed the constructor of `Azure::IO::FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
-- Renamed the `Range` type to `HttpRange` within the `Azure::Core::Http` namespace.
-- Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class within the `Azure::Core` namespace.
-- Moved `Azure::Core::Response<T>` to `Azure::Response<T>`.
-- Moved `Azure::Core::ETag` to `Azure::ETag`.
-- Moved `Azure::Core::DateTime` to `Azure::DateTime`.
-- Moved `Azure::Core::Nullable<T>` to `Azure::Nullable<T>`.
-- Renamed `Azure::Core::Http::TokenRequestOptions` to `Azure::Core::Credentials::TokenRequestContext`.
-- Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` from `Azure::Core` to `Azure::Core::Credentials` namespace.
-- Moved the Http policies from `Azure::Core::Http` to `Azure::Core::Http::Policies`.
-- Moved `Azure::Core::Http::Url` to `Azure::Core::Url`.
+- `Azure::Core` namespace:
+  - Renamed `Azure::Core::Uuid::GetUuidString()` to `ToString()`.
+  - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class.
+  - Moved `Azure::Core::Logging` namespace entities to `Azure::Core::Diagnostics::Logger` class.
+  - Moved `AccessToken`, `TokenCredential`, and `AuthenticationException` to `Azure::Core::Credentials` namespace.
+  - `Azure::Core::Details::Version`:
+    - Moved from `Azure::Core::Details` to `Azure::Core` namespace.
+    - Renamed to `PackageVersion`.
+  - Moved `Context` to be the last parameter for consistency, instead of first in various azure-core types. For example:
+    - `BodyStream::Read(uint8_t* buffer, int64_t count, Context const& context)`
+    - `BodyStream::ReadToEnd(BodyStream& body, Context const& context)`
+    - `HttpPolicy::Send(Request& request, NextHttpPolicy policy, Context const& context)`
+    - `Operation<T>::PollUntilDone(std::chrono::milliseconds period, Context& context)`
+    - `TokenCredential::GetToken(Http::TokenRequestOptions const& tokenRequestOptions, Context const& context)`
+  - Moved from `Azure::Core` to `Azure` namespace:
+    - `Response<T>`.
+    - `ETag`.
+    - `Nullable<T>`.
+    - `RequestConditions`:
+      - Split into `MatchConditions` and `ModifiedConditions`.
+    - `DateTime`:
+      - Renamed `GetString()` to `ToString()`.
+      - Removed `GetRfc3339String()`: `ToString()` was extended to provide the same functionality.
+- `Azure::Core::Http` namespace:
+  - Removed `HttpPipeline`, `TransportKind`, `NullBodyStream`, `LimitBodyStream`.
+  - Removed `Request::StartTry()`.
+  - Renamed CurlTransportSSLOptions::NoRevoke` to `EnableCertificateRevocationListCheck`.
+  - Renamed `Range` to `HttpRange`.
+  - Moved `Url` to `Azure::Core` namespace.
+  - `TokenRequestOptions`:
+    - Renamed to `TokenRequestContext`.
+    - Moved to `Azure::Core::Credentials` namespace.
+  - `Request` and `RawResponse`:
+    - Renamed `AddHeader()` to `SetHeader()`.
+    - Introduced `Azure::Core::CaseInsensitiveMap` which is now used to store headers.
+  - `BodyStream` and the types that derive from it:
+    - Moved to `Azure::Core::IO` namespace.
+    - Moved `body_stream.hpp` header from `azure/core/http` to `azure/core/io`.
+    - Changed the static methods `BodyStream::ReadToCount()` and `BodyStream::ReadToEnd()` into instance methods.
+    - Changed the constructor of `FileBodyStream` to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.
+  - HTTP policies and their options:
+    - Moved to `Azure::Core::Http::Policies` namespace.
+    - Renamed `TransportPolicyOptions` to `TransportOptions`.
+    - Renamed `TelemetryPolicyOptions` to `TelemetryOptions`.
+    - Changed type of `RetryOptions::StatusCodes` from `std::vector` to `std::set`.
+    - `LoggingPolicy`:
+      - Renamed to `LogPolicy`.
+      - Introduced `LogOptions` as mandatory parameter for the constructor.
 
 ### Bug Fixes
 
