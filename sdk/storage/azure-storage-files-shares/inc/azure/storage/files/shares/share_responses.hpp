@@ -203,7 +203,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override { return *m_rawResponse; }
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
 
     StartCopyShareFileOperation() = default;
 
