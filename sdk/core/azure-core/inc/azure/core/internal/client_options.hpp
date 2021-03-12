@@ -10,7 +10,7 @@
 #pragma once
 
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 
 #include <memory>
 #include <vector>

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 
 #include <memory>
 

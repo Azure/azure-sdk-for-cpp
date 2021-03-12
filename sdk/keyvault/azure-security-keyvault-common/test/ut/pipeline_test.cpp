@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 

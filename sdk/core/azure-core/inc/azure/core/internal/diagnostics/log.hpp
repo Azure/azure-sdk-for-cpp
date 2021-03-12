@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "azure/core/diagnostics/logger.hpp"
 #include "azure/core/dll_import_export.hpp"
-#include "azure/core/logger.hpp"
 
 #include <atomic>
 #include <type_traits>

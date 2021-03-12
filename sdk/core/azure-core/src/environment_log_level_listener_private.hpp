@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/logger.hpp"
+#include "azure/core/diagnostics/logger.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)

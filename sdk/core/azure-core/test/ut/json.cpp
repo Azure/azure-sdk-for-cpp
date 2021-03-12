@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <gtest/gtest.h>
 
 using json = Azure::Core::Json::_internal::json;

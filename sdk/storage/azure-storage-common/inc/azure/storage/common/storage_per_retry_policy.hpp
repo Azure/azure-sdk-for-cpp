@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 
 namespace Azure { namespace Storage { namespace _detail {
 

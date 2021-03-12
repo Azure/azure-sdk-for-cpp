@@ -9,6 +9,11 @@
 
 ### Breaking Changes
 
+- Renamed `azure/core/credentials.hpp` to `azure/core/credentials/credentials.hpp`.
+- Renamed `azure/core/logger.hpp` to `azure/core/diagnostics/logger.hpp`.
+- Renamed `azure/core/http/policy.hpp` to `azure/core/http/policies/policy.hpp`.
+- Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
+- Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
 - `Azure::Core` namespace:
   - Renamed `Azure::Core::Uuid::GetUuidString()` to `ToString()`.
   - Moved the `Base64Encode()` and `Base64Decode()` functions to be static members of a `Convert` class.

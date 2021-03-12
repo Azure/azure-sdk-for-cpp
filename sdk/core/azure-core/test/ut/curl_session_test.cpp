@@ -3,7 +3,7 @@
 
 #include "curl_session.hpp"
 
-#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/curl_transport.hpp>
 #include <azure/core/http/http.hpp>
 
 #include <http/curl/curl_connection_private.hpp>
