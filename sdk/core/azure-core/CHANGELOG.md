@@ -5,6 +5,7 @@
 ### New Features
 
 - Added `HttpPolicyOrder` for adding custom Http policies to SDK clients.
+- Added `Azure::Core::Operation<T>::GetRawResponse()`.
 
 ### Breaking Changes
 
@@ -69,7 +70,6 @@
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
 - Added the `Hash` base class and MD5 hashing APIs to the `Azure::Core::Cryptography` namespace available from `azure/core/cryptography/hash.hpp`.
-- Added `Azure::Core::Operation<T>::GetRawResponse()`.
 
 ### Breaking Changes
 
