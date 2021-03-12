@@ -52,7 +52,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       while (true)
       {
-        m_rawResponse = std::make_unique<Azure::Core::Http::RawResponse>(Poll(context));
+        // Poll will update the raw response.
+        Poll(context);
         if (IsDone())
         {
           break;
@@ -81,7 +82,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    Azure::Core::Http::RawResponse const& GetRawResponse() const override { return *m_rawResponse; }
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override { return *m_rawResponse; }
 
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.

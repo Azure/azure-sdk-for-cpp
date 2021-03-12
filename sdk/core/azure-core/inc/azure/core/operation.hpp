@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 namespace Azure { namespace Core {
@@ -29,6 +30,7 @@ namespace Azure { namespace Core {
     virtual std::unique_ptr<Http::RawResponse> PollInternal(Context& context) = 0;
     virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
+    virtual Azure::Core::Http::RawResponse const& GetRawResponseInternal() const = 0;
 
   protected:
     std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse = nullptr;
@@ -36,7 +38,7 @@ namespace Azure { namespace Core {
 
     Operation() = default;
 
-    // Define how an Operation<T> can be moved-constructed from rvalue other. Parameter `other`
+    // Define how an Operation<T> can be move-constructed from rvalue other. Parameter `other`
     // gave up ownership for the rawResponse.
     Operation(Operation&& other)
         : m_rawResponse(std::move(other.m_rawResponse)), m_status(other.m_status)
@@ -51,20 +53,22 @@ namespace Azure { namespace Core {
     {
     }
 
-    // Define how an Operation<T> can be moved-assigned from rvalue other. Parameter `other`
+    // Define how an Operation<T> can be move-assigned from rvalue other. Parameter `other`
     // gave up ownership for the rawResponse.
-    void operator=(Operation&& other)
+    Operation& operator=(Operation&& other)
     {
       this->m_rawResponse = std::move(other.m_rawResponse);
       this->m_status = other.m_status;
+      return *this;
     }
 
     // Define how an Operation<T> can be copy-assigned from some other Operation reference.
     // Operation will create a clone of the rawResponse from `other`.
-    void operator=(Operation const& other)
+    Operation& operator=(Operation const& other)
     {
       this->m_rawResponse = std::make_unique<Http::RawResponse>(other.GetRawResponse());
       this->m_status = other.m_status;
+      return *this;
     }
 
   public:
@@ -90,7 +94,14 @@ namespace Azure { namespace Core {
      * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    virtual Azure::Core::Http::RawResponse const& GetRawResponse() const = 0;
+    Azure::Core::Http::RawResponse const& GetRawResponse() const
+    {
+      if (!m_rawResponse)
+      {
+        throw std::runtime_error("The raw response was not yet set for the Operation.");
+      }
+      return *m_rawResponse;
+    };
 
     /**
      * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
