@@ -35,7 +35,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   {
     rawResponse = m_pipeline->GetResponse(
         context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
-    m_status = CheckCompleted(*m_rawResponse);
+    m_status = CheckCompleted(*rawResponse);
   }
 
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
