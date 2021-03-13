@@ -15,7 +15,7 @@
 ### Breaking Changes
 
 - Changes to `Azure::Core` namespace:
-  - Removed Response<void>, `ValueBase`, and `ContextValue`.
+  - Removed `Response<void>`, `ValueBase`, and `ContextValue`.
   - Removed `Context::operator[]`, `Get()` introduced instead.
   - Renamed `Uuid::GetUuidString()` to `ToString()`.
   - Changed return type of `Operation<T>::Poll()` from `std::unique_ptr<RawResponse>` to `RawResponse const&`.
