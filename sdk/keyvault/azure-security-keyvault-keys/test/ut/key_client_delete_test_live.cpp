@@ -271,3 +271,38 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
   }
   EXPECT_TRUE(wasThrown);
 }
+
+// Get Delete Key
+TEST_F(KeyVaultClientTest, GetDeletedKey)
+{
+  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName("deleteThisKeyAndGetItFromDeleteKeys1wwxx3x4");
+
+  {
+    auto keyResponse
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.ExtractValue();
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+  {
+    // Wait until key is deleted
+    auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
+    auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
+
+    auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
+    auto expectedStatusToken = m_keyVaultUrl + "/"
+        + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
+    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
+  }
+  {
+    // Get the deleted key
+    auto deletedKey = keyClient.GetDeletedKey(keyName).ExtractValue();
+    EXPECT_FALSE(deletedKey.RecoveryId.empty());
+    EXPECT_EQ(deletedKey.Name(), keyName);
+    auto expectedType = Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec;
+    EXPECT_EQ(
+        Azure::Security::KeyVault::Keys::_detail::KeyTypeToString(expectedType),
+        Azure::Security::KeyVault::Keys::_detail::KeyTypeToString(deletedKey.Key.KeyType));
+  }
+}
