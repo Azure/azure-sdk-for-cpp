@@ -32,7 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define the options to create an SDK Keys client.
    *
    */
-  struct KeyClientOptions : public Azure::Core::Internal::ClientOptions
+  struct KeyClientOptions : public Azure::Core::_internal::ClientOptions
   {
     /**
      * @brief The service version. All request are created with this version.

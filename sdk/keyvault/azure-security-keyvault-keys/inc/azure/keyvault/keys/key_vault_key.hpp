@@ -80,7 +80,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /***********************  Deserializer / Serializer ******************************/
-  namespace Details {
+  namespace _detail {
     // Creates a new key based on a name and an http raw response.
     KeyVaultKey KeyVaultKeyDeserialize(
         std::string const& name,
@@ -90,6 +90,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     void KeyVaultKeyDeserialize(
         KeyVaultKey& key,
         Azure::Core::Http::RawResponse const& rawResponse);
-  } // namespace Details
+  } // namespace _detail
 
 }}}} // namespace Azure::Security::KeyVault::Keys

@@ -18,10 +18,10 @@ namespace Azure { namespace Storage { namespace Test {
   TEST(CryptFunctionsTest, Sha256)
   {
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::Sha256(ToBinaryVector(""))),
+        Azure::Core::Convert::Base64Encode(_detail::Sha256(ToBinaryVector(""))),
         "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::Sha256(ToBinaryVector("Hello Azure!"))),
+        Azure::Core::Convert::Base64Encode(_detail::Sha256(ToBinaryVector("Hello Azure!"))),
         "Mjzwx2mqGHb9FSgjm33ShNmXYndkgvwA6tQmEiskOHg=");
   }
 
@@ -30,10 +30,11 @@ namespace Azure { namespace Storage { namespace Test {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";
     std::vector<uint8_t> binaryKey(key.begin(), key.end());
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::HmacSha256(ToBinaryVector(""), binaryKey)),
+        Azure::Core::Convert::Base64Encode(_detail::HmacSha256(ToBinaryVector(""), binaryKey)),
         "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
     EXPECT_EQ(
-        Azure::Core::Base64Encode(Details::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
+        Azure::Core::Convert::Base64Encode(
+            _detail::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
         "+SBESxQVhI53mSEdZJcCBpdBkaqwzfPaVYZMAf5LP3c=");
   }
 
@@ -47,10 +48,10 @@ namespace Azure { namespace Storage { namespace Test {
   TEST(CryptFunctionsTest, Crc64Hash_Basic)
   {
     Crc64Hash crc64empty;
-    EXPECT_EQ(Azure::Core::Base64Encode(crc64empty.Final()), "AAAAAAAAAAA=");
+    EXPECT_EQ(Azure::Core::Convert::Base64Encode(crc64empty.Final()), "AAAAAAAAAAA=");
 
-    EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("")), "AAAAAAAAAAA=");
-    EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("Hello Azure!")), "DtjZpL9/o8c=");
+    EXPECT_EQ(Azure::Core::Convert::Base64Encode(ComputeHash("")), "AAAAAAAAAAA=");
+    EXPECT_EQ(Azure::Core::Convert::Base64Encode(ComputeHash("Hello Azure!")), "DtjZpL9/o8c=");
 
     auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
     {
@@ -129,7 +130,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
     EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
 
-    EXPECT_EQ(Azure::Core::Base64Encode(instance.Final(ptr, data.length())), "AAAAAAAAAAA=");
+    EXPECT_EQ(
+        Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())), "AAAAAAAAAAA=");
     EXPECT_THROW(instance.Final(), std::runtime_error);
     EXPECT_THROW(instance.Final(ptr, data.length()), std::runtime_error);
     EXPECT_THROW(instance.Append(ptr, data.length()), std::runtime_error);

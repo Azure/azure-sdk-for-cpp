@@ -10,22 +10,22 @@
 
 #include "azure/identity/dll_import_export.hpp"
 
-#include <azure/core/credentials.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/client_options.hpp>
 
 #include <string>
 #include <utility>
 
 namespace Azure { namespace Identity {
-  namespace Details {
+  namespace _detail {
     AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
   }
 
   /**
    * @brief Defines options for token authentication.
    */
-  struct ClientSecretCredentialOptions : public Azure::Core::Internal::ClientOptions
+  struct ClientSecretCredentialOptions : public Azure::Core::_internal::ClientOptions
   {
   public:
     /**
@@ -37,14 +37,14 @@ namespace Azure { namespace Identity {
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = Details::g_aadGlobalAuthority;
+    std::string AuthorityHost = _detail::g_aadGlobalAuthority;
   };
 
   /**
    * @brief This class is used by Azure SDK clients to authenticate with the Azure service using a
    * tenant ID, client ID and client secret.
    */
-  class ClientSecretCredential : public Core::TokenCredential {
+  class ClientSecretCredential : public Core::Credentials::TokenCredential {
   private:
     std::string m_tenantId;
     std::string m_clientId;
@@ -70,8 +70,8 @@ namespace Azure { namespace Identity {
     {
     }
 
-    Core::AccessToken GetToken(
-        Core::Http::TokenRequestOptions const& tokenRequestOptions,
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
   };
 

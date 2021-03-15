@@ -5,17 +5,17 @@
 
 #include "azure/storage/common/crypt.hpp"
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
   ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm)
   {
     ContentHash hash;
-    hash.Value = Azure::Core::Base64Decode(base64String);
+    hash.Value = Azure::Core::Convert::Base64Decode(base64String);
     hash.Algorithm = algorithm;
     return hash;
   }
 
   std::string ToBase64String(const ContentHash& hash)
   {
-    return Azure::Core::Base64Encode(hash.Value);
+    return Azure::Core::Convert::Base64Encode(hash.Value);
   }
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

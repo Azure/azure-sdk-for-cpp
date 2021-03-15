@@ -29,8 +29,8 @@ SOFTWARE.
 
 #include "doctest_compatibility.h"
 
-#include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 #include <fstream>
 #include <test_data.hpp>

@@ -8,11 +8,11 @@
 
 #include <chrono>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
       Core::Http::Request& request,
-      Core::Http::NextHttpPolicy nextHttpPolicy,
+      Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Core::Context const& ctx) const
   {
     const char* HttpHeaderDate = "Date";
@@ -24,11 +24,11 @@ namespace Azure { namespace Storage { namespace Details {
       // add x-ms-date header in RFC1123 format
       request.SetHeader(
           HttpHeaderXMsDate,
-          Core::DateTime(std::chrono::system_clock::now())
-              .ToString(Azure::Core::DateTime::DateFormat::Rfc1123));
+          DateTime(std::chrono::system_clock::now())
+              .ToString(Azure::DateTime::DateFormat::Rfc1123));
     }
 
     return nextHttpPolicy.Send(request, ctx);
   }
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

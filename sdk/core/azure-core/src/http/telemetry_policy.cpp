@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/platform.hpp"
 
 #include <cctype>
@@ -32,7 +32,7 @@ std::string GetOSVersion()
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
-    Azure::Core::Internal::HKEYHolder regKey;
+    Azure::Core::_internal::HKEYHolder regKey;
     if (RegOpenKeyExA(
             HKEY_LOCAL_MACHINE,
             "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
@@ -94,6 +94,7 @@ std::string TrimString(std::string s)
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 std::string TelemetryPolicy::BuildTelemetryId(
     std::string const& componentName,

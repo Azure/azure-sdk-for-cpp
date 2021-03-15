@@ -22,11 +22,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
-      Details::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseIdOptional = m_leaseId;
       protocolLayerOptions.LeaseDuration = static_cast<int32_t>(duration.count());
 
-      auto response = Details::ShareRestClient::File::AcquireLease(
+      auto response = _detail::ShareRestClient::File::AcquireLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
           context,
@@ -42,11 +42,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else if (m_shareClient.HasValue())
     {
-      Details::ShareRestClient::Share::AcquireLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::Share::AcquireLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseIdOptional = m_leaseId;
       protocolLayerOptions.LeaseDuration = static_cast<int32_t>(duration.count());
 
-      auto response = Details::ShareRestClient::Share::AcquireLease(
+      auto response = _detail::ShareRestClient::Share::AcquireLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
           context,
@@ -78,10 +78,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else if (m_shareClient.HasValue())
     {
-      Details::ShareRestClient::Share::RenewLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::Share::RenewLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
-      auto response = Details::ShareRestClient::Share::RenewLease(
+      auto response = _detail::ShareRestClient::Share::RenewLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
           context,
@@ -108,10 +108,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
-      Details::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
-      auto response = Details::ShareRestClient::File::ReleaseLease(
+      auto response = _detail::ShareRestClient::File::ReleaseLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
           context,
@@ -126,10 +126,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else if (m_shareClient.HasValue())
     {
-      Details::ShareRestClient::Share::ReleaseLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::Share::ReleaseLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
-      auto response = Details::ShareRestClient::Share::ReleaseLease(
+      auto response = _detail::ShareRestClient::Share::ReleaseLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
           context,
@@ -156,11 +156,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
-      Details::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
       protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
 
-      auto response = Details::ShareRestClient::File::ChangeLease(
+      auto response = _detail::ShareRestClient::File::ChangeLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
           context,
@@ -176,11 +176,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else if (m_shareClient.HasValue())
     {
-      Details::ShareRestClient::Share::ChangeLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::Share::ChangeLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
       protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
 
-      auto response = Details::ShareRestClient::Share::ChangeLease(
+      auto response = _detail::ShareRestClient::Share::ChangeLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
           context,
@@ -207,9 +207,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
-      Details::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
 
-      auto response = Details::ShareRestClient::File::BreakLease(
+      auto response = _detail::ShareRestClient::File::BreakLease(
           m_fileClient.GetValue().m_shareFileUrl,
           *(m_fileClient.GetValue().m_pipeline),
           context,
@@ -224,9 +224,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else if (m_shareClient.HasValue())
     {
-      Details::ShareRestClient::Share::BreakLeaseOptions protocolLayerOptions;
+      _detail::ShareRestClient::Share::BreakLeaseOptions protocolLayerOptions;
 
-      auto response = Details::ShareRestClient::Share::BreakLease(
+      auto response = _detail::ShareRestClient::Share::BreakLease(
           m_shareClient.GetValue().m_shareUrl,
           *(m_shareClient.GetValue().m_pipeline),
           context,

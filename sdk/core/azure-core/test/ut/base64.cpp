@@ -19,48 +19,54 @@ TEST(Base64, Basic)
     data.push_back(i + 1);
   }
 
-  std::string result = Base64Encode(data);
+  std::string result = Convert::Base64Encode(data);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; },
       result,
       "AQIDBAUGBw==");
-  EXPECT_TRUE(std::equal(data.begin(), data.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(std::equal(data.begin(), data.end(), Convert::Base64Decode(result).begin()));
 
   std::vector<uint8_t> subsection = std::vector<uint8_t>(data.begin(), data.begin() + 1);
-  result = Base64Encode(subsection);
+  result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; }, result, "AQ==");
-  EXPECT_TRUE(std::equal(subsection.begin(), subsection.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(
+      std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 2);
-  result = Base64Encode(subsection);
+  result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; }, result, "AQI=");
-  EXPECT_TRUE(std::equal(subsection.begin(), subsection.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(
+      std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 3);
-  result = Base64Encode(subsection);
+  result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; }, result, "AQID");
-  EXPECT_TRUE(std::equal(subsection.begin(), subsection.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(
+      std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 4);
-  result = Base64Encode(subsection);
+  result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; }, result, "AQIDBA==");
-  EXPECT_TRUE(std::equal(subsection.begin(), subsection.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(
+      std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 5);
-  result = Base64Encode(subsection);
+  result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; }, result, "AQIDBAU=");
-  EXPECT_TRUE(std::equal(subsection.begin(), subsection.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(
+      std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 6);
-  result = Base64Encode(subsection);
+  result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; }, result, "AQIDBAUG");
-  EXPECT_TRUE(std::equal(subsection.begin(), subsection.end(), Base64Decode(result).begin()));
+  EXPECT_TRUE(
+      std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 }
 
 static thread_local std::mt19937_64 random_generator(std::random_device{}());
@@ -108,6 +114,6 @@ TEST(Base64, Roundtrip)
     std::vector<uint8_t> data;
     data.resize(len);
     RandomBuffer(data.data(), data.size());
-    EXPECT_EQ(Base64Decode(Base64Encode(data)), data);
+    EXPECT_EQ(Convert::Base64Decode(Convert::Base64Encode(data)), data);
   }
 }

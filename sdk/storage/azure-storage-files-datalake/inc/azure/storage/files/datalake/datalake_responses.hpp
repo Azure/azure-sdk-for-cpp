@@ -21,12 +21,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct FileSystemItemDetails
   {
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     Storage::Metadata Metadata;
     PublicAccessType AccessType = PublicAccessType::None;
     bool HasImmutabilityPolicy = false;
     bool HasLegalHold = false;
-    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Available;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
   }; // struct FileSystemItemDetails
@@ -42,13 +42,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
     std::string ServiceEndpoint;
     std::string Prefix;
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
     std::vector<FileSystemItem> Items;
   }; // struct ListFileSystemsSinglePageResult
 
   // FileSystemClient models:
 
-  using ListPathsSinglePageResult = Details::FileSystemListPathsResult;
+  using ListPathsSinglePageResult = _detail::FileSystemListPathsResult;
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
   using ListDataLakeFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
 
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     PublicAccessType AccessType = PublicAccessType::None;
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
     std::string RequestId;
   }; // struct GetDataLakeFileSystemAccessPolicyResult
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct GetDataLakeFileSystemPropertiesResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     Storage::Metadata Metadata;
     std::string RequestId;
   };
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     bool Created = true;
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct SetDataLakeFileSystemMetadataResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
@@ -147,40 +147,40 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct GetDataLakePathPropertiesResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
-    Core::DateTime CreatedOn;
+    DateTime LastModified;
+    DateTime CreatedOn;
     int64_t FileSize = 0;
     Storage::Metadata Metadata;
-    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-    Azure::Core::Nullable<LeaseStateType> LeaseState;
-    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    Azure::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Nullable<LeaseStateType> LeaseState;
+    Azure::Nullable<LeaseStatusType> LeaseStatus;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<bool> IsServerEncrypted;
-    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Core::Nullable<bool> IsAccessTierInferred;
-    Azure::Core::Nullable<Core::DateTime> AccessTierChangedOn;
-    Azure::Core::Nullable<std::string> CopyId;
-    Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
-    Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
-    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
-    Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
+    Azure::Nullable<bool> IsServerEncrypted;
+    Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    Azure::Nullable<bool> IsAccessTierInferred;
+    Azure::Nullable<DateTime> AccessTierChangedOn;
+    Azure::Nullable<std::string> CopyId;
+    Azure::Nullable<std::string> CopySource;
+    Azure::Nullable<Blobs::Models::CopyStatus> CopyStatus;
+    Azure::Nullable<std::string> CopyProgress;
+    Azure::Nullable<DateTime> CopyCompletedOn;
+    Azure::Nullable<DateTime> ExpiresOn;
+    Azure::Nullable<DateTime> LastAccessedOn;
     bool IsDirectory = false;
-    Azure::Core::Nullable<DataLakeArchiveStatus> ArchiveStatus;
-    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
-    Azure::Core::Nullable<std::string> CopyStatusDescription;
-    Azure::Core::Nullable<bool> IsIncrementalCopy;
-    Azure::Core::Nullable<std::string> IncrementalCopyDestinationSnapshot;
-    Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<bool> IsCurrentVersion;
+    Azure::Nullable<DataLakeArchiveStatus> ArchiveStatus;
+    Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+    Azure::Nullable<std::string> CopyStatusDescription;
+    Azure::Nullable<bool> IsIncrementalCopy;
+    Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+    Azure::Nullable<std::string> VersionId;
+    Azure::Nullable<bool> IsCurrentVersion;
     std::string RequestId;
   };
 
   struct GetDataLakePathAccessControlListResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string Owner;
     std::string Group;
     std::string Permissions;
@@ -191,14 +191,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct SetDataLakePathHttpHeadersResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
   struct SetDataLakePathMetadataResult
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
+    DateTime LastModified;
     std::string RequestId;
   };
 
@@ -206,53 +206,53 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     bool Created = true;
     Azure::ETag ETag;
-    Core::DateTime LastModified;
-    Azure::Core::Nullable<int64_t> FileSize;
+    DateTime LastModified;
+    Azure::Nullable<int64_t> FileSize;
     std::string RequestId;
   };
 
-  using SetDataLakePathAccessControlListResult = Details::PathSetAccessControlResult;
-  using SetDataLakePathPermissionsResult = Details::PathSetAccessControlResult;
+  using SetDataLakePathAccessControlListResult = _detail::PathSetAccessControlResult;
+  using SetDataLakePathPermissionsResult = _detail::PathSetAccessControlResult;
 
   // FileClient models:
 
   using UploadDataLakeFileFromResult = Blobs::Models::UploadBlockBlobResult;
-  using AppendDataLakeFileResult = Details::PathAppendDataResult;
-  using FlushDataLakeFileResult = Details::PathFlushDataResult;
+  using AppendDataLakeFileResult = _detail::PathAppendDataResult;
+  using FlushDataLakeFileResult = _detail::PathFlushDataResult;
   using ScheduleDataLakeFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
   using CopyStatus = Blobs::Models::CopyStatus;
 
   struct DownloadDataLakeFileDetails
   {
     Azure::ETag ETag;
-    Core::DateTime LastModified;
-    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    DateTime LastModified;
+    Azure::Nullable<LeaseDurationType> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
     PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
-    Core::DateTime CreatedOn;
-    Azure::Core::Nullable<Core::DateTime> ExpiresOn;
-    Azure::Core::Nullable<Core::DateTime> LastAccessedOn;
-    Azure::Core::Nullable<std::string> CopyId;
-    Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
-    Azure::Core::Nullable<std::string> CopyStatusDescription;
-    Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<Azure::Core::DateTime> CopyCompletedOn;
-    Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<bool> IsCurrentVersion;
+    DateTime CreatedOn;
+    Azure::Nullable<DateTime> ExpiresOn;
+    Azure::Nullable<DateTime> LastAccessedOn;
+    Azure::Nullable<std::string> CopyId;
+    Azure::Nullable<std::string> CopySource;
+    Azure::Nullable<Models::CopyStatus> CopyStatus;
+    Azure::Nullable<std::string> CopyStatusDescription;
+    Azure::Nullable<std::string> CopyProgress;
+    Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+    Azure::Nullable<std::string> VersionId;
+    Azure::Nullable<bool> IsCurrentVersion;
     bool IsServerEncrypted = false;
-    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+    Azure::Nullable<std::string> EncryptionScope;
   };
 
   struct DownloadDataLakeFileResult
   {
-    std::unique_ptr<Azure::IO::BodyStream> Body;
+    std::unique_ptr<Azure::Core::IO::BodyStream> Body;
     int64_t FileSize = int64_t();
-    Azure::Core::Http::Range ContentRange;
-    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+    Azure::Core::Http::HttpRange ContentRange;
+    Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
     DownloadDataLakeFileDetails Details;
     std::string RequestId;
   };
@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct DownloadDataLakeFileToResult
   {
     int64_t FileSize = int64_t();
-    Azure::Core::Http::Range ContentRange;
+    Azure::Core::Http::HttpRange ContentRange;
     DownloadDataLakeFileDetails Details;
   };
 
@@ -276,12 +276,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct RenameDataLakeDirectoryResult
   {
-    Azure::Core::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> ContinuationToken;
     std::string RequestId;
   };
 
   using SetDataLakePathAccessControlListRecursiveSinglePageResult
-      = Details::PathSetAccessControlRecursiveResult;
+      = _detail::PathSetAccessControlRecursiveResult;
   using UpdateDataLakePathAccessControlListRecursiveSinglePageResult
       = SetDataLakePathAccessControlListRecursiveSinglePageResult;
   using RemoveDataLakePathAccessControlListRecursiveSinglePageResult

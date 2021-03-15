@@ -3,11 +3,11 @@
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/curl_transport.hpp"
 #endif
 
 #include <iostream>
@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("http://httpbin.org/get"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
       std::string const expectedConnectionKey = "httpbin.org0011";
 
       {
@@ -170,6 +170,25 @@ namespace Azure { namespace Core { namespace Test {
         EXPECT_EQ(values->second.size(), 0);
       }
 #endif
+    }
+
+    TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
+    {
+      Azure::Core::Http::Request req(
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
+
+      Azure::Core::Http::CurlTransportOptions options;
+      auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
+      // Simulate connection lost (like server disconnection).
+      connection->Shutdown();
+
+      {
+        // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
+        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+            req, std::move(connection), options.HttpKeepAlive);
+        auto r = session->Perform(Azure::Core::Context::GetApplicationContext());
+        EXPECT_EQ(CURLE_SEND_ERROR, r);
+      }
     }
 
 #endif

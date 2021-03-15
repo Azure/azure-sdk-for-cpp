@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_client.hpp>
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DataLakePathClient(
         const std::string& pathUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -292,14 +292,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   protected:
-    Azure::Core::Http::Url m_pathUrl;
+    Azure::Core::Url m_pathUrl;
     Blobs::BlobClient m_blobClient;
-    std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     explicit DataLakePathClient(
-        Azure::Core::Http::Url pathUrl,
+        Azure::Core::Url pathUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
           m_pipeline(std::move(pipeline))
     {

@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/internal/log.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/platform.hpp"
 
 // Private incude
@@ -15,6 +15,7 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
+#include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
@@ -110,8 +111,8 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
-using Azure::Core::Logger;
-using Azure::Core::Internal::Log;
+using Azure::Core::Diagnostics::Logger;
+using Azure::Core::Diagnostics::_internal::Log;
 
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
@@ -163,23 +164,30 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
       request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
   CURLcode performing;
 
-  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
-  // either closed or the socket is not usable any more. In that case, let the session be destroyed
-  // and create a new session to get another connection from connection pool.
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
+  // the connection is either closed or the socket is not usable any more. In that case, let the
+  // session be destroyed and create a new session to get another connection from connection pool.
   // Prevent from trying forever by using DefaultMaxOpenNewConnectionIntentsAllowed.
   for (auto getConnectionOpenIntent = 0;
-       getConnectionOpenIntent < Details::DefaultMaxOpenNewConnectionIntentsAllowed;
+       getConnectionOpenIntent < _detail::DefaultMaxOpenNewConnectionIntentsAllowed;
        getConnectionOpenIntent++)
   {
     performing = session->Perform(context);
-    if (performing != CURLE_UNSUPPORTED_PROTOCOL)
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL && performing != CURLE_SEND_ERROR)
     {
       break;
     }
-    // Let session be destroyed and create a new one to get a new connection
+    // Let session be destroyed and request a new connection. If the number of
+    // request for connection has reached `RequestPoolResetAfterConnectionFailed`, ask the pool to
+    // clean (remove connections) and create a new one. This is because, keep getting connections
+    // that fail to perform means a general network disconnection where all connections in the pool
+    // won't be no longer valid.
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::GetCurlConnection(request, m_options),
+        CurlConnectionPool::GetCurlConnection(
+            request,
+            m_options,
+            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
         m_options.HttpKeepAlive);
   }
 
@@ -399,7 +407,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
   if (uploadChunkSize <= 0)
   {
     // use default size
-    uploadChunkSize = Details::DefaultUploadChunkSize;
+    uploadChunkSize = _detail::DefaultUploadChunkSize;
   }
   auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
 
@@ -492,7 +500,7 @@ void CurlSession::ParseChunkSize(Context const& context)
            * indicate the the next read call should read from the inner buffer start.
            */
           this->m_innerBufferSize = m_connection->ReadFromSocket(
-              this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
+              this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -512,7 +520,7 @@ void CurlSession::ParseChunkSize(Context const& context)
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize = m_connection->ReadFromSocket(
-          this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
+          this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -548,7 +556,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       // Try to fill internal buffer from socket.
       // If response is smaller than buffer, we will get back the size of the response
       bufferSize = m_connection->ReadFromSocket(
-          this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
+          this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
       if (bufferSize == 0)
       {
         // closed connection, prevent application from keep trying to pull more bytes from the wire
@@ -610,7 +618,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize = m_connection->ReadFromSocket(
-            this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
+            this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -633,7 +641,7 @@ void CurlSession::ReadExpected(uint8_t expected, Context const& context)
   {
     // end of buffer, pull data from wire
     this->m_innerBufferSize = m_connection->ReadFromSocket(
-        this->m_readBuffer, Details::DefaultLibcurlReaderSize, context);
+        this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
     this->m_bodyStartInBuffer = 0;
   }
   auto data = this->m_readBuffer[this->m_bodyStartInBuffer];
@@ -698,7 +706,7 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   if (this->m_bodyStartInBuffer >= 0)
   {
     // still have data to take from innerbuffer
-    Azure::IO::MemoryBodyStream innerBufferMemoryStream(
+    Azure::Core::IO::MemoryBodyStream innerBufferMemoryStream(
         this->m_readBuffer + this->m_bodyStartInBuffer,
         this->m_innerBufferSize - this->m_bodyStartInBuffer);
 
@@ -744,6 +752,16 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   }
 
   return totalRead;
+}
+
+void CurlConnection::Shutdown()
+{
+#if defined(AZ_PLATFORM_POSIX)
+  ::shutdown(m_curlSocket, SHUT_RDWR);
+#elif defined(AZ_PLATFORM_WINDOWS)
+  ::shutdown(m_curlSocket, SD_BOTH);
+#endif
+  m_isShutDown = true;
 }
 
 // Read from socket and return the number of bytes taken from socket
@@ -1052,7 +1070,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
-int32_t CurlConnectionPool::s_connectionCounter = 0;
+uint64_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 namespace {
@@ -1097,7 +1115,8 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     Request& request,
-    CurlTransportOptions const& options)
+    CurlTransportOptions const& options,
+    bool resetPool)
 {
   std::string const& host = request.GetUrl().GetHost();
   std::string const connectionKey = GetConnectionKey(host, options);
@@ -1109,26 +1128,36 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
 
     // get a ref to the pool from the map of pools
     auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
+
     if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
         && hostPoolIndex->second.size() > 0)
     {
-      // get ref to first connection
-      auto fistConnectionIterator = hostPoolIndex->second.begin();
-      // move the connection ref to temp ref
-      auto connection = std::move(*fistConnectionIterator);
-      // Remove the connection ref from list
-      hostPoolIndex->second.erase(fistConnectionIterator);
-      // reduce number of connections on the pool
-      CurlConnectionPool::s_connectionCounter -= 1;
-
-      // Remove index if there are no more connections
-      if (hostPoolIndex->second.size() == 0)
+      if (resetPool)
       {
-        CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        // Remove all connections for the connection Key and move to spawn new connection below
+        CurlConnectionPool::s_connectionCounter -= hostPoolIndex->second.size();
+        hostPoolIndex->second.clear();
       }
+      else
+      {
+        // get ref to first connection
+        auto fistConnectionIterator = hostPoolIndex->second.begin();
+        // move the connection ref to temp ref
+        auto connection = std::move(*fistConnectionIterator);
+        // Remove the connection ref from list
+        hostPoolIndex->second.erase(fistConnectionIterator);
+        // reduce number of connections on the pool
+        CurlConnectionPool::s_connectionCounter -= 1;
 
-      // return connection ref
-      return connection;
+        // Remove index if there are no more connections
+        if (hostPoolIndex->second.size() == 0)
+        {
+          CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        }
+
+        // return connection ref
+        return connection;
+      }
     }
   }
 
@@ -1138,7 +1167,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   if (!newHandle)
   {
     throw Azure::Core::Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string("curl_easy_init returned Null"));
   }
   CURLcode result;
@@ -1147,7 +1176,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
     throw Azure::Core::Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
@@ -1155,14 +1184,14 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
   {
     throw Azure::Core::Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
   if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
   {
     throw Azure::Core::Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
@@ -1172,7 +1201,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   if (!SetLibcurlOption(newHandle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
   {
     throw Azure::Core::Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
@@ -1184,7 +1213,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     if (!SetLibcurlOption(newHandle, CURLOPT_PROXY, options.Proxy.c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
-          Details::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set proxy to:"
+          _detail::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set proxy to:"
           + options.Proxy + ". " + std::string(curl_easy_strerror(result)));
     }
   }
@@ -1194,7 +1223,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     if (!SetLibcurlOption(newHandle, CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
-          Details::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set CA cert to:"
+          _detail::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set CA cert to:"
           + options.CAInfo + ". " + std::string(curl_easy_strerror(result)));
     }
   }
@@ -1208,7 +1237,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   if (!SetLibcurlOption(newHandle, CURLOPT_SSL_OPTIONS, sslOption, &result))
   {
     throw Azure::Core::Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host
+        _detail::DefaultFailedToGetNewConnectionTemplate + host
         + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
         + std::string(curl_easy_strerror(result)));
   }
@@ -1218,7 +1247,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {
       throw Azure::Core::Http::TransportException(
-          Details::DefaultFailedToGetNewConnectionTemplate + host
+          _detail::DefaultFailedToGetNewConnectionTemplate + host
           + ". Failed to disable ssl verify peer." + ". "
           + std::string(curl_easy_strerror(result)));
     }
@@ -1228,7 +1257,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   if (performResult != CURLE_OK)
   {
     throw Http::TransportException(
-        Details::DefaultFailedToGetNewConnectionTemplate + host + ". "
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(performResult)));
   }
 
@@ -1246,6 +1275,12 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   if (code < 200 || code >= 300)
   {
     // A handler with previous response with Error can't be re-use.
+    return;
+  }
+
+  if (connection->IsShutdown())
+  {
+    // Can't re-used a shut down connection
     return;
   }
 
@@ -1274,7 +1309,7 @@ void CurlConnectionPool::CleanUp()
     {
       // wait before trying to clean
       std::this_thread::sleep_for(
-          std::chrono::milliseconds(Details::DefaultCleanerIntervalMilliseconds));
+          std::chrono::milliseconds(_detail::DefaultCleanerIntervalMilliseconds));
 
       {
         // take mutex for reading the pool
@@ -1306,7 +1341,7 @@ void CurlConnectionPool::CleanUp()
             // size() > 0 so we are safe to go end() - 1 and find the last element in the
             // list
             connection--;
-            if (connection->get()->isExpired())
+            if (connection->get()->IsExpired())
             {
               // remove connection from the pool and update the connection to the next one
               // which is going to be list.end()

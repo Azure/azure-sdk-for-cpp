@@ -10,13 +10,13 @@ namespace Azure { namespace Storage { namespace Test {
   TEST(StorageCredentialTest, DefaultHostCorrect)
   {
     EXPECT_EQ(
-        Azure::Storage::Details::ParseConnectionString(
+        Azure::Storage::_detail::ParseConnectionString(
             "DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=testkey")
             .BlobServiceUrl.GetHost(),
         "testaccount.blob.core.windows.net");
 
     EXPECT_EQ(
-        Azure::Storage::Details::ParseConnectionString(
+        Azure::Storage::_detail::ParseConnectionString(
             "DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=testkey;"
             "EndpointSuffix=core.windows.net")
             .BlobServiceUrl.GetHost(),

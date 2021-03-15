@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_service_client.hpp>
@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DataLakeServiceClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
-        const Azure::Core::DateTime& expiresOn,
+        const Azure::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
@@ -111,8 +111,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
+    Azure::Core::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
-    std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

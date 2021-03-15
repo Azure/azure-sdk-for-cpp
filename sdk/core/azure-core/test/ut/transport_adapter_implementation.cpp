@@ -3,15 +3,15 @@
 
 #include "transport_adapter_base.hpp"
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/curl_transport.hpp"
 #endif
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-#include "azure/core/http/winhttp/win_http_client.hpp"
+#include "azure/core/http/win_http_transport.hpp"
 #endif
 
 #include <string>
@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Test {
         std::string suffix,
         std::shared_ptr<Azure::Core::Http::HttpTransport> adapter)
     {
-      Azure::Core::Http::TransportOptions options;
+      Azure::Core::Http::Policies::TransportOptions options;
       options.Transport = adapter;
       return TransportAdaptersTestParameter(std::move(suffix), options);
     }

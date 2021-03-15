@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/core/internal/json_serializable.hpp>
+#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_create_options.hpp"
@@ -21,17 +21,17 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Details {
+namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
 
-  class KeyRequestParameters : public Azure::Core::Internal::Json::JsonSerializable {
+  class KeyRequestParameters : public Azure::Core::Json::_internal::JsonSerializable {
   private:
     JsonWebKeyType m_keyType;
     CreateKeyOptions const& m_options;
 
   public:
-    Azure::Core::Nullable<KeyCurveName> Curve;
-    Azure::Core::Nullable<uint64_t> KeySize;
-    Azure::Core::Nullable<uint64_t> PublicExponent;
+    Azure::Nullable<KeyCurveName> Curve;
+    Azure::Nullable<uint64_t> KeySize;
+    Azure::Nullable<uint64_t> PublicExponent;
 
     explicit KeyRequestParameters(JsonWebKeyType keyType, CreateKeyOptions const& options)
         : m_keyType(keyType), m_options(options)
@@ -71,4 +71,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     std::string Serialize() const override;
   };
-}}}}} // namespace Azure::Security::KeyVault::Keys::Details
+}}}}} // namespace Azure::Security::KeyVault::Keys::_detail

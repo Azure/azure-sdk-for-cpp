@@ -2,14 +2,17 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
-#include "azure/core/internal/null_body_stream.hpp"
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/io/null_body_stream.hpp"
+#include "azure/core/url.hpp"
 
 #include <utility>
 
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::IO::Internal;
+using namespace Azure::Core::IO::_internal;
 
-void Azure::Core::Http::Details::InsertHeaderWithValidation(
+void Azure::Core::_detail::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
@@ -153,7 +156,7 @@ void Azure::Core::Http::Details::InsertHeaderWithValidation(
   {
     if (validChars[static_cast<int>(headerName[index])] == 0)
     {
-      throw InvalidHeaderException("Invalid header: " + headerName);
+      throw std::invalid_argument("Invalid header: " + headerName);
     }
   }
   // insert (override if duplicated)

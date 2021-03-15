@@ -23,7 +23,7 @@
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 
-namespace Azure { namespace Core { namespace Internal {
+namespace Azure { namespace Core { namespace _internal {
 
   /**
    * @brief HKEYHolder ensures native handle resource is released.
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Internal {
     HKEY* operator&() noexcept { return &m_value; }
   };
 
-}}} // namespace Azure::Core::Internal
+}}} // namespace Azure::Core::_internal
 
 #endif
 

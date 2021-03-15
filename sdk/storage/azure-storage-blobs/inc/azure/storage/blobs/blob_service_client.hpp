@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
 #include "azure/storage/blobs/blob_container_client.hpp"
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobServiceClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A deserialized GetUserDelegationKeyResult instance.
      */
     Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
-        const Azure::Core::DateTime& expiresOn,
+        const Azure::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -232,9 +232,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
-    std::shared_ptr<Azure::Core::Http::Internal::HttpPipeline> m_pipeline;
-    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
-    Azure::Core::Nullable<std::string> m_encryptionScope;
+    Azure::Core::Url m_serviceUrl;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Nullable<std::string> m_encryptionScope;
   };
 }}} // namespace Azure::Storage::Blobs

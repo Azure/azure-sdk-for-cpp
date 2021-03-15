@@ -30,21 +30,23 @@ inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawRespons
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::Context& context)
 {
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())
   {
-    m_rawResponse = m_pipeline->GetResponse(
-        context, Azure::Core::Http::HttpMethod::Get, {Details::DeletedKeysPath, m_value.Name()});
-    m_status = CheckCompleted(*m_rawResponse);
+    rawResponse = m_pipeline->GetResponse(
+        context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
+    m_status = CheckCompleted(*rawResponse);
   }
 
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
   // copy of the raw http response is returned instead of transfering the ownership of the raw
   // response inside the Operation.
-  return std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse);
+  return rawResponse;
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
-    std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> keyvaultPipeline,
+    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
+        keyvaultPipeline,
     Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
     : m_pipeline(keyvaultPipeline)
 {
@@ -62,7 +64,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
   // Build the full url for continuation token. It is only used in case customers wants to use
   // it on their own. The Operation uses the KeyVaultPipeline from the client which knows how to
   // build this url.
-  m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(Details::DeletedKeysPath)
+  m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(_detail::DeletedKeysPath)
       + "/" + m_value.Name();
 
   // The recoveryId is only returned if soft-delete is enabled.

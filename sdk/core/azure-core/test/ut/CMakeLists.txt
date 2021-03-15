@@ -52,6 +52,7 @@ add_executable (
     operation_status.cpp
     pipeline.cpp
     policy.cpp
+    response_t.cpp
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp
@@ -87,6 +88,10 @@ add_executable (
   azure-core-global-context-test
   global_context.cpp
 )
+if (MSVC)
+  # Disable gtest warnings for msvc
+  target_compile_options(azure-core-global-context-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
+endif()
 target_link_libraries(azure-core-global-context-test PRIVATE azure-core gtest_main)
 
 # gtest_discover_tests will scan the test from azure-core-test and call add_test

@@ -36,9 +36,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * constructor is private and requires internal components.*/
     friend class KeyClient;
 
-    std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
     Azure::Security::KeyVault::Keys::DeletedKey m_value;
-    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
     std::string m_continuationToken;
 
     /* This is the implementation for checking the status of a deleted key. The key is considered
@@ -53,7 +52,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       while (true)
       {
-        m_rawResponse = Poll(context);
+        // Poll will update the raw response.
+        Poll(context);
         if (IsDone())
         {
           break;
@@ -72,17 +72,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     DeleteKeyOperation(
-        std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline>
+        std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
             keyvaultPipeline,
         Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
-  public:
     /**
      * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A pointer to #Azure::Core::Http::RawResponse or null.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
      */
-    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
 
+  public:
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
      *

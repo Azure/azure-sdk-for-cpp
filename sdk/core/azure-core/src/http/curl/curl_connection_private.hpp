@@ -17,7 +17,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  namespace Details {
+  namespace _detail {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
@@ -26,11 +26,14 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
     constexpr static int DefaultMaxOpenNewConnectionIntentsAllowed = 10;
+    // After 3 connections are received from the pool and failed to send a request, the next
+    // connections would ask the pool to be clean and spawn new connection.
+    constexpr static int RequestPoolResetAfterConnectionFailed = 3;
     // 90 sec -> cleaner wait time before next clean routine
     constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
     constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief Interface for the connection to the network with Curl.
@@ -40,6 +43,9 @@ namespace Azure { namespace Core { namespace Http {
    *
    */
   class CurlNetworkConnection {
+  protected:
+    bool m_isShutDown = false;
+
   public:
     /**
      * @brief Allow derived classes calling a destructor.
@@ -61,7 +67,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Checks whether this CURL connection is expired.
      */
-    virtual bool isExpired() = 0;
+    virtual bool IsExpired() = 0;
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
@@ -77,6 +83,21 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
         = 0;
+
+    /**
+     * @brief Set the connection into an invalid and unusable state.
+     *
+     * @remark A connection won't be returned to the connection pool if it was shut it down.
+     *
+     */
+    virtual void Shutdown() { m_isShutDown = true; };
+
+    /**
+     * @brief Check if the the connection was shut it down.
+     *
+     * @return `true` is the connection was shut it down.
+     */
+    bool IsShutdown() const { return m_isShutDown; };
   };
 
   /**
@@ -138,11 +159,11 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Checks whether this CURL connection is expired.
        * @return `true` if this connection is considered expired, `false` otherwise.
        */
-      bool isExpired() override
+      bool IsExpired() override
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= Details::DefaultConnectionExpiredMilliseconds;
+        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
       }
 
       /**
@@ -170,5 +191,7 @@ namespace Azure { namespace Core { namespace Http {
        */
       CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
           override;
+
+      void Shutdown() override;
     };
 }}} // namespace Azure::Core::Http

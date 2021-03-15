@@ -9,7 +9,7 @@
 
 #pragma once
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Details {
+namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
   /***************** KeyVault Key *****************/
   constexpr static const char KeyPropertyName[] = "key";
 
@@ -69,4 +69,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char P384OidValue[] = "1.3.132.0.34";
   constexpr static const char P521OidValue[] = "1.3.132.0.35";
 
-}}}}} // namespace Azure::Security::KeyVault::Keys::Details
+}}}}} // namespace Azure::Security::KeyVault::Keys::_detail

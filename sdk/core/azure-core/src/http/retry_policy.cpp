@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policy.hpp"
-#include "azure/core/internal/log.hpp"
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -12,6 +12,7 @@
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 namespace {
 typedef decltype(RetryOptions::RetryDelay) Delay;
@@ -101,8 +102,8 @@ bool ShouldRetryOnResponse(
     RetryNumber attempt,
     Delay& retryAfter)
 {
-  using Azure::Core::Logger;
-  using Azure::Core::Internal::Log;
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
   {
@@ -157,13 +158,13 @@ Context inline CreateRetryContext(Context const& parent)
   int retryCount = 0;
   if (parent.HasKey(RetryKey))
   {
-    retryCount = parent[RetryKey].Get<int>() + 1;
+    retryCount = parent.Get<int>(RetryKey) + 1;
   }
   return parent.WithValue(RetryKey, retryCount);
 }
 } // namespace
 
-int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
+int RetryPolicy::GetRetryNumber(Context const& context)
 {
   if (!context.HasKey(RetryKey))
   {
@@ -174,16 +175,16 @@ int Azure::Core::Http::RetryPolicy::GetRetryNumber(Context const& context)
     // ...
     return -1;
   }
-  return context[RetryKey].Get<int>();
+  return context.Get<int>(RetryKey);
 }
 
-std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
+std::unique_ptr<RawResponse> RetryPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  using Azure::Core::Logger;
-  using Azure::Core::Internal::Log;
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
 
   auto retryContext = CreateRetryContext(ctx);
 

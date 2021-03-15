@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
 #if defined(AZ_PLATFORM_WINDOWS)
   using FileHandle = HANDLE;
@@ -55,4 +55,4 @@ namespace Azure { namespace Storage { namespace Details {
     FileHandle m_handle;
   };
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

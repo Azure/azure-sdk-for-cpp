@@ -10,7 +10,7 @@
 
 #include "azure/storage/files/datalake/datalake_options.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 
   std::string GetBlobUrlFromUrl(const std::string& url);
   std::string GetDfsUrlFromUrl(const std::string& url);
@@ -26,4 +26,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options);
 
-}}}}} // namespace Azure::Storage::Files::DataLake::Details
+}}}}} // namespace Azure::Storage::Files::DataLake::_detail

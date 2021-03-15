@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/http.hpp"
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 // The NextHttpPolicy can't be created from a nullptr because it is a reference. So we don't need to
 // check if m_policies is nullptr.

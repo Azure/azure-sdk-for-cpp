@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace Details {
+namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _detail {
   /***************** KeyVault headers *****************/
   static constexpr char const ContentType[] = "content-type";
   static constexpr char const ApplicationJson[] = "application/json";
@@ -18,4 +18,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
   /**************** KeyVault QueryParameters *********/
   static constexpr char const ApiVersion[] = "api-version";
-}}}}} // namespace Azure::Security::KeyVault::Common::Details
+}}}}} // namespace Azure::Security::KeyVault::Common::_detail

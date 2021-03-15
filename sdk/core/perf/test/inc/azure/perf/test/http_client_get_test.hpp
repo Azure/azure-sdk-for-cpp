@@ -20,9 +20,9 @@
 
 namespace Azure { namespace Perf { namespace Test {
 
-  namespace Details {
+  namespace _detail {
     static std::unique_ptr<Azure::Core::Http::HttpTransport> HttpClient;
-  } // namespace Details
+  } // namespace _detail
 
   /**
    * @brief A performance test that defines a test option.
@@ -30,7 +30,7 @@ namespace Azure { namespace Perf { namespace Test {
    */
   class HttpClientGetTest : public Azure::Perf::PerfTest {
   protected:
-    Azure::Core::Http::Url m_url;
+    Azure::Core::Url m_url;
 
   public:
     /**
@@ -46,7 +46,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     void Setup() override
     {
-      m_url = Azure::Core::Http::Url(m_options.GetMandatoryOption<std::string>("url"));
+      m_url = Azure::Core::Url(m_options.GetMandatoryOption<std::string>("url"));
     }
 
     /**
@@ -57,10 +57,10 @@ namespace Azure { namespace Perf { namespace Test {
     void Run(Azure::Core::Context const& ctx) override
     {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, m_url);
-      auto response = Details::HttpClient->Send(request, ctx);
+      auto response = _detail::HttpClient->Send(request, ctx);
       // Read the body from network
       auto bodyStream = response->GetBodyStream();
-      response->SetBody(Azure::IO::BodyStream::ReadToEnd(*bodyStream, ctx));
+      response->SetBody(bodyStream->ReadToEnd(ctx));
     }
 
     /**

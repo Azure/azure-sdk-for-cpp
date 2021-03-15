@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Azure { namespace Storage { namespace Details {
+namespace Azure { namespace Storage { namespace _detail {
 
   enum class XmlNodeType
   {
@@ -55,4 +55,4 @@ namespace Azure { namespace Storage { namespace Details {
     void* m_writer = nullptr;
   };
 
-}}} // namespace Azure::Storage::Details
+}}} // namespace Azure::Storage::_detail

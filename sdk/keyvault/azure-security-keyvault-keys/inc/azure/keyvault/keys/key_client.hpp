@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
-    std::shared_ptr<Azure::Security::KeyVault::Common::Internal::KeyVaultPipeline> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
 
   public:
     /**
@@ -42,7 +42,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     explicit KeyClient(
         std::string const& vaultUrl,
-        std::shared_ptr<Core::TokenCredential const> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         KeyClientOptions options = KeyClientOptions());
 
     /**

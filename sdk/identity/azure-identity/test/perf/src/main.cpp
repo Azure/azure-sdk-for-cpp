@@ -12,7 +12,7 @@ int main(int argc, char** argv)
   std::vector<Azure::Perf::TestMetadata> tests{
       Azure::Identity::Test::SecretCredentialTest::GetTestMetadata()};
 
-  Azure::Perf::Program::Run(Azure::Core::GetApplicationContext(), tests, argc, argv);
+  Azure::Perf::Program::Run(Azure::Core::Context::GetApplicationContext(), tests, argc, argv);
 
   return 0;
 }

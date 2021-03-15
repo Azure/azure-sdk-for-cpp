@@ -30,8 +30,8 @@ SOFTWARE.
 #include "doctest_compatibility.h"
 
 #define private public
-#include <azure/core/internal/json.hpp>
-using Azure::Core::Internal::Json::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 #undef private
 
 TEST_CASE("iterator class")
