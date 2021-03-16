@@ -19,7 +19,6 @@
 - Changed return type of `BlobContainerClient::GetProperties` to `BlobContainerProperties`.
 - Changed return type of `BlobContainerClient::GetAccessPolicy` to `BlobContainerAccessPolicy`.
 - Changed return type of `BlobClient::GetProperties` to `BlobProperties`.
-- Changed return type of `BlobClient::GetTags` to `std::map<std::string, std::string>`.
 
 ### Other Changes and Improvements
 
