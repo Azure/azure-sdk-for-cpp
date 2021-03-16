@@ -1,6 +1,6 @@
 # Operation\<T>
 
-The Azure SDK for C++ defines an Operation as an abstract class to support a long running operation ([LRO](http://restalk-patterns.org/long-running-operation-polling.html)).
+The Azure SDK for C++ defines an Operation as an abstract class to support a long running operation ([LRO](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations)).
 
 The SDK clients would define a concrete class from the `Operation<T>` which an end users can consume for getting the status of the running operation.
 
@@ -139,13 +139,13 @@ The Operation\<T> will maintain the ownership of the Http raw response and the v
 
 As any concrete class, the Operation\<T> defines the next contract to be implemented:
 
-| Method | Description | Highlights |
-| --- | --- | --- |
-| PollInternal | Implement how to get an update for the operation. Although the update can come from anywhere, it needs to be returned as a unique_ptr<Azure::Core::Http::RawResponse> which the Operation will own. | - This method **must** update the operation status.<br>- This is the only expected method where the operation status should be updated.<br>- If the operation status is updated to `completed` and is *successful*, this method **must** init the value\<T> model before returning (if the implementation of `T Value()` will just return the internal value field.).<br>- This method is not expected to be exposed as public, but implemented as private. |
-| PollUntilDoneInternal | Implement an strategy for keep polling for updates and return the `value\<T>` once the operation has successfully finished. | - This method **must** set the member field `value\<T>` before returning it if the implementation of `T Value()` will just return the internal value field.<br>- This method is not expected to be exposed as public, but implemented as private. |
-| GetRawResponseInternal | Usually this implementation would just return the reference to the http raw response member, but it can be further used to make changes to the http raw response if required. | - This method *does not* need to check if the http raw response member is not set before returning it, the Operation\<T> would add that validation for all derived classes.<br>- This method is not expected to be exposed as public, but implemented as private. |
-| Value | Implement the way the model `T` is returned. | - If the `Poll` implementation is creating the model `T` when the operation is completed and updates the value member from the operation to hold the value `T`, then this method should only return the member value.<br>- If `Poll` is not creating the model `T`, this method **must** init the value `T` and return it. |
-| GetResumeToken | For operations that support resuming, this method defines how to generate or provide the resume token. | - If the operation does not support `resume`, this method **must** call `std::abort`. |
+| Method                 | Description                                                                                                                                                                                         | Highlights                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PollInternal           | Implement how to get an update for the operation. Although the update can come from anywhere, it needs to be returned as a unique_ptr<Azure::Core::Http::RawResponse> which the Operation will own. | - This method **must** update the operation status.<br>- This is the only expected method where the operation status should be updated.<br>- If the operation status is updated to `completed` and is _successful_, this method **must** init the value\<T> model before returning (if the implementation of `T Value()` will just return the internal value field.).<br>- This method is not expected to be exposed as public, but implemented as private. |
+| PollUntilDoneInternal  | Implement an strategy for keep polling for updates and return the `value\<T>` once the operation has successfully finished.                                                                         | - This method **must** set the member field `value\<T>` before returning it if the implementation of `T Value()` will just return the internal value field.<br>- This method is not expected to be exposed as public, but implemented as private.                                                                                                                                                                                                           |
+| GetRawResponseInternal | Usually this implementation would just return the reference to the http raw response member, but it can be further used to make changes to the http raw response if required.                       | - This method _does not_ need to check if the http raw response member is not set before returning it, the Operation\<T> would add that validation for all derived classes.<br>- This method is not expected to be exposed as public, but implemented as private.                                                                                                                                                                                           |
+| Value                  | Implement the way the model `T` is returned.                                                                                                                                                        | - If the `Poll` implementation is creating the model `T` when the operation is completed and updates the value member from the operation to hold the value `T`, then this method should only return the member value.<br>- If `Poll` is not creating the model `T`, this method **must** init the value `T` and return it.                                                                                                                                  |
+| GetResumeToken         | For operations that support resuming, this method defines how to generate or provide the resume token.                                                                                              | - If the operation does not support `resume`, this method **must** call `std::abort`.                                                                                                                                                                                                                                                                                                                                                                       |
 
 The next code show how to create an Operation\<T> concrete class that uses `Poll` to update the `value` member field.
 
@@ -164,8 +164,8 @@ class fooOperation : public Azure::Core::Operation<Model> {
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override {
-        
-        // `GetFooStatus` return a Response<fooOperationProgressResult> model which is used to set the Operation status. 
+
+        // `GetFooStatus` return a Response<fooOperationProgressResult> model which is used to set the Operation status.
         auto response = GetFooStatus();
         if (!response->Status.HasValue())
         {
@@ -192,7 +192,7 @@ class fooOperation : public Azure::Core::Operation<Model> {
     Azure::Response<Model> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override {
-      
+
         while (true)
         {
             // Poll will update the operation status
@@ -231,7 +231,7 @@ class fooOperation : public Azure::Core::Operation<Model> {
     }
 
   public:
-   // Since Poll is updating the value T, we can return it here. 
+   // Since Poll is updating the value T, we can return it here.
     Model Value() const override { return m_valueT; }
 
   };
@@ -253,8 +253,8 @@ class fooOperation : public Azure::Core::Operation<Model> {
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override {
-        
-        // `GetFooStatus` return a Response<fooOperationProgressResult> model which is used to set the Operation status. 
+
+        // `GetFooStatus` return a Response<fooOperationProgressResult> model which is used to set the Operation status.
         auto response = GetFooStatus();
         if (!response->Status.HasValue())
         {
@@ -280,7 +280,7 @@ class fooOperation : public Azure::Core::Operation<Model> {
     Azure::Response<Model> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override {
-      
+
         while (true)
         {
             // Poll will update the operation status
@@ -324,5 +324,4 @@ class fooOperation : public Azure::Core::Operation<Model> {
     Model Value() const override { return Model(*m_rawResponse); }
 
   };
-  ```
-  
+```

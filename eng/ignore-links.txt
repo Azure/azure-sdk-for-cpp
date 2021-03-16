@@ -1,1 +1,0 @@
-http://restalk-patterns.org/long-running-operation-polling.html
