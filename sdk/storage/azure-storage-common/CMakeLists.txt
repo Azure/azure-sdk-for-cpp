@@ -44,6 +44,7 @@ set(
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_exception.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
+    inc/azure/storage/common/storage_service_version_policy.hpp
     inc/azure/storage/common/storage_switch_to_secondary_policy.hpp
     inc/azure/storage/common/version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
