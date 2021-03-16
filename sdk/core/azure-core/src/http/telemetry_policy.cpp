@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/platform.hpp"
 
 #include <cctype>
@@ -94,6 +94,7 @@ std::string TrimString(std::string s)
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 std::string TelemetryPolicy::BuildTelemetryId(
     std::string const& componentName,

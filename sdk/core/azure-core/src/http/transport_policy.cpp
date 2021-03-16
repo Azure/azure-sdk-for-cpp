@@ -1,21 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/curl_transport.hpp"
 #endif
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-#include "azure/core/http/winhttp/win_http_client.hpp"
+#include "azure/core/http/win_http_transport.hpp"
 #endif
 
 using Azure::Core::Context;
-using namespace Azure::IO;
+using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
-std::shared_ptr<HttpTransport> Azure::Core::Http::_detail::GetTransportAdapter()
+std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTransportAdapter()
 {
   // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
   // both are defined.
@@ -57,7 +58,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // Using DownloadViaStream and getting an error code would also get to here to download error from
   // body
   auto bodyStream = response->GetBodyStream();
-  response->SetBody(BodyStream::ReadToEnd(*bodyStream, ctx));
+  response->SetBody(bodyStream->ReadToEnd(ctx));
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.
   return response;

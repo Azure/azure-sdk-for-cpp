@@ -3,6 +3,7 @@
 
 #include "azure/storage/blobs/block_blob_client.hpp"
 
+#include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -33,7 +34,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient::BlockBlobClient(
       const std::string& blobUrl,
-      std::shared_ptr<Core::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobClientOptions& options)
       : BlobClient(blobUrl, std::move(credential), options)
   {
@@ -78,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::UploadBlockBlobResult> BlockBlobClient::Upload(
-      Azure::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream* content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -116,7 +117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
     {
-      Azure::IO::MemoryBodyStream contentStream(buffer, bufferSize);
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer, bufferSize);
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
@@ -129,11 +130,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
+      return Azure::Core::Convert::Base64Encode(
+          std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::IO::MemoryBodyStream contentStream(buffer + offset, length);
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
@@ -173,18 +175,17 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
-    Storage::_detail::FileReader fileReader(fileName);
-
-    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
-
-    if (fileReader.GetFileSize() <= options.TransferOptions.SingleUploadThreshold)
     {
-      Azure::IO::FileBodyStream contentStream(fileReader.GetHandle(), 0, fileReader.GetFileSize());
-      UploadBlockBlobOptions uploadBlockBlobOptions;
-      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
-      uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions, context);
+      Azure::Core::IO::FileBodyStream contentStream(fileName);
+
+      if (contentStream.Length() <= options.TransferOptions.SingleUploadThreshold)
+      {
+        UploadBlockBlobOptions uploadBlockBlobOptions;
+        uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
+        uploadBlockBlobOptions.Metadata = options.Metadata;
+        uploadBlockBlobOptions.Tier = options.Tier;
+        return Upload(&contentStream, uploadBlockBlobOptions, context);
+      }
     }
 
     std::vector<std::string> blockIds;
@@ -192,11 +193,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
+      return Azure::Core::Convert::Base64Encode(
+          std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
+    Storage::_detail::FileReader fileReader(fileName);
+
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::IO::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
+          fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
@@ -204,6 +209,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         blockIds.resize(static_cast<std::size_t>(numChunks));
       }
     };
+
+    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
 
     Storage::_detail::ConcurrentTransfer(
         0,
@@ -235,7 +242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
       const std::string& blockId,
-      Azure::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream* content,
       const StageBlockOptions& options,
       const Azure::Core::Context& context) const
   {

@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakeDirectoryClient::DataLakeDirectoryClient(
       const std::string& directoryUrl,
-      std::shared_ptr<Core::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : DataLakePathClient(directoryUrl, credential, options)
   {
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const RenameDataLakeFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
+    Azure::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
     {
       const auto& currentPath = m_pathUrl.GetPath();
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const RenameDataLakeSubdirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
+    Azure::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
     {
       const auto& currentPath = m_pathUrl.GetPath();

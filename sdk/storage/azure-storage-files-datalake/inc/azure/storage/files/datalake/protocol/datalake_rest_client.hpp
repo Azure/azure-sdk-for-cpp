@@ -18,7 +18,7 @@
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::string Name;
       bool IsDirectory = bool();
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string ETag;
       int64_t FileSize = int64_t();
       std::string Owner;
@@ -326,45 +326,45 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       std::vector<PathItem> Items;
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct PathCreateResult
     {
       Azure::ETag ETag;
-      Azure::Core::Nullable<Core::DateTime> LastModified;
+      Azure::Nullable<DateTime> LastModified;
       std::string RequestId;
-      Azure::Core::Nullable<int64_t> ContentLength;
+      Azure::Nullable<int64_t> ContentLength;
     };
 
     struct PathGetPropertiesResult
     {
-      Azure::Core::Nullable<std::string> AcceptRanges;
+      Azure::Nullable<std::string> AcceptRanges;
       PathHttpHeaders HttpHeaders;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ResourceType;
-      Azure::Core::Nullable<std::string> Properties;
-      Azure::Core::Nullable<std::string> Owner;
-      Azure::Core::Nullable<std::string> Group;
-      Azure::Core::Nullable<std::string> Permissions;
-      Azure::Core::Nullable<std::string> Acl;
-      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<LeaseStateType> LeaseState;
-      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Nullable<std::string> ResourceType;
+      Azure::Nullable<std::string> Properties;
+      Azure::Nullable<std::string> Owner;
+      Azure::Nullable<std::string> Group;
+      Azure::Nullable<std::string> Permissions;
+      Azure::Nullable<std::string> Acl;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Nullable<LeaseStateType> LeaseState;
+      Azure::Nullable<LeaseStatusType> LeaseStatus;
     };
 
     struct PathDeleteResult
     {
       std::string RequestId;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct PathSetAccessControlResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
     };
 
@@ -374,14 +374,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int32_t NumberOfSuccessfulFiles = int32_t();
       int32_t NumberOfFailures = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::string RequestId;
     };
 
     struct PathFlushDataResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       int64_t ContentLength = int64_t();
       std::string RequestId;
     };
@@ -389,7 +389,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     struct PathAppendDataResult
     {
       std::string RequestId;
-      Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+      Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
       bool IsServerEncrypted = bool();
     };
 
@@ -400,17 +400,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         struct ListPathsOptions
         {
           FileSystemResourceType Resource;
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<std::string> Directory;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<std::string> Directory;
           bool RecursiveRequired = bool();
-          Azure::Core::Nullable<int32_t> MaxResults;
-          Azure::Core::Nullable<bool> Upn;
+          Azure::Nullable<int32_t> MaxResults;
+          Azure::Nullable<bool> Upn;
         };
 
         static Azure::Response<FileSystemListPathsResult> ListPaths(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const ListPathsOptions& listPathsOptions)
@@ -474,7 +474,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             FileSystemListPathsResult result = bodyBuffer.empty()
                 ? FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
-                    PathListFromJson(Azure::Core::_internal::Json::json::parse(bodyBuffer)));
+                    PathListFromJson(Azure::Core::Json::_internal::json::parse(bodyBuffer)));
             result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
@@ -491,7 +491,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static PathItem PathItemFromJson(const Azure::Core::_internal::Json::json& node)
+        static PathItem PathItemFromJson(const Azure::Core::Json::_internal::json& node)
         {
           PathItem result;
           result.Name = node["name"].get<std::string>();
@@ -499,8 +499,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.IsDirectory = (node["isDirectory"].get<std::string>() == "true");
           }
-          result.LastModified = Core::DateTime::Parse(
-              node["lastModified"].get<std::string>(), Core::DateTime::DateFormat::Rfc1123);
+          result.LastModified = DateTime::Parse(
+              node["lastModified"].get<std::string>(), DateTime::DateFormat::Rfc1123);
           result.ETag = node["etag"].get<std::string>();
           if (node.contains("contentLength"))
           {
@@ -512,7 +512,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static PathList PathListFromJson(const Azure::Core::_internal::Json::json& node)
+        static PathList PathListFromJson(const Azure::Core::Json::_internal::json& node)
         {
           PathList result;
           for (const auto& element : node["paths"])
@@ -535,34 +535,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<PathResourceType> Resource;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<PathRenameMode> Mode;
-          Azure::Core::Nullable<std::string> CacheControl;
-          Azure::Core::Nullable<std::string> ContentEncoding;
-          Azure::Core::Nullable<std::string> ContentLanguage;
-          Azure::Core::Nullable<std::string> ContentDisposition;
-          Azure::Core::Nullable<std::string> ContentType;
-          Azure::Core::Nullable<std::string> RenameSource;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Azure::Core::Nullable<std::string> SourceLeaseId;
-          Azure::Core::Nullable<std::string> Properties;
-          Azure::Core::Nullable<std::string> Permissions;
-          Azure::Core::Nullable<std::string> Umask;
+          Azure::Nullable<PathResourceType> Resource;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<PathRenameMode> Mode;
+          Azure::Nullable<std::string> CacheControl;
+          Azure::Nullable<std::string> ContentEncoding;
+          Azure::Nullable<std::string> ContentLanguage;
+          Azure::Nullable<std::string> ContentDisposition;
+          Azure::Nullable<std::string> ContentType;
+          Azure::Nullable<std::string> RenameSource;
+          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<std::string> SourceLeaseId;
+          Azure::Nullable<std::string> Properties;
+          Azure::Nullable<std::string> Permissions;
+          Azure::Nullable<std::string> Umask;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
           Azure::ETag SourceIfMatch;
           Azure::ETag SourceIfNoneMatch;
-          Azure::Core::Nullable<Core::DateTime> SourceIfModifiedSince;
-          Azure::Core::Nullable<Core::DateTime> SourceIfUnmodifiedSince;
+          Azure::Nullable<DateTime> SourceIfModifiedSince;
+          Azure::Nullable<DateTime> SourceIfUnmodifiedSince;
         };
 
         static Azure::Response<PathCreateResult> Create(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const CreateOptions& createOptions)
@@ -657,15 +657,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.SetHeader(
                 _detail::HeaderIfModifiedSince,
-                createOptions.IfModifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                createOptions.IfModifiedSince.GetValue().ToString(DateTime::DateFormat::Rfc1123));
           }
           if (createOptions.IfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderIfUnmodifiedSince,
-                createOptions.IfUnmodifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                createOptions.IfUnmodifiedSince.GetValue().ToString(DateTime::DateFormat::Rfc1123));
           }
           if (createOptions.SourceIfMatch.HasValue())
           {
@@ -681,33 +679,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.SetHeader(
                 _detail::HeaderSourceIfModifiedSince,
                 createOptions.SourceIfModifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           if (createOptions.SourceIfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderSourceIfUnmodifiedSince,
                 createOptions.SourceIfUnmodifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           return CreateParseResult(context, pipeline.Send(request, context));
         }
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<PathGetPropertiesAction> Action;
-          Azure::Core::Nullable<bool> Upn;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<PathGetPropertiesAction> Action;
+          Azure::Nullable<bool> Upn;
+          Azure::Nullable<std::string> LeaseIdOptional;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
         };
 
         static Azure::Response<PathGetPropertiesResult> GetProperties(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const GetPropertiesOptions& getPropertiesOptions)
@@ -754,33 +752,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.SetHeader(
                 _detail::HeaderIfModifiedSince,
                 getPropertiesOptions.IfModifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           if (getPropertiesOptions.IfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderIfUnmodifiedSince,
                 getPropertiesOptions.IfUnmodifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
-          Azure::Core::Nullable<bool> RecursiveOptional;
-          Azure::Core::Nullable<std::string> ContinuationToken;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<bool> RecursiveOptional;
+          Azure::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<std::string> LeaseIdOptional;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
         };
 
         static Azure::Response<PathDeleteResult> Delete(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const DeleteOptions& deleteOptions)
@@ -824,36 +822,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.SetHeader(
                 _detail::HeaderIfModifiedSince,
-                deleteOptions.IfModifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                deleteOptions.IfModifiedSince.GetValue().ToString(DateTime::DateFormat::Rfc1123));
           }
           if (deleteOptions.IfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderIfUnmodifiedSince,
-                deleteOptions.IfUnmodifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                deleteOptions.IfUnmodifiedSince.GetValue().ToString(DateTime::DateFormat::Rfc1123));
           }
           return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
         struct SetAccessControlOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Azure::Core::Nullable<std::string> Owner;
-          Azure::Core::Nullable<std::string> Group;
-          Azure::Core::Nullable<std::string> Permissions;
-          Azure::Core::Nullable<std::string> Acl;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<std::string> Owner;
+          Azure::Nullable<std::string> Group;
+          Azure::Nullable<std::string> Permissions;
+          Azure::Nullable<std::string> Acl;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
         static Azure::Response<PathSetAccessControlResult> SetAccessControl(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessControlOptions& setAccessControlOptions)
@@ -903,14 +899,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.SetHeader(
                 _detail::HeaderIfModifiedSince,
                 setAccessControlOptions.IfModifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           if (setAccessControlOptions.IfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderIfUnmodifiedSince,
                 setAccessControlOptions.IfUnmodifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           request.SetHeader(_detail::HeaderVersion, setAccessControlOptions.ApiVersionParameter);
           return SetAccessControlParseResult(context, pipeline.Send(request, context));
@@ -918,17 +914,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct SetAccessControlRecursiveOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<std::string> ContinuationToken;
           PathSetAccessControlRecursiveMode Mode;
-          Azure::Core::Nullable<bool> ForceFlag;
-          Azure::Core::Nullable<int32_t> MaxRecords;
-          Azure::Core::Nullable<std::string> Acl;
+          Azure::Nullable<bool> ForceFlag;
+          Azure::Nullable<int32_t> MaxRecords;
+          Azure::Nullable<std::string> Acl;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
         static Azure::Response<PathSetAccessControlRecursiveResult> SetAccessControlRecursive(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const SetAccessControlRecursiveOptions& setAccessControlRecursiveOptions)
@@ -978,27 +974,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct FlushDataOptions
         {
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<int64_t> Position;
-          Azure::Core::Nullable<bool> RetainUncommittedData;
-          Azure::Core::Nullable<bool> Close;
-          Azure::Core::Nullable<int64_t> ContentLength;
-          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
-          Azure::Core::Nullable<std::string> CacheControl;
-          Azure::Core::Nullable<std::string> ContentType;
-          Azure::Core::Nullable<std::string> ContentDisposition;
-          Azure::Core::Nullable<std::string> ContentEncoding;
-          Azure::Core::Nullable<std::string> ContentLanguage;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<int64_t> Position;
+          Azure::Nullable<bool> RetainUncommittedData;
+          Azure::Nullable<bool> Close;
+          Azure::Nullable<int64_t> ContentLength;
+          Azure::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<std::string> CacheControl;
+          Azure::Nullable<std::string> ContentType;
+          Azure::Nullable<std::string> ContentDisposition;
+          Azure::Nullable<std::string> ContentEncoding;
+          Azure::Nullable<std::string> ContentLanguage;
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
-          Azure::Core::Nullable<Core::DateTime> IfModifiedSince;
-          Azure::Core::Nullable<Core::DateTime> IfUnmodifiedSince;
+          Azure::Nullable<DateTime> IfModifiedSince;
+          Azure::Nullable<DateTime> IfUnmodifiedSince;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
         static Azure::Response<PathFlushDataResult> FlushData(
-            const Azure::Core::Http::Url& url,
+            const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const FlushDataOptions& flushDataOptions)
@@ -1086,14 +1082,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.SetHeader(
                 _detail::HeaderIfModifiedSince,
                 flushDataOptions.IfModifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           if (flushDataOptions.IfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderIfUnmodifiedSince,
                 flushDataOptions.IfUnmodifiedSince.GetValue().ToString(
-                    Core::DateTime::DateFormat::Rfc1123));
+                    DateTime::DateFormat::Rfc1123));
           }
           request.SetHeader(_detail::HeaderVersion, flushDataOptions.ApiVersionParameter);
           return FlushDataParseResult(context, pipeline.Send(request, context));
@@ -1101,18 +1097,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct AppendDataOptions
         {
-          Azure::Core::Nullable<int64_t> Position;
-          Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<int64_t> ContentLength;
-          Azure::Core::Nullable<Storage::ContentHash> TransactionalContentMd5;
-          Azure::Core::Nullable<Storage::ContentHash> TransactionalContentCrc64;
-          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          Azure::Nullable<int64_t> Position;
+          Azure::Nullable<int32_t> Timeout;
+          Azure::Nullable<int64_t> ContentLength;
+          Azure::Nullable<Storage::ContentHash> TransactionalContentMd5;
+          Azure::Nullable<Storage::ContentHash> TransactionalContentCrc64;
+          Azure::Nullable<std::string> LeaseIdOptional;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
         static Azure::Response<PathAppendDataResult> AppendData(
-            const Azure::Core::Http::Url& url,
-            Azure::IO::BodyStream& bodyStream,
+            const Azure::Core::Url& url,
+            Azure::Core::IO::BodyStream& bodyStream,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
             const AppendDataOptions& appendDataOptions)
@@ -1179,9 +1175,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(_detail::HeaderLastModified)
                 != response.GetHeaders().end())
             {
-              result.LastModified = Core::DateTime::Parse(
+              result.LastModified = DateTime::Parse(
                   response.GetHeaders().at(_detail::HeaderLastModified),
-                  Core::DateTime::DateFormat::Rfc1123);
+                  DateTime::DateFormat::Rfc1123);
             }
             result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContentLength)
@@ -1247,9 +1243,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(_detail::HeaderLastModified)
                 != response.GetHeaders().end())
             {
-              result.LastModified = Core::DateTime::Parse(
+              result.LastModified = DateTime::Parse(
                   response.GetHeaders().at(_detail::HeaderLastModified),
-                  Core::DateTime::DateFormat::Rfc1123);
+                  DateTime::DateFormat::Rfc1123);
             }
             result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderResourceType)
@@ -1347,9 +1343,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(_detail::HeaderLastModified)
                 != response.GetHeaders().end())
             {
-              result.LastModified = Core::DateTime::Parse(
+              result.LastModified = DateTime::Parse(
                   response.GetHeaders().at(_detail::HeaderLastModified),
-                  Core::DateTime::DateFormat::Rfc1123);
+                  DateTime::DateFormat::Rfc1123);
             }
             result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<PathSetAccessControlResult>(
@@ -1376,7 +1372,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 ? PathSetAccessControlRecursiveResult()
                 : PathSetAccessControlRecursiveResultFromSetAccessControlRecursiveResponse(
                     SetAccessControlRecursiveResponseFromJson(
-                        Azure::Core::_internal::Json::json::parse(bodyBuffer)));
+                        Azure::Core::Json::_internal::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -1393,7 +1389,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static AclFailedEntry AclFailedEntryFromJson(const Azure::Core::_internal::Json::json& node)
+        static AclFailedEntry AclFailedEntryFromJson(const Azure::Core::Json::_internal::json& node)
         {
           AclFailedEntry result;
           result.Name = node["name"].get<std::string>();
@@ -1403,7 +1399,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
         static SetAccessControlRecursiveResponse SetAccessControlRecursiveResponseFromJson(
-            const Azure::Core::_internal::Json::json& node)
+            const Azure::Core::Json::_internal::json& node)
         {
           SetAccessControlRecursiveResponse result;
           result.NumberOfSuccessfulDirectories = node["directoriesSuccessful"].get<int32_t>();
@@ -1444,9 +1440,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(_detail::HeaderLastModified)
                 != response.GetHeaders().end())
             {
-              result.LastModified = Core::DateTime::Parse(
+              result.LastModified = DateTime::Parse(
                   response.GetHeaders().at(_detail::HeaderLastModified),
-                  Core::DateTime::DateFormat::Rfc1123);
+                  DateTime::DateFormat::Rfc1123);
             }
             if (response.GetHeaders().find(_detail::HeaderContentLength)
                 != response.GetHeaders().end())

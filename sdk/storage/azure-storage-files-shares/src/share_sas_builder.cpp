@@ -84,25 +84,25 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string protocol = _detail::SasProtocolToString(Protocol);
     std::string resource = ShareSasResourceToString(Resource);
 
-    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
-                                  Azure::Core::DateTime::DateFormat::Rfc3339,
-                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
-                                                  : "";
-    std::string expiresOnStr = Identifier.empty() ? ExpiresOn.ToString(
-                                   Azure::Core::DateTime::DateFormat::Rfc3339,
-                                   Azure::Core::DateTime::TimeFractionFormat::Truncate)
-                                                  : "";
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
         + "\n" + protocol + "\n" + Storage::_detail::DefaultSasVersion + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
-    std::string signature = Azure::Core::Base64Encode(Storage::_detail::HmacSha256(
+    std::string signature = Azure::Core::Convert::Base64Encode(Storage::_detail::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-        Azure::Core::Base64Decode(credential.GetAccountKey())));
+        Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
-    Azure::Core::Http::Url builder;
+    Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::_detail::UrlEncodeQueryParameter(protocol));

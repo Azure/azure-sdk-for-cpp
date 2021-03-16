@@ -65,13 +65,13 @@ namespace Azure { namespace Storage { namespace Test {
   }
   std::vector<uint8_t> RandomBuffer(std::size_t length);
 
-  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::IO::BodyStream>& stream)
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
   {
     Azure::Core::Context context;
-    return Azure::IO::BodyStream::ReadToEnd(*stream, context);
+    return stream->ReadToEnd(context);
   }
 
-  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::IO::BodyStream>&& stream)
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream>&& stream)
   {
     return ReadBodyStream(stream);
   }
@@ -82,11 +82,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string InferSecondaryUrl(const std::string primaryUri);
 
-  bool IsValidTime(const Azure::Core::DateTime& datetime);
+  bool IsValidTime(const Azure::DateTime& datetime);
 
   inline std::string Base64EncodeText(const std::string& text)
   {
-    return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
+    return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
   }
 
 }}} // namespace Azure::Storage::Test

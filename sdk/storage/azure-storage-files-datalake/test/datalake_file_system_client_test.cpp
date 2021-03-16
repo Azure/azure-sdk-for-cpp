@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto createResult = client.CreateIfNotExists();
         EXPECT_FALSE(createResult->Created);
         EXPECT_FALSE(createResult->ETag.HasValue());
-        EXPECT_EQ(Core::DateTime(), createResult->LastModified);
+        EXPECT_EQ(DateTime(), createResult->LastModified);
         auto deleted = client.Delete()->Deleted;
         EXPECT_TRUE(deleted);
       }

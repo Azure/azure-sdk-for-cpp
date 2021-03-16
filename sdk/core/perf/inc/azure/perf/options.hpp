@@ -16,7 +16,7 @@
 #include "azure/perf/dynamic_test_options.hpp"
 #include "azure/perf/test_options.hpp"
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include <iostream>
 #include <vector>
@@ -82,13 +82,13 @@ namespace Azure { namespace Perf {
      * @brief Port to redirect HTTP requests.
      *
      */
-    Azure::Core::Nullable<int> Port;
+    Azure::Nullable<int> Port;
 
     /**
      * @brief Target throughput (ops/sec).
      *
      */
-    Azure::Core::Nullable<int> Rate;
+    Azure::Nullable<int> Rate;
 
     /**
      * @brief Duration of warmup in seconds.
@@ -105,7 +105,7 @@ namespace Azure { namespace Perf {
   };
 
   /**
-   * @brief Define a #Azure::Core::_internal::Json::json to
+   * @brief Define a #Azure::Core::Json::_internal::json to
    * Azure::Perf::GlobalTestOptions convertion.
    *
    * @remark The Json library consumes this implementation for parsing
@@ -114,5 +114,5 @@ namespace Azure { namespace Perf {
    * @param j A Json reference to be written.
    * @param p A #Azure::Perf::GlobalTestOptions reference to be parsed.
    */
-  void to_json(Azure::Core::_internal::Json::json& j, const GlobalTestOptions& p);
+  void to_json(Azure::Core::Json::_internal::json& j, const GlobalTestOptions& p);
 }} // namespace Azure::Perf

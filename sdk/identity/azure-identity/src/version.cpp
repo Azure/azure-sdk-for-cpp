@@ -6,21 +6,21 @@
 #include <sstream>
 #include <string>
 
-using namespace Azure::Identity::_detail;
+using namespace Azure::Identity;
 
-std::string const Version::PreRelease = secret;
+std::string const PackageVersion::PreRelease = secret;
 
-std::string Version::VersionString()
+std::string PackageVersion::VersionString()
 {
   static const std::string versionString = [] {
     std::string version;
     std::stringstream ss;
     std::string dot = ".";
 
-    ss << Version::Major << dot << Version::Minor << dot << Version::Patch;
+    ss << PackageVersion::Major << dot << PackageVersion::Minor << dot << PackageVersion::Patch;
 
-    if (!Version::PreRelease.empty())
-      ss << "-" << Version::PreRelease;
+    if (!PackageVersion::PreRelease.empty())
+      ss << "-" << PackageVersion::PreRelease;
 
     return ss.str();
   }();

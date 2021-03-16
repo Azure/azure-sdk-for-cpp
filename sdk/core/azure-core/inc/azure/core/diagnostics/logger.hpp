@@ -12,7 +12,7 @@
 #include <functional>
 #include <string>
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace Diagnostics {
   /**
    * @brief Log message handler.
    */
@@ -49,13 +49,14 @@ namespace Azure { namespace Core {
     /**
      * @brief Set the function that will be invoked to report an SDK log message.
      *
-     * @param listener An #Azure::Core::Logger::Listener function that will be invoked when
-     * the SDK reports a log message. If `nullptr`, no function will be invoked.
+     * @param listener An #Azure::Core::Diagnostics::Logger::Listener function that will be invoked
+     * when the SDK reports a log message. If `nullptr`, no function will be invoked.
      */
     static void SetListener(Listener listener);
 
     /**
-     * @brief Sets the #Azure::Core::Logger::Level an application is interested in receiving.
+     * @brief Sets the #Azure::Core::Diagnostics::Logger::Level an application is interested in
+     * receiving.
      *
      * @param level Maximum log level.
      */
@@ -65,4 +66,4 @@ namespace Azure { namespace Core {
     Logger() = delete;
     ~Logger() = delete;
   };
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::Diagnostics

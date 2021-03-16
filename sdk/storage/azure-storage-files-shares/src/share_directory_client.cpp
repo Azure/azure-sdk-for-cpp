@@ -3,8 +3,8 @@
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 
-#include <azure/core/credentials.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
@@ -48,19 +48,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
       valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -70,19 +70,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
     {
-      Azure::Core::Http::_internal::ValueOptions valueOptions;
+      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
       valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::_internal::ValuePolicy>(valueOptions));
+          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         Storage::_detail::FileServicePackageName,
-        _detail::Version::VersionString(),
+        PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -133,8 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
-          Azure::Core::DateTime::DateFormat::Rfc3339,
-          Core::DateTime::TimeFractionFormat::AllDigits);
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -144,8 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime
           = options.SmbProperties.LastWrittenOn.GetValue().ToString(
-              Azure::Core::DateTime::DateFormat::Rfc3339,
-              Core::DateTime::TimeFractionFormat::AllDigits);
+              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -257,8 +255,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().ToString(
-          Azure::Core::DateTime::DateFormat::Rfc3339,
-          Core::DateTime::TimeFractionFormat::AllDigits);
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -267,8 +264,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (smbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.GetValue().ToString(
-          Azure::Core::DateTime::DateFormat::Rfc3339,
-          Core::DateTime::TimeFractionFormat::AllDigits);
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {

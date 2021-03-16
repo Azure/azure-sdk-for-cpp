@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_container_client.hpp>
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DataLakeFileSystemClient(
         const std::string& fileSystemUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -245,12 +245,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_fileSystemUrl;
+    Azure::Core::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     explicit DataLakeFileSystemClient(
-        Azure::Core::Http::Url fileSystemUrl,
+        Azure::Core::Url fileSystemUrl,
         Blobs::BlobContainerClient blobContainerClient,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : m_fileSystemUrl(std::move(fileSystemUrl)),

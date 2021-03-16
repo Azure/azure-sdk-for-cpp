@@ -5,7 +5,7 @@
 
 #include "http.hpp"
 #include <azure/core/http/http.hpp>
-#include <azure/core/internal/null_body_stream.hpp>
+#include <azure/core/internal/io/null_body_stream.hpp>
 
 #include <string>
 #include <utility>
@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestHttp, add_headers)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-    Http::Url url("http://test.com");
+    Url url("http://test.com");
     Http::Request req(httpMethod, url);
     std::pair<std::string, std::string> expected("valid", "header");
 
@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    EXPECT_THROW(req.SetHeader("invalid()", "header"), std::runtime_error);
+    EXPECT_THROW(req.SetHeader("invalid()", "header"), std::invalid_argument);
 
     // same header will just override
     std::pair<std::string, std::string> expectedOverride("valid", "override");
@@ -78,8 +78,7 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected);
 
-    EXPECT_THROW(
-        response.SetHeader("invalid()", "header"), Azure::Core::Http::InvalidHeaderException);
+    EXPECT_THROW(response.SetHeader("invalid()", "header"), std::invalid_argument);
 
     // same header will just override
     std::pair<std::string, std::string> expectedOverride("valid", "override");
@@ -107,9 +106,8 @@ namespace Azure { namespace Core { namespace Test {
         expected2);
 
     // Response SetHeader overload method to add from string
-    EXPECT_THROW(response.SetHeader("inv(): header"), Azure::Core::Http::InvalidHeaderException);
-    EXPECT_THROW(
-        response.SetHeader("no delimiter header"), Azure::Core::Http::InvalidHeaderException);
+    EXPECT_THROW(response.SetHeader("inv(): header"), std::invalid_argument);
+    EXPECT_THROW(response.SetHeader("no delimiter header"), std::invalid_argument);
 
     // adding header after previous error just happened on add from string
     EXPECT_NO_THROW(response.SetHeader("valid3: header3"));
@@ -126,29 +124,29 @@ namespace Azure { namespace Core { namespace Test {
   }
 
   // HTTP Range
-  TEST(TestHttp, Range)
+  TEST(TestHttp, HttpRange)
   {
     {
-      Http::Range r{10, 1};
+      Http::HttpRange r{10, 1};
       EXPECT_EQ(r.Offset, 10);
       EXPECT_TRUE(r.Length.HasValue());
       EXPECT_EQ(r.Length.GetValue(), 1);
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       r.Offset = 10;
       EXPECT_EQ(r.Offset, 10);
       EXPECT_FALSE(r.Length.HasValue());
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       r.Length = 10;
       EXPECT_EQ(r.Offset, 0);
       EXPECT_TRUE(r.Length.HasValue());
       EXPECT_EQ(r.Length.GetValue(), 10);
     }
     {
-      Http::Range r;
+      Http::HttpRange r;
       EXPECT_EQ(r.Offset, 0);
       EXPECT_FALSE(r.Length.HasValue());
     }
@@ -158,11 +156,11 @@ namespace Azure { namespace Core { namespace Test {
   {
     {
       Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-      Http::Url url("http://test.com");
+      Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
-      Azure::IO::_internal::NullBodyStream* d
-          = dynamic_cast<Azure::IO::_internal::NullBodyStream*>(req.GetBodyStream());
+      Azure::Core::IO::_internal::NullBodyStream* d
+          = dynamic_cast<Azure::Core::IO::_internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
@@ -178,41 +176,38 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
-      d = dynamic_cast<Azure::IO::_internal::NullBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::Core::IO::_internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
     }
 
     {
       Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-      Http::Url url("http://test.com");
+      Url url("http://test.com");
 
       std::vector<uint8_t> data = {1, 2, 3, 4};
-      Azure::IO::MemoryBodyStream stream(data);
+      Azure::Core::IO::MemoryBodyStream stream(data);
 
       // Change the offset of the stream to be non-zero by reading a byte.
       std::vector<uint8_t> temp(2);
-      EXPECT_EQ(
-          Azure::IO::BodyStream::ReadToCount(stream, temp.data(), 1, GetApplicationContext()), 1);
+      EXPECT_EQ(stream.ReadToCount(temp.data(), 1, Context::GetApplicationContext()), 1);
 
       EXPECT_EQ(temp[0], 1);
       EXPECT_EQ(temp[1], 0);
 
       Http::Request req(httpMethod, url, &stream);
 
-      Azure::IO::MemoryBodyStream* d
-          = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
+      Azure::Core::IO::MemoryBodyStream* d
+          = dynamic_cast<Azure::Core::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       req.StartTry();
 
-      d = dynamic_cast<Azure::IO::MemoryBodyStream*>(req.GetBodyStream());
+      d = dynamic_cast<Azure::Core::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
 
       // Verify that StartTry rewound the stream back.
       auto getStream = req.GetBodyStream();
-      EXPECT_EQ(
-          Azure::IO::BodyStream::ReadToCount(*getStream, temp.data(), 2, GetApplicationContext()),
-          2);
+      EXPECT_EQ(getStream->ReadToCount(temp.data(), 2, Context::GetApplicationContext()), 2);
 
       EXPECT_EQ(temp[0], 1);
       EXPECT_EQ(temp[1], 2);

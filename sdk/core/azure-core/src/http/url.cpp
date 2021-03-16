@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/http.hpp"
+#include "azure/core/url.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <iterator>
 #include <limits>
+#include <stdexcept>
 #include <vector>
 
-using namespace Azure::Core::Http;
+using namespace Azure::Core;
 
 Url::Url(const std::string& url)
 {
@@ -22,7 +23,7 @@ Url::Url(const std::string& url)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
       return static_cast<char>(
-          Azure::Core::_internal::Strings::ToLower(static_cast<unsigned char>(c)));
+          Azure::Core::_internal::StringExtensions::ToLower(static_cast<unsigned char>(c)));
     });
 
     pos = url.begin() + schemeIter + schemeEnd.length();

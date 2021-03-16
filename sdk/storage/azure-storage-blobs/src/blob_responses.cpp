@@ -8,9 +8,8 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyBlobOperation::PollInternal(
-      Azure::Core::Context& context)
+      Azure::Core::Context&)
   {
-    (void)context;
 
     auto response = m_blobClient->GetProperties();
     if (!response->CopyStatus.HasValue())
@@ -39,11 +38,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     while (true)
     {
-      auto rawResponse = PollInternal(context);
+      auto rawResponse = Poll(context);
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Response<Models::BlobProperties>(m_pollResult, std::move(rawResponse));
+        return Azure::Response<Models::BlobProperties>(m_pollResult, std::make_unique<Azure::Core::Http::RawResponse>(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {

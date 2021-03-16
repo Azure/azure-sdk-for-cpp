@@ -4,9 +4,9 @@
 #include "azure/keyvault/common/keyvault_exception.hpp"
 #include "azure/keyvault/common/keyvault_constants.hpp"
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <type_traits>
 
 using namespace Azure::Security::KeyVault::Common;
@@ -49,7 +49,7 @@ KeyVaultException KeyVaultException::CreateFromResponse(
 
   if (contentType.find("json") != std::string::npos)
   {
-    auto jsonParser = Azure::Core::_internal::Json::json::parse(bodyBuffer);
+    auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
     auto& error = jsonParser["error"];
     errorCode = error["code"].get<std::string>();
     message = error["message"].get<std::string>();

@@ -15,14 +15,14 @@
 #define AZURE_IDENTITY_VERSION_MAJOR 1
 #define AZURE_IDENTITY_VERSION_MINOR 0
 #define AZURE_IDENTITY_VERSION_PATCH 0
-#define AZURE_IDENTITY_VERSION_PRERELEASE "beta.4"
+#define AZURE_IDENTITY_VERSION_PRERELEASE "beta.5"
 
-namespace Azure { namespace Identity { namespace _detail {
+namespace Azure { namespace Identity {
 
   /**
    * @brief Provides version information.
    */
-  class Version {
+  class PackageVersion {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_IDENTITY_VERSION_MAJOR;
@@ -48,7 +48,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static constexpr char const* secret = AZURE_IDENTITY_VERSION_PRERELEASE;
   };
 
-}}} // namespace Azure::Identity::_detail
+}} // namespace Azure::Identity
 
 #undef AZURE_IDENTITY_VERSION_MAJOR
 #undef AZURE_IDENTITY_VERSION_MINOR

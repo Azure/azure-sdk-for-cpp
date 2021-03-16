@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 namespace Azure { namespace Core {
@@ -29,15 +30,52 @@ namespace Azure { namespace Core {
     virtual std::unique_ptr<Http::RawResponse> PollInternal(Context& context) = 0;
     virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
+    virtual Azure::Core::Http::RawResponse const& GetRawResponseInternal() const = 0;
 
   protected:
+    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse = nullptr;
     OperationStatus m_status = OperationStatus::NotStarted;
+
+    Operation() = default;
+
+    // Define how an Operation<T> can be move-constructed from rvalue other. Parameter `other`
+    // gave up ownership for the rawResponse.
+    Operation(Operation&& other)
+        : m_rawResponse(std::move(other.m_rawResponse)), m_status(other.m_status)
+    {
+    }
+
+    // Define how an Operation<T> can be copy-constructed from some other Operation reference.
+    // Operation will create a clone of the rawResponse from `other`.
+    Operation(Operation const& other)
+        : m_rawResponse(std::make_unique<Http::RawResponse>(other.GetRawResponse())),
+          m_status(other.m_status)
+    {
+    }
+
+    // Define how an Operation<T> can be move-assigned from rvalue other. Parameter `other`
+    // gave up ownership for the rawResponse.
+    Operation& operator=(Operation&& other)
+    {
+      this->m_rawResponse = std::move(other.m_rawResponse);
+      this->m_status = other.m_status;
+      return *this;
+    }
+
+    // Define how an Operation<T> can be copy-assigned from some other Operation reference.
+    // Operation will create a clone of the rawResponse from `other`.
+    Operation& operator=(Operation const& other)
+    {
+      this->m_rawResponse = std::make_unique<Http::RawResponse>(other.GetRawResponse());
+      this->m_status = other.m_status;
+      return *this;
+    }
 
   public:
     virtual ~Operation() {}
 
     /**
-     * @brief Final reuslt of the long-running operation.
+     * @brief Final result of the long-running operation.
      *
      * @return Response<T> the final result of the long-running operation.
      */
@@ -53,10 +91,17 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Get the raw HTTP response.
-     * @return A pointer to #Azure::Core::Http::RawResponse.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    virtual Azure::Core::Http::RawResponse* GetRawResponse() const = 0;
+    Azure::Core::Http::RawResponse const& GetRawResponse() const
+    {
+      if (!m_rawResponse)
+      {
+        throw std::runtime_error("The raw response was not yet set for the Operation.");
+      }
+      return *m_rawResponse;
+    };
 
     /**
      * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
@@ -88,11 +133,11 @@ namespace Azure { namespace Core {
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
-    std::unique_ptr<Http::RawResponse> Poll()
+    Http::RawResponse const& Poll()
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollInternal(GetApplicationContext());
+      return Poll(Context::GetApplicationContext());
     }
 
     /**
@@ -102,7 +147,12 @@ namespace Azure { namespace Core {
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
-    std::unique_ptr<Http::RawResponse> Poll(Context& context) { return PollInternal(context); }
+    Http::RawResponse const& Poll(Context& context)
+    {
+      context.ThrowIfCancelled();
+      m_rawResponse = PollInternal(context);
+      return *m_rawResponse;
+    }
 
     /**
      * @brief Periodically calls the server till the long-running operation completes.
@@ -115,7 +165,7 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollUntilDoneInternal(period, GetApplicationContext());
+      return PollUntilDone(period, Context::GetApplicationContext());
     }
 
     /**
@@ -128,6 +178,7 @@ namespace Azure { namespace Core {
      */
     Response<T> PollUntilDone(std::chrono::milliseconds period, Context& context)
     {
+      context.ThrowIfCancelled();
       return PollUntilDoneInternal(period, context);
     }
   };

@@ -42,7 +42,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     {
       result.append(
           pair.first + "="
-          + Azure::Core::Base64Encode(std::vector<uint8_t>(pair.second.begin(), pair.second.end()))
+          + Azure::Core::Convert::Base64Encode(
+              std::vector<uint8_t>(pair.second.begin(), pair.second.end()))
           + ",");
     }
     if (!result.empty())

@@ -10,10 +10,10 @@
 
 #include "azure/core/io/body_stream.hpp"
 
-namespace Azure { namespace IO { namespace _internal {
+namespace Azure { namespace Core { namespace IO { namespace _internal {
 
   /**
-   * @brief Empty #Azure::IO::BodyStream.
+   * @brief Empty #Azure::Core::IO::BodyStream.
    * @remark Used for requests with no body.
    */
   class NullBodyStream : public BodyStream {
@@ -35,7 +35,7 @@ namespace Azure { namespace IO { namespace _internal {
     void Rewind() override {}
 
     /**
-     * @brief Gets a singleton instance of a #Azure::IO::_internal::NullBodyStream.
+     * @brief Gets a singleton instance of a #Azure::Core::IO::_internal::NullBodyStream.
      */
     static NullBodyStream* GetNullBodyStream()
     {
@@ -44,4 +44,4 @@ namespace Azure { namespace IO { namespace _internal {
     }
   };
 
-}}} // namespace Azure::IO::_internal
+}}}} // namespace Azure::Core::IO::_internal

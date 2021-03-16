@@ -128,14 +128,14 @@ namespace Azure { namespace Storage { namespace Sas {
       snapshotVersion = BlobVersionId;
     }
 
-    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
-                                  Azure::Core::DateTime::DateFormat::Rfc3339,
-                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
-                                                  : "";
-    std::string expiresOnStr = Identifier.empty() ? ExpiresOn.ToString(
-                                   Azure::Core::DateTime::DateFormat::Rfc3339,
-                                   Azure::Core::DateTime::TimeFractionFormat::Truncate)
-                                                  : "";
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
@@ -143,11 +143,11 @@ namespace Azure { namespace Storage { namespace Sas {
         + snapshotVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
         + "\n" + ContentLanguage + "\n" + ContentType;
 
-    std::string signature = Azure::Core::Base64Encode(Storage::_detail::HmacSha256(
+    std::string signature = Azure::Core::Convert::Base64Encode(Storage::_detail::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-        Azure::Core::Base64Decode(credential.GetAccountKey())));
+        Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
-    Azure::Core::Http::Url builder;
+    Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::_detail::UrlEncodeQueryParameter(protocol));
@@ -224,19 +224,16 @@ namespace Azure { namespace Storage { namespace Sas {
       snapshotVersion = BlobVersionId;
     }
 
-    std::string startsOnStr = StartsOn.HasValue() ? StartsOn.GetValue().ToString(
-                                  Azure::Core::DateTime::DateFormat::Rfc3339,
-                                  Azure::Core::DateTime::TimeFractionFormat::Truncate)
-                                                  : "";
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
     std::string expiresOnStr = ExpiresOn.ToString(
-        Azure::Core::DateTime::DateFormat::Rfc3339,
-        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
     std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
-        Azure::Core::DateTime::DateFormat::Rfc3339,
-        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
     std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
-        Azure::Core::DateTime::DateFormat::Rfc3339,
-        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
@@ -247,11 +244,11 @@ namespace Azure { namespace Storage { namespace Sas {
         + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
         + "\n" + ContentType;
 
-    std::string signature = Azure::Core::Base64Encode(Storage::_detail::HmacSha256(
+    std::string signature = Azure::Core::Convert::Base64Encode(Storage::_detail::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-        Azure::Core::Base64Decode(userDelegationKey.Value)));
+        Azure::Core::Convert::Base64Decode(userDelegationKey.Value)));
 
-    Azure::Core::Http::Url builder;
+    Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", Storage::_detail::UrlEncodeQueryParameter(Storage::_detail::DefaultSasVersion));
     builder.AppendQueryParameter("sr", Storage::_detail::UrlEncodeQueryParameter(resource));

@@ -5,8 +5,8 @@
 
 #include <type_traits>
 
-#include <azure/core/http/policy.hpp>
-#include <azure/core/internal/json.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/xml_wrapper.hpp"
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage {
           response->GetHeaders().at(_detail::HttpHeaderContentType).find("json")
           != std::string::npos)
       {
-        auto jsonParser = Azure::Core::_internal::Json::json::parse(bodyBuffer);
+        auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
         errorCode = jsonParser["error"]["code"].get<std::string>();
         message = jsonParser["error"]["message"].get<std::string>();
       }

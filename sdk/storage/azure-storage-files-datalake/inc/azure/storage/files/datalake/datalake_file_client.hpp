@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/block_blob_client.hpp>
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DataLakeFileClient(
         const std::string& fileUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Response<Models::AppendDataLakeFileResult> Append(
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         int64_t offset,
         const AppendDataLakeFileOptions& options = AppendDataLakeFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     explicit DataLakeFileClient(
-        Azure::Core::Http::Url fileUrl,
+        Azure::Core::Url fileUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : DataLakePathClient(std::move(fileUrl), std::move(blobClient), pipeline)

@@ -7,21 +7,22 @@ namespace Azure { namespace Storage { namespace _detail {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       const Azure::Core::Context& ctx) const
   {
     SecondaryHostReplicaStatus* replicaStatus = nullptr;
     if (ctx.HasKey(SecondaryHostReplicaStatusKey))
     {
-      replicaStatus = dynamic_cast<SecondaryHostReplicaStatus*>(
-          ctx[SecondaryHostReplicaStatusKey].Get<std::unique_ptr<Azure::Core::ValueBase>>().get());
+      replicaStatus
+          = ctx.Get<std::unique_ptr<SecondaryHostReplicaStatus>>(SecondaryHostReplicaStatusKey)
+                .get();
     }
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
         && !m_secondaryHost.empty() && replicaStatus && replicaStatus->replicated;
 
-    if (considerSecondary && Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx) > 0)
+    if (considerSecondary && Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(ctx) > 0)
     {
       // switch host
       if (request.GetUrl().GetHost() == m_primaryHost)

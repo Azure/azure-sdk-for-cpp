@@ -29,15 +29,15 @@ SOFTWARE.
 
 #include "doctest_compatibility.h"
 
-#include <azure/core/internal/json.hpp>
-using Azure::Core::_internal::Json::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 #include <iostream>
 #include <sstream>
 #include <valarray>
 
 namespace {
-struct SaxEventLogger : public Azure::Core::_internal::Json::json_sax<json>
+struct SaxEventLogger : public Azure::Core::Json::_internal::json_sax<json>
 {
   bool null() override
   {

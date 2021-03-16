@@ -31,14 +31,14 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
   auto foundHeader = false;
   for (auto& header : response.GetRawResponse().GetHeaders())
   {
-    if (Azure::Core::_internal::Strings::LocaleInvariantCaseInsensitiveEqual(
+    if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
             header.first, "User-Agent"))
     {
       foundHeader = true;
       EXPECT_PRED2(
           [](std::string const& received, std::string const& sent) {
             auto telemetryInfoWithNoOSAndDate = received.substr(0, sent.size());
-            return Azure::Core::_internal::Strings::LocaleInvariantCaseInsensitiveEqual(
+            return Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
                 telemetryInfoWithNoOSAndDate, sent);
           },
           header.second,

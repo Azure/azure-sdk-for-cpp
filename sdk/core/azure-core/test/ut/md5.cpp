@@ -65,9 +65,10 @@ uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
 TEST(Md5Hash, Basic)
 {
   Md5Hash md5empty;
-  EXPECT_EQ(Azure::Core::Base64Encode(md5empty.Final()), "1B2M2Y8AsgTpgAmY7PhCfg==");
-  EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
-  EXPECT_EQ(Azure::Core::Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
+  EXPECT_EQ(Azure::Core::Convert::Base64Encode(md5empty.Final()), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(Azure::Core::Convert::Base64Encode(ComputeHash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
+  EXPECT_EQ(
+      Azure::Core::Convert::Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
   auto data = RandomBuffer(static_cast<std::size_t>(16777216));
 
@@ -104,7 +105,8 @@ TEST(Md5Hash, ExpectThrow)
   EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
 
   EXPECT_EQ(
-      Azure::Core::Base64Encode(instance.Final(ptr, data.length())), "1B2M2Y8AsgTpgAmY7PhCfg==");
+      Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())),
+      "1B2M2Y8AsgTpgAmY7PhCfg==");
   EXPECT_THROW(instance.Final(), std::runtime_error);
   EXPECT_THROW(instance.Final(ptr, data.length()), std::runtime_error);
   EXPECT_THROW(instance.Append(ptr, data.length()), std::runtime_error);

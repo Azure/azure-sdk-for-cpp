@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       bool Created = true;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
     };
 
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct CreateShareDirectoryResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string DirectoryPath;
       std::string Prefix;
       int32_t PageSizeHint = int32_t();
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::vector<DirectoryItem> DirectoryItems;
       std::vector<FileItem> FileItems;
       std::string RequestId;
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ListShareDirectoryHandlesSinglePageResult
     {
       std::vector<HandleItem> Handles;
-      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Nullable<std::string> ContinuationToken;
       std::string RequestId;
     };
 
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       bool Created = true;
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       std::string RequestId;
@@ -119,28 +119,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DownloadShareFileDetails
     {
-      Core::DateTime LastModified;
+      DateTime LastModified;
       Storage::Metadata Metadata;
       Azure::ETag ETag;
-      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
-      Azure::Core::Nullable<std::string> CopyStatusDescription;
-      Azure::Core::Nullable<std::string> CopyId;
-      Azure::Core::Nullable<std::string> CopyProgress;
-      Azure::Core::Nullable<std::string> CopySource;
-      Azure::Core::Nullable<CopyStatusType> CopyStatus;
+      Azure::Nullable<DateTime> CopyCompletedOn;
+      Azure::Nullable<std::string> CopyStatusDescription;
+      Azure::Nullable<std::string> CopyId;
+      Azure::Nullable<std::string> CopyProgress;
+      Azure::Nullable<std::string> CopySource;
+      Azure::Nullable<CopyStatusType> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Core::Nullable<LeaseStateType> LeaseState;
-      Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Nullable<LeaseStateType> LeaseState;
+      Azure::Nullable<LeaseStatusType> LeaseStatus;
     };
 
     struct DownloadShareFileResult
     {
-      std::unique_ptr<Azure::IO::BodyStream> BodyStream;
-      Azure::Core::Http::Range ContentRange;
+      std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
+      Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize = 0;
-      Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
+      Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
       FileHttpHeaders HttpHeaders;
       DownloadShareFileDetails Details;
       std::string RequestId;
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ClearShareFileRangeResult
     {
       Azure::ETag ETag;
-      Core::DateTime LastModified;
+      DateTime LastModified;
       std::string RequestId;
       bool IsServerEncrypted = bool();
     };
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DownloadShareFileToResult
     {
       int64_t FileSize = 0;
-      Azure::Core::Http::Range ContentRange;
+      Azure::Core::Http::HttpRange ContentRange;
       FileHttpHeaders HttpHeaders;
       DownloadShareFileDetails Details;
     };
@@ -190,20 +190,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   public:
     std::string RequestId;
     Azure::ETag ETag;
-    Azure::Core::DateTime LastModified;
+    Azure::DateTime LastModified;
     std::string CopyId;
     Models::CopyStatusType CopyStatus;
-    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Nullable<std::string> VersionId;
 
   public:
     Models::GetShareFilePropertiesResult Value() const override { return m_pollResult; }
-
-    /**
-     * @brief Get the raw HTTP response.
-     * @return A pointer to #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
 
     StartCopyShareFileOperation() = default;
 
@@ -227,7 +220,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
-    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
+    /**
+     * @brief Get the raw HTTP response.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
     std::shared_ptr<ShareFileClient> m_fileClient;
     Models::GetShareFilePropertiesResult m_pollResult;
 

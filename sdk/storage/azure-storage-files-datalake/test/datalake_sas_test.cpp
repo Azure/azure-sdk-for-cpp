@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::Core::DateTime();
+      builder2.ExpiresOn = Azure::DateTime();
       builder2.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 

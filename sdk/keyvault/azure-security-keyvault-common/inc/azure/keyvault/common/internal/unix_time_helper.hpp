@@ -25,9 +25,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @param unixTime The number of seconds since 1970.
      * @return Calculated Datetime.
      */
-    static inline Azure::Core::DateTime UnixTimeToDatetime(uint64_t unixTime)
+    static inline Azure::DateTime UnixTimeToDatetime(uint64_t unixTime)
     {
-      return Azure::Core::DateTime(1970) + std::chrono::seconds(unixTime);
+      return Azure::DateTime(1970) + std::chrono::seconds(unixTime);
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Common::_internal

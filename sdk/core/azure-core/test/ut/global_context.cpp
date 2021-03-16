@@ -22,7 +22,7 @@ using namespace Azure::Core;
 
 TEST(Context, ApplicationContext)
 {
-  Context appContext = GetApplicationContext();
+  Context appContext = Context::GetApplicationContext();
 
   EXPECT_FALSE(appContext.HasKey("Key"));
   EXPECT_FALSE(appContext.HasKey("key"));
@@ -41,6 +41,6 @@ TEST(Context, ApplicationContext)
 
   // AppContext2 is the same context as AppContext
   //  The context should be cancelled
-  Context appContext2 = GetApplicationContext();
+  Context appContext2 = Context::GetApplicationContext();
   EXPECT_TRUE(appContext2.IsCancelled());
 }

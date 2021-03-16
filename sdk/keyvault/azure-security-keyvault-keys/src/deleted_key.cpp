@@ -7,7 +7,7 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
 using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
@@ -17,7 +17,7 @@ DeletedKey _detail::DeletedKeyDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto body = rawResponse.GetBody();
-  auto jsonParser = Azure::Core::_internal::Json::json::parse(body);
+  auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
   // "Key"
   DeletedKey deletedKey(name);

@@ -15,19 +15,30 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief Encodes the vector of binary data into UTF-8 encoded text represented as base 64.
-   *
-   * @param data The input vector that contains binary data that needs to be encoded.
-   * @return The UTF-8 encoded text in base 64.
+   *@brief Used to convert one form of data  into another, for example encoding binary data into
+   *base 64 text.
    */
-  std::string Base64Encode(const std::vector<uint8_t>& data);
+  class Convert {
+  private:
+    // This type currently only contains static methods and hence disallowing instance creation.
+    Convert() = default;
 
-  /**
-   * @brief Decodes the UTF-8 encoded text represented as base 64 into binary data.
-   *
-   * @param text The input UTF-8 encoded text in base 64 that needs to be decoded.
-   * @return The decoded binary data.
-   */
-  std::vector<uint8_t> Base64Decode(const std::string& text);
+  public:
+    /**
+     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as base 64.
+     *
+     * @param data The input vector that contains binary data that needs to be encoded.
+     * @return The UTF-8 encoded text in base 64.
+     */
+    static std::string Base64Encode(const std::vector<uint8_t>& data);
+
+    /**
+     * @brief Decodes the UTF-8 encoded text represented as base 64 into binary data.
+     *
+     * @param text The input UTF-8 encoded text in base 64 that needs to be decoded.
+     * @return The decoded binary data.
+     */
+    static std::vector<uint8_t> Base64Decode(const std::string& text);
+  };
 
 }} // namespace Azure::Core

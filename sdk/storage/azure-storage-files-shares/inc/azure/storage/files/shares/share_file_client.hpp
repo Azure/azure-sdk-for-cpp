@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::UploadShareFileRangeResult> UploadRange(
         int64_t offset,
-        Azure::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream* content,
         const UploadShareFileRangeOptions& options = UploadShareFileRangeOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -348,16 +348,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUri(
         int64_t destinationOffset,
         const std::string& sourceUri,
-        const Azure::Core::Http::Range& sourceRange,
+        const Azure::Core::Http::HttpRange& sourceRange,
         const UploadFileRangeFromUriOptions& options = UploadFileRangeFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_shareFileUrl;
+    Azure::Core::Url m_shareFileUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     explicit ShareFileClient(
-        Azure::Core::Http::Url shareFileUrl,
+        Azure::Core::Url shareFileUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : m_shareFileUrl(std::move(shareFileUrl)), m_pipeline(std::move(pipeline))
     {

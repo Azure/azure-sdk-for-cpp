@@ -5,6 +5,7 @@
 ### New Features
 
 - Added support for telemetry options.
+- Added `Azure::Storage::Files::DataLake::PackageVersion`.
 
 ### Breaking Changes
 

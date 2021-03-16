@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_blob_add = [&](const std::string& sas) {
       blobClient0.Create();
       std::string content = "Hello world";
-      auto blockContent = Azure::IO::MemoryBodyStream(
+      auto blockContent = Azure::Core::IO::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(content.data()), content.size());
       auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       EXPECT_NO_THROW(blobClient.AppendBlock(&blockContent));
@@ -381,7 +381,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Sas::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::Core::DateTime();
+      builder2.ExpiresOn = Azure::DateTime();
       builder2.SetPermissions(static_cast<Sas::BlobContainerSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
@@ -439,7 +439,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_snapshot_read = [&](const std::string sas) {
-      Azure::Core::Http::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
+      Azure::Core::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
       blobSnapshotUrlWithSas.AppendQueryParameters(sas);
       auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
       auto downloadedContent = blobSnapshotClient.Download();
@@ -447,7 +447,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
-      Azure::Core::Http::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
+      Azure::Core::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
       blobSnapshotUrlWithSas.AppendQueryParameters(sas);
       auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
@@ -500,7 +500,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_version_read = [&](const std::string sas) {
-      Azure::Core::Http::Url blobVersionUrlWithSas(blobVersionUrl);
+      Azure::Core::Url blobVersionUrlWithSas(blobVersionUrl);
       blobVersionUrlWithSas.AppendQueryParameters(sas);
       auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
       auto downloadedContent = blobVersionClient.Download();
@@ -508,7 +508,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_delete_version = [&](const std::string& sas) {
-      Azure::Core::Http::Url blobVersionUrlWithSas(blobVersionUrl);
+      Azure::Core::Url blobVersionUrlWithSas(blobVersionUrl);
       blobVersionUrlWithSas.AppendQueryParameters(sas);
       auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
       blobVersionClient.Delete();

@@ -34,40 +34,40 @@ endif()
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
-  SET(CURL_TRANSPORT_ADAPTER_INC inc/azure/core/http/curl/curl.hpp)
+  SET(CURL_TRANSPORT_ADAPTER_INC inc/azure/core/http/curl_transport.hpp)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
-  SET(WIN_TRANSPORT_ADAPTER_INC inc/azure/core/http/winhttp/win_http_client.hpp)
+  SET(WIN_TRANSPORT_ADAPTER_INC inc/azure/core/http/win_http_transport.hpp)
 endif()
 
 set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
+    inc/azure/core/credentials/credentials.hpp
     inc/azure/core/cryptography/hash.hpp
+    inc/azure/core/diagnostics/logger.hpp
     inc/azure/core/http/http.hpp
-    inc/azure/core/http/policy.hpp
+    inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/hkeyholder.hpp
     inc/azure/core/internal/http/pipeline.hpp
-    inc/azure/core/internal/json_serializable.hpp
-    inc/azure/core/internal/json.hpp
-    inc/azure/core/internal/log.hpp
-    inc/azure/core/internal/null_body_stream.hpp
+    inc/azure/core/internal/io/null_body_stream.hpp
+    inc/azure/core/internal/json/json_serializable.hpp
+    inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
-    inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
-    inc/azure/core/logger.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
@@ -75,6 +75,7 @@ set(
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
+    inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core/version.hpp
     inc/azure/core.hpp
@@ -96,6 +97,7 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/io/body_stream.cpp
+    src/io/random_access_file_body_stream.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp

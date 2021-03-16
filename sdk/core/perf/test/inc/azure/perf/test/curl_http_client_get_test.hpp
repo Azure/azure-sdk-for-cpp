@@ -11,7 +11,7 @@
 
 #include "azure/perf/test/http_client_get_test.hpp"
 
-#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/curl_transport.hpp>
 
 #include <curl/curl.h>
 
@@ -22,7 +22,7 @@ namespace Azure { namespace Perf { namespace Test {
    */
   class CurlHttpClientGetTest : public Azure::Perf::Test::HttpClientGetTest {
   private:
-    Azure::Core::Http::Url m_url;
+    Azure::Core::Url m_url;
 
   public:
     /**

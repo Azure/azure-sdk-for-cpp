@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::_internal;
 
 namespace {
@@ -43,21 +44,21 @@ TEST(TelemetryPolicy, telemetryString)
   HttpPipeline pipeline1(policy1);
 
   std::string const expected2 = "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
-  Azure::Core::Http::TelemetryOptions options2;
+  Azure::Core::Http::Policies::TelemetryOptions options2;
   options2.ApplicationId = "AzCopy/10.0.4-Preview";
   policy2.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options2));
   policy2.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline2(policy2);
 
   std::string const expected3 = "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
-  Azure::Core::Http::TelemetryOptions options3;
+  Azure::Core::Http::Policies::TelemetryOptions options3;
   options3.ApplicationId = "  AzCopy / 10.0.4-Preview  ";
   policy3.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options3));
   policy3.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline3(policy3);
 
   std::string const expected4 = "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 (";
-  Azure::Core::Http::TelemetryOptions options4;
+  Azure::Core::Http::Policies::TelemetryOptions options4;
   options4.ApplicationId = "  01234567890123456789abcde  ";
   policy4.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options4));
   policy4.emplace_back(std::make_unique<NoOpPolicy>());
@@ -67,10 +68,10 @@ TEST(TelemetryPolicy, telemetryString)
   constexpr auto ClosingBrace = ')';
   constexpr auto OSInfoMin = 10;
 
-  auto request1 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
-  auto request2 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
-  auto request3 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
-  auto request4 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request1 = Request(HttpMethod::Get, Url("https://www.microsoft.com"));
+  auto request2 = Request(HttpMethod::Get, Url("https://www.microsoft.com"));
+  auto request3 = Request(HttpMethod::Get, Url("https://www.microsoft.com"));
+  auto request4 = Request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
   Context context;
   pipeline1.Send(request1, context);

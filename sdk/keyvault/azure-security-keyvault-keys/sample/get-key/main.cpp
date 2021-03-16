@@ -57,7 +57,7 @@ int main()
       std::cout << " - " << operation.ToString() << std::endl;
     }
   }
-  catch (Azure::Core::AuthenticationException const& e)
+  catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
   }

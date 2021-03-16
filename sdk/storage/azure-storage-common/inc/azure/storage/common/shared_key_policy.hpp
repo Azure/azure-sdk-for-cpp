@@ -6,13 +6,13 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 
 #include "azure/storage/common/storage_credential.hpp"
 
 namespace Azure { namespace Storage { namespace _detail {
 
-  class SharedKeyPolicy : public Core::Http::HttpPolicy {
+  class SharedKeyPolicy : public Core::Http::Policies::HttpPolicy {
   public:
     explicit SharedKeyPolicy(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))
@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::NextHttpPolicy nextHttpPolicy,
+        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
         Core::Context const& ctx) const override
     {
       request.SetHeader(

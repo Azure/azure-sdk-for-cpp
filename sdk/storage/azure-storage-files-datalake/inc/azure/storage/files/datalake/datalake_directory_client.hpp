@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DataLakeDirectoryClient(
         const std::string& directoryUrl,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     explicit DataLakeDirectoryClient(
-        Azure::Core::Http::Url directoryUrl,
+        Azure::Core::Url directoryUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
         : DataLakePathClient(std::move(directoryUrl), std::move(blobClient), pipeline)

@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/logger.hpp"
-#include "azure/core/internal/log.hpp"
+#include "azure/core/diagnostics/logger.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 
 #include <mutex>
 #include <shared_mutex>
 
 #include "environment_log_level_listener_private.hpp"
 
-using namespace Azure::Core;
-using namespace Azure::Core::_internal;
+using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::Diagnostics::_internal;
 
 namespace {
 static std::shared_timed_mutex g_logListenerMutex;

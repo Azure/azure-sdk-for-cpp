@@ -50,7 +50,8 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
     m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
     m_blobUploadOptions.Tier = Azure::Storage::Blobs::Models::AccessTier::Hot;
-    auto blobContent = Azure::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(&blobContent, m_blobUploadOptions);
     m_blobUploadOptions.HttpHeaders.ContentHash
         = m_blockBlobClient->GetProperties()->HttpHeaders.ContentHash;
@@ -62,7 +63,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    auto blobContent = Azure::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     auto blobContentInfo = blockBlobClient.Upload(&blobContent, m_blobUploadOptions);
     EXPECT_FALSE(blobContentInfo->RequestId.empty());
     EXPECT_TRUE(blobContentInfo->ETag.HasValue());
@@ -112,7 +114,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const int64_t downloadLength = 1024;
     Blobs::DownloadBlobOptions options;
-    options.Range = Azure::Core::Http::Range();
+    options.Range = Azure::Core::Http::HttpRange();
     options.Range.GetValue().Offset = 0;
     options.Range.GetValue().Length = downloadLength;
     options.RangeHashAlgorithm = HashAlgorithm::Md5;
@@ -150,7 +152,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(res->LastAccessedOn.GetValue()));
     }
     {
-      Azure::Core::DateTime lastAccessedOn;
+      Azure::DateTime lastAccessedOn;
 
       Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
       options.Prefix = m_blobName;
@@ -177,7 +179,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> emptyContent;
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    auto blobContent = Azure::IO::MemoryBodyStream(emptyContent.data(), emptyContent.size());
+    auto blobContent = Azure::Core::IO::MemoryBodyStream(emptyContent.data(), emptyContent.size());
     blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
@@ -194,7 +196,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
-    options.Range = Core::Http::Range();
+    options.Range = Core::Http::HttpRange();
     options.Range.GetValue().Offset = 0;
     EXPECT_THROW(blockBlobClient.Download(options), StorageException);
     options.Range.GetValue().Length = 1;
@@ -205,7 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl());
-    EXPECT_NE(res.GetRawResponse(), nullptr);
+    EXPECT_EQ(res.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_TRUE(res.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res.LastModified));
@@ -266,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(versionClient.Download()->BodyStream), m_blobContent);
     EXPECT_EQ(versionClient.GetProperties()->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_TRUE(versionClient.GetProperties()->IsServerEncrypted);
-    auto emptyContent = Azure::IO::MemoryBodyStream(nullptr, 0);
+    auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
     EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageException);
     EXPECT_THROW(snapshotClient.SetMetadata({}), StorageException);
     EXPECT_NO_THROW(snapshotClient.SetAccessTier(Azure::Storage::Blobs::Models::AccessTier::Cool));
@@ -362,7 +364,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    auto blobContent = Azure::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobContent
+        = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
     blockBlobClient.SetAccessTier(Azure::Storage::Blobs::Models::AccessTier::Cool);
@@ -392,7 +395,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> block1Content;
     block1Content.resize(100);
     RandomBuffer(reinterpret_cast<char*>(&block1Content[0]), block1Content.size());
-    auto blockContent = Azure::IO::MemoryBodyStream(block1Content.data(), block1Content.size());
+    auto blockContent
+        = Azure::Core::IO::MemoryBodyStream(block1Content.data(), block1Content.size());
     blockBlobClient.StageBlock(blockId1, &blockContent);
     Azure::Storage::Blobs::CommitBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
@@ -434,10 +438,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto testDownloadToBuffer = [](int concurrency,
                                    int64_t downloadSize,
-                                   Azure::Core::Nullable<int64_t> offset = {},
-                                   Azure::Core::Nullable<int64_t> length = {},
-                                   Azure::Core::Nullable<int64_t> initialChunkSize = {},
-                                   Azure::Core::Nullable<int64_t> chunkSize = {}) {
+                                   Azure::Nullable<int64_t> offset = {},
+                                   Azure::Nullable<int64_t> length = {},
+                                   Azure::Nullable<int64_t> initialChunkSize = {},
+                                   Azure::Nullable<int64_t> chunkSize = {}) {
       std::vector<uint8_t> downloadBuffer;
       std::vector<uint8_t> expectedData = m_blobContent;
       int64_t blobSize = m_blobContent.size();
@@ -476,7 +480,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue() || length.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -507,10 +511,10 @@ namespace Azure { namespace Storage { namespace Test {
     };
     auto testDownloadToFile = [](int concurrency,
                                  int64_t downloadSize,
-                                 Azure::Core::Nullable<int64_t> offset = {},
-                                 Azure::Core::Nullable<int64_t> length = {},
-                                 Azure::Core::Nullable<int64_t> initialChunkSize = {},
-                                 Azure::Core::Nullable<int64_t> chunkSize = {}) {
+                                 Azure::Nullable<int64_t> offset = {},
+                                 Azure::Nullable<int64_t> length = {},
+                                 Azure::Nullable<int64_t> initialChunkSize = {},
+                                 Azure::Nullable<int64_t> chunkSize = {}) {
       std::string tempFilename = RandomString();
       std::vector<uint8_t> expectedData = m_blobContent;
       int64_t blobSize = m_blobContent.size();
@@ -548,7 +552,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue() || length.HasValue())
       {
-        options.Range = Core::Http::Range();
+        options.Range = Core::Http::HttpRange();
         options.Range.GetValue().Offset = offset.GetValue();
         options.Range.GetValue().Length = length;
       }
@@ -633,7 +637,7 @@ namespace Azure { namespace Storage { namespace Test {
       // buffer not big enough
       Blobs::DownloadBlobToOptions options;
       options.TransferOptions.Concurrency = c;
-      options.Range = Core::Http::Range();
+      options.Range = Core::Http::HttpRange();
       options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
@@ -714,7 +718,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> emptyContent;
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    auto blobContent = Azure::IO::MemoryBodyStream(emptyContent.data(), emptyContent.size());
+    auto blobContent = Azure::Core::IO::MemoryBodyStream(emptyContent.data(), emptyContent.size());
     blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
@@ -784,7 +788,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(ReadFile(tempFilename).empty());
       DeleteFile(tempFilename);
 
-      options.Range = Core::Http::Range();
+      options.Range = Core::Http::HttpRange();
       options.Range.GetValue().Offset = 0;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
