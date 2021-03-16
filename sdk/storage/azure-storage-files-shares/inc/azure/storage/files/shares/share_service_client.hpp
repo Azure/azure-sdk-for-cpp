@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * when setting the service properties.
      */
     Azure::Response<Models::SetServicePropertiesResult> SetProperties(
-        Models::FileServiceProperties properties,
+        Models::ShareFileServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -95,10 +95,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Get the service's properties.
      * @param options Optional parameters to get the properties of the service.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetServicePropertiesResult> The result containing
-     * service's properties.
+     * @return Azure::Response<Models::FileServiceProperties> The properties of the service.
      */
-    Azure::Response<Models::GetServicePropertiesResult> GetProperties(
+    Azure::Response<Models::ShareFileServiceProperties> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

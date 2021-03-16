@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  Azure::Response<Models::GetShareDirectoryPropertiesResult> ShareDirectoryClient::GetProperties(
+  Azure::Response<Models::ShareDirectoryProperties> ShareDirectoryClient::GetProperties(
       const GetShareDirectoryPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
