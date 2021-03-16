@@ -22,9 +22,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blobContainerName,
       const BlobClientOptions& options)
   {
-    auto parsedConnectionString = Storage::_detail::ParseConnectionString(connectionString);
+    auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
     auto blobContainerUrl = std::move(parsedConnectionString.BlobServiceUrl);
-    blobContainerUrl.AppendPath(Storage::_detail::UrlEncodePath(blobContainerName));
+    blobContainerUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -45,23 +45,22 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
+        std::make_unique<_internal::SharedKeyPolicy>(credential));
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
-            m_blobContainerUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+        m_blobContainerUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = newOptions.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -75,26 +74,25 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
-            m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+        m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
-      tokenContext.Scopes.emplace_back(Storage::_detail::StorageScope);
+      tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
+      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -108,19 +106,18 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
-            m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+        m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
+      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -129,7 +126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobClient BlobContainerClient::GetBlobClient(const std::string& blobName) const
   {
     auto blobUrl = m_blobContainerUrl;
-    blobUrl.AppendPath(Storage::_detail::UrlEncodePath(blobName));
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     return BlobClient(std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
@@ -229,7 +226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline,
         m_blobContainerUrl,
         protocolLayerOptions,
-        Storage::_detail::WithReplicaStatus(context));
+        _internal::WithReplicaStatus(context));
   }
 
   Azure::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
@@ -258,7 +255,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline,
         m_blobContainerUrl,
         protocolLayerOptions,
-        Storage::_detail::WithReplicaStatus(context));
+        _internal::WithReplicaStatus(context));
     for (auto& i : response->Items)
     {
       if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
@@ -294,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline,
         m_blobContainerUrl,
         protocolLayerOptions,
-        Storage::_detail::WithReplicaStatus(context));
+        _internal::WithReplicaStatus(context));
     for (auto& i : response->Items)
     {
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
@@ -316,7 +313,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline,
         m_blobContainerUrl,
         protocolLayerOptions,
-        Storage::_detail::WithReplicaStatus(context));
+        _internal::WithReplicaStatus(context));
   }
 
   Azure::Response<Models::SetBlobContainerAccessPolicyResult> BlobContainerClient::SetAccessPolicy(

@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
     return sasBuilder.GenerateSasToken(
-        *_detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+        *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
   }
 
   TEST_F(BlobContainerClientTest, CreateDelete)
@@ -62,20 +62,21 @@ namespace Azure { namespace Storage { namespace Test {
     options.Metadata = metadata;
     auto res = container_client.Create(options);
     EXPECT_FALSE(res->RequestId.empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_EQ(res->RequestId, res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId));
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_EQ(res->RequestId, res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId));
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
     EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_THROW(container_client.Create(), StorageException);
 
     auto res2 = container_client.Delete();
     EXPECT_FALSE(res2->RequestId.empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_EQ(res2->RequestId, res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId));
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_EQ(
+        res2->RequestId, res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId));
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
 
     container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString() + "UPPERCASE");
@@ -109,16 +110,16 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);
     EXPECT_FALSE(res->RequestId.empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
     EXPECT_TRUE(res->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res->LastModified));
 
     auto res2 = m_blobContainerClient->GetProperties();
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
     auto properties = *res2;
     EXPECT_TRUE(properties.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(properties.LastModified));
@@ -173,9 +174,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
       EXPECT_FALSE(res->RequestId.empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
       EXPECT_EQ(res->BlobContainerName, m_containerName);
 
@@ -550,7 +551,7 @@ namespace Azure { namespace Storage { namespace Test {
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
       key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
-      key.KeyHash = _detail::Sha256(aes256Key);
+      key.KeyHash = _internal::Sha256(aes256Key);
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
     };
@@ -1041,8 +1042,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create());
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1050,8 +1050,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create(1024));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1059,8 +1058,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
 
     {
@@ -1070,8 +1068,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create());
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1080,8 +1077,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create(1024));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1090,8 +1086,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
   }
 
@@ -1101,8 +1096,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
     EXPECT_NO_THROW(blobClient.Create());
     auto blobUrl = blobClient.GetUrl();
-    EXPECT_EQ(
-        blobUrl, m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+    EXPECT_EQ(blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
   }
 
   TEST_F(BlobContainerClientTest, DeleteBlob)

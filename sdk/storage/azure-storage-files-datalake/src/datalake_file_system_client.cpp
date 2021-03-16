@@ -26,9 +26,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemName,
       const DataLakeClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto parsedConnectionString
+        = Azure::Storage::_internal::ParseConnectionString(connectionString);
     auto fileSystemUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
-    fileSystemUrl.AppendPath(Storage::_detail::UrlEncodePath(fileSystemName));
+    fileSystemUrl.AppendPath(_internal::UrlEncodePath(fileSystemName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -52,23 +53,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
+        std::make_unique<_internal::SharedKeyPolicy>(credential));
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
-            m_fileSystemUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+        m_fileSystemUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
+      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = newOptions.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -85,26 +85,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
-            m_fileSystemUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+        m_fileSystemUrl.GetHost(), options.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
-      tokenContext.Scopes.emplace_back(Storage::_detail::StorageScope);
+      tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
+      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -119,19 +118,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::StorageSwitchToSecondaryPolicy>(
-            m_fileSystemUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+        m_fileSystemUrl.GetHost(), options.SecondaryHostForRetryReads));
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
+      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = options.ApiVersion;
       perOperationPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
     }
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -140,7 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& fileName) const
   {
     auto builder = m_fileSystemUrl;
-    builder.AppendPath(Storage::_detail::UrlEncodePath(fileName));
+    builder.AppendPath(_internal::UrlEncodePath(fileName));
     auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
     return DataLakeFileClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
@@ -149,7 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& directoryName) const
   {
     auto builder = m_fileSystemUrl;
-    builder.AppendPath(Storage::_detail::UrlEncodePath(directoryName));
+    builder.AppendPath(_internal::UrlEncodePath(directoryName));
     return DataLakeDirectoryClient(
         builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
   }
@@ -293,10 +291,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
     return _detail::DataLakeRestClient::FileSystem::ListPaths(
-        m_fileSystemUrl,
-        *m_pipeline,
-        Storage::_detail::WithReplicaStatus(context),
-        protocolLayerOptions);
+        m_fileSystemUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
   }
 
   Azure::Response<Models::DataLakeFileSystemAccessPolicy> DataLakeFileSystemClient::GetAccessPolicy(
