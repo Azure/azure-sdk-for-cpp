@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   enum class XmlNodeType
   {

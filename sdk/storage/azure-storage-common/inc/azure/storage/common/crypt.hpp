@@ -26,7 +26,7 @@ namespace Azure { namespace Storage {
     std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override;
   };
 
-  namespace _detail {
+  namespace _internal {
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data);
     std::vector<uint8_t> HmacSha256(
         const std::vector<uint8_t>& data,

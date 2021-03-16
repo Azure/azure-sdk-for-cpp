@@ -3,7 +3,7 @@
 
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,

@@ -52,12 +52,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQuerySnapshot, Storage::_detail::UrlEncodeQueryParameter(snapshot));
+          _internal::HttpQuerySnapshot, _internal::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -67,13 +67,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQueryVersionId,
-          Storage::_detail::UrlEncodeQueryParameter(versionId));
+          _internal::HttpQueryVersionId, _internal::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
@@ -144,7 +143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     };
 
-    Storage::_detail::ConcurrentTransfer(
+    _internal::ConcurrentTransfer(
         0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadBlockFunc);
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
@@ -197,7 +196,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
-    Storage::_detail::FileReader fileReader(fileName);
+    _internal::FileReader fileReader(fileName);
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
@@ -212,7 +211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
 
-    Storage::_detail::ConcurrentTransfer(
+    _internal::ConcurrentTransfer(
         0,
         fileReader.GetFileSize(),
         chunkSize,
@@ -328,7 +327,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::BlockBlob::GetBlockList(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, Storage::_detail::WithReplicaStatus(context));
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
 }}} // namespace Azure::Storage::Blobs

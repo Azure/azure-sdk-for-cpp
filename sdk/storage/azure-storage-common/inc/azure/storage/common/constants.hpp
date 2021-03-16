@@ -7,7 +7,7 @@ namespace Azure { namespace Storage {
 
   constexpr static const char* AccountEncryptionKey = "$account-encryption-key";
 
-  namespace _detail {
+  namespace _internal {
     constexpr static const char* BlobServicePackageName = "storage-blobs";
     constexpr static const char* DatalakeServicePackageName = "storage-files-datalake";
     constexpr static const char* FileServicePackageName = "storage-files-shares";

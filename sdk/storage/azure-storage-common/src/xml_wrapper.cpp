@@ -9,7 +9,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   struct XmlGlobalInitializer
   {

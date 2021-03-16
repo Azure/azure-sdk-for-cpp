@@ -31,7 +31,7 @@
 
 namespace Azure { namespace Storage {
 
-  namespace _detail {
+  namespace _internal {
     static const char* Subdelimiters = "!$&'()*+,;=";
 
     std::string UrlEncodeQueryParameter(const std::string& value)
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  namespace _detail {
+  namespace _internal {
 
     enum class AlgorithmType
     {

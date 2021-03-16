@@ -50,7 +50,7 @@ namespace Azure { namespace Storage {
     HashAlgorithm Algorithm = HashAlgorithm::Md5;
   };
 
-  namespace _detail {
+  namespace _internal {
     ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm);
     std::string ToBase64String(const ContentHash& hash);
   } // namespace _detail

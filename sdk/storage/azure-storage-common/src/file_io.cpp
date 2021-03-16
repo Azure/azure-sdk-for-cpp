@@ -17,7 +17,7 @@
 #include <locale>
 #include <stdexcept>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)

@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   inline void ConcurrentTransfer(
       int64_t offset,
@@ -70,4 +70,4 @@ namespace Azure { namespace Storage { namespace _detail {
     }
   }
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal
