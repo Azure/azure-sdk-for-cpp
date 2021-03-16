@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(
               _detail::QueryFileSystemResource,
-              _internal::UrlEncodeQueryParameter((listPathsOptions.Resource.ToString())));
+              _internal::UrlEncodeQueryParameter(listPathsOptions.Resource.ToString()));
           if (listPathsOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
@@ -580,7 +580,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 _detail::QueryPathResourceType,
-                _internal::UrlEncodeQueryParameter((createOptions.Resource.GetValue().ToString())));
+                _internal::UrlEncodeQueryParameter(createOptions.Resource.GetValue().ToString()));
           }
           if (createOptions.ContinuationToken.HasValue())
           {
@@ -592,7 +592,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 _detail::QueryPathRenameMode,
-                _internal::UrlEncodeQueryParameter((createOptions.Mode.GetValue().ToString())));
+                _internal::UrlEncodeQueryParameter(createOptions.Mode.GetValue().ToString()));
           }
           if (createOptions.CacheControl.HasValue())
           {
@@ -720,7 +720,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.GetUrl().AppendQueryParameter(
                 _detail::QueryPathGetPropertiesAction,
                 _internal::UrlEncodeQueryParameter(
-                    (getPropertiesOptions.Action.GetValue().ToString())));
+                    getPropertiesOptions.Action.GetValue().ToString()));
           }
           if (getPropertiesOptions.Upn.HasValue())
           {
@@ -942,8 +942,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           request.GetUrl().AppendQueryParameter(
               _detail::QueryPathSetAccessControlRecursiveMode,
-              _internal::UrlEncodeQueryParameter(
-                  (setAccessControlRecursiveOptions.Mode.ToString())));
+              _internal::UrlEncodeQueryParameter(setAccessControlRecursiveOptions.Mode.ToString()));
           if (setAccessControlRecursiveOptions.ForceFlag.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
