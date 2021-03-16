@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool IsServerEncrypted = bool();
     };
     using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
-    using ShareFileRangeInfo = _detail::FileGetRangeListResult;
+    using GetShareFileRangeListResult = _detail::FileGetRangeListResult;
     using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
     using ForceCloseAllShareFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
 
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return A pointer to #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
-    Azure::Core::Http::RawResponse& GetRawResponseInternal() const override
+    const Azure::Core::Http::RawResponse& GetRawResponseInternal() const override
     {
       return *m_rawResponse;
     }

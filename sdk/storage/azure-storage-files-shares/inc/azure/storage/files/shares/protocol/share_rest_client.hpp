@@ -381,7 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // Storage service properties.
-    struct FileServiceProperties
+    struct ShareFileServiceProperties
     {
       Metrics HourMetrics; // A summary of request statistics grouped by API in hourly aggregates
                            // for files.
@@ -1099,7 +1099,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct SetPropertiesOptions
         {
-          FileServiceProperties ServiceProperties;
+          ShareFileServiceProperties ServiceProperties;
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
@@ -1114,7 +1114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string xml_body;
           {
             _internal::XmlWriter writer;
-            FileServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
+            ShareFileServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
@@ -1338,9 +1338,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
 
-        static void FileServicePropertiesToXml(
+        static void ShareFileServicePropertiesToXml(
             _internal::XmlWriter& writer,
-            const FileServiceProperties& object)
+            const ShareFileServiceProperties& object)
         {
           writer.Write(
               _internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
@@ -1378,8 +1378,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceGetPropertiesResult result = bodyBuffer.empty()
                 ? ServiceGetPropertiesResult()
-                : ServiceGetPropertiesResultFromFileServiceProperties(
-                    FileServicePropertiesFromXml(reader));
+                : ServiceGetPropertiesResultFromShareFileServiceProperties(
+                    ShareFileServicePropertiesFromXml(reader));
             return Azure::Response<ServiceGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1774,9 +1774,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileServiceProperties FileServicePropertiesFromXml(_internal::XmlReader& reader)
+        static ShareFileServiceProperties ShareFileServicePropertiesFromXml(
+            _internal::XmlReader& reader)
         {
-          auto result = FileServiceProperties();
+          auto result = ShareFileServiceProperties();
           enum class XmlTagName
           {
             Cors,
@@ -1874,8 +1875,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ServiceGetPropertiesResult ServiceGetPropertiesResultFromFileServiceProperties(
-            FileServiceProperties object)
+        static ServiceGetPropertiesResult ServiceGetPropertiesResultFromShareFileServiceProperties(
+            ShareFileServiceProperties object)
         {
           ServiceGetPropertiesResult result;
           result.HourMetrics = std::move(object.HourMetrics);

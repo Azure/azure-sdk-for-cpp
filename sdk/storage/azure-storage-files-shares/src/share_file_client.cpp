@@ -549,7 +549,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), response.ExtractRawResponse());
   }
 
-  Azure::Response<Models::ShareFileRangeInfo> ShareFileClient::GetRangeList(
+  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeList(
       const GetShareFileRangeListOptions& options,
       const Azure::Core::Context& context) const
   {

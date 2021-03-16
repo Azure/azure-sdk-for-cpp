@@ -723,7 +723,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(halfContent, downloadContent);
 
     EXPECT_NO_THROW(fileClient.ClearRange(512, 512));
-    Files::Shares::Models::ShareFileRangeInfo result;
+    Files::Shares::Models::GetShareFileRangeListResult result;
     EXPECT_NO_THROW(result = fileClient.GetRangeList().ExtractValue());
     EXPECT_EQ(2U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Offset);
@@ -755,7 +755,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshot1 = m_shareClient->CreateSnapshot()->Snapshot;
     EXPECT_NO_THROW(fileClient.ClearRange(500, 2048));
     auto snapshot2 = m_shareClient->CreateSnapshot()->Snapshot;
-    Files::Shares::Models::ShareFileRangeInfo result;
+    Files::Shares::Models::GetShareFileRangeListResult result;
     Files::Shares::GetShareFileRangeListOptions options;
     options.PreviousShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
@@ -876,7 +876,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(result = destFileClient.Download(downloadOptions).ExtractValue());
     auto resultBuffer = result.BodyStream->ReadToEnd(Core::Context());
     EXPECT_EQ(fileContent, resultBuffer);
-    Files::Shares::Models::ShareFileRangeInfo getRangeResult;
+    Files::Shares::Models::GetShareFileRangeListResult getRangeResult;
     EXPECT_NO_THROW(getRangeResult = destFileClient.GetRangeList().ExtractValue());
     EXPECT_EQ(1U, getRangeResult.Ranges.size());
     EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Offset);

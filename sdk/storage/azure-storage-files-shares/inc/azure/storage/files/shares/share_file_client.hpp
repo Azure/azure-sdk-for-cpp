@@ -289,10 +289,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the list of valid range from the file within specified range.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ShareFileRangeInfo> containing the valid
+     * @return Azure::Response<Models::GetShareFileRangeListResult> containing the valid
      * ranges within the file for the specified range.
      */
-    Azure::Response<Models::ShareFileRangeInfo> GetRangeList(
+    Azure::Response<Models::GetShareFileRangeListResult> GetRangeList(
         const GetShareFileRangeListOptions& options = GetShareFileRangeListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
