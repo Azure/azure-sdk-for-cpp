@@ -229,7 +229,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(ret->FilePermissionKey.empty());
 
     auto ret2 = m_shareClient->GetPermission(ret->FilePermissionKey);
-    EXPECT_EQ(expectedPermission, ret2->FilePermission);
+    EXPECT_EQ(expectedPermission, *ret2);
   }
 
   // TEST_F(FileShareClientTest, Lease)
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Create/Get properties works
     std::unordered_map<std::string, Files::Shares::ShareClient> shareClients;
     std::string prefix = LowercaseRandomString(5);
-    Files::Shares::Models::GetSharePropertiesResult properties;
+    Files::Shares::Models::ShareProperties properties;
     {
       auto shareName = prefix + LowercaseRandomString(5);
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
@@ -474,7 +474,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         PremiumFileConnectionString(), shareName);
     EXPECT_NO_THROW(shareClient.Create());
-    Files::Shares::Models::GetSharePropertiesResult properties;
+    Files::Shares::Models::ShareProperties properties;
     EXPECT_NO_THROW(properties = *shareClient.GetProperties());
     EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Premium, properties.AccessTier.GetValue());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
