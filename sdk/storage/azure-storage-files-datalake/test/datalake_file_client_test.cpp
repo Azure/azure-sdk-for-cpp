@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       std::string tempFilename = RandomString();
       {
-        Azure::Storage::_detail::FileWriter fileWriter(tempFilename);
+        Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
@@ -521,7 +521,7 @@ namespace Azure { namespace Storage { namespace Test {
               fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
       std::string tempFileDestinationName = RandomString();
       fileClient.DownloadTo(tempFileDestinationName);
-      Azure::Storage::_detail::FileReader fileReader(tempFileDestinationName);
+      Azure::Storage::_internal::FileReader fileReader(tempFileDestinationName);
       auto size = fileReader.GetFileSize();
       EXPECT_EQ(fileSize, size);
       DeleteFile(tempFileDestinationName);

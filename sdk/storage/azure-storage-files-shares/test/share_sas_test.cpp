@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
     shareSasBuilder.Resource = Sas::ShareSasResource::Share;
 
     auto keyCredential
-        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto fileServiceClient0 = Files::Shares::ShareServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());

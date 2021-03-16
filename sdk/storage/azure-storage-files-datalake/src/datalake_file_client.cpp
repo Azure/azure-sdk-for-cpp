@@ -84,10 +84,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileName,
       const DataLakeClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
     auto fileUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
-    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(fileSystemName));
-    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(fileName));
+    fileUrl.AppendPath(_internal::UrlEncodePath(fileSystemName));
+    fileUrl.AppendPath(_internal::UrlEncodePath(fileName));
 
     if (parsedConnectionString.KeyCredential)
     {
