@@ -25,21 +25,26 @@ RUN apt-get update \
         openssh-client \
         less \
         #
-        # g++
+        # Azure sdk for C++ dev env
         make \
         cmake \
         build-essential \
         zlib1g-dev \
-        locales \
         libcurl4-openssl-dev \
         libssl-dev \
         libxml2-dev \
+        # clang format 10 req
+        gnupg2 \
+        wget \
+        ca-certificates \
     #
     # Add en_US.UTF-8 locale
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    #
-    # Generate locale files
-    && locale-gen \
+    && wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
+    && echo 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main' | tee -a /etc/apt/sources.list \
+    && echo 'deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main' | tee -a /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get -y install --no-install-recommends clang-format-10 \
     #
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
     && groupadd --gid $USER_GID $USERNAME \
