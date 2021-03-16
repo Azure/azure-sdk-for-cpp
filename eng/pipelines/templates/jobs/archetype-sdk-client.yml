@@ -157,8 +157,11 @@ jobs:
     displayName: Validate Clang Format
     condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
 
-  - bash: docker run -p 80:80 kennethreitz/httpbin
+  - bash: docker run -p 3331:80 kennethreitz/httpbin &>/dev/null &
     displayName: Spin local http rest echo server for tests.
+
+  - bash: wget http://localhost:3331/get
+    displayName: ping local server
 
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
