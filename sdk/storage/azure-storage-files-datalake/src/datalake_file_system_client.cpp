@@ -299,14 +299,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         protocolLayerOptions);
   }
 
-  Azure::Response<Models::DataLakeFileSystemAccessPolciy> DataLakeFileSystemClient::GetAccessPolicy(
+  Azure::Response<Models::DataLakeFileSystemAccessPolicy> DataLakeFileSystemClient::GetAccessPolicy(
       const GetDataLakeFileSystemAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
     Blobs::GetBlobContainerAccessPolicyOptions blobOptions;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto response = m_blobContainerClient.GetAccessPolicy(blobOptions, context);
-    Models::DataLakeFileSystemAccessPolciy ret;
+    Models::DataLakeFileSystemAccessPolicy ret;
     if (response->AccessType == Blobs::Models::PublicAccessType::BlobContainer)
     {
       ret.AccessType = Models::PublicAccessType::FileSystem;
@@ -324,7 +324,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       ret.AccessType = Models::PublicAccessType(response->AccessType.ToString());
     }
     ret.SignedIdentifiers = std::move(response->SignedIdentifiers);
-    return Azure::Response<Models::DataLakeFileSystemAccessPolciy>(
+    return Azure::Response<Models::DataLakeFileSystemAccessPolicy>(
         std::move(ret), response.ExtractRawResponse());
   }
 

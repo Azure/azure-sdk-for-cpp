@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using DataLakeSignedIdentifier = Blobs::Models::BlobSignedIdentifier;
   using ListDataLakeFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
 
-  struct DataLakeFileSystemAccessPolciy
+  struct DataLakeFileSystemAccessPolicy
   {
     PublicAccessType AccessType = PublicAccessType::None;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
