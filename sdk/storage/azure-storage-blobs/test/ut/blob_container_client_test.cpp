@@ -742,10 +742,10 @@ namespace Azure { namespace Storage { namespace Test {
     tags[c2] = v2;
     tags[c3] = v3;
 
-    auto downloadedTags = *blobClient.GetTags();
+    auto downloadedTags = blobClient.GetTags()->Tags;
     EXPECT_TRUE(downloadedTags.empty());
     blobClient.SetTags(tags);
-    downloadedTags = *blobClient.GetTags();
+    downloadedTags = blobClient.GetTags()->Tags;
     EXPECT_EQ(downloadedTags, tags);
 
     properties = *blobClient.GetProperties();
