@@ -172,10 +172,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the access policy of the share.
      * @param options Optional parameters to get the share's access policy.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<std::vector<Models::SignedIdentifier>> The signed identifiers of the
-     * share.
+     * @return Azure::Response<Models::GetShareAccessPolicyResult> containing the access
+     * policy of the share.
      */
-    Azure::Response<std::vector<Models::SignedIdentifier>> GetAccessPolicy(
+    Azure::Response<Models::GetShareAccessPolicyResult> GetAccessPolicy(
         const GetShareAccessPolicyOptions& options = GetShareAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

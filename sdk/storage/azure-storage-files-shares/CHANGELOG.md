@@ -17,7 +17,6 @@
 - Renamed `GetShareFilePropertiesResult` to `ShareFileProperties`.
 - Renamed `GetShareFileRangeListResult` to `ShareFileRangeInfo`.
 - `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
-- `ShareClient::GetAccessPolicy` now returns `Azure::Response<std::vector<Models::SignedIdentifier>>`.
 - `ShareServiceClient::GetProperties` now returns `Azure::Response<Models::FileServiceProperties>`.
 
 ## 12.0.0-beta.8 (2021-02-12)

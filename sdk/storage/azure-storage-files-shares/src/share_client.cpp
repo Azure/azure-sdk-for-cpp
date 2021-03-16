@@ -223,17 +223,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<std::vector<Models::SignedIdentifier>> ShareClient::GetAccessPolicy(
+  Azure::Response<Models::GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
       const GetShareAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareRestClient::Share::GetAccessPolicyOptions();
-    return Details::ShareRestClient::Share::GetAccessPolicy(
+    return _detail::ShareRestClient::Share::GetAccessPolicy(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
-
-    return Azure::Response<std::vector<Models::SignedIdentifier>>(
-        std::move(result.ExtractValue().SignedIdentifiers), result.ExtractRawResponse());
   }
 
   Azure::Response<Models::SetShareAccessPolicyResult> ShareClient::SetAccessPolicy(
@@ -278,11 +275,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareRestClient::Share::GetPermissionOptions();
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
-    return Details::ShareRestClient::Share::GetPermission(
+    auto result = _detail::ShareRestClient::Share::GetPermission(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
 
     return Azure::Response<std::string>(
-        std::move(result.ExtractValue().FilePermission), result.ExtractRawResponse());
+        result.ExtractValue().FilePermission, result.ExtractRawResponse());
   }
 
   Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>

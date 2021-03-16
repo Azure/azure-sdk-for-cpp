@@ -44,7 +44,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Response<Models::ShareFileProperties>(m_pollResult, std::move(rawResponse));
+        return Azure::Response<Models::ShareFileProperties>(
+            m_pollResult, std::make_unique<Azure::Core::Http::RawResponse>(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {
