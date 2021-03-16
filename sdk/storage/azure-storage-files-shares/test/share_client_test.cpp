@@ -385,7 +385,7 @@ namespace Azure { namespace Storage { namespace Test {
           Files::Shares::Models::ShareAccessTier::TransactionOptimized,
           properties.AccessTier.GetValue());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
-      EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.GetValue());
+      EXPECT_TRUE(IsValidTime(properties.AccessTierChangedOn.GetValue()));
       shareClients.emplace(std::move(shareName), std::move(shareClient));
     }
     {
