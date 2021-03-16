@@ -10,17 +10,15 @@ namespace Azure { namespace Storage { namespace _detail {
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       const Azure::Core::Context& ctx) const
   {
-    SecondaryHostReplicaStatus* replicaStatus = nullptr;
+    std::shared_ptr<bool> replicaStatus;
     if (ctx.HasKey(SecondaryHostReplicaStatusKey))
     {
-      replicaStatus
-          = ctx.Get<std::unique_ptr<SecondaryHostReplicaStatus>>(SecondaryHostReplicaStatusKey)
-                .get();
+      replicaStatus = ctx.Get<std::shared_ptr<bool>>(SecondaryHostReplicaStatusKey);
     }
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
-        && !m_secondaryHost.empty() && replicaStatus && replicaStatus->replicated;
+        && !m_secondaryHost.empty() && replicaStatus && *replicaStatus;
 
     if (considerSecondary && Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(ctx) > 0)
     {
@@ -42,7 +40,7 @@ namespace Azure { namespace Storage { namespace _detail {
             || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
         && request.GetUrl().GetHost() == m_secondaryHost)
     {
-      replicaStatus->replicated = false;
+      *replicaStatus = false;
       // switch back
       request.GetUrl().SetHost(m_primaryHost);
       response = nextHttpPolicy.Send(request, ctx);
