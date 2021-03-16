@@ -245,7 +245,7 @@ namespace Azure { namespace Storage {
 
 #elif defined(AZ_PLATFORM_POSIX)
 
-  namespace _detail {
+  namespace _internal {
 
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
@@ -275,7 +275,7 @@ namespace Azure { namespace Storage {
       return std::vector<uint8_t>(std::begin(hash), std::begin(hash) + hashLength);
     }
 
-  } // namespace _detail
+  } // namespace _internal
 
 #endif
 
