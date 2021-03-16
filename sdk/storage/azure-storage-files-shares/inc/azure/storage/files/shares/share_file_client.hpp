@@ -297,6 +297,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Gets the list of valid range from the file within specified range that have changed
+     * since previousShareSnapshot was taken.
+     * @param previousShareSnapshot Specifies the previous snapshot.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::GetShareFileRangeListResult> containing the valid
+     * ranges within the file for the specified range.
+     */
+    Azure::Response<Models::GetShareFileRangeListResult> GetRangeListDiff(
+        std::string previousShareSnapshot,
+        const GetShareFileRangeListOptions& options = GetShareFileRangeListOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief List open handles on the file.
      * @param options Optional parameters to list this file's open handles.
      * @param context Context for cancelling long running operations.

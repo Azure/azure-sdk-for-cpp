@@ -488,12 +488,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<Core::Http::HttpRange> Range;
 
     /**
-     * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
-     * specifies the previous snapshot.
-     */
-    Azure::Nullable<std::string> PreviousShareSnapshot;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
