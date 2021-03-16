@@ -6,12 +6,12 @@ The SDK clients would define a concrete class from the `Operation<T>` which an e
 
 ## Operation Status
 
-The status of the operation defines the stages which the operation can be set from its creation and up to completion. The next table show the supported status of an `Operation<T>`.
+The status of the operation defines the stages which the operation can be in from its creation to completion. The following table shows the supported status of an `Operation<T>`.
 
 | Status     | Description                                                                    |
 | ---------- | ------------------------------------------------------------------------------ |
 | NotStarted | The operation is created but the server has not yet started it.                |
-| Running    | The operation is running on the server side and has not yet be completed.      |
+| Running    | The operation is running on the server side and has not yet been completed.      |
 | Succeeded  | The server has successfully finished running the LRO. This is a `final stage`. |
 | Cancelled  | The operation was interrupted before completion. This is a `final stage`.      |
 | Failed     | The server failed to run the LRO. This is a `final stage`.                     |
