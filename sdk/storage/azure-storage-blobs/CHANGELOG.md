@@ -12,6 +12,13 @@
 - Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `BlobClientOptions`.
+- Changed return type of `BlobServiceClient::GetUserDelegationKey` to `UserDelegationKey`.
+- Changed return type of `BlobServiceClient::GetProperties` to `BlobServiceProperties`.
+- Changed return type of `BlobServiceClient::GetAccountInfo` to `AccountInfo`.
+- Changed return type of `BlobServiceClient::GetStatistics` to `ServiceStatistics`.
+- Changed return type of `BlobContainerClient::GetProperties` to `BlobContainerProperties`.
+- Changed return type of `BlobContainerClient::GetAccessPolicy` to `BlobContainerAccessPolicy`.
+- Changed return type of `BlobClient::GetProperties` to `BlobProperties`.
 
 ### Other Changes and Improvements
 

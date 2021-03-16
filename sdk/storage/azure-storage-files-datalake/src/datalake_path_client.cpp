@@ -334,7 +334,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   }
 
-  Azure::Response<Models::GetDataLakePathPropertiesResult> DataLakePathClient::GetProperties(
+  Azure::Response<Models::DataLakePathProperties> DataLakePathClient::GetProperties(
       const GetDataLakePathPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -345,7 +345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.GetProperties(blobOptions, context);
-    Models::GetDataLakePathPropertiesResult ret;
+    Models::DataLakePathProperties ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.CreatedOn = std::move(result->CreatedOn);
@@ -377,7 +377,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ExpiresOn = std::move(result->ExpiresOn);
     ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.FileSize = result->BlobSize;
-    ret.RequestId = std::move(result->RequestId);
     ret.ArchiveStatus = std::move(result->ArchiveStatus);
     ret.RehydratePriority = std::move(result->RehydratePriority);
     ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
@@ -386,7 +385,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.VersionId = std::move(result->VersionId);
     ret.IsCurrentVersion = std::move(result->IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
-    return Azure::Response<Models::GetDataLakePathPropertiesResult>(
+    return Azure::Response<Models::DataLakePathProperties>(
         std::move(ret), result.ExtractRawResponse());
   }
 
