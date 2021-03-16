@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Http {
         std::unique_ptr<_detail::HandleManager>& handleManager,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
-    std::unique_ptr<RawResponse> GetRawResponse(
+    std::unique_ptr<RawResponse> SendRequestAndGetResponse(
         std::unique_ptr<_detail::HandleManager> handleManager,
         HttpMethod requestMethod);
 
