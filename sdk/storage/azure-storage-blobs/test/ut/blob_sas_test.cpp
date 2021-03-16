@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = blobServiceClient1.GetUserDelegationKey(sasExpiresOn)->Key;
+    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
 
     auto verify_blob_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(blobClient0.Create());
