@@ -85,4 +85,4 @@ namespace Azure { namespace Storage { namespace _internal {
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
         Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

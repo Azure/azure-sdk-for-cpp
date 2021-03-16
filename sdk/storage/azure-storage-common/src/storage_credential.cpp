@@ -104,4 +104,4 @@ namespace Azure { namespace Storage { namespace _internal {
 
     return connectionStringParts;
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

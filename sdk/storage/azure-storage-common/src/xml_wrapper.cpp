@@ -185,4 +185,4 @@ namespace Azure { namespace Storage { namespace _internal {
     return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
   }
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

@@ -46,4 +46,4 @@ namespace Azure { namespace Storage { namespace _internal {
     std::string m_secondaryHost;
   };
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

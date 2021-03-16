@@ -24,4 +24,4 @@ namespace Azure { namespace Storage { namespace _internal {
         Core::Context const& ctx) const override;
   };
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

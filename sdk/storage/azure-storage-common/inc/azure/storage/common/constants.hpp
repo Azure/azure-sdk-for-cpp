@@ -23,5 +23,5 @@ namespace Azure { namespace Storage {
     constexpr static const char* DefaultSasVersion = "2020-02-10";
 
     constexpr int ReliableStreamRetryCount = 3;
-  } // namespace _detail
+  } // namespace _internal
 }} // namespace Azure::Storage

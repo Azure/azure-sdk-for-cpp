@@ -76,7 +76,7 @@ namespace Azure { namespace Storage {
       }();
       return Core::Url::Encode(value, DoNotEncodeCharacters);
     }
-  } // namespace _detail
+  } // namespace _internal
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage {
 
       return hash;
     }
-  } // namespace _detail
+  } // namespace _internal
 
 #elif defined(AZ_PLATFORM_POSIX)
 

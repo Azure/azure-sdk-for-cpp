@@ -150,4 +150,4 @@ namespace Azure { namespace Storage { namespace _internal {
   }
 #endif
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

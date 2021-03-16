@@ -55,4 +55,4 @@ namespace Azure { namespace Storage { namespace _internal {
     FileHandle m_handle;
   };
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

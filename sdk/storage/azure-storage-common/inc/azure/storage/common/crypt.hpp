@@ -33,5 +33,5 @@ namespace Azure { namespace Storage {
         const std::vector<uint8_t>& key);
     std::string UrlEncodeQueryParameter(const std::string& value);
     std::string UrlEncodePath(const std::string& value);
-  } // namespace _detail
+  } // namespace _internal
 }} // namespace Azure::Storage

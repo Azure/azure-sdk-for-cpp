@@ -18,4 +18,4 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     return Azure::Core::Convert::Base64Encode(hash.Value);
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

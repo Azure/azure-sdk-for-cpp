@@ -55,4 +55,4 @@ namespace Azure { namespace Storage { namespace _internal {
     void* m_writer = nullptr;
   };
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

@@ -42,4 +42,4 @@ namespace Azure { namespace Storage { namespace _internal {
     std::shared_ptr<StorageSharedKeyCredential> m_credential;
   };
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

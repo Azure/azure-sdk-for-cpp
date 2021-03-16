@@ -86,6 +86,6 @@ namespace Azure { namespace Storage {
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);
 
-  } // namespace _detail
+  } // namespace _internal
 
 }} // namespace Azure::Storage
