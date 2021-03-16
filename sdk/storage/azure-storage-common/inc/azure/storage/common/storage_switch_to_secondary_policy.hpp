@@ -13,15 +13,9 @@ namespace Azure { namespace Storage { namespace _internal {
   static constexpr const char* SecondaryHostReplicaStatusKey
       = "AzureSdkStorageSecondaryHostReplicaStatusKey";
 
-  struct SecondaryHostReplicaStatus
-  {
-    bool replicated = true;
-  };
-
   inline Azure::Core::Context WithReplicaStatus(const Azure::Core::Context& context)
   {
-    return context.WithValue(
-        SecondaryHostReplicaStatusKey, std::make_unique<SecondaryHostReplicaStatus>());
+    return context.WithValue(SecondaryHostReplicaStatusKey, std::make_shared<bool>(true));
   }
 
   class StorageSwitchToSecondaryPolicy : public Azure::Core::Http::Policies::HttpPolicy {
