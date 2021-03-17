@@ -667,14 +667,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::GetBlobTagsResult> BlobClient::GetTags(
+  Azure::Response<std::map<std::string, std::string>> BlobClient::GetTags(
       const GetBlobTagsOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::BlobRestClient::Blob::GetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::Blob::GetTags(
+    auto response = _detail::BlobRestClient::Blob::GetTags(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    return Azure::Response<std::map<std::string, std::string>>(
+        std::move(response->Tags), response.ExtractRawResponse());
   }
 
 }}} // namespace Azure::Storage::Blobs
