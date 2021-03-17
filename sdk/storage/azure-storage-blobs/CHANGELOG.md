@@ -20,6 +20,7 @@
 - Changed return type of `BlobContainerClient::GetProperties` to `BlobContainerProperties`.
 - Changed return type of `BlobContainerClient::GetAccessPolicy` to `BlobContainerAccessPolicy`.
 - Changed return type of `BlobClient::GetProperties` to `BlobProperties`.
+- Changed return type of `BlobClinet::GetTags` to `std::map<std::string, std::string>`.
 - Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
 
 ### Other Changes and Improvements
