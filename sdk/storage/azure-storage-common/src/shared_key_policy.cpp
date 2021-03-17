@@ -11,7 +11,7 @@
 
 #include "azure/storage/common/crypt.hpp"
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   std::string SharedKeyPolicy::GetSignature(const Core::Http::Request& request) const
   {
@@ -81,8 +81,8 @@ namespace Azure { namespace Storage { namespace _detail {
     // remove last linebreak
     string_to_sign.pop_back();
 
-    return Azure::Core::Convert::Base64Encode(_detail::HmacSha256(
+    return Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
         Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

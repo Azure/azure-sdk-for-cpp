@@ -142,10 +142,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the properties of the directory.
      * @param options Optional parameters to get this directory's properties.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetShareDirectoryPropertiesResult> containing the
+     * @return Azure::Response<Models::ShareDirectoryProperties> containing the
      * properties of the directory returned from the server.
      */
-    Azure::Response<Models::GetShareDirectoryPropertiesResult> GetProperties(
+    Azure::Response<Models::ShareDirectoryProperties> GetProperties(
         const GetShareDirectoryPropertiesOptions& options = GetShareDirectoryPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

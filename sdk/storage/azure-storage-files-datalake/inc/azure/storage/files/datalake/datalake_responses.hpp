@@ -15,7 +15,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   // ServiceClient models:
 
-  using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
 
   struct FileSystemItemDetails
@@ -54,21 +53,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct GetDataLakeFileSystemAccessPolicyResult
   {
-    PublicAccessType AccessType = PublicAccessType::None;
+    std::string RequestId;
     Azure::ETag ETag;
     Azure::DateTime LastModified;
+    PublicAccessType AccessType = PublicAccessType::None;
     std::vector<DataLakeSignedIdentifier> SignedIdentifiers;
-    std::string RequestId;
-  }; // struct GetDataLakeFileSystemAccessPolicyResult
+  }; // struct DataLakeFileSystemAccessPolciy
 
   using SetDataLakeFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 
-  struct GetDataLakeFileSystemPropertiesResult
+  struct DataLakeFileSystemProperties
   {
     Azure::ETag ETag;
     DateTime LastModified;
     Storage::Metadata Metadata;
-    std::string RequestId;
   };
 
   struct CreateDataLakeFileSystemResult
@@ -144,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
   };
 
-  struct GetDataLakePathPropertiesResult
+  struct DataLakePathProperties
   {
     Azure::ETag ETag;
     DateTime LastModified;
@@ -174,7 +172,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
     Azure::Nullable<std::string> VersionId;
     Azure::Nullable<bool> IsCurrentVersion;
-    std::string RequestId;
   };
 
   struct GetDataLakePathAccessControlListResult

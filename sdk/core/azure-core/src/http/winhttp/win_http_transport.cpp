@@ -426,7 +426,7 @@ int64_t WinHttpTransport::GetContentLength(
   return contentLength;
 }
 
-std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
+std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
     std::unique_ptr<_detail::HandleManager> handleManager,
     HttpMethod requestMethod)
 {
@@ -559,7 +559,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 
   ReceiveResponse(handleManager);
 
-  return GetRawResponse(std::move(handleManager), request.GetMethod());
+  return SendRequestAndGetResponse(std::move(handleManager), request.GetMethod());
 }
 
 // Read the response from the sent request.

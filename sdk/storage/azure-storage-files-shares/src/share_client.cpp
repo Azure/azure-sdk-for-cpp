@@ -10,6 +10,7 @@
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
@@ -22,9 +23,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareName,
       const ShareClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
     auto shareUrl = std::move(parsedConnectionString.FileServiceUrl);
-    shareUrl.AppendPath(Storage::_detail::UrlEncodePath(shareName));
+    shareUrl.AppendPath(_internal::UrlEncodePath(shareName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -44,20 +45,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
+        std::make_unique<_internal::SharedKeyPolicy>(credential));
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
-      perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
-    }
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -68,16 +65,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
-      perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
-    }
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -98,8 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     else
     {
       newClient.m_shareUrl.AppendQueryParameter(
-          _detail::ShareSnapshotQueryParameter,
-          Storage::_detail::UrlEncodeQueryParameter(snapshot));
+          _detail::ShareSnapshotQueryParameter, _internal::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -191,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetSharePropertiesResult> ShareClient::GetProperties(
+  Azure::Response<Models::ShareProperties> ShareClient::GetProperties(
       const GetSharePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -246,7 +238,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetShareStatisticsResult> ShareClient::GetStatistics(
+  Azure::Response<Models::ShareStatistics> ShareClient::GetStatistics(
       const GetShareStatsOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -268,7 +260,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetSharePermissionResult> ShareClient::GetPermission(
+  Azure::Response<std::string> ShareClient::GetPermission(
       const std::string& permissionKey,
       const GetSharePermissionOptions& options,
       const Azure::Core::Context& context) const
@@ -276,8 +268,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareRestClient::Share::GetPermissionOptions();
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
-    return _detail::ShareRestClient::Share::GetPermission(
+    auto result = _detail::ShareRestClient::Share::GetPermission(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
+
+    return Azure::Response<std::string>(
+        result.ExtractValue().FilePermission, result.ExtractRawResponse());
   }
 
   Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>

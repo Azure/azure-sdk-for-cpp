@@ -50,12 +50,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQuerySnapshot, Storage::_detail::UrlEncodeQueryParameter(snapshot));
+          _internal::HttpQuerySnapshot, _internal::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -65,13 +65,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQueryVersionId,
-          Storage::_detail::UrlEncodeQueryParameter(versionId));
+          _internal::HttpQueryVersionId, _internal::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
@@ -101,7 +100,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::Create(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::CreatePageBlobResult> PageBlobClient::CreateIfNotExists(
@@ -154,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::UploadPages(
-        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
@@ -184,7 +183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::UploadPagesFromUri(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::ClearPageBlobPagesResult> PageBlobClient::ClearPages(
@@ -208,7 +207,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::ClearPages(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::ResizePageBlobResult> PageBlobClient::Resize(
@@ -232,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::Resize(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRanges(
@@ -248,7 +247,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
   Azure::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRangesDiff(
@@ -266,7 +265,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
   Azure::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetManagedDiskPageRangesDiff(
@@ -284,7 +283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
   StartCopyBlobOperation PageBlobClient::StartCopyIncremental(
@@ -301,7 +300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
     auto response = _detail::BlobRestClient::PageBlob::StartCopyIncremental(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
     StartCopyBlobOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
     res.RequestId = std::move(response->RequestId);

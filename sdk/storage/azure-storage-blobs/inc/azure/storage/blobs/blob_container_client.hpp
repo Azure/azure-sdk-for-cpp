@@ -180,9 +180,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetBlobContainerPropertiesResult describing the container and its properties.
+     * @return A BlobContainerProperties describing the container and its properties.
      */
-    Azure::Response<Models::GetBlobContainerPropertiesResult> GetProperties(
+    Azure::Response<Models::BlobContainerProperties> GetProperties(
         const GetBlobContainerPropertiesOptions& options = GetBlobContainerPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

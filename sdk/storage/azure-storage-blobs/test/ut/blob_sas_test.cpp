@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerSasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
 
     auto keyCredential
-        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto blobServiceClient0
         = Blobs::BlobServiceClient::CreateFromConnectionString(StandardStorageConnectionString());
@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = blobServiceClient1.GetUserDelegationKey(sasExpiresOn)->Key;
+    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
 
     auto verify_blob_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(blobClient0.Create());

@@ -141,7 +141,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks)
   {
     auto keyCredential
-        = Azure::Storage::_detail::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+        = Azure::Storage::_internal::ParseConnectionString(AdlsGen2ConnectionString())
+              .KeyCredential;
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     accountSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
