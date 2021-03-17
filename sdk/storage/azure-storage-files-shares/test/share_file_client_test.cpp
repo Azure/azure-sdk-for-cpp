@@ -757,8 +757,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshot2 = m_shareClient->CreateSnapshot()->Snapshot;
     Files::Shares::Models::GetShareFileRangeListResult result;
     Files::Shares::GetShareFileRangeListOptions options;
-    options.PreviousShareSnapshot = snapshot1;
-    EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
+    EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot1, options).ExtractValue());
     EXPECT_EQ(2U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Offset);
     EXPECT_TRUE(result.Ranges[0].Length.HasValue());
@@ -768,8 +767,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(512, result.Ranges[1].Length.GetValue());
     EXPECT_NO_THROW(fileClient.ClearRange(3096, 2048));
     auto snapshot3 = m_shareClient->CreateSnapshot()->Snapshot;
-    options.PreviousShareSnapshot = snapshot1;
-    EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
+    EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot1, options).ExtractValue());
     EXPECT_EQ(4U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Offset);
     EXPECT_TRUE(result.Ranges[0].Length.HasValue());

@@ -563,7 +563,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
-    protocolLayerOptions.PrevShareSnapshot = options.PreviousShareSnapshot;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    return _detail::ShareRestClient::File::GetRangeList(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+  }
+
+  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeListDiff(
+      std::string previousShareSnapshot,
+      const GetShareFileRangeListOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
+    if (options.Range.HasValue())
+    {
+      if (options.Range.GetValue().Length.HasValue())
+      {
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-")
+            + std::to_string(options.Range.GetValue().Offset
+                             + options.Range.GetValue().Length.GetValue() - 1);
+      }
+      else
+      {
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+      }
+    }
+
+    protocolLayerOptions.PrevShareSnapshot = std::move(previousShareSnapshot);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return _detail::ShareRestClient::File::GetRangeList(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
