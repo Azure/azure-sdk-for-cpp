@@ -239,9 +239,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A BlobContainerAccessPolicy describing the container's access policy.
+     * @return A GetBlobContainerAccessPolicyResult describing the container's access policy.
      */
-    Azure::Response<Models::BlobContainerAccessPolicy> GetAccessPolicy(
+    Azure::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
         const GetBlobContainerAccessPolicyOptions& options = GetBlobContainerAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

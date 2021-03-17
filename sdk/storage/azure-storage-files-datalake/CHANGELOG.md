@@ -14,7 +14,6 @@
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `DataLakeClientOptions`.
 - Changed return type of `DataLakeServiceClient::GetUserDelegationKey` to `UserDelegationKey`.
 - Changed return type of `DataLakeFileSystemClient::GetProperties` to `DataLakeFileSystemProperties`.
-- Changed return type of `DataLakeFileSystemClient::GetAccessPolicy` to `DataLakeFileSystemAccessPolicy`.
 - Changed return type of `DataLakePathClient::GetProperties` to `DataLakePathProperties`.
 - Removed `GetUserDelegationKeyResult`.
 

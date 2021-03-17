@@ -17,7 +17,6 @@
 - Changed return type of `BlobServiceClient::GetAccountInfo` to `AccountInfo`.
 - Changed return type of `BlobServiceClient::GetStatistics` to `ServiceStatistics`.
 - Changed return type of `BlobContainerClient::GetProperties` to `BlobContainerProperties`.
-- Changed return type of `BlobContainerClient::GetAccessPolicy` to `BlobContainerAccessPolicy`.
 - Changed return type of `BlobClient::GetProperties` to `BlobProperties`.
 
 ### Other Changes and Improvements
