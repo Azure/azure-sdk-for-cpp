@@ -42,9 +42,18 @@ Merging Pull Requests (for project contributors with write access)
   - Contributor is using an e-mail address other than the primary GitHub address and wants that preserved in the history. Contributor must be willing to squash
     the commits manually before acceptance.
 
+## Codespaces
+
+Codespaces is new technology that allows you to use a container as your development environment. This repo provides a Codespaces container which is supported by VS Code Codespaces.
+
+### VS Code Codespaces
+
+1. Install the [VS Code Remote Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+1. When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select "Remote-Containers: Open Folder in Container..."
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](#building-and-Testing)
 
 
-## Developer Guide
+## Full Local Setup
 
 ### Pre-requisites
 
