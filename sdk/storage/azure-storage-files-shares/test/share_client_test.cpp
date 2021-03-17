@@ -229,7 +229,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(ret->FilePermissionKey.empty());
 
     auto ret2 = m_shareClient->GetPermission(ret->FilePermissionKey);
-    EXPECT_EQ(expectedPermission, ret2->FilePermission);
+    EXPECT_EQ(expectedPermission, *ret2);
   }
 
   // TEST_F(FileShareClientTest, Lease)
@@ -355,15 +355,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(directoryClient.Create());
       auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
-          directoryUrl,
-          m_shareClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(directoryName));
+          directoryUrl, m_shareClient->GetUrl() + "/" + _internal::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
       auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create(1024));
       auto fileUrl = fileClient.GetUrl();
-      EXPECT_EQ(fileUrl, m_shareClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(fileName));
+      EXPECT_EQ(fileUrl, m_shareClient->GetUrl() + "/" + _internal::UrlEncodePath(fileName));
     }
   }
 
@@ -372,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Create/Get properties works
     std::unordered_map<std::string, Files::Shares::ShareClient> shareClients;
     std::string prefix = LowercaseRandomString(5);
-    Files::Shares::Models::GetSharePropertiesResult properties;
+    Files::Shares::Models::ShareProperties properties;
     {
       auto shareName = prefix + LowercaseRandomString(5);
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
@@ -385,7 +384,7 @@ namespace Azure { namespace Storage { namespace Test {
           Files::Shares::Models::ShareAccessTier::TransactionOptimized,
           properties.AccessTier.GetValue());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
-      EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.GetValue());
+      EXPECT_TRUE(IsValidTime(properties.AccessTierChangedOn.GetValue()));
       shareClients.emplace(std::move(shareName), std::move(shareClient));
     }
     {
@@ -475,7 +474,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         PremiumFileConnectionString(), shareName);
     EXPECT_NO_THROW(shareClient.Create());
-    Files::Shares::Models::GetSharePropertiesResult properties;
+    Files::Shares::Models::ShareProperties properties;
     EXPECT_NO_THROW(properties = *shareClient.GetProperties());
     EXPECT_EQ(Files::Shares::Models::ShareAccessTier::Premium, properties.AccessTier.GetValue());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());

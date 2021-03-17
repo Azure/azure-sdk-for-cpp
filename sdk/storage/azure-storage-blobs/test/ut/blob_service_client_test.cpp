@@ -114,9 +114,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
       EXPECT_FALSE(res->RequestId.empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
       options.ContinuationToken = res->ContinuationToken;
@@ -136,9 +136,9 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
       options.ContinuationToken = res->ContinuationToken;
@@ -169,7 +169,6 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, GetProperties)
   {
     auto ret = m_blobServiceClient.GetProperties();
-    EXPECT_FALSE(ret->RequestId.empty());
     auto properties = *ret;
     auto logging = properties.Logging;
     EXPECT_FALSE(logging.Version.empty());
@@ -322,7 +321,6 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
     auto accountInfo = *m_blobServiceClient.GetAccountInfo();
-    EXPECT_FALSE(accountInfo.RequestId.empty());
     EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
     EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
     EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
@@ -338,11 +336,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageException);
 
     auto keyCredential
-        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto secondaryServiceClient
         = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
-    EXPECT_FALSE(serviceStatistics.RequestId.empty());
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
@@ -432,11 +429,8 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
 
-    auto getUserDelegationKeyResult = blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
+    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
 
-    EXPECT_FALSE(getUserDelegationKeyResult->RequestId.empty());
-
-    auto userDelegationKey = getUserDelegationKeyResult->Key;
     EXPECT_FALSE(userDelegationKey.SignedObjectId.empty());
     EXPECT_FALSE(userDelegationKey.SignedTenantId.empty());
     EXPECT_TRUE(IsValidTime(userDelegationKey.SignedStartsOn));

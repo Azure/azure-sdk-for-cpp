@@ -15,6 +15,7 @@
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/version.hpp"
@@ -27,10 +28,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& fileName,
       const ShareClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
     auto fileUrl = std::move(parsedConnectionString.FileServiceUrl);
-    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(shareName));
-    fileUrl.AppendPath(Storage::_detail::UrlEncodePath(fileName));
+    fileUrl.AppendPath(_internal::UrlEncodePath(shareName));
+    fileUrl.AppendPath(_internal::UrlEncodePath(fileName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -51,20 +52,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<Storage::_detail::SharedKeyPolicy>(credential));
+        std::make_unique<_internal::SharedKeyPolicy>(credential));
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = newOptions.ApiVersion;
-      perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
-    }
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -77,16 +74,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<Storage::_detail::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[Storage::_detail::HttpHeaderXMsVersion] = options.ApiVersion;
-      perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
-    }
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        Storage::_detail::FileServicePackageName,
+        _internal::FileServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -102,8 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     else
     {
       newClient.m_shareFileUrl.AppendQueryParameter(
-          _detail::ShareSnapshotQueryParameter,
-          Storage::_detail::UrlEncodeQueryParameter(shareSnapshot));
+          _detail::ShareSnapshotQueryParameter, _internal::UrlEncodeQueryParameter(shareSnapshot));
     }
     return newClient;
   }
@@ -297,7 +289,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = Storage::_detail::ReliableStreamRetryCount;
+      reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
@@ -408,7 +400,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetShareFilePropertiesResult> ShareFileClient::GetProperties(
+  Azure::Response<Models::ShareFileProperties> ShareFileClient::GetProperties(
       const GetShareFilePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -571,7 +563,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
-    protocolLayerOptions.PrevShareSnapshot = options.PreviousShareSnapshot;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    return _detail::ShareRestClient::File::GetRangeList(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+  }
+
+  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeListDiff(
+      std::string previousShareSnapshot,
+      const GetShareFileRangeListOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
+    if (options.Range.HasValue())
+    {
+      if (options.Range.GetValue().Length.HasValue())
+      {
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-")
+            + std::to_string(options.Range.GetValue().Offset
+                             + options.Range.GetValue().Length.GetValue() - 1);
+      }
+      else
+      {
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+      }
+    }
+
+    protocolLayerOptions.PrevShareSnapshot = std::move(previousShareSnapshot);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return _detail::ShareRestClient::File::GetRangeList(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
@@ -714,7 +733,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
 
-    Storage::_detail::ConcurrentTransfer(
+    _internal::ConcurrentTransfer(
         remainingOffset,
         remainingSize,
         options.TransferOptions.ChunkSize,
@@ -747,7 +766,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       firstChunkOptions.Range.GetValue().Length = firstChunkLength;
     }
 
-    Storage::_detail::FileWriter fileWriter(fileName);
+    _internal::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions, context);
 
@@ -770,7 +789,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     firstChunkLength = std::min(firstChunkLength, fileRangeSize);
 
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
-                               Storage::_detail::FileWriter& fileWriter,
+                               _internal::FileWriter& fileWriter,
                                int64_t offset,
                                int64_t length,
                                const Azure::Core::Context& context) {
@@ -827,7 +846,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
 
-    Storage::_detail::ConcurrentTransfer(
+    _internal::ConcurrentTransfer(
         remainingOffset,
         remainingSize,
         options.TransferOptions.ChunkSize,
@@ -931,7 +950,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (bufferSize > 0)
     {
-      Storage::_detail::ConcurrentTransfer(
+      _internal::ConcurrentTransfer(
           0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
     }
 
@@ -946,7 +965,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const UploadShareFileFromOptions& options,
       const Azure::Core::Context& context) const
   {
-    Storage::_detail::FileReader fileReader(fileName);
+    _internal::FileReader fileReader(fileName);
 
     _detail::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();
@@ -1037,7 +1056,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (fileSize > 0)
     {
-      Storage::_detail::ConcurrentTransfer(
+      _internal::ConcurrentTransfer(
           0, fileSize, chunkSize, options.TransferOptions.Concurrency, uploadPageFunc);
     }
 

@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     filesystemSasBuilder.Path.clear();
     filesystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
 
-    auto keyCredential = _detail::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
     auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
         AdlsGen2ConnectionString());
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = serviceClient1.GetUserDelegationKey(sasExpiresOn)->Key;
+    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(sasExpiresOn);
 
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());

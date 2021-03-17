@@ -5,7 +5,7 @@
 
 #include "azure/storage/common/crypt.hpp"
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
   ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm)
   {
     ContentHash hash;
@@ -18,4 +18,4 @@ namespace Azure { namespace Storage { namespace _detail {
   {
     return Azure::Core::Convert::Base64Encode(hash.Value);
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

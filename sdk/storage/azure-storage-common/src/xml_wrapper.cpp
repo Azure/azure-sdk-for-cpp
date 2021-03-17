@@ -9,7 +9,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   struct XmlGlobalInitializer
   {
@@ -185,4 +185,4 @@ namespace Azure { namespace Storage { namespace _detail {
     return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
   }
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

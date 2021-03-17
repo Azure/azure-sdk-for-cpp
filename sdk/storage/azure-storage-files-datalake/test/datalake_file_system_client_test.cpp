@@ -316,8 +316,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileSystemClient->GetFileClient(pathName);
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
-      EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(pathName));
+      EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(pathName));
     }
     {
       std::string directoryName = baseName + RandomString();
@@ -326,15 +325,14 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(directoryName));
+          m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
       auto fileClient = m_fileSystemClient->GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
-      EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(fileName));
+      EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(fileName));
     }
   }
 
@@ -392,8 +390,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(ret->LastModified));
 
       auto ret2 = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(ret2->ETag, ret->ETag);
-      EXPECT_EQ(ret2->LastModified, ret->LastModified);
+      EXPECT_FALSE(ret2->RequestId.empty());
+      EXPECT_TRUE(ret2->ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(ret2->LastModified));
       EXPECT_EQ(ret2->AccessType, options.AccessType);
       for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
       {
