@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Response<Models::BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(
+  Azure::Response<Models::GetBlobContainerAccessPolicyResult> BlobContainerClient::GetAccessPolicy(
       const GetBlobContainerAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {

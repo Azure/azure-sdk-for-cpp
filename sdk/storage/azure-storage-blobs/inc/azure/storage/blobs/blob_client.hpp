@@ -337,9 +337,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return GetBlobTagsResult on successfully getting tags.
+     * @return BlobTags on successfully getting tags.
      */
-    Azure::Response<Models::GetBlobTagsResult> GetTags(
+    Azure::Response<std::map<std::string, std::string>> GetTags(
         const GetBlobTagsOptions& options = GetBlobTagsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

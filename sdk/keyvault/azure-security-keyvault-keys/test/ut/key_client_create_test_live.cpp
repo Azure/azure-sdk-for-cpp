@@ -132,6 +132,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.ExtractValue();
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_EQ(ecKey.CurveName->ToString(), keyVaultKey.Key.CurveName->ToString());
   }
   {
     // Now get the key
