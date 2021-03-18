@@ -15,6 +15,7 @@
 #include <azure/storage/common/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/version.hpp"
@@ -56,12 +57,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = newOptions.ApiVersion;
-      perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
-    }
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::FileServicePackageName,
@@ -78,12 +75,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Http::Policies::_internal::ValueOptions valueOptions;
-      valueOptions.HeaderValues[_internal::HttpHeaderXMsVersion] = options.ApiVersion;
-      perOperationPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(valueOptions));
-    }
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::FileServicePackageName,
@@ -570,7 +563,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
-    protocolLayerOptions.PrevShareSnapshot = options.PreviousShareSnapshot;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    return _detail::ShareRestClient::File::GetRangeList(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+  }
+
+  Azure::Response<Models::GetShareFileRangeListResult> ShareFileClient::GetRangeListDiff(
+      std::string previousShareSnapshot,
+      const GetShareFileRangeListOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
+    if (options.Range.HasValue())
+    {
+      if (options.Range.GetValue().Length.HasValue())
+      {
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-")
+            + std::to_string(options.Range.GetValue().Offset
+                             + options.Range.GetValue().Length.GetValue() - 1);
+      }
+      else
+      {
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+      }
+    }
+
+    protocolLayerOptions.PrevShareSnapshot = std::move(previousShareSnapshot);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return _detail::ShareRestClient::File::GetRangeList(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);

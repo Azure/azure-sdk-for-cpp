@@ -747,12 +747,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobRetentionPolicy RetentionPolicy;
     }; // struct BlobAnalyticsLogging
 
-    struct BlobContainerAccessPolicy
-    {
-      PublicAccessType AccessType = PublicAccessType::None;
-      std::vector<BlobSignedIdentifier> SignedIdentifiers;
-    }; // struct BlobContainerAccessPolicy
-
     struct BlobContainerItemDetails
     {
       Azure::ETag ETag;
@@ -806,6 +800,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<std::string> ContinuationToken;
       std::vector<FilterBlobItem> Items;
     }; // struct FindBlobsByTagsSinglePageResult
+
+    struct GetBlobContainerAccessPolicyResult
+    {
+      std::string RequestId;
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      PublicAccessType AccessType = PublicAccessType::None;
+      std::vector<BlobSignedIdentifier> SignedIdentifiers;
+    }; // struct GetBlobContainerAccessPolicyResult
 
     struct GetBlockListResult
     {
@@ -3418,7 +3421,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<std::string> LeaseId;
         }; // struct GetBlobContainerAccessPolicyOptions
 
-        static Azure::Response<BlobContainerAccessPolicy> GetAccessPolicy(
+        static Azure::Response<GetBlobContainerAccessPolicyResult> GetAccessPolicy(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetBlobContainerAccessPolicyOptions& options,
@@ -3436,7 +3439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter("comp", "acl");
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          BlobContainerAccessPolicy response;
+          GetBlobContainerAccessPolicyResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3448,15 +3451,19 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = BlobContainerAccessPolicyFromXml(reader);
+            response = GetBlobContainerAccessPolicyResultFromXml(reader);
           }
+          response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+          response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
+          response.LastModified = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
           auto x_ms_blob_public_access__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-public-access");
           if (x_ms_blob_public_access__iterator != httpResponse.GetHeaders().end())
           {
             response.AccessType = PublicAccessType(x_ms_blob_public_access__iterator->second);
           }
-          return Azure::Response<BlobContainerAccessPolicy>(
+          return Azure::Response<GetBlobContainerAccessPolicyResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -3842,10 +3849,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
       private:
-        static BlobContainerAccessPolicy BlobContainerAccessPolicyFromXml(
+        static GetBlobContainerAccessPolicyResult GetBlobContainerAccessPolicyResultFromXml(
             _internal::XmlReader& reader)
         {
-          BlobContainerAccessPolicy ret;
+          GetBlobContainerAccessPolicyResult ret;
           enum class XmlTagName
           {
             k_SignedIdentifiers,

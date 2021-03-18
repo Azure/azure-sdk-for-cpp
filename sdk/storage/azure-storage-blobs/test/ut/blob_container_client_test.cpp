@@ -404,6 +404,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(ret->LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
+    EXPECT_FALSE(ret2->RequestId.empty());
+    EXPECT_TRUE(ret2->ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(ret2->LastModified));
     EXPECT_EQ(ret2->AccessType, options.AccessType);
     EXPECT_EQ(ret2->SignedIdentifiers, options.SignedIdentifiers);
 
@@ -743,10 +746,10 @@ namespace Azure { namespace Storage { namespace Test {
     tags[c2] = v2;
     tags[c3] = v3;
 
-    auto downloadedTags = blobClient.GetTags()->Tags;
+    auto downloadedTags = *blobClient.GetTags();
     EXPECT_TRUE(downloadedTags.empty());
     blobClient.SetTags(tags);
-    downloadedTags = blobClient.GetTags()->Tags;
+    downloadedTags = *blobClient.GetTags();
     EXPECT_EQ(downloadedTags, tags);
 
     properties = *blobClient.GetProperties();
