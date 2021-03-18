@@ -32,7 +32,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct AcquireLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       std::string LeaseId;
@@ -40,14 +39,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct BreakLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
     };
 
     struct ChangeLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       std::string LeaseId;
@@ -55,14 +52,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct ReleaseLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
     };
 
     struct RenewLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       std::string LeaseId;
@@ -72,7 +67,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   class StartCopyBlobOperation : public Azure::Core::Operation<Models::BlobProperties> {
   public:
-    std::string RequestId;
     Azure::ETag ETag;
     Azure::DateTime LastModified;
     std::string CopyId;

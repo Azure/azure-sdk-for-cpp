@@ -337,7 +337,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::SetFileSystemAccessPolicyResult>(
         std::move(ret), result.ExtractRawResponse());
   }

@@ -113,7 +113,6 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res->RequestId.empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
@@ -315,7 +314,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadedProperties.DeleteRetentionPolicy, properties.DeleteRetentionPolicy);
 
     auto res = m_blobServiceClient.SetProperties(originalProperties);
-    EXPECT_FALSE(res->RequestId.empty());
   }
 
   TEST_F(BlobServiceClientTest, AccountInfo)
