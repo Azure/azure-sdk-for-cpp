@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the empty directory. Throws exception if directory is not empty.
      * @param options Optional parameters to delete the directory the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * empty.
      * @param options Optional parameters to delete the directory the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the directory and all its subdirectories and files.
      * @param options Optional parameters to delete the directory the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the directory and all its subdirectories and files if the directory exists.
      * @param options Optional parameters to delete the directory the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DeleteShareDirectoryResult> containing the information
+     * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
