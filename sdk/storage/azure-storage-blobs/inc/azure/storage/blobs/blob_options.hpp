@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Stored access policies that you can use to provide fine grained control over
      * container permissions.
      */
-    std::vector<Models::BlobSignedIdentifier> SignedIdentifiers;
+    std::vector<Models::SignedIdentifier> SignedIdentifiers;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -589,7 +589,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Acquire.
    */
-  struct AcquireBlobLeaseOptions
+  struct AcquireLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -600,7 +600,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Renew.
    */
-  struct RenewBlobLeaseOptions
+  struct RenewLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -611,7 +611,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Change.
    */
-  struct ChangeBlobLeaseOptions
+  struct ChangeLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -622,7 +622,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Release.
    */
-  struct ReleaseBlobLeaseOptions
+  struct ReleaseLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -633,7 +633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Break.
    */
-  struct BreakBlobLeaseOptions
+  struct BreakLeaseOptions
   {
     /**
      * @brief Proposed duration the lease should continue before it is broken, in seconds,

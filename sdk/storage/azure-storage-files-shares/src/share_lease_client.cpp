@@ -14,9 +14,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return Azure::Core::Uuid::CreateUuid().ToString();
   }
 
-  Azure::Response<Models::AcquireShareLeaseResult> ShareLeaseClient::Acquire(
+  Azure::Response<Models::AcquireLeaseResult> ShareLeaseClient::Acquire(
       std::chrono::seconds duration,
-      const AcquireShareLeaseOptions& options,
+      const AcquireLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -32,12 +32,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::AcquireShareLeaseResult ret;
+      Models::AcquireLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::AcquireShareLeaseResult>(
+      return Azure::Response<Models::AcquireLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_shareClient.HasValue())
@@ -52,12 +52,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::AcquireShareLeaseResult ret;
+      Models::AcquireLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::AcquireShareLeaseResult>(
+      return Azure::Response<Models::AcquireLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -66,8 +66,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  Azure::Response<Models::RenewShareLeaseResult> ShareLeaseClient::Renew(
-      const RenewShareLeaseOptions& options,
+  Azure::Response<Models::RenewLeaseResult> ShareLeaseClient::Renew(
+      const RenewLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -87,12 +87,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::RenewShareLeaseResult ret;
+      Models::RenewLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::RenewShareLeaseResult>(
+      return Azure::Response<Models::RenewLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -101,8 +101,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  Azure::Response<Models::ReleaseShareLeaseResult> ShareLeaseClient::Release(
-      const ReleaseShareLeaseOptions& options,
+  Azure::Response<Models::ReleaseLeaseResult> ShareLeaseClient::Release(
+      const ReleaseLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -117,11 +117,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::ReleaseShareLeaseResult ret;
+      Models::ReleaseLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::ReleaseShareLeaseResult>(
+      return Azure::Response<Models::ReleaseLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_shareClient.HasValue())
@@ -135,11 +135,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::ReleaseShareLeaseResult ret;
+      Models::ReleaseLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::ReleaseShareLeaseResult>(
+      return Azure::Response<Models::ReleaseLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -148,9 +148,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  Azure::Response<Models::ChangeShareLeaseResult> ShareLeaseClient::Change(
+  Azure::Response<Models::ChangeLeaseResult> ShareLeaseClient::Change(
       const std::string& proposedLeaseId,
-      const ChangeShareLeaseOptions& options,
+      const ChangeLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -166,12 +166,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::ChangeShareLeaseResult ret;
+      Models::ChangeLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::ChangeShareLeaseResult>(
+      return Azure::Response<Models::ChangeLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_shareClient.HasValue())
@@ -186,12 +186,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::ChangeShareLeaseResult ret;
+      Models::ChangeLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::ChangeShareLeaseResult>(
+      return Azure::Response<Models::ChangeLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -200,8 +200,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  Azure::Response<Models::BreakShareLeaseResult> ShareLeaseClient::Break(
-      const BreakShareLeaseOptions& options,
+  Azure::Response<Models::BreakLeaseResult> ShareLeaseClient::Break(
+      const BreakLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -215,11 +215,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::BreakShareLeaseResult ret;
+      Models::BreakLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::BreakShareLeaseResult>(
+      return Azure::Response<Models::BreakLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_shareClient.HasValue())
@@ -232,11 +232,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
-      Models::BreakShareLeaseResult ret;
+      Models::BreakLeaseResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::BreakShareLeaseResult>(
+      return Azure::Response<Models::BreakLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else

@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
       const std::string& fileName,
       const std::string& destinationFilePath,
-      const RenameDataLakeFileOptions& options,
+      const RenameFileOptions& options,
       const Azure::Core::Context& context) const
   {
     Azure::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
       const std::string& subdirectoryName,
       const std::string& destinationDirectoryPath,
-      const RenameDataLakeSubdirectoryOptions& options,
+      const RenameSubdirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
     Azure::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
@@ -167,23 +167,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(renamedDirectoryClient), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::Delete(
+  Azure::Response<Models::DeleteDirectoryResult> DataLakeDirectoryClient::Delete(
       bool recursive,
-      const DeleteDataLakeDirectoryOptions& options,
+      const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    DeleteDataLakePathOptions deleteOptions;
+    DeletePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Recursive = recursive;
     return DataLakePathClient::Delete(deleteOptions, context);
   }
 
-  Azure::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::DeleteIfExists(
+  Azure::Response<Models::DeleteDirectoryResult> DataLakeDirectoryClient::DeleteIfExists(
       bool recursive,
-      const DeleteDataLakeDirectoryOptions& options,
+      const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    DeleteDataLakePathOptions deleteOptions;
+    DeletePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Recursive = recursive;
     return DataLakePathClient::DeleteIfExists(deleteOptions, context);

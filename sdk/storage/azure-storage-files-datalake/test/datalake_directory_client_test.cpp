@@ -59,11 +59,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::DeleteDataLakeDirectoryOptions options1;
+        Files::DataLake::DeleteDirectoryOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
-        Files::DataLake::DeleteDataLakeDirectoryOptions options2;
+        Files::DataLake::DeleteDirectoryOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
@@ -81,10 +81,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         EXPECT_TRUE(response->IsDirectory);
-        Files::DataLake::DeleteDataLakeDirectoryOptions options1;
+        Files::DataLake::DeleteDirectoryOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
-        Files::DataLake::DeleteDataLakeDirectoryOptions options2;
+        Files::DataLake::DeleteDirectoryOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
         EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
@@ -170,11 +170,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::RenameDataLakeDirectoryOptions options1;
+        Files::DataLake::RenameDirectoryOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
-        Files::DataLake::RenameDataLakeDirectoryOptions options2;
+        Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
         EXPECT_NO_THROW(
@@ -193,10 +193,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::RenameDataLakeDirectoryOptions options1;
+        Files::DataLake::RenameDirectoryOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
         EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
-        Files::DataLake::RenameDataLakeDirectoryOptions options2;
+        Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
         EXPECT_NO_THROW(
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       {
         // Rename to a non-existing file system will fail and source is not changed.
-        Files::DataLake::RenameDataLakeDirectoryOptions options;
+        Files::DataLake::RenameDirectoryOptions options;
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
         {
@@ -229,7 +229,7 @@ namespace Azure { namespace Storage { namespace Test {
             Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
                 AdlsGen2ConnectionString(), newfileSystemName));
         newfileSystemClient->Create();
-        Files::DataLake::RenameDataLakeDirectoryOptions options;
+        Files::DataLake::RenameDirectoryOptions options;
         options.DestinationFileSystem = newfileSystemName;
         for (auto& client : directoryClient)
         {
@@ -259,8 +259,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create path with metadata works
       auto client1 = m_fileSystemClient->GetDirectoryClient(RandomString());
       auto client2 = m_fileSystemClient->GetDirectoryClient(RandomString());
-      Files::DataLake::CreateDataLakePathOptions options1;
-      Files::DataLake::CreateDataLakePathOptions options2;
+      Files::DataLake::CreatePathOptions options1;
+      Files::DataLake::CreatePathOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -311,7 +311,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        Files::DataLake::CreateDataLakePathOptions options;
+        Files::DataLake::CreatePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
         directoryClient.emplace_back(std::move(client));

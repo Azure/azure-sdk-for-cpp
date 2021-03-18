@@ -13,19 +13,21 @@
 - Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `BlobClientOptions`.
-- Changed return type of `BlobServiceClient::GetUserDelegationKey` to `UserDelegationKey`.
-- Changed return type of `BlobServiceClient::GetProperties` to `BlobServiceProperties`.
-- Changed return type of `BlobServiceClient::GetAccountInfo` to `AccountInfo`.
-- Changed return type of `BlobServiceClient::GetStatistics` to `ServiceStatistics`.
-- Changed return type of `BlobContainerClient::GetProperties` to `BlobContainerProperties`.
-- Changed return type of `BlobClient::GetProperties` to `BlobProperties`.
-- Changed return type of `BlobClinet::GetTags` to `std::map<std::string, std::string>`.
+- Changed the return types of the following APIs:
+  - `BlobServiceClient::DeleteBlobContainer` now returns `Azure::Core::Response<Models::DeleteBlobContainerResult>`.
+  - `BlobServiceClient::GetUserDelegationKey` now returns `UserDelegationKey`.
+  - `BlobServiceClient::GetProperties` now returns `BlobServiceProperties`.
+  - `BlobServiceClient::GetAccountInfo` now returns `AccountInfo`.
+  - `BlobServiceClient::GetStatistics` now returns `ServiceStatistics`.
+  - `BlobContainerClient::DeleteBlob` now returns `Azure::Core::Response<Models::DeleteBlobResult>`.
+  - `BlobContainerClient::GetProperties` now returns `BlobContainerProperties`.
+  - `BlobContainerClient::GetAccessPolicy` now returns `BlobContainerAccessPolicy`.
+  - `BlobClient::GetProperties` now returns `BlobProperties`.
+  - `BlobClinet::GetTags` now returns `std::map<std::string, std::string>`.
 - Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
-
-### Other Changes and Improvements
-
-- Changed return type of `BlobServiceClient::DeleteBlobContainer` to `Azure::Core::Response<Models::DeleteBlobContainerResult>`.
-- Changed return type of `BlobContainerClient::DeleteBlob` to `Azure::Core::Response<Models::DeleteBlobResult>`.
+- Removed `Blob` from the name of lease options and return types, like `AcquireBlobLeaseOptions` was renamed to `AcquireLeaseOptions`.
+- Removed `Blob` prefix from the name of structs `BlobGeoReplication`, `BlobLeaseStatus`, `BlobLeaseState`, `BlobLeaseDurationType`, `BlobAnalyticsLogging`, `BlobMetrics`, `BlobCorsRule`, `BlobRetentionPolicy`, `BlobStaticWebsite`, `BlobArchiveStatus` and `BlobGeoReplictionStatus`.
+- Removed `RequestId` from return types.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
