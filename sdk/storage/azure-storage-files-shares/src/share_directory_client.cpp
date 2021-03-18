@@ -336,8 +336,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::ForceCloseDirectoryHandleResult>
-  ShareDirectoryClient::ForceCloseHandle(
+  Azure::Response<Models::ForceCloseDirectoryHandleResult> ShareDirectoryClient::ForceCloseHandle(
       const std::string& handleId,
       const ForceCloseDirectoryHandleOptions& options,
       const Azure::Core::Context& context) const

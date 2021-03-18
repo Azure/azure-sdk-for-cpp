@@ -69,8 +69,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     using ShareDirectoryProperties = _detail::DirectoryGetPropertiesResult;
     using SetDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
     using SetDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
-    using ForceCloseAllDirectoryHandlesSinglePageResult
-        = _detail::DirectoryForceCloseHandlesResult;
+    using ForceCloseAllDirectoryHandlesSinglePageResult = _detail::DirectoryForceCloseHandlesResult;
 
     struct ForceCloseDirectoryHandleResult
     {

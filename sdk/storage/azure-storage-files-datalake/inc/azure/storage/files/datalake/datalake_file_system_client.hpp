@@ -151,8 +151,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::SetFileSystemMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetFileSystemMetadataOptions& options
-        = SetFileSystemMetadataOptions(),
+        const SetFileSystemMetadataOptions& options = SetFileSystemMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -164,8 +163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Response<Models::DataLakeFileSystemProperties> GetProperties(
-        const GetFileSystemPropertiesOptions& options
-        = GetFileSystemPropertiesOptions(),
+        const GetFileSystemPropertiesOptions& options = GetFileSystemPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -193,8 +191,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Response<Models::GetFileSystemAccessPolicyResult> GetAccessPolicy(
-        const GetFileSystemAccessPolicyOptions& options
-        = GetFileSystemAccessPolicyOptions(),
+        const GetFileSystemAccessPolicyOptions& options = GetFileSystemAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -207,8 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Response<Models::SetFileSystemAccessPolicyResult> SetAccessPolicy(
-        const SetFileSystemAccessPolicyOptions& options
-        = SetFileSystemAccessPolicyOptions(),
+        const SetFileSystemAccessPolicyOptions& options = SetFileSystemAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

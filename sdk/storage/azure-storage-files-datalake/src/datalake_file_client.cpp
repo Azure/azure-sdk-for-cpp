@@ -188,8 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DeleteFileResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Response<Models::DeleteFileResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Response<Models::DeleteFileResult> DataLakeFileClient::DeleteIfExists(
@@ -202,8 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DeleteFileResult ret;
     ret.Deleted = result->Deleted;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Response<Models::DeleteFileResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Response<Models::DownloadFileResult> DataLakeFileClient::Download(
@@ -255,8 +253,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
     ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Response<Models::DownloadFileResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DownloadFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(

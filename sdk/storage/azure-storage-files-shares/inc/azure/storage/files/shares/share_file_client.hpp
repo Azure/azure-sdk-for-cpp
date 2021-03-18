@@ -317,8 +317,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * information of the operation and the open handles of this file
      */
     Azure::Response<Models::ListFileHandlesSinglePageResult> ListHandlesSinglePage(
-        const ListFileHandlesSinglePageOptions& options
-        = ListFileHandlesSinglePageOptions(),
+        const ListFileHandlesSinglePageOptions& options = ListFileHandlesSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

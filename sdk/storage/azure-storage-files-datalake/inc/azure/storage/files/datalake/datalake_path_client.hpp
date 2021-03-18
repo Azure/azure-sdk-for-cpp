@@ -145,8 +145,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::SetPathAccessControlListResult> SetAccessControlList(
         std::vector<Models::Acl> acls,
-        const SetPathAccessControlListOptions& options
-        = SetPathAccessControlListOptions(),
+        const SetPathAccessControlListOptions& options = SetPathAccessControlListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -203,8 +202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Response<Models::GetPathAccessControlListResult> GetAccessControlList(
-        const GetPathAccessControlListOptions& options
-        = GetPathAccessControlListOptions(),
+        const GetPathAccessControlListOptions& options = GetPathAccessControlListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

@@ -183,8 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.LastModified = std::move(result->LastModified);
     ret.RequestId = std::move(result->RequestId);
 
-    return Azure::Response<Models::CreateFileResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::CreateFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Response<Models::DeleteFileResult> ShareFileClient::Delete(
@@ -198,8 +197,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::DeleteFileResult ret;
     ret.Deleted = true;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Response<Models::DeleteFileResult>(
-        std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Response<Models::DeleteFileResult> ShareFileClient::DeleteIfExists(
@@ -218,8 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Models::DeleteFileResult ret;
         ret.Deleted = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Response<Models::DeleteFileResult>(
-            std::move(ret), std::move(e.RawResponse));
+        return Azure::Response<Models::DeleteFileResult>(std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
@@ -596,8 +593,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::ListFileHandlesSinglePageResult>
-  ShareFileClient::ListHandlesSinglePage(
+  Azure::Response<Models::ListFileHandlesSinglePageResult> ShareFileClient::ListHandlesSinglePage(
       const ListFileHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {

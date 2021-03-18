@@ -173,8 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::CreateFileSystemResult>
-  DataLakeFileSystemClient::CreateIfNotExists(
+  Azure::Response<Models::CreateFileSystemResult> DataLakeFileSystemClient::CreateIfNotExists(
       const CreateFileSystemOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -225,8 +224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Models::DeleteFileSystemResult ret;
         ret.Deleted = false;
-        return Azure::Response<Models::DeleteFileSystemResult>(
-            ret, std::move(e.RawResponse));
+        return Azure::Response<Models::DeleteFileSystemResult>(ret, std::move(e.RawResponse));
       }
       throw;
     }
@@ -247,8 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::SetFileSystemMetadataResult>
-  DataLakeFileSystemClient::SetMetadata(
+  Azure::Response<Models::SetFileSystemMetadataResult> DataLakeFileSystemClient::SetMetadata(
       Storage::Metadata metadata,
       const SetFileSystemMetadataOptions& options,
       const Azure::Core::Context& context) const

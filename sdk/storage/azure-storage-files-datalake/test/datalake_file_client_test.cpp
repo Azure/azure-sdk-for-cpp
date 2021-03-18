@@ -419,8 +419,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto client = m_fileSystemClient->GetFileClient(RandomString());
       EXPECT_NO_THROW(client.Create());
-      EXPECT_NO_THROW(client.ScheduleDeletion(
-          Files::DataLake::ScheduleFileExpiryOriginType::NeverExpire));
+      EXPECT_NO_THROW(
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::NeverExpire));
     }
     {
       auto client = m_fileSystemClient->GetFileClient(RandomString());
@@ -439,13 +439,11 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client.Create());
       Files::DataLake::ScheduleFileDeletionOptions options;
       EXPECT_THROW(
-          client.ScheduleDeletion(
-              Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
           StorageException);
       options.TimeToExpire = std::chrono::milliseconds(1000);
       EXPECT_THROW(
-          client.ScheduleDeletion(
-              Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
           StorageException);
       options.ExpiresOn = Azure::DateTime::Parse(
           "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
