@@ -11,12 +11,13 @@
 
 - Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyShareFileOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
+- Changed the return types of the following APIs:
+  - `ShareClient::GetAccessPolicy` now returns `ShareAccessPolicy`.
+  - `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
 - Renamed `GetSharePropertiesResult` to `ShareProperties`.
 - Renamed `GetShareStatisticsResult` to `ShareStatistics`.
 - Renamed `GetShareDirectoryPropertiesResult` to `ShareDirectoryProperties`.
 - Renamed `GetShareFilePropertiesResult` to `FileServiceProperties`.
-- Changed the return type of `ShareClient::GetAccessPolicy` to `ShareAccessPolicy`.
-- `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
 - Removed `Share` from the names of return types and option types.
 
 ## 12.0.0-beta.8 (2021-02-12)
