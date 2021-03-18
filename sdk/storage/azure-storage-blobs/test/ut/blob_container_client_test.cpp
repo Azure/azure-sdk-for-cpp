@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const BlobSignedIdentifier& lhs, const BlobSignedIdentifier& rhs)
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
   {
     return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
         && lhs.Permissions == rhs.Permissions;
@@ -386,7 +386,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::SetBlobContainerAccessPolicyOptions options;
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
-    Blobs::Models::BlobSignedIdentifier identifier;
+    Blobs::Models::SignedIdentifier identifier;
     identifier.Id = RandomString(64);
     identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);

@@ -204,14 +204,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<int32_t> Days;
     }; // struct BlobRetentionPolicy
 
-    struct BlobSignedIdentifier
-    {
-      std::string Id;
-      Azure::DateTime StartsOn;
-      Azure::DateTime ExpiresOn;
-      std::string Permissions;
-    }; // struct BlobSignedIdentifier
-
     struct BlobStaticWebsite
     {
       bool IsEnabled = false;
@@ -682,6 +674,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string RequestId;
     }; // struct SetServicePropertiesResult
 
+    struct SignedIdentifier
+    {
+      std::string Id;
+      Azure::DateTime StartsOn;
+      Azure::DateTime ExpiresOn;
+      std::string Permissions;
+    }; // struct SignedIdentifier
+
     class SkuName {
     public:
       SkuName() = default;
@@ -807,7 +807,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       PublicAccessType AccessType = PublicAccessType::None;
-      std::vector<BlobSignedIdentifier> SignedIdentifiers;
+      std::vector<SignedIdentifier> SignedIdentifiers;
     }; // struct GetBlobContainerAccessPolicyResult
 
     struct GetBlockListResult
@@ -3474,7 +3474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
           Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
-          std::vector<BlobSignedIdentifier> SignedIdentifiers;
+          std::vector<SignedIdentifier> SignedIdentifiers;
         }; // struct SetBlobContainerAccessPolicyOptions
 
         static Azure::Response<SetBlobContainerAccessPolicyResult> SetAccessPolicy(
@@ -3895,7 +3895,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               if (path.size() == 2 && path[0] == XmlTagName::k_SignedIdentifiers
                   && path[1] == XmlTagName::k_SignedIdentifier)
               {
-                ret.SignedIdentifiers.emplace_back(BlobSignedIdentifierFromXml(reader));
+                ret.SignedIdentifiers.emplace_back(SignedIdentifierFromXml(reader));
                 path.pop_back();
               }
             }
@@ -4486,9 +4486,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobSignedIdentifier BlobSignedIdentifierFromXml(_internal::XmlReader& reader)
+        static SignedIdentifier SignedIdentifierFromXml(_internal::XmlReader& reader)
         {
-          BlobSignedIdentifier ret;
+          SignedIdentifier ret;
           enum class XmlTagName
           {
             k_Id,
@@ -4668,14 +4668,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifiers"});
           for (const auto& i : options.SignedIdentifiers)
           {
-            BlobSignedIdentifierToXml(writer, i);
+            SignedIdentifierToXml(writer, i);
           }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
 
-        static void BlobSignedIdentifierToXml(
+        static void SignedIdentifierToXml(
             _internal::XmlWriter& writer,
-            const BlobSignedIdentifier& options)
+            const SignedIdentifier& options)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id"});

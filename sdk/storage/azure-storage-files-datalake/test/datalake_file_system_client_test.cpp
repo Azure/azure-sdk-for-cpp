@@ -373,7 +373,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Files::DataLake::SetFileSystemAccessPolicyOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-      Files::DataLake::Models::DataLakeSignedIdentifier identifier;
+      Files::DataLake::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);

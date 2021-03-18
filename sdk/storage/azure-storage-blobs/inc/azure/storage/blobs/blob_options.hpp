@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Stored access policies that you can use to provide fine grained control over
      * container permissions.
      */
-    std::vector<Models::BlobSignedIdentifier> SignedIdentifiers;
+    std::vector<Models::SignedIdentifier> SignedIdentifiers;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

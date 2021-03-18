@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Stored access policies that you can use to provide fine grained control over
      * file system permissions.
      */
-    std::vector<Models::DataLakeSignedIdentifier> SignedIdentifiers;
+    std::vector<Models::SignedIdentifier> SignedIdentifiers;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
