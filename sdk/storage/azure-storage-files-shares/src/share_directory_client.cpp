@@ -160,7 +160,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ETag = std::move(result->ETag);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
-    ret.RequestId = std::move(result->RequestId);
     ret.SmbProperties = std::move(result->SmbProperties);
 
     return Azure::Response<Models::CreateDirectoryResult>(
@@ -182,7 +181,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::CreateDirectoryResult ret;
         ret.Created = false;
-        ret.RequestId = std::move(e.RequestId);
         return Azure::Response<Models::CreateDirectoryResult>(
             std::move(ret), std::move(e.RawResponse));
       }
@@ -219,7 +217,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::DeleteDirectoryResult ret;
         ret.Deleted = false;
-        ret.RequestId = std::move(e.RequestId);
         return Azure::Response<Models::DeleteDirectoryResult>(
             std::move(ret), std::move(e.RawResponse));
       }
@@ -347,7 +344,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::File::ForceCloseHandles(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ForceCloseDirectoryHandleResult ret;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::ForceCloseDirectoryHandleResult>(
         std::move(ret), result.ExtractRawResponse());
   }

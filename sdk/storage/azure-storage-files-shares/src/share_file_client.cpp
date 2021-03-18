@@ -181,7 +181,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.SmbProperties = std::move(result->SmbProperties);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
-    ret.RequestId = std::move(result->RequestId);
 
     return Azure::Response<Models::CreateFileResult>(std::move(ret), result.ExtractRawResponse());
   }
@@ -196,7 +195,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteFileResult ret;
     ret.Deleted = true;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
@@ -215,7 +213,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Models::DeleteFileResult ret;
         ret.Deleted = false;
-        ret.RequestId = std::move(e.RequestId);
         return Azure::Response<Models::DeleteFileResult>(std::move(ret), std::move(e.RawResponse));
       }
       throw;
@@ -376,7 +373,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     StartCopyFileOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
-    res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
     res.CopyId = std::move(response->CopyId);
@@ -534,7 +530,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ETag = std::move(response->ETag);
     ret.IsServerEncrypted = response->IsServerEncrypted;
     ret.LastModified = std::move(response->LastModified);
-    ret.RequestId = std::move(response->RequestId);
     return Azure::Response<Models::ClearFileRangeResult>(
         std::move(ret), response.ExtractRawResponse());
   }

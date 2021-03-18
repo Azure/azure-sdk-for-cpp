@@ -37,7 +37,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::AcquireLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
@@ -66,7 +65,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::AcquireLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
@@ -101,7 +99,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::RenewLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
@@ -130,7 +127,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::RenewLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
@@ -165,7 +161,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::ReleaseLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
@@ -193,7 +188,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::ReleaseLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
@@ -229,7 +223,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::ChangeLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
@@ -259,7 +252,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::ChangeLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
@@ -294,7 +286,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::BreakLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
@@ -322,7 +313,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           context);
 
       Models::BreakLeaseResult ret;
-      ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 

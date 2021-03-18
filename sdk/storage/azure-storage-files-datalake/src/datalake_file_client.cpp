@@ -187,7 +187,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakePathClient::Delete(deleteOptions, context);
     Models::DeleteFileResult ret;
     ret.Deleted = true;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
@@ -200,7 +199,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakePathClient::DeleteIfExists(deleteOptions, context);
     Models::DeleteFileResult ret;
     ret.Deleted = result->Deleted;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
@@ -252,7 +250,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(result->Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(result->Details.EncryptionScope);
     ret.Details.IsServerEncrypted = result->Details.IsServerEncrypted;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::DownloadFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
