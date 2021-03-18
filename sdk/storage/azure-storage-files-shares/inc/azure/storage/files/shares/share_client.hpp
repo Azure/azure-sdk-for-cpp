@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Deletes the file share.
      * @param options Optional parameters to delete this file share.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * @return Azure::Response<Models::DeleteShareResult> currently empty and reserved for
      * future usage.
      */
     Azure::Response<Models::DeleteShareResult> Delete(
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Deletes the file share if it exists.
      * @param options Optional parameters to delete this file share.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * @return Azure::Response<Models::DeleteShareResult> currently empty and reserved for
      * future usage.
      */
     Azure::Response<Models::DeleteShareResult> DeleteIfExists(
@@ -200,7 +200,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * including the bytes used in by the share, the version and modified time of a share.
      */
     Azure::Response<Models::ShareStatistics> GetStatistics(
-        const GetShareStatsOptions& options = GetShareStatsOptions(),
+        const GetShareStatisticsOptions& options = GetShareStatisticsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Test {
   //  EXPECT_NE(Azure::DateTime(), brokenLease.LastModified);
   //  EXPECT_EQ(brokenLease.LeaseTime, 0);
 
-  //  Files::Shares::BreakShareLeaseOptions options;
+  //  Files::Shares::BreakLeaseOptions options;
   //  options.BreakPeriod = 0;
   //  leaseClient.Break(options);
   //}
@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Test {
   //  EXPECT_NE(Azure::DateTime(), brokenLease.LastModified);
   //  EXPECT_EQ(brokenLease.LeaseTime, 0);
 
-  //  Files::Shares::BreakShareLeaseOptions options;
+  //  Files::Shares::BreakLeaseOptions options;
   //  options.BreakPeriod = 0;
   //  shareSnapshotLeaseClient.Break(options);
 

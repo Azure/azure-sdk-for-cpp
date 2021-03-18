@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(
-      Models::ShareFileServiceProperties properties,
+      Models::FileServiceProperties properties,
       const SetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::ShareFileServiceProperties> ShareServiceClient::GetProperties(
+  Azure::Response<Models::FileServiceProperties> ShareServiceClient::GetProperties(
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -115,12 +115,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareRestClient::Service::GetPropertiesOptions();
     auto result = _detail::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ShareFileServiceProperties ret;
+    Models::FileServiceProperties ret;
     ret.Cors = std::move(result->Cors);
     ret.HourMetrics = std::move(result->HourMetrics);
     ret.MinuteMetrics = std::move(result->MinuteMetrics);
     ret.Protocol = std::move(result->Protocol);
-    return Azure::Response<Models::ShareFileServiceProperties>(
+    return Azure::Response<Models::FileServiceProperties>(
         std::move(ret), result.ExtractRawResponse());
   }
 

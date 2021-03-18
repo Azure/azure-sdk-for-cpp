@@ -381,7 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // Storage service properties.
-    struct ShareFileServiceProperties
+    struct FileServiceProperties
     {
       Metrics HourMetrics; // A summary of request statistics grouped by API in hourly aggregates
                            // for files.
@@ -1099,7 +1099,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct SetPropertiesOptions
         {
-          ShareFileServiceProperties ServiceProperties;
+          FileServiceProperties ServiceProperties;
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
@@ -1340,7 +1340,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static void ShareFileServicePropertiesToXml(
             _internal::XmlWriter& writer,
-            const ShareFileServiceProperties& object)
+            const FileServiceProperties& object)
         {
           writer.Write(
               _internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
@@ -1774,10 +1774,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareFileServiceProperties ShareFileServicePropertiesFromXml(
-            _internal::XmlReader& reader)
+        static FileServiceProperties ShareFileServicePropertiesFromXml(_internal::XmlReader& reader)
         {
-          auto result = ShareFileServiceProperties();
+          auto result = FileServiceProperties();
           enum class XmlTagName
           {
             Cors,
@@ -1876,7 +1875,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static ServiceGetPropertiesResult ServiceGetPropertiesResultFromShareFileServiceProperties(
-            ShareFileServiceProperties object)
+            FileServiceProperties object)
         {
           ServiceGetPropertiesResult result;
           result.HourMetrics = std::move(object.HourMetrics);

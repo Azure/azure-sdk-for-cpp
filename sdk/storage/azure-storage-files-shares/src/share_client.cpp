@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Response<Models::ShareStatistics> ShareClient::GetStatistics(
-      const GetShareStatsOptions& options,
+      const GetShareStatisticsOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
