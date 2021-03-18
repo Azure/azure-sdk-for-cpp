@@ -16,6 +16,7 @@
 - Changed return type of `DataLakeFileSystemClient::GetProperties` to `DataLakeFileSystemProperties`.
 - Changed return type of `DataLakePathClient::GetProperties` to `DataLakePathProperties`.
 - Removed `GetUserDelegationKeyResult`.
+- Removed `DataLake` from return types and option types.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
