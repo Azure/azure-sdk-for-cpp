@@ -49,24 +49,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     return result;
   }
 
-  std::vector<Acl> Acl::DeserializeAcls(const std::string& dataLakeAclsString)
+  std::vector<Acl> Acl::DeserializeAcls(const std::string& aclsString)
   {
     std::vector<Acl> result;
 
-    std::string::const_iterator cur = dataLakeAclsString.begin();
+    std::string::const_iterator cur = aclsString.begin();
 
-    while (cur != dataLakeAclsString.end())
+    while (cur != aclsString.end())
     {
-      result.emplace_back(
-          FromString(_detail::GetSubstringTillDelimiter(',', dataLakeAclsString, cur)));
+      result.emplace_back(FromString(_detail::GetSubstringTillDelimiter(',', aclsString, cur)));
     }
 
     return result;
   }
-  std::string Acl::SerializeAcls(const std::vector<Acl>& dataLakeAclArray)
+  std::string Acl::SerializeAcls(const std::vector<Acl>& aclArray)
   {
     std::string result;
-    for (const auto& acl : dataLakeAclArray)
+    for (const auto& acl : aclArray)
     {
       result.append(ToString(acl) + ",");
     }

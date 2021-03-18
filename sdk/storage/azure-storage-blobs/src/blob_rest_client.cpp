@@ -29,24 +29,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   const AccountKind AccountKind::FileStorage("FileStorage");
   const AccountKind AccountKind::BlockBlobStorage("BlockBlobStorage");
 
-  const BlobArchiveStatus BlobArchiveStatus::RehydratePendingToHot("rehydrate-pending-to-hot");
-  const BlobArchiveStatus BlobArchiveStatus::RehydratePendingToCool("rehydrate-pending-to-cool");
-
-  const BlobGeoReplicationStatus BlobGeoReplicationStatus::Live("live");
-  const BlobGeoReplicationStatus BlobGeoReplicationStatus::Bootstrap("bootstrap");
-  const BlobGeoReplicationStatus BlobGeoReplicationStatus::Unavailable("unavailable");
-
-  const BlobLeaseDurationType BlobLeaseDurationType::Infinite("infinite");
-  const BlobLeaseDurationType BlobLeaseDurationType::Fixed("fixed");
-
-  const BlobLeaseState BlobLeaseState::Available("available");
-  const BlobLeaseState BlobLeaseState::Leased("leased");
-  const BlobLeaseState BlobLeaseState::Expired("expired");
-  const BlobLeaseState BlobLeaseState::Breaking("breaking");
-  const BlobLeaseState BlobLeaseState::Broken("broken");
-
-  const BlobLeaseStatus BlobLeaseStatus::Locked("locked");
-  const BlobLeaseStatus BlobLeaseStatus::Unlocked("unlocked");
+  const ArchiveStatus ArchiveStatus::RehydratePendingToHot("rehydrate-pending-to-hot");
+  const ArchiveStatus ArchiveStatus::RehydratePendingToCool("rehydrate-pending-to-cool");
 
   const BlobType BlobType::BlockBlob("BlockBlob");
   const BlobType BlobType::PageBlob("PageBlob");
@@ -67,6 +51,22 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   const DeleteSnapshotsOption DeleteSnapshotsOption::OnlySnapshots("only");
 
   const EncryptionAlgorithmType EncryptionAlgorithmType::Aes256("AES256");
+
+  const GeoReplicationStatus GeoReplicationStatus::Live("live");
+  const GeoReplicationStatus GeoReplicationStatus::Bootstrap("bootstrap");
+  const GeoReplicationStatus GeoReplicationStatus::Unavailable("unavailable");
+
+  const LeaseDurationType LeaseDurationType::Infinite("infinite");
+  const LeaseDurationType LeaseDurationType::Fixed("fixed");
+
+  const LeaseState LeaseState::Available("available");
+  const LeaseState LeaseState::Leased("leased");
+  const LeaseState LeaseState::Expired("expired");
+  const LeaseState LeaseState::Breaking("breaking");
+  const LeaseState LeaseState::Broken("broken");
+
+  const LeaseStatus LeaseStatus::Locked("locked");
+  const LeaseStatus LeaseStatus::Unlocked("unlocked");
 
   const ObjectReplicationStatus ObjectReplicationStatus::Complete("complete");
   const ObjectReplicationStatus ObjectReplicationStatus::Failed("failed");

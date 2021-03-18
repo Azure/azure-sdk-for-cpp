@@ -45,7 +45,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContentInfo = appendBlobClient.Create(m_blobUploadOptions);
-    EXPECT_FALSE(blobContentInfo->RequestId.empty());
     EXPECT_TRUE(blobContentInfo->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
@@ -61,7 +60,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     auto appendResponse = appendBlobClient.AppendBlock(&blockContent);
-    EXPECT_FALSE(appendResponse->RequestId.empty());
     properties = *appendBlobClient.GetProperties();
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
     EXPECT_EQ(properties.BlobSize, static_cast<int64_t>(m_blobContent.size()));
@@ -92,7 +90,6 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto deleteResponse = appendBlobClient.Delete();
     EXPECT_TRUE(deleteResponse->Deleted);
-    EXPECT_FALSE(deleteResponse->RequestId.empty());
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
@@ -302,7 +299,6 @@ namespace Azure { namespace Storage { namespace Test {
 
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size();
     auto sealResult = blobClient.Seal(sealOptions);
-    EXPECT_FALSE(sealResult->RequestId.empty());
     EXPECT_TRUE(sealResult->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(sealResult->LastModified));
     EXPECT_TRUE(sealResult->IsSealed);
@@ -356,7 +352,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(), StorageException);
     {
       auto response = blobClient.CreateIfNotExists();
-      EXPECT_FALSE(response->RequestId.empty());
       EXPECT_TRUE(response->Created);
     }
     auto blobContent
@@ -364,7 +359,6 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.AppendBlock(&blobContent);
     {
       auto response = blobClient.CreateIfNotExists();
-      EXPECT_FALSE(response->RequestId.empty());
       EXPECT_FALSE(response->Created);
     }
     auto downloadStream = std::move(blobClient.Download()->BodyStream);

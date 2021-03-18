@@ -161,7 +161,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "ContainerAlreadyExists")
       {
         Models::CreateBlobContainerResult ret;
-        ret.RequestId = e.RequestId;
         ret.Created = false;
         return Azure::Response<Models::CreateBlobContainerResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -196,7 +195,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "ContainerNotFound")
       {
         Models::DeleteBlobContainerResult ret;
-        ret.RequestId = e.RequestId;
         ret.Deleted = false;
         return Azure::Response<Models::DeleteBlobContainerResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -291,7 +289,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Response<Models::GetBlobContainerAccessPolicyResult> BlobContainerClient::GetAccessPolicy(
+  Azure::Response<Models::BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(
       const GetBlobContainerAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
