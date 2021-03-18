@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, get)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getLoop)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
@@ -77,7 +77,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, head)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host);
@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, put)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1K
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, deleteRequest)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/delete");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, patch)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/patch");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -158,7 +158,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, putErrorResponse)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     // Try to make a PUT to a GET url. This will return an error code from server.
     // This test makes sure that the connection is not re-used (because it gets closed by server)
@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getWithStream)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
@@ -198,7 +198,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getLoopWithStream)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
 
@@ -214,7 +214,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, headWithStream)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host, true);
@@ -229,7 +229,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, putWithStream)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -245,7 +245,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, deleteRequestWithStream)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/delete");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -261,7 +261,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, patchWithStream)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/patch");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -295,7 +295,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, createResponseT)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     std::string expectedType("This is the Response Type");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
@@ -321,7 +321,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, customSizePut)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1MB
     auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
@@ -341,7 +341,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, putWithStreamOnFail)
   {
     // point to bad address pah to generate server MethodNotAllowed error
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -358,7 +358,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, cancelTransferUpload)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     Azure::Core::Context cancelThis;
 
     auto threadRoutine = [&]() {
@@ -435,7 +435,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, SizePutFromFile)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -462,7 +462,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, SizePutFromFileDefault)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -488,7 +488,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
   {
-    Azure::Core::Url host("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #if defined(AZ_PLATFORM_POSIX)

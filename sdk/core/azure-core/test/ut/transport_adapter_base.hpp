@@ -19,6 +19,25 @@
 
 namespace Azure { namespace Core { namespace Test {
 
+  namespace _detail {
+    constexpr static const char AzureSdkHttpbinServer[]
+        = "https://azure-sdk-for-cpp-httpbin.azurewebsites.net";
+  } // namespace _detail
+
+  struct AzureSdkHttpbinServer
+  {
+    inline static std::string Get() { return std::string(_detail::AzureSdkHttpbinServer) + "/get"; }
+    inline static std::string Put() { return std::string(_detail::AzureSdkHttpbinServer) + "/put"; }
+    inline static std::string Delete()
+    {
+      return std::string(_detail::AzureSdkHttpbinServer) + "/delete";
+    }
+    inline static std::string Patch()
+    {
+      return std::string(_detail::AzureSdkHttpbinServer) + "/patch";
+    }
+  };
+
   struct TransportAdaptersTestParameter
   {
     std::string Suffix;
