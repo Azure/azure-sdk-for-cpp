@@ -25,13 +25,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Created = true;
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct DeleteShareResult
     {
       bool Deleted = true;
-      std::string RequestId;
     };
     using CreateShareSnapshotResult = _detail::ShareCreateSnapshotResult;
     using ShareProperties = _detail::ShareGetPropertiesResult;
@@ -53,7 +51,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       std::string ParentFileId;
@@ -63,7 +60,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DeleteDirectoryResult
     {
       bool Deleted = true;
-      std::string RequestId;
     };
 
     using DirectoryProperties = _detail::DirectoryGetPropertiesResult;
@@ -73,7 +69,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ForceCloseDirectoryHandleResult
     {
-      std::string RequestId;
     };
 
     struct ListFilesAndDirectoriesSinglePageResult
@@ -87,14 +82,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<std::string> ContinuationToken;
       std::vector<DirectoryItem> DirectoryItems;
       std::vector<FileItem> FileItems;
-      std::string RequestId;
     };
 
     struct ListDirectoryHandlesSinglePageResult
     {
       std::vector<HandleItem> Handles;
       Nullable<std::string> ContinuationToken;
-      std::string RequestId;
     };
 
     // FileClient models:
@@ -105,13 +98,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      std::string RequestId;
     };
 
     struct DeleteFileResult
     {
       bool Deleted = true;
-      std::string RequestId;
     };
 
     struct DownloadFileDetails
@@ -140,7 +131,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<Storage::ContentHash> TransactionalContentHash;
       FileHttpHeaders HttpHeaders;
       DownloadFileDetails Details;
-      std::string RequestId;
     };
 
     using StartCopyShareFileResult = _detail::FileStartCopyResult;
@@ -154,7 +144,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
     };
     using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
@@ -172,7 +161,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ForceCloseFileHandleResult
     {
-      std::string RequestId;
     };
 
     struct UploadFileFromResult
@@ -184,7 +172,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class StartCopyFileOperation : public Azure::Core::Operation<Models::FileProperties> {
   public:
-    std::string RequestId;
     Azure::ETag ETag;
     Azure::DateTime LastModified;
     std::string CopyId;

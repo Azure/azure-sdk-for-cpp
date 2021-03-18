@@ -657,7 +657,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ServiceSetPropertiesResult
     {
-      std::string RequestId;
     };
 
     struct ServiceGetPropertiesResult
@@ -675,14 +674,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int32_t PageSizeHint = int32_t();
       std::vector<ShareItem> Items;
       Azure::Nullable<std::string> ContinuationToken;
-      std::string RequestId;
     };
 
     struct ShareCreateResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareGetPropertiesResult
@@ -705,7 +702,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ShareDeleteResult
     {
-      std::string RequestId;
     };
 
     struct ShareAcquireLeaseResult
@@ -713,14 +709,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       std::string LeaseId;
-      std::string RequestId;
     };
 
     struct ShareReleaseLeaseResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareChangeLeaseResult
@@ -728,7 +722,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       std::string LeaseId;
-      std::string RequestId;
     };
 
     struct ShareRenewLeaseResult
@@ -736,14 +729,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       std::string LeaseId;
-      std::string RequestId;
     };
 
     struct ShareBreakLeaseResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareCreateSnapshotResult
@@ -751,33 +742,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string Snapshot;
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareCreatePermissionResult
     {
-      std::string RequestId;
       std::string FilePermissionKey;
     };
 
     struct ShareGetPermissionResult
     {
       std::string FilePermission;
-      std::string RequestId;
     };
 
     struct ShareSetPropertiesResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareSetMetadataResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareGetAccessPolicyResult
@@ -789,7 +775,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareGetStatisticsResult
@@ -803,14 +788,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct DirectoryCreateResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
     };
@@ -826,13 +809,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DirectoryDeleteResult
     {
-      std::string RequestId;
     };
 
     struct DirectorySetPropertiesResult
     {
       Azure::ETag ETag;
-      std::string RequestId;
       DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
@@ -841,7 +822,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectorySetMetadataResult
     {
       Azure::ETag ETag;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
     };
 
@@ -856,7 +836,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FilesAndDirectoriesListSinglePage SinglePage;
       Azure::Nullable<std::string> ContinuationToken;
       FileHttpHeaders HttpHeaders;
-      std::string RequestId;
     };
 
     struct DirectoryListHandlesResult
@@ -864,12 +843,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::vector<HandleItem> HandleList;
       Azure::Nullable<std::string> ContinuationToken;
       FileHttpHeaders HttpHeaders;
-      std::string RequestId;
     };
 
     struct DirectoryForceCloseHandlesResult
     {
-      std::string RequestId;
       Azure::Nullable<std::string> ContinuationToken;
       int32_t NumberOfHandlesClosed = int32_t();
       int32_t NumberOfHandlesFailedToClose = int32_t();
@@ -879,7 +856,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
     };
@@ -894,7 +870,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int64_t FileSize = int64_t();
       Azure::ETag ETag;
       Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
-      std::string RequestId;
       std::string AcceptRanges;
       Azure::Nullable<DateTime> CopyCompletedOn;
       Azure::Nullable<std::string> CopyStatusDescription;
@@ -931,14 +906,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileDeleteResult
     {
-      std::string RequestId;
     };
 
     struct FileSetHttpHeadersResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
     };
@@ -946,7 +919,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileSetMetadataResult
     {
       Azure::ETag ETag;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
     };
 
@@ -955,14 +927,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       std::string LeaseId;
-      std::string RequestId;
     };
 
     struct FileReleaseLeaseResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct FileChangeLeaseResult
@@ -970,7 +940,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       std::string LeaseId;
-      std::string RequestId;
     };
 
     struct FileBreakLeaseResult
@@ -978,7 +947,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       Azure::Nullable<std::string> LeaseId;
-      std::string RequestId;
     };
 
     struct FileUploadRangeResult
@@ -986,7 +954,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       Storage::ContentHash TransactionalContentHash;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
     };
 
@@ -995,7 +962,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       Storage::ContentHash TransactionalContentHash;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
     };
 
@@ -1012,14 +978,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       std::string CopyId;
       CopyStatusType CopyStatus;
     };
 
     struct FileAbortCopyResult
     {
-      std::string RequestId;
     };
 
     struct FileListHandlesResult
@@ -1027,12 +991,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::vector<HandleItem> HandleList;
       Azure::Nullable<std::string> ContinuationToken;
       FileHttpHeaders HttpHeaders;
-      std::string RequestId;
     };
 
     struct FileForceCloseHandlesResult
     {
-      std::string RequestId;
       Azure::Nullable<std::string> ContinuationToken;
       int32_t NumberOfHandlesClosed = int32_t();
       int32_t NumberOfHandlesFailedToClose = int32_t();
@@ -1111,7 +1073,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string xml_body;
           {
             _internal::XmlWriter writer;
-            ShareFileServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
+            FileServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
@@ -1225,7 +1187,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Accepted)
             ServiceSetPropertiesResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ServiceSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1335,7 +1296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
 
-        static void ShareFileServicePropertiesToXml(
+        static void FileServicePropertiesToXml(
             _internal::XmlWriter& writer,
             const FileServiceProperties& object)
         {
@@ -1375,8 +1336,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceGetPropertiesResult result = bodyBuffer.empty()
                 ? ServiceGetPropertiesResult()
-                : ServiceGetPropertiesResultFromShareFileServiceProperties(
-                    ShareFileServicePropertiesFromXml(reader));
+                : ServiceGetPropertiesResultFromFileServiceProperties(
+                    FileServicePropertiesFromXml(reader));
             return Azure::Response<ServiceGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1771,7 +1732,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileServiceProperties ShareFileServicePropertiesFromXml(_internal::XmlReader& reader)
+        static FileServiceProperties FileServicePropertiesFromXml(_internal::XmlReader& reader)
         {
           auto result = FileServiceProperties();
           enum class XmlTagName
@@ -1871,7 +1832,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ServiceGetPropertiesResult ServiceGetPropertiesResultFromShareFileServiceProperties(
+        static ServiceGetPropertiesResult ServiceGetPropertiesResultFromFileServiceProperties(
             FileServiceProperties object)
         {
           ServiceGetPropertiesResult result;
@@ -1897,7 +1858,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 ? ServiceListSharesSinglePageResult()
                 : ServiceListSharesSinglePageResultFromListSharesResponse(
                     ListSharesResponseFromXml(reader));
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ServiceListSharesSinglePageResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3174,7 +3134,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareCreateResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -3285,7 +3244,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Accepted
             ShareDeleteResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareDeleteResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -3309,7 +3267,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareAcquireLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3333,7 +3290,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareReleaseLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3358,7 +3314,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareChangeLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3383,7 +3338,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareRenewLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3407,7 +3361,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareBreakLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3432,7 +3385,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareCreateSnapshotResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3452,7 +3404,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success, Share level permission created.
             ShareCreatePermissionResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.FilePermissionKey = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
             return Azure::Response<ShareCreatePermissionResult>(
                 std::move(result), std::move(responsePtr));
@@ -3484,7 +3435,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 ? ShareGetPermissionResult()
                 : ShareGetPermissionResultFromSharePermission(
                     SharePermissionFromJson(Azure::Core::Json::_internal::json::parse(bodyBuffer)));
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareGetPermissionResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3524,7 +3474,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3548,7 +3497,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareSetMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3794,7 +3742,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareSetAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3961,7 +3908,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareRestoreResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -4341,7 +4287,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
@@ -4424,7 +4369,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Accepted).
             DirectoryDeleteResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<DirectoryDeleteResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -4445,7 +4389,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success
             DirectorySetPropertiesResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
@@ -4485,7 +4428,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success (OK).
             DirectorySetMetadataResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             return Azure::Response<DirectorySetMetadataResult>(
@@ -4515,7 +4457,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 : DirectoryListFilesAndDirectoriesSinglePageResultFromListFilesAndDirectoriesSinglePageResponse(
                     ListFilesAndDirectoriesSinglePageResponseFromXml(reader));
             result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<DirectoryListFilesAndDirectoriesSinglePageResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -4903,7 +4844,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 : DirectoryListHandlesResultFromListHandlesResponse(
                     ListHandlesResponseFromXml(reader));
             result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<DirectoryListHandlesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -5120,7 +5060,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             DirectoryForceCloseHandlesResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -6013,7 +5952,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
@@ -6123,7 +6061,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.HttpHeaders.ContentLanguage
                   = response.GetHeaders().at(_detail::HeaderContentLanguage);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.AcceptRanges = response.GetHeaders().at(_detail::HeaderAcceptRanges);
             if (response.GetHeaders().find(_detail::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
@@ -6283,7 +6220,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.HttpHeaders.ContentLanguage
                   = response.GetHeaders().at(_detail::HeaderContentLanguage);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.AcceptRanges = response.GetHeaders().at(_detail::HeaderAcceptRanges);
             if (response.GetHeaders().find(_detail::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
@@ -6519,7 +6455,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success (Accepted).
             FileDeleteResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileDeleteResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -6542,7 +6477,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             result.SmbProperties.PermissionKey
@@ -6579,7 +6513,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success (OK).
             FileSetMetadataResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             return Azure::Response<FileSetMetadataResult>(
@@ -6606,7 +6539,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileAcquireLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -6630,7 +6562,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileReleaseLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -6655,7 +6586,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileChangeLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -6683,7 +6613,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileBreakLeaseResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -6713,7 +6642,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   response.GetHeaders().at(_detail::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderRequestIsServerEncrypted)
                 != response.GetHeaders().end())
             {
@@ -6746,7 +6674,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.TransactionalContentHash = _internal::FromBase64String(
                 response.GetHeaders().at(_detail::HeaderTransactionalContentHashCrc64),
                 HashAlgorithm::Crc64);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             return Azure::Response<FileUploadRangeFromUrlResult>(
@@ -6879,7 +6806,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderCopyId) != response.GetHeaders().end())
             {
               result.CopyId = response.GetHeaders().at(_detail::HeaderCopyId);
@@ -6908,7 +6834,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // The delete request was accepted and the file will be deleted.
             FileAbortCopyResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileAbortCopyResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -6933,7 +6858,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 ? FileListHandlesResult()
                 : FileListHandlesResultFromListHandlesResponse(ListHandlesResponseFromXml(reader));
             result.HttpHeaders.ContentType = response.GetHeaders().at(_detail::HeaderContentType);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<FileListHandlesResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -7150,7 +7074,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             FileForceCloseHandlesResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {

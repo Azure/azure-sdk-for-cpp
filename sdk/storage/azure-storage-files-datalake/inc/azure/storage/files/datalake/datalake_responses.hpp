@@ -38,7 +38,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct ListFileSystemsSinglePageResult
   {
-    std::string RequestId;
     std::string ServiceEndpoint;
     std::string Prefix;
     Azure::Nullable<std::string> ContinuationToken;
@@ -71,20 +70,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     bool Created = true;
     Azure::ETag ETag;
     DateTime LastModified;
-    std::string RequestId;
   };
 
   struct DeleteFileSystemResult
   {
     bool Deleted = true;
-    std::string RequestId;
   };
 
   struct SetFileSystemMetadataResult
   {
     Azure::ETag ETag;
     DateTime LastModified;
-    std::string RequestId;
   };
 
   // PathClient models:
@@ -92,7 +88,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct DeletePathResult
   {
     bool Deleted = true;
-    std::string RequestId;
   };
 
   using AcquireLeaseResult = Blobs::Models::AcquireLeaseResult;
@@ -179,21 +174,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string Group;
     std::string Permissions;
     std::vector<Acl> Acls;
-    std::string RequestId;
   };
 
   struct SetPathHttpHeadersResult
   {
     Azure::ETag ETag;
     DateTime LastModified;
-    std::string RequestId;
   };
 
   struct SetPathMetadataResult
   {
     Azure::ETag ETag;
     DateTime LastModified;
-    std::string RequestId;
   };
 
   struct CreatePathResult
@@ -202,7 +194,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::ETag ETag;
     DateTime LastModified;
     Azure::Nullable<int64_t> FileSize;
-    std::string RequestId;
   };
 
   using SetPathAccessControlListResult = _detail::PathSetAccessControlResult;
@@ -248,13 +239,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Http::HttpRange ContentRange;
     Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
     DownloadFileDetails Details;
-    std::string RequestId;
   };
 
   struct DeleteFileResult
   {
     bool Deleted = true;
-    std::string RequestId;
   };
 
   struct DownloadFileToResult

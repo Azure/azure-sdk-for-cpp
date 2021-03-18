@@ -207,9 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     auto ret = m_shareClient->SetAccessPolicy(identifiers);
-    EXPECT_TRUE(ret->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(ret->LastModified));
-    EXPECT_FALSE(ret->RequestId.empty());
 
     auto ret2 = m_shareClient->GetAccessPolicy();
     EXPECT_EQ(ret2->SignedIdentifiers, identifiers);
