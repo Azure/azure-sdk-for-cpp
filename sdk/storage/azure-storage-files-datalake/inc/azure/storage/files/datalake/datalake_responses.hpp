@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
      * @param aclsArray the acls to be serialized into a string.
      * @return std::string
      */
-    static std::string SerializeAcls(const std::vector<Acl>& cclsArray);
+    static std::string SerializeAcls(const std::vector<Acl>& aclsArray);
   };
 
   struct PathProperties
