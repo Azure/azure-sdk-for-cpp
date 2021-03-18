@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
 
-    Blobs::BreakBlobLeaseOptions options;
+    Blobs::BreakLeaseOptions options;
     options.BreakPeriod = std::chrono::seconds(0);
     leaseClient.Break(options);
   }

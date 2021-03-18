@@ -626,10 +626,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Nullable<DateTime> ExpiresOn;
   };
 
-  using AcquireDataLakeLeaseOptions = Blobs::AcquireBlobLeaseOptions;
-  using BreakDataLakeLeaseOptions = Blobs::BreakBlobLeaseOptions;
-  using RenewDataLakeLeaseOptions = Blobs::RenewBlobLeaseOptions;
-  using ReleaseDataLakeLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
-  using ChangeDataLakeLeaseOptions = Blobs::ChangeBlobLeaseOptions;
+  using AcquireLeaseOptions = Blobs::AcquireLeaseOptions;
+  using BreakDataLakeLeaseOptions = Blobs::BreakLeaseOptions;
+  using RenewDataLakeLeaseOptions = Blobs::RenewLeaseOptions;
+  using ReleaseDataLakeLeaseOptions = Blobs::ReleaseLeaseOptions;
+  using ChangeDataLakeLeaseOptions = Blobs::ChangeLeaseOptions;
 
 }}}} // namespace Azure::Storage::Files::DataLake

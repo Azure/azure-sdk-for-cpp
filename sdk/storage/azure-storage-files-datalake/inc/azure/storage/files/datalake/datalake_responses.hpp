@@ -98,11 +98,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string RequestId;
   };
 
-  using AcquireDataLakeLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
-  using RenewDataLakeLeaseResult = Blobs::Models::RenewBlobLeaseResult;
-  using ReleaseDataLakeLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
-  using ChangeDataLakeLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
-  using BreakDataLakeLeaseResult = Blobs::Models::BreakBlobLeaseResult;
+  using AcquireLeaseResult = Blobs::Models::AcquireLeaseResult;
+  using RenewLeaseResult = Blobs::Models::RenewLeaseResult;
+  using ReleaseLeaseResult = Blobs::Models::ReleaseLeaseResult;
+  using ChangeLeaseResult = Blobs::Models::ChangeLeaseResult;
+  using BreakLeaseResult = Blobs::Models::BreakLeaseResult;
   using RehydratePriority = Blobs::Models::RehydratePriority;
   using ArchiveStatus = Blobs::Models::BlobArchiveStatus;
 
