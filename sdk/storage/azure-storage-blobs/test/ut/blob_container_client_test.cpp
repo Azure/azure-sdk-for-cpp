@@ -408,13 +408,11 @@ namespace Azure { namespace Storage { namespace Test {
     auto leaseDuration = std::chrono::seconds(20);
     Blobs::BlobLeaseClient leaseClient(containerClient, leaseId1);
     auto aLease = *leaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.RequestId.empty());
     EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId1);
     aLease = *leaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.RequestId.empty());
     EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
@@ -425,7 +423,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Fixed);
 
     auto rLease = *leaseClient.Renew();
-    EXPECT_FALSE(rLease.RequestId.empty());
     EXPECT_TRUE(rLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(rLease.LastModified));
     EXPECT_EQ(rLease.LeaseId, leaseId1);
@@ -433,7 +430,6 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId2 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     auto cLease = *leaseClient.Change(leaseId2);
-    EXPECT_FALSE(cLease.RequestId.empty());
     EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
@@ -441,7 +437,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
     auto containerInfo = *leaseClient.Release();
-    EXPECT_FALSE(containerInfo.RequestId.empty());
     EXPECT_TRUE(containerInfo.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(containerInfo.LastModified));
 
