@@ -18,6 +18,7 @@
 - Changed the return type of `ShareClient::GetAccessPolicy` to `ShareAccessPolicy`.
 - `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
 - Removed `Share` from the names of return types and option types.
+- Removed `RequestId` from the return types.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

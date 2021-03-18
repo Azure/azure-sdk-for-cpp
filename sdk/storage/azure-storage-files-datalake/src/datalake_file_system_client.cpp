@@ -168,7 +168,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Created = true;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::CreateFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -205,7 +204,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobContainerClient.Delete(blobOptions, context);
     Models::DeleteFileSystemResult ret;
     ret.Deleted = true;
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::DeleteFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -260,7 +258,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::SetFileSystemMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }

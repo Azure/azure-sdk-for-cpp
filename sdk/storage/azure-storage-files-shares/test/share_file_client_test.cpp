@@ -683,7 +683,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(
           copyOperation.GetRawResponse().GetStatusCode(),
           Azure::Core::Http::HttpStatusCode::Accepted);
-      EXPECT_FALSE(copyOperation.RequestId.empty());
       EXPECT_TRUE(copyOperation.ETag.HasValue());
       EXPECT_TRUE(IsValidTime(copyOperation.LastModified));
       EXPECT_FALSE(copyOperation.CopyId.empty());

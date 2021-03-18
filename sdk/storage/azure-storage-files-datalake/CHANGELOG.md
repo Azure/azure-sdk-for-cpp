@@ -18,6 +18,7 @@
 - Changed return type of `DataLakePathClient::GetProperties` to `DataLakePathProperties`.
 - Removed `GetUserDelegationKeyResult`.
 - Removed `DataLake` from the names of return types and option types.
+- Removed `RequestId` from the return types.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
