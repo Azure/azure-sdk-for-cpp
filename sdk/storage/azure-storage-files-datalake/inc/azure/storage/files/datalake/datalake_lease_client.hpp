@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return A RenewLeaseResult describing the lease.
      */
     Azure::Response<Models::RenewLeaseResult> Renew(
-        const RenewDataLakeLeaseOptions& options = RenewDataLakeLeaseOptions(),
+        const RenewLeaseOptions& options = RenewLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Renew(options, context);
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return A ReleaseLeaseResult describing the updated container or blob.
      */
     Azure::Response<Models::ReleaseLeaseResult> Release(
-        const ReleaseDataLakeLeaseOptions& options = ReleaseDataLakeLeaseOptions(),
+        const ReleaseLeaseOptions& options = ReleaseLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Release(options, context);
@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::ChangeLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeDataLakeLeaseOptions& options = ChangeDataLakeLeaseOptions(),
+        const ChangeLeaseOptions& options = ChangeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Change(proposedLeaseId, options, context);
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return A BreakLeaseResult describing the broken lease.
      */
     Azure::Response<Models::BreakLeaseResult> Break(
-        const BreakDataLakeLeaseOptions& options = BreakDataLakeLeaseOptions(),
+        const BreakLeaseOptions& options = BreakLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Break(options, context);

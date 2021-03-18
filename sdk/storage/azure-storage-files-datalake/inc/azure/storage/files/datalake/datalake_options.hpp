@@ -627,9 +627,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   using AcquireLeaseOptions = Blobs::AcquireLeaseOptions;
-  using BreakDataLakeLeaseOptions = Blobs::BreakLeaseOptions;
-  using RenewDataLakeLeaseOptions = Blobs::RenewLeaseOptions;
-  using ReleaseDataLakeLeaseOptions = Blobs::ReleaseLeaseOptions;
-  using ChangeDataLakeLeaseOptions = Blobs::ChangeLeaseOptions;
+  using BreakLeaseOptions = Blobs::BreakLeaseOptions;
+  using RenewLeaseOptions = Blobs::RenewLeaseOptions;
+  using ReleaseLeaseOptions = Blobs::ReleaseLeaseOptions;
+  using ChangeLeaseOptions = Blobs::ChangeLeaseOptions;
 
 }}}} // namespace Azure::Storage::Files::DataLake
