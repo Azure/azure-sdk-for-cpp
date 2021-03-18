@@ -51,7 +51,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContentInfo = pageBlobClient.Create(0, m_blobUploadOptions);
-    EXPECT_FALSE(blobContentInfo->RequestId.empty());
     EXPECT_TRUE(blobContentInfo->ETag.HasValue());
     EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
@@ -101,7 +100,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(downloadContent->BodyStream), blobContent);
 
     auto pageRanges = *pageBlobClient.GetPageRanges();
-    EXPECT_FALSE(pageRanges.RequestId.empty());
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 3_KB);
@@ -304,7 +302,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(m_blobContent.size()), StorageException);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
-      EXPECT_FALSE(response->RequestId.empty());
       EXPECT_TRUE(response->Created);
     }
 

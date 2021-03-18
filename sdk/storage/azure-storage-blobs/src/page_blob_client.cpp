@@ -120,7 +120,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "BlobAlreadyExists")
       {
         Models::CreatePageBlobResult ret;
-        ret.RequestId = e.RequestId;
         ret.Created = false;
         return Azure::Response<Models::CreatePageBlobResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -303,7 +302,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
     StartCopyBlobOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
-    res.RequestId = std::move(response->RequestId);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
     res.CopyId = std::move(response->CopyId);

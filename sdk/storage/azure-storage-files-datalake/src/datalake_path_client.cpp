@@ -217,7 +217,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetPathHttpHeadersResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::SetPathHttpHeadersResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -428,7 +427,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::SetPathMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.RequestId = std::move(result->RequestId);
     return Azure::Response<Models::SetPathMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
