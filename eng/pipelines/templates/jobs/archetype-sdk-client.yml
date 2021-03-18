@@ -5,6 +5,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: TestPipeline
+    type: boolean
+    default: false
   - name: Coverage
     type: string
     default: ''
@@ -132,6 +135,12 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
+
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |
@@ -213,7 +222,13 @@ jobs:
         parameters:
           Directory: ''
           CheckLinkGuidance: $true
-          
+
+      - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+        parameters:
+          PackageName: "azure-template"
+          ServiceDirectory: "template"
+          TestPipeline: ${{ parameters.TestPipeline }}
+
       - pwsh: |
           $setupFile="doxygen-1.8.18-setup.exe";
 
