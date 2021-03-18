@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * duration cannot be changed using renew or change.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A AcquireLeaseResult describing the lease.
+     * @return An AcquireLeaseResult describing the lease.
      */
     Azure::Response<Models::AcquireLeaseResult> Acquire(
         std::chrono::seconds duration,
