@@ -36,8 +36,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
       std::string const expectedConnectionKey = "azure-sdk-for-cpp-httpbin.azurewebsites.net0011";
 
       {
@@ -82,13 +81,11 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
       // Now test that using a different connection config won't re-use the same connection
-      std::string const CAinfo = "someFakePath";
-      std::string const secondExpectedKey
-          = "azure-sdk-for-cpp-httpbin.azurewebsites.net" + CAinfo + "011";
+      std::string const secondExpectedKey = "azure-sdk-for-cpp-httpbin.azurewebsites.net0010";
       {
-        // Creating a new connection with default options
+        // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
-        options.CAInfo = CAinfo;
+        options.SSLVerifyPeer = false;
         auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
         // One connection still in the pool after getting a new connection and with first expected
@@ -112,18 +109,17 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
       values = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin();
       EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
       values++;
       EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
+      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
       // Test re-using same custom config
       {
         // Creating a new connection with default options
         Azure::Core::Http::CurlTransportOptions options;
-        options.CAInfo = CAinfo;
         auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
-        EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
         // One connection still in the pool after getting a new connection and with first expected
         // key
         EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
@@ -132,7 +128,7 @@ namespace Azure { namespace Core { namespace Test {
                 ->second.begin()
                 ->get()
                 ->GetConnectionKey(),
-            expectedConnectionKey);
+            secondExpectedKey);
 
         auto session = std::make_unique<Azure::Core::Http::CurlSession>(
             req, std::move(connection), options.HttpKeepAlive);
@@ -144,10 +140,10 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
       values = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin();
       EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
       values++;
       EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
+      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
 #ifdef RUN_LONG_UNIT_TESTS
       {
@@ -177,8 +173,7 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
     {
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("https://azure-sdk-for-cpp-httpbin.azurewebsites.net/get"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
 
       Azure::Core::Http::CurlTransportOptions options;
       auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
