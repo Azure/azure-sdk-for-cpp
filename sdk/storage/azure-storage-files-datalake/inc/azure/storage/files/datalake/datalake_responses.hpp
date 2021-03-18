@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Nullable<DateTime> ExpiresOn;
     Azure::Nullable<DateTime> LastAccessedOn;
     bool IsDirectory = false;
-    Azure::Nullable<ArchiveStatus> ArchiveStatus;
+    Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
     Azure::Nullable<Models::RehydratePriority> RehydratePriority;
     Azure::Nullable<std::string> CopyStatusDescription;
     Azure::Nullable<bool> IsIncrementalCopy;
