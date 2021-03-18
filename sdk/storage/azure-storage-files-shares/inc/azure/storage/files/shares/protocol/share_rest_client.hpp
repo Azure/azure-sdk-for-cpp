@@ -783,9 +783,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareGetAccessPolicyResult
     {
       std::vector<SignedIdentifier> SignedIdentifiers;
-      Azure::ETag ETag;
-      DateTime LastModified;
-      std::string RequestId;
     };
 
     struct ShareSetAccessPolicyResult
@@ -3576,11 +3573,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareGetAccessPolicyResult result = bodyBuffer.empty()
                 ? ShareGetAccessPolicyResult()
                 : ShareGetAccessPolicyResultFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
-            result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
-            result.LastModified = DateTime::Parse(
-                response.GetHeaders().at(_detail::HeaderLastModified),
-                DateTime::DateFormat::Rfc1123);
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<ShareGetAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }

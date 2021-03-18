@@ -187,10 +187,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetFileSystemAccessPolicyResult describing the container's access policy.
+     * @return A FileSystemAccessPolicy describing the container's access policy.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::GetFileSystemAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::FileSystemAccessPolicy> GetAccessPolicy(
         const GetFileSystemAccessPolicyOptions& options = GetFileSystemAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

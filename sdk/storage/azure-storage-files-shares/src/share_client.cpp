@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
+  Azure::Response<Models::ShareAccessPolicy> ShareClient::GetAccessPolicy(
       const GetShareAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {

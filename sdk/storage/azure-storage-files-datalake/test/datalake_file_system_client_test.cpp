@@ -390,9 +390,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(IsValidTime(ret->LastModified));
 
       auto ret2 = fileSystem.GetAccessPolicy();
-      EXPECT_FALSE(ret2->RequestId.empty());
-      EXPECT_TRUE(ret2->ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(ret2->LastModified));
       EXPECT_EQ(ret2->AccessType, options.AccessType);
       for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
       {

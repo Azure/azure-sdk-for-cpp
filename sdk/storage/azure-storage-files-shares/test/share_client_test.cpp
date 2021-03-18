@@ -206,14 +206,12 @@ namespace Azure { namespace Storage { namespace Test {
       identifiers.emplace_back(identifier);
     }
 
-    auto lmt = m_shareClient->GetAccessPolicy()->LastModified;
     auto ret = m_shareClient->SetAccessPolicy(identifiers);
     EXPECT_TRUE(ret->ETag.HasValue());
-    EXPECT_FALSE(ret->LastModified < lmt);
+    EXPECT_TRUE(IsValidTime(ret->LastModified));
+    EXPECT_FALSE(ret->RequestId.empty());
 
     auto ret2 = m_shareClient->GetAccessPolicy();
-    EXPECT_EQ(ret2->ETag, ret->ETag);
-    EXPECT_EQ(ret2->LastModified, ret->LastModified);
     EXPECT_EQ(ret2->SignedIdentifiers, identifiers);
   }
 

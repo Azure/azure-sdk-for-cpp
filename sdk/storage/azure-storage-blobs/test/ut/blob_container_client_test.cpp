@@ -404,9 +404,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(ret->LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
-    EXPECT_FALSE(ret2->RequestId.empty());
-    EXPECT_TRUE(ret2->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(ret2->LastModified));
     EXPECT_EQ(ret2->AccessType, options.AccessType);
     EXPECT_EQ(ret2->SignedIdentifiers, options.SignedIdentifiers);
 
