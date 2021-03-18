@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   using ChangeLeaseResult = Blobs::Models::ChangeLeaseResult;
   using BreakLeaseResult = Blobs::Models::BreakLeaseResult;
   using RehydratePriority = Blobs::Models::RehydratePriority;
-  using ArchiveStatus = Blobs::Models::BlobArchiveStatus;
+  using ArchiveStatus = Blobs::Models::ArchiveStatus;
 
   struct Acl
   {

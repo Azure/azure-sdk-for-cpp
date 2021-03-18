@@ -19,38 +19,38 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace {
-    Models::LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
+    Models::LeaseStateType FromBlobLeaseState(Blobs::Models::LeaseState state)
     {
-      if (state == Blobs::Models::BlobLeaseState::Available)
+      if (state == Blobs::Models::LeaseState::Available)
       {
         return Models::LeaseStateType::Available;
       }
-      if (state == Blobs::Models::BlobLeaseState::Breaking)
+      if (state == Blobs::Models::LeaseState::Breaking)
       {
         return Models::LeaseStateType::Breaking;
       }
-      if (state == Blobs::Models::BlobLeaseState::Broken)
+      if (state == Blobs::Models::LeaseState::Broken)
       {
         return Models::LeaseStateType::Broken;
       }
-      if (state == Blobs::Models::BlobLeaseState::Expired)
+      if (state == Blobs::Models::LeaseState::Expired)
       {
         return Models::LeaseStateType::Expired;
       }
-      if (state == Blobs::Models::BlobLeaseState::Leased)
+      if (state == Blobs::Models::LeaseState::Leased)
       {
         return Models::LeaseStateType::Leased;
       }
       return Models::LeaseStateType();
     }
 
-    Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
+    Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
     {
-      if (status == Blobs::Models::BlobLeaseStatus::Locked)
+      if (status == Blobs::Models::LeaseStatus::Locked)
       {
         return Models::LeaseStatusType::Locked;
       }
-      if (status == Blobs::Models::BlobLeaseStatus::Unlocked)
+      if (status == Blobs::Models::LeaseStatus::Unlocked)
       {
         return Models::LeaseStatusType::Unlocked;
       }

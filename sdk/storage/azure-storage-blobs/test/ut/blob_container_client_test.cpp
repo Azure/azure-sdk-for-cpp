@@ -432,9 +432,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *containerClient.GetProperties();
-    EXPECT_EQ(properties.LeaseState, Blobs::Models::BlobLeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::BlobLeaseStatus::Locked);
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Fixed);
+    EXPECT_EQ(properties.LeaseState, Blobs::Models::LeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::LeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Fixed);
 
     auto rLease = *leaseClient.Renew();
     EXPECT_FALSE(rLease.RequestId.empty());
@@ -461,7 +461,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobLeaseClient(containerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
     properties = *containerClient.GetProperties();
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Infinite);
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Infinite);
     auto brokenLease = *leaseClient.Break();
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
