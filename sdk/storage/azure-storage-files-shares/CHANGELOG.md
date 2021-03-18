@@ -14,10 +14,11 @@
 - Changed the return types of the following APIs:
   - `ShareClient::GetAccessPolicy` now returns `ShareAccessPolicy`.
   - `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
-- Renamed `GetSharePropertiesResult` to `ShareProperties`.
 - Renamed `GetShareStatisticsResult` to `ShareStatistics`.
-- Renamed `GetShareDirectoryPropertiesResult` to `ShareDirectoryProperties`.
-- Renamed `GetShareFilePropertiesResult` to `FileServiceProperties`.
+- Renamed `GetSharePropertiesResult` to `ShareProperties`.
+- Renamed `GetShareDirectoryPropertiesResult` to `DirectoryProperties`.
+- Renamed `GetShareFilePropertiesResult` to `FileProperties`
+- Renamed `GetServicePropertiesResult` to `FileServiceProperties`.
 - Removed `Share` from the names of return types and option types.
 
 ## 12.0.0-beta.8 (2021-02-12)
