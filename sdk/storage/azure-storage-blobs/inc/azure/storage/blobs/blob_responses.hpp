@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
-    struct AcquireBlobLeaseResult
+    struct AcquireLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;
@@ -38,14 +38,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LeaseId;
     };
 
-    struct BreakBlobLeaseResult
+    struct BreakLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
     };
 
-    struct ChangeBlobLeaseResult
+    struct ChangeLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;
@@ -53,14 +53,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LeaseId;
     };
 
-    struct ReleaseBlobLeaseResult
+    struct ReleaseLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
     };
 
-    struct RenewBlobLeaseResult
+    struct RenewLeaseResult
     {
       std::string RequestId;
       Azure::ETag ETag;

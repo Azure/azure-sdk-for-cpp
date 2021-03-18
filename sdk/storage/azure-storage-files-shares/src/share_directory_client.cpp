@@ -111,8 +111,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return newClient;
   }
 
-  Azure::Response<Models::CreateShareDirectoryResult> ShareDirectoryClient::Create(
-      const CreateShareDirectoryOptions& options,
+  Azure::Response<Models::CreateDirectoryResult> ShareDirectoryClient::Create(
+      const CreateDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::CreateOptions();
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     auto result = _detail::ShareRestClient::Directory::Create(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::CreateShareDirectoryResult ret;
+    Models::CreateDirectoryResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
     ret.IsServerEncrypted = result->IsServerEncrypted;
@@ -163,12 +163,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.RequestId = std::move(result->RequestId);
     ret.SmbProperties = std::move(result->SmbProperties);
 
-    return Azure::Response<Models::CreateShareDirectoryResult>(
+    return Azure::Response<Models::CreateDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::CreateShareDirectoryResult> ShareDirectoryClient::CreateIfNotExists(
-      const CreateShareDirectoryOptions& options,
+  Azure::Response<Models::CreateDirectoryResult> ShareDirectoryClient::CreateIfNotExists(
+      const CreateDirectoryOptions& options,
       const Azure::Core::Context& context) const
 
   {
@@ -180,32 +180,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       if (e.ErrorCode == _detail::ResourceAlreadyExists)
       {
-        Models::CreateShareDirectoryResult ret;
+        Models::CreateDirectoryResult ret;
         ret.Created = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Response<Models::CreateShareDirectoryResult>(
+        return Azure::Response<Models::CreateDirectoryResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Response<Models::DeleteShareDirectoryResult> ShareDirectoryClient::Delete(
-      const DeleteShareDirectoryOptions& options,
+  Azure::Response<Models::DeleteDirectoryResult> ShareDirectoryClient::Delete(
+      const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::DeleteOptions();
     auto result = _detail::ShareRestClient::Directory::Delete(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::DeleteShareDirectoryResult ret;
+    Models::DeleteDirectoryResult ret;
     ret.Deleted = true;
-    return Azure::Response<Models::DeleteShareDirectoryResult>(
+    return Azure::Response<Models::DeleteDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::DeleteShareDirectoryResult> ShareDirectoryClient::DeleteIfExists(
-      const DeleteShareDirectoryOptions& options,
+  Azure::Response<Models::DeleteDirectoryResult> ShareDirectoryClient::DeleteIfExists(
+      const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
     try
@@ -217,18 +217,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (e.ErrorCode == _detail::ShareNotFound || e.ErrorCode == _detail::ParentNotFound
           || e.ErrorCode == _detail::ResourceNotFound)
       {
-        Models::DeleteShareDirectoryResult ret;
+        Models::DeleteDirectoryResult ret;
         ret.Deleted = false;
         ret.RequestId = std::move(e.RequestId);
-        return Azure::Response<Models::DeleteShareDirectoryResult>(
+        return Azure::Response<Models::DeleteDirectoryResult>(
             std::move(ret), std::move(e.RawResponse));
       }
       throw;
     }
   }
 
-  Azure::Response<Models::ShareDirectoryProperties> ShareDirectoryClient::GetProperties(
-      const GetShareDirectoryPropertiesOptions& options,
+  Azure::Response<Models::DirectoryProperties> ShareDirectoryClient::GetProperties(
+      const GetDirectoryPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -237,9 +237,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::SetShareDirectoryPropertiesResult> ShareDirectoryClient::SetProperties(
+  Azure::Response<Models::SetDirectoryPropertiesResult> ShareDirectoryClient::SetProperties(
       Models::FileSmbProperties smbProperties,
-      const SetShareDirectoryPropertiesOptions& options,
+      const SetDirectoryPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::SetPropertiesOptions();
@@ -278,9 +278,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::SetShareDirectoryMetadataResult> ShareDirectoryClient::SetMetadata(
+  Azure::Response<Models::SetDirectoryMetadataResult> ShareDirectoryClient::SetMetadata(
       Storage::Metadata metadata,
-      const SetShareDirectoryMetadataOptions& options,
+      const SetDirectoryMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -317,9 +317,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::ListShareDirectoryHandlesSinglePageResult>
+  Azure::Response<Models::ListDirectoryHandlesSinglePageResult>
   ShareDirectoryClient::ListHandlesSinglePage(
-      const ListShareDirectoryHandlesSinglePageOptions& options,
+      const ListDirectoryHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::ListHandlesOptions();
@@ -328,18 +328,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Recursive = options.Recursive;
     auto result = _detail::ShareRestClient::Directory::ListHandles(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ListShareDirectoryHandlesSinglePageResult ret;
+    Models::ListDirectoryHandlesSinglePageResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Handles = std::move(result->HandleList);
 
-    return Azure::Response<Models::ListShareDirectoryHandlesSinglePageResult>(
+    return Azure::Response<Models::ListDirectoryHandlesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::ForceCloseShareDirectoryHandleResult>
-  ShareDirectoryClient::ForceCloseHandle(
+  Azure::Response<Models::ForceCloseDirectoryHandleResult> ShareDirectoryClient::ForceCloseHandle(
       const std::string& handleId,
-      const ForceCloseShareDirectoryHandleOptions& options,
+      const ForceCloseDirectoryHandleOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
@@ -347,15 +346,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.HandleId = handleId;
     auto result = _detail::ShareRestClient::File::ForceCloseHandles(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ForceCloseShareDirectoryHandleResult ret;
+    Models::ForceCloseDirectoryHandleResult ret;
     ret.RequestId = std::move(result->RequestId);
-    return Azure::Response<Models::ForceCloseShareDirectoryHandleResult>(
+    return Azure::Response<Models::ForceCloseDirectoryHandleResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::ForceCloseAllShareDirectoryHandlesSinglePageResult>
+  Azure::Response<Models::ForceCloseAllDirectoryHandlesSinglePageResult>
   ShareDirectoryClient::ForceCloseAllHandlesSinglePage(
-      const ForceCloseAllShareDirectoryHandlesSinglePageOptions& options,
+      const ForceCloseAllDirectoryHandlesSinglePageOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::ForceCloseHandlesOptions();

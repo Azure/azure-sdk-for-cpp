@@ -14,9 +14,10 @@
 - Renamed `GetSharePropertiesResult` to `ShareProperties`.
 - Renamed `GetShareStatisticsResult` to `ShareStatistics`.
 - Renamed `GetShareDirectoryPropertiesResult` to `ShareDirectoryProperties`.
-- Renamed `GetShareFilePropertiesResult` to `ShareFileServiceProperties`.
+- Renamed `GetShareFilePropertiesResult` to `FileServiceProperties`.
+- Changed the return type of `ShareClient::GetAccessPolicy` to `ShareAccessPolicy`.
 - `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
-- `ShareServiceClient::GetProperties` now returns `Azure::Response<Models::ShareFileServiceProperties>`.
+- Removed `Share` from the names of return types and option types.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

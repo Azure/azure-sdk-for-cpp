@@ -14,9 +14,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     return Azure::Core::Uuid::CreateUuid().ToString();
   }
 
-  Azure::Response<Models::AcquireBlobLeaseResult> BlobLeaseClient::Acquire(
+  Azure::Response<Models::AcquireLeaseResult> BlobLeaseClient::Acquire(
       std::chrono::seconds duration,
-      const AcquireBlobLeaseOptions& options,
+      const AcquireLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
@@ -36,13 +36,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::AcquireBlobLeaseResult ret;
+      Models::AcquireLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::AcquireBlobLeaseResult>(
+      return Azure::Response<Models::AcquireLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_blobContainerClient.HasValue())
@@ -65,13 +65,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::AcquireBlobLeaseResult ret;
+      Models::AcquireLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::AcquireBlobLeaseResult>(
+      return Azure::Response<Models::AcquireLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -80,8 +80,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  Azure::Response<Models::RenewBlobLeaseResult> BlobLeaseClient::Renew(
-      const RenewBlobLeaseOptions& options,
+  Azure::Response<Models::RenewLeaseResult> BlobLeaseClient::Renew(
+      const RenewLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
@@ -100,13 +100,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::RenewBlobLeaseResult ret;
+      Models::RenewLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::RenewBlobLeaseResult>(
+      return Azure::Response<Models::RenewLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_blobContainerClient.HasValue())
@@ -129,13 +129,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::RenewBlobLeaseResult ret;
+      Models::RenewLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::RenewBlobLeaseResult>(
+      return Azure::Response<Models::RenewLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -144,8 +144,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  Azure::Response<Models::ReleaseBlobLeaseResult> BlobLeaseClient::Release(
-      const ReleaseBlobLeaseOptions& options,
+  Azure::Response<Models::ReleaseLeaseResult> BlobLeaseClient::Release(
+      const ReleaseLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
@@ -164,12 +164,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::ReleaseBlobLeaseResult ret;
+      Models::ReleaseLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::ReleaseBlobLeaseResult>(
+      return Azure::Response<Models::ReleaseLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_blobContainerClient.HasValue())
@@ -192,12 +192,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::ReleaseBlobLeaseResult ret;
+      Models::ReleaseLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::ReleaseBlobLeaseResult>(
+      return Azure::Response<Models::ReleaseLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -206,9 +206,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  Azure::Response<Models::ChangeBlobLeaseResult> BlobLeaseClient::Change(
+  Azure::Response<Models::ChangeLeaseResult> BlobLeaseClient::Change(
       const std::string& proposedLeaseId,
-      const ChangeBlobLeaseOptions& options,
+      const ChangeLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
@@ -228,13 +228,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::ChangeBlobLeaseResult ret;
+      Models::ChangeLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::ChangeBlobLeaseResult>(
+      return Azure::Response<Models::ChangeLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_blobContainerClient.HasValue())
@@ -258,13 +258,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::ChangeBlobLeaseResult ret;
+      Models::ChangeLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.LeaseId = std::move(response->LeaseId);
 
-      return Azure::Response<Models::ChangeBlobLeaseResult>(
+      return Azure::Response<Models::ChangeLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else
@@ -273,8 +273,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  Azure::Response<Models::BreakBlobLeaseResult> BlobLeaseClient::Break(
-      const BreakBlobLeaseOptions& options,
+  Azure::Response<Models::BreakLeaseResult> BlobLeaseClient::Break(
+      const BreakLeaseOptions& options,
       const Azure::Core::Context& context) const
   {
     if (m_blobClient.HasValue())
@@ -293,12 +293,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::BreakBlobLeaseResult ret;
+      Models::BreakLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::BreakBlobLeaseResult>(
+      return Azure::Response<Models::BreakLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else if (m_blobContainerClient.HasValue())
@@ -321,12 +321,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
-      Models::BreakBlobLeaseResult ret;
+      Models::BreakLeaseResult ret;
       ret.RequestId = std::move(response->RequestId);
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
 
-      return Azure::Response<Models::BreakBlobLeaseResult>(
+      return Azure::Response<Models::BreakLeaseResult>(
           std::move(ret), response.ExtractRawResponse());
     }
     else

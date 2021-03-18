@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const BlobSignedIdentifier& lhs, const BlobSignedIdentifier& rhs)
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
   {
     return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
         && lhs.Permissions == rhs.Permissions;
@@ -386,7 +386,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::SetBlobContainerAccessPolicyOptions options;
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
-    Blobs::Models::BlobSignedIdentifier identifier;
+    Blobs::Models::SignedIdentifier identifier;
     identifier.Id = RandomString(64);
     identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
@@ -404,9 +404,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(ret->LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
-    EXPECT_FALSE(ret2->RequestId.empty());
-    EXPECT_TRUE(ret2->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(ret2->LastModified));
     EXPECT_EQ(ret2->AccessType, options.AccessType);
     EXPECT_EQ(ret2->SignedIdentifiers, options.SignedIdentifiers);
 
@@ -435,9 +432,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *containerClient.GetProperties();
-    EXPECT_EQ(properties.LeaseState, Blobs::Models::BlobLeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::BlobLeaseStatus::Locked);
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Fixed);
+    EXPECT_EQ(properties.LeaseState, Blobs::Models::LeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::LeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Fixed);
 
     auto rLease = *leaseClient.Renew();
     EXPECT_FALSE(rLease.RequestId.empty());
@@ -464,7 +461,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobLeaseClient(containerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
     aLease = *leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
     properties = *containerClient.GetProperties();
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Infinite);
+    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Infinite);
     auto brokenLease = *leaseClient.Break();
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
@@ -476,7 +473,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
 
-    Blobs::BreakBlobLeaseOptions options;
+    Blobs::BreakLeaseOptions options;
     options.BreakPeriod = std::chrono::seconds(0);
     leaseClient.Break(options);
     containerClient.Delete();
@@ -911,14 +908,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-      Blobs::AcquireBlobLeaseOptions options;
+      Blobs::AcquireLeaseOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       auto leaseClient = Blobs::BlobLeaseClient(appendBlobClient, leaseId);
       EXPECT_THROW(leaseClient.Acquire(std::chrono::seconds(60), options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(leaseClient.Acquire(std::chrono::seconds(60), options));
 
-      Blobs::BreakBlobLeaseOptions options2;
+      Blobs::BreakLeaseOptions options2;
       options2.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(leaseClient.Break(options2), StorageException);
       options2.AccessConditions.TagConditions = successWhereExpression;

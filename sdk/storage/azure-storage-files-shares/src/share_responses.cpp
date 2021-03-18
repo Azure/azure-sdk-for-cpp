@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyShareFileOperation::PollInternal(
+  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyFileOperation::PollInternal(
       Azure::Core::Context&)
   {
 
@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return response.ExtractRawResponse();
   }
 
-  Azure::Response<Models::ShareFileProperties> StartCopyShareFileOperation::PollUntilDoneInternal(
+  Azure::Response<Models::FileProperties> StartCopyFileOperation::PollUntilDoneInternal(
       std::chrono::milliseconds period,
       Azure::Core::Context& context)
   {
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Response<Models::ShareFileProperties>(
+        return Azure::Response<Models::FileProperties>(
             m_pollResult, std::make_unique<Azure::Core::Http::RawResponse>(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
