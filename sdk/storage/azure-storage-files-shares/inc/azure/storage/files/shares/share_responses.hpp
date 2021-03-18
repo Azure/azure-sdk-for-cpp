@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     // DirectoryClient models:
 
-    struct CreateShareDirectoryResult
+    struct CreateDirectoryResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
@@ -60,19 +60,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Created = false;
     };
 
-    struct DeleteShareDirectoryResult
+    struct DeleteDirectoryResult
     {
       bool Deleted = true;
       std::string RequestId;
     };
 
     using ShareDirectoryProperties = _detail::DirectoryGetPropertiesResult;
-    using SetShareDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
-    using SetShareDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
-    using ForceCloseAllShareDirectoryHandlesSinglePageResult
+    using SetDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
+    using SetDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
+    using ForceCloseAllDirectoryHandlesSinglePageResult
         = _detail::DirectoryForceCloseHandlesResult;
 
-    struct ForceCloseShareDirectoryHandleResult
+    struct ForceCloseDirectoryHandleResult
     {
       std::string RequestId;
     };
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string RequestId;
     };
 
-    struct ListShareDirectoryHandlesSinglePageResult
+    struct ListDirectoryHandlesSinglePageResult
     {
       std::vector<HandleItem> Handles;
       Nullable<std::string> ContinuationToken;
@@ -99,7 +99,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // FileClient models:
-    struct CreateShareFileResult
+    struct CreateFileResult
     {
       bool Created = true;
       Azure::ETag ETag;
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string RequestId;
     };
 
-    struct DeleteShareFileResult
+    struct DeleteFileResult
     {
       bool Deleted = true;
       std::string RequestId;
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<LeaseStatusType> LeaseStatus;
     };
 
-    struct DownloadShareFileResult
+    struct DownloadFileResult
     {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
       Azure::Core::Http::HttpRange ContentRange;
@@ -144,14 +144,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string RequestId;
     };
 
-    using StartCopyShareFileResult = _detail::FileStartCopyResult;
-    using AbortCopyShareFileResult = _detail::FileAbortCopyResult;
+    using StartCopyFileResult = _detail::FileStartCopyResult;
+    using AbortCopyFileResult = _detail::FileAbortCopyResult;
     using ShareFileProperties = _detail::FileGetPropertiesResult;
-    using SetShareFilePropertiesResult = _detail::FileSetHttpHeadersResult;
+    using SetFilePropertiesResult = _detail::FileSetHttpHeadersResult;
     using ResizeFileResult = _detail::FileSetHttpHeadersResult;
-    using SetShareFileMetadataResult = _detail::FileSetMetadataResult;
-    using UploadShareFileRangeResult = _detail::FileUploadRangeResult;
-    struct ClearShareFileRangeResult
+    using SetFileMetadataResult = _detail::FileSetMetadataResult;
+    using UploadFileRangeResult = _detail::FileUploadRangeResult;
+    struct ClearFileRangeResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
@@ -159,11 +159,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool IsServerEncrypted = bool();
     };
     using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
-    using GetShareFileRangeListResult = _detail::FileGetRangeListResult;
-    using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
-    using ForceCloseAllShareFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
+    using GetFileRangeListResult = _detail::FileGetRangeListResult;
+    using ListFileHandlesSinglePageResult = ListDirectoryHandlesSinglePageResult;
+    using ForceCloseAllFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
 
-    struct DownloadShareFileToResult
+    struct DownloadFileToResult
     {
       int64_t FileSize = 0;
       Azure::Core::Http::HttpRange ContentRange;
@@ -171,12 +171,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DownloadShareFileDetails Details;
     };
 
-    struct ForceCloseShareFileHandleResult
+    struct ForceCloseFileHandleResult
     {
       std::string RequestId;
     };
 
-    struct UploadShareFileFromResult
+    struct UploadFileFromResult
     {
       bool IsServerEncrypted = false;
     };

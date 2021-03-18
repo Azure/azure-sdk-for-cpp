@@ -71,11 +71,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * changed using renew or change.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A AcquireDataLakeLeaseResult describing the lease.
+     * @return A AcquireLeaseResult describing the lease.
      */
-    Azure::Response<Models::AcquireDataLakeLeaseResult> Acquire(
+    Azure::Response<Models::AcquireLeaseResult> Acquire(
         std::chrono::seconds duration,
-        const AcquireDataLakeLeaseOptions& options = AcquireDataLakeLeaseOptions(),
+        const AcquireLeaseOptions& options = AcquireLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Acquire(duration, options, context);
@@ -86,10 +86,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A RenewDataLakeLeaseResult describing the lease.
+     * @return A RenewLeaseResult describing the lease.
      */
-    Azure::Response<Models::RenewDataLakeLeaseResult> Renew(
-        const RenewDataLakeLeaseOptions& options = RenewDataLakeLeaseOptions(),
+    Azure::Response<Models::RenewLeaseResult> Renew(
+        const RenewLeaseOptions& options = RenewLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Renew(options, context);
@@ -100,10 +100,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ReleaseDataLakeLeaseResult describing the updated container or blob.
+     * @return A ReleaseLeaseResult describing the updated container or blob.
      */
-    Azure::Response<Models::ReleaseDataLakeLeaseResult> Release(
-        const ReleaseDataLakeLeaseOptions& options = ReleaseDataLakeLeaseOptions(),
+    Azure::Response<Models::ReleaseLeaseResult> Release(
+        const ReleaseLeaseOptions& options = ReleaseLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Release(options, context);
@@ -115,12 +115,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ChangeDataLakeLeaseResult describing the changed lease.
+     * @return A ChangeLeaseResult describing the changed lease.
      * @remarks The current DataLakeLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Response<Models::ChangeDataLakeLeaseResult> Change(
+    Azure::Response<Models::ChangeLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeDataLakeLeaseOptions& options = ChangeDataLakeLeaseOptions(),
+        const ChangeLeaseOptions& options = ChangeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Change(proposedLeaseId, options, context);
@@ -131,10 +131,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A BreakDataLakeLeaseResult describing the broken lease.
+     * @return A BreakLeaseResult describing the broken lease.
      */
-    Azure::Response<Models::BreakDataLakeLeaseResult> Break(
-        const BreakDataLakeLeaseOptions& options = BreakDataLakeLeaseOptions(),
+    Azure::Response<Models::BreakLeaseResult> Break(
+        const BreakLeaseOptions& options = BreakLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return m_blobLeaseClient.Break(options, context);
