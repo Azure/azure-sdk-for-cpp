@@ -676,9 +676,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SubmitBlobBatchResult
     } // namespace _detail
 
-    struct UndeleteBlobContainerResult
-    {
-    }; // struct UndeleteBlobContainerResult
+    namespace _detail {
+      struct UndeleteBlobContainerResult
+      {
+      }; // struct UndeleteBlobContainerResult
+    } // namespace _detail
 
     struct UndeleteBlobResult
     {
@@ -3053,7 +3055,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string DeletedBlobContainerVersion;
         }; // struct UndeleteBlobContainerOptions
 
-        static Azure::Response<UndeleteBlobContainerResult> Undelete(
+        static Azure::Response<Models::_detail::UndeleteBlobContainerResult> Undelete(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const UndeleteBlobContainerOptions& options,
@@ -3074,7 +3076,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.SetHeader("x-ms-deleted-container-version", options.DeletedBlobContainerVersion);
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          UndeleteBlobContainerResult response;
+          Models::_detail::UndeleteBlobContainerResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3082,7 +3084,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
-          return Azure::Response<UndeleteBlobContainerResult>(
+          return Azure::Response<Models::_detail::UndeleteBlobContainerResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
