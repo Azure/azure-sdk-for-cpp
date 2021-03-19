@@ -302,11 +302,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
     StartCopyBlobOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
-    res.ETag = std::move(response->ETag);
-    res.LastModified = std::move(response->LastModified);
-    res.CopyId = std::move(response->CopyId);
-    res.CopyStatus = std::move(response->CopyStatus);
-    res.VersionId = std::move(response->VersionId);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
     return res;
   }
