@@ -21,6 +21,7 @@
 - Renamed `GetShareFilePropertiesResult` to `FileProperties`
 - Renamed `GetServicePropertiesResult` to `FileServiceProperties`.
 - Removed `Share` from the names of return types and option types.
+- Renamed `AbortCopyFileOptions` to `AbortFileCopyOptions`.
 - Removed `RequestId` from the return types.
 - Changed `BodyStream` parameter in upload functions from pointer to reference.
 - Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.

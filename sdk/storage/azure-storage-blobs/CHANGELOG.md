@@ -19,12 +19,23 @@
   - `BlobServiceClient::GetProperties` now returns `BlobServiceProperties`.
   - `BlobServiceClient::GetAccountInfo` now returns `AccountInfo`.
   - `BlobServiceClient::GetStatistics` now returns `ServiceStatistics`.
-  - `BlobContainerClient::DeleteBlob` now returns `Models::DeleteBlobResult`.
+  - `BlobContainerClient::DeleteBlob` now returns `DeleteBlobResult`.
   - `BlobContainerClient::GetProperties` now returns `BlobContainerProperties`.
   - `BlobContainerClient::GetAccessPolicy` now returns `BlobContainerAccessPolicy`.
   - `BlobClient::GetProperties` now returns `BlobProperties`.
   - `BlobClinet::GetTags` now returns `std::map<std::string, std::string>`.
   - `BlobClient::AbortCopyFromUri` now returns `AbortBlobCopyFromUriResult`.
+  - `PageBlobClient::UploadPages` now returns `UploadPagesResult`.
+  - `PageBlobClient::UploadPagesFromUri` now returns `UploadPagesFromUriResult`.
+  - `PageBlobClient::ClearPages` now returns `ClearPagesResult`.
+  - `PageBlobClient::GetPageRanges`, `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff` now return `GetPageRangesResult`.
+- Renamed some options:
+  - Renamed `UploadPageBlobPagesOptions` to `UploadPagesOptions`.
+  - Renamed `UploadPageBlobPagesFromUriOptions` to `UploadPagesFromUriOptions`.
+  - Renamed `ClearPageBlobPagesOptions` to `ClearPagesOptions`.
+  - Renamed `GetPageBlobPageRangesOptions` to `GetPageRangesOptions`.
+  - Renamed `StartCopyBlobFromUriOptions` to `StartBlobCopyFromUriOptions`.
+  - Renamed `StartCopyPageBlobIncrementalOptions` to `StartBlobCopyIncrementalOptions`.
 - Removed `Blob` from the name of lease options and return types, like `AcquireBlobLeaseOptions` was renamed to `AcquireLeaseOptions`.
 - Removed `Blob` prefix from the name of structs `BlobGeoReplication`, `BlobLeaseStatus`, `BlobLeaseState`, `BlobLeaseDurationType`, `BlobAnalyticsLogging`, `BlobMetrics`, `BlobCorsRule`, `BlobRetentionPolicy`, `BlobStaticWebsite`, `BlobArchiveStatus` and `BlobGeoReplictionStatus`.
 - Removed `RequestId` from return types.
