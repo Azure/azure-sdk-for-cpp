@@ -151,12 +151,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
     EXPECT_EQ(
         copyInfo.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
-    EXPECT_TRUE(copyInfo.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(copyInfo.LastModified));
-    EXPECT_FALSE(copyInfo.CopyId.empty());
-    EXPECT_FALSE(copyInfo.CopyStatus.ToString().empty());
-    EXPECT_TRUE(copyInfo.VersionId.HasValue());
-    EXPECT_FALSE(copyInfo.VersionId.GetValue().empty());
     auto getPropertiesResult = copyInfo.PollUntilDone(std::chrono::seconds(1));
     ASSERT_TRUE(getPropertiesResult->CopyStatus.HasValue());
     EXPECT_EQ(getPropertiesResult->CopyStatus.GetValue(), Blobs::Models::CopyStatus::Success);

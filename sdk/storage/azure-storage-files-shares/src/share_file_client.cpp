@@ -373,10 +373,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     StartCopyFileOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
-    res.ETag = std::move(response->ETag);
-    res.LastModified = std::move(response->LastModified);
-    res.CopyId = std::move(response->CopyId);
-    res.CopyStatus = std::move(response->CopyStatus);
     res.m_fileClient = std::make_shared<ShareFileClient>(*this);
     return res;
   }
