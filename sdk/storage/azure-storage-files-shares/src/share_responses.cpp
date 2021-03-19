@@ -18,11 +18,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Pending)
+    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Pending)
     {
       m_status = Azure::Core::OperationStatus::Running;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Success)
+    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Success)
     {
       m_status = Azure::Core::OperationStatus::Succeeded;
     }

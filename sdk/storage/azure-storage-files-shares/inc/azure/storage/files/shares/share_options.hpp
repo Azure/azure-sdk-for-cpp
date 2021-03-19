@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
      */
-    Azure::Nullable<Models::ShareAccessTier> AccessTier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
      */
-    Azure::Nullable<Models::ShareAccessTier> AccessTier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.

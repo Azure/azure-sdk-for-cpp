@@ -488,7 +488,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
-    protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Update;
+    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteType::Update;
     protocolLayerOptions.ContentLength = content.Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content.Length() - 1);
@@ -510,7 +510,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
-    protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Clear;
+    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteType::Clear;
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + length - 1);
