@@ -358,14 +358,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       SmbSettings Settings; // Settings for SMB protocol.
     };
 
-    // Stats for the share.
-    struct ShareStats
-    {
-      int64_t ShareUsageInBytes
-          = int64_t(); // The approximate size of the data stored in bytes. Note that this value may
-                       // not include all recently created or recently resized files.
-    };
-
     // Signed identifier.
     struct SignedIdentifier
     {
@@ -633,6 +625,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::vector<Core::Http::HttpRange> Ranges;
       std::vector<Core::Http::HttpRange> ClearRanges;
+    };
+
+    // Stats for the share.
+    struct ShareStats
+    {
+      int64_t ShareUsageInBytes
+          = int64_t(); // The approximate size of the data stored in bytes. Note that this value may
+                       // not include all recently created or recently resized files.
     };
 
     // Specify one of the following options: - Update: Writes the bytes specified by the request
