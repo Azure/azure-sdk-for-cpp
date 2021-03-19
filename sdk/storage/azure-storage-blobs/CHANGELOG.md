@@ -40,6 +40,7 @@
 - Removed `Blob` prefix from the name of structs `BlobGeoReplication`, `BlobLeaseStatus`, `BlobLeaseState`, `BlobLeaseDurationType`, `BlobAnalyticsLogging`, `BlobMetrics`, `BlobCorsRule`, `BlobRetentionPolicy`, `BlobStaticWebsite`, `BlobArchiveStatus` and `BlobGeoReplictionStatus`.
 - Removed `RequestId` from return types.
 - Changed `BodyStream` parameter of `UploadBlob`, `Upload`, `UploadPages` and `AppendBlock`functions from pointer to reference.
+- Renamed access tier members in return types and options from `Tier` to `AccessTier`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
