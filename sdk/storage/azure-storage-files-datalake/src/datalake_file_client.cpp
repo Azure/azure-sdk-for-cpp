@@ -124,14 +124,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Response<Models::AppendFileResult> DataLakeFileClient::Append(
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       int64_t offset,
       const AppendFileOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
-    protocolLayerOptions.ContentLength = content->Length();
+    protocolLayerOptions.ContentLength = content.Length();
     if (options.TransactionalContentHash.HasValue())
     {
       if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return _detail::DataLakeRestClient::Path::AppendData(
-        m_pathUrl, *content, *m_pipeline, context, protocolLayerOptions);
+        m_pathUrl, content, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Response<Models::FlushFileResult> DataLakeFileClient::Flush(
