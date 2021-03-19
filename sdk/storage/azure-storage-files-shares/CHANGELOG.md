@@ -29,8 +29,7 @@
 - Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
 - Renamed `ShareProtocolSettings` to `ProtocolSettings`.
 - Renamed `CopyStatusType` to `CopyStatus`
-- Removed `FileRangeWriteType`.
-- Removed `ShareFileRangeList`.
+- Removed `FileRangeWriteType`, `ShareFileRangeList` and `ShareStats`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
