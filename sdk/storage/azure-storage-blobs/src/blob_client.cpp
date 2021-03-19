@@ -462,7 +462,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     auto response = _detail::BlobRestClient::Blob::GetProperties(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
-    if (response->Tier.HasValue() && !response->IsAccessTierInferred.HasValue())
+    if (response->AccessTier.HasValue() && !response->IsAccessTierInferred.HasValue())
     {
       response->IsAccessTierInferred = false;
     }
@@ -528,7 +528,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     _detail::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
-    protocolLayerOptions.Tier = tier;
+    protocolLayerOptions.AccessTier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     return _detail::BlobRestClient::Blob::SetAccessTier(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
@@ -542,7 +542,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobRestClient::Blob::StartBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.SourceUri = sourceUri;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
