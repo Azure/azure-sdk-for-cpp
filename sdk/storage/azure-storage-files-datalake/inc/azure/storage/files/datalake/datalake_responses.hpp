@@ -147,8 +147,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     PathHttpHeaders HttpHeaders;
     Azure::Nullable<bool> IsServerEncrypted;
     Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Nullable<bool> IsAccessTierInferred;
-    Azure::Nullable<DateTime> AccessTierChangedOn;
     Azure::Nullable<std::string> CopyId;
     Azure::Nullable<std::string> CopySource;
     Azure::Nullable<Blobs::Models::CopyStatus> CopyStatus;
