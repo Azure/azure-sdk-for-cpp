@@ -311,9 +311,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), downloadResponse.ExtractRawResponse());
   }
 
-  StartCopyFileOperation ShareFileClient::StartCopy(
+  StartFileCopyOperation ShareFileClient::StartCopy(
       std::string copySource,
-      const StartCopyFileOptions& options,
+      const StartFileCopyOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::StartCopyOptions();
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto response = _detail::ShareRestClient::File::StartCopy(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
-    StartCopyFileOperation res;
+    StartFileCopyOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
@@ -381,9 +381,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return res;
   }
 
-  Azure::Response<Models::AbortCopyFileResult> ShareFileClient::AbortCopy(
+  Azure::Response<Models::AbortFileCopyResult> ShareFileClient::AbortCopy(
       std::string copyId,
-      const AbortCopyFileOptions& options,
+      const AbortFileCopyOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::AbortCopyOptions();

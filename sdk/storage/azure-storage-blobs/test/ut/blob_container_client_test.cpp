@@ -872,7 +872,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string url = appendBlobClient.GetUrl() + GetSas();
 
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, RandomString());
       options.SourceAccessConditions.TagConditions = failWhereExpression;
@@ -930,7 +930,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::UploadPageBlobPagesOptions options;
+      Blobs::UploadPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
       EXPECT_THROW(pageBlobClient.UploadPages(0, content, options), StorageException);
@@ -941,7 +941,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string url = pageBlobClient.GetUrl() + GetSas();
-      Blobs::UploadPageBlobPagesFromUriOptions options;
+      Blobs::UploadPagesFromUriOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
           pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options), StorageException);
@@ -950,7 +950,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::ClearPageBlobPagesOptions options;
+      Blobs::ClearPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.ClearPages({0, contentSize}, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
@@ -966,7 +966,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::GetPageBlobPageRangesOptions options;
+      Blobs::GetPageRangesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
