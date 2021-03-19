@@ -373,10 +373,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     StartCopyFileOperation res;
     res.m_rawResponse = response.ExtractRawResponse();
-    res.ETag = std::move(response->ETag);
-    res.LastModified = std::move(response->LastModified);
-    res.CopyId = std::move(response->CopyId);
-    res.CopyStatus = std::move(response->CopyStatus);
     res.m_fileClient = std::make_shared<ShareFileClient>(*this);
     return res;
   }
@@ -487,15 +483,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Response<Models::UploadFileRangeResult> ShareFileClient::UploadRange(
       int64_t offset,
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const UploadFileRangeOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
     protocolLayerOptions.XMsWrite = Models::FileRangeWriteType::Update;
-    protocolLayerOptions.ContentLength = content->Length();
+    protocolLayerOptions.ContentLength = content.Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
-        + std::string("-") + std::to_string(offset + content->Length() - 1);
+        + std::string("-") + std::to_string(offset + content.Length() - 1);
     if (options.TransactionalContentHash.HasValue()
         && options.TransactionalContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
     {
@@ -504,7 +500,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return _detail::ShareRestClient::File::UploadRange(
-        m_shareFileUrl, *content, *m_pipeline, context, protocolLayerOptions);
+        m_shareFileUrl, content, *m_pipeline, context, protocolLayerOptions);
   }
 
   Azure::Response<Models::ClearFileRangeResult> ShareFileClient::ClearRange(
@@ -930,7 +926,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       (void)numChunks;
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
       UploadFileRangeOptions uploadRangeOptions;
-      UploadRange(offset, &contentStream, uploadRangeOptions, context);
+      UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
 
     int64_t chunkSize = options.TransferOptions.ChunkSize;
@@ -1035,7 +1031,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           fileReader.GetHandle(), offset, length);
       UploadFileRangeOptions uploadRangeOptions;
-      UploadRange(offset, &contentStream, uploadRangeOptions, context);
+      UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
 
     const int64_t fileSize = fileReader.GetFileSize();
