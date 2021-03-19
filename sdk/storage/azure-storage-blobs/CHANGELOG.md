@@ -41,6 +41,7 @@
 - Removed `RequestId` from return types.
 - Changed `BodyStream` parameter of `UploadBlob`, `Upload`, `UploadPages` and `AppendBlock`functions from pointer to reference.
 - Renamed access tier members in return types and options from `Tier` to `AccessTier`.
+- Renamed `BlockListTypeOption` to `BlockListType`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

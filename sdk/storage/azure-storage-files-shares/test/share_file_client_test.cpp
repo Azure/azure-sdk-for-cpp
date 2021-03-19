@@ -683,8 +683,7 @@ namespace Azure { namespace Storage { namespace Test {
           copyOperation.GetRawResponse().GetStatusCode(),
           Azure::Core::Http::HttpStatusCode::Accepted);
       auto fileProperties = *copyOperation.PollUntilDone(std::chrono::milliseconds(1000));
-      EXPECT_EQ(
-          fileProperties.CopyStatus.GetValue(), Files::Shares::Models::CopyStatusType::Success);
+      EXPECT_EQ(fileProperties.CopyStatus.GetValue(), Files::Shares::Models::CopyStatus::Success);
     }
 
     {

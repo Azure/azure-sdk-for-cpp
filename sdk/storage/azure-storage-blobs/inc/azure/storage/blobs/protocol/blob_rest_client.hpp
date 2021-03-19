@@ -138,20 +138,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlobType
 
-    class BlockListTypeOption {
+    class BlockListType {
     public:
-      BlockListTypeOption() = default;
-      explicit BlockListTypeOption(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const BlockListTypeOption& other) const { return m_value == other.m_value; }
-      bool operator!=(const BlockListTypeOption& other) const { return !(*this == other); }
+      BlockListType() = default;
+      explicit BlockListType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlockListType& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlockListType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption Committed;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption Uncommitted;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListTypeOption All;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Committed;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Uncommitted;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
 
     private:
       std::string m_value;
-    }; // extensible enum BlockListTypeOption
+    }; // extensible enum BlockListType
 
     class BlockType {
     public:
@@ -7312,7 +7312,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct GetBlockListOptions
         {
           Azure::Nullable<int32_t> Timeout;
-          BlockListTypeOption ListType = BlockListTypeOption::Committed;
+          BlockListType ListType = BlockListType::Committed;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> IfTags;
         }; // struct GetBlockListOptions
