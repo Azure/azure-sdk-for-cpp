@@ -25,6 +25,12 @@
 - Removed `RequestId` from the return types.
 - Changed `BodyStream` parameter of `UploadRange` function from pointer to reference.
 - Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
+- Removed `PathRenameMode`.
+- Removed `PathGetPropertiesAction`.
+- Removed `PathSetAccessControlRecursiveMode`.
+- Removed `FileSystemResourceType`.
+- Removed `FileSystemResourceType`.
+- Removed `IsAccessTierInferred` and `AccessTierChangedOn` from `PathProperties`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
