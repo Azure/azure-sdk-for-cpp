@@ -23,7 +23,11 @@ int main(int argc, char** argv)
   auto r = RUN_ALL_TESTS();
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#if defined(AZ_PLATFORM_POSIX)
+  // Cleaning ssl connections on Windows is broken until
+  // https://github.com/Azure/azure-sdk-for-cpp/pull/1500 is merged.
   curl_global_cleanup();
+#endif
 #endif
   return r;
 }
