@@ -166,10 +166,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Nullable<bool> IsCurrentVersion;
   };
 
-  struct GetPathAccessControlListResult
+  struct PathAccessControlList
   {
-    Azure::ETag ETag;
-    DateTime LastModified;
     std::string Owner;
     std::string Group;
     std::string Permissions;

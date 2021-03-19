@@ -16,7 +16,8 @@
   - `DataLakeServiceClient::GetUserDelegationKey` now returns `UserDelegationKey`.
   - `DataLakeFileSystemClient::GetProperties` now returns  `FileSystemProperties`.
   - `DataLakeFileSystemClient::GetAccessPolicy` now returns  `FileSystemAccessPolicy`.
-  - `DataLakePathClient::GetProperties` now returns  `PathProperties`.
+  - `DataLakePathClient::GetProperties` now returns `PathProperties`.
+  - `DataLakePathClient::GetAccessControlList` now returns `PathAccessControlList`.
 - Removed `GetUserDelegationKeyResult`.
 - Removed `DataLake` from the names of return types and option types.
 - Removed `RequestId` from the return types.
