@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         _internal::WithReplicaStatus(context));
     for (auto& i : response->Items)
     {
-      if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
+      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
       {
         i.Details.IsAccessTierInferred = false;
       }

@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.Tier = options.Tier;
+      uploadBlockBlobOptions.AccessTier = options.AccessTier;
       return Upload(contentStream, uploadBlockBlobOptions, context);
     }
 
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
-    commitBlockListOptions.Tier = options.Tier;
+    commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult ret;
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         UploadBlockBlobOptions uploadBlockBlobOptions;
         uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
         uploadBlockBlobOptions.Metadata = options.Metadata;
-        uploadBlockBlobOptions.Tier = options.Tier;
+        uploadBlockBlobOptions.AccessTier = options.AccessTier;
         return Upload(contentStream, uploadBlockBlobOptions, context);
       }
     }
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
-    commitBlockListOptions.Tier = options.Tier;
+    commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult result;
@@ -300,7 +300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

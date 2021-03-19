@@ -463,7 +463,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Indicates the priority with which to rehydrate an archived blob. The priority
@@ -697,7 +697,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -723,7 +723,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     struct
     {
@@ -812,7 +812,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

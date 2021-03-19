@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
     m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
-    m_blobUploadOptions.Tier = Azure::Storage::Blobs::Models::AccessTier::Hot;
+    m_blobUploadOptions.AccessTier = Azure::Storage::Blobs::Models::AccessTier::Hot;
     auto blobContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(blobContent, m_blobUploadOptions);
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->BlobSize, static_cast<int64_t>(m_blobContent.size()));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->HttpHeaders.ContentHash.Algorithm, Storage::HashAlgorithm::Md5);
-    EXPECT_EQ(res->Tier.GetValue(), Azure::Storage::Blobs::Models::AccessTier::Cool);
+    EXPECT_EQ(res->AccessTier.GetValue(), Azure::Storage::Blobs::Models::AccessTier::Cool);
     EXPECT_TRUE(IsValidTime(res->AccessTierChangedOn.GetValue()));
   }
 
@@ -816,7 +816,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
       options.HttpHeaders.ContentHash.Value.clear();
       options.Metadata = m_blobUploadOptions.Metadata;
-      options.Tier = m_blobUploadOptions.Tier;
+      options.AccessTier = m_blobUploadOptions.AccessTier;
       auto res = blockBlobClient.UploadFrom(
           blobContent.data(), static_cast<std::size_t>(blobSize), options);
       EXPECT_TRUE(res->ETag.HasValue());
@@ -826,7 +826,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(properties.BlobSize, blobSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
-      EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+      EXPECT_EQ(properties.AccessTier.GetValue(), options.AccessTier.GetValue());
       EXPECT_EQ(properties.ETag, res->ETag);
       EXPECT_EQ(properties.LastModified, res->LastModified);
       std::vector<uint8_t> downloadContent(static_cast<std::size_t>(blobSize), '\x00');
@@ -846,7 +846,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
       options.HttpHeaders.ContentHash.Value.clear();
       options.Metadata = m_blobUploadOptions.Metadata;
-      options.Tier = m_blobUploadOptions.Tier;
+      options.AccessTier = m_blobUploadOptions.AccessTier;
 
       std::string tempFilename = RandomString();
       {
@@ -861,7 +861,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(properties.BlobSize, blobSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
-      EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+      EXPECT_EQ(properties.AccessTier.GetValue(), options.AccessTier.GetValue());
       EXPECT_EQ(properties.ETag, res->ETag);
       EXPECT_EQ(properties.LastModified, res->LastModified);
       std::vector<uint8_t> downloadContent(static_cast<std::size_t>(blobSize), '\x00');
@@ -970,7 +970,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
 
     auto properties = *blobClient.GetProperties();
-    ASSERT_TRUE(properties.Tier.HasValue());
+    ASSERT_TRUE(properties.AccessTier.HasValue());
     ASSERT_TRUE(properties.IsAccessTierInferred.HasValue());
     EXPECT_TRUE(properties.IsAccessTierInferred.GetValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
@@ -985,7 +985,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          ASSERT_TRUE(blob.Details.Tier.HasValue());
+          ASSERT_TRUE(blob.Details.AccessTier.HasValue());
           ASSERT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
           EXPECT_TRUE(blob.Details.IsAccessTierInferred.GetValue());
         }
@@ -993,13 +993,13 @@ namespace Azure { namespace Storage { namespace Test {
     } while (options.ContinuationToken.HasValue());
 
     // choose a different tier
-    auto targetTier = properties.Tier.GetValue() == Blobs::Models::AccessTier::Hot
+    auto targetTier = properties.AccessTier.GetValue() == Blobs::Models::AccessTier::Hot
         ? Blobs::Models::AccessTier::Cool
         : Blobs::Models::AccessTier::Hot;
     blobClient.SetAccessTier(targetTier);
 
     properties = *blobClient.GetProperties();
-    ASSERT_TRUE(properties.Tier.HasValue());
+    ASSERT_TRUE(properties.AccessTier.HasValue());
     ASSERT_TRUE(properties.IsAccessTierInferred.HasValue());
     EXPECT_FALSE(properties.IsAccessTierInferred.GetValue());
     EXPECT_TRUE(properties.AccessTierChangedOn.HasValue());
@@ -1012,7 +1012,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         if (blob.Name == blobName)
         {
-          ASSERT_TRUE(blob.Details.Tier.HasValue());
+          ASSERT_TRUE(blob.Details.AccessTier.HasValue());
           ASSERT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
           EXPECT_FALSE(blob.Details.IsAccessTierInferred.GetValue());
         }

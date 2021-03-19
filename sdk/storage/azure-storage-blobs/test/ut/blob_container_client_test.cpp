@@ -181,12 +181,12 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(blob.BlobType.ToString().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
-          EXPECT_TRUE(blob.Details.Tier.HasValue());
+          EXPECT_TRUE(blob.Details.AccessTier.HasValue());
           EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
         }
-        if (blob.Details.Tier.HasValue())
+        if (blob.Details.AccessTier.HasValue())
         {
-          EXPECT_FALSE(blob.Details.Tier.GetValue().ToString().empty());
+          EXPECT_FALSE(blob.Details.AccessTier.GetValue().ToString().empty());
         }
         if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {
