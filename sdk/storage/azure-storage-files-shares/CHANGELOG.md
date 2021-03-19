@@ -19,7 +19,7 @@
 - Renamed `GetSharePropertiesResult` to `ShareProperties`.
 - Renamed `GetShareDirectoryPropertiesResult` to `DirectoryProperties`.
 - Renamed `GetShareFilePropertiesResult` to `FileProperties`
-- Renamed `GetServicePropertiesResult` to `FileServiceProperties`.
+- Renamed `GetServicePropertiesResult` to `ShareServiceProperties`.
 - Removed `Share` from the names of return types and option types.
 - Renamed `AbortCopyFileOptions` to `AbortFileCopyOptions`.
 - Removed `RequestId` from the return types.
