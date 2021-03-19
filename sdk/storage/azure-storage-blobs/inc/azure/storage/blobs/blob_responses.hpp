@@ -67,13 +67,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   class StartBlobCopyOperation : public Azure::Core::Operation<Models::BlobProperties> {
   public:
-    Azure::ETag ETag;
-    Azure::DateTime LastModified;
-    std::string CopyId;
-    Models::CopyStatus CopyStatus;
-    Azure::Nullable<std::string> VersionId;
-
-  public:
     Models::BlobProperties Value() const override { return m_pollResult; }
 
     StartBlobCopyOperation() = default;

@@ -171,13 +171,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class StartFileCopyOperation : public Azure::Core::Operation<Models::FileProperties> {
   public:
-    Azure::ETag ETag;
-    Azure::DateTime LastModified;
-    std::string CopyId;
-    Models::CopyStatusType CopyStatus;
-    Nullable<std::string> VersionId;
-
-  public:
     Models::FileProperties Value() const override { return m_pollResult; }
 
     StartFileCopyOperation() = default;
