@@ -28,6 +28,8 @@
 - Renamed `ShareAccessTier` to `AccessTier`.
 - Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
 - Renamed `ShareProtocolSettings` to `ProtocolSettings`.
+- Renamed `ShareGetPropertiesResult::AccessTier` to `ShareGetPropertiesResult::Tier` to align with other services.
+- Renamed `ShareItemDetails::AccessTier` to `ShareItemDetails::Tier` to align with other services.
 - Removed `FileRangeWriteType`.
 
 ## 12.0.0-beta.8 (2021-02-12)

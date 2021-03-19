@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       Azure::Nullable<DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
-      Azure::Nullable<AccessTier> AccessTier; // The access tier of the share.
+      Azure::Nullable<AccessTier> Tier; // The access tier of the share.
       Azure::Nullable<DateTime> AccessTierChangedOn;
       Azure::Nullable<std::string> AccessTierTransitionState;
       LeaseStatusType LeaseStatus;
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Enabled = bool(); // Indicates whether metrics are enabled for the File service.
       Azure::Nullable<bool> IncludeApis; // Indicates whether metrics should generate summary
                                          // statistics for called API operations.
-      RetentionPolicy RetentionPolicy;
+      Models::RetentionPolicy RetentionPolicy;
     };
 
     // Settings for SMB multichannel
@@ -501,7 +501,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* QueryRestype = "restype";
     constexpr static const char* QueryComp = "comp";
     constexpr static const char* HeaderVersion = "x-ms-version";
-    constexpr static const char* HeaderAccessTier = "x-ms-access-tier";
+    constexpr static const char* HeaderTier = "x-ms-access-tier";
     constexpr static const char* HeaderContentLength = "content-length";
     constexpr static const char* HeaderContentHashMd5 = "content-md5";
     constexpr static const char* HeaderCopyActionAbortConstant = "x-ms-copy-action";
@@ -695,7 +695,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<LeaseDurationType> LeaseDuration;
       Azure::Nullable<LeaseStateType> LeaseState;
       Azure::Nullable<LeaseStatusType> LeaseStatus;
-      Azure::Nullable<AccessTier> AccessTier;
+      Azure::Nullable<AccessTier> Tier;
       Azure::Nullable<DateTime> AccessTierChangedOn;
       Azure::Nullable<std::string> AccessTierTransitionState;
     };
@@ -2151,7 +2151,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::AccessTier)
               {
-                result.AccessTier = AccessTier(node.Value);
+                result.Tier = AccessTier(node.Value);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::AccessTierChangeTime)
               {
@@ -2493,7 +2493,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (createOptions.XMsAccessTier.HasValue())
           {
             request.SetHeader(
-                _detail::HeaderAccessTier, createOptions.XMsAccessTier.GetValue().ToString());
+                _detail::HeaderTier, createOptions.XMsAccessTier.GetValue().ToString());
           }
           request.SetHeader(_detail::HeaderVersion, createOptions.ApiVersionParameter);
           return CreateParseResult(context, pipeline.Send(request, context));
@@ -2924,8 +2924,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (setPropertiesOptions.XMsAccessTier.HasValue())
           {
             request.SetHeader(
-                _detail::HeaderAccessTier,
-                setPropertiesOptions.XMsAccessTier.GetValue().ToString());
+                _detail::HeaderTier, setPropertiesOptions.XMsAccessTier.GetValue().ToString());
           }
           if (setPropertiesOptions.LeaseIdOptional.HasValue())
           {
@@ -3210,7 +3209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             if (response.GetHeaders().find("x-ms-access-tier") != response.GetHeaders().end())
             {
-              result.AccessTier = AccessTier(response.GetHeaders().at("x-ms-access-tier"));
+              result.Tier = AccessTier(response.GetHeaders().at("x-ms-access-tier"));
             }
             if (response.GetHeaders().find(_detail::HeaderAccessTierChangedOn)
                 != response.GetHeaders().end())
