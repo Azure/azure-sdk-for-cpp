@@ -829,7 +829,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
-    Models::BlockListTypeOption ListType = Models::BlockListTypeOption::Committed;
+    Models::BlockListType ListType = Models::BlockListType::Committed;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
