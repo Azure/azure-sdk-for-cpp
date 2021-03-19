@@ -352,7 +352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct StartCopyFileOptions
+  struct StartFileCopyOptions
   {
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -394,7 +394,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct AbortCopyFileOptions
+  struct AbortFileCopyOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.

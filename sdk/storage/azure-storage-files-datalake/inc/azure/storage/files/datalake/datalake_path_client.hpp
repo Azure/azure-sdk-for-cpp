@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * access control list of the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::GetPathAccessControlListResult> GetAccessControlList(
+    Azure::Response<Models::PathAccessControlList> GetAccessControlList(
         const GetPathAccessControlListOptions& options = GetPathAccessControlListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
