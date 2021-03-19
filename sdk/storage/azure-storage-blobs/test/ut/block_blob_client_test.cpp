@@ -406,7 +406,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUrl() + GetSas());
     Blobs::GetBlockListOptions options2;
-    options2.ListType = Blobs::Models::BlockListTypeOption::All;
+    options2.ListType = Blobs::Models::BlockListType::All;
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(res->BlobSize, static_cast<int64_t>(block1Content.size()));
     ASSERT_FALSE(res->UncommittedBlocks.empty());
