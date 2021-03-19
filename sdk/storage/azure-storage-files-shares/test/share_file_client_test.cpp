@@ -623,7 +623,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         memBodyStream.Rewind();
         EXPECT_NO_THROW(
-            fileClient.UploadRange(static_cast<int64_t>(rangeSize) * i, &memBodyStream));
+            fileClient.UploadRange(static_cast<int64_t>(rangeSize) * i, memBodyStream));
       }
 
       for (int32_t i = 0; i < numOfChunks; ++i)
@@ -658,11 +658,11 @@ namespace Azure { namespace Storage { namespace Test {
       hash.Value = md5;
       hash.Algorithm = HashAlgorithm::Md5;
       uploadOptions.TransactionalContentHash = hash;
-      EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions));
+      EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream, uploadOptions));
       hash.Value = invalidMd5;
       uploadOptions.TransactionalContentHash = hash;
       memBodyStream.Rewind();
-      EXPECT_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions), StorageException);
+      EXPECT_THROW(fileClient.UploadRange(0, memBodyStream, uploadOptions), StorageException);
     }
   }
 
@@ -714,7 +714,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto fileClient
         = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
     fileClient.Create(fileSize);
-    EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream));
+    EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
     std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
     EXPECT_NO_THROW(
@@ -744,7 +744,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto fileClient
         = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
     fileClient.Create(fileSize);
-    EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream));
+    EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
     std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
     EXPECT_NO_THROW(
@@ -840,7 +840,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
     auto sourceFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
     sourceFileClient.Create(fileSize);
-    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, &memBodyStream));
+    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, memBodyStream));
 
     auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString(10));
     destFileClient.Create(fileSize * 4);
