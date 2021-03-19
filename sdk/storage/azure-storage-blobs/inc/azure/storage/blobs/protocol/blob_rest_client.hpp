@@ -943,7 +943,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<Azure::DateTime> LastAccessedOn;
       Azure::DateTime LastModified;
       Azure::ETag ETag;
-      Azure::Nullable<AccessTier> Tier;
+      Azure::Nullable<Models::AccessTier> AccessTier;
       Azure::Nullable<bool> IsAccessTierInferred;
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
       Models::LeaseState LeaseState = Models::LeaseState::Available;
@@ -977,7 +977,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool IsServerEncrypted = false;
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<AccessTier> Tier;
+      Azure::Nullable<Models::AccessTier> AccessTier;
       Azure::Nullable<bool> IsAccessTierInferred;
       Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
       Azure::Nullable<Models::RehydratePriority> RehydratePriority;
@@ -4357,7 +4357,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_AccessTier)
               {
-                ret.Details.Tier = AccessTier(node.Value);
+                ret.Details.AccessTier = AccessTier(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5364,7 +5364,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_access_tier__iterator = httpResponse.GetHeaders().find("x-ms-access-tier");
           if (x_ms_access_tier__iterator != httpResponse.GetHeaders().end())
           {
-            response.Tier = AccessTier(x_ms_access_tier__iterator->second);
+            response.AccessTier = AccessTier(x_ms_access_tier__iterator->second);
           }
           auto x_ms_access_tier_inferred__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-inferred");
@@ -5703,7 +5703,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct SetBlobAccessTierOptions
         {
           Azure::Nullable<int32_t> Timeout;
-          AccessTier Tier;
+          Models::AccessTier AccessTier;
           Azure::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobAccessTierOptions
@@ -5722,7 +5722,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.SetHeader("x-ms-access-tier", options.Tier.ToString());
+          request.SetHeader("x-ms-access-tier", options.AccessTier.ToString());
           if (options.RehydratePriority.HasValue())
           {
             request.SetHeader(
@@ -5771,7 +5771,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string SourceUri;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> SourceLeaseId;
-          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
           Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
@@ -5814,9 +5814,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.GetValue());
           }
-          if (options.Tier.HasValue())
+          if (options.AccessTier.HasValue())
           {
-            request.SetHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
+            request.SetHeader("x-ms-access-tier", options.AccessTier.GetValue().ToString());
           }
           if (options.RehydratePriority.HasValue())
           {
@@ -6680,7 +6680,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
           Azure::Nullable<std::string> LeaseId;
-          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<std::string> EncryptionKey;
           Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
           Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
@@ -6781,9 +6781,9 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.SetHeader("x-ms-lease-id", options.LeaseId.GetValue());
           }
           request.SetHeader("x-ms-blob-type", "BlockBlob");
-          if (options.Tier.HasValue())
+          if (options.AccessTier.HasValue())
           {
-            request.SetHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
+            request.SetHeader("x-ms-access-tier", options.AccessTier.GetValue().ToString());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -7160,7 +7160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
           Azure::Nullable<std::string> IfTags;
-          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<Models::AccessTier> AccessTier;
         }; // struct CommitBlockListOptions
 
         static Azure::Response<CommitBlockListResult> CommitBlockList(
@@ -7243,9 +7243,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
           }
-          if (options.Tier.HasValue())
+          if (options.AccessTier.HasValue())
           {
-            request.SetHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
+            request.SetHeader("x-ms-access-tier", options.AccessTier.GetValue().ToString());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -7523,7 +7523,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
           Azure::Nullable<std::string> LeaseId;
-          Azure::Nullable<AccessTier> Tier;
+          Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<std::string> EncryptionKey;
           Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
           Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
@@ -7592,9 +7592,9 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.SetHeader(
                 "x-ms-blob-sequence-number", std::to_string(options.SequenceNumber.GetValue()));
           }
-          if (options.Tier.HasValue())
+          if (options.AccessTier.HasValue())
           {
-            request.SetHeader("x-ms-access-tier", options.Tier.GetValue().ToString());
+            request.SetHeader("x-ms-access-tier", options.AccessTier.GetValue().ToString());
           }
           if (options.EncryptionKey.HasValue())
           {
