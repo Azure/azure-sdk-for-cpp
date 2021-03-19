@@ -325,7 +325,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     struct FileSystemListPathsResult
     {
       std::vector<PathItem> Items;
-      std::string RequestId;
       Azure::Nullable<std::string> ContinuationToken;
     };
 
@@ -333,7 +332,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::ETag ETag;
       Azure::Nullable<DateTime> LastModified;
-      std::string RequestId;
       Azure::Nullable<int64_t> ContentLength;
     };
 
@@ -343,7 +341,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       PathHttpHeaders HttpHeaders;
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       Azure::Nullable<std::string> ResourceType;
       Azure::Nullable<std::string> Properties;
       Azure::Nullable<std::string> Owner;
@@ -357,7 +354,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathDeleteResult
     {
-      std::string RequestId;
       Azure::Nullable<std::string> ContinuationToken;
     };
 
@@ -365,7 +361,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct PathSetAccessControlRecursiveResult
@@ -375,7 +370,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int32_t NumberOfFailures = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
       Azure::Nullable<std::string> ContinuationToken;
-      std::string RequestId;
     };
 
     struct PathFlushDataResult
@@ -383,12 +377,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::ETag ETag;
       DateTime LastModified;
       int64_t ContentLength = int64_t();
-      std::string RequestId;
     };
 
     struct PathAppendDataResult
     {
-      std::string RequestId;
       Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
       bool IsServerEncrypted = bool();
     };
@@ -474,7 +466,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 ? FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
                     PathListFromJson(Azure::Core::Json::_internal::json::parse(bodyBuffer)));
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -1171,7 +1162,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   response.GetHeaders().at(_detail::HeaderLastModified),
                   DateTime::DateFormat::Rfc1123);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContentLength)
                 != response.GetHeaders().end())
             {
@@ -1239,7 +1229,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   response.GetHeaders().at(_detail::HeaderLastModified),
                   DateTime::DateFormat::Rfc1123);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderResourceType)
                 != response.GetHeaders().end())
             {
@@ -1304,7 +1293,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // The file was deleted.
             PathDeleteResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContinuationToken)
                 != response.GetHeaders().end())
             {
@@ -1339,7 +1327,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   response.GetHeaders().at(_detail::HeaderLastModified),
                   DateTime::DateFormat::Rfc1123);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<PathSetAccessControlResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1370,7 +1357,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.ContinuationToken = response.GetHeaders().at(_detail::HeaderContinuationToken);
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<PathSetAccessControlRecursiveResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -1442,7 +1428,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.ContentLength
                   = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
             }
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             return Azure::Response<PathFlushDataResult>(std::move(result), std::move(responsePtr));
           }
           else
@@ -1461,7 +1446,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // Append data to file control response.
             PathAppendDataResult result;
-            result.RequestId = response.GetHeaders().at(_detail::HeaderRequestId);
             if (response.GetHeaders().find(_detail::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
