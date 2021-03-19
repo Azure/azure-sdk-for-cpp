@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 3_KB);
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.GetValue()), 3_KB);
 
-    Azure::Storage::Blobs::GetPageBlobPageRangesOptions options;
+    Azure::Storage::Blobs::GetPageRangesOptions options;
     options.Range = Core::Http::HttpRange();
     options.Range.GetValue().Offset = 4_KB;
     options.Range.GetValue().Length = 1_KB;
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
     auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
 
-    Blobs::UploadPageBlobPagesOptions options;
+    Blobs::UploadPagesOptions options;
     ContentHash hash;
     hash.Algorithm = HashAlgorithm::Md5;
 
@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
     auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
 
-    Blobs::UploadPageBlobPagesOptions options;
+    Blobs::UploadPagesOptions options;
     ContentHash hash;
     hash.Algorithm = HashAlgorithm::Crc64;
 

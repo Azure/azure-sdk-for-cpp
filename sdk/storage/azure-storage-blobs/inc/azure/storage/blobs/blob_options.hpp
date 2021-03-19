@@ -439,7 +439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::StartCopyFromUri.
    */
-  struct StartCopyBlobFromUriOptions
+  struct StartBlobCopyFromUriOptions
   {
     /**
      * @brief Specifies user-defined name-value pairs associated with the blob. If no
@@ -463,7 +463,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Indicates the priority with which to rehydrate an archived blob. The priority
@@ -481,7 +481,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::AbortCopyFromUri.
    */
-  struct AbortCopyBlobFromUriOptions
+  struct AbortBlobCopyFromUriOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -697,7 +697,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -723,7 +723,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     struct
     {
@@ -812,7 +812,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -947,7 +947,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::UploadPages.
    */
-  struct UploadPageBlobPagesOptions
+  struct UploadPagesOptions
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -965,7 +965,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::UploadPagesFromUri.
    */
-  struct UploadPageBlobPagesFromUriOptions
+  struct UploadPagesFromUriOptions
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -983,7 +983,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::ClearPages.
    */
-  struct ClearPageBlobPagesOptions
+  struct ClearPagesOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1005,7 +1005,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::GetPageRanges.
    */
-  struct GetPageBlobPageRangesOptions
+  struct GetPageRangesOptions
   {
     /**
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
@@ -1022,7 +1022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::StartCopyIncremental.
    */
-  struct StartCopyPageBlobIncrementalOptions
+  struct StartBlobCopyIncrementalOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.

@@ -145,12 +145,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param content A BodyStream containing the content of the pages to upload.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A UploadPageBlobPagesResult describing the state of the updated pages.
+     * @return A UploadPagesResult describing the state of the updated pages.
      */
-    Azure::Response<Models::UploadPageBlobPagesResult> UploadPages(
+    Azure::Response<Models::UploadPagesResult> UploadPages(
         int64_t offset,
         Azure::Core::IO::BodyStream& content,
-        const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions(),
+        const UploadPagesOptions& options = UploadPagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -167,13 +167,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param sourceRange Only upload the bytes of the blob in the sourceUri in the specified range.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
+     * @return A UploadPagesFromUriResult describing the state of the updated pages.
      */
-    Azure::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
+    Azure::Response<Models::UploadPagesFromUriResult> UploadPagesFromUri(
         int64_t destinationOffset,
         std::string sourceUri,
         Azure::Core::Http::HttpRange sourceRange,
-        const UploadPageBlobPagesFromUriOptions& options = UploadPageBlobPagesFromUriOptions(),
+        const UploadPagesFromUriOptions& options = UploadPagesFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -181,16 +181,15 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param range Specifies the range of bytes to be cleared. Both the start and end of the range
      * must be specified. For a page clear operation, the page range can be up to the value of the
-     * blob's full size. Given that pages must be aligned with 512-byte boundaries, the start of the
-     * range must be a modulus of 512 and the end of the range must be a modulus of 512 � 1.
-     * Examples of valid byte ranges are 0-511, 512-1023, etc.
+     * blob's full size. Given that pages must be aligned with 512-byte boundaries, the start and
+     * length of the range must be a modulus of 512.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ClearPageBlobPagesResult describing the state of the updated pages.
+     * @return A ClearPagesResult describing the state of the updated pages.
      */
-    Azure::Response<Models::ClearPageBlobPagesResult> ClearPages(
+    Azure::Response<Models::ClearPagesResult> ClearPages(
         Azure::Core::Http::HttpRange range,
-        const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions(),
+        const ClearPagesOptions& options = ClearPagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -214,10 +213,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
+     * @return A GetPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Response<Models::GetPageBlobPageRangesResult> GetPageRanges(
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
+    Azure::Response<Models::GetPageRangesResult> GetPageRanges(
+        const GetPageRangesOptions& options = GetPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -230,11 +229,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * previousSnapshot is the older of the two.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
+     * @return A GetPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Response<Models::GetPageBlobPageRangesResult> GetPageRangesDiff(
+    Azure::Response<Models::GetPageRangesResult> GetPageRangesDiff(
         const std::string& previousSnapshot,
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
+        const GetPageRangesOptions& options = GetPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -249,11 +248,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * two.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
+     * @return A GetPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Response<Models::GetPageBlobPageRangesResult> GetManagedDiskPageRangesDiff(
+    Azure::Response<Models::GetPageRangesResult> GetManagedDiskPageRangesDiff(
         const std::string& previousSnapshotUrl,
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions(),
+        const GetPageRangesOptions& options = GetPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -266,11 +265,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source blob must either be public or must be authenticated via a shared access signature.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A StartCopyBlobOperation describing the state of the copy operation.
+     * @return A StartBlobCopyOperation describing the state of the copy operation.
      */
-    StartCopyBlobOperation StartCopyIncremental(
+    StartBlobCopyOperation StartCopyIncremental(
         const std::string& sourceUri,
-        const StartCopyPageBlobIncrementalOptions& options = StartCopyPageBlobIncrementalOptions(),
+        const StartBlobCopyIncrementalOptions& options = StartBlobCopyIncrementalOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:

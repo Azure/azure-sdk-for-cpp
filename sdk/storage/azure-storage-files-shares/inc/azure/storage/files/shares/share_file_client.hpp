@@ -197,11 +197,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * snapshot can also be specified as a copy source.
      * @param options Optional parameters to copy the content of this file.
      * @param context Context for cancelling long running operations.
-     * @return StartCopyFileOperation containing the copy related information.
+     * @return StartFileCopyOperation containing the copy related information.
      */
-    StartCopyFileOperation StartCopy(
+    StartFileCopyOperation StartCopy(
         std::string copySource,
-        const StartCopyFileOptions& options = StartCopyFileOptions(),
+        const StartFileCopyOptions& options = StartFileCopyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -210,12 +210,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * StartCopy operation.
      * @param options Optional parameters to abort copying the content of this file.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::AbortCopyFileResult> containing the abort copy
+     * @return Azure::Response<Models::AbortFileCopyResult> containing the abort copy
      * related information, current empty but preserved for future usage.
      */
-    Azure::Response<Models::AbortCopyFileResult> AbortCopy(
+    Azure::Response<Models::AbortFileCopyResult> AbortCopy(
         std::string copyId,
-        const AbortCopyFileOptions& options = AbortCopyFileOptions(),
+        const AbortFileCopyOptions& options = AbortFileCopyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
