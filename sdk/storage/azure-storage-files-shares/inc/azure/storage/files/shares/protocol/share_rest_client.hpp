@@ -80,22 +80,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ParentFileId;
     };
     // Specifies the access tier of the share.
-    class ShareAccessTier {
+    class AccessTier {
     public:
-      ShareAccessTier() = default;
-      explicit ShareAccessTier(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const ShareAccessTier& other) const { return m_value == other.m_value; }
-      bool operator!=(const ShareAccessTier& other) const { return !(*this == other); }
+      AccessTier() = default;
+      explicit AccessTier(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
+      bool operator!=(const AccessTier& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier TransactionOptimized;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Hot;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Cool;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAccessTier Premium;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier TransactionOptimized;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Hot;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Cool;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Premium;
 
     private:
       std::string m_value;
-    }; // extensible enum ShareAccessTier
+    }; // extensible enum AccessTier
 
     // Specifies the option to copy file security descriptor from source file or to set it using the
     // value which is defined by the header value of x-ms-file-permission or
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       Azure::Nullable<DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
-      Azure::Nullable<ShareAccessTier> AccessTier; // The access tier of the share.
+      Azure::Nullable<AccessTier> AccessTier; // The access tier of the share.
       Azure::Nullable<DateTime> AccessTierChangedOn;
       Azure::Nullable<std::string> AccessTierTransitionState;
       LeaseStatusType LeaseStatus;
@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // The retention policy.
-    struct ShareRetentionPolicy
+    struct RetentionPolicy
     {
       bool Enabled
           = bool(); // Indicates whether a retention policy is enabled for the File service. If
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Enabled = bool(); // Indicates whether metrics are enabled for the File service.
       Azure::Nullable<bool> IncludeApis; // Indicates whether metrics should generate summary
                                          // statistics for called API operations.
-      ShareRetentionPolicy RetentionPolicy;
+      RetentionPolicy RetentionPolicy;
     };
 
     // Settings for SMB multichannel
@@ -353,16 +353,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // Protocol settings
-    struct ShareProtocolSettings
+    struct ProtocolSettings
     {
       SmbSettings Settings; // Settings for SMB protocol.
-    };
-
-    // The list of file ranges
-    struct ShareFileRangeList
-    {
-      std::vector<Core::Http::HttpRange> Ranges;
-      std::vector<Core::Http::HttpRange> ClearRanges;
     };
 
     // Stats for the share.
@@ -388,7 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Metrics MinuteMetrics; // A summary of request statistics grouped by API in minute aggregates
                              // for files.
       std::vector<CorsRule> Cors; // The set of CORS rules.
-      Azure::Nullable<ShareProtocolSettings> Protocol; // Protocol settings
+      Azure::Nullable<ProtocolSettings> Protocol; // Protocol settings
     };
 
     // A permission (a security descriptor) at the share level.
@@ -434,26 +427,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     private:
       std::string m_value;
     }; // extensible enum CopyStatusType
-
-    // Specify one of the following options: - Update: Writes the bytes specified by the request
-    // body into the specified range. The Range and Content-Length headers must match to perform the
-    // update. - Clear: Clears the specified range and releases the space used in storage for that
-    // range. To clear a range, set the Content-Length header to zero, and set the Range header to a
-    // value that indicates the range to clear, up to maximum file size.
-    class FileRangeWriteType {
-    public:
-      FileRangeWriteType() = default;
-      explicit FileRangeWriteType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const FileRangeWriteType& other) const { return m_value == other.m_value; }
-      bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Update;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Clear;
-
-    private:
-      std::string m_value;
-    }; // extensible enum FileRangeWriteType
 
     enum class ListSharesIncludeType
     {
@@ -655,6 +628,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
     };
 
+    // The list of file ranges
+    struct RangeList
+    {
+      std::vector<Core::Http::HttpRange> Ranges;
+      std::vector<Core::Http::HttpRange> ClearRanges;
+    };
+
+    // Specify one of the following options: - Update: Writes the bytes specified by the request
+    // body into the specified range. The Range and Content-Length headers must match to perform the
+    // update. - Clear: Clears the specified range and releases the space used in storage for that
+    // range. To clear a range, set the Content-Length header to zero, and set the Range header to a
+    // value that indicates the range to clear, up to maximum file size.
+    class FileRangeWriteType {
+    public:
+      FileRangeWriteType() = default;
+      explicit FileRangeWriteType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileRangeWriteType& other) const { return m_value == other.m_value; }
+      bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Clear;
+
+    private:
+      std::string m_value;
+    }; // extensible enum FileRangeWriteType
+
     struct ServiceSetPropertiesResult
     {
     };
@@ -664,7 +664,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Metrics HourMetrics;
       Metrics MinuteMetrics;
       std::vector<CorsRule> Cors;
-      Azure::Nullable<ShareProtocolSettings> Protocol;
+      Azure::Nullable<ProtocolSettings> Protocol;
     };
 
     struct ServiceListSharesSinglePageResult
@@ -695,7 +695,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<LeaseDurationType> LeaseDuration;
       Azure::Nullable<LeaseStateType> LeaseState;
       Azure::Nullable<LeaseStatusType> LeaseStatus;
-      Azure::Nullable<ShareAccessTier> AccessTier;
+      Azure::Nullable<AccessTier> AccessTier;
       Azure::Nullable<DateTime> AccessTierChangedOn;
       Azure::Nullable<std::string> AccessTierTransitionState;
     };
@@ -1197,9 +1197,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static void ShareRetentionPolicyToXml(
+        static void RetentionPolicyToXml(
             _internal::XmlWriter& writer,
-            const ShareRetentionPolicy& object)
+            const RetentionPolicy& object)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Enabled"});
           writer.Write(_internal::XmlNode{
@@ -1236,7 +1236,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-          ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
+          RetentionPolicyToXml(writer, object.RetentionPolicy);
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
 
@@ -1287,9 +1287,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
 
-        static void ShareProtocolSettingsToXml(
+        static void ProtocolSettingsToXml(
             _internal::XmlWriter& writer,
-            const ShareProtocolSettings& object)
+            const ProtocolSettings& object)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ProtocolSettings"});
           SmbSettingsToXml(writer, object.Settings);
@@ -1319,7 +1319,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
           if (object.Protocol.HasValue())
           {
-            ShareProtocolSettingsToXml(writer, object.Protocol.GetValue());
+            ProtocolSettingsToXml(writer, object.Protocol.GetValue());
           }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -1348,9 +1348,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareRetentionPolicy ShareRetentionPolicyFromXml(_internal::XmlReader& reader)
+        static RetentionPolicy RetentionPolicyFromXml(_internal::XmlReader& reader)
         {
-          auto result = ShareRetentionPolicy();
+          auto result = RetentionPolicy();
           enum class XmlTagName
           {
             Days,
@@ -1465,7 +1465,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
               if (path.size() == 1 && path[0] == XmlTagName::RetentionPolicy)
               {
-                result.RetentionPolicy = ShareRetentionPolicyFromXml(reader);
+                result.RetentionPolicy = RetentionPolicyFromXml(reader);
                 path.pop_back();
               }
             }
@@ -1679,9 +1679,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareProtocolSettings ShareProtocolSettingsFromXml(_internal::XmlReader& reader)
+        static ProtocolSettings ProtocolSettingsFromXml(_internal::XmlReader& reader)
         {
-          auto result = ShareProtocolSettings();
+          auto result = ProtocolSettings();
           enum class XmlTagName
           {
             SMB,
@@ -1814,7 +1814,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   path.size() == 2 && path[0] == XmlTagName::StorageServiceProperties
                   && path[1] == XmlTagName::ProtocolSettings)
               {
-                result.Protocol = ShareProtocolSettingsFromXml(reader);
+                result.Protocol = ProtocolSettingsFromXml(reader);
                 path.pop_back();
               }
               else if (
@@ -2151,7 +2151,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::AccessTier)
               {
-                result.AccessTier = ShareAccessTier(node.Value);
+                result.AccessTier = AccessTier(node.Value);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::AccessTierChangeTime)
               {
@@ -2461,7 +2461,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
           Azure::Nullable<int64_t> ShareQuota;
-          Azure::Nullable<ShareAccessTier> XMsAccessTier;
+          Azure::Nullable<AccessTier> XMsAccessTier;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
@@ -2894,7 +2894,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Nullable<int64_t> ShareQuota;
-          Azure::Nullable<ShareAccessTier> XMsAccessTier;
+          Azure::Nullable<AccessTier> XMsAccessTier;
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
@@ -3210,7 +3210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             if (response.GetHeaders().find("x-ms-access-tier") != response.GetHeaders().end())
             {
-              result.AccessTier = ShareAccessTier(response.GetHeaders().at("x-ms-access-tier"));
+              result.AccessTier = AccessTier(response.GetHeaders().at("x-ms-access-tier"));
             }
             if (response.GetHeaders().find(_detail::HeaderAccessTierChangedOn)
                 != response.GetHeaders().end())
@@ -6699,7 +6699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileGetRangeListResult result = bodyBuffer.empty()
                 ? FileGetRangeListResult()
-                : FileGetRangeListResultFromShareFileRangeList(ShareFileRangeListFromXml(reader));
+                : FileGetRangeListResultFromRangeList(RangeListFromXml(reader));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
@@ -6715,9 +6715,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static ShareFileRangeList ShareFileRangeListFromXml(_internal::XmlReader& reader)
+        static RangeList RangeListFromXml(_internal::XmlReader& reader)
         {
-          auto result = ShareFileRangeList();
+          auto result = RangeList();
           enum class XmlTagName
           {
             ClearRange,
@@ -6784,8 +6784,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileGetRangeListResult FileGetRangeListResultFromShareFileRangeList(
-            ShareFileRangeList object)
+        static FileGetRangeListResult FileGetRangeListResultFromRangeList(RangeList object)
         {
           FileGetRangeListResult result;
           result.Ranges = std::move(object.Ranges);

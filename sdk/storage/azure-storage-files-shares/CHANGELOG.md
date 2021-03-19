@@ -25,6 +25,10 @@
 - Removed `RequestId` from the return types.
 - Changed `BodyStream` parameter of `UploadRange` function from pointer to reference.
 - Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
+- Renamed `ShareAccessTier` to `AccessTier`.
+- Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
+- Renamed `ShareProtocolSettings` to `ProtocolSettings`.
+- Removed `FileRangeWriteType`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
