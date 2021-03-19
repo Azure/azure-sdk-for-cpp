@@ -23,7 +23,7 @@
 - Removed `Share` from the names of return types and option types.
 - Renamed `AbortCopyFileOptions` to `AbortFileCopyOptions`.
 - Removed `RequestId` from the return types.
-- Changed `BodyStream` parameter in upload functions from pointer to reference.
+- Changed `BodyStream` parameter of `UploadRange` function from pointer to reference.
 - Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
 
 ## 12.0.0-beta.8 (2021-02-12)

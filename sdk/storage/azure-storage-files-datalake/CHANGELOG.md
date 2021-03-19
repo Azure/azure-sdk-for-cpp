@@ -21,7 +21,7 @@
 - Removed `GetUserDelegationKeyResult`.
 - Removed `DataLake` from the names of return types and option types.
 - Removed `RequestId` from the return types.
-- Changed `BodyStream` parameter in upload functions from pointer to reference.
+- Changed `BodyStream` parameter of `Append` function from pointer to reference.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
