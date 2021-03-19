@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::UploadFileRangeResult> UploadRange(
         int64_t offset,
-        Azure::Core::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream& content,
         const UploadFileRangeOptions& options = UploadFileRangeOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

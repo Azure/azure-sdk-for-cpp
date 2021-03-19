@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Response<Models::AppendFileResult> Append(
-        Azure::Core::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream& content,
         int64_t offset,
         const AppendFileOptions& options = AppendFileOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;

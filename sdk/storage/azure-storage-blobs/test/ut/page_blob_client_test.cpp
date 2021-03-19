@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
     auto pageContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    m_pageBlobClient->UploadPages(0, &pageContent);
+    m_pageBlobClient->UploadPages(0, pageContent);
     m_blobUploadOptions.HttpHeaders.ContentHash
         = m_pageBlobClient->GetProperties()->HttpHeaders.ContentHash;
   }
@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(8_KB, m_blobUploadOptions);
     auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(2_KB, &pageContent);
+    pageBlobClient.UploadPages(2_KB, pageContent);
     // |_|_|x|x|  |x|x|_|_|
     blobContent.insert(blobContent.begin(), static_cast<std::size_t>(2_KB), '\x00');
     blobContent.resize(static_cast<std::size_t>(8_KB), '\x00');
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Test {
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
     blobContent.resize(static_cast<std::size_t>(1_KB));
     auto pageClient = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(0, &pageClient);
+    pageBlobClient.UploadPages(0, pageClient);
     pageBlobClient.ClearPages({3_KB, 1_KB});
     // |x|_|_|_|  |x|x|_|_|
 
@@ -247,12 +247,12 @@ namespace Azure { namespace Storage { namespace Test {
       hash.Value = instance.Final(blobContent.data(), blobContent.size());
     }
     options.TransactionalContentHash = hash;
-    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
+    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, pageContent, options));
 
     pageContent.Rewind();
     hash.Value = Azure::Core::Convert::Base64Decode(DummyMd5);
     options.TransactionalContentHash = hash;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
+    EXPECT_THROW(pageBlobClient.UploadPages(0, pageContent, options), StorageException);
   }
 
   TEST_F(PageBlobClientTest, ContentCrc64)
@@ -275,12 +275,12 @@ namespace Azure { namespace Storage { namespace Test {
       hash.Value = instance.Final(blobContent.data(), blobContent.size());
     }
     options.TransactionalContentHash = hash;
-    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
+    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, pageContent, options));
 
     pageContent.Rewind();
     hash.Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
     options.TransactionalContentHash = hash;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
+    EXPECT_THROW(pageBlobClient.UploadPages(0, pageContent, options), StorageException);
   }
 
   TEST_F(PageBlobClientTest, CreateIfNotExists)
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto blobContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    blobClient.UploadPages(0, &blobContent);
+    blobClient.UploadPages(0, blobContent);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());
       EXPECT_FALSE(response->Created);

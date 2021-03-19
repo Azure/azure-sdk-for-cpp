@@ -130,13 +130,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
       int64_t offset,
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const UploadPageBlobPagesOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::BlobRestClient::PageBlob::UploadPageBlobPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range.Offset = offset;
-    protocolLayerOptions.Range.Length = content->Length();
+    protocolLayerOptions.Range.Length = content.Length();
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::UploadPages(
-        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+        *m_pipeline, m_blobUrl, &content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
