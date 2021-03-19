@@ -6693,14 +6693,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Response<UploadBlockBlobResult> Upload(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
-            Azure::Core::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream& requestBody,
             const UploadBlockBlobOptions& options,
             const Azure::Core::Context& context)
         {
           (void)options;
           auto request
-              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
-          request.SetHeader("Content-Length", std::to_string(requestBody->Length()));
+              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
+          request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
           {
@@ -6879,14 +6879,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Response<StageBlockResult> StageBlock(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
-            Azure::Core::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream& requestBody,
             const StageBlockOptions& options,
             const Azure::Core::Context& context)
         {
           (void)options;
           auto request
-              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
-          request.SetHeader("Content-Length", std::to_string(requestBody->Length()));
+              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
+          request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
           request.GetUrl().AppendQueryParameter("comp", "block");
           request.GetUrl().AppendQueryParameter(
               "blockid", _internal::UrlEncodeQueryParameter(options.BlockId));
@@ -7698,14 +7698,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Response<UploadPagesResult> UploadPages(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
-            Azure::Core::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream& requestBody,
             const UploadPageBlobPagesOptions& options,
             const Azure::Core::Context& context)
         {
           (void)options;
           auto request
-              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
-          request.SetHeader("Content-Length", std::to_string(requestBody->Length()));
+              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
+          request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
           request.GetUrl().AppendQueryParameter("comp", "page");
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -8830,14 +8830,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Response<AppendBlockResult> AppendBlock(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
-            Azure::Core::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream& requestBody,
             const AppendBlockOptions& options,
             const Azure::Core::Context& context)
         {
           (void)options;
           auto request
-              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
-          request.SetHeader("Content-Length", std::to_string(requestBody->Length()));
+              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
+          request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
           request.GetUrl().AppendQueryParameter("comp", "appendblock");
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -9246,14 +9246,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         static Azure::Response<Models::_detail::SubmitBlobBatchResult> SubmitBatch(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
-            Azure::Core::IO::BodyStream* requestBody,
+            Azure::Core::IO::BodyStream& requestBody,
             const SubmitBlobBatchOptions& options,
             const Azure::Core::Context& context)
         {
           (void)options;
           auto request
-              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, requestBody);
-          request.SetHeader("Content-Length", std::to_string(requestBody->Length()));
+              = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, &requestBody);
+          request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
           request.GetUrl().AppendQueryParameter("comp", "batch");
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())

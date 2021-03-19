@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::BlockBlob::Upload(
-        *m_pipeline, m_blobUrl, &content, protocolLayerOptions, context);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -257,7 +257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::BlockBlob::StageBlock(
-        *m_pipeline, m_blobUrl, &content, protocolLayerOptions, context);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(

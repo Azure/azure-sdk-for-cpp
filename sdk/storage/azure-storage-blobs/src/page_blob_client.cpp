@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::UploadPages(
-        *m_pipeline, m_blobUrl, &content, protocolLayerOptions, context);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::UploadPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
