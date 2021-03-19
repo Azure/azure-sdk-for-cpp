@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties1 = m_fileClient->GetProperties();
 
     // Append
-    m_fileClient->Append(bufferStream.get(), 0);
+    m_fileClient->Append(*bufferStream, 0);
     auto properties2 = m_fileClient->GetProperties();
     // Append does not change etag because not committed yet.
     EXPECT_EQ(properties1->ETag, properties2->ETag);
@@ -339,7 +339,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties1 = newFileClient->GetProperties();
 
     // Append
-    newFileClient->Append(bufferStream.get(), 0);
+    newFileClient->Append(*bufferStream, 0);
     auto properties2 = newFileClient->GetProperties();
     // Append does not change etag because not committed yet.
     EXPECT_EQ(properties1->ETag, properties2->ETag);
@@ -585,7 +585,7 @@ namespace Azure { namespace Storage { namespace Test {
       containerClient.SetAccessPolicy(options);
       auto blobClient = containerClient.GetBlockBlobClient(objectName);
       auto memoryStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-      EXPECT_NO_THROW(blobClient.Upload(&memoryStream));
+      EXPECT_NO_THROW(blobClient.Upload(memoryStream));
 
       auto anonymousClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
           Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
