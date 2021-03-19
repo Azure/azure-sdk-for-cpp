@@ -622,8 +622,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < numOfChunks; ++i)
       {
         memBodyStream.Rewind();
-        EXPECT_NO_THROW(
-            fileClient.UploadRange(static_cast<int64_t>(rangeSize) * i, memBodyStream));
+        EXPECT_NO_THROW(fileClient.UploadRange(static_cast<int64_t>(rangeSize) * i, memBodyStream));
       }
 
       for (int32_t i = 0; i < numOfChunks; ++i)
