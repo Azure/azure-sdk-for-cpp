@@ -411,22 +411,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }; // extensible enum LeaseAction
 
     // State of the copy operation identified by 'x-ms-copy-id'.
-    class CopyStatusType {
+    class CopyStatus {
     public:
-      CopyStatusType() = default;
-      explicit CopyStatusType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const CopyStatusType& other) const { return m_value == other.m_value; }
-      bool operator!=(const CopyStatusType& other) const { return !(*this == other); }
+      CopyStatus() = default;
+      explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const CopyStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Pending;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Success;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Aborted;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatusType Failed;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Pending;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Success;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Aborted;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Failed;
 
     private:
       std::string m_value;
-    }; // extensible enum CopyStatusType
+    }; // extensible enum CopyStatus
 
     enum class ListSharesIncludeType
     {
@@ -876,7 +876,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> CopyId;
       Azure::Nullable<std::string> CopyProgress;
       Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<CopyStatusType> CopyStatus;
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       Azure::Nullable<LeaseDurationType> LeaseDuration;
@@ -896,7 +896,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> CopyId;
       Azure::Nullable<std::string> CopyProgress;
       Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<CopyStatusType> CopyStatus;
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       Azure::Nullable<LeaseDurationType> LeaseDuration;
@@ -979,7 +979,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::ETag ETag;
       DateTime LastModified;
       std::string CopyId;
-      CopyStatusType CopyStatus;
+      Models::CopyStatus CopyStatus;
     };
 
     struct FileAbortCopyResult
@@ -6091,8 +6091,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
-              result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
+              result.CopyStatus = CopyStatus(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
             if (response.GetHeaders().find(_detail::HeaderContentHashMd5)
                 != response.GetHeaders().end())
@@ -6250,8 +6249,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
-              result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
+              result.CopyStatus = CopyStatus(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
             if (response.GetHeaders().find(_detail::HeaderContentHashMd5)
                 != response.GetHeaders().end())
@@ -6394,8 +6392,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
-              result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
+              result.CopyStatus = CopyStatus(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
             if (response.GetHeaders().find(_detail::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -6811,8 +6808,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(_detail::HeaderCopyStatus)
                 != response.GetHeaders().end())
             {
-              result.CopyStatus
-                  = CopyStatusType(response.GetHeaders().at(_detail::HeaderCopyStatus));
+              result.CopyStatus = CopyStatus(response.GetHeaders().at(_detail::HeaderCopyStatus));
             }
             return Azure::Response<FileStartCopyResult>(std::move(result), std::move(responsePtr));
           }

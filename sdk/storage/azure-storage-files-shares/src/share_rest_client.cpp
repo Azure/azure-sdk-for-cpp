@@ -36,10 +36,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const LeaseAction LeaseAction::Renew("renew");
     const LeaseAction LeaseAction::Break("break");
 
-    const CopyStatusType CopyStatusType::Pending("pending");
-    const CopyStatusType CopyStatusType::Success("success");
-    const CopyStatusType CopyStatusType::Aborted("aborted");
-    const CopyStatusType CopyStatusType::Failed("failed");
+    const CopyStatus CopyStatus::Pending("pending");
+    const CopyStatus CopyStatus::Success("success");
+    const CopyStatus CopyStatus::Aborted("aborted");
+    const CopyStatus CopyStatus::Failed("failed");
 
   } // namespace Models
   namespace _detail {

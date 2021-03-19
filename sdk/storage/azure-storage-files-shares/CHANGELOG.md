@@ -30,7 +30,9 @@
 - Renamed `ShareProtocolSettings` to `ProtocolSettings`.
 - Renamed `ShareGetPropertiesResult::AccessTier` to `ShareGetPropertiesResult::Tier` to align with other services.
 - Renamed `ShareItemDetails::AccessTier` to `ShareItemDetails::Tier` to align with other services.
+- Renamed `CopyStatusType` to `CopyStatus`
 - Removed `FileRangeWriteType`.
+- Removed `ShareFileRangeList`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
