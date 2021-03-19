@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<std::string> CopyId;
       Nullable<std::string> CopyProgress;
       Nullable<std::string> CopySource;
-      Nullable<CopyStatus> CopyStatus;
+      Nullable<Models::CopyStatus> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       Nullable<LeaseDurationType> LeaseDuration;

@@ -377,7 +377,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(shareClient.Create(options));
       EXPECT_NO_THROW(properties = *shareClient.GetProperties());
       EXPECT_EQ(
-          Files::Shares::Models::AccessTier::TransactionOptimized, properties.Tier.GetValue());
+          Files::Shares::Models::AccessTier::TransactionOptimized,
+          properties.AccessTier.GetValue());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
       EXPECT_TRUE(IsValidTime(properties.AccessTierChangedOn.GetValue()));
       shareClients.emplace(std::move(shareName), std::move(shareClient));
@@ -390,7 +391,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessTier = Files::Shares::Models::AccessTier::Hot;
       EXPECT_NO_THROW(shareClient.Create(options));
       EXPECT_NO_THROW(properties = *shareClient.GetProperties());
-      EXPECT_EQ(Files::Shares::Models::AccessTier::Hot, properties.Tier.GetValue());
+      EXPECT_EQ(Files::Shares::Models::AccessTier::Hot, properties.AccessTier.GetValue());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
       EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.GetValue());
       shareClients.emplace(std::move(shareName), std::move(shareClient));
@@ -403,7 +404,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessTier = Files::Shares::Models::AccessTier::Cool;
       EXPECT_NO_THROW(shareClient.Create(options));
       EXPECT_NO_THROW(properties = *shareClient.GetProperties());
-      EXPECT_EQ(Files::Shares::Models::AccessTier::Cool, properties.Tier.GetValue());
+      EXPECT_EQ(Files::Shares::Models::AccessTier::Cool, properties.AccessTier.GetValue());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
       EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.GetValue());
       shareClients.emplace(std::move(shareName), std::move(shareClient));
@@ -417,7 +418,8 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessTier = Files::Shares::Models::AccessTier::Cool;
       EXPECT_NO_THROW(shareClient.Create(options));
       EXPECT_EQ(
-          Files::Shares::Models::AccessTier::Cool, shareClient.GetProperties()->Tier.GetValue());
+          Files::Shares::Models::AccessTier::Cool,
+          shareClient.GetProperties()->AccessTier.GetValue());
 
       auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
       setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::Hot;
@@ -425,11 +427,11 @@ namespace Azure { namespace Storage { namespace Test {
       properties = *shareClient.GetProperties();
       if (properties.AccessTierTransitionState.HasValue())
       {
-        EXPECT_EQ(Files::Shares::Models::AccessTier::Cool, properties.Tier.GetValue());
+        EXPECT_EQ(Files::Shares::Models::AccessTier::Cool, properties.AccessTier.GetValue());
       }
       else
       {
-        EXPECT_EQ(Files::Shares::Models::AccessTier::Hot, properties.Tier.GetValue());
+        EXPECT_EQ(Files::Shares::Models::AccessTier::Hot, properties.AccessTier.GetValue());
       }
       EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.GetValue());
     }
@@ -446,8 +448,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_TRUE(shareClients.find(shareItem.Name) != shareClients.end());
       properties = *shareClients.at(shareItem.Name).GetProperties();
-      EXPECT_EQ(true, shareItem.Details.Tier.HasValue() && properties.Tier.HasValue());
-      EXPECT_EQ(shareItem.Details.Tier.GetValue(), properties.Tier.GetValue());
+      EXPECT_EQ(true, shareItem.Details.AccessTier.HasValue() && properties.AccessTier.HasValue());
+      EXPECT_EQ(shareItem.Details.AccessTier.GetValue(), properties.AccessTier.GetValue());
       EXPECT_EQ(
           true,
           shareItem.Details.AccessTierChangedOn.HasValue()
@@ -470,7 +472,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(shareClient.Create());
     Files::Shares::Models::ShareProperties properties;
     EXPECT_NO_THROW(properties = *shareClient.GetProperties());
-    EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.Tier.GetValue());
+    EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.GetValue());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
 
@@ -481,7 +483,8 @@ namespace Azure { namespace Storage { namespace Test {
                           .ListSharesSinglePage(listOptions)
                           ->Items;
     EXPECT_EQ(1U, shareItems.size());
-    EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, shareItems[0].Details.Tier.GetValue());
+    EXPECT_EQ(
+        Files::Shares::Models::AccessTier::Premium, shareItems[0].Details.AccessTier.GetValue());
     EXPECT_FALSE(shareItems[0].Details.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(shareItems[0].Details.AccessTierChangedOn.HasValue());
 
@@ -494,7 +497,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
     setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::Premium;
     EXPECT_NO_THROW(shareClient.SetProperties(setPropertiesOptions));
-    EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.Tier.GetValue());
+    EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.GetValue());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
   }

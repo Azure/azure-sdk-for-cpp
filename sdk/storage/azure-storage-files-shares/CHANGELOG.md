@@ -28,8 +28,6 @@
 - Renamed `ShareAccessTier` to `AccessTier`.
 - Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
 - Renamed `ShareProtocolSettings` to `ProtocolSettings`.
-- Renamed `ShareGetPropertiesResult::AccessTier` to `ShareGetPropertiesResult::Tier` to align with other services.
-- Renamed `ShareItemDetails::AccessTier` to `ShareItemDetails::Tier` to align with other services.
 - Renamed `CopyStatusType` to `CopyStatus`
 - Removed `FileRangeWriteType`.
 - Removed `ShareFileRangeList`.
