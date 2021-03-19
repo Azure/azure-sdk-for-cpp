@@ -20,7 +20,6 @@ namespace Azure { namespace Core { namespace Test {
 
   private:
     std::string m_operationToken;
-    std::string m_value;
 
   private:
     int m_count = 0;
@@ -32,7 +31,7 @@ namespace Azure { namespace Core { namespace Test {
       if (++m_count == 2)
       {
         m_status = OperationStatus::Succeeded;
-        m_value = "StringOperation-Completed";
+        Value = "StringOperation-Completed";
       }
 
       // The contents of the response are irrelevant for testing purposes
@@ -58,7 +57,7 @@ namespace Azure { namespace Core { namespace Test {
         EXPECT_EQ(response.GetMinorVersion(), 0);
       }
 
-      return Response<std::string>(m_value, std::make_unique<Http::RawResponse>(*m_rawResponse));
+      return Response<std::string>(Value, std::make_unique<Http::RawResponse>(*m_rawResponse));
     }
 
   public:
@@ -68,16 +67,6 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     std::string GetResumeToken() const override { return m_operationToken; }
-
-    std::string Value() const override
-    {
-      if (m_status != OperationStatus::Succeeded)
-      {
-        throw std::runtime_error("InvalidOperation");
-      }
-
-      return m_value;
-    }
 
     // This is a helper method to allow testing of the underlying operation<T> behaviors
     //  ClientOperations would not expose a way to control status

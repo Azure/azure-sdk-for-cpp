@@ -26,14 +26,14 @@ TEST(Operation, Poll)
   while (!operation.IsDone())
   {
     EXPECT_FALSE(operation.HasValue());
-    EXPECT_THROW(operation.Value(), std::runtime_error);
+    EXPECT_THROW(operation.Value, std::runtime_error);
     auto response = operation.Poll();
   }
 
   EXPECT_TRUE(operation.IsDone());
   EXPECT_TRUE(operation.HasValue());
 
-  auto result = operation.Value();
+  auto result = operation.Value;
   EXPECT_EQ(result, "StringOperation-Completed");
 }
 
@@ -44,7 +44,7 @@ TEST(Operation, PollUntilDone)
 
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
-  EXPECT_THROW(operation.Value(), std::runtime_error);
+  EXPECT_THROW(operation.Value, std::runtime_error);
 
   auto start = std::chrono::high_resolution_clock::now();
   auto response = operation.PollUntilDone(500ms);
@@ -56,7 +56,7 @@ TEST(Operation, PollUntilDone)
   EXPECT_TRUE(operation.IsDone());
   EXPECT_TRUE(operation.HasValue());
 
-  auto result = operation.Value();
+  auto result = operation.Value;
   EXPECT_EQ(result, "StringOperation-Completed");
 }
 
@@ -67,24 +67,24 @@ TEST(Operation, Status)
 
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
-  EXPECT_THROW(operation.Value(), std::runtime_error);
+  EXPECT_THROW(operation.Value, std::runtime_error);
   EXPECT_EQ(operation.Status(), OperationStatus::NotStarted);
 
   operation.SetOperationStatus(OperationStatus::Running);
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
-  EXPECT_THROW(operation.Value(), std::runtime_error);
+  EXPECT_THROW(operation.Value, std::runtime_error);
   EXPECT_EQ(operation.Status(), OperationStatus::Running);
 
   operation.SetOperationStatus(OperationStatus::Failed);
   EXPECT_TRUE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
-  EXPECT_THROW(operation.Value(), std::runtime_error);
+  EXPECT_THROW(operation.Value, std::runtime_error);
   EXPECT_EQ(operation.Status(), OperationStatus::Failed);
 
   operation.SetOperationStatus(OperationStatus::Cancelled);
   EXPECT_TRUE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
-  EXPECT_THROW(operation.Value(), std::runtime_error);
+  EXPECT_THROW(operation.Value, std::runtime_error);
   EXPECT_EQ(operation.Status(), OperationStatus::Cancelled);
 }
