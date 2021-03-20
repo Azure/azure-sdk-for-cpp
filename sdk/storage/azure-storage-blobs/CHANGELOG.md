@@ -10,24 +10,38 @@
 
 ### Breaking Changes
 
-- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyBlobOperation` directly.
+- Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartBlobCopyOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
 - Moved `SecondaryHostForRetryReads` out of retry options, now it's under `BlobClientOptions`.
 - Changed the return types of the following APIs:
-  - `BlobServiceClient::DeleteBlobContainer` now returns `Azure::Core::Response<Models::DeleteBlobContainerResult>`.
+  - `BlobServiceClient::DeleteBlobContainer` now returns `DeleteBlobContainerResult`.
   - `BlobServiceClient::GetUserDelegationKey` now returns `UserDelegationKey`.
   - `BlobServiceClient::GetProperties` now returns `BlobServiceProperties`.
   - `BlobServiceClient::GetAccountInfo` now returns `AccountInfo`.
   - `BlobServiceClient::GetStatistics` now returns `ServiceStatistics`.
-  - `BlobContainerClient::DeleteBlob` now returns `Azure::Core::Response<Models::DeleteBlobResult>`.
+  - `BlobContainerClient::DeleteBlob` now returns `DeleteBlobResult`.
   - `BlobContainerClient::GetProperties` now returns `BlobContainerProperties`.
   - `BlobContainerClient::GetAccessPolicy` now returns `BlobContainerAccessPolicy`.
   - `BlobClient::GetProperties` now returns `BlobProperties`.
   - `BlobClinet::GetTags` now returns `std::map<std::string, std::string>`.
-- Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
+  - `BlobClient::AbortCopyFromUri` now returns `AbortBlobCopyFromUriResult`.
+  - `PageBlobClient::UploadPages` now returns `UploadPagesResult`.
+  - `PageBlobClient::UploadPagesFromUri` now returns `UploadPagesFromUriResult`.
+  - `PageBlobClient::ClearPages` now returns `ClearPagesResult`.
+  - `PageBlobClient::GetPageRanges`, `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff` now return `GetPageRangesResult`.
+- Renamed some options:
+  - Renamed `UploadPageBlobPagesOptions` to `UploadPagesOptions`.
+  - Renamed `UploadPageBlobPagesFromUriOptions` to `UploadPagesFromUriOptions`.
+  - Renamed `ClearPageBlobPagesOptions` to `ClearPagesOptions`.
+  - Renamed `GetPageBlobPageRangesOptions` to `GetPageRangesOptions`.
+  - Renamed `StartCopyBlobFromUriOptions` to `StartBlobCopyFromUriOptions`.
+  - Renamed `StartCopyPageBlobIncrementalOptions` to `StartBlobCopyIncrementalOptions`.
 - Removed `Blob` from the name of lease options and return types, like `AcquireBlobLeaseOptions` was renamed to `AcquireLeaseOptions`.
 - Removed `Blob` prefix from the name of structs `BlobGeoReplication`, `BlobLeaseStatus`, `BlobLeaseState`, `BlobLeaseDurationType`, `BlobAnalyticsLogging`, `BlobMetrics`, `BlobCorsRule`, `BlobRetentionPolicy`, `BlobStaticWebsite`, `BlobArchiveStatus` and `BlobGeoReplictionStatus`.
 - Removed `RequestId` from return types.
+- Changed `BodyStream` parameter of `UploadBlob`, `Upload`, `UploadPages` and `AppendBlock`functions from pointer to reference.
+- Renamed access tier members in return types and options from `Tier` to `AccessTier`.
+- Renamed `BlockListTypeOption` to `BlockListType`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

@@ -345,8 +345,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders.ContentType = std::move(result->HttpHeaders.ContentType);
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    ret.IsAccessTierInferred = std::move(result->IsAccessTierInferred);
-    ret.AccessTierChangedOn = std::move(result->AccessTierChangedOn);
     ret.CopyId = std::move(result->CopyId);
     ret.CopySource = std::move(result->CopySource);
     ret.CopyStatus = std::move(result->CopyStatus);
@@ -366,12 +364,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return Azure::Response<Models::PathProperties>(std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Response<Models::GetPathAccessControlListResult> DataLakePathClient::GetAccessControlList(
+  Azure::Response<Models::PathAccessControlList> DataLakePathClient::GetAccessControlList(
       const GetPathAccessControlListOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.Action = Models::PathGetPropertiesAction::GetAccessControl;
+    protocolLayerOptions.Action = _detail::PathGetPropertiesAction::GetAccessControl;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
@@ -384,9 +382,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       acl = Models::Acl::DeserializeAcls(result->Acl.GetValue());
     }
-    Models::GetPathAccessControlListResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    Models::PathAccessControlList ret;
     if (!acl.HasValue())
     {
       throw Azure::Core::RequestFailedException(
@@ -405,7 +401,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.Permissions = result->Permissions.GetValue();
     }
-    return Azure::Response<Models::GetPathAccessControlListResult>(
+    return Azure::Response<Models::PathAccessControlList>(
         std::move(ret), result.ExtractRawResponse());
   }
 
@@ -430,7 +426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
   DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
-      Models::PathSetAccessControlRecursiveMode mode,
+      _detail::PathSetAccessControlRecursiveMode mode,
       const std::vector<Models::Acl>& acls,
       const SetPathAccessControlListRecursiveSinglePageOptions& options,
       const Azure::Core::Context& context) const

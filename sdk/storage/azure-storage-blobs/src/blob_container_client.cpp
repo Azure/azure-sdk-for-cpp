@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         _internal::WithReplicaStatus(context));
     for (auto& i : response->Items)
     {
-      if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
+      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
       {
         i.Details.IsAccessTierInferred = false;
       }
@@ -329,7 +329,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
       const std::string& blobName,
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {

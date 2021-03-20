@@ -16,10 +16,14 @@
   - `DataLakeServiceClient::GetUserDelegationKey` now returns `UserDelegationKey`.
   - `DataLakeFileSystemClient::GetProperties` now returns  `FileSystemProperties`.
   - `DataLakeFileSystemClient::GetAccessPolicy` now returns  `FileSystemAccessPolicy`.
-  - `DataLakePathClient::GetProperties` now returns  `PathProperties`.
+  - `DataLakePathClient::GetProperties` now returns `PathProperties`.
+  - `DataLakePathClient::GetAccessControlList` now returns `PathAccessControlList`.
 - Removed `GetUserDelegationKeyResult`.
 - Removed `DataLake` from the names of return types and option types.
 - Removed `RequestId` from the return types.
+- Changed `BodyStream` parameter of `Append` function from pointer to reference.
+- Removed `PathRenameMode`, `PathGetPropertiesAction`, `PathSetAccessControlRecursiveMode`, `FileSystemResourceType` and `FileSystemResourceType`.
+- Removed `IsAccessTierInferred` and `AccessTierChangedOn` from `PathProperties`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
