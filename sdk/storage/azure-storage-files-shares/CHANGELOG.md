@@ -9,14 +9,27 @@
 
 ### Breaking Changes
 
-- Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyShareFileOperation` directly.
+- Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartFileCopyOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
-- Renamed `GetSharePropertiesResult` to `ShareProperties`.
+- Changed the return types of the following APIs:
+  - `ShareClient::GetAccessPolicy` now returns `ShareAccessPolicy`.
+  - `ShareClient::GetPermission` now returns `std::string`.
+  - `ShareClient::AbortCopy` now returns `AbortFileCopyResult`.
 - Renamed `GetShareStatisticsResult` to `ShareStatistics`.
-- Renamed `GetShareDirectoryPropertiesResult` to `ShareDirectoryProperties`.
-- Renamed `GetShareFilePropertiesResult` to `ShareFileServiceProperties`.
-- `ShareClient::GetPermission` now returns `Azure::Response<std::string>`.
-- `ShareServiceClient::GetProperties` now returns `Azure::Response<Models::ShareFileServiceProperties>`.
+- Renamed `GetSharePropertiesResult` to `ShareProperties`.
+- Renamed `GetShareDirectoryPropertiesResult` to `DirectoryProperties`.
+- Renamed `GetShareFilePropertiesResult` to `FileProperties`
+- Renamed `GetServicePropertiesResult` to `ShareServiceProperties`.
+- Removed `Share` from the names of return types and option types.
+- Renamed `AbortCopyFileOptions` to `AbortFileCopyOptions`.
+- Removed `RequestId` from the return types.
+- Changed `BodyStream` parameter of `UploadRange` function from pointer to reference.
+- Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
+- Renamed `ShareAccessTier` to `AccessTier`.
+- Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
+- Renamed `ShareProtocolSettings` to `ProtocolSettings`.
+- Renamed `CopyStatusType` to `CopyStatus`
+- Removed `FileRangeWriteType`, `ShareFileRangeList` and `ShareStats`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 

@@ -161,7 +161,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "ContainerAlreadyExists")
       {
         Models::CreateBlobContainerResult ret;
-        ret.RequestId = e.RequestId;
         ret.Created = false;
         return Azure::Response<Models::CreateBlobContainerResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -196,7 +195,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "ContainerNotFound")
       {
         Models::DeleteBlobContainerResult ret;
-        ret.RequestId = e.RequestId;
         ret.Deleted = false;
         return Azure::Response<Models::DeleteBlobContainerResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -247,7 +245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         _internal::WithReplicaStatus(context));
     for (auto& i : response->Items)
     {
-      if (i.Details.Tier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
+      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
       {
         i.Details.IsAccessTierInferred = false;
       }
@@ -291,7 +289,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Response<Models::GetBlobContainerAccessPolicyResult> BlobContainerClient::GetAccessPolicy(
+  Azure::Response<Models::BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(
       const GetBlobContainerAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -331,7 +329,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<BlockBlobClient> BlobContainerClient::UploadBlob(
       const std::string& blobName,
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {

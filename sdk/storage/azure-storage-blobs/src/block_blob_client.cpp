@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::UploadBlockBlobResult> BlockBlobClient::Upload(
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -120,8 +120,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions, context);
+      uploadBlockBlobOptions.AccessTier = options.AccessTier;
+      return Upload(contentStream, uploadBlockBlobOptions, context);
     }
 
     std::vector<std::string> blockIds;
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
       StageBlockOptions chunkOptions;
-      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
+      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
-    commitBlockListOptions.Tier = options.Tier;
+    commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult ret;
@@ -182,8 +182,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         UploadBlockBlobOptions uploadBlockBlobOptions;
         uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
         uploadBlockBlobOptions.Metadata = options.Metadata;
-        uploadBlockBlobOptions.Tier = options.Tier;
-        return Upload(&contentStream, uploadBlockBlobOptions, context);
+        uploadBlockBlobOptions.AccessTier = options.AccessTier;
+        return Upload(contentStream, uploadBlockBlobOptions, context);
       }
     }
 
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
-      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
+      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
-    commitBlockListOptions.Tier = options.Tier;
+    commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult result;
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
       const std::string& blockId,
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const StageBlockOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -300,7 +300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

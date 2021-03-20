@@ -239,9 +239,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetBlobContainerAccessPolicyResult describing the container's access policy.
+     * @return A BlobContainerAccessPolicy describing the container's access policy.
      */
-    Azure::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::BlobContainerAccessPolicy> GetAccessPolicy(
         const GetBlobContainerAccessPolicyOptions& options = GetBlobContainerAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<BlockBlobClient> UploadBlob(
         const std::string& blobName,
-        Azure::Core::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream& content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
