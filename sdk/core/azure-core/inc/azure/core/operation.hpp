@@ -171,7 +171,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Periodically calls the server till the long-running operation completes;
      *
-     * @param period Time in milliseconds to wait between polls
+     * @param period Time in milliseconds to wait between polls.
      * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
      *
      * @return Response<T> the final result of the long-running operation.
