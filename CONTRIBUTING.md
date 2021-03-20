@@ -1,5 +1,4 @@
-Azure SDK for C++ Contributing Guide
--------------------------------------
+## Azure SDK for C++ Contributing Guide
 
 Thank you for your interest in contributing to Azure SDK for C++.
 
@@ -9,8 +8,7 @@ Thank you for your interest in contributing to Azure SDK for C++.
 
 - To make code changes, or contribute something new, please follow the [GitHub Forks / Pull requests model](https://help.github.com/articles/fork-a-repo/): Fork the repo, make the change and propose it back by submitting a pull request.
 
-Pull Requests
--------------
+## Pull Requests
 
 - **DO** follow the API design and implementation [C++ Guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html).
   - When submitting large changes or features, **DO** have an issue or spec doc that describes the design, usage, and motivating scenario.
@@ -21,8 +19,8 @@ Pull Requests
 - **DO** give PRs short-but-descriptive names (e.g. "Improve code coverage for Azure.Core by 10%", not "Fix #1234") and add a description which explains why the change is being made.
 - **DO** refer to any relevant issues, and include [keywords](https://help.github.com/articles/closing-issues-via-commit-messages/) that automatically close issues when the PR is merged.
 - **DO** tag any users that should know about and/or review the change.
-- **DO** ensure each commit successfully builds.  The entire PR must pass all tests in the Continuous Integration (CI) system before it'll be merged.
-- **DO** address PR feedback in an additional commit(s) rather than amending the existing commits, and only rebase/squash them when necessary.  This makes it easier for reviewers to track changes.
+- **DO** ensure each commit successfully builds. The entire PR must pass all tests in the Continuous Integration (CI) system before it'll be merged.
+- **DO** address PR feedback in an additional commit(s) rather than amending the existing commits, and only rebase/squash them when necessary. This makes it easier for reviewers to track changes.
 - **DO** assume that ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) will be used to merge your commit unless you request otherwise in the PR.
 - **DO NOT** mix independent, unrelated changes in one PR. Separate real product/test code changes from larger code formatting/dead code removal changes. Separate unrelated fixes into separate PRs, especially if they are in different modules or files that otherwise wouldn't be changed.
 - **DO** comment your code focusing on "why", where necessary. Otherwise, aim to keep it self-documenting with appropriate names and style.
@@ -31,10 +29,9 @@ Pull Requests
 - **DO** verify if your changes have impact elsewhere. For instance, do you need to update other docs or exiting markdown files that might be impacted?
 - **DO** add relevant unit tests to ensure CI will catch future regressions.
 
-Merging Pull Requests (for project contributors with write access)
-----------------------------------------------------------
+## Merging Pull Requests (for project contributors with write access)
 
-* **DO** use ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) by default for individual contributions unless requested by the PR author.
+- **DO** use ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) by default for individual contributions unless requested by the PR author.
   Do so, even if the PR contains only one commit. It creates a simpler history than "Create a Merge Commit".
   Reasons that PR authors may request "Merge and Commit" may include (but are not limited to):
 
@@ -42,17 +39,34 @@ Merging Pull Requests (for project contributors with write access)
   - Contributor is using an e-mail address other than the primary GitHub address and wants that preserved in the history. Contributor must be willing to squash
     the commits manually before acceptance.
 
-
-
 ## Developer Guide
 
-### Pre-requisites
+### Codespaces
 
-#### CMake
+Codespaces is new technology that allows you to use a container as your development environment. This repo provides a Codespaces container which is supported by both GitHub Codespaces and VS Code Codespaces.
+
+### GitHub Codespaces
+
+1. From the Azure SDK GitHub repo, click on the "Code -> Open with Codespaces" button.
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](#building-and-Testing).
+
+#### VS Code Codespaces
+
+1. Install the [VS Code Remote Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+1. When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select "Remote-Containers: Open Folder in Container..."
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](#building-and-Testing).
+
+### Full Local Setup
+
+#### Pre-requisites
+
+##### CMake
+
 CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
-#### Third Party Dependencies
+##### Third Party Dependencies
+
 - curl
 - libxml2
 - clang-format (min version 10)
@@ -80,10 +94,11 @@ git checkout <vcpkg commit>
 ./bootstrap-vcpkg.sh
 ./vcpkg install curl libxml2
 ```
- 
+
 ### Building and Testing
 
 #### Building the project
+
 Generate the CMake files and build as you would with any standard CMake project. From the
 repo root, run:
 
@@ -95,13 +110,15 @@ cmake --build .
 ```
 
 #### Static Analysis
+
 When the project is built using MSVC on Windows, the compiler can run [static analysis](https://docs.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.
 
-Keep in mind that enabling static analysis will significantly impact build time.  It is recommended to run it right before submitting the PR, but not in your inner developer loop.
+Keep in mind that enabling static analysis will significantly impact build time. It is recommended to run it right before submitting the PR, but not in your inner developer loop.
 
 The static code analysis is `ON` for the CI pipelines. You can turn this feature `ON` locally to debug errors reported during CI or for the last time you build and test before creating a new PR.
 
 #### CMake build options
+
 The following CMake options are available for adding/removing project features.
 
 <table>
@@ -158,11 +175,14 @@ The following CMake options are available for adding/removing project features.
 </table>
 
 #### Testing the project
+
 If you want to run tests also, generate build files using below command and then build.
+
 ```sh
 cmake -DBUILD_TESTING=ON ..
 cmake --build .
 ```
+
 Tests are executed via the `ctest` command included with CMake. From the build directory, run:
 
 ```sh
@@ -175,6 +195,7 @@ ctest -R Http # runs only Http tests
 ```
 
 #### Generating Code Coverage reports
+
 `gcov` and `gcovr` must be installed on your system.
 Also, make sure to generate the project with Debug mode. Then, option `-DBUILD_TESTING` must be `ON` and to use a GNU compiler (like gcc).
 
@@ -184,7 +205,7 @@ sudo apt-get install gcov gcovr # example for Linux
 
 cmake -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON ..
 
-# After this, generate reports by calling a package target 
+# After this, generate reports by calling a package target
 make package-name_cov_xml # for example `azure-core_cov_xml`
 make package-name_cov_html # for example `azure-core_cov_html`
 ```
@@ -194,4 +215,5 @@ Running the above commands will create the test executable and run it. While it 
 If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step.
 
 ### Visual Studio 2019
+
 You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.
