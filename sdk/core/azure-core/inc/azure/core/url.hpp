@@ -202,6 +202,9 @@ namespace Azure { namespace Core {
     }
 
     /************** API to read values from Url ***************/
+
+    const std::string& GetScheme() const { return m_scheme; }
+
     /**
      * @brief Get URL host.
      */
@@ -242,6 +245,13 @@ namespace Azure { namespace Core {
      * @return Absolute URL without query parameters.
      */
     std::string GetUrlWithoutQuery() const { return GetUrlWithoutQuery(false); }
+
+    /**
+     * @brief Get Scheme, host and port.
+     *
+     * @return Url authority.
+     */
+    std::string GetUrlAuthorityWithScheme() const;
 
     /**
      * @brief Get the path and query parameters.

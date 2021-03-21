@@ -22,6 +22,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char AttributesPropertyName[] = "attributes";
   constexpr static const char TagsPropertyName[] = "tags";
   constexpr static const char ReleasePolicyPropertyName[] = "release_policy";
+  constexpr static const char EnabledPropertyName[] = "enabled";
+  constexpr static const char NbfPropertyName[] = "nbf";
+  constexpr static const char ExpPropertyName[] = "exp";
+  constexpr static const char CreatedPropertyName[] = "created";
+  constexpr static const char UpdatedPropertyName[] = "updated";
 
   /***************** Key Request Parameters *****************/
   constexpr static const char KeyTypePropertyName[] = "kty";

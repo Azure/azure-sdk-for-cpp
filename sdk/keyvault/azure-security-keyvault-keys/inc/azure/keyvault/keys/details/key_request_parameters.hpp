@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   class KeyRequestParameters : public Azure::Core::Json::_internal::JsonSerializable {
   private:
     Azure::Nullable<JsonWebKeyType> m_keyType;
-    Azure::Nullable<CreateKeyOptions> m_options;
+    CreateKeyOptions m_options;
 
   public:
     Azure::Nullable<KeyCurveName> Curve;
@@ -42,23 +42,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (key.Enabled)
       {
-        m_options->Enabled = key.Enabled.GetValue();
+        m_options.Enabled = key.Enabled.GetValue();
       }
       if (key.ExpiresOn)
       {
-        m_options->ExpiresOn = key.ExpiresOn.GetValue();
+        m_options.ExpiresOn = key.ExpiresOn.GetValue();
       }
       if (key.NotBefore)
       {
-        m_options->NotBefore = key.NotBefore.GetValue();
+        m_options.NotBefore = key.NotBefore.GetValue();
       }
       if (key.Tags.size() > 0)
       {
-        m_options->Tags = std::unordered_map<std::string, std::string>(key.Tags);
+        m_options.Tags = std::unordered_map<std::string, std::string>(key.Tags);
       }
       if (operations)
       {
-        m_options->KeyOperations = std::list<KeyOperation>(operations.GetValue());
+        m_options.KeyOperations = std::list<KeyOperation>(operations.GetValue());
       }
     }
 

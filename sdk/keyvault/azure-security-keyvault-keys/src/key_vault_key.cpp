@@ -10,6 +10,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
+#include <azure/core/url.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
@@ -23,6 +24,32 @@ void ParseStringOperationsToKeyOperations(
   for (std::string const& operation : stringOperations)
   {
     keyOperations.emplace_back(KeyOperation(operation));
+  }
+}
+
+void static inline ParseKeyUrl(KeyProperties& keyProperties, std::string const& url)
+{
+  Azure::Core::Url kid(url);
+  keyProperties.Id = url;
+  keyProperties.VaultUrl = kid.GetUrlAuthorityWithScheme();
+  auto const& path = kid.GetPath();
+  //  path is in the form of `verb/keyName{/keyVersion}`
+  auto const separatorChar = '/';
+  auto pathEnd = path.end();
+  auto start = path.begin();
+  start = std::find(start, pathEnd, separatorChar);
+  start += 1;
+  auto separator = std::find(start, pathEnd, separatorChar);
+  if (separator != pathEnd)
+  {
+    keyProperties.Name = std::string(start, separator);
+    start = separator + 1;
+    keyProperties.Version = std::string(start, pathEnd);
+  }
+  else
+  {
+    // Nothing but the name+
+    keyProperties.Name = std::string(start, pathEnd);
   }
 }
 } // namespace
@@ -65,20 +92,35 @@ void _detail::KeyVaultKeyDeserialize(
         });
   }
 
+  // Parse URL for the vaultUri, keyVersion
+  ParseKeyUrl(key.Properties, key.Key.Id);
+
   // "Attributes"
   if (jsonParser.contains(_detail::AttributesPropertyName))
   {
     auto attributes = jsonParser[_detail::AttributesPropertyName];
 
-    JsonOptional::SetIfExists(key.Properties.Enabled, attributes, "enabled");
+    JsonOptional::SetIfExists(key.Properties.Enabled, attributes, _detail::EnabledPropertyName);
     JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-        key.Properties.NotBefore, attributes, "nbf", UnixTimeConverter::UnixTimeToDatetime);
+        key.Properties.NotBefore,
+        attributes,
+        _detail::NbfPropertyName,
+        UnixTimeConverter::UnixTimeToDatetime);
     JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-        key.Properties.ExpiresOn, attributes, "exp", UnixTimeConverter::UnixTimeToDatetime);
+        key.Properties.ExpiresOn,
+        attributes,
+        _detail::ExpPropertyName,
+        UnixTimeConverter::UnixTimeToDatetime);
     JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-        key.Properties.CreatedOn, attributes, "created", UnixTimeConverter::UnixTimeToDatetime);
+        key.Properties.CreatedOn,
+        attributes,
+        _detail::CreatedPropertyName,
+        UnixTimeConverter::UnixTimeToDatetime);
     JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-        key.Properties.UpdatedOn, attributes, "updated", UnixTimeConverter::UnixTimeToDatetime);
+        key.Properties.UpdatedOn,
+        attributes,
+        _detail::UpdatedPropertyName,
+        UnixTimeConverter::UnixTimeToDatetime);
   }
 
   // "Tags"

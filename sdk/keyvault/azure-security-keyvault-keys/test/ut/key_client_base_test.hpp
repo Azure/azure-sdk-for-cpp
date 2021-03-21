@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
+#include <azure/core/uuid.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/key_vault.hpp>
 
@@ -50,6 +51,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
     }
+
+    static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test

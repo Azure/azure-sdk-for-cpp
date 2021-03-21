@@ -71,16 +71,28 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
   };
 
-  template <class T>
+  template <class T, class R>
   static inline void SetFromNullable(
       Azure::Nullable<T> const& source,
       Azure::Core::Json::_internal::json& jsonKey,
       std::string const& keyName,
-      std::function<std::string(T const&)> factory)
+      std::function<R(T const&)> factory)
   {
     if (source)
     {
       jsonKey[keyName] = factory(source.GetValue());
+    }
+  }
+
+  template <class T>
+  static inline void SetFromNullable(
+      Azure::Nullable<T> const& source,
+      Azure::Core::Json::_internal::json& jsonKey,
+      std::string const& keyName)
+  {
+    if (source)
+    {
+      jsonKey[keyName] = source.GetValue();
     }
   }
 

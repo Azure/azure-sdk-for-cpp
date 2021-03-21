@@ -44,7 +44,7 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 TEST_F(KeyVaultClientTest, DeleteKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("deleteThisKey");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -74,7 +74,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
 TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("deleteThisKeyPoll");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -98,7 +98,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
 TEST_F(KeyVaultClientTest, DeleteInvalidKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("thisKeyDoesNotExists");
+  auto keyName = GetUniqueName();
 
   auto wasThrown = false;
   try
@@ -125,7 +125,7 @@ TEST_F(KeyVaultClientTest, DeleteInvalidKey)
 TEST_F(KeyVaultClientTest, DoubleDelete)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("DeleteMeTwoTimes");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -163,7 +163,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
 TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("DeleteMeBeforePollComplete1");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -199,7 +199,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
 TEST_F(KeyVaultClientTest, CreateDeletedKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("YouCanCreateMeAfterYouDeletedMe");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -239,7 +239,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
 TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("YouCanCreateMeAfterYouDeletedMeEvenBeforePollComplete");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -276,7 +276,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
 TEST_F(KeyVaultClientTest, GetDeletedKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("deleteThisKeyAndGetItFromDeleteKeys1wwxx3x4");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
