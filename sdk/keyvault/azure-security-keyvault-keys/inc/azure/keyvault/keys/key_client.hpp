@@ -18,6 +18,7 @@
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 #include <functional>
+#include <list>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
@@ -177,6 +178,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Response<DeletedKey> GetDeletedKey(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief  The update key operation changes specified attributes of a stored key and can be
+     * applied to any key type and key version stored in Azure Key Vault.
+     *
+     * @remark In order to perform this operation, the key must already exist in the Key Vault.
+     * Note: The cryptographic material of a key itself cannot be changed. This operation requires
+     * the keys/update permission.
+     *
+     * @param properties The #KeyProperties object with updated properties.
+     * @param keyOperations Optional list of supported #KeyOperation. If no operation list provided,
+     * no changes will be made to existing key operations.
+     * @param context A #Azure::Security::KeyVault::Keys::DeleteKeyOperation to wait on this
+     * long-running.
+     * @return Azure::Response<KeyVaultKey>
+     */
+    Azure::Response<KeyVaultKey> UpdateKeyProperties(
+        KeyProperties const& properties,
+        Azure::Nullable<std::list<KeyOperation>> const& keyOperations
+        = Azure::Nullable<std::list<KeyOperation>>(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

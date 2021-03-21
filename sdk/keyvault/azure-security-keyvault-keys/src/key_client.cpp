@@ -142,3 +142,18 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       },
       {_detail::DeletedKeysPath, name});
 }
+
+Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
+    KeyProperties const& properties,
+    Azure::Nullable<std::list<KeyOperation>> const& keyOperations,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Patch,
+      _detail::KeyRequestParameters(properties, keyOperations),
+      [&properties](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultKeyDeserialize(properties.Name, rawResponse);
+      },
+      {_detail::KeysPath, properties.Name, properties.Version});
+}
