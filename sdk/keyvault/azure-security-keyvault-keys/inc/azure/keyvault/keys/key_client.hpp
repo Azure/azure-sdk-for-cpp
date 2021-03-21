@@ -16,6 +16,7 @@
 #include "azure/keyvault/keys/key_create_options.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 #include <functional>
 #include <list>
@@ -199,6 +200,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
     Azure::Response<PurgedKey> PurgeDeletedKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Recovers the deleted key to its latest version.
+     *
+     * @remark The Recover Deleted Key operation is applicable for deleted keys in soft-delete
+     * enabled vaults. It recovers the deleted key back to its latest version under /keys. An
+     * attempt to recover an non-deleted key will return an error. Consider this the inverse of the
+     * delete operation on soft-delete enabled vaults. This operation requires the keys/recover
+     * permission.
+     *
+     * @param name The name of the key.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation
+     */
+    Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation StartRecoverDeletedKey(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

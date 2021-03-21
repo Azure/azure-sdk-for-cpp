@@ -70,6 +70,15 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
   {
+    // recover
+    auto recoverOperation = keyClient.StartRecoverDeletedKey(keyName);
+    auto keyResponse = recoverOperation.PollUntilDone(std::chrono::milliseconds(500));
+    auto key = keyResponse.ExtractValue();
+    // Delete again for purging
+    auto deleteOp = keyClient.StartDeleteKey(key.Name());
+    deleteOp.PollUntilDone(std::chrono::milliseconds(200));
+  }
+  {
     // Purge
     auto response = keyClient.PurgeDeletedKey(keyName);
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
