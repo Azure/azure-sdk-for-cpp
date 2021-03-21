@@ -24,6 +24,14 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   /**
+   * @brief Define a model for a purged key.
+   *
+   */
+  struct PurgedKey
+  {
+  };
+
+  /**
    * @brief The KeyClient provides synchronous methods to manage a KeyVaultKe in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the KeyVaultKey.
@@ -177,6 +185,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return Azure::Response<DeletedKey>
      */
     Azure::Response<DeletedKey> GetDeletedKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Permanently deletes the specified key.
+     *
+     * @remark The Purge Deleted Key operation is applicable for soft-delete enabled values. While
+     * the operation can be invoked on any vault, it will return an error if invoked on a non
+     * soft-delete enabled vault. This operation requires the keys/purge permission.
+     *
+     * @param name The name of the key.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     */
+    Azure::Response<PurgedKey> PurgeDeletedKey(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

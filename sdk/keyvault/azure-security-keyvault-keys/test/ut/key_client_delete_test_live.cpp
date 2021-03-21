@@ -69,6 +69,11 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     // Will throw and fail test if test takes more than 3 minutes (token cancelled)
     auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
+  {
+    // Purge
+    auto response = keyClient.PurgeDeletedKey(keyName);
+    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
+  }
 }
 
 TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)

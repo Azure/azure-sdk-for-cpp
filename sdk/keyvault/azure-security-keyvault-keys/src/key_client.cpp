@@ -143,6 +143,17 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
+Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<PurgedKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Delete,
+      [](Azure::Core::Http::RawResponse const&) { return PurgedKey(); },
+      {_detail::DeletedKeysPath, name});
+}
+
 Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
     KeyProperties const& properties,
     Azure::Nullable<std::list<KeyOperation>> const& keyOperations,
