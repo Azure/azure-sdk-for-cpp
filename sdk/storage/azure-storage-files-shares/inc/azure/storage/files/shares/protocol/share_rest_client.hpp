@@ -307,20 +307,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Enabled = bool(); // If SMB multichannel is enabled.
     };
 
-    // An Azure Storage file range.
-    struct FileRange
-    {
-      int64_t Start = int64_t(); // Start of the range.
-      int64_t End = int64_t(); // End of the range.
-    };
-
-    // An Azure Storage file clear range.
-    struct ClearRange
-    {
-      int64_t Start = int64_t(); // Start of the range.
-      int64_t End = int64_t(); // End of the range.
-    };
-
     // Settings for SMB protocol.
     struct SmbSettings
     {
@@ -350,32 +336,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::vector<CorsRule> Cors; // The set of CORS rules.
       Azure::Nullable<ProtocolSettings> Protocol; // Protocol settings
     };
-
-    // A permission (a security descriptor) at the share level.
-    struct SharePermission
-    {
-      std::string
-          FilePermission; // The permission in the Security Descriptor Definition Language (SDDL).
-    };
-
-    // Describes what lease action to take.
-    class LeaseAction {
-    public:
-      LeaseAction() = default;
-      explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseAction& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Acquire;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Release;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Change;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Renew;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Break;
-
-    private:
-      std::string m_value;
-    }; // extensible enum LeaseAction
 
     // State of the copy operation identified by 'x-ms-copy-id'.
     class CopyStatus {
@@ -618,6 +578,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
     };
 
+    // An Azure Storage file range.
+    struct FileRange
+    {
+      int64_t Start = int64_t(); // Start of the range.
+      int64_t End = int64_t(); // End of the range.
+    };
+
+    // An Azure Storage file clear range.
+    struct ClearRange
+    {
+      int64_t Start = int64_t(); // Start of the range.
+      int64_t End = int64_t(); // End of the range.
+    };
+
     // The list of file ranges
     struct RangeList
     {
@@ -632,6 +606,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           = int64_t(); // The approximate size of the data stored in bytes. Note that this value may
                        // not include all recently created or recently resized files.
     };
+
+    // A permission (a security descriptor) at the share level.
+    struct SharePermission
+    {
+      std::string
+          FilePermission; // The permission in the Security Descriptor Definition Language (SDDL).
+    };
+
+    // Describes what lease action to take.
+    class LeaseAction {
+    public:
+      LeaseAction() = default;
+      explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseAction& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Acquire;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Release;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Change;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Renew;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseAction Break;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseAction
 
     // Specify one of the following options: - Update: Writes the bytes specified by the request
     // body into the specified range. The Range and Content-Length headers must match to perform the

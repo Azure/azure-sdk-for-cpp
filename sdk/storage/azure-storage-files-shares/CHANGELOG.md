@@ -29,7 +29,7 @@
 - Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
 - Renamed `ShareProtocolSettings` to `ProtocolSettings`.
 - Renamed `CopyStatusType` to `CopyStatus`
-- Removed `FileRangeWriteType`, `ShareFileRangeList`, `FileRangeWriteFromUrlType` and `ShareStats`.
+- Removed `FileRangeWriteType`, `ShareFileRangeList`, `FileRangeWriteFromUrlType`, `FileRange`, `ClearRange`, `SharePermission`, `LeaseAction` and `ShareStats`.
 - Renamed `LeaseDurationType` to `LeaseDuration`, `LeaseStateType` to `LeaseState` and `LeaseStatusType` to `LeaseStatus`.
 - Renamed `ListSharesIncludeType` to `ListSharesIncludeFlags`.
 - Renamed `DeleteSnapshotsOptionType` to `DeleteSnapshotsOption`.

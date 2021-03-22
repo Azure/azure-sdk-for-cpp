@@ -28,12 +28,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const LeaseStatus LeaseStatus::Locked("locked");
     const LeaseStatus LeaseStatus::Unlocked("unlocked");
 
-    const LeaseAction LeaseAction::Acquire("acquire");
-    const LeaseAction LeaseAction::Release("release");
-    const LeaseAction LeaseAction::Change("change");
-    const LeaseAction LeaseAction::Renew("renew");
-    const LeaseAction LeaseAction::Break("break");
-
     const CopyStatus CopyStatus::Pending("pending");
     const CopyStatus CopyStatus::Success("success");
     const CopyStatus CopyStatus::Aborted("aborted");
@@ -45,6 +39,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const FileRangeWriteType FileRangeWriteType::Clear("clear");
 
     const FileRangeWriteFromUrlType FileRangeWriteFromUrlType::Update("update");
+
+    const LeaseAction LeaseAction::Acquire("acquire");
+    const LeaseAction LeaseAction::Release("release");
+    const LeaseAction LeaseAction::Change("change");
+    const LeaseAction LeaseAction::Renew("renew");
+    const LeaseAction LeaseAction::Break("break");
 
   } // namespace _detail
 }}}} // namespace Azure::Storage::Files::Shares

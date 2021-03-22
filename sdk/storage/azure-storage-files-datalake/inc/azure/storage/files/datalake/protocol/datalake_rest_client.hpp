@@ -38,24 +38,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Storage::ContentHash ContentHash;
     };
 
-    // Required. Indicates mode of the expiry time
-    class PathExpiryOptions {
-    public:
-      PathExpiryOptions() = default;
-      explicit PathExpiryOptions(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const PathExpiryOptions& other) const { return m_value == other.m_value; }
-      bool operator!=(const PathExpiryOptions& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions NeverExpire;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToCreation;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToNow;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions Absolute;
-
-    private:
-      std::string m_value;
-    }; // extensible enum PathExpiryOptions
-
     struct AclFailedEntry
     {
       std::string Name;
@@ -209,7 +191,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderGroup = "x-ms-group";
     constexpr static const char* HeaderAcl = "x-ms-acl";
     constexpr static const char* HeaderContentLength = "content-length";
-    constexpr static const char* HeaderExpiryOptions = "x-ms-expiry-option";
     constexpr static const char* HeaderExpiresOn = "x-ms-expiry-time";
     constexpr static const char* HeaderDate = "date";
     constexpr static const char* HeaderRequestId = "x-ms-request-id";
