@@ -63,6 +63,13 @@ KeyVaultKey _detail::KeyVaultKeyDeserialize(
   return key;
 }
 
+KeyVaultKey _detail::KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultKey key;
+  _detail::KeyVaultKeyDeserialize(key, rawResponse);
+  return key;
+}
+
 void _detail::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Http::RawResponse const& rawResponse)

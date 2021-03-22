@@ -86,6 +86,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
 
+    // Create from http raw response only.
+    KeyVaultKey KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
+
     // Updates a Key based on an Http raw response.
     void KeyVaultKeyDeserialize(
         KeyVaultKey& key,

@@ -202,3 +202,19 @@ Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
   return Azure::Response<std::vector<uint8_t>>(
       response.ExtractValue().Value, response.ExtractRawResponse());
 }
+
+Azure::Response<KeyVaultKey> KeyClient::RestoreKeyBackup(
+    std::vector<uint8_t> const& backup,
+    Azure::Core::Context const& context) const
+{
+  _detail::KeyBackup backupModel;
+  backupModel.Value = backup;
+  return m_pipeline->SendRequest<KeyVaultKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      backupModel,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultKeyDeserialize(rawResponse);
+      },
+      {_detail::KeysPath, "restore"});
+}
