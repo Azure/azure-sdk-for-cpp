@@ -142,6 +142,9 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
 
+  - pwsh: |
+      git diff
+
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |
