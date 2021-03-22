@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.PermissionCopyMode.HasValue())
     {
       protocolLayerOptions.XMsFilePermissionCopyMode = options.PermissionCopyMode.GetValue();
-      if (options.PermissionCopyMode.GetValue() == Models::PermissionCopyModeType::Override)
+      if (options.PermissionCopyMode.GetValue() == Models::PermissionCopyMode::Override)
       {
         if (options.Permission.HasValue())
         {
@@ -363,7 +363,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.XMsFilePermissionCopyMode = Models::PermissionCopyModeType::Source;
+      protocolLayerOptions.XMsFilePermissionCopyMode = Models::PermissionCopyMode::Source;
     }
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.FileCopySetArchiveAttribute = options.SetArchiveAttribute;
@@ -1099,7 +1099,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = options.SourceAccessCondition.IfNoneMatchContentHash;
     protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
         + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.GetValue() - 1);
-    protocolLayerOptions.XMsWrite = Models::FileRangeWriteFromUrlType::Update;
+    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteFromUrlType::Update;
 
     return _detail::ShareRestClient::File::UploadRangeFromUrl(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);

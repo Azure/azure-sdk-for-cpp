@@ -282,8 +282,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_fileClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
+    EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatus::Locked);
 
     std::string leaseId2 = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
