@@ -26,11 +26,12 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
-                    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-                      parameters:
-                        PackageName: "azure-template"
-                        ServiceDirectory: "template"
-                        TestPipeline: ${{ parameters.TestPipeline }}
+                    - ${{ each artifact in parameters.Artifacts }}: 
+                      - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                        parameters:
+                          PackageName: ${{ artifact.Name }}
+                          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                          TestPipeline: ${{ parameters.TestPipeline }}
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
                     - task: Powershell@2
@@ -187,6 +188,7 @@ stages:
                           PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
                           SkipCheckingForChanges: true
                           BaseBranchName: master
+                          OpenAsDraft: ${{ parameters.TestPipeline }}
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
