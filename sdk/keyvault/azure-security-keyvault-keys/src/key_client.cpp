@@ -5,6 +5,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include "azure/keyvault/keys/details/key_backup.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
@@ -182,4 +183,22 @@ Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
         return _detail::KeyVaultKeyDeserialize(properties.Name, rawResponse);
       },
       {_detail::KeysPath, properties.Name, properties.Version});
+}
+
+Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  // Use the internal model KeyBackup to parse from Json
+  auto response = m_pipeline->SendRequest<_detail::KeyBackup>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyBackup::Deserialize(rawResponse);
+      },
+      {_detail::KeysPath, name, "/backup"});
+
+  // Convert the internal KeyBackup model to a raw vector<uint8_t>.
+  return Azure::Response<std::vector<uint8_t>>(
+      response.ExtractValue().Value, response.ExtractRawResponse());
 }

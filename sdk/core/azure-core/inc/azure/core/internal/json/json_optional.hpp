@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   {
     /**
      * @brief If the optional key \p key is present in the json node \p jsonKey set the value of \p
-     * destination.
+     * the Nullable destination.
      *
      * @remark If the key is not in the json node, the \p destination is not modified.
      *
@@ -48,6 +48,28 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /**
      * @brief If the optional key \p key is present in the json node \p jsonKey set the value of \p
      * destination.
+     *
+     * @remark If the key is not in the json node, the \p destination is not modified.
+     *
+     * @param jsonKey The json node to review.
+     * @param key The key name for the optional property.
+     * @param destination The value to update if the key name property is in the json node.
+     */
+    template <class T>
+    static inline void SetIfExists(
+        T& destination,
+        Azure::Core::Json::_internal::json const& jsonKey,
+        std::string const& key) noexcept
+    {
+      if (jsonKey.contains(key))
+      {
+        destination = jsonKey[key].get<T>();
+      }
+    }
+
+    /**
+     * @brief If the optional key \p key is present in the json node \p jsonKey set the value of \p
+     * the Nullable destination.
      *
      * @remark If the key is not in the json node, the \p destination is not modified.
      *

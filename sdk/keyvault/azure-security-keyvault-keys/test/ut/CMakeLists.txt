@@ -37,6 +37,7 @@ gtest_discover_tests(azure-security-keyvault-keys-test
 ################## Live Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test-live
+  key_client_backup_test_live.cpp
   key_client_create_test_live.cpp
   key_client_delete_test_live.cpp
   key_client_get_test_live.cpp

@@ -67,7 +67,7 @@ void _detail::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  auto body = rawResponse.GetBody();
+  auto& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
   // "Key"

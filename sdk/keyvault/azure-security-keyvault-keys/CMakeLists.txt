@@ -32,7 +32,9 @@ set(
     inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
+    inc/azure/keyvault/keys/details/key_backup.hpp
     inc/azure/keyvault/keys/details/key_constants.hpp
+    inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_create_options.hpp
     inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
@@ -49,6 +51,7 @@ set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/delete_key_operation.cpp
     src/deleted_key.cpp
+    src/key_backup.cpp
     src/key_client.cpp
     src/key_curve_name.cpp
     src/key_request_parameters.cpp

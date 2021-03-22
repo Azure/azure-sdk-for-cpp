@@ -231,14 +231,35 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param properties The #KeyProperties object with updated properties.
      * @param keyOperations Optional list of supported #KeyOperation. If no operation list provided,
      * no changes will be made to existing key operations.
-     * @param context A #Azure::Security::KeyVault::Keys::DeleteKeyOperation to wait on this
-     * long-running.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Azure::Response<KeyVaultKey>
      */
     Azure::Response<KeyVaultKey> UpdateKeyProperties(
         KeyProperties const& properties,
         Azure::Nullable<std::list<KeyOperation>> const& keyOperations
         = Azure::Nullable<std::list<KeyOperation>>(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Request that a backup of the specified be downloaded to the client.
+     *
+     * @remark The Key Backup operation exports a key from Azure Key Vault in a protected form. Note
+     * that this operation does NOT return the actual key in a form that can be used outside the
+     * Azure Key Vault system, the returned key is either protected to a Azure Key Vault HSM or to
+     * Azure Key Vault itself. The intent of this operation is to allow a client to GENERATE a key
+     * in one Azure Key Vault instance, BACKUP the key, and then RESTORE it into another Azure Key
+     * Vault instance. The BACKUP operation may be used to export, in protected form, any key type
+     * from Azure Key Vault. Individual versions of a key cannot be backed up. BACKUP / RESTORE can
+     * be performed within geographical boundaries only; meaning that a BACKUP from one geographical
+     * are cannot be restored to another geographical are. For example, a backup from the US
+     * geographical are cannot be restored in an EU geographical area. This operation requires the
+     * key/backup permission.
+     *
+     * @param name The name of the key.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     */
+    Azure::Response<std::vector<uint8_t>> BackupKey(
+        std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
