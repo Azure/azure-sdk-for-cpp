@@ -55,15 +55,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
      * @param key The key name for the optional property.
      * @param destination The value to update if the key name property is in the json node.
      */
-    template <class T>
+    template <class V, class T>
     static inline void SetIfExists(
         T& destination,
         Azure::Core::Json::_internal::json const& jsonKey,
-        std::string const& key) noexcept
+        std::string const& key,
+        std::function<T(V value)> decorator) noexcept
     {
       if (jsonKey.contains(key))
       {
-        destination = jsonKey[key].get<T>();
+        destination = decorator(jsonKey[key].get<V>());
       }
     }
 

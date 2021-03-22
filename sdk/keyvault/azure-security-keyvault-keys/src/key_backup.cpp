@@ -29,6 +29,9 @@ KeyBackup KeyBackup::Deserialize(Azure::Core::Http::RawResponse const& rawRespon
   auto& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
   KeyBackup keyBackup;
-  JsonOptional::SetIfExists(keyBackup.Value, jsonParser, "value");
+  JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+      keyBackup.Value, jsonParser, "value", [](std::string const& value) {
+        return Azure::Core::Convert::Base64Decode(value);
+      });
   return keyBackup;
 }
