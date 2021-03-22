@@ -135,16 +135,6 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
-  - ${{ each artifact in parameters.Artifacts }}: 
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: ${{ artifact.Name }}
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-
-  - pwsh: |
-      git diff
-
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |
@@ -169,6 +159,13 @@ jobs:
 
     displayName: Validate Clang Format
     condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
+  
+  - ${{ each artifact in parameters.Artifacts }}: 
+    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+      parameters:
+        PackageName: ${{ artifact.Name }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
 
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
