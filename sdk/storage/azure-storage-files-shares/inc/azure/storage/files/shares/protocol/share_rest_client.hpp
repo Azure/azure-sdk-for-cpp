@@ -422,7 +422,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     using namespace Models;
     constexpr static const char* DefaultServiceApiVersion = "2020-02-10";
     constexpr static const char* QueryCopyId = "copyid";
-    constexpr static const char* QueryListSharesIncludeFlags = "include";
+    constexpr static const char* QueryIncludeFlags = "include";
     constexpr static const char* QueryContinuationToken = "marker";
     constexpr static const char* QueryPageSizeHint = "maxresults";
     constexpr static const char* QueryPrefix = "prefix";
@@ -1123,7 +1123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> Prefix;
           Azure::Nullable<std::string> ContinuationToken;
           Azure::Nullable<int32_t> MaxResults;
-          Azure::Nullable<ListSharesIncludeFlags> ListSharesIncludeFlags;
+          Azure::Nullable<ListSharesIncludeFlags> IncludeFlags;
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
@@ -1156,12 +1156,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 _internal::UrlEncodeQueryParameter(
                     std::to_string(listSharesSinglePageOptions.MaxResults.GetValue())));
           }
-          if (listSharesSinglePageOptions.ListSharesIncludeFlags.HasValue())
+          if (listSharesSinglePageOptions.IncludeFlags.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                _detail::QueryListSharesIncludeFlags,
+                _detail::QueryIncludeFlags,
                 _internal::UrlEncodeQueryParameter(ListSharesIncludeFlagsToString(
-                    listSharesSinglePageOptions.ListSharesIncludeFlags.GetValue())));
+                    listSharesSinglePageOptions.IncludeFlags.GetValue())));
           }
           if (listSharesSinglePageOptions.Timeout.HasValue())
           {
