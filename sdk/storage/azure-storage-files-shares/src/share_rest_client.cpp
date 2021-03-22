@@ -11,24 +11,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const AccessTier AccessTier::Cool("Cool");
     const AccessTier AccessTier::Premium("Premium");
 
-    const PermissionCopyModeType PermissionCopyModeType::Source("source");
-    const PermissionCopyModeType PermissionCopyModeType::Override("override");
+    const PermissionCopyMode PermissionCopyMode::Source("source");
+    const PermissionCopyMode PermissionCopyMode::Override("override");
 
-    const DeleteSnapshotsOptionType DeleteSnapshotsOptionType::Include("include");
+    const DeleteSnapshotsOption DeleteSnapshotsOption::Include("include");
 
-    const FileRangeWriteFromUrlType FileRangeWriteFromUrlType::Update("update");
+    const LeaseDuration LeaseDuration::Infinite("infinite");
+    const LeaseDuration LeaseDuration::Fixed("fixed");
 
-    const LeaseDurationType LeaseDurationType::Infinite("infinite");
-    const LeaseDurationType LeaseDurationType::Fixed("fixed");
+    const LeaseState LeaseState::Available("available");
+    const LeaseState LeaseState::Leased("leased");
+    const LeaseState LeaseState::Expired("expired");
+    const LeaseState LeaseState::Breaking("breaking");
+    const LeaseState LeaseState::Broken("broken");
 
-    const LeaseStateType LeaseStateType::Available("available");
-    const LeaseStateType LeaseStateType::Leased("leased");
-    const LeaseStateType LeaseStateType::Expired("expired");
-    const LeaseStateType LeaseStateType::Breaking("breaking");
-    const LeaseStateType LeaseStateType::Broken("broken");
-
-    const LeaseStatusType LeaseStatusType::Locked("locked");
-    const LeaseStatusType LeaseStatusType::Unlocked("unlocked");
+    const LeaseStatus LeaseStatus::Locked("locked");
+    const LeaseStatus LeaseStatus::Unlocked("unlocked");
 
     const LeaseAction LeaseAction::Acquire("acquire");
     const LeaseAction LeaseAction::Release("release");
@@ -45,5 +43,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   namespace _detail {
     const FileRangeWriteType FileRangeWriteType::Update("update");
     const FileRangeWriteType FileRangeWriteType::Clear("clear");
+
+    const FileRangeWriteFromUrlType FileRangeWriteFromUrlType::Update("update");
+
   } // namespace _detail
 }}}} // namespace Azure::Storage::Files::Shares

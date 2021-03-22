@@ -118,9 +118,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<Models::CopyStatus> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      Nullable<LeaseDurationType> LeaseDuration;
-      Nullable<LeaseStateType> LeaseState;
-      Nullable<LeaseStatusType> LeaseStatus;
+      Nullable<Models::LeaseDuration> LeaseDuration;
+      Nullable<Models::LeaseState> LeaseState;
+      Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
     struct DownloadFileResult

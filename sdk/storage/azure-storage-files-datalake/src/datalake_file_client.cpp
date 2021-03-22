@@ -39,42 +39,42 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    Models::LeaseStateType FromBlobLeaseState(Blobs::Models::LeaseState state)
+    Models::LeaseState FromBlobLeaseState(Blobs::Models::LeaseState state)
     {
       if (state == Blobs::Models::LeaseState::Available)
       {
-        return Models::LeaseStateType::Available;
+        return Models::LeaseState::Available;
       }
       if (state == Blobs::Models::LeaseState::Breaking)
       {
-        return Models::LeaseStateType::Breaking;
+        return Models::LeaseState::Breaking;
       }
       if (state == Blobs::Models::LeaseState::Broken)
       {
-        return Models::LeaseStateType::Broken;
+        return Models::LeaseState::Broken;
       }
       if (state == Blobs::Models::LeaseState::Expired)
       {
-        return Models::LeaseStateType::Expired;
+        return Models::LeaseState::Expired;
       }
       if (state == Blobs::Models::LeaseState::Leased)
       {
-        return Models::LeaseStateType::Leased;
+        return Models::LeaseState::Leased;
       }
-      return Models::LeaseStateType();
+      return Models::LeaseState();
     }
 
-    Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
+    Models::LeaseStatus FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
     {
       if (status == Blobs::Models::LeaseStatus::Locked)
       {
-        return Models::LeaseStatusType::Locked;
+        return Models::LeaseStatus::Locked;
       }
       if (status == Blobs::Models::LeaseStatus::Unlocked)
       {
-        return Models::LeaseStatusType::Unlocked;
+        return Models::LeaseStatus::Unlocked;
       }
-      return Models::LeaseStatusType();
+      return Models::LeaseStatus();
     }
   } // namespace
 
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (result->Details.LeaseDuration.HasValue())
     {
       ret.Details.LeaseDuration
-          = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().ToString());
+          = Models::LeaseDuration(result->Details.LeaseDuration.GetValue().ToString());
     }
     ret.Details.LeaseState = result->Details.LeaseState.HasValue()
         ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
@@ -300,7 +300,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (result->Details.LeaseDuration.HasValue())
     {
       ret.Details.LeaseDuration
-          = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().ToString());
+          = Models::LeaseDuration(result->Details.LeaseDuration.GetValue().ToString());
     }
     ret.Details.LeaseState = result->Details.LeaseState.HasValue()
         ? FromBlobLeaseState(result->Details.LeaseState.GetValue())
@@ -342,7 +342,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (result->Details.LeaseDuration.HasValue())
     {
       ret.Details.LeaseDuration
-          = Models::LeaseDurationType(result->Details.LeaseDuration.GetValue().ToString());
+          = Models::LeaseDuration(result->Details.LeaseDuration.GetValue().ToString());
     }
     ret.Details.LeaseState = result->Details.LeaseState.HasValue()
         ? FromBlobLeaseState(result->Details.LeaseState.GetValue())

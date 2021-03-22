@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareRestClient::Share::DeleteOptions();
     if (options.DeleteSnapshots.HasValue() && options.DeleteSnapshots.GetValue())
     {
-      protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOptionType::Include;
+      protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOption::Include;
     }
     auto result = _detail::ShareRestClient::Share::Delete(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
