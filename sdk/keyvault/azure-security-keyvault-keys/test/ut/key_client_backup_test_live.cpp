@@ -9,6 +9,8 @@
 
 #include "key_client_base_test.hpp"
 
+#include <azure/core/base64.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/key_vault.hpp>
 #include <azure/keyvault/keys/details/key_constants.hpp>
 
@@ -16,6 +18,7 @@
 
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
+using namespace Azure::Core::Json::_internal;
 
 TEST_F(KeyVaultClientTest, BackupKey)
 {
@@ -30,5 +33,13 @@ TEST_F(KeyVaultClientTest, BackupKey)
     // backup
     auto backUpResponse = keyClient.BackupKey(keyName);
     CheckValidResponse(backUpResponse);
+    auto& rawResponse = backUpResponse.GetRawResponse();
+    auto& payload = rawResponse.GetBody();
+    auto jsonParser = json::parse(payload);
+    auto originalBackUpValue = jsonParser["value"].get<std::string>();
+    // auto& decodedValue = *backUpResponse;
+    auto decodedValue = Azure::Core::Convert::Base64Decode(originalBackUpValue);
+    auto encodedValue = Azure::Core::Convert::Base64Encode(decodedValue);
+    EXPECT_EQ(originalBackUpValue, encodedValue);
   }
 }

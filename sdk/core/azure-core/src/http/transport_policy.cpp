@@ -30,7 +30,7 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTranspor
   return std::shared_ptr<HttpTransport>();
 #endif
 }
-
+#include <iostream>
 std::unique_ptr<RawResponse> TransportPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
@@ -59,6 +59,8 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // body
   auto bodyStream = response->GetBodyStream();
   response->SetBody(bodyStream->ReadToEnd(ctx));
+  auto& b = response->GetBody();
+  std::cout << std::endl << std::string(b.begin(), b.end());
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.
   return response;
