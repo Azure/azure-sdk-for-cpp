@@ -124,34 +124,6 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   }
 }
 
-TEST(Policy, ValuePolicy)
-{
-  using namespace Azure::Core;
-  using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
-  using namespace Azure::Core::Http::_internal;
-
-  Azure::Core::Http::Policies::_internal::ValueOptions options
-      = {{{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}},
-         {{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}};
-
-  std::vector<std::unique_ptr<HttpPolicy>> policies;
-  policies.emplace_back(
-      std::make_unique<Azure::Core::Http::Policies::_internal::ValuePolicy>(options));
-  policies.emplace_back(std::make_unique<NoOpPolicy>());
-  HttpPipeline pipeline(policies);
-
-  Request request(HttpMethod::Get, Url("https:://www.example.com"));
-
-  pipeline.Send(request, Context::GetApplicationContext());
-
-  auto headers = request.GetHeaders();
-  auto queryParams = request.GetUrl().GetQueryParameters();
-
-  ASSERT_EQ(headers, decltype(headers)({{"hdrkey1", "HdrVal1"}, {"hdrkey2", "HdrVal2"}}));
-  ASSERT_EQ(queryParams, decltype(queryParams)({{"QryKey1", "QryVal1"}, {"QryKey2", "QryVal2"}}));
-}
-
 TEST(Policy, RetryPolicyCounter)
 {
   using namespace Azure::Core;
