@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Azure SDK for C++.
 
 - For reporting bugs, requesting features, or asking for support, please file an issue in the [issues](https://github.com/Azure/azure-sdk-for-cpp/issues) section of the project.
 
-- If you would like to become an active contributor to this project please follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](https://azure.github.com/guidelines.html).
+- If you would like to become an active contributor to this project please follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](https://azure.github.io/azure-sdk/policies_opensource.html).
 
 - To make code changes, or contribute something new, please follow the [GitHub Forks / Pull requests model](https://help.github.com/articles/fork-a-repo/): Fork the repo, make the change and propose it back by submitting a pull request.
 
@@ -48,13 +48,13 @@ Codespaces is new technology that allows you to use a container as your developm
 ### GitHub Codespaces
 
 1. From the Azure SDK GitHub repo, click on the "Code -> Open with Codespaces" button.
-1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](#building-and-Testing).
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#building-and-testing).
 
 #### VS Code Codespaces
 
 1. Install the [VS Code Remote Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
 1. When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select "Remote-Containers: Open Folder in Container..."
-1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](#building-and-Testing).
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#building-and-testing).
 
 ### Full Local Setup
 

@@ -1,31 +1,30 @@
 # Release History
 
-## 1.0.0-beta.25 (2020-01-12)
+## 1.0.0-beta.25 (2021-01-12)
 
 * Validate vcpkg publishing automation (part 20)
 
-## 1.0.0-beta.24 (2020-01-11)
+## 1.0.0-beta.24 (2021-01-11)
 
 * Validate vcpkg publishing automation (part 19)
 
-## 1.0.0-beta.23 (2020-01-11)
+## 1.0.0-beta.23 (2021-01-11)
 
 * Validate vcpkg publishing automation (part 18)
 
-## 1.0.0-beta.22 (2020-01-08)
+## 1.0.0-beta.22 (2021-01-08)
 
 * Validate vcpkg publishing automation (part 17)
 
-## 1.0.0-beta.21 (2020-01-08)
+## 1.0.0-beta.21 (2021-01-08)
 
 * Validate vcpkg publishing automation (part 17)
 
-## 1.0.0-beta.20 (2020-01-08)
-
+## 1.0.0-beta.20 (2021-01-08)
 
 * Validate vcpkg publishing automation (part 16)
 
-## 1.0.0-beta.19 (2020-01-08)
+## 1.0.0-beta.19 (2021-01-08)
 
 * Validate vcpkg publishing automation (part 15)
 
