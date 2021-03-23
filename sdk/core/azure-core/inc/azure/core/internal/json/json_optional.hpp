@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         Azure::Core::Json::_internal::json const& jsonKey,
         std::string const& key) noexcept
     {
-      if (jsonKey.contains(key))
+      if (jsonKey.contains(key) && !jsonKey[key].is_null()) // In Json and not-Null
       {
         destination = jsonKey[key].get<T>();
       }

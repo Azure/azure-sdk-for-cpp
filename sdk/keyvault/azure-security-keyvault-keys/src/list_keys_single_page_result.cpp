@@ -15,46 +15,45 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
-ListKeysSinglePageResult _detail::ListKeysSinglePageResultDeserialize(
+KeyPropertiesSinglePage _detail::KeyPropertiesSinglePageDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  ListKeysSinglePageResult result;
+  KeyPropertiesSinglePage result;
   auto& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
-
+  std::string aa(body.begin(), body.end());
   JsonOptional::SetIfExists(result.ContinuationToken, jsonParser, "nextLink");
 
-  // Keys
-  auto keys = jsonParser["value"];
-  for (auto const& key : keys)
+  // Key properties
+  auto keyPropertiesJson = jsonParser["value"];
+  for (auto const& key : keyPropertiesJson)
   {
-    KeyVaultKey keyVaultKey;
-    keyVaultKey.Key.Id = key[_detail::KeyIdPropertyName].get<std::string>();
-    _detail::ParseKeyUrl(keyVaultKey.Properties, keyVaultKey.Key.Id);
+    KeyProperties keyProperties;
+    keyProperties.Id = key[_detail::KeyIdPropertyName].get<std::string>();
+    _detail::ParseKeyUrl(keyProperties, keyProperties.Id);
     // "Attributes"
     if (key.contains(_detail::AttributesPropertyName))
     {
       auto attributes = key[_detail::AttributesPropertyName];
 
-      JsonOptional::SetIfExists(
-          keyVaultKey.Properties.Enabled, attributes, _detail::EnabledPropertyName);
+      JsonOptional::SetIfExists(keyProperties.Enabled, attributes, _detail::EnabledPropertyName);
       JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-          keyVaultKey.Properties.NotBefore,
+          keyProperties.NotBefore,
           attributes,
           _detail::NbfPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
       JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-          keyVaultKey.Properties.ExpiresOn,
+          keyProperties.ExpiresOn,
           attributes,
           _detail::ExpPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
       JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-          keyVaultKey.Properties.CreatedOn,
+          keyProperties.CreatedOn,
           attributes,
           _detail::CreatedPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
       JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
-          keyVaultKey.Properties.UpdatedOn,
+          keyProperties.UpdatedOn,
           attributes,
           _detail::UpdatedPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
@@ -67,7 +66,7 @@ ListKeysSinglePageResult _detail::ListKeysSinglePageResultDeserialize(
       {
         for (auto tag = tags.begin(); tag != tags.end(); ++tag)
         {
-          keyVaultKey.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
+          keyProperties.Tags.emplace(tag.key(), tag.value().get<std::string>());
         }
       }
     }
@@ -75,10 +74,10 @@ ListKeysSinglePageResult _detail::ListKeysSinglePageResultDeserialize(
     // managed
     if (key.contains(_detail::ManagedPropertyName))
     {
-      keyVaultKey.Properties.Managed = key[_detail::ManagedPropertyName].get<bool>();
+      keyProperties.Managed = key[_detail::ManagedPropertyName].get<bool>();
     }
 
-    result.Items.emplace_back(keyVaultKey);
+    result.Items.emplace_back(keyProperties);
   }
 
   return result;

@@ -18,21 +18,28 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  struct ListKeysSinglePageResult
+  struct KeyPropertiesSinglePage
   {
     Azure::Nullable<std::string> ContinuationToken;
-    std::vector<KeyVaultKey> Items;
+    std::vector<KeyProperties> Items;
   };
 
-  struct ListKeysSinglePageOptions
+  struct GetSinglePageOptions
   {
     Azure::Nullable<std::string> ContinuationToken;
     Azure::Nullable<uint32_t> MaxResults;
   };
+  struct GetPropertiesOfKeysSinglePageOptions : public GetSinglePageOptions
+  {
+  };
+
+  struct GetPropertiesOfKeyVersionsOptions : public GetSinglePageOptions
+  {
+  };
 
   /***********************  Deserializer / Serializer ******************************/
   namespace _detail {
-    ListKeysSinglePageResult ListKeysSinglePageResultDeserialize(
+    KeyPropertiesSinglePage KeyPropertiesSinglePageDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   } // namespace _detail
 

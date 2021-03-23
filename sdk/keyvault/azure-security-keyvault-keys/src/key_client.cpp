@@ -8,7 +8,6 @@
 #include "azure/keyvault/keys/details/key_backup.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
-#include "azure/keyvault/keys/import_key_options.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 
 #include <memory>
@@ -117,40 +116,77 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
       {_detail::KeysPath, keyName, "create"});
 }
 
-Azure::Response<ListKeysSinglePageResult> KeyClient::ListKeysSinglePage(
-    ListKeysSinglePageOptions const& options,
+Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePage(
+    GetPropertiesOfKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   if (!options.ContinuationToken) // First page when no continuation token //
   {
     if (options.MaxResults) // Update max-results //
     {
-      return m_pipeline->SendRequest<ListKeysSinglePageResult>(
+      return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
           context,
           Azure::Core::Http::HttpMethod::Get,
           [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::ListKeysSinglePageResultDeserialize(rawResponse);
+            return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
           },
           {_detail::KeysPath},
           {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
     }
     // let server choose max-results //
-    return m_pipeline->SendRequest<ListKeysSinglePageResult>(
+    return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
         context,
         Azure::Core::Http::HttpMethod::Get,
         [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::ListKeysSinglePageResultDeserialize(rawResponse);
+          return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
         },
         {_detail::KeysPath});
   }
   // Get next page //
-  return m_pipeline->SendRequest<ListKeysSinglePageResult>(
+  return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::ListKeysSinglePageResultDeserialize(rawResponse);
+        return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
       },
       {_detail::KeysPath});
+}
+
+Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersions(
+    std::string const& name,
+    GetPropertiesOfKeyVersionsOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  if (!options.ContinuationToken) // First page when no continuation token //
+  {
+    if (options.MaxResults) // Update max-results //
+    {
+      return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+          context,
+          Azure::Core::Http::HttpMethod::Get,
+          [](Azure::Core::Http::RawResponse const& rawResponse) {
+            return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+          },
+          {_detail::KeysPath, name, "versions"},
+          {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
+    }
+    // let server choose max-results //
+    return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+        context,
+        Azure::Core::Http::HttpMethod::Get,
+        [](Azure::Core::Http::RawResponse const& rawResponse) {
+          return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+        },
+        {_detail::KeysPath, name, "versions"});
+  }
+  // Get next page //
+  return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+      },
+      {_detail::KeysPath, name, "versions"});
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -269,4 +305,18 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
         return _detail::KeyVaultKeyDeserialize(name, rawResponse);
       },
       {_detail::KeysPath, name});
+}
+
+Azure::Response<KeyVaultKey> KeyClient::ImportKey(
+    ImportKeyOptions const& importKeyOptions,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Put,
+      importKeyOptions,
+      [&importKeyOptions](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultKeyDeserialize(importKeyOptions.Name(), rawResponse);
+      },
+      {_detail::KeysPath, importKeyOptions.Name()});
 }

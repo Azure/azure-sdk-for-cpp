@@ -31,16 +31,22 @@ TEST_F(KeyVaultClientTest, GetKey)
 }
 
 #include <iostream>
-TEST_F(KeyVaultClientTest, ListKeys)
+TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
 
-  auto keyResponse = keyClient.ListKeysSinglePage();
+  auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage();
   CheckValidResponse(keyResponse);
-  for (auto const& key : keyResponse->Items)
+  for (auto const& keyProperties : keyResponse->Items)
   {
+    auto keyVersions = keyClient.GetPropertiesOfKeyVersions(keyProperties.Name);
+    CheckValidResponse(keyVersions);
     std::cout << std::endl
-              << key.Name() << " - " << key.Properties.CreatedOn.GetValue().ToString() << " - "
-              << key.Properties.Enabled.GetValue();
+              << keyProperties.Name << " - " << keyProperties.CreatedOn.GetValue().ToString();
+    std::cout << std::endl << "Versions:";
+    for (auto const& keyVersion : keyVersions->Items)
+    {
+      std::cout << std::endl << "\t-" << keyVersion.Version;
+    }
   }
 }

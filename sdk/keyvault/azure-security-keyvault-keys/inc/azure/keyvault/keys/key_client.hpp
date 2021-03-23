@@ -12,6 +12,7 @@
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
+#include "azure/keyvault/keys/import_key_options.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 #include "azure/keyvault/keys/key_create_options.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
@@ -156,8 +157,51 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         CreateOctKeyOptions const& octKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
-    Azure::Response<ListKeysSinglePageResult> ListKeysSinglePage(
-        ListKeysSinglePageOptions const& options = ListKeysSinglePageOptions(),
+    /**
+     * @brief Get a single page with the properties of all keys in the specified vault. You can use
+     * the returned #KeyProperties.Name in subsequent calls to #GetKey.
+     *
+     * @remark Retrieves a list of the keys in the Key Vault that contains the public part of a
+     * stored key. The operation is applicable to all key types, however only the base key
+     * identifier, attributes, and tags are provided in the response. Individual versions of a key
+     * are not listed in the response. This operation requires the keys/list permission.
+     *
+     * @remark Use \p options to control which page to get. If
+     * #GetPropertiesOfKeysSinglePageOptions.NextLink is not set, the operation will get the first
+     * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
+     * page of the response if there is a next page.
+     *
+     * @param options The #GetPropertiesOfKeysSinglePageOptions object to for setting the operation
+     * up.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyPropertiesSinglePage>
+     */
+    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeysSinglePage(
+        GetPropertiesOfKeysSinglePageOptions const& options
+        = GetPropertiesOfKeysSinglePageOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Get one page listing the properties of all the versions of the specified key. You can
+     * use the returned #KeyProperties.Name and #KeyProperties.Version in subsequent calls to
+     * #GetKey.
+     *
+     * @remark The full identifier, attributes, and tags are provided in the response. This
+     * operation requires the keys/list permission.
+     *
+     * @remark Use \p options to control which page to get. If
+     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the first
+     * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
+     * page of the response if there is a next page.
+     *
+     * @param name The name of the key.
+     * @param options The #GetPropertiesOfKeyVersionsOptions object to for setting the operation up.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyPropertiesSinglePage>
+     */
+    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeyVersions(
+        std::string const& name,
+        GetPropertiesOfKeyVersionsOptions const& options = GetPropertiesOfKeyVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -305,6 +349,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Response<KeyVaultKey> ImportKey(
         std::string const& name,
         JsonWebKey const& keyMaterial,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Imports an externally created key, stores it, and returns key parameters and
+     * attributes to the client.
+     *
+     * @remark The import operation may be used to import any key type into an Azure Key Vault. If
+     * the named key already exists, Azure Key Vault creates a new version of the key. This
+     * operation requires the keys/import permission.
+     *
+     * @param importKeyOptions The key import configuration object containing information about the
+     * #JsonWebKey being imported.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     */
+    Azure::Response<KeyVaultKey> ImportKey(
+        ImportKeyOptions const& importKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
