@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const BlobRetentionPolicy& lhs, const BlobRetentionPolicy& rhs)
+  bool operator==(const RetentionPolicy& lhs, const RetentionPolicy& rhs)
   {
     if (lhs.IsEnabled != rhs.IsEnabled)
     {
@@ -27,14 +27,14 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     return true;
   }
 
-  bool operator==(const BlobCorsRule& lhs, const BlobCorsRule& rhs)
+  bool operator==(const CorsRule& lhs, const CorsRule& rhs)
   {
     return lhs.AllowedHeaders == rhs.AllowedHeaders && lhs.AllowedMethods == rhs.AllowedMethods
         && lhs.AllowedOrigins == rhs.AllowedOrigins && lhs.ExposedHeaders == rhs.ExposedHeaders
         && lhs.MaxAgeInSeconds == rhs.MaxAgeInSeconds;
   }
 
-  bool operator==(const BlobStaticWebsite& lhs, const BlobStaticWebsite& rhs)
+  bool operator==(const StaticWebsite& lhs, const StaticWebsite& rhs)
   {
     if (lhs.IsEnabled != rhs.IsEnabled)
     {
@@ -113,7 +113,6 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res->RequestId.empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
@@ -238,7 +237,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.StaticWebsite.ErrorDocument404Path = "404.html";
     properties.StaticWebsite.DefaultIndexDocumentPath.Reset();
 
-    Blobs::Models::BlobCorsRule corsRule;
+    Blobs::Models::CorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
     corsRule.AllowedMethods = "GET,PUT";
     corsRule.AllowedHeaders = "x-ms-header1,x-ms-header2";
@@ -315,7 +314,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadedProperties.DeleteRetentionPolicy, properties.DeleteRetentionPolicy);
 
     auto res = m_blobServiceClient.SetProperties(originalProperties);
-    EXPECT_FALSE(res->RequestId.empty());
   }
 
   TEST_F(BlobServiceClientTest, AccountInfo)

@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Stored access policies that you can use to provide fine grained control over
      * container permissions.
      */
-    std::vector<Models::BlobSignedIdentifier> SignedIdentifiers;
+    std::vector<Models::SignedIdentifier> SignedIdentifiers;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -439,7 +439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::StartCopyFromUri.
    */
-  struct StartCopyBlobFromUriOptions
+  struct StartBlobCopyFromUriOptions
   {
     /**
      * @brief Specifies user-defined name-value pairs associated with the blob. If no
@@ -463,7 +463,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Indicates the priority with which to rehydrate an archived blob. The priority
@@ -481,7 +481,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::AbortCopyFromUri.
    */
-  struct AbortCopyBlobFromUriOptions
+  struct AbortBlobCopyFromUriOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -589,7 +589,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Acquire.
    */
-  struct AcquireBlobLeaseOptions
+  struct AcquireLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -600,7 +600,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Renew.
    */
-  struct RenewBlobLeaseOptions
+  struct RenewLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -611,7 +611,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Change.
    */
-  struct ChangeBlobLeaseOptions
+  struct ChangeLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -622,7 +622,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Release.
    */
-  struct ReleaseBlobLeaseOptions
+  struct ReleaseLeaseOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -633,7 +633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobLeaseClient::Break.
    */
-  struct BreakBlobLeaseOptions
+  struct BreakLeaseOptions
   {
     /**
      * @brief Proposed duration the lease should continue before it is broken, in seconds,
@@ -697,7 +697,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -723,7 +723,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     struct
     {
@@ -812,7 +812,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -829,7 +829,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
-    Models::BlockListTypeOption ListType = Models::BlockListTypeOption::Committed;
+    Models::BlockListType ListType = Models::BlockListType::Committed;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Nullable<Models::AccessTier> Tier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -947,7 +947,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::UploadPages.
    */
-  struct UploadPageBlobPagesOptions
+  struct UploadPagesOptions
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -965,7 +965,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::UploadPagesFromUri.
    */
-  struct UploadPageBlobPagesFromUriOptions
+  struct UploadPagesFromUriOptions
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -983,7 +983,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::ClearPages.
    */
-  struct ClearPageBlobPagesOptions
+  struct ClearPagesOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1005,7 +1005,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::GetPageRanges.
    */
-  struct GetPageBlobPageRangesOptions
+  struct GetPageRangesOptions
   {
     /**
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
@@ -1022,7 +1022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::StartCopyIncremental.
    */
-  struct StartCopyPageBlobIncrementalOptions
+  struct StartBlobCopyIncrementalOptions
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.

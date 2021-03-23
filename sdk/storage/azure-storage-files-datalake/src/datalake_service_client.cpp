@@ -53,11 +53,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         if (item.Details.LeaseDuration.HasValue())
         {
           fileSystem.Details.LeaseDuration
-              = Models::LeaseDurationType((item.Details.LeaseDuration.GetValue().ToString()));
+              = Models::LeaseDuration((item.Details.LeaseDuration.GetValue().ToString()));
         }
-        fileSystem.Details.LeaseState = Models::LeaseStateType(item.Details.LeaseState.ToString());
-        fileSystem.Details.LeaseStatus
-            = Models::LeaseStatusType(item.Details.LeaseStatus.ToString());
+        fileSystem.Details.LeaseState = Models::LeaseState(item.Details.LeaseState.ToString());
+        fileSystem.Details.LeaseStatus = Models::LeaseStatus(item.Details.LeaseStatus.ToString());
 
         fileSystems.emplace_back(std::move(fileSystem));
       }
@@ -186,7 +185,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions, context);
     auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = std::move(result->ContinuationToken);
-    response.RequestId = std::move(result->RequestId);
     response.ServiceEndpoint = std::move(result->ServiceEndpoint);
     response.Prefix = std::move(result->Prefix);
     response.Items = FileSystemsFromContainerItems(std::move(result->Items));

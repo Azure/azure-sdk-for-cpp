@@ -112,7 +112,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "BlobAlreadyExists")
       {
         Models::CreateAppendBlobResult ret;
-        ret.RequestId = e.RequestId;
         ret.Created = false;
         return Azure::Response<Models::CreateAppendBlobResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -122,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
   {

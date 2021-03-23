@@ -81,13 +81,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::CreateDataLakePathResult> containing the information
+     * @return Azure::Response<Models::CreatePathResult> containing the information
      * returned when creating a path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::CreateDataLakePathResult> Create(
+    Azure::Response<Models::CreatePathResult> Create(
         Models::PathResourceType type,
-        const CreateDataLakePathOptions& options = CreateDataLakePathOptions(),
+        const CreatePathOptions& options = CreatePathOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -95,38 +95,38 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * exists.
      * @param options Optional parameters to create the resource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::CreateDataLakePathResult> containing the information
+     * @return Azure::Response<Models::CreatePathResult> containing the information
      * returned when creating a path, the information will only be valid when the create operation
      * is successful.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::CreateDataLakePathResult> CreateIfNotExists(
+    Azure::Response<Models::CreatePathResult> CreateIfNotExists(
         Models::PathResourceType type,
-        const CreateDataLakePathOptions& options = CreateDataLakePathOptions(),
+        const CreatePathOptions& options = CreatePathOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DeleteDataLakePathResult> which is current empty but
+     * @return Azure::Response<Models::DeletePathResult> which is current empty but
      * preserved for future usage.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::DeleteDataLakePathResult> Delete(
-        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions(),
+    Azure::Response<Models::DeletePathResult> Delete(
+        const DeletePathOptions& options = DeletePathOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Deletes the resource the path points to if it exists.
      * @param options Optional parameters to delete the reource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DeleteDataLakePathResult> which is current empty but
+     * @return Azure::Response<Models::DeletePathResult> which is current empty but
      * preserved for future usage. The result will only valid if the delete operation is successful.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::DeleteDataLakePathResult> DeleteIfExists(
-        const DeleteDataLakePathOptions& options = DeleteDataLakePathOptions(),
+    Azure::Response<Models::DeletePathResult> DeleteIfExists(
+        const DeletePathOptions& options = DeletePathOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -139,14 +139,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::SetDataLakePathAccessControlListResult> containing the
+     * @return Azure::Response<Models::SetPathAccessControlListResult> containing the
      * information returned when setting path's access control.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::SetDataLakePathAccessControlListResult> SetAccessControlList(
+    Azure::Response<Models::SetPathAccessControlListResult> SetAccessControlList(
         std::vector<Models::Acl> acls,
-        const SetDataLakePathAccessControlListOptions& options
-        = SetDataLakePathAccessControlListOptions(),
+        const SetPathAccessControlListOptions& options = SetPathAccessControlListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -156,13 +155,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param permissions Sets the permissions on the path
      * @param options Optional parameters to set permissions to the resource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::SetDataLakePathPermissionsResult> containing the
+     * @return Azure::Response<Models::SetPathPermissionsResult> containing the
      * information returned when setting path's permissions.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::SetDataLakePathPermissionsResult> SetPermissions(
+    Azure::Response<Models::SetPathPermissionsResult> SetPermissions(
         std::string permissions,
-        const SetDataLakePathPermissionsOptions& options = SetDataLakePathPermissionsOptions(),
+        const SetPathPermissionsOptions& options = SetPathPermissionsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -170,13 +169,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to set the http headers to the resource the path points
      * to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<SetDataLakePathHttpHeadersResult> containing the information
+     * @return Azure::Response<SetPathHttpHeadersResult> containing the information
      * returned when setting the path's Http headers.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::SetDataLakePathHttpHeadersResult> SetHttpHeaders(
+    Azure::Response<Models::SetPathHttpHeadersResult> SetHttpHeaders(
         Models::PathHttpHeaders httpHeaders,
-        const SetDataLakePathHttpHeadersOptions& options = SetDataLakePathHttpHeadersOptions(),
+        const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -186,25 +185,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::DataLakePathProperties> containing the
+     * @return Azure::Response<Models::PathProperties> containing the
      * properties of the path.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::DataLakePathProperties> GetProperties(
-        const GetDataLakePathPropertiesOptions& options = GetDataLakePathPropertiesOptions(),
+    Azure::Response<Models::PathProperties> GetProperties(
+        const GetPathPropertiesOptions& options = GetPathPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetDataLakePathAccessControlListResult> containing the
+     * @return Azure::Response<Models::GetPathAccessControlListResult> containing the
      * access control list of the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::GetDataLakePathAccessControlListResult> GetAccessControlList(
-        const GetDataLakePathAccessControlListOptions& options
-        = GetDataLakePathAccessControlListOptions(),
+    Azure::Response<Models::PathAccessControlList> GetAccessControlList(
+        const GetPathAccessControlListOptions& options = GetPathAccessControlListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -213,13 +211,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to the resource the path points to.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::SetDataLakePathMetadataResult> containing the
+     * @return Azure::Response<Models::SetPathMetadataResult> containing the
      * information returned when setting the metadata.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::SetDataLakePathMetadataResult> SetMetadata(
+    Azure::Response<Models::SetPathMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetDataLakePathMetadataOptions& options = SetDataLakePathMetadataOptions(),
+        const SetPathMetadataOptions& options = SetPathMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -231,18 +229,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * directory points to.
      * @param context Context for cancelling long running operations.
      * @return
-     * Azure::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+     * Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+    Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
     SetAccessControlListRecursiveSinglePage(
         const std::vector<Models::Acl>& acls,
-        const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options
-        = SetDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const SetPathAccessControlListRecursiveSinglePageOptions& options
+        = SetPathAccessControlListRecursiveSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Set, acls, options, context);
+          _detail::PathSetAccessControlRecursiveMode::Set, acls, options, context);
     }
 
     /**
@@ -254,18 +252,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * directory points to.
      * @param context Context for cancelling long running operations.
      * @return
-     * Azure::Response<Models::UpdateDataLakePathAccessControlListRecursiveSinglePageResult>
+     * Azure::Response<Models::UpdatePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::UpdateDataLakePathAccessControlListRecursiveSinglePageResult>
+    Azure::Response<Models::UpdatePathAccessControlListRecursiveSinglePageResult>
     UpdateAccessControlListRecursiveSinglePage(
         const std::vector<Models::Acl>& acls,
-        const UpdateDataLakePathAccessControlListRecursiveSinglePageOptions& options
-        = UpdateDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const UpdatePathAccessControlListRecursiveSinglePageOptions& options
+        = UpdatePathAccessControlListRecursiveSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
+          _detail::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
     }
 
     /**
@@ -277,18 +275,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * directory points to.
      * @param context Context for cancelling long running operations.
      * @return
-     * Azure::Response<Models::RemoveDataLakePathAccessControlListRecursiveSinglePageResult>
+     * Azure::Response<Models::RemovePathAccessControlListRecursiveSinglePageResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::RemoveDataLakePathAccessControlListRecursiveSinglePageResult>
+    Azure::Response<Models::RemovePathAccessControlListRecursiveSinglePageResult>
     RemoveAccessControlListRecursiveSinglePage(
         const std::vector<Models::Acl>& acls,
-        const RemoveDataLakePathAccessControlListRecursiveSinglePageOptions& options
-        = RemoveDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const RemovePathAccessControlListRecursiveSinglePageOptions& options
+        = RemovePathAccessControlListRecursiveSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
+          _detail::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
     }
 
   protected:
@@ -305,12 +303,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
     }
 
-    Azure::Response<Models::SetDataLakePathAccessControlListRecursiveSinglePageResult>
+    Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
     SetAccessControlListRecursiveSinglePageInternal(
-        Models::PathSetAccessControlRecursiveMode mode,
+        _detail::PathSetAccessControlRecursiveMode mode,
         const std::vector<Models::Acl>& acls,
-        const SetDataLakePathAccessControlListRecursiveSinglePageOptions& options
-        = SetDataLakePathAccessControlListRecursiveSinglePageOptions(),
+        const SetPathAccessControlListRecursiveSinglePageOptions& options
+        = SetPathAccessControlListRecursiveSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     friend class DataLakeFileSystemClient;

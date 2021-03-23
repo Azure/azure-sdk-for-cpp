@@ -140,10 +140,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileSystemClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::DeleteDataLakeFileSystemOptions options1;
+        Files::DataLake::DeleteFileSystemOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_THROW(client.Delete(options1), StorageException);
-        Files::DataLake::DeleteDataLakeFileSystemOptions options2;
+        Files::DataLake::DeleteFileSystemOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
@@ -206,8 +206,8 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), LowercaseRandomString());
       auto client2 = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options1;
-      Files::DataLake::CreateDataLakeFileSystemOptions options2;
+      Files::DataLake::CreateFileSystemOptions options1;
+      Files::DataLake::CreateFileSystemOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -371,9 +371,9 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), LowercaseRandomString());
       fileSystem.Create();
 
-      Files::DataLake::SetDataLakeFileSystemAccessPolicyOptions options;
+      Files::DataLake::SetFileSystemAccessPolicyOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-      Files::DataLake::Models::DataLakeSignedIdentifier identifier;
+      Files::DataLake::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
       fileSystem.Create(options);
       auto ret = fileSystem.GetAccessPolicy();
@@ -423,7 +423,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
       fileSystem.Create(options);
       auto ret = fileSystem.GetAccessPolicy();
@@ -432,7 +432,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
       fileSystem.Create(options);
       auto ret = fileSystem.GetAccessPolicy();

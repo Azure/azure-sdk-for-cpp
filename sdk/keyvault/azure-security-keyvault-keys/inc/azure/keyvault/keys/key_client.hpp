@@ -163,5 +163,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Security::KeyVault::Keys::DeleteKeyOperation StartDeleteKey(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Gets the public part of a deleted key.
+     *
+     * @remark The Get Deleted Key operation is applicable for soft-delete enabled vaults. While the
+     * operation can be invoked on any vault, it will return an error if invoked on a non
+     * soft-delete enabled vault. This operation requires the keys/get permission.
+     *
+     * @param name The name of the key.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<DeletedKey>
+     */
+    Azure::Response<DeletedKey> GetDeletedKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

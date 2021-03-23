@@ -25,56 +25,50 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Created = true;
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
     };
 
     struct DeleteShareResult
     {
       bool Deleted = true;
-      std::string RequestId;
     };
     using CreateShareSnapshotResult = _detail::ShareCreateSnapshotResult;
     using ShareProperties = _detail::ShareGetPropertiesResult;
     using SetSharePropertiesResult = _detail::ShareSetPropertiesResult;
     using SetShareMetadataResult = _detail::ShareSetMetadataResult;
-    using GetShareAccessPolicyResult = _detail::ShareGetAccessPolicyResult;
+    using ShareAccessPolicy = _detail::ShareGetAccessPolicyResult;
     using SetShareAccessPolicyResult = _detail::ShareSetAccessPolicyResult;
     using ShareStatistics = _detail::ShareGetStatisticsResult;
     using CreateSharePermissionResult = _detail::ShareCreatePermissionResult;
-    using AcquireShareLeaseResult = _detail::ShareAcquireLeaseResult;
-    using RenewShareLeaseResult = _detail::ShareRenewLeaseResult;
-    using ReleaseShareLeaseResult = _detail::ShareReleaseLeaseResult;
-    using BreakShareLeaseResult = _detail::ShareBreakLeaseResult;
-    using ChangeShareLeaseResult = _detail::ShareChangeLeaseResult;
+    using AcquireLeaseResult = _detail::ShareAcquireLeaseResult;
+    using RenewLeaseResult = _detail::ShareRenewLeaseResult;
+    using ReleaseLeaseResult = _detail::ShareReleaseLeaseResult;
+    using BreakLeaseResult = _detail::ShareBreakLeaseResult;
+    using ChangeLeaseResult = _detail::ShareChangeLeaseResult;
 
     // DirectoryClient models:
 
-    struct CreateShareDirectoryResult
+    struct CreateDirectoryResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
       std::string ParentFileId;
       bool Created = false;
     };
 
-    struct DeleteShareDirectoryResult
+    struct DeleteDirectoryResult
     {
       bool Deleted = true;
-      std::string RequestId;
     };
 
-    using ShareDirectoryProperties = _detail::DirectoryGetPropertiesResult;
-    using SetShareDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
-    using SetShareDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
-    using ForceCloseAllShareDirectoryHandlesSinglePageResult
-        = _detail::DirectoryForceCloseHandlesResult;
+    using DirectoryProperties = _detail::DirectoryGetPropertiesResult;
+    using SetDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
+    using SetDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
+    using ForceCloseAllDirectoryHandlesSinglePageResult = _detail::DirectoryForceCloseHandlesResult;
 
-    struct ForceCloseShareDirectoryHandleResult
+    struct ForceCloseDirectoryHandleResult
     {
-      std::string RequestId;
     };
 
     struct ListFilesAndDirectoriesSinglePageResult
@@ -88,34 +82,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<std::string> ContinuationToken;
       std::vector<DirectoryItem> DirectoryItems;
       std::vector<FileItem> FileItems;
-      std::string RequestId;
     };
 
-    struct ListShareDirectoryHandlesSinglePageResult
+    struct ListDirectoryHandlesSinglePageResult
     {
       std::vector<HandleItem> Handles;
       Nullable<std::string> ContinuationToken;
-      std::string RequestId;
     };
 
     // FileClient models:
-    struct CreateShareFileResult
+    struct CreateFileResult
     {
       bool Created = true;
       Azure::ETag ETag;
       DateTime LastModified;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      std::string RequestId;
     };
 
-    struct DeleteShareFileResult
+    struct DeleteFileResult
     {
       bool Deleted = true;
-      std::string RequestId;
     };
 
-    struct DownloadShareFileDetails
+    struct DownloadFileDetails
     {
       DateTime LastModified;
       Storage::Metadata Metadata;
@@ -125,83 +115,71 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<std::string> CopyId;
       Nullable<std::string> CopyProgress;
       Nullable<std::string> CopySource;
-      Nullable<CopyStatusType> CopyStatus;
+      Nullable<Models::CopyStatus> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      Nullable<LeaseDurationType> LeaseDuration;
-      Nullable<LeaseStateType> LeaseState;
-      Nullable<LeaseStatusType> LeaseStatus;
+      Nullable<Models::LeaseDuration> LeaseDuration;
+      Nullable<Models::LeaseState> LeaseState;
+      Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
-    struct DownloadShareFileResult
+    struct DownloadFileResult
     {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
       Azure::Core::Http::HttpRange ContentRange;
       int64_t FileSize = 0;
       Nullable<Storage::ContentHash> TransactionalContentHash;
       FileHttpHeaders HttpHeaders;
-      DownloadShareFileDetails Details;
-      std::string RequestId;
+      DownloadFileDetails Details;
     };
 
-    using StartCopyShareFileResult = _detail::FileStartCopyResult;
-    using AbortCopyShareFileResult = _detail::FileAbortCopyResult;
-    using ShareFileProperties = _detail::FileGetPropertiesResult;
-    using SetShareFilePropertiesResult = _detail::FileSetHttpHeadersResult;
+    using AbortFileCopyResult = _detail::FileAbortCopyResult;
+    using FileProperties = _detail::FileGetPropertiesResult;
+    using SetFilePropertiesResult = _detail::FileSetHttpHeadersResult;
     using ResizeFileResult = _detail::FileSetHttpHeadersResult;
-    using SetShareFileMetadataResult = _detail::FileSetMetadataResult;
-    using UploadShareFileRangeResult = _detail::FileUploadRangeResult;
-    struct ClearShareFileRangeResult
+    using SetFileMetadataResult = _detail::FileSetMetadataResult;
+    using UploadFileRangeResult = _detail::FileUploadRangeResult;
+    struct ClearFileRangeResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
-      std::string RequestId;
       bool IsServerEncrypted = bool();
     };
     using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
-    using GetShareFileRangeListResult = _detail::FileGetRangeListResult;
-    using ListShareFileHandlesSinglePageResult = ListShareDirectoryHandlesSinglePageResult;
-    using ForceCloseAllShareFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
+    using GetFileRangeListResult = _detail::FileGetRangeListResult;
+    using ListFileHandlesSinglePageResult = ListDirectoryHandlesSinglePageResult;
+    using ForceCloseAllFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
 
-    struct DownloadShareFileToResult
+    struct DownloadFileToResult
     {
       int64_t FileSize = 0;
       Azure::Core::Http::HttpRange ContentRange;
       FileHttpHeaders HttpHeaders;
-      DownloadShareFileDetails Details;
+      DownloadFileDetails Details;
     };
 
-    struct ForceCloseShareFileHandleResult
+    struct ForceCloseFileHandleResult
     {
-      std::string RequestId;
     };
 
-    struct UploadShareFileFromResult
+    struct UploadFileFromResult
     {
       bool IsServerEncrypted = false;
     };
 
   } // namespace Models
 
-  class StartCopyShareFileOperation : public Azure::Core::Operation<Models::ShareFileProperties> {
+  class StartFileCopyOperation : public Azure::Core::Operation<Models::FileProperties> {
   public:
-    std::string RequestId;
-    Azure::ETag ETag;
-    Azure::DateTime LastModified;
-    std::string CopyId;
-    Models::CopyStatusType CopyStatus;
-    Nullable<std::string> VersionId;
+    Models::FileProperties Value() const override { return m_pollResult; }
 
-  public:
-    Models::ShareFileProperties Value() const override { return m_pollResult; }
+    StartFileCopyOperation() = default;
 
-    StartCopyShareFileOperation() = default;
+    StartFileCopyOperation(StartFileCopyOperation&&) = default;
 
-    StartCopyShareFileOperation(StartCopyShareFileOperation&&) = default;
+    StartFileCopyOperation& operator=(StartFileCopyOperation&&) = default;
 
-    StartCopyShareFileOperation& operator=(StartCopyShareFileOperation&&) = default;
-
-    ~StartCopyShareFileOperation() override {}
+    ~StartFileCopyOperation() override {}
 
   private:
     std::string GetResumeToken() const override
@@ -213,7 +191,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Response<Models::ShareFileProperties> PollUntilDoneInternal(
+    Azure::Response<Models::FileProperties> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -228,7 +206,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     std::shared_ptr<ShareFileClient> m_fileClient;
-    Models::ShareFileProperties m_pollResult;
+    Models::FileProperties m_pollResult;
 
     friend class ShareFileClient;
   };

@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Nullable<Models::ListSharesIncludeType> ListSharesIncludeFlags;
+    Azure::Nullable<Models::ListSharesIncludeFlags> ListSharesIncludeFlags;
   };
 
   struct SetServicePropertiesOptions
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
      */
-    Azure::Nullable<Models::ShareAccessTier> AccessTier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
      */
-    Azure::Nullable<Models::ShareAccessTier> AccessTier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
   };
 
-  struct GetShareStatsOptions
+  struct GetShareStatisticsOptions
   {
   };
 
@@ -145,28 +145,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for ShareClient::AcquireLease.
    */
-  struct AcquireShareLeaseOptions
+  struct AcquireLeaseOptions
   {
   };
 
   /**
    * @brief Optional parameters for ShareClient::ChangeLease.
    */
-  struct ChangeShareLeaseOptions
+  struct ChangeLeaseOptions
   {
   };
 
   /**
    * @brief Optional parameters for ShareClient::ReleaseLease.
    */
-  struct ReleaseShareLeaseOptions
+  struct ReleaseLeaseOptions
   {
   };
 
   /**
    * @brief Optional parameters for ShareClient::BreakLease.
    */
-  struct BreakShareLeaseOptions
+  struct BreakLeaseOptions
   {
     /**
      * @brief Proposed duration the lease should continue before it is broken, in seconds,
@@ -181,11 +181,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for ShareClient::BreakLease.
    */
-  struct RenewShareLeaseOptions
+  struct RenewLeaseOptions
   {
   };
 
-  struct CreateShareDirectoryOptions
+  struct CreateDirectoryOptions
   {
     /**
      * @brief A name-value pair to associate with a directory object.
@@ -204,15 +204,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::FileSmbProperties SmbProperties;
   };
 
-  struct DeleteShareDirectoryOptions
+  struct DeleteDirectoryOptions
   {
   };
 
-  struct GetShareDirectoryPropertiesOptions
+  struct GetDirectoryPropertiesOptions
   {
   };
 
-  struct SetShareDirectoryPropertiesOptions
+  struct SetDirectoryPropertiesOptions
   {
     /**
      * @brief If specified the permission (security descriptor) shall be set for the directory.
@@ -223,7 +223,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> FilePermission;
   };
 
-  struct SetShareDirectoryMetadataOptions
+  struct SetDirectoryMetadataOptions
   {
   };
 
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ListShareDirectoryHandlesSinglePageOptions
+  struct ListDirectoryHandlesSinglePageOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -275,11 +275,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<bool> Recursive;
   };
 
-  struct ForceCloseShareDirectoryHandleOptions
+  struct ForceCloseDirectoryHandleOptions
   {
   };
 
-  struct ForceCloseAllShareDirectoryHandlesSinglePageOptions
+  struct ForceCloseAllDirectoryHandlesSinglePageOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<bool> Recursive;
   };
 
-  struct CreateShareFileOptions
+  struct CreateFileOptions
   {
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
@@ -325,7 +325,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct DeleteShareFileOptions
+  struct DeleteFileOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -333,7 +333,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct DownloadShareFileOptions
+  struct DownloadFileOptions
   {
     /**
      * @brief Downloads only the bytes of the file from this range.
@@ -352,7 +352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct StartCopyShareFileOptions
+  struct StartFileCopyOptions
   {
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -374,7 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the smb properties.
      */
-    Azure::Nullable<Models::PermissionCopyModeType> PermissionCopyMode;
+    Azure::Nullable<Models::PermissionCopyMode> PermissionCopyMode;
 
     /**
      * @brief Specifies the option to overwrite the target file if it already exists and has
@@ -394,7 +394,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct AbortCopyShareFileOptions
+  struct AbortFileCopyOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -402,7 +402,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct GetShareFilePropertiesOptions
+  struct GetFilePropertiesOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -410,7 +410,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct SetShareFilePropertiesOptions
+  struct SetFilePropertiesOptions
   {
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
@@ -429,7 +429,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct SetShareFileMetadataOptions
+  struct SetFileMetadataOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct UploadShareFileRangeOptions
+  struct UploadFileRangeOptions
   {
     /**
      * @brief An MD5 hash of the content. This hash is used to verify the integrity of the data
@@ -453,7 +453,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ClearShareFileRangeOptions
+  struct ClearFileRangeOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -480,7 +480,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct GetShareFileRangeListOptions
+  struct GetFileRangeListOptions
   {
     /**
      * @brief The range to be get from service.
@@ -488,18 +488,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<Core::Http::HttpRange> Range;
 
     /**
-     * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
-     * specifies the previous snapshot.
-     */
-    Azure::Nullable<std::string> PreviousShareSnapshot;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ListShareFileHandlesSinglePageOptions
+  struct ListFileHandlesSinglePageOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -517,11 +511,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ForceCloseShareFileHandleOptions
+  struct ForceCloseFileHandleOptions
   {
   };
 
-  struct ForceCloseAllShareFileHandlesSinglePageOptions
+  struct ForceCloseAllFileHandlesSinglePageOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -535,7 +529,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::DownloadTo.
    */
-  struct DownloadShareFileToOptions
+  struct DownloadFileToOptions
   {
     /**
      * @brief Downloads only the bytes of the file from this range.
@@ -566,7 +560,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::UploadFrom.
    */
-  struct UploadShareFileFromOptions
+  struct UploadFileFromOptions
   {
     /**
      * @brief The standard HTTP header system properties to set.

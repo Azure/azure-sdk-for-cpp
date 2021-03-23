@@ -8,8 +8,8 @@ using time_point = std::chrono::system_clock::time_point;
 
 Context& Azure::Core::Context::GetApplicationContext()
 {
-  static Context ctx;
-  return ctx;
+  static Context context;
+  return context;
 }
 
 time_point Azure::Core::Context::CancelWhen() const

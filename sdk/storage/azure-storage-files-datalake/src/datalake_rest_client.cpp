@@ -4,41 +4,39 @@
 
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
-  const FileSystemResourceType FileSystemResourceType::Filesystem("filesystem");
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  namespace Models {
+    const PublicAccessType PublicAccessType::FileSystem("FileSystem");
+    const PublicAccessType PublicAccessType::Path("Path");
+    const PublicAccessType PublicAccessType::None("None");
 
-  const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Set("set");
-  const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Modify("modify");
-  const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Remove("remove");
+    const PathResourceType PathResourceType::Directory("directory");
+    const PathResourceType PathResourceType::File("file");
 
-  const PathExpiryOptions PathExpiryOptions::NeverExpire("NeverExpire");
-  const PathExpiryOptions PathExpiryOptions::RelativeToCreation("RelativeToCreation");
-  const PathExpiryOptions PathExpiryOptions::RelativeToNow("RelativeToNow");
-  const PathExpiryOptions PathExpiryOptions::Absolute("Absolute");
+    const LeaseDuration LeaseDuration::Infinite("infinite");
+    const LeaseDuration LeaseDuration::Fixed("fixed");
 
-  const PublicAccessType PublicAccessType::FileSystem("FileSystem");
-  const PublicAccessType PublicAccessType::Path("Path");
-  const PublicAccessType PublicAccessType::None("None");
+    const LeaseState LeaseState::Available("available");
+    const LeaseState LeaseState::Leased("leased");
+    const LeaseState LeaseState::Expired("expired");
+    const LeaseState LeaseState::Breaking("breaking");
+    const LeaseState LeaseState::Broken("broken");
 
-  const PathResourceType PathResourceType::Directory("directory");
-  const PathResourceType PathResourceType::File("file");
+    const LeaseStatus LeaseStatus::Locked("locked");
+    const LeaseStatus LeaseStatus::Unlocked("unlocked");
 
-  const PathRenameMode PathRenameMode::Legacy("legacy");
-  const PathRenameMode PathRenameMode::Posix("posix");
+  } // namespace Models
+  namespace _detail {
+    const PathRenameMode PathRenameMode::Legacy("legacy");
+    const PathRenameMode PathRenameMode::Posix("posix");
 
-  const PathGetPropertiesAction PathGetPropertiesAction::GetAccessControl("getAccessControl");
-  const PathGetPropertiesAction PathGetPropertiesAction::GetStatus("getStatus");
+    const PathGetPropertiesAction PathGetPropertiesAction::GetAccessControl("getAccessControl");
+    const PathGetPropertiesAction PathGetPropertiesAction::GetStatus("getStatus");
 
-  const LeaseDurationType LeaseDurationType::Infinite("infinite");
-  const LeaseDurationType LeaseDurationType::Fixed("fixed");
+    const FileSystemResourceType FileSystemResourceType::Filesystem("filesystem");
 
-  const LeaseStateType LeaseStateType::Available("available");
-  const LeaseStateType LeaseStateType::Leased("leased");
-  const LeaseStateType LeaseStateType::Expired("expired");
-  const LeaseStateType LeaseStateType::Breaking("breaking");
-  const LeaseStateType LeaseStateType::Broken("broken");
-
-  const LeaseStatusType LeaseStatusType::Locked("locked");
-  const LeaseStatusType LeaseStatusType::Unlocked("unlocked");
-
-}}}}} // namespace Azure::Storage::Files::DataLake::Models
+    const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Set("set");
+    const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Modify("modify");
+    const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Remove("remove");
+  } // namespace _detail
+}}}} // namespace Azure::Storage::Files::DataLake

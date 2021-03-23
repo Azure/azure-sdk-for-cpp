@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blockContent = Azure::Core::IO::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(content.data()), content.size());
       auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
-      EXPECT_NO_THROW(blobClient.AppendBlock(&blockContent));
+      EXPECT_NO_THROW(blobClient.AppendBlock(blockContent));
       blobClient0.Delete();
     };
 
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::SetBlobContainerAccessPolicyOptions options;
       options.AccessType = Blobs::Models::PublicAccessType::Blob;
-      Blobs::Models::BlobSignedIdentifier identifier;
+      Blobs::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.StartsOn = sasStartsOn;
       identifier.ExpiresOn = sasExpiresOn;
