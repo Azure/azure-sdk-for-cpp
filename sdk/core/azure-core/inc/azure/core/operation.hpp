@@ -79,7 +79,7 @@ namespace Azure { namespace Core {
      *
      * @return Response<T> the final result of the long-running operation.
      */
-    T Value;
+    virtual T Value() const = 0;
 
     /**
      * @brief Gets an token representing the operation that can be used to poll for the status of
@@ -88,6 +88,20 @@ namespace Azure { namespace Core {
      * @return std::string The resume token.
      */
     virtual std::string GetResumeToken() const = 0;
+
+    /**
+     * @brief Get the raw HTTP response.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponse() const
+    {
+      if (!m_rawResponse)
+      {
+        throw std::runtime_error("The raw response was not yet set for the Operation.");
+      }
+      return *m_rawResponse;
+    };
 
     /**
      * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
