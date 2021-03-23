@@ -1,6 +1,7 @@
 parameters:
   Artifacts: []
   ArtifactName: 'not-specified'
+  TestPipeline: false
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -25,6 +26,11 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+                    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                      parameters:
+                        PackageName: ${{ artifact.Name }}
+                        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                        TestPipeline: ${{ parameters.TestPipeline }}
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
                     - task: Powershell@2
@@ -181,6 +187,7 @@ stages:
                           PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
                           SkipCheckingForChanges: true
                           BaseBranchName: master
+                          OpenAsDraft: ${{ parameters.TestPipeline }}
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
