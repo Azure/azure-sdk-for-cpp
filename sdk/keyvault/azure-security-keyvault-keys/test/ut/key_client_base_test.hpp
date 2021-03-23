@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     static inline void EmptyTrashFromVault(KeyClient const& keyClient)
     {
       std::vector<DeletedKey> deletedKeys;
-      GetDeletedKeysOptions options;
+      GetDeletedKeysSinglePageOptions options;
       while (true)
       {
         auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);

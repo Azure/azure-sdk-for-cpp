@@ -190,18 +190,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the first
+     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the first
      * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
      * page of the response if there is a next page.
      *
      * @param name The name of the key.
-     * @param options The #GetPropertiesOfKeyVersionsOptions object to for setting the operation up.
+     * @param options The #GetPropertiesOfKeyVersionsSinglePageOptions object to for setting the operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Azure::Response<KeyPropertiesSinglePage>
      */
-    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeyVersions(
+    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeyVersionsSinglePage(
         std::string const& name,
-        GetPropertiesOfKeyVersionsOptions const& options = GetPropertiesOfKeyVersionsOptions(),
+        GetPropertiesOfKeyVersionsSinglePageOptions const& options = GetPropertiesOfKeyVersionsSinglePageOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -248,16 +248,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the first
+     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the first
      * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
      * page of the response if there is a next page.
      *
-     * @param options The #GetDeletedKeysOptions object to for setting the operation up.
+     * @param options The #GetDeletedKeysSinglePageOptions object to for setting the operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Azure::Response<DeletedKeySinglePage>
      */
     Azure::Response<DeletedKeySinglePage> GetDeletedKeysSinglePage(
-        GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
+        GetDeletedKeysSinglePageOptions const& options = GetDeletedKeysSinglePageOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

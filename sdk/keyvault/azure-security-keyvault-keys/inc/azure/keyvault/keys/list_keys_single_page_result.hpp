@@ -43,11 +43,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
   };
 
-  struct GetPropertiesOfKeyVersionsOptions : public GetSinglePageOptions
+  struct GetPropertiesOfKeyVersionsSinglePageOptions : public GetSinglePageOptions
   {
   };
 
-  struct GetDeletedKeysOptions : public GetSinglePageOptions
+  struct GetDeletedKeysSinglePageOptions : public GetSinglePageOptions
   {
   };
 

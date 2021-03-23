@@ -160,9 +160,9 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
       query);
 }
 
-Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersions(
+Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSinglePage(
     std::string const& name,
-    GetPropertiesOfKeyVersionsOptions const& options,
+    GetPropertiesOfKeyVersionsSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   if (!options.ContinuationToken) // First page when no continuation token //
@@ -248,7 +248,7 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
 }
 
 Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
-    GetDeletedKeysOptions const& options,
+    GetDeletedKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   if (!options.ContinuationToken) // First page when no continuation token //

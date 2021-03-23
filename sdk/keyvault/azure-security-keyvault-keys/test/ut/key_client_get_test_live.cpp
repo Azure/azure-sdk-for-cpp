@@ -77,6 +77,46 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
   RemoveAllKeysFromVault(keyClient, false);
 }
 
+TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+
+  // Create 5 key versions
+  std::string keyName(GetUniqueName());
+  int expectedVersions = 5;
+  CreateEcKeyOptions createKeyOptions(keyName);
+  for (int counter = 0; counter < expectedVersions; counter++)
+  {
+    auto response = keyClient.CreateEcKey(createKeyOptions);
+    CheckValidResponse(response);
+  }
+  // Get Key versions
+  std::vector<KeyProperties> keyPropertiesList;
+  GetPropertiesOfKeyVersionsSinglePageOptions getKeyOptions;
+  while (true)
+  {
+    auto keyResponse = keyClient.GetPropertiesOfKeyVersionsSinglePage(keyName, getKeyOptions);
+    for (auto& key : keyResponse->Items)
+    {
+      keyPropertiesList.emplace_back(key);
+    }
+    if (!keyResponse->ContinuationToken)
+    {
+      break;
+    }
+    getKeyOptions.ContinuationToken = keyResponse->ContinuationToken;
+  }
+
+  EXPECT_EQ(expectedVersions, keyPropertiesList.size());
+  for (auto const& keyProperties : keyPropertiesList)
+  {
+    EXPECT_EQ(keyName, keyProperties.Name);
+  }
+
+  // Clean vault
+  RemoveAllKeysFromVault(keyClient, false);
+}
+
 TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
@@ -108,7 +148,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 
   // Get all deleted Keys
   std::vector<DeletedKey> deletedKeys;
-  GetDeletedKeysOptions options;
+  GetDeletedKeysSinglePageOptions options;
   while (true)
   {
     auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
