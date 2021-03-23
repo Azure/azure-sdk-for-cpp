@@ -44,6 +44,7 @@ set(
     inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
+    inc/azure/keyvault/keys/list_keys_single_page_result.hpp
     inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
     inc/azure/keyvault/keys/version.hpp
 )
@@ -60,6 +61,7 @@ set(
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
+    src/list_keys_single_page_result.cpp
     src/recover_deleted_key_operation.cpp
 )
 

@@ -29,3 +29,18 @@ TEST_F(KeyVaultClientTest, GetKey)
   EXPECT_EQ(key.Name(), keyName);
   EXPECT_EQ(key.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa);
 }
+
+#include <iostream>
+TEST_F(KeyVaultClientTest, ListKeys)
+{
+  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
+
+  auto keyResponse = keyClient.ListKeysSinglePage();
+  CheckValidResponse(keyResponse);
+  for (auto const& key : keyResponse->Items)
+  {
+    std::cout << std::endl
+              << key.Name() << " - " << key.Properties.CreatedOn.GetValue().ToString() << " - "
+              << key.Properties.Enabled.GetValue();
+  }
+}

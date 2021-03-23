@@ -19,18 +19,6 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Common::_internal;
 
-// namespace {
-// static std::vector<uint8_t> Base64url::Base64UrlDecode(std::string const& value)
-// {
-//   std::vector<uint8_t> result;
-//   for (auto& t : value)
-//   {
-//     result.emplace_back(t);
-//   }
-//   return result;
-// }
-// } // namespace
-
 TEST_F(KeyVaultClientTest, ImportKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);

@@ -97,9 +97,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
-        std::vector<std::string> const& path)
+        std::vector<std::string> const& path,
+        std::map<std::string, std::string> const& query = std::map<std::string, std::string>())
     {
       auto request = CreateRequest(method, path);
+      if (query.size() > 0)
+      {
+        for (auto const& queryParameter : query)
+        {
+          request.GetUrl().AppendQueryParameter(queryParameter.first, queryParameter.second);
+        }
+      }
       auto response = SendRequest(context, request);
       return Azure::Response<T>(factoryFn(*response), std::move(response));
     }

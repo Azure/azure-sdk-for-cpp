@@ -16,6 +16,7 @@
 #include "azure/keyvault/keys/key_create_options.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/list_keys_single_page_result.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 #include <functional>
@@ -30,6 +31,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct PurgedKey
   {
+  };
+
+  /**
+   * @brief Optional parameters for KeyVaultClient::GetKey
+   *
+   */
+  struct GetKeyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+    /**
+     * @brief Specify the key version to get.
+     */
+    std::string Version;
   };
 
   /**
@@ -54,22 +71,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::string const& vaultUrl,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         KeyClientOptions options = KeyClientOptions());
-
-    /**
-     * @brief Optional parameters for KeyVaultClient::GetKey
-     *
-     */
-    struct GetKeyOptions
-    {
-      /**
-       * @brief Context for cancelling long running operations.
-       */
-      Azure::Core::Context Context;
-      /**
-       * @brief Specify the key version to get.
-       */
-      std::string Version;
-    };
 
     /**
      * @brief Gets the public part of a stored key.
@@ -153,6 +154,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Response<KeyVaultKey> CreateOctKey(
         CreateOctKeyOptions const& octKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<ListKeysSinglePageResult> ListKeysSinglePage(
+        ListKeysSinglePageOptions const& options = ListKeysSinglePageOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

@@ -117,6 +117,42 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
       {_detail::KeysPath, keyName, "create"});
 }
 
+Azure::Response<ListKeysSinglePageResult> KeyClient::ListKeysSinglePage(
+    ListKeysSinglePageOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  if (!options.ContinuationToken) // First page when no continuation token //
+  {
+    if (options.MaxResults) // Update max-results //
+    {
+      return m_pipeline->SendRequest<ListKeysSinglePageResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Get,
+          [](Azure::Core::Http::RawResponse const& rawResponse) {
+            return _detail::ListKeysSinglePageResultDeserialize(rawResponse);
+          },
+          {_detail::KeysPath},
+          {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
+    }
+    // let server choose max-results //
+    return m_pipeline->SendRequest<ListKeysSinglePageResult>(
+        context,
+        Azure::Core::Http::HttpMethod::Get,
+        [](Azure::Core::Http::RawResponse const& rawResponse) {
+          return _detail::ListKeysSinglePageResultDeserialize(rawResponse);
+        },
+        {_detail::KeysPath});
+  }
+  // Get next page //
+  return m_pipeline->SendRequest<ListKeysSinglePageResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::ListKeysSinglePageResultDeserialize(rawResponse);
+      },
+      {_detail::KeysPath});
+}
+
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
     std::string const& name,
     Azure::Core::Context const& context) const
