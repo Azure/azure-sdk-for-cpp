@@ -74,7 +74,8 @@ function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
   Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }
 
-function Get-cpp-GithubIoDocIndex() {
+function Get-cpp-GithubIoDocIndex() 
+{
   # Update the main.js and docfx.json language content
   UpdateDocIndexFiles -appTitleLang "C++"
   # Fetch out all package metadata from csv file.
@@ -85,4 +86,10 @@ function Get-cpp-GithubIoDocIndex() {
   $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
   # Generate yml/md toc files and build site.
   GenerateDocfxTocContent -tocContent $tocContent -lang "C++"
+}
+
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory)
+{
+  & "$EngDir/scripts/Update-PkgVersion.ps1" -ServiceDirectory $ServiceDirectory -PackageName $PackageName `
+  -NewVersionString $Version
 }
