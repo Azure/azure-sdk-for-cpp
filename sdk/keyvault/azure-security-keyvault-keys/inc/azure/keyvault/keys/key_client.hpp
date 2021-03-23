@@ -278,10 +278,28 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * permission.
      *
      * @param name The backup blob associated with a key.
-     * @param context  A #Azure::Core::Context controlling the request lifetime.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
      */
     Azure::Response<KeyVaultKey> RestoreKeyBackup(
         std::vector<uint8_t> const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Imports an externally created ket, stores it, and returns jey parameters and
+     * attributes to the client.
+     *
+     * @remark The import key operation may be used to import any key type into an Azure Key Vault.
+     * If the named key already exists, Azure Key Vault creates a new version of the key. This
+     * operation requires the keys/import permission.
+     *
+     * @param name The name of the key.
+     * @param keyMaterial The #JsonWebKey being imported.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyVaultKey>
+     */
+    Azure::Response<KeyVaultKey> ImportKey(
+        std::string const& name,
+        JsonWebKey const& keyMaterial,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

@@ -8,6 +8,7 @@
 #include "azure/keyvault/keys/details/key_backup.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
+#include "azure/keyvault/keys/import_key_options.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 
 #include <memory>
@@ -217,4 +218,19 @@ Azure::Response<KeyVaultKey> KeyClient::RestoreKeyBackup(
         return _detail::KeyVaultKeyDeserialize(rawResponse);
       },
       {_detail::KeysPath, "restore"});
+}
+
+Azure::Response<KeyVaultKey> KeyClient::ImportKey(
+    std::string const& name,
+    JsonWebKey const& keyMaterial,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultKey>(
+      context,
+      Azure::Core::Http::HttpMethod::Put,
+      ImportKeyOptions(name, keyMaterial),
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultKeyDeserialize(name, rawResponse);
+      },
+      {_detail::KeysPath, name});
 }
