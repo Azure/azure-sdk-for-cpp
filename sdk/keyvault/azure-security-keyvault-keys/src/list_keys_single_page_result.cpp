@@ -97,6 +97,7 @@ DeletedKeySinglePage _detail::DeletedKeySinglePageDeserialize(
   {
     DeletedKey deletedKey;
     deletedKey.Properties.Id = key[_detail::KeyIdPropertyName].get<std::string>();
+    _detail::ParseKeyUrl(deletedKey.Properties, deletedKey.Properties.Id);
 
     deletedKeySinglePage.Items.emplace_back(deletedKey);
   }

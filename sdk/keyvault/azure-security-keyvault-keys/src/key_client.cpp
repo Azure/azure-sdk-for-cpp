@@ -143,13 +143,21 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
         {_detail::KeysPath});
   }
   // Get next page //
+  // Get next page //
+  Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
+  auto query = nextPageUrl.GetQueryParameters();
+  if (options.MaxResults)
+  {
+    query.emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
+  }
   return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
       },
-      {_detail::KeysPath});
+      {nextPageUrl.GetPath()},
+      query);
 }
 
 Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersions(
@@ -180,13 +188,20 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersions(
         {_detail::KeysPath, name, "versions"});
   }
   // Get next page //
+  Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
+  auto query = nextPageUrl.GetQueryParameters();
+  if (options.MaxResults)
+  {
+    query.emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
+  }
   return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
       },
-      {_detail::KeysPath, name, "versions"});
+      {nextPageUrl.GetPath()},
+      query);
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -259,13 +274,20 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
         {_detail::DeletedKeysPath});
   }
   // Get next page //
+  Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
+  auto query = nextPageUrl.GetQueryParameters();
+  if (options.MaxResults)
+  {
+    query.emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
+  }
   return m_pipeline->SendRequest<DeletedKeySinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::DeletedKeySinglePageDeserialize(rawResponse);
       },
-      {_detail::DeletedKeysPath});
+      {nextPageUrl.GetPath()},
+      query);
 }
 
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(

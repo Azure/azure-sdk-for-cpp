@@ -31,30 +31,58 @@ TEST_F(KeyVaultClientTest, GetKey)
   EXPECT_EQ(key.GetKeyType(), JsonWebKeyType::Rsa);
 }
 
-#include <iostream>
 TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
 
-  auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage();
-  CheckValidResponse(keyResponse);
-  for (auto const& keyProperties : keyResponse->Items)
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  // Delete and purge anything before starting the test to ensure test will work
+  RemoveAllKeysFromVault(keyClient);
+
+  // Create 5 keys
+  std::vector<std::string> keyNames;
+  for (int counter = 0; counter < 5; counter++)
   {
-    auto keyVersions = keyClient.GetPropertiesOfKeyVersions(keyProperties.Name);
-    CheckValidResponse(keyVersions);
-    std::cout << std::endl
-              << keyProperties.Name << " - " << keyProperties.CreatedOn.GetValue().ToString();
-    std::cout << std::endl << "Versions:";
-    for (auto const& keyVersion : keyVersions->Items)
-    {
-      std::cout << std::endl << "\t-" << keyVersion.Version;
-    }
+    auto name = GetUniqueName();
+    CreateEcKeyOptions options(name);
+    keyNames.emplace_back(name);
+    auto response = keyClient.CreateEcKey(options);
+    CheckValidResponse(response);
   }
+  // Get Key properties
+  std::vector<KeyProperties> keyPropertiesList;
+  GetPropertiesOfKeysSinglePageOptions options;
+  while (true)
+  {
+    auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
+    for (auto& key : keyResponse->Items)
+    {
+      keyPropertiesList.emplace_back(key);
+    }
+    if (!keyResponse->ContinuationToken)
+    {
+      break;
+    }
+    options.ContinuationToken = keyResponse->ContinuationToken;
+  }
+
+  EXPECT_EQ(keyNames.size(), keyPropertiesList.size());
+  for (auto const& keyProperties : keyPropertiesList)
+  {
+    // Check names are in the keyNames list
+    auto findKeyName = std::find(keyNames.begin(), keyNames.end(), keyProperties.Name);
+    EXPECT_NE(findKeyName, keyNames.end());
+  }
+
+  // Clean vault
+  RemoveAllKeysFromVault(keyClient, false);
 }
 
 TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
+
+  // Delete and purge anything before starting the test to ensure test will work
+  EmptyTrashFromVault(keyClient);
 
   // Create 5 keys
   std::vector<std::string> keyNames;
@@ -98,7 +126,9 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   EXPECT_EQ(keyNames.size(), deletedKeys.size());
   for (auto const& deletedKey : deletedKeys)
   {
-    std::cout << std::endl << deletedKey.Id();
+    // Check names are in the keyNames list
+    auto findKeyName = std::find(keyNames.begin(), keyNames.end(), deletedKey.Name());
+    EXPECT_NE(findKeyName, keyNames.end());
   }
 
   // Purge

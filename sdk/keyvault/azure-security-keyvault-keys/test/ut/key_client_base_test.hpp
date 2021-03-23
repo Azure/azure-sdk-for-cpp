@@ -15,6 +15,7 @@
 #include <azure/keyvault/key_vault.hpp>
 
 #include <cstdio>
+#include <iostream>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
@@ -53,6 +54,71 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     }
 
     static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
+
+    static inline void EmptyTrashFromVault(KeyClient const& keyClient)
+    {
+      std::vector<DeletedKey> deletedKeys;
+      GetDeletedKeysOptions options;
+      while (true)
+      {
+        auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
+        for (auto& key : keyResponse->Items)
+        {
+          deletedKeys.emplace_back(key);
+        }
+        if (!keyResponse->ContinuationToken)
+        {
+          break;
+        }
+        options.ContinuationToken = keyResponse->ContinuationToken;
+      }
+      if (deletedKeys.size() > 0)
+      {
+        for (auto& deletedKey : deletedKeys)
+        {
+          keyClient.PurgeDeletedKey(deletedKey.Name());
+        }
+        // Wait for purge is completed
+        std::this_thread::sleep_for(std::chrono::minutes(1));
+      }
+    }
+
+    static inline void RemoveAllKeysFromVault(KeyClient const& keyClient, bool waitForPurge = true)
+    {
+      std::vector<DeleteKeyOperation> deletedKeys;
+      GetPropertiesOfKeysSinglePageOptions options;
+      while (true)
+      {
+        auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
+        for (auto& key : keyResponse->Items)
+        {
+          deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
+        }
+        if (!keyResponse->ContinuationToken)
+        {
+          break;
+        }
+        options.ContinuationToken = keyResponse->ContinuationToken;
+      }
+      if (deletedKeys.size() > 0)
+      {
+        std::cout << std::endl
+                  << "Cleaning vault. " << deletedKeys.size()
+                  << " Will be deleted and purged now...";
+        for (auto& deletedKey : deletedKeys)
+        {
+          auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::milliseconds(1000));
+          keyClient.PurgeDeletedKey(readyToPurgeKey->Name());
+          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey->Name();
+        }
+        std::cout << std::endl << "Complete purge operation.";
+        // Wait for purge is completed
+        if (waitForPurge)
+        {
+          std::this_thread::sleep_for(std::chrono::minutes(1));
+        }
+      }
+    }
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test
