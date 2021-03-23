@@ -232,6 +232,42 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
+Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
+    GetDeletedKeysOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  if (!options.ContinuationToken) // First page when no continuation token //
+  {
+    if (options.MaxResults) // Update max-results //
+    {
+      return m_pipeline->SendRequest<DeletedKeySinglePage>(
+          context,
+          Azure::Core::Http::HttpMethod::Get,
+          [](Azure::Core::Http::RawResponse const& rawResponse) {
+            return _detail::DeletedKeySinglePageDeserialize(rawResponse);
+          },
+          {_detail::DeletedKeysPath},
+          {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
+    }
+    // let server choose max-results //
+    return m_pipeline->SendRequest<DeletedKeySinglePage>(
+        context,
+        Azure::Core::Http::HttpMethod::Get,
+        [](Azure::Core::Http::RawResponse const& rawResponse) {
+          return _detail::DeletedKeySinglePageDeserialize(rawResponse);
+        },
+        {_detail::DeletedKeysPath});
+  }
+  // Get next page //
+  return m_pipeline->SendRequest<DeletedKeySinglePage>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::DeletedKeySinglePageDeserialize(rawResponse);
+      },
+      {_detail::DeletedKeysPath});
+}
+
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const

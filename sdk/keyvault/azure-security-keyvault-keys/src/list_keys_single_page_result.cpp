@@ -21,7 +21,7 @@ KeyPropertiesSinglePage _detail::KeyPropertiesSinglePageDeserialize(
   KeyPropertiesSinglePage result;
   auto& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
-  std::string aa(body.begin(), body.end());
+
   JsonOptional::SetIfExists(result.ContinuationToken, jsonParser, "nextLink");
 
   // Key properties
@@ -81,4 +81,25 @@ KeyPropertiesSinglePage _detail::KeyPropertiesSinglePageDeserialize(
   }
 
   return result;
+}
+
+DeletedKeySinglePage _detail::DeletedKeySinglePageDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  auto& body = rawResponse.GetBody();
+  auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
+
+  DeletedKeySinglePage deletedKeySinglePage;
+  JsonOptional::SetIfExists(deletedKeySinglePage.ContinuationToken, jsonParser, "nextLink");
+
+  auto deletedKeys = jsonParser["value"];
+  for (auto const& key : deletedKeys)
+  {
+    DeletedKey deletedKey;
+    deletedKey.Properties.Id = key[_detail::KeyIdPropertyName].get<std::string>();
+
+    deletedKeySinglePage.Items.emplace_back(deletedKey);
+  }
+
+  return deletedKeySinglePage;
 }

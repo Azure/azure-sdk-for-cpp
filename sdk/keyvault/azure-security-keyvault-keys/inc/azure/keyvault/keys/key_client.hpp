@@ -239,6 +239,28 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Get on page listing the deleted keys in the specified vault.
+     *
+     * @remark Retrieves a list of the keys in the Key Vault that contains the public part od the
+     * deleted key. This operation includes deletion-specific information. This operation is
+     * applicable for vaults enabled fr soft-delete. While the operation can be invoked on any
+     * vault, it will return error if invoked on a non soft-delete enabled vault. This operation
+     * requires the keys/list permission.
+     *
+     * @remark Use \p options to control which page to get. If
+     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the first
+     * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
+     * page of the response if there is a next page.
+     *
+     * @param options The #GetDeletedKeysOptions object to for setting the operation up.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<DeletedKeySinglePage>
+     */
+    Azure::Response<DeletedKeySinglePage> GetDeletedKeysSinglePage(
+        GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Permanently deletes the specified key.
      *
      * @remark The Purge Deleted Key operation is applicable for soft-delete enabled values. While

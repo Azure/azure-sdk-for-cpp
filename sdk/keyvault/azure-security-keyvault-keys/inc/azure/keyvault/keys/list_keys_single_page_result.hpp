@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/json_web_key.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
@@ -18,10 +19,19 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  struct KeyPropertiesSinglePage
+  struct GetSinglePage
   {
     Azure::Nullable<std::string> ContinuationToken;
+  };
+
+  struct KeyPropertiesSinglePage : public GetSinglePage
+  {
     std::vector<KeyProperties> Items;
+  };
+
+  struct DeletedKeySinglePage : public GetSinglePage
+  {
+    std::vector<DeletedKey> Items;
   };
 
   struct GetSinglePageOptions
@@ -37,9 +47,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
   };
 
+  struct GetDeletedKeysOptions : public GetSinglePageOptions
+  {
+  };
+
   /***********************  Deserializer / Serializer ******************************/
   namespace _detail {
     KeyPropertiesSinglePage KeyPropertiesSinglePageDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+    DeletedKeySinglePage DeletedKeySinglePageDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   } // namespace _detail
 
