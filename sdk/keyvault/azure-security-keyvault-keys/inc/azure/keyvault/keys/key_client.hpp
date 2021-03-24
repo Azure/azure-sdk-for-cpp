@@ -12,10 +12,12 @@
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
+#include "azure/keyvault/keys/import_key_options.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 #include "azure/keyvault/keys/key_create_options.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/list_keys_single_page_result.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 #include <functional>
@@ -30,6 +32,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct PurgedKey
   {
+  };
+
+  /**
+   * @brief Optional parameters for KeyVaultClient::GetKey
+   *
+   */
+  struct GetKeyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+    /**
+     * @brief Specify the key version to get.
+     */
+    std::string Version;
   };
 
   /**
@@ -54,22 +72,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::string const& vaultUrl,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         KeyClientOptions options = KeyClientOptions());
-
-    /**
-     * @brief Optional parameters for KeyVaultClient::GetKey
-     *
-     */
-    struct GetKeyOptions
-    {
-      /**
-       * @brief Context for cancelling long running operations.
-       */
-      Azure::Core::Context Context;
-      /**
-       * @brief Specify the key version to get.
-       */
-      std::string Version;
-    };
 
     /**
      * @brief Gets the public part of a stored key.
@@ -156,6 +158,55 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Get a single page with the properties of all keys in the specified vault. You can use
+     * the returned #KeyProperties.Name in subsequent calls to #GetKey.
+     *
+     * @remark Retrieves a list of the keys in the Key Vault that contains the public part of a
+     * stored key. The operation is applicable to all key types, however only the base key
+     * identifier, attributes, and tags are provided in the response. Individual versions of a key
+     * are not listed in the response. This operation requires the keys/list permission.
+     *
+     * @remark Use \p options to control which page to get. If
+     * #GetPropertiesOfKeysSinglePageOptions.NextLink is not set, the operation will get the first
+     * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
+     * page of the response if there is a next page.
+     *
+     * @param options The #GetPropertiesOfKeysSinglePageOptions object to for setting the operation
+     * up.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyPropertiesSinglePage>
+     */
+    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeysSinglePage(
+        GetPropertiesOfKeysSinglePageOptions const& options
+        = GetPropertiesOfKeysSinglePageOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Get one page listing the properties of all the versions of the specified key. You can
+     * use the returned #KeyProperties.Name and #KeyProperties.Version in subsequent calls to
+     * #GetKey.
+     *
+     * @remark The full identifier, attributes, and tags are provided in the response. This
+     * operation requires the keys/list permission.
+     *
+     * @remark Use \p options to control which page to get. If
+     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the
+     * first page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the
+     * next page of the response if there is a next page.
+     *
+     * @param name The name of the key.
+     * @param options The #GetPropertiesOfKeyVersionsSinglePageOptions object to for setting the
+     * operation up.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyPropertiesSinglePage>
+     */
+    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeyVersionsSinglePage(
+        std::string const& name,
+        GetPropertiesOfKeyVersionsSinglePageOptions const& options
+        = GetPropertiesOfKeyVersionsSinglePageOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Deletes a key of any type from storage in Azure Key Vault.
      *
      * @remark The delete key operation cannot be used to remove individual versions of a key. This
@@ -187,6 +238,28 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Response<DeletedKey> GetDeletedKey(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Get on page listing the deleted keys in the specified vault.
+     *
+     * @remark Retrieves a list of the keys in the Key Vault that contains the public part od the
+     * deleted key. This operation includes deletion-specific information. This operation is
+     * applicable for vaults enabled fr soft-delete. While the operation can be invoked on any
+     * vault, it will return error if invoked on a non soft-delete enabled vault. This operation
+     * requires the keys/list permission.
+     *
+     * @remark Use \p options to control which page to get. If
+     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the
+     * first page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the
+     * next page of the response if there is a next page.
+     *
+     * @param options The #GetDeletedKeysSinglePageOptions object to for setting the operation up.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<DeletedKeySinglePage>
+     */
+    Azure::Response<DeletedKeySinglePage> GetDeletedKeysSinglePage(
+        GetDeletedKeysSinglePageOptions const& options = GetDeletedKeysSinglePageOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -260,6 +333,62 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Response<std::vector<uint8_t>> BackupKey(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restores a backed up key to keyvault.
+     *
+     * @remark Imports a previously backed up key into Azure Key Vault, restoring the key, its key
+     * identifier, attributes, and access control policies. The RESTORE operation may be used to
+     * import a previously backed up key. Individual versions of a key cannot be restored. The key
+     * is restored in its entirety with the same key name as it had when it was backed up. If the
+     * key name is not available in the target Key Vault, the RESTORE operation will be rejected.
+     * While the key name is retained during restore, the final key identifier will change if the
+     * key is restored to a different vault. Restore will restore all versions and preserve version
+     * identifiers. The RESTORE operation is subject to security constrains: The target Key Vault
+     * must be owned by the same Microsoft Azure Subscription as the source Key Vault. The user must
+     * have RESTORE permission in the target Key Vault. This operation requires the keys/restore
+     * permission.
+     *
+     * @param backup The backup blob associated with a key.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     */
+    Azure::Response<KeyVaultKey> RestoreKeyBackup(
+        std::vector<uint8_t> const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Imports an externally created ket, stores it, and returns jey parameters and
+     * attributes to the client.
+     *
+     * @remark The import key operation may be used to import any key type into an Azure Key Vault.
+     * If the named key already exists, Azure Key Vault creates a new version of the key. This
+     * operation requires the keys/import permission.
+     *
+     * @param name The name of the key.
+     * @param keyMaterial The #JsonWebKey being imported.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyVaultKey>
+     */
+    Azure::Response<KeyVaultKey> ImportKey(
+        std::string const& name,
+        JsonWebKey const& keyMaterial,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Imports an externally created key, stores it, and returns key parameters and
+     * attributes to the client.
+     *
+     * @remark The import operation may be used to import any key type into an Azure Key Vault. If
+     * the named key already exists, Azure Key Vault creates a new version of the key. This
+     * operation requires the keys/import permission.
+     *
+     * @param importKeyOptions The key import configuration object containing information about the
+     * #JsonWebKey being imported.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     */
+    Azure::Response<KeyVaultKey> ImportKey(
+        ImportKeyOptions const& importKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

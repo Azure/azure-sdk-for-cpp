@@ -38,24 +38,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Storage::ContentHash ContentHash;
     };
 
-    // Required. Indicates mode of the expiry time
-    class PathExpiryOptions {
-    public:
-      PathExpiryOptions() = default;
-      explicit PathExpiryOptions(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const PathExpiryOptions& other) const { return m_value == other.m_value; }
-      bool operator!=(const PathExpiryOptions& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions NeverExpire;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToCreation;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToNow;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions Absolute;
-
-    private:
-      std::string m_value;
-    }; // extensible enum PathExpiryOptions
-
     struct AclFailedEntry
     {
       std::string Name;
@@ -108,55 +90,55 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }; // extensible enum PathResourceType
 
     // When a resource is leased, specifies whether the lease is of infinite or fixed duration.
-    class LeaseDurationType {
+    class LeaseDuration {
     public:
-      LeaseDurationType() = default;
-      explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
+      LeaseDuration() = default;
+      explicit LeaseDuration(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseDuration& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseDuration& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseDurationType Infinite;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseDurationType Fixed;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseDuration Infinite;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseDuration Fixed;
 
     private:
       std::string m_value;
-    }; // extensible enum LeaseDurationType
+    }; // extensible enum LeaseDuration
 
     // Lease state of the resource.
-    class LeaseStateType {
+    class LeaseState {
     public:
-      LeaseStateType() = default;
-      explicit LeaseStateType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseStateType& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
+      LeaseState() = default;
+      explicit LeaseState(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseState& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Available;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Leased;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Expired;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Breaking;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStateType Broken;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseState Available;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseState Leased;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseState Expired;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseState Breaking;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseState Broken;
 
     private:
       std::string m_value;
-    }; // extensible enum LeaseStateType
+    }; // extensible enum LeaseState
 
     // The lease status of the resource.
-    class LeaseStatusType {
+    class LeaseStatus {
     public:
-      LeaseStatusType() = default;
-      explicit LeaseStatusType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseStatusType& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
+      LeaseStatus() = default;
+      explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatusType Locked;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatusType Unlocked;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatus Locked;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseStatus Unlocked;
 
     private:
       std::string m_value;
-    }; // extensible enum LeaseStatusType
+    }; // extensible enum LeaseStatus
 
   } // namespace Models
   namespace _detail {
@@ -209,7 +191,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderGroup = "x-ms-group";
     constexpr static const char* HeaderAcl = "x-ms-acl";
     constexpr static const char* HeaderContentLength = "content-length";
-    constexpr static const char* HeaderExpiryOptions = "x-ms-expiry-option";
     constexpr static const char* HeaderExpiresOn = "x-ms-expiry-time";
     constexpr static const char* HeaderDate = "date";
     constexpr static const char* HeaderRequestId = "x-ms-request-id";
@@ -347,9 +328,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<std::string> Group;
       Azure::Nullable<std::string> Permissions;
       Azure::Nullable<std::string> Acl;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Nullable<LeaseStateType> LeaseState;
-      Azure::Nullable<LeaseStatusType> LeaseStatus;
+      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+      Azure::Nullable<Models::LeaseState> LeaseState;
+      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
     struct PathDeleteResult
@@ -1260,19 +1241,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 != response.GetHeaders().end())
             {
               result.LeaseDuration
-                  = LeaseDurationType(response.GetHeaders().at(_detail::HeaderLeaseDuration));
+                  = LeaseDuration(response.GetHeaders().at(_detail::HeaderLeaseDuration));
             }
             if (response.GetHeaders().find(_detail::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
-              result.LeaseState
-                  = LeaseStateType(response.GetHeaders().at(_detail::HeaderLeaseState));
+              result.LeaseState = LeaseState(response.GetHeaders().at(_detail::HeaderLeaseState));
             }
             if (response.GetHeaders().find(_detail::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusType(response.GetHeaders().at(_detail::HeaderLeaseStatus));
+                  = LeaseStatus(response.GetHeaders().at(_detail::HeaderLeaseStatus));
             }
             return Azure::Response<PathGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));

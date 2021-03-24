@@ -25,6 +25,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
      * @return The json string representation.
      */
     virtual std::string Serialize() const = 0;
+
+    /**
+     * @brief Default destructor for serializable objects.
+     *
+     * @remark This makes the type compatible with Response<T>
+     *
+     */
+    virtual ~JsonSerializable() = default;
   };
 
 }}}} // namespace Azure::Core::Json::_internal

@@ -19,6 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   struct KeyBackup : public Azure::Core::Json::_internal::JsonSerializable
   {
+
     std::vector<uint8_t> Value;
 
     std::string Serialize() const override;

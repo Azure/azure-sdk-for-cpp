@@ -29,5 +29,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     {
       return Azure::DateTime(1970) + std::chrono::seconds(unixTime);
     }
+
+    /**
+     * @brief Converts a #Azure::Core::Datetime to unix time.
+     *
+     * @param dateTime The date time to convert.
+     */
+    static inline uint64_t DatetimeToUnixTime(Azure::DateTime dateTime)
+    {
+      auto secondsSince1970
+          = std::chrono::duration_cast<std::chrono::seconds>(dateTime - Azure::DateTime(1970));
+      return secondsSince1970.count();
+    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Common::_internal

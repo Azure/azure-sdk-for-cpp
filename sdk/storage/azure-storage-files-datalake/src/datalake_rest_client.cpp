@@ -6,12 +6,6 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace Models {
-
-    const PathExpiryOptions PathExpiryOptions::NeverExpire("NeverExpire");
-    const PathExpiryOptions PathExpiryOptions::RelativeToCreation("RelativeToCreation");
-    const PathExpiryOptions PathExpiryOptions::RelativeToNow("RelativeToNow");
-    const PathExpiryOptions PathExpiryOptions::Absolute("Absolute");
-
     const PublicAccessType PublicAccessType::FileSystem("FileSystem");
     const PublicAccessType PublicAccessType::Path("Path");
     const PublicAccessType PublicAccessType::None("None");
@@ -19,17 +13,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     const PathResourceType PathResourceType::Directory("directory");
     const PathResourceType PathResourceType::File("file");
 
-    const LeaseDurationType LeaseDurationType::Infinite("infinite");
-    const LeaseDurationType LeaseDurationType::Fixed("fixed");
+    const LeaseDuration LeaseDuration::Infinite("infinite");
+    const LeaseDuration LeaseDuration::Fixed("fixed");
 
-    const LeaseStateType LeaseStateType::Available("available");
-    const LeaseStateType LeaseStateType::Leased("leased");
-    const LeaseStateType LeaseStateType::Expired("expired");
-    const LeaseStateType LeaseStateType::Breaking("breaking");
-    const LeaseStateType LeaseStateType::Broken("broken");
+    const LeaseState LeaseState::Available("available");
+    const LeaseState LeaseState::Leased("leased");
+    const LeaseState LeaseState::Expired("expired");
+    const LeaseState LeaseState::Breaking("breaking");
+    const LeaseState LeaseState::Broken("broken");
 
-    const LeaseStatusType LeaseStatusType::Locked("locked");
-    const LeaseStatusType LeaseStatusType::Unlocked("unlocked");
+    const LeaseStatus LeaseStatus::Locked("locked");
+    const LeaseStatus LeaseStatus::Unlocked("unlocked");
 
   } // namespace Models
   namespace _detail {

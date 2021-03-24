@@ -26,32 +26,6 @@ void ParseStringOperationsToKeyOperations(
     keyOperations.emplace_back(KeyOperation(operation));
   }
 }
-
-void static inline ParseKeyUrl(KeyProperties& keyProperties, std::string const& url)
-{
-  Azure::Core::Url kid(url);
-  keyProperties.Id = url;
-  keyProperties.VaultUrl = kid.GetUrlAuthorityWithScheme();
-  auto const& path = kid.GetPath();
-  //  path is in the form of `verb/keyName{/keyVersion}`
-  auto const separatorChar = '/';
-  auto pathEnd = path.end();
-  auto start = path.begin();
-  start = std::find(start, pathEnd, separatorChar);
-  start += 1;
-  auto separator = std::find(start, pathEnd, separatorChar);
-  if (separator != pathEnd)
-  {
-    keyProperties.Name = std::string(start, separator);
-    start = separator + 1;
-    keyProperties.Version = std::string(start, pathEnd);
-  }
-  else
-  {
-    // Nothing but the name+
-    keyProperties.Name = std::string(start, pathEnd);
-  }
-}
 } // namespace
 
 KeyVaultKey _detail::KeyVaultKeyDeserialize(
@@ -63,13 +37,26 @@ KeyVaultKey _detail::KeyVaultKeyDeserialize(
   return key;
 }
 
+KeyVaultKey _detail::KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultKey key;
+  _detail::KeyVaultKeyDeserialize(key, rawResponse);
+  return key;
+}
+
 void _detail::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
+  _detail::KeyVaultKeyDeserialize(key, jsonParser);
+}
 
+void _detail::KeyVaultKeyDeserialize(
+    KeyVaultKey& key,
+    Azure::Core::Json::_internal::json const& jsonParser)
+{
   // "Key"
   if (jsonParser.contains(_detail::KeyPropertyName))
   {
@@ -93,7 +80,7 @@ void _detail::KeyVaultKeyDeserialize(
   }
 
   // Parse URL for the vaultUri, keyVersion
-  ParseKeyUrl(key.Properties, key.Key.Id);
+  _detail::ParseKeyUrl(key.Properties, key.Key.Id);
 
   // "Attributes"
   if (jsonParser.contains(_detail::AttributesPropertyName))

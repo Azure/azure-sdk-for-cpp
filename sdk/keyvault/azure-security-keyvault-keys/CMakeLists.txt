@@ -30,6 +30,7 @@ set(
   AZURE_KEYVAULT_KEYS_HEADER
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
+    inc/azure/keyvault/keys/import_key_options
     inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/details/key_backup.hpp
@@ -43,6 +44,7 @@ set(
     inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
+    inc/azure/keyvault/keys/list_keys_single_page_result.hpp
     inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
     inc/azure/keyvault/keys/version.hpp
 )
@@ -51,12 +53,15 @@ set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/delete_key_operation.cpp
     src/deleted_key.cpp
+    src/import_key_options.cpp
+    src/json_web_key.cpp
     src/key_backup.cpp
     src/key_client.cpp
     src/key_curve_name.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
+    src/list_keys_single_page_result.cpp
     src/recover_deleted_key_operation.cpp
 )
 

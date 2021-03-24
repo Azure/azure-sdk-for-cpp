@@ -14,6 +14,7 @@
 #include "azure/keyvault/keys/key_properties.hpp"
 
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include <vector>
 
@@ -86,10 +87,42 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
 
+    // Create from http raw response only.
+    KeyVaultKey KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
+
     // Updates a Key based on an Http raw response.
     void KeyVaultKeyDeserialize(
         KeyVaultKey& key,
         Azure::Core::Http::RawResponse const& rawResponse);
+
+    // Create from json node directly. Used from listKeys
+    void KeyVaultKeyDeserialize(KeyVaultKey& key, Azure::Core::Json::_internal::json const& json);
+
+    void static inline ParseKeyUrl(KeyProperties& keyProperties, std::string const& url)
+    {
+      Azure::Core::Url kid(url);
+      keyProperties.Id = url;
+      keyProperties.VaultUrl = kid.GetUrlAuthorityWithScheme();
+      auto const& path = kid.GetPath();
+      //  path is in the form of `verb/keyName{/keyVersion}`
+      auto const separatorChar = '/';
+      auto pathEnd = path.end();
+      auto start = path.begin();
+      start = std::find(start, pathEnd, separatorChar);
+      start += 1;
+      auto separator = std::find(start, pathEnd, separatorChar);
+      if (separator != pathEnd)
+      {
+        keyProperties.Name = std::string(start, separator);
+        start = separator + 1;
+        keyProperties.Version = std::string(start, pathEnd);
+      }
+      else
+      {
+        // Nothing but the name+
+        keyProperties.Name = std::string(start, pathEnd);
+      }
+    }
   } // namespace _detail
 
 }}}} // namespace Azure::Security::KeyVault::Keys

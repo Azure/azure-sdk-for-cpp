@@ -27,6 +27,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char ExpPropertyName[] = "exp";
   constexpr static const char CreatedPropertyName[] = "created";
   constexpr static const char UpdatedPropertyName[] = "updated";
+  constexpr static const char RecoverableDaysPropertyName[] = "recoverableDays";
+  constexpr static const char RecoveryLevelPropertyName[] = "recoveryLevel";
 
   /***************** Key Request Parameters *****************/
   constexpr static const char KeyTypePropertyName[] = "kty";
@@ -73,5 +75,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char P256KOidValue[] = "1.3.132.0.10";
   constexpr static const char P384OidValue[] = "1.3.132.0.34";
   constexpr static const char P521OidValue[] = "1.3.132.0.35";
+
+  /***************** Import Key  *****************/
+  constexpr static const char HsmPropertyName[] = "hsm";
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail
