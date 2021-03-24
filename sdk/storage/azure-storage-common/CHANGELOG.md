@@ -27,7 +27,7 @@
 
 - Fixed `ClientRequestId` wasn't filled in `StorageException`.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 
