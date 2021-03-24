@@ -350,7 +350,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * have RESTORE permission in the target Key Vault. This operation requires the keys/restore
      * permission.
      *
-     * @param name The backup blob associated with a key.
+     * @param backup The backup blob associated with a key.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
     Azure::Response<KeyVaultKey> RestoreKeyBackup(
