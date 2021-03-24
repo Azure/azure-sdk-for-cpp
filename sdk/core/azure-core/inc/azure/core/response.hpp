@@ -27,8 +27,6 @@ template <class T> class Response {
 public:
   /// The value returned by the service.
   T Value;
-  /// The HTTP status code returned by the service as part of the response.
-  Azure::Core::Http::HttpStatusCode StatusCode;
   /// The HTTP response returned by the service.
   std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
@@ -40,8 +38,7 @@ public:
    * @param rawResponse The HTTP response returned by the service.
    */
   explicit Response(T value, std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
-      : Value(std::move(value)), StatusCode(rawResponse->GetStatusCode()),
-        RawResponse(std::move(rawResponse))
+      : Value(std::move(value)), RawResponse(std::move(rawResponse))
   {
   }
 };
