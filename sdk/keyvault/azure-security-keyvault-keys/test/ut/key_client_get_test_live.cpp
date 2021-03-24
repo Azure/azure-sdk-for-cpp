@@ -83,9 +83,9 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
 
   // Create 5 key versions
   std::string keyName(GetUniqueName());
-  int expectedVersions = 5;
+  size_t expectedVersions = 5;
   CreateEcKeyOptions createKeyOptions(keyName);
-  for (int counter = 0; counter < expectedVersions; counter++)
+  for (size_t counter = 0; counter < expectedVersions; counter++)
   {
     auto response = keyClient.CreateEcKey(createKeyOptions);
     CheckValidResponse(response);
