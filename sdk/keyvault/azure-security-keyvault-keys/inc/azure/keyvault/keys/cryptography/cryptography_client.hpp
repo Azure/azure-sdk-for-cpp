@@ -31,10 +31,19 @@ namespace Azure {
     std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
 
   public:
+    /**
+     * @brief Construct a new Cryptography Client object.
+     *
+     * @param keyId The key identifier of the #KeyVaultKey which will be used for cryptographic
+     * operations.
+     * @param credential
+     * @param options
+     */
     explicit CryptographyClient(
         std::string const& keyId,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        CryptographyClientOptions options = CryptographyClientOptions());
+        CryptographyClientOptions options = CryptographyClientOptions())
+        : m_keyId(keyId);
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

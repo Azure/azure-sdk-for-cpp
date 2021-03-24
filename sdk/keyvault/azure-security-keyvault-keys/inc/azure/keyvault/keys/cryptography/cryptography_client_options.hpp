@@ -11,8 +11,6 @@
 
 #include <azure/keyvault/common/client_options.hpp>
 
-#include "azure/keyvault/keys/key_vault_key.hpp"
-
 namespace Azure {
   namespace Security {
     namespace KeyVault {
