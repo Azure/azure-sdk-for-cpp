@@ -88,7 +88,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::vector<uint8_t> P;
     /// The RSA secret prime.
     std::vector<uint8_t> Q;
-    
+
     /// The RSA private exponent or EC private key.
     std::vector<uint8_t> D;
 
