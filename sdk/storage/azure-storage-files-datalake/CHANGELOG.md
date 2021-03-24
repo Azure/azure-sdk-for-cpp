@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0-beta.10 (Unreleased)
+
+
 ## 12.0.0-beta.9 (2021-03-23)
 
 ### New Features
@@ -98,7 +101,7 @@
 - Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControlList`.
 - Removed unused parameters, options, results and functions in protocol layer.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 
