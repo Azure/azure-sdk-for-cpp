@@ -28,32 +28,33 @@ void ParseStringOperationsToKeyOperations(
 }
 } // namespace
 
-KeyVaultKey _detail::KeyVaultKeyDeserialize(
+KeyVaultKey _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   KeyVaultKey key(name);
-  _detail::KeyVaultKeyDeserialize(key, rawResponse);
+  _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(key, rawResponse);
   return key;
 }
 
-KeyVaultKey _detail::KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse)
+KeyVaultKey _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
 {
   KeyVaultKey key;
-  _detail::KeyVaultKeyDeserialize(key, rawResponse);
+  _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(key, rawResponse);
   return key;
 }
 
-void _detail::KeyVaultKeyDeserialize(
+void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
-  _detail::KeyVaultKeyDeserialize(key, jsonParser);
+  _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(key, jsonParser);
 }
 
-void _detail::KeyVaultKeyDeserialize(
+void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Json::_internal::json const& jsonParser)
 {
@@ -80,7 +81,7 @@ void _detail::KeyVaultKeyDeserialize(
   }
 
   // Parse URL for the vaultUri, keyVersion
-  _detail::ParseKeyUrl(key.Properties, key.Key.Id);
+  _detail::KeyVaultKeySerializer::ParseKeyUrl(key.Properties, key.Key.Id);
 
   // "Attributes"
   if (jsonParser.contains(_detail::AttributesPropertyName))

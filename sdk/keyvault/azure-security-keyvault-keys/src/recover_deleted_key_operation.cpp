@@ -41,7 +41,8 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
     m_status = CheckCompleted(*rawResponse);
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::KeyVaultKeyDeserialize(m_value.Name(), *rawResponse);
+      m_value
+          = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(m_value.Name(), *rawResponse);
     }
   }
 

@@ -140,6 +140,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
       return Azure::Response<T>(factoryFn(*response), std::move(response));
     }
 
+    template <class T>
+    Azure::Response<T> SendRequest(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::HttpMethod method,
+        std::function<std::string()> serializeContentFn,
+        std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
+        std::vector<std::string> const& path)
+    {
+      auto serialContent = serializeContentFn();
+      auto streamContent = Azure::Core::IO::MemoryBodyStream(
+          reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
+
+      auto request = CreateRequest(method, &streamContent, path);
+      auto response = SendRequest(context, request);
+      return Azure::Response<T>(factoryFn(*response), std::move(response));
+    }
+
     /**
      * @brief Create a key vault request and send it using the Azure Core pipeline directly to avoid
      * checking the respone code.

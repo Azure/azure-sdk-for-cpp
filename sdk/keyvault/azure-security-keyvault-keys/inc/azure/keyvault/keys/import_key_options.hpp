@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/json_web_key.hpp"
@@ -26,7 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief A key resource and its properties.
    *
    */
-  struct ImportKeyOptions : public Azure::Core::Json::_internal::JsonSerializable
+  struct ImportKeyOptions
   {
     /**
      * @brief The cryptographic key, the key type, and the operations you can perform using the key.
@@ -63,14 +62,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The name of the key.
      */
     std::string const& Name() const { return Properties.Name; }
-
-    std::string Serialize() const override;
   };
 
   /***********************  Deserializer / Serializer ******************************/
   namespace _detail {
-    // Create from http raw response only.
-    ImportKeyOptions ImportKeyOptionsDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
+    struct ImportKeyOptionsSerializer
+    {
+      static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
+    };
   } // namespace _detail
 
 }}}} // namespace Azure::Security::KeyVault::Keys

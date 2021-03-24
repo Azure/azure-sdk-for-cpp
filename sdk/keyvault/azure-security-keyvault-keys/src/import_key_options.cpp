@@ -16,47 +16,51 @@ using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Core::Json::_internal;
 using namespace Azure::Security::KeyVault::Common::_internal;
 
-std::string ImportKeyOptions::Serialize() const
+std::string
+Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyOptionsSerialize(
+    ImportKeyOptions const& importKeyOptions)
 {
 
   Azure::Core::Json::_internal::json payload;
   // key
-  payload[_detail::KeyPropertyName] = Key;
+  payload[_detail::KeyPropertyName] = importKeyOptions.Key;
 
   // hsm
-  SetFromNullable(HardwareProtected, payload, _detail::HsmPropertyName);
+  SetFromNullable(importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
 
   // attributes
   SetFromNullable<Azure::DateTime, uint64_t>(
-      Properties.CreatedOn,
+      importKeyOptions.Properties.CreatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::CreatedPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
   SetFromNullable(
-      Properties.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
+      importKeyOptions.Properties.Enabled,
+      payload[_detail::AttributesPropertyName],
+      _detail::EnabledPropertyName);
   SetFromNullable<Azure::DateTime, uint64_t>(
-      Properties.ExpiresOn,
+      importKeyOptions.Properties.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
   SetFromNullable<Azure::DateTime, uint64_t>(
-      Properties.NotBefore,
+      importKeyOptions.Properties.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
   SetFromNullable(
-      Properties.RecoverableDays,
+      importKeyOptions.Properties.RecoverableDays,
       payload[_detail::AttributesPropertyName],
       _detail::RecoverableDaysPropertyName);
-  payload[_detail::RecoveryLevelPropertyName] = Properties.RecoveryLevel;
+  payload[_detail::RecoveryLevelPropertyName] = importKeyOptions.Properties.RecoveryLevel;
   SetFromNullable<Azure::DateTime, uint64_t>(
-      Properties.UpdatedOn,
+      importKeyOptions.Properties.UpdatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::UpdatedPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
 
   // tags
-  for (auto& tag : Properties.Tags)
+  for (auto& tag : importKeyOptions.Properties.Tags)
   {
     payload[_detail::TagsPropertyName][tag.first] = tag.second;
   }

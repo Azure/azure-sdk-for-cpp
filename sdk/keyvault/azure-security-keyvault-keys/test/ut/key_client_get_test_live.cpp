@@ -17,7 +17,7 @@
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 
-TEST_F(KeyVaultClientTest, GetKey)
+TEST_F(KeyVaultClientTest, GetSingleKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   // Assuming and RS Key exists in the KeyVault Account.
@@ -30,7 +30,7 @@ TEST_F(KeyVaultClientTest, GetKey)
   auto key = keyResponse.ExtractValue();
 
   EXPECT_EQ(key.Name(), keyName);
-  EXPECT_EQ(key.GetKeyType(), JsonWebKeyType::Rsa);
+  EXPECT_EQ(key.GetKeyType(), JsonWebKeyType::Ec);
 }
 
 TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)

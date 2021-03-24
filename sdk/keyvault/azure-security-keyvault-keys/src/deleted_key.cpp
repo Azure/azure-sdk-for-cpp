@@ -21,7 +21,7 @@ DeletedKey _detail::DeletedKeyDeserialize(
 
   // "Key"
   DeletedKey deletedKey(name);
-  _detail::KeyVaultKeyDeserialize(deletedKey, rawResponse);
+  _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(deletedKey, rawResponse);
 
   // recoveryId
   // deletedDate
