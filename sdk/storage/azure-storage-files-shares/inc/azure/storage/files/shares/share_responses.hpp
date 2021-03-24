@@ -115,12 +115,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<std::string> CopyId;
       Nullable<std::string> CopyProgress;
       Nullable<std::string> CopySource;
-      Nullable<CopyStatusType> CopyStatus;
+      Nullable<Models::CopyStatus> CopyStatus;
       bool IsServerEncrypted = bool();
       FileSmbProperties SmbProperties;
-      Nullable<LeaseDurationType> LeaseDuration;
-      Nullable<LeaseStateType> LeaseState;
-      Nullable<LeaseStatusType> LeaseStatus;
+      Nullable<Models::LeaseDuration> LeaseDuration;
+      Nullable<Models::LeaseState> LeaseState;
+      Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
     struct DownloadFileResult
@@ -133,8 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DownloadFileDetails Details;
     };
 
-    using StartCopyShareFileResult = _detail::FileStartCopyResult;
-    using AbortCopyFileResult = _detail::FileAbortCopyResult;
+    using AbortFileCopyResult = _detail::FileAbortCopyResult;
     using FileProperties = _detail::FileGetPropertiesResult;
     using SetFilePropertiesResult = _detail::FileSetHttpHeadersResult;
     using ResizeFileResult = _detail::FileSetHttpHeadersResult;
@@ -170,24 +169,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   } // namespace Models
 
-  class StartCopyFileOperation : public Azure::Core::Operation<Models::FileProperties> {
-  public:
-    Azure::ETag ETag;
-    Azure::DateTime LastModified;
-    std::string CopyId;
-    Models::CopyStatusType CopyStatus;
-    Nullable<std::string> VersionId;
-
+  class StartFileCopyOperation : public Azure::Core::Operation<Models::FileProperties> {
   public:
     Models::FileProperties Value() const override { return m_pollResult; }
 
-    StartCopyFileOperation() = default;
+    StartFileCopyOperation() = default;
 
-    StartCopyFileOperation(StartCopyFileOperation&&) = default;
+    StartFileCopyOperation(StartFileCopyOperation&&) = default;
 
-    StartCopyFileOperation& operator=(StartCopyFileOperation&&) = default;
+    StartFileCopyOperation& operator=(StartFileCopyOperation&&) = default;
 
-    ~StartCopyFileOperation() override {}
+    ~StartFileCopyOperation() override {}
 
   private:
     std::string GetResumeToken() const override

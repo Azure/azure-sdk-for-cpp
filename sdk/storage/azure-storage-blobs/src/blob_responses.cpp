@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyBlobOperation::PollInternal(
+  std::unique_ptr<Azure::Core::Http::RawResponse> StartBlobCopyOperation::PollInternal(
       Azure::Core::Context&)
   {
 
@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return std::move(response.RawResponse);
   }
 
-  Azure::Response<Models::BlobProperties> StartCopyBlobOperation::PollUntilDoneInternal(
+  Azure::Response<Models::BlobProperties> StartBlobCopyOperation::PollUntilDoneInternal(
       std::chrono::milliseconds period,
       Azure::Core::Context& context)
   {

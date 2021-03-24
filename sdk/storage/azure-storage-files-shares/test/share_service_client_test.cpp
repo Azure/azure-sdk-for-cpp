@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto properties = m_fileShareServiceClient->GetProperties().Value;
     // Has to remove before set, otherwise would return failure.
-    properties.Protocol = Azure::Nullable<Files::Shares::Models::ShareProtocolSettings>();
+    properties.Protocol = Azure::Nullable<Files::Shares::Models::ProtocolSettings>();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -273,7 +273,7 @@ namespace Azure { namespace Storage { namespace Test {
     corsRule.MaxAgeInSeconds = 20;
     properties.Cors.emplace_back(corsRule);
 
-    auto protocolSettings = Files::Shares::Models::ShareProtocolSettings();
+    auto protocolSettings = Files::Shares::Models::ProtocolSettings();
     protocolSettings.Settings.Multichannel.Enabled = true;
     properties.Protocol = protocolSettings;
 

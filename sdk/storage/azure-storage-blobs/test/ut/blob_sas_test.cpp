@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blockContent = Azure::Core::IO::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(content.data()), content.size());
       auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
-      EXPECT_NO_THROW(blobClient.AppendBlock(&blockContent));
+      EXPECT_NO_THROW(blobClient.AppendBlock(blockContent));
       blobClient0.Delete();
     };
 

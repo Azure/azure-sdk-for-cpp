@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         destinationFileSystem.GetValue() + '/' + _internal::UrlEncodePath(destinationFilePath));
 
     _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
+    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         + _internal::UrlEncodePath(destinationDirectoryPath));
 
     _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
+    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
-    protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
+    protocolLayerOptions.Resource = _detail::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;

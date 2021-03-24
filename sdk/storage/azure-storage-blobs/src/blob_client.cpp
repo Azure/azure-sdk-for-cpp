@@ -462,7 +462,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     auto response = _detail::BlobRestClient::Blob::GetProperties(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
-    if (response.Value.Tier.HasValue() && !response.Value.IsAccessTierInferred.HasValue())
+    if (response.Value.AccessTier.HasValue() && !response.Value.IsAccessTierInferred.HasValue())
     {
       response.Value.IsAccessTierInferred = false;
     }
@@ -529,21 +529,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     _detail::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
-    protocolLayerOptions.Tier = tier;
+    protocolLayerOptions.AccessTier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     return _detail::BlobRestClient::Blob::SetAccessTier(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
-  StartCopyBlobOperation BlobClient::StartCopyFromUri(
+  StartBlobCopyOperation BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
-      const StartCopyBlobFromUriOptions& options,
+      const StartBlobCopyFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Blob::StartCopyBlobFromUriOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::StartBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.SourceUri = sourceUri;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -561,23 +561,18 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response = _detail::BlobRestClient::Blob::StartCopyFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
-    StartCopyBlobOperation res;
+    StartBlobCopyOperation res;
     res.m_rawResponse = std::move(response.RawResponse);
-    res.ETag = std::move(response.Value.ETag);
-    res.LastModified = std::move(response.Value.LastModified);
-    res.CopyId = std::move(response.Value.CopyId);
-    res.CopyStatus = std::move(response.Value.CopyStatus);
-    res.VersionId = std::move(response.Value.VersionId);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
     return res;
   }
 
-  Azure::Response<Models::AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(
+  Azure::Response<Models::AbortBlobCopyFromUriResult> BlobClient::AbortCopyFromUri(
       const std::string& copyId,
-      const AbortCopyBlobFromUriOptions& options,
+      const AbortBlobCopyFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Blob::AbortCopyBlobFromUriOptions protocolLayerOptions;
+    _detail::BlobRestClient::Blob::AbortBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.CopyId = copyId;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return _detail::BlobRestClient::Blob::AbortCopyFromUri(

@@ -19,42 +19,42 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace {
-    Models::LeaseStateType FromBlobLeaseState(Blobs::Models::LeaseState state)
+    Models::LeaseState FromBlobLeaseState(Blobs::Models::LeaseState state)
     {
       if (state == Blobs::Models::LeaseState::Available)
       {
-        return Models::LeaseStateType::Available;
+        return Models::LeaseState::Available;
       }
       if (state == Blobs::Models::LeaseState::Breaking)
       {
-        return Models::LeaseStateType::Breaking;
+        return Models::LeaseState::Breaking;
       }
       if (state == Blobs::Models::LeaseState::Broken)
       {
-        return Models::LeaseStateType::Broken;
+        return Models::LeaseState::Broken;
       }
       if (state == Blobs::Models::LeaseState::Expired)
       {
-        return Models::LeaseStateType::Expired;
+        return Models::LeaseState::Expired;
       }
       if (state == Blobs::Models::LeaseState::Leased)
       {
-        return Models::LeaseStateType::Leased;
+        return Models::LeaseState::Leased;
       }
-      return Models::LeaseStateType();
+      return Models::LeaseState();
     }
 
-    Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
+    Models::LeaseStatus FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
     {
       if (status == Blobs::Models::LeaseStatus::Locked)
       {
-        return Models::LeaseStatusType::Locked;
+        return Models::LeaseStatus::Locked;
       }
       if (status == Blobs::Models::LeaseStatus::Unlocked)
       {
-        return Models::LeaseStatusType::Unlocked;
+        return Models::LeaseStatus::Unlocked;
       }
-      return Models::LeaseStatusType();
+      return Models::LeaseStatus();
     }
   } // namespace
 
@@ -330,8 +330,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result.Value.Metadata);
     if (result.Value.LeaseDuration.HasValue())
     {
-      ret.LeaseDuration
-          = Models::LeaseDurationType(result.Value.LeaseDuration.GetValue().ToString());
+      ret.LeaseDuration = Models::LeaseDuration(result.Value.LeaseDuration.GetValue().ToString());
     }
     ret.LeaseState = result.Value.LeaseState.HasValue()
         ? FromBlobLeaseState(result.Value.LeaseState.GetValue())
@@ -346,8 +345,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders.ContentType = std::move(result.Value.HttpHeaders.ContentType);
     ret.IsServerEncrypted = result.Value.IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result.Value.EncryptionKeySha256);
-    ret.IsAccessTierInferred = std::move(result.Value.IsAccessTierInferred);
-    ret.AccessTierChangedOn = std::move(result.Value.AccessTierChangedOn);
     ret.CopyId = std::move(result.Value.CopyId);
     ret.CopySource = std::move(result.Value.CopySource);
     ret.CopyStatus = std::move(result.Value.CopyStatus);
@@ -360,20 +357,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.RehydratePriority = std::move(result.Value.RehydratePriority);
     ret.CopyStatusDescription = std::move(result.Value.CopyStatusDescription);
     ret.IsIncrementalCopy = std::move(result.Value.IsIncrementalCopy);
-    ret.IncrementalCopyDestinationSnapshot
-        = std::move(result.Value.IncrementalCopyDestinationSnapshot);
+    ret.IncrementalCopyDestinationSnapshot = std::move(result.Value.IncrementalCopyDestinationSnapshot);
     ret.VersionId = std::move(result.Value.VersionId);
     ret.IsCurrentVersion = std::move(result.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
     return Azure::Response<Models::PathProperties>(std::move(ret), std::move(result.RawResponse));
   }
 
-  Azure::Response<Models::GetPathAccessControlListResult> DataLakePathClient::GetAccessControlList(
+  Azure::Response<Models::PathAccessControlList> DataLakePathClient::GetAccessControlList(
       const GetPathAccessControlListOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.Action = Models::PathGetPropertiesAction::GetAccessControl;
+    protocolLayerOptions.Action = _detail::PathGetPropertiesAction::GetAccessControl;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
@@ -386,9 +382,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       acl = Models::Acl::DeserializeAcls(result.Value.Acl.GetValue());
     }
-    Models::GetPathAccessControlListResult ret;
-    ret.ETag = std::move(result.Value.ETag);
-    ret.LastModified = std::move(result.Value.LastModified);
+    Models::PathAccessControlList ret;
     if (!acl.HasValue())
     {
       throw Azure::Core::RequestFailedException(
@@ -407,7 +401,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.Permissions = result.Value.Permissions.GetValue();
     }
-    return Azure::Response<Models::GetPathAccessControlListResult>(
+    return Azure::Response<Models::PathAccessControlList>(
         std::move(ret), std::move(result.RawResponse));
   }
 
@@ -432,7 +426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
   DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
-      Models::PathSetAccessControlRecursiveMode mode,
+      _detail::PathSetAccessControlRecursiveMode mode,
       const std::vector<Models::Acl>& acls,
       const SetPathAccessControlListRecursiveSinglePageOptions& options,
       const Azure::Core::Context& context) const

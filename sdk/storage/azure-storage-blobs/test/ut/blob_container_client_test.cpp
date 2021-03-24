@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blobName = prefix1 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
       auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
-      blobClient.Upload(&emptyContent);
+      blobClient.Upload(emptyContent);
       p1Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blobName = prefix2 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
       auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
-      blobClient.Upload(&emptyContent);
+      blobClient.Upload(emptyContent);
       p2Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -181,12 +181,12 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(blob.BlobType.ToString().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
-          EXPECT_TRUE(blob.Details.Tier.HasValue());
+          EXPECT_TRUE(blob.Details.AccessTier.HasValue());
           EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
         }
-        if (blob.Details.Tier.HasValue())
+        if (blob.Details.AccessTier.HasValue())
         {
-          EXPECT_FALSE(blob.Details.Tier.GetValue().ToString().empty());
+          EXPECT_FALSE(blob.Details.AccessTier.GetValue().ToString().empty());
         }
         if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::string blobName = blobNamePrefix + delimiter + RandomString();
         auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
         auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
-        blobClient.Upload(&emptyContent);
+        blobClient.Upload(emptyContent);
         blobs.insert(blobName);
       }
     }
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.SetMetadata({{"k1", "v1"}});
     std::vector<uint8_t> content(1);
     auto contentStream = Azure::Core::IO::MemoryBodyStream(content.data(), 1);
-    blobClient.AppendBlock(&contentStream);
+    blobClient.AppendBlock(contentStream);
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
@@ -513,14 +513,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(properties.EncryptionScope.GetValue(), TestEncryptionScope);
       std::vector<uint8_t> appendContent(1);
       Azure::Core::IO::MemoryBodyStream bodyStream(appendContent.data(), appendContent.size());
-      EXPECT_NO_THROW(appendBlobClient.AppendBlock(&bodyStream));
+      EXPECT_NO_THROW(appendBlobClient.AppendBlock(bodyStream));
 
       bodyStream.Rewind();
       auto appendBlobClientWithoutEncryptionScope
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, blobName);
       EXPECT_THROW(
-          appendBlobClientWithoutEncryptionScope.AppendBlock(&bodyStream), StorageException);
+          appendBlobClientWithoutEncryptionScope.AppendBlock(bodyStream), StorageException);
       EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageException);
       appendBlobClient.Delete();
     }
@@ -553,11 +553,11 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blockBlobName = RandomString();
       auto blockBlob = containerClient.GetBlockBlobClient(blockBlobName);
       bodyStream.Rewind();
-      EXPECT_NO_THROW(blockBlob.Upload(&bodyStream));
+      EXPECT_NO_THROW(blockBlob.Upload(bodyStream));
       std::string blockId1 = Base64EncodeText("1");
       std::string blockId2 = Base64EncodeText("2");
       bodyStream.Rewind();
-      EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
+      EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
       EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
       EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
@@ -582,7 +582,7 @@ namespace Azure { namespace Storage { namespace Test {
           options.CustomerProvidedKey.GetValue().KeyHash);
 
       bodyStream.Rewind();
-      EXPECT_NO_THROW(appendBlob.AppendBlock(&bodyStream));
+      EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
       EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(copySourceBlob.GetUrl() + GetSas()));
       EXPECT_NO_THROW(appendBlob.Download());
       EXPECT_NO_THROW(appendBlob.GetProperties());
@@ -593,7 +593,7 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, appendBlobName);
       bodyStream.Rewind();
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(&bodyStream), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(bodyStream), StorageException);
       EXPECT_THROW(
           appendBlobClientWithoutEncryptionKey.AppendBlockFromUri(
               copySourceBlob.GetUrl() + GetSas()),
@@ -620,7 +620,7 @@ namespace Azure { namespace Storage { namespace Test {
           options.CustomerProvidedKey.GetValue().KeyHash);
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
-      EXPECT_NO_THROW(pageBlob.UploadPages(0, &bodyStream));
+      EXPECT_NO_THROW(pageBlob.UploadPages(0, bodyStream));
       EXPECT_NO_THROW(pageBlob.ClearPages({0, static_cast<int64_t>(blobContent.size())}));
       EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
           0, copySourceBlob.GetUrl() + GetSas(), {0, static_cast<int64_t>(blobContent.size())}));
@@ -857,10 +857,10 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::AppendBlockOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(appendBlobClient.AppendBlock(&content, options), StorageException);
+      EXPECT_THROW(appendBlobClient.AppendBlock(content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
-      EXPECT_NO_THROW(appendBlobClient.AppendBlock(&content, options));
+      EXPECT_NO_THROW(appendBlobClient.AppendBlock(content, options));
 
       std::string url = appendBlobClient.GetUrl() + GetSas();
       Blobs::AppendBlockFromUriOptions options2;
@@ -873,7 +873,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string url = appendBlobClient.GetUrl() + GetSas();
 
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, RandomString());
       options.SourceAccessConditions.TagConditions = failWhereExpression;
@@ -931,18 +931,18 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::UploadPageBlobPagesOptions options;
+      Blobs::UploadPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(pageBlobClient.UploadPages(0, &content, options), StorageException);
+      EXPECT_THROW(pageBlobClient.UploadPages(0, content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
-      EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &content, options));
+      EXPECT_NO_THROW(pageBlobClient.UploadPages(0, content, options));
     }
 
     {
       std::string url = pageBlobClient.GetUrl() + GetSas();
-      Blobs::UploadPageBlobPagesFromUriOptions options;
+      Blobs::UploadPagesFromUriOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
           pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options), StorageException);
@@ -951,7 +951,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::ClearPageBlobPagesOptions options;
+      Blobs::ClearPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.ClearPages({0, contentSize}, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
@@ -967,7 +967,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::GetPageBlobPageRangesOptions options;
+      Blobs::GetPageRangesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
@@ -984,10 +984,10 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadBlockBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageException);
+      EXPECT_THROW(blockBlobClient.Upload(content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
-      EXPECT_NO_THROW(blockBlobClient.Upload(&content, options));
+      EXPECT_NO_THROW(blockBlobClient.Upload(content, options));
       blockBlobClient.SetTags(tags);
     }
 
@@ -995,7 +995,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blockId = Base64EncodeText("1");
       std::vector<std::string> blockIds = {blockId};
       content.Rewind();
-      blockBlobClient.StageBlock(blockId, &content);
+      blockBlobClient.StageBlock(blockId, content);
 
       Blobs::CommitBlockListOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;

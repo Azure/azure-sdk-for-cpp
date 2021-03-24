@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_appendBlobClient->Create(m_blobUploadOptions);
     auto blockContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    m_appendBlobClient->AppendBlock(&blockContent);
+    m_appendBlobClient->AppendBlock(blockContent);
     m_blobUploadOptions.HttpHeaders.ContentHash
         = m_appendBlobClient->GetProperties().Value.HttpHeaders.ContentHash;
   }
@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto blockContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    auto appendResponse = appendBlobClient.AppendBlock(&blockContent);
+    auto appendResponse = appendBlobClient.AppendBlock(blockContent);
     properties = appendBlobClient.GetProperties().Value;
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
     EXPECT_EQ(properties.BlobSize, static_cast<int64_t>(m_blobContent.size()));
@@ -67,20 +67,20 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::AppendBlockOptions options;
     options.AccessConditions.IfAppendPositionEqual = 1_MB;
     blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
+    EXPECT_THROW(appendBlobClient.AppendBlock(blockContent, options), StorageException);
     options.AccessConditions.IfAppendPositionEqual = properties.BlobSize;
     blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    appendBlobClient.AppendBlock(&blockContent, options);
+    appendBlobClient.AppendBlock(blockContent, options);
 
     properties = appendBlobClient.GetProperties().Value;
     options = Azure::Storage::Blobs::AppendBlockOptions();
     options.AccessConditions.IfMaxSizeLessThanOrEqual
         = properties.BlobSize + m_blobContent.size() - 1;
     blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
+    EXPECT_THROW(appendBlobClient.AppendBlock(blockContent, options), StorageException);
     options.AccessConditions.IfMaxSizeLessThanOrEqual = properties.BlobSize + m_blobContent.size();
     blockContent = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    appendBlobClient.AppendBlock(&blockContent, options);
+    appendBlobClient.AppendBlock(blockContent, options);
 
     properties = appendBlobClient.GetProperties().Value;
     int64_t originalLength = properties.BlobSize;
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
 
     {
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
       /*
       don't know why, the copy operation also succeeds even if the lease id doesn't match.
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     sourceLeaseClient.Break();
     {
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.IfMatch = eTag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceAccessConditions.IfMatch = DummyETag;
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.IfNoneMatch = DummyETag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceAccessConditions.IfNoneMatch = eTag;
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceAccessConditions.IfModifiedSince = timeAfterStr;
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Test {
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.Create();
     auto blockContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    blobClient.AppendBlock(&blockContent);
+    blobClient.AppendBlock(blockContent);
 
     auto downloadResult = blobClient.Download();
     EXPECT_TRUE(downloadResult.Value.Details.IsSealed.HasValue());
@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 
-    Blobs::StartCopyBlobFromUriOptions copyOptions;
+    Blobs::StartBlobCopyFromUriOptions copyOptions;
     copyOptions.ShouldSealDestination = false;
     auto copyResult = blobClient2.StartCopyFromUri(blobClient.GetUrl() + GetSas(), copyOptions);
     getPropertiesResult = copyResult.PollUntilDone(std::chrono::seconds(1));
@@ -356,7 +356,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto blobContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    blobClient.AppendBlock(&blobContent);
+    blobClient.AppendBlock(blobContent);
     {
       auto response = blobClient.CreateIfNotExists();
       EXPECT_FALSE(response.Value.Created);

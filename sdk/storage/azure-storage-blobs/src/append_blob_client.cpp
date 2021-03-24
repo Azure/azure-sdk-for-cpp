@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
   {

@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * access control list of the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::GetPathAccessControlListResult> GetAccessControlList(
+    Azure::Response<Models::PathAccessControlList> GetAccessControlList(
         const GetPathAccessControlListOptions& options = GetPathAccessControlListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -240,7 +240,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Set, acls, options, context);
+          _detail::PathSetAccessControlRecursiveMode::Set, acls, options, context);
     }
 
     /**
@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
+          _detail::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
     }
 
     /**
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveSinglePageInternal(
-          Models::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
+          _detail::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
     }
 
   protected:
@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
     SetAccessControlListRecursiveSinglePageInternal(
-        Models::PathSetAccessControlRecursiveMode mode,
+        _detail::PathSetAccessControlRecursiveMode mode,
         const std::vector<Models::Acl>& acls,
         const SetPathAccessControlListRecursiveSinglePageOptions& options
         = SetPathAccessControlListRecursiveSinglePageOptions(),

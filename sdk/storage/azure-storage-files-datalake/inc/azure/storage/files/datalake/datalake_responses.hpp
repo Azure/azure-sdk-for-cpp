@@ -25,9 +25,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     PublicAccessType AccessType = PublicAccessType::None;
     bool HasImmutabilityPolicy = false;
     bool HasLegalHold = false;
-    Azure::Nullable<LeaseDurationType> LeaseDuration;
-    LeaseStateType LeaseState = LeaseStateType::Available;
-    LeaseStatusType LeaseStatus = LeaseStatusType::Unlocked;
+    Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+    Models::LeaseState LeaseState = Models::LeaseState::Available;
+    Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
   }; // struct FileSystemItemDetails
 
   struct FileSystemItem
@@ -141,14 +141,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     DateTime CreatedOn;
     int64_t FileSize = 0;
     Storage::Metadata Metadata;
-    Azure::Nullable<LeaseDurationType> LeaseDuration;
-    Azure::Nullable<LeaseStateType> LeaseState;
-    Azure::Nullable<LeaseStatusType> LeaseStatus;
+    Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+    Azure::Nullable<Models::LeaseState> LeaseState;
+    Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     PathHttpHeaders HttpHeaders;
     Azure::Nullable<bool> IsServerEncrypted;
     Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-    Azure::Nullable<bool> IsAccessTierInferred;
-    Azure::Nullable<DateTime> AccessTierChangedOn;
     Azure::Nullable<std::string> CopyId;
     Azure::Nullable<std::string> CopySource;
     Azure::Nullable<Blobs::Models::CopyStatus> CopyStatus;
@@ -166,10 +164,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Nullable<bool> IsCurrentVersion;
   };
 
-  struct GetPathAccessControlListResult
+  struct PathAccessControlList
   {
-    Azure::ETag ETag;
-    DateTime LastModified;
     std::string Owner;
     std::string Group;
     std::string Permissions;
@@ -211,9 +207,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     Azure::ETag ETag;
     DateTime LastModified;
-    Azure::Nullable<LeaseDurationType> LeaseDuration;
-    LeaseStateType LeaseState;
-    LeaseStatusType LeaseStatus;
+    Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+    Models::LeaseState LeaseState;
+    Models::LeaseStatus LeaseStatus;
     PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     DateTime CreatedOn;

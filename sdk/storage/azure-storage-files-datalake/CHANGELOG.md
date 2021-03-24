@@ -1,6 +1,9 @@
 # Release History
 
-## 12.0.0-beta.9 (Unreleased)
+## 12.0.0-beta.10 (Unreleased)
+
+
+## 12.0.0-beta.9 (2021-03-23)
 
 ### New Features
 
@@ -16,10 +19,15 @@
   - `DataLakeServiceClient::GetUserDelegationKey` now returns `UserDelegationKey`.
   - `DataLakeFileSystemClient::GetProperties` now returns  `FileSystemProperties`.
   - `DataLakeFileSystemClient::GetAccessPolicy` now returns  `FileSystemAccessPolicy`.
-  - `DataLakePathClient::GetProperties` now returns  `PathProperties`.
+  - `DataLakePathClient::GetProperties` now returns `PathProperties`.
+  - `DataLakePathClient::GetAccessControlList` now returns `PathAccessControlList`.
 - Removed `GetUserDelegationKeyResult`.
 - Removed `DataLake` from the names of return types and option types.
 - Removed `RequestId` from the return types.
+- Changed `BodyStream` parameter of `Append` function from pointer to reference.
+- Removed `PathRenameMode`, `PathGetPropertiesAction`, `PathSetAccessControlRecursiveMode`, `FileSystemResourceType`, `PathExpiryOptions` and `FileSystemResourceType`.
+- Removed `IsAccessTierInferred` and `AccessTierChangedOn` from `PathProperties`.
+- Renamed `LeaseDurationType` to `LeaseDuration`, `LeaseStateType` to `LeaseState` and `LeaseStatusType` to `LeaseStatus`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
@@ -93,7 +101,7 @@
 - Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControlList`.
 - Removed unused parameters, options, results and functions in protocol layer.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 

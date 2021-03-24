@@ -36,9 +36,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   const BlobType BlobType::PageBlob("PageBlob");
   const BlobType BlobType::AppendBlob("AppendBlob");
 
-  const BlockListTypeOption BlockListTypeOption::Committed("committed");
-  const BlockListTypeOption BlockListTypeOption::Uncommitted("uncommitted");
-  const BlockListTypeOption BlockListTypeOption::All("all");
+  const BlockListType BlockListType::Committed("committed");
+  const BlockListType BlockListType::Uncommitted("uncommitted");
+  const BlockListType BlockListType::All("all");
 
   const BlockType BlockType::Committed("Committed");
   const BlockType BlockType::Uncommitted("Uncommitted");

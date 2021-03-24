@@ -65,24 +65,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   } // namespace Models
 
-  class StartCopyBlobOperation : public Azure::Core::Operation<Models::BlobProperties> {
-  public:
-    Azure::ETag ETag;
-    Azure::DateTime LastModified;
-    std::string CopyId;
-    Models::CopyStatus CopyStatus;
-    Azure::Nullable<std::string> VersionId;
-
+  class StartBlobCopyOperation : public Azure::Core::Operation<Models::BlobProperties> {
   public:
     Models::BlobProperties Value() const override { return m_pollResult; }
 
-    StartCopyBlobOperation() = default;
+    StartBlobCopyOperation() = default;
 
-    StartCopyBlobOperation(StartCopyBlobOperation&&) = default;
+    StartBlobCopyOperation(StartBlobCopyOperation&&) = default;
 
-    StartCopyBlobOperation& operator=(StartCopyBlobOperation&&) = default;
+    StartBlobCopyOperation& operator=(StartBlobCopyOperation&&) = default;
 
-    ~StartCopyBlobOperation() override {}
+    ~StartBlobCopyOperation() override {}
 
   private:
     std::string GetResumeToken() const override

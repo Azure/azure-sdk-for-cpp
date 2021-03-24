@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Nullable<Models::ListSharesIncludeType> ListSharesIncludeFlags;
+    Azure::Nullable<Models::ListSharesIncludeFlags> ListSharesIncludeFlags;
   };
 
   struct SetServicePropertiesOptions
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
      */
-    Azure::Nullable<Models::ShareAccessTier> AccessTier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the access tier of the share. This is only valid for standard file account
      * and the value can only be one of `Hot`, `Cool` or `TransactionOptimized`
      */
-    Azure::Nullable<Models::ShareAccessTier> AccessTier;
+    Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
@@ -352,7 +352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct StartCopyFileOptions
+  struct StartFileCopyOptions
   {
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -374,7 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the smb properties.
      */
-    Azure::Nullable<Models::PermissionCopyModeType> PermissionCopyMode;
+    Azure::Nullable<Models::PermissionCopyMode> PermissionCopyMode;
 
     /**
      * @brief Specifies the option to overwrite the target file if it already exists and has
@@ -394,7 +394,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct AbortCopyFileOptions
+  struct AbortFileCopyOptions
   {
     /**
      * @brief The operation will only succeed if the access condition is met.

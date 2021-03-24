@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
-    protocolLayerOptions.ListSharesInclude = options.ListSharesIncludeFlags;
+    protocolLayerOptions.IncludeFlags = options.ListSharesIncludeFlags;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(
-      Models::FileServiceProperties properties,
+      Models::ShareServiceProperties properties,
       const SetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::FileServiceProperties> ShareServiceClient::GetProperties(
+  Azure::Response<Models::ShareServiceProperties> ShareServiceClient::GetProperties(
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -115,12 +115,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareRestClient::Service::GetPropertiesOptions();
     auto result = _detail::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::FileServiceProperties ret;
+    Models::ShareServiceProperties ret;
     ret.Cors = std::move(result.Value.Cors);
     ret.HourMetrics = std::move(result.Value.HourMetrics);
     ret.MinuteMetrics = std::move(result.Value.MinuteMetrics);
     ret.Protocol = std::move(result.Value.Protocol);
-    return Azure::Response<Models::FileServiceProperties>(
+    return Azure::Response<Models::ShareServiceProperties>(
         std::move(ret), std::move(result.RawResponse));
   }
 
