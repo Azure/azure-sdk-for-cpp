@@ -101,6 +101,36 @@
 - Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControlList`.
 - Removed unused parameters, options, results and functions in protocol layer.
 
+## 12.0.0-beta.6 (2021-01-14)
+
+### New Features
+
+- Support setting DataLake SAS permission with a raw string.
+- Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
+
+### Breaking Changes
+
+- Moved DataLake SAS into `Azure::Storage::Sas` namespace.
+- `EncrytionKeySha256` are changed to binary (`std::vector<uint8_t>`).
+- Replaced all transactional content MD5/CRC64 with the `ContentHash` struct.
+- `DataLakeHttpHeaders` is renamed to `PathHttpHeaders`, and now contains `ContentHash` for the resource.
+- All date time related strings are now changed to `Azure::Core::DateTime` type.
+- `CreationTime` is renamed to `CreatedOn`.
+- `AccessTierChangeTime` is renamed to `AccessTierChangedOn`.
+- `CopyCompletionTime` is renamed to `CopyCompletedOn`.
+- `ExpiryTime` is renamed to `ExpiresOn`.
+- `LastAccessTime` is renamed to `LastAccessedOn`.
+- Made version strings private by moving them into the `Details` namespace.
+- Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
+- `ReadFileResult` now have `ContentRange` as string.
+- `ReadFileOptions` now have `Azure::Core::Http::Range` instead of `Content-Length` and `Offset`.
+- Replaced scoped enums that don't support bitwise operations with extensible enum.
+- `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
+- Added `DataLake` prefix to `FileSystemClient`, `PathClient`,  `DirectoryClient`, and `FileClient` types.
+- FileSystems, Path, Directory and File related result types and options types now have a `DataLake` prefix. For example, `GetFileSystemPropertiesResult` is changed to `GetDataLakeFileSystemPropertiesResult`.
+- Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
+- Removed `NamespaceEnabled` field in `CreateDataLakeFileSystemResult`.
+
 ## 12.0.0-beta.5 (2020-11-13)
 
 ### Breaking Changes
@@ -169,33 +199,3 @@
   - DirectoryClient::Rename
   - DirectoryClient::Delete
 - Support for Lease related operations.
-## 12.0.0-beta.6 (2020-01-14)
-
-### New Features
-
-- Support setting DataLake SAS permission with a raw string.
-- Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
-
-### Breaking Changes
-
-- Moved DataLake SAS into `Azure::Storage::Sas` namespace.
-- `EncrytionKeySha256` are changed to binary (`std::vector<uint8_t>`).
-- Replaced all transactional content MD5/CRC64 with the `ContentHash` struct.
-- `DataLakeHttpHeaders` is renamed to `PathHttpHeaders`, and now contains `ContentHash` for the resource.
-- All date time related strings are now changed to `Azure::Core::DateTime` type.
-- `CreationTime` is renamed to `CreatedOn`.
-- `AccessTierChangeTime` is renamed to `AccessTierChangedOn`.
-- `CopyCompletionTime` is renamed to `CopyCompletedOn`.
-- `ExpiryTime` is renamed to `ExpiresOn`.
-- `LastAccessTime` is renamed to `LastAccessedOn`.
-- Made version strings private by moving them into the `Details` namespace.
-- Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
-- `ReadFileResult` now have `ContentRange` as string.
-- `ReadFileOptions` now have `Azure::Core::Http::Range` instead of `Content-Length` and `Offset`.
-- Replaced scoped enums that don't support bitwise operations with extensible enum.
-- `ListPaths` is renamed to `ListPathsSinglePage` and its related return type and options are also renamed accordingly.
-- Added `DataLake` prefix to `FileSystemClient`, `PathClient`,  `DirectoryClient`, and `FileClient` types.
-- FileSystems, Path, Directory and File related result types and options types now have a `DataLake` prefix. For example, `GetFileSystemPropertiesResult` is changed to `GetDataLakeFileSystemPropertiesResult`.
-- Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
-- Removed `NamespaceEnabled` field in `CreateDataLakeFileSystemResult`.
-
