@@ -357,7 +357,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.RehydratePriority = std::move(result.Value.RehydratePriority);
     ret.CopyStatusDescription = std::move(result.Value.CopyStatusDescription);
     ret.IsIncrementalCopy = std::move(result.Value.IsIncrementalCopy);
-    ret.IncrementalCopyDestinationSnapshot = std::move(result.Value.IncrementalCopyDestinationSnapshot);
+    ret.IncrementalCopyDestinationSnapshot
+        = std::move(result.Value.IncrementalCopyDestinationSnapshot);
     ret.VersionId = std::move(result.Value.VersionId);
     ret.IsCurrentVersion = std::move(result.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
