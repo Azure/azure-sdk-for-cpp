@@ -301,12 +301,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = _detail::BlobRestClient::PageBlob::StartCopyIncremental(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
     StartCopyBlobOperation res;
-    res.m_rawResponse = response.ExtractRawResponse();
-    res.ETag = std::move(response->ETag);
-    res.LastModified = std::move(response->LastModified);
-    res.CopyId = std::move(response->CopyId);
-    res.CopyStatus = std::move(response->CopyStatus);
-    res.VersionId = std::move(response->VersionId);
+    res.m_rawResponse = std::move(response.RawResponse);
+    res.ETag = std::move(response.Value.ETag);
+    res.LastModified = std::move(response.Value.LastModified);
+    res.CopyId = std::move(response.Value.CopyId);
+    res.CopyStatus = std::move(response.Value.CopyStatus);
+    res.VersionId = std::move(response.Value.VersionId);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
     return res;
   }

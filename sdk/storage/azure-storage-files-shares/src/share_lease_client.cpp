@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LeaseId = std::move(response->LeaseId);
 
       return Azure::Response<Models::AcquireLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else if (m_shareClient.HasValue())
     {
@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LeaseId = std::move(response->LeaseId);
 
       return Azure::Response<Models::AcquireLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else
     {
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LeaseId = std::move(response->LeaseId);
 
       return Azure::Response<Models::RenewLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else
     {
@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LastModified = std::move(response->LastModified);
 
       return Azure::Response<Models::ReleaseLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else if (m_shareClient.HasValue())
     {
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LastModified = std::move(response->LastModified);
 
       return Azure::Response<Models::ReleaseLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else
     {
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LeaseId = std::move(response->LeaseId);
 
       return Azure::Response<Models::ChangeLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else if (m_shareClient.HasValue())
     {
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LeaseId = std::move(response->LeaseId);
 
       return Azure::Response<Models::ChangeLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else
     {
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LastModified = std::move(response->LastModified);
 
       return Azure::Response<Models::BreakLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else if (m_shareClient.HasValue())
     {
@@ -237,7 +237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.LastModified = std::move(response->LastModified);
 
       return Azure::Response<Models::BreakLeaseResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     }
     else
     {

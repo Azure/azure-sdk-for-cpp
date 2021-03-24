@@ -60,11 +60,11 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         Files::DataLake::DeleteDirectoryOptions options1;
-        options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_TRUE(IsValidTime(response->LastModified));
+        options1.AccessConditions.IfModifiedSince = response.Value.LastModified;
+        EXPECT_TRUE(IsValidTime(response.Value.LastModified));
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
-        options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
+        options2.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
         EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
     }
@@ -80,12 +80,12 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        EXPECT_TRUE(response->IsDirectory);
+        EXPECT_TRUE(response.Value.IsDirectory);
         Files::DataLake::DeleteDirectoryOptions options1;
-        options1.AccessConditions.IfNoneMatch = response->ETag;
+        options1.AccessConditions.IfNoneMatch = response.Value.ETag;
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
-        options2.AccessConditions.IfMatch = response->ETag;
+        options2.AccessConditions.IfMatch = response.Value.ETag;
         EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
     }
@@ -113,20 +113,20 @@ namespace Azure { namespace Storage { namespace Test {
       auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
       bool created = false;
       bool deleted = false;
-      EXPECT_NO_THROW(created = client.Create()->Created);
+      EXPECT_NO_THROW(created = client.Create().Value.Created);
       EXPECT_TRUE(created);
-      EXPECT_NO_THROW(created = client.CreateIfNotExists()->Created);
+      EXPECT_NO_THROW(created = client.CreateIfNotExists().Value.Created);
       EXPECT_FALSE(created);
-      EXPECT_NO_THROW(deleted = client.DeleteEmpty()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmpty().Value.Deleted);
       EXPECT_TRUE(deleted);
-      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
     {
       auto client = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), RandomString());
       bool deleted = false;
-      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
   }
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto newPath = RandomString();
         EXPECT_NO_THROW(newDirectoryClients.emplace_back(
-            client.RenameSubdirectory("", newPath).ExtractValue()));
+            client.RenameSubdirectory("", newPath).Value));
       }
       for (const auto& client : directoryClients)
       {
@@ -171,14 +171,14 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         Files::DataLake::RenameDirectoryOptions options1;
-        options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_TRUE(IsValidTime(response->LastModified));
+        options1.SourceAccessConditions.IfModifiedSince = response.Value.LastModified;
+        EXPECT_TRUE(IsValidTime(response.Value.LastModified));
         EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
         Files::DataLake::RenameDirectoryOptions options2;
-        options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
+        options2.SourceAccessConditions.IfUnmodifiedSince = response.Value.LastModified;
         auto newPath = RandomString();
         EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteEmpty());
+            client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
       }
     }
     {
@@ -194,13 +194,13 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         Files::DataLake::RenameDirectoryOptions options1;
-        options1.SourceAccessConditions.IfNoneMatch = response->ETag;
+        options1.SourceAccessConditions.IfNoneMatch = response.Value.ETag;
         EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
         Files::DataLake::RenameDirectoryOptions options2;
-        options2.SourceAccessConditions.IfMatch = response->ETag;
+        options2.SourceAccessConditions.IfMatch = response.Value.ETag;
         auto newPath = RandomString();
         EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteEmpty());
+            client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
       }
     }
     {
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           auto newPath = RandomString();
           EXPECT_NO_THROW(
-              client.RenameSubdirectory("", newPath, options).ExtractValue().DeleteEmpty());
+              client.RenameSubdirectory("", newPath, options).Value.DeleteEmpty());
         }
       }
     }
@@ -248,10 +248,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
-      auto result = m_directoryClient->GetProperties()->Metadata;
+      auto result = m_directoryClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
-      result = m_directoryClient->GetProperties()->Metadata;
+      result = m_directoryClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -266,11 +266,11 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
-      auto result = client1.GetProperties()->Metadata;
+      auto result = client1.GetProperties().Value.Metadata;
       metadata1["hdi_isfolder"] = "true";
       metadata2["hdi_isfolder"] = "true";
       EXPECT_EQ(metadata1, result);
-      result = client2.GetProperties()->Metadata;
+      result = client2.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
@@ -283,25 +283,25 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
       auto result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata1, result->Metadata);
+      EXPECT_EQ(metadata1, result.Value.Metadata);
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
       result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata2, result->Metadata);
+      EXPECT_EQ(metadata2, result.Value.Metadata);
     }
 
     {
       // Last modified Etag works.
       auto properties1 = m_directoryClient->GetProperties();
       auto properties2 = m_directoryClient->GetProperties();
-      EXPECT_EQ(properties1->ETag, properties2->ETag);
-      EXPECT_TRUE(IsValidTime(properties1->LastModified));
-      EXPECT_EQ(properties1->LastModified, properties2->LastModified);
+      EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_TRUE(IsValidTime(properties1.Value.LastModified));
+      EXPECT_EQ(properties1.Value.LastModified, properties2.Value.LastModified);
 
       // This operation changes ETag/LastModified.
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
 
       auto properties3 = m_directoryClient->GetProperties();
-      EXPECT_NE(properties1->ETag, properties3->ETag);
+      EXPECT_NE(properties1.Value.ETag, properties3.Value.ETag);
     }
 
     {
@@ -319,10 +319,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto result = client.GetProperties();
-        EXPECT_EQ(httpHeader.CacheControl, result->HttpHeaders.CacheControl);
-        EXPECT_EQ(httpHeader.ContentDisposition, result->HttpHeaders.ContentDisposition);
-        EXPECT_EQ(httpHeader.ContentLanguage, result->HttpHeaders.ContentLanguage);
-        EXPECT_EQ(httpHeader.ContentType, result->HttpHeaders.ContentType);
+        EXPECT_EQ(httpHeader.CacheControl, result.Value.HttpHeaders.CacheControl);
+        EXPECT_EQ(httpHeader.ContentDisposition, result.Value.HttpHeaders.ContentDisposition);
+        EXPECT_EQ(httpHeader.ContentLanguage, result.Value.HttpHeaders.ContentLanguage);
+        EXPECT_EQ(httpHeader.ContentType, result.Value.HttpHeaders.ContentType);
         EXPECT_NO_THROW(client.DeleteEmpty());
       }
     }
@@ -349,8 +349,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -376,8 +376,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.UpdateAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -453,8 +453,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -529,8 +529,8 @@ namespace Azure { namespace Storage { namespace Test {
       (rootDirectoryClient.SetAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(

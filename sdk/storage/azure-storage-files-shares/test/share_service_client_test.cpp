@@ -73,8 +73,8 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      result.insert(result.end(), response->Items.begin(), response->Items.end());
-      options.ContinuationToken = response->ContinuationToken;
+      result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
+      options.ContinuationToken = response.Value.ContinuationToken;
     } while (options.ContinuationToken.HasValue());
     return result;
   }
@@ -129,14 +129,14 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ListSharesSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      EXPECT_LE(2U, response->Items.size());
+      EXPECT_LE(2U, response.Value.Items.size());
     }
   }
 
   TEST_F(FileShareServiceClientTest, GetProperties)
   {
     auto ret = m_fileShareServiceClient->GetProperties();
-    auto properties = *ret;
+    auto properties = ret.Value;
     auto hourMetrics = properties.HourMetrics;
     if (hourMetrics.Enabled)
     {
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
-    auto properties = *m_fileShareServiceClient->GetProperties();
+    auto properties = m_fileShareServiceClient->GetProperties().Value;
     // Has to remove before set, otherwise would return failure.
     properties.Protocol = Azure::Nullable<Files::Shares::Models::ShareProtocolSettings>();
     auto originalProperties = properties;
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = *m_fileShareServiceClient->GetProperties();
+    auto downloadedProperties = m_fileShareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
             PremiumFileConnectionString()));
-    auto properties = *premiumFileShareServiceClient->GetProperties();
+    auto properties = premiumFileShareServiceClient->GetProperties().Value;
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -281,7 +281,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = *premiumFileShareServiceClient->GetProperties();
+    auto downloadedProperties = premiumFileShareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);

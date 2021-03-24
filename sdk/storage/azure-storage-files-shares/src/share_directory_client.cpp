@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.SmbProperties = std::move(result->SmbProperties);
 
     return Azure::Response<Models::CreateDirectoryResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::CreateDirectoryResult> ShareDirectoryClient::CreateIfNotExists(
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::DeleteDirectoryResult ret;
     ret.Deleted = true;
     return Azure::Response<Models::DeleteDirectoryResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeleteDirectoryResult> ShareDirectoryClient::DeleteIfExists(
@@ -311,7 +311,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileItems = std::move(result->SinglePage.FileItems);
 
     return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ListDirectoryHandlesSinglePageResult>
@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Handles = std::move(result->HandleList);
 
     return Azure::Response<Models::ListDirectoryHandlesSinglePageResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ForceCloseDirectoryHandleResult> ShareDirectoryClient::ForceCloseHandle(
@@ -345,7 +345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ForceCloseDirectoryHandleResult ret;
     return Azure::Response<Models::ForceCloseDirectoryHandleResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ForceCloseAllDirectoryHandlesSinglePageResult>

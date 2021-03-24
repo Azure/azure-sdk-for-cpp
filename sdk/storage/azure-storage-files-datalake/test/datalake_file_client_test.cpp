@@ -74,13 +74,13 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileClient)
       {
         auto response = client.GetProperties();
-        EXPECT_FALSE(response->IsDirectory);
+        EXPECT_FALSE(response.Value.IsDirectory);
         Files::DataLake::DeleteFileOptions options1;
-        options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_TRUE(IsValidTime(response->LastModified));
+        options1.AccessConditions.IfModifiedSince = response.Value.LastModified;
+        EXPECT_TRUE(IsValidTime(response.Value.LastModified));
         EXPECT_THROW(client.Delete(options1), StorageException);
         Files::DataLake::DeleteFileOptions options2;
-        options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
+        options2.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
@@ -97,10 +97,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         Files::DataLake::DeleteFileOptions options1;
-        options1.AccessConditions.IfNoneMatch = response->ETag;
+        options1.AccessConditions.IfNoneMatch = response.Value.ETag;
         EXPECT_THROW(client.Delete(options1), StorageException);
         Files::DataLake::DeleteFileOptions options2;
-        options2.AccessConditions.IfMatch = response->ETag;
+        options2.AccessConditions.IfMatch = response.Value.ETag;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
@@ -112,20 +112,20 @@ namespace Azure { namespace Storage { namespace Test {
       auto client = m_fileSystemClient->GetFileClient(RandomString());
       bool created = false;
       bool deleted = false;
-      EXPECT_NO_THROW(created = client.Create()->Created);
+      EXPECT_NO_THROW(created = client.Create().Value.Created);
       EXPECT_TRUE(created);
-      EXPECT_NO_THROW(created = client.CreateIfNotExists()->Created);
+      EXPECT_NO_THROW(created = client.CreateIfNotExists().Value.Created);
       EXPECT_FALSE(created);
-      EXPECT_NO_THROW(deleted = client.Delete()->Deleted);
+      EXPECT_NO_THROW(deleted = client.Delete().Value.Deleted);
       EXPECT_TRUE(deleted);
-      EXPECT_NO_THROW(deleted = client.DeleteIfExists()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
     {
       auto client = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), RandomString());
       bool deleted = false;
-      EXPECT_NO_THROW(deleted = client.DeleteIfExists()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
   }
@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
       EXPECT_NO_THROW(
           ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
-              m_fileSystemClient->RenameFile(fileName, RandomString()).ExtractValue()));
+              m_fileSystemClient->RenameFile(fileName, RandomString()).Value));
       EXPECT_THROW(m_fileSystemClient->GetFileClient(fileName).Delete(), StorageException);
       EXPECT_NO_THROW(ret->Delete());
     }
@@ -150,15 +150,15 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.Create());
       auto response = fileClient.GetProperties();
       Files::DataLake::RenameFileOptions options1;
-      options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
+      options1.SourceAccessConditions.IfModifiedSince = response.Value.LastModified;
       EXPECT_THROW(
           m_fileSystemClient->RenameFile(fileName, RandomString(), options1), StorageException);
       Files::DataLake::RenameFileOptions options2;
-      options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
+      options2.SourceAccessConditions.IfUnmodifiedSince = response.Value.LastModified;
       std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
       EXPECT_NO_THROW(
           ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
-              m_fileSystemClient->RenameFile(fileName, RandomString(), options2).ExtractValue()));
+              m_fileSystemClient->RenameFile(fileName, RandomString(), options2).Value));
       EXPECT_THROW(m_fileSystemClient->GetFileClient(fileName).Delete(), StorageException);
       EXPECT_NO_THROW(ret->Delete());
     }
@@ -169,15 +169,15 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.Create());
       auto response = fileClient.GetProperties();
       Files::DataLake::RenameFileOptions options1;
-      options1.SourceAccessConditions.IfNoneMatch = response->ETag;
+      options1.SourceAccessConditions.IfNoneMatch = response.Value.ETag;
       EXPECT_THROW(
           m_fileSystemClient->RenameFile(fileName, RandomString(), options1), StorageException);
       Files::DataLake::RenameFileOptions options2;
-      options2.SourceAccessConditions.IfMatch = response->ETag;
+      options2.SourceAccessConditions.IfMatch = response.Value.ETag;
       std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
       EXPECT_NO_THROW(
           ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
-              m_fileSystemClient->RenameFile(fileName, RandomString(), options2).ExtractValue()));
+              m_fileSystemClient->RenameFile(fileName, RandomString(), options2).Value));
       EXPECT_THROW(m_fileSystemClient->GetFileClient(fileName).Delete(), StorageException);
       EXPECT_THROW(fileClient.GetProperties(), StorageException);
       EXPECT_NO_THROW(ret->Delete());
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::shared_ptr<Files::DataLake::DataLakeFileClient> ret;
         EXPECT_NO_THROW(
             ret = std::make_shared<Files::DataLake::DataLakeFileClient>(
-                m_fileSystemClient->RenameFile(fileName, RandomString(), options).ExtractValue()));
+                m_fileSystemClient->RenameFile(fileName, RandomString(), options).Value));
         EXPECT_THROW(fileClient.GetProperties(), StorageException);
         EXPECT_NO_THROW(ret->Delete());
       }
@@ -221,10 +221,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata1));
-      auto result = m_fileClient->GetProperties()->Metadata;
+      auto result = m_fileClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata2));
-      result = m_fileClient->GetProperties()->Metadata;
+      result = m_fileClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -239,9 +239,9 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
-      auto result = client1.GetProperties()->Metadata;
+      auto result = client1.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata1, result);
-      result = client2.GetProperties()->Metadata;
+      result = client2.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
@@ -254,25 +254,25 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata1));
       auto result = m_fileClient->GetProperties();
-      EXPECT_EQ(metadata1, result->Metadata);
+      EXPECT_EQ(metadata1, result.Value.Metadata);
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata2));
       result = m_fileClient->GetProperties();
-      EXPECT_EQ(metadata2, result->Metadata);
+      EXPECT_EQ(metadata2, result.Value.Metadata);
     }
 
     {
       // Last modified Etag works.
       auto properties1 = m_fileClient->GetProperties();
       auto properties2 = m_fileClient->GetProperties();
-      EXPECT_EQ(properties1->ETag, properties2->ETag);
-      EXPECT_TRUE(IsValidTime(properties1->LastModified));
-      EXPECT_EQ(properties1->LastModified, properties2->LastModified);
+      EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_TRUE(IsValidTime(properties1.Value.LastModified));
+      EXPECT_EQ(properties1.Value.LastModified, properties2.Value.LastModified);
 
       // This operation changes ETag/LastModified.
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata1));
 
       auto properties3 = m_fileClient->GetProperties();
-      EXPECT_NE(properties1->ETag, properties3->ETag);
+      EXPECT_NE(properties1.Value.ETag, properties3.Value.ETag);
     }
 
     {
@@ -290,10 +290,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileClient)
       {
         auto result = client.GetProperties();
-        EXPECT_EQ(httpHeader.CacheControl, result->HttpHeaders.CacheControl);
-        EXPECT_EQ(httpHeader.ContentDisposition, result->HttpHeaders.ContentDisposition);
-        EXPECT_EQ(httpHeader.ContentLanguage, result->HttpHeaders.ContentLanguage);
-        EXPECT_EQ(httpHeader.ContentType, result->HttpHeaders.ContentType);
+        EXPECT_EQ(httpHeader.CacheControl, result.Value.HttpHeaders.CacheControl);
+        EXPECT_EQ(httpHeader.ContentDisposition, result.Value.HttpHeaders.ContentDisposition);
+        EXPECT_EQ(httpHeader.ContentLanguage, result.Value.HttpHeaders.ContentLanguage);
+        EXPECT_EQ(httpHeader.ContentType, result.Value.HttpHeaders.ContentType);
         EXPECT_NO_THROW(client.Delete());
       }
     }
@@ -311,18 +311,18 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->Append(bufferStream.get(), 0);
     auto properties2 = m_fileClient->GetProperties();
     // Append does not change etag because not committed yet.
-    EXPECT_EQ(properties1->ETag, properties2->ETag);
-    EXPECT_TRUE(IsValidTime(properties1->LastModified));
-    EXPECT_EQ(properties1->LastModified, properties2->LastModified);
+    EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+    EXPECT_TRUE(IsValidTime(properties1.Value.LastModified));
+    EXPECT_EQ(properties1.Value.LastModified, properties2.Value.LastModified);
 
     // Flush
     m_fileClient->Flush(bufferSize);
     auto properties3 = m_fileClient->GetProperties();
-    EXPECT_NE(properties2->ETag, properties3->ETag);
+    EXPECT_NE(properties2.Value.ETag, properties3.Value.ETag);
 
     // Read
     auto result = m_fileClient->Download();
-    auto downloaded = ReadBodyStream(result->Body);
+    auto downloaded = ReadBodyStream(result.Value.Body);
     EXPECT_EQ(buffer, downloaded);
   }
 
@@ -342,22 +342,22 @@ namespace Azure { namespace Storage { namespace Test {
     newFileClient->Append(bufferStream.get(), 0);
     auto properties2 = newFileClient->GetProperties();
     // Append does not change etag because not committed yet.
-    EXPECT_EQ(properties1->ETag, properties2->ETag);
-    EXPECT_TRUE(IsValidTime(properties1->LastModified));
-    EXPECT_EQ(properties1->LastModified, properties2->LastModified);
+    EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+    EXPECT_TRUE(IsValidTime(properties1.Value.LastModified));
+    EXPECT_EQ(properties1.Value.LastModified, properties2.Value.LastModified);
 
     // Flush
     newFileClient->Flush(bufferSize);
     auto properties3 = newFileClient->GetProperties();
-    EXPECT_NE(properties2->ETag, properties3->ETag);
+    EXPECT_NE(properties2.Value.ETag, properties3.Value.ETag);
 
     // Read
     auto result = newFileClient->Download();
-    auto downloaded = ReadBodyStream(result->Body);
+    auto downloaded = ReadBodyStream(result.Value.Body);
     EXPECT_EQ(buffer, downloaded);
-    EXPECT_EQ(bufferSize, result->FileSize);
-    EXPECT_EQ(bufferSize, result->ContentRange.Length.GetValue());
-    EXPECT_EQ(0, result->ContentRange.Offset);
+    EXPECT_EQ(bufferSize, result.Value.FileSize);
+    EXPECT_EQ(bufferSize, result.Value.ContentRange.Length.GetValue());
+    EXPECT_EQ(0, result.Value.ContentRange.Offset);
 
     // Read Range
     {
@@ -367,12 +367,12 @@ namespace Azure { namespace Storage { namespace Test {
       options.Range.GetValue().Offset = 0;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
-      downloaded = ReadBodyStream(result->Body);
+      downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(firstHalf.size(), downloaded.size());
       EXPECT_EQ(firstHalf, downloaded);
-      EXPECT_EQ(bufferSize, result->FileSize);
-      EXPECT_EQ(bufferSize / 2, result->ContentRange.Length.GetValue());
-      EXPECT_EQ(0, result->ContentRange.Offset);
+      EXPECT_EQ(bufferSize, result.Value.FileSize);
+      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Length.GetValue());
+      EXPECT_EQ(0, result.Value.ContentRange.Offset);
     }
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
@@ -381,35 +381,35 @@ namespace Azure { namespace Storage { namespace Test {
       options.Range.GetValue().Offset = bufferSize / 2;
       options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Download(options);
-      downloaded = ReadBodyStream(result->Body);
+      downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(secondHalf, downloaded);
-      EXPECT_EQ(bufferSize, result->FileSize);
-      EXPECT_EQ(bufferSize / 2, result->ContentRange.Length.GetValue());
-      EXPECT_EQ(bufferSize / 2, result->ContentRange.Offset);
+      EXPECT_EQ(bufferSize, result.Value.FileSize);
+      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Length.GetValue());
+      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Offset);
     }
     {
       // Read with last modified access condition.
       auto response = newFileClient->GetProperties();
       Files::DataLake::DownloadFileOptions options1;
-      options1.AccessConditions.IfModifiedSince = response->LastModified;
-      EXPECT_TRUE(IsValidTime(response->LastModified));
+      options1.AccessConditions.IfModifiedSince = response.Value.LastModified;
+      EXPECT_TRUE(IsValidTime(response.Value.LastModified));
       EXPECT_THROW(newFileClient->Download(options1), StorageException);
       Files::DataLake::DownloadFileOptions options2;
-      options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
+      options2.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
       EXPECT_NO_THROW(result = newFileClient->Download(options2));
-      downloaded = ReadBodyStream(result->Body);
+      downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(buffer, downloaded);
     }
     {
       // Read with if match access condition.
       auto response = newFileClient->GetProperties();
       Files::DataLake::DownloadFileOptions options1;
-      options1.AccessConditions.IfNoneMatch = response->ETag;
+      options1.AccessConditions.IfNoneMatch = response.Value.ETag;
       EXPECT_THROW(newFileClient->Download(options1), StorageException);
       Files::DataLake::DownloadFileOptions options2;
-      options2.AccessConditions.IfMatch = response->ETag;
+      options2.AccessConditions.IfMatch = response.Value.ETag;
       EXPECT_NO_THROW(result = newFileClient->Download(options2));
-      downloaded = ReadBodyStream(result->Body);
+      downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(buffer, downloaded);
     }
   }
@@ -467,17 +467,17 @@ namespace Azure { namespace Storage { namespace Test {
       options.Metadata = RandomMetadata();
       auto res
           = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
-      auto lastModified = fileClient.GetProperties()->LastModified;
-      EXPECT_TRUE(res->ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(res->LastModified));
-      EXPECT_EQ(res->LastModified, lastModified);
-      auto properties = *fileClient.GetProperties();
+      auto lastModified = fileClient.GetProperties().Value.LastModified;
+      EXPECT_TRUE(res.Value.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+      EXPECT_EQ(res.Value.LastModified, lastModified);
+      auto properties = fileClient.GetProperties().Value;
       EXPECT_EQ(properties.FileSize, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
-      EXPECT_EQ(properties.ETag, res->ETag);
-      EXPECT_TRUE(IsValidTime(res->LastModified));
-      EXPECT_EQ(properties.LastModified, res->LastModified);
+      EXPECT_EQ(properties.ETag, res.Value.ETag);
+      EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+      EXPECT_EQ(properties.LastModified, res.Value.LastModified);
       std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
       fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
       EXPECT_EQ(
@@ -501,16 +501,16 @@ namespace Azure { namespace Storage { namespace Test {
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
-      auto lastModified = fileClient.GetProperties()->LastModified;
-      EXPECT_TRUE(res->ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(res->LastModified));
-      EXPECT_EQ(res->LastModified, lastModified);
-      auto properties = *fileClient.GetProperties();
+      auto lastModified = fileClient.GetProperties().Value.LastModified;
+      EXPECT_TRUE(res.Value.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+      EXPECT_EQ(res.Value.LastModified, lastModified);
+      auto properties = fileClient.GetProperties().Value;
       EXPECT_EQ(properties.FileSize, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
-      EXPECT_EQ(properties.ETag, res->ETag);
-      EXPECT_EQ(properties.LastModified, res->LastModified);
+      EXPECT_EQ(properties.ETag, res.Value.ETag);
+      EXPECT_EQ(properties.LastModified, res.Value.LastModified);
       std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
       fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
       EXPECT_EQ(

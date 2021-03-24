@@ -49,7 +49,7 @@ int main()
   try
   {
     auto responseT = keyClient.GetKey(KEY_VAULT_KEY_NAME);
-    auto key = responseT.ExtractValue();
+    auto key = responseT.Value;
     std::cout << "KeyId: " << key.Key.Id << std::endl;
     std::cout << "Operations:" << std::endl;
     for (KeyOperation operation : key.KeyOperations())

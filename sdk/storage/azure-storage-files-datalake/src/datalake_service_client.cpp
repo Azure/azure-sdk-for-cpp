@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     response.Prefix = std::move(result->Prefix);
     response.Items = FileSystemsFromContainerItems(std::move(result->Items));
     return Azure::Response<Models::ListFileSystemsSinglePageResult>(
-        std::move(response), result.ExtractRawResponse());
+        std::move(response), std::move(result.RawResponse));
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

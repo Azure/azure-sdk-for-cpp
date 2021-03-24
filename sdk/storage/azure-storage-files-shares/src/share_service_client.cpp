@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.MinuteMetrics = std::move(result->MinuteMetrics);
     ret.Protocol = std::move(result->Protocol);
     return Azure::Response<Models::FileServiceProperties>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

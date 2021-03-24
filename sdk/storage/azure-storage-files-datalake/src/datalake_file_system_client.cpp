@@ -165,11 +165,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     auto result = m_blobContainerClient.Create(blobOptions, context);
     Models::CreateFileSystemResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
     ret.Created = true;
     return Azure::Response<Models::CreateFileSystemResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::CreateFileSystemResult> DataLakeFileSystemClient::CreateIfNotExists(
@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DeleteFileSystemResult ret;
     ret.Deleted = true;
     return Azure::Response<Models::DeleteFileSystemResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeleteFileSystemResult> DataLakeFileSystemClient::DeleteIfExists(
@@ -236,11 +236,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.GetProperties(blobOptions, context);
     Models::FileSystemProperties ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
-    ret.Metadata = std::move(result->Metadata);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
+    ret.Metadata = std::move(result.Value.Metadata);
     return Azure::Response<Models::FileSystemProperties>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::SetFileSystemMetadataResult> DataLakeFileSystemClient::SetMetadata(
@@ -256,10 +256,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetFileSystemMetadataResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
     return Azure::Response<Models::SetFileSystemMetadataResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::ListPathsSinglePage(
@@ -285,25 +285,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto response = m_blobContainerClient.GetAccessPolicy(blobOptions, context);
     Models::FileSystemAccessPolicy ret;
-    if (response->AccessType == Blobs::Models::PublicAccessType::BlobContainer)
+    if (response.Value.AccessType == Blobs::Models::PublicAccessType::BlobContainer)
     {
       ret.AccessType = Models::PublicAccessType::FileSystem;
     }
-    else if (response->AccessType == Blobs::Models::PublicAccessType::Blob)
+    else if (response.Value.AccessType == Blobs::Models::PublicAccessType::Blob)
     {
       ret.AccessType = Models::PublicAccessType::Path;
     }
-    else if (response->AccessType == Blobs::Models::PublicAccessType::None)
+    else if (response.Value.AccessType == Blobs::Models::PublicAccessType::None)
     {
       ret.AccessType = Models::PublicAccessType::None;
     }
     else
     {
-      ret.AccessType = Models::PublicAccessType(response->AccessType.ToString());
+      ret.AccessType = Models::PublicAccessType(response.Value.AccessType.ToString());
     }
-    ret.SignedIdentifiers = std::move(response->SignedIdentifiers);
+    ret.SignedIdentifiers = std::move(response.Value.SignedIdentifiers);
     return Azure::Response<Models::FileSystemAccessPolicy>(
-        std::move(ret), response.ExtractRawResponse());
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::SetFileSystemAccessPolicyResult>
@@ -335,10 +335,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = m_blobContainerClient.SetAccessPolicy(blobOptions, context);
     Models::SetFileSystemAccessPolicyResult ret;
 
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
     return Azure::Response<Models::SetFileSystemAccessPolicyResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<DataLakeFileClient> DataLakeFileSystemClient::RenameFile(

@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = Files::Shares::ShareFileClient(fileUrl + sas);
       auto downloadedContent = fileClient.Download();
       EXPECT_EQ(
-          ReadBodyStream(downloadedContent->BodyStream).size(), static_cast<std::size_t>(fileSize));
+          ReadBodyStream(downloadedContent.Value.BodyStream).size(), static_cast<std::size_t>(fileSize));
     };
 
     auto verifyFileCreate = [&](const std::string& sas) {
@@ -208,11 +208,11 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = Files::Shares::ShareFileClient(fileUrl + sasToken);
       fileClient0.Create(0);
       auto p = fileClient.GetProperties();
-      EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
-      EXPECT_EQ(p->HttpHeaders.ContentLanguage, headers.ContentLanguage);
-      EXPECT_EQ(p->HttpHeaders.ContentDisposition, headers.ContentDisposition);
-      EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
-      EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentType, headers.ContentType);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentLanguage, headers.ContentLanguage);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentDisposition, headers.ContentDisposition);
+      EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
     }
   }
 

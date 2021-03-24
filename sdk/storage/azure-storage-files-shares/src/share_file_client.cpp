@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.IsServerEncrypted = result->IsServerEncrypted;
     ret.LastModified = std::move(result->LastModified);
 
-    return Azure::Response<Models::CreateFileResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::CreateFileResult>(std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeleteFileResult> ShareFileClient::Delete(
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteFileResult ret;
     ret.Deleted = true;
-    return Azure::Response<Models::DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeleteFileResult>(std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeleteFileResult> ShareFileClient::DeleteIfExists(
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Details.LeaseState = std::move(downloadResponse->LeaseState);
     ret.Details.LeaseStatus = std::move(downloadResponse->LeaseStatus);
     return Azure::Response<Models::DownloadFileResult>(
-        std::move(ret), downloadResponse.ExtractRawResponse());
+        std::move(ret), downloadstd::move(response.RawResponse));
   }
 
   StartCopyFileOperation ShareFileClient::StartCopy(
@@ -372,7 +372,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
 
     StartCopyFileOperation res;
-    res.m_rawResponse = response.ExtractRawResponse();
+    res.m_rawResponse = std::move(response.RawResponse);
     res.ETag = std::move(response->ETag);
     res.LastModified = std::move(response->LastModified);
     res.CopyId = std::move(response->CopyId);
@@ -531,7 +531,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.IsServerEncrypted = response->IsServerEncrypted;
     ret.LastModified = std::move(response->LastModified);
     return Azure::Response<Models::ClearFileRangeResult>(
-        std::move(ret), response.ExtractRawResponse());
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::GetFileRangeListResult> ShareFileClient::GetRangeList(
@@ -602,7 +602,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Handles = std::move(result->HandleList);
 
     return Azure::Response<Models::ListFileHandlesSinglePageResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ForceCloseFileHandleResult> ShareFileClient::ForceCloseHandle(
@@ -616,7 +616,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::File::ForceCloseHandles(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     return Azure::Response<Models::ForceCloseFileHandleResult>(
-        Models::ForceCloseFileHandleResult(), result.ExtractRawResponse());
+        Models::ForceCloseFileHandleResult(), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ForceCloseAllFileHandlesSinglePageResult>
@@ -694,7 +694,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Details = std::move(response->Details);
       return Azure::Response<Models::DownloadFileToResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     };
     auto ret = returnTypeConverter(firstChunk);
 
@@ -809,7 +809,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Details = std::move(response->Details);
       return Azure::Response<Models::DownloadFileToResult>(
-          std::move(ret), response.ExtractRawResponse());
+          std::move(ret), std::move(response.RawResponse));
     };
     auto ret = returnTypeConverter(firstChunk);
 
@@ -948,7 +948,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::UploadFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Response<Models::UploadFileFromResult>(
-        std::move(result), createResult.ExtractRawResponse());
+        std::move(result), createstd::move(result.RawResponse));
   }
 
   Azure::Response<Models::UploadFileFromResult> ShareFileClient::UploadFrom(
@@ -1054,7 +1054,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::UploadFileFromResult result;
     result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Response<Models::UploadFileFromResult>(
-        std::move(result), createResult.ExtractRawResponse());
+        std::move(result), createstd::move(result.RawResponse));
   }
 
   Azure::Response<Models::UploadFileRangeFromUriResult> ShareFileClient::UploadRangeFromUri(

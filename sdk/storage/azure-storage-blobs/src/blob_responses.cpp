@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       m_status = Azure::Core::OperationStatus::Failed;
     }
     m_pollResult = *response;
-    return response.ExtractRawResponse();
+    return std::move(response.RawResponse);
   }
 
   Azure::Response<Models::BlobProperties> StartCopyBlobOperation::PollUntilDoneInternal(

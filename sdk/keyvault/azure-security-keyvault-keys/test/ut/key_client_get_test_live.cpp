@@ -24,7 +24,7 @@ TEST_F(KeyVaultClientTest, GetKey)
 
   auto keyResponse = keyClient.GetKey(keyName);
   CheckValidResponse(keyResponse);
-  auto key = keyResponse.ExtractValue();
+  auto key = keyResponse.Value;
 
   EXPECT_EQ(key.Name(), keyName);
   EXPECT_EQ(key.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa);

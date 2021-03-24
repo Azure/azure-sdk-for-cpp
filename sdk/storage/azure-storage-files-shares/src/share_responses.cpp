@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       m_status = Azure::Core::OperationStatus::Failed;
     }
     m_pollResult = *response;
-    return response.ExtractRawResponse();
+    return std::move(response.RawResponse);
   }
 
   Azure::Response<Models::FileProperties> StartCopyFileOperation::PollUntilDoneInternal(
