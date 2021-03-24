@@ -16,6 +16,7 @@ add_executable (
     macro_guard.cpp
     main.cpp
     simplified_header.cpp
+    client_secret_credential.cpp
 )
 
 if (MSVC)

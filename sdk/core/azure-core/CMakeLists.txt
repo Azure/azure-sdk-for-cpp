@@ -56,10 +56,12 @@ set(
     inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/hkeyholder.hpp
     inc/azure/core/internal/http/pipeline.hpp
+    inc/azure/core/internal/http/test_transport.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
+    inc/azure/core/internal/system_clock.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
@@ -106,6 +108,7 @@ set(
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
+    src/system_clock.cpp
     src/version.cpp
 )
 
