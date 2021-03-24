@@ -7,20 +7,9 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 
 
 
-function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory, $pkgName) 
+function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory) 
 {
-  # Test if the package path ends with the package name (e.g. sdk/storage/azure-storage-common)
-  # This function runs in a loop where $pkgPath might be the path to the package and must return 
-  # $null in cases where $pkgPath is not the path to the package specified by $pkgName
-  if ($pkgName -and ($pkgName -ne (Split-Path -Leaf $pkgPath))) { 
-    return $null
-  }
-
-  if (!$pkgName)
-  {
-    $pkgName = Split-Path -Leaf $pkgPath
-  }
-
+  $pkgName = Split-Path -Leaf $pkgPath
   $packageVersion = & $PSScriptRoot/Get-PkgVersion.ps1 -ServiceDirectory $serviceDirectory -PackageName $pkgName
   if ($null -ne $packageVersion)
   {
