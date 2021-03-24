@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#pragma once
-
 #include "azure/core/internal/system_clock.hpp"
 
 #include <mutex>
