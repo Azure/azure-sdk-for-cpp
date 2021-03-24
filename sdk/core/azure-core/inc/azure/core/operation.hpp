@@ -126,7 +126,6 @@ namespace Azure { namespace Core {
      *
      * @return `true` if the long-running operation completed successfully. `false` otherwise.
      */
-    // bool Succeeded() const noexcept { return (m_status == OperationStatus::Succeeded); }
     bool HasValue() const noexcept { return (m_status == OperationStatus::Succeeded); }
 
     /**
