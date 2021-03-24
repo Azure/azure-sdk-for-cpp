@@ -202,7 +202,6 @@ namespace Azure { namespace Core {
     }
 
     /************** API to read values from Url ***************/
-
     /**
      * @brief Get URL host.
      */
