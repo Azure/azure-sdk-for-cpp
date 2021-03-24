@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Nullable<Models::ListSharesIncludeType> ListSharesIncludeFlags;
+    Azure::Nullable<Models::ListSharesIncludeFlags> ListSharesIncludeFlags;
   };
 
   struct SetServicePropertiesOptions
@@ -374,7 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the smb properties.
      */
-    Azure::Nullable<Models::PermissionCopyModeType> PermissionCopyMode;
+    Azure::Nullable<Models::PermissionCopyMode> PermissionCopyMode;
 
     /**
      * @brief Specifies the option to overwrite the target file if it already exists and has
