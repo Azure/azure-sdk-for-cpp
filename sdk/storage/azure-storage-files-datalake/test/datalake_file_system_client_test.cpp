@@ -394,9 +394,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (size_t i = 0; i < ret2.Value.SignedIdentifiers.size(); ++i)
       {
         EXPECT_EQ(ret2.Value.SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
-        EXPECT_EQ(ret2.Value.SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
+        EXPECT_EQ(
+            ret2.Value.SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
         EXPECT_EQ(ret2.Value.SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
-        EXPECT_EQ(ret2.Value.SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
+        EXPECT_EQ(
+            ret2.Value.SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
       }
 
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;

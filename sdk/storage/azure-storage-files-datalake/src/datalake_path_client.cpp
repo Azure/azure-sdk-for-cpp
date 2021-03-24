@@ -330,7 +330,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result.Value.Metadata);
     if (result.Value.LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = Models::LeaseDurationType(result.Value.LeaseDuration.GetValue().ToString());
+      ret.LeaseDuration
+          = Models::LeaseDurationType(result.Value.LeaseDuration.GetValue().ToString());
     }
     ret.LeaseState = result.Value.LeaseState.HasValue()
         ? FromBlobLeaseState(result.Value.LeaseState.GetValue())
@@ -359,7 +360,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.RehydratePriority = std::move(result.Value.RehydratePriority);
     ret.CopyStatusDescription = std::move(result.Value.CopyStatusDescription);
     ret.IsIncrementalCopy = std::move(result.Value.IsIncrementalCopy);
-    ret.IncrementalCopyDestinationSnapshot = std::move(result.Value.IncrementalCopyDestinationSnapshot);
+    ret.IncrementalCopyDestinationSnapshot
+        = std::move(result.Value.IncrementalCopyDestinationSnapshot);
     ret.VersionId = std::move(result.Value.VersionId);
     ret.IsCurrentVersion = std::move(result.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);

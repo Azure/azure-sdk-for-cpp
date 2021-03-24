@@ -61,8 +61,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto response = directoryClient.ListFilesAndDirectoriesSinglePage(options);
       directoryResult.insert(
-          directoryResult.end(), response.Value.DirectoryItems.begin(), response.Value.DirectoryItems.end());
-      fileResult.insert(fileResult.end(), response.Value.FileItems.begin(), response.Value.FileItems.end());
+          directoryResult.end(),
+          response.Value.DirectoryItems.begin(),
+          response.Value.DirectoryItems.end());
+      fileResult.insert(
+          fileResult.end(), response.Value.FileItems.begin(), response.Value.FileItems.end());
       options.ContinuationToken = response.Value.ContinuationToken;
     } while (options.ContinuationToken.HasValue());
     return std::make_pair<

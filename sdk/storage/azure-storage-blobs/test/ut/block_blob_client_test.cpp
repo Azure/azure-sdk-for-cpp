@@ -205,7 +205,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto operation = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl());
-    EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_EQ(
+        operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_TRUE(operation.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(operation.LastModified));
     EXPECT_FALSE(operation.CopyId.empty());
@@ -425,7 +426,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.CommitBlockList({blockId1, blockId2});
     res = blockBlobClient.GetBlockList(options2);
-    EXPECT_EQ(res.Value.BlobSize, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));
+    EXPECT_EQ(
+        res.Value.BlobSize, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));
     EXPECT_TRUE(res.Value.UncommittedBlocks.empty());
   }
 

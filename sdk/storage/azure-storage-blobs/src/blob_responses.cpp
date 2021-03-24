@@ -12,15 +12,15 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
 
     auto response = m_blobClient->GetProperties();
-    if (!response->CopyStatus.HasValue())
+    if (!response.Value.CopyStatus.HasValue())
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Pending)
+    else if (response.Value.CopyStatus.GetValue() == Models::CopyStatus::Pending)
     {
       m_status = Azure::Core::OperationStatus::Running;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatus::Success)
+    else if (response.Value.CopyStatus.GetValue() == Models::CopyStatus::Success)
     {
       m_status = Azure::Core::OperationStatus::Succeeded;
     }
@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    m_pollResult = *response;
+    m_pollResult = response.Value;
     return std::move(response.RawResponse);
   }
 

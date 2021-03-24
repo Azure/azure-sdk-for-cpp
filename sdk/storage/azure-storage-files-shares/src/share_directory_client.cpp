@@ -157,10 +157,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreateDirectoryResult ret;
     ret.Created = true;
-    ret.ETag = std::move(result->ETag);
-    ret.IsServerEncrypted = result->IsServerEncrypted;
-    ret.LastModified = std::move(result->LastModified);
-    ret.SmbProperties = std::move(result->SmbProperties);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.IsServerEncrypted = result.Value.IsServerEncrypted;
+    ret.LastModified = std::move(result.Value.LastModified);
+    ret.SmbProperties = std::move(result.Value.SmbProperties);
 
     return Azure::Response<Models::CreateDirectoryResult>(
         std::move(ret), std::move(result.RawResponse));
@@ -300,15 +300,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ListFilesAndDirectoriesSinglePageResult ret;
-    ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
-    ret.ShareName = std::move(result->ShareName);
-    ret.ShareSnapshot = std::move(result->ShareSnapshot);
-    ret.DirectoryPath = std::move(result->DirectoryPath);
-    ret.Prefix = std::move(result->Prefix);
-    ret.PageSizeHint = result->PageSizeHint;
-    ret.ContinuationToken = std::move(result->ContinuationToken);
-    ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);
-    ret.FileItems = std::move(result->SinglePage.FileItems);
+    ret.ServiceEndpoint = std::move(result.Value.ServiceEndpoint);
+    ret.ShareName = std::move(result.Value.ShareName);
+    ret.ShareSnapshot = std::move(result.Value.ShareSnapshot);
+    ret.DirectoryPath = std::move(result.Value.DirectoryPath);
+    ret.Prefix = std::move(result.Value.Prefix);
+    ret.PageSizeHint = result.Value.PageSizeHint;
+    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
+    ret.DirectoryItems = std::move(result.Value.SinglePage.DirectoryItems);
+    ret.FileItems = std::move(result.Value.SinglePage.FileItems);
 
     return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
         std::move(ret), std::move(result.RawResponse));
@@ -326,8 +326,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::Directory::ListHandles(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ListDirectoryHandlesSinglePageResult ret;
-    ret.ContinuationToken = std::move(result->ContinuationToken);
-    ret.Handles = std::move(result->HandleList);
+    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
+    ret.Handles = std::move(result.Value.HandleList);
 
     return Azure::Response<Models::ListDirectoryHandlesSinglePageResult>(
         std::move(ret), std::move(result.RawResponse));

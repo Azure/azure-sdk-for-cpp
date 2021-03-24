@@ -250,7 +250,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(result.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(result.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = result.Value.Details.IsServerEncrypted;
-    return Azure::Response<Models::DownloadFileResult>(std::move(ret), std::move(result.RawResponse));
+    return Azure::Response<Models::DownloadFileResult>(
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(

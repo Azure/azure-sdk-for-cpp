@@ -14,15 +14,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
 
     auto response = m_fileClient->GetProperties();
-    if (!response->CopyStatus.HasValue())
+    if (!response.Value.CopyStatus.HasValue())
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Pending)
+    else if (response.Value.CopyStatus.GetValue() == Models::CopyStatusType::Pending)
     {
       m_status = Azure::Core::OperationStatus::Running;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Success)
+    else if (response.Value.CopyStatus.GetValue() == Models::CopyStatusType::Success)
     {
       m_status = Azure::Core::OperationStatus::Succeeded;
     }
@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    m_pollResult = *response;
+    m_pollResult = response.Value;
     return std::move(response.RawResponse);
   }
 

@@ -116,10 +116,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::Service::GetProperties(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
     Models::FileServiceProperties ret;
-    ret.Cors = std::move(result->Cors);
-    ret.HourMetrics = std::move(result->HourMetrics);
-    ret.MinuteMetrics = std::move(result->MinuteMetrics);
-    ret.Protocol = std::move(result->Protocol);
+    ret.Cors = std::move(result.Value.Cors);
+    ret.HourMetrics = std::move(result.Value.HourMetrics);
+    ret.MinuteMetrics = std::move(result.Value.MinuteMetrics);
+    ret.Protocol = std::move(result.Value.Protocol);
     return Azure::Response<Models::FileServiceProperties>(
         std::move(ret), std::move(result.RawResponse));
   }

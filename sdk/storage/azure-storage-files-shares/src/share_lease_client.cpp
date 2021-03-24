@@ -33,9 +33,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::AcquireLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
-      ret.LeaseId = std::move(response->LeaseId);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
+      ret.LeaseId = std::move(response.Value.LeaseId);
 
       return Azure::Response<Models::AcquireLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -53,9 +53,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::AcquireLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
-      ret.LeaseId = std::move(response->LeaseId);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
+      ret.LeaseId = std::move(response.Value.LeaseId);
 
       return Azure::Response<Models::AcquireLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -88,9 +88,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::RenewLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
-      ret.LeaseId = std::move(response->LeaseId);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
+      ret.LeaseId = std::move(response.Value.LeaseId);
 
       return Azure::Response<Models::RenewLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -118,8 +118,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::ReleaseLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
 
       return Azure::Response<Models::ReleaseLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -136,8 +136,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::ReleaseLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
 
       return Azure::Response<Models::ReleaseLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -167,9 +167,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::ChangeLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
-      ret.LeaseId = std::move(response->LeaseId);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
+      ret.LeaseId = std::move(response.Value.LeaseId);
 
       return Azure::Response<Models::ChangeLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -187,9 +187,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::ChangeLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
-      ret.LeaseId = std::move(response->LeaseId);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
+      ret.LeaseId = std::move(response.Value.LeaseId);
 
       return Azure::Response<Models::ChangeLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -216,8 +216,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::BreakLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
 
       return Azure::Response<Models::BreakLeaseResult>(
           std::move(ret), std::move(response.RawResponse));
@@ -233,8 +233,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           protocolLayerOptions);
 
       Models::BreakLeaseResult ret;
-      ret.ETag = std::move(response->ETag);
-      ret.LastModified = std::move(response->LastModified);
+      ret.ETag = std::move(response.Value.ETag);
+      ret.LastModified = std::move(response.Value.LastModified);
 
       return Azure::Response<Models::BreakLeaseResult>(
           std::move(ret), std::move(response.RawResponse));

@@ -146,8 +146,8 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : directoryClients)
       {
         auto newPath = RandomString();
-        EXPECT_NO_THROW(newDirectoryClients.emplace_back(
-            client.RenameSubdirectory("", newPath).Value));
+        EXPECT_NO_THROW(
+            newDirectoryClients.emplace_back(client.RenameSubdirectory("", newPath).Value));
       }
       for (const auto& client : directoryClients)
       {
@@ -177,8 +177,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response.Value.LastModified;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
+        EXPECT_NO_THROW(client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
       }
     }
     {
@@ -199,8 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfMatch = response.Value.ETag;
         auto newPath = RandomString();
-        EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
+        EXPECT_NO_THROW(client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
       }
     }
     {
@@ -234,8 +232,7 @@ namespace Azure { namespace Storage { namespace Test {
         for (auto& client : directoryClient)
         {
           auto newPath = RandomString();
-          EXPECT_NO_THROW(
-              client.RenameSubdirectory("", newPath, options).Value.DeleteEmpty());
+          EXPECT_NO_THROW(client.RenameSubdirectory("", newPath, options).Value.DeleteEmpty());
         }
       }
     }

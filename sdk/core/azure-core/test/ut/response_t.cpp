@@ -29,8 +29,8 @@ TEST(ResponseT, extractAndGet)
   rawResponse = std::move(response.RawResponse);
   // rawResponse is now valid again
   EXPECT_NE(nullptr, rawResponse);
-  // Can't get a ref from rawResponse since it was extracted
-  EXPECT_THROW(response.RawResponse, std::runtime_error);
+  // Can't get rawResponse again since it was moved
+  EXPECT_EQ(nullptr, response.RawResponse);
 
   // This is fine, we can keep extracting the rawReponse, only that the second time the it would be
   // a nullptr
@@ -53,7 +53,7 @@ TEST(ResponseT, value)
 
   // const Response
   std::string constFakeT("pretending this is the T");
-  Azure::Response<std::string> const constResponse(constFakeT, std::move(rawResponse));
+  Azure::Response<std::string> const constResponse(constFakeT, std::move(response.RawResponse));
   // Fetch Value from const Response
   EXPECT_EQ(constFakeT, constResponse.Value);
 }

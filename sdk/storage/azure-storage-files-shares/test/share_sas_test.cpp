@@ -45,7 +45,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = Files::Shares::ShareFileClient(fileUrl + sas);
       auto downloadedContent = fileClient.Download();
       EXPECT_EQ(
-          ReadBodyStream(downloadedContent.Value.BodyStream).size(), static_cast<std::size_t>(fileSize));
+          ReadBodyStream(downloadedContent.Value.BodyStream).size(),
+          static_cast<std::size_t>(fileSize));
     };
 
     auto verifyFileCreate = [&](const std::string& sas) {

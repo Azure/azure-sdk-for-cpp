@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string GetResumeToken() const override { return m_operationToken; }
 
-     std::string Value() const override
+    std::string Value() const override
     {
       if (m_status != OperationStatus::Succeeded)
       {

@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     /**************** Container sdk client ************************/
     /****************      list Blobs (one page) ******************/
     auto response = containerClient.ListBlobsSinglePage();
-    auto blobListPage = response.ExtractValue();
+    auto blobListPage = response.Value;
     for (auto blob : blobListPage.Items)
     {
       std::cout << blob.Name << std::endl;
