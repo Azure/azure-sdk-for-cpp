@@ -19,7 +19,8 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     std::lock_guard<std::mutex> lock(m_accessTokenMutex);
 
     // Refresh the token in 2 or less minutes before the actual expiration.
-    if (Azure::Core::_internal::SystemClock::Now() > (m_accessToken.ExpiresOn - std::chrono::minutes(2)))
+    if (Azure::Core::_internal::SystemClock::Now()
+        > (m_accessToken.ExpiresOn - std::chrono::minutes(2)))
     {
       m_accessToken = m_credential->GetToken(m_tokenRequestContext, context);
     }
