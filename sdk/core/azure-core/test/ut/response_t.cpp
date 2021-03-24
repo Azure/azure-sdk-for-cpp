@@ -24,7 +24,7 @@ TEST(ResponseT, extractAndGet)
   // rawResponse moved to Response<T>
   EXPECT_EQ(nullptr, rawResponse);
   // This is fine because the rawResponse is still in the Response<T>
-  EXPECT_NO_THROW(response.RawResponse);
+  EXPECT_NO_THROW(response.RawResponse->GetStatusCode());
 
   rawResponse = std::move(response.RawResponse);
   // rawResponse is now valid again
