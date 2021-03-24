@@ -12,6 +12,7 @@
 
 #include <azure/core/internal/http/test_transport.hpp>
 #include <azure/core/internal/system_clock.hpp>
+#include <azure/core/io/body_stream.hpp>
 
 #include <gtest/gtest.h>
 
@@ -42,6 +43,7 @@ CredentialResult TestClientSecretCredential(
 {
   CredentialResult result;
 
+  auto responseVec = std::vector<uint8_t>(responseBody.begin(), responseBody.end());
   credentialOptions.Transport.Transport
       = std::make_shared<Azure::Core::Http::_internal::TestTransport>([&](auto request, auto) {
           auto const bodyVec = request.GetBodyStream()->ReadToEnd(Azure::Core::Context());
@@ -54,26 +56,17 @@ CredentialResult TestClientSecretCredential(
           auto response = std::make_unique<Azure::Core::Http::RawResponse>(
               1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
-          response->SetBody(std::vector<uint8_t>(responseBody.begin(), responseBody.end()));
+          response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseVec));
 
           return response;
         });
 
   ClientSecretCredential credential(tenantId, clientId, clientSecret, credentialOptions);
 
-  try
-  {
-    Azure::Core::_internal::SystemClock::Override(
-        [=]() { return static_cast<std::chrono::system_clock::time_point>(clockOverride); });
+  Azure::Core::_internal::SystemClock overriddenSystemClock(
+      [=]() { return static_cast<std::chrono::system_clock::time_point>(clockOverride); });
 
-    result.Response = credential.GetToken(tokenRequestContext, Azure::Core::Context());
-
-    Azure::Core::_internal::SystemClock::Override(nullptr);
-  }
-  catch (...)
-  {
-    Azure::Core::_internal::SystemClock::Override(nullptr);
-  }
+  result.Response = credential.GetToken(tokenRequestContext, Azure::Core::Context());
 
   return result;
 }
@@ -82,7 +75,7 @@ CredentialResult TestClientSecretCredential(
 TEST(ClientSecretCredential, Regular)
 {
   ClientSecretCredentialOptions options;
-  options.AuthorityHost = "https://autority.url/";
+  options.AuthorityHost = "https://authority.url/";
   auto const actual = TestClientSecretCredential(
       "01234567-89ab-cdef-fedc-ba8976543210",
       "fedcba98-7654-3210-0123-456789abcdef",
@@ -97,29 +90,30 @@ TEST(ClientSecretCredential, Regular)
       "https://authority.url/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
-    auto const expectedBody = "grant_type=client_credentials"
-                              "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-                              "&client_secret=CLIENTSECRET"
-                              "&scope=https%3A%2F%2Fresource.url%2F.default";
+    constexpr char expectedBody[] = "grant_type=client_credentials"
+                                    "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+                                    "&client_secret=CLIENTSECRET"
+                                    "&scope=https%3A%2F%2Fresource.url%2F.default";
 
     EXPECT_EQ(actual.Request.Body, expectedBody);
 
+    EXPECT_NE(actual.Request.Headers.find("Content-Length"), actual.Request.Headers.end());
     EXPECT_EQ(
-        actual.Request.Headers,
-        Azure::Core::CaseInsensitiveMap({
-            {"Content-Type", "application/x-www-form-urlencoded"},
-            {"Content-Length", std::to_string(sizeof(expectedBody) - 1)},
-        }));
+        actual.Request.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
   }
+
+  EXPECT_NE(actual.Request.Headers.find("Content-Type"), actual.Request.Headers.end());
+  EXPECT_EQ(actual.Request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_EQ(actual.Response.Token, "ACCESSTOKEN1");
   EXPECT_EQ(actual.Response.ExpiresOn, Azure::DateTime(2021, 1, 1, 1));
+  EXPECT_EQ(actual.Response.ExpiresOn.ToString(), Azure::DateTime(2021, 1, 1, 1).ToString());
 }
 
 TEST(ClientSecretCredential, AzureStack)
 {
   ClientSecretCredentialOptions options;
-  options.AuthorityHost = "https://autority.url/";
+  options.AuthorityHost = "https://authority.url/";
   auto const actual = TestClientSecretCredential(
       "adfs",
       "fedcba98-7654-3210-0123-456789abcdef",
@@ -132,21 +126,23 @@ TEST(ClientSecretCredential, AzureStack)
   EXPECT_EQ(actual.Request.AbsoluteUrl, "https://authority.url/adfs/oauth2/token");
 
   {
-    auto const expectedBody = "grant_type=client_credentials"
-                              "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-                              "&client_secret=CLIENTSECRET"
-                              "&scope=https%3A%2F%2Fresource.url";
+    constexpr char expectedBody[] = "grant_type=client_credentials"
+                                    "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+                                    "&client_secret=CLIENTSECRET"
+                                    "&scope=https%3A%2F%2Fresource.url";
 
     EXPECT_EQ(actual.Request.Body, expectedBody);
 
+    EXPECT_NE(actual.Request.Headers.find("Content-Length"), actual.Request.Headers.end());
     EXPECT_EQ(
-        actual.Request.Headers,
-        Azure::Core::CaseInsensitiveMap({
-            {"Content-Type", "application/x-www-form-urlencoded"},
-            {"Content-Length", std::to_string(sizeof(expectedBody) - 1)},
-            {"Host", "autority.url"},
-        }));
+        actual.Request.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
   }
+
+  EXPECT_NE(actual.Request.Headers.find("Content-Type"), actual.Request.Headers.end());
+  EXPECT_EQ(actual.Request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_NE(actual.Request.Headers.find("Host"), actual.Request.Headers.end());
+  EXPECT_EQ(actual.Request.Headers.at("Host"), "authority.url");
 
   EXPECT_EQ(actual.Response.Token, "ACCESSTOKEN1");
   EXPECT_EQ(actual.Response.ExpiresOn, Azure::DateTime(2021, 1, 1, 1));

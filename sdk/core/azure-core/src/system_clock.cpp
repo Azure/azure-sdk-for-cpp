@@ -12,16 +12,16 @@ std::atomic<bool> SystemClock::g_isOverridden(false);
 
 namespace {
 std::shared_timed_mutex g_mutex;
-std::function<std::chrono::system_clock::time_point()> g_now(nullptr);
+SystemClock::NowCallback g_now(nullptr);
 } // namespace
 
-std::chrono::system_clock::time_point SystemClock::OverriddenNow()
+SystemClock::NowCallback::result_type SystemClock::OverriddenNow()
 {
   std::shared_lock<std::shared_timed_mutex> lock(g_mutex);
   return g_now();
 }
 
-void SystemClock::Override(std::function<std::chrono::system_clock::time_point()> now)
+void SystemClock::Override(SystemClock::NowCallback now)
 {
   std::unique_lock<std::shared_timed_mutex> lock(g_mutex);
   g_now = now;

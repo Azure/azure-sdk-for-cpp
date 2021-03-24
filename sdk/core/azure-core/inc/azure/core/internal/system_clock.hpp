@@ -12,19 +12,23 @@
 
 namespace Azure { namespace Core { namespace _internal {
   class SystemClock {
-    SystemClock() = delete;
-    ~SystemClock() = delete;
+  public:
+    typedef std::function<std::chrono::system_clock::time_point()> NowCallback;
 
+  private:
     static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
     static AZ_CORE_DLLEXPORT std::atomic<bool> g_isOverridden;
-    static std::chrono::system_clock::time_point OverriddenNow();
+    static NowCallback::result_type OverriddenNow();
+
+    static void Override(NowCallback now);
 
   public:
+    SystemClock(NowCallback now) { Override(now); }
+    ~SystemClock() { Override(nullptr); }
+
     static std::chrono::system_clock::time_point Now()
     {
       return g_isOverridden ? OverriddenNow() : std::chrono::system_clock::now();
     }
-
-    static void Override(std::function<std::chrono::system_clock::time_point()> now);
   };
 }}} // namespace Azure::Core::_internal
