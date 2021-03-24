@@ -3,7 +3,8 @@
 
 /**
  * @file
- * @brief Wraps raw HTTP response into a response of a specific type.
+ * @brief Wraps the raw HTTP response from a request made to the service into a response of a
+ * specific type.
  */
 
 #pragma once
@@ -16,26 +17,30 @@
 
 namespace Azure {
 /**
- * @brief Wraps raw HTTP response into a response of a specific type.
+ * @brief Represents the result of an Azure operation over HTTP by wrapping the raw HTTP response
+ * from a request made to the service into a response of a specific type.
  *
- * @tparam T A specific type of value to get from the raw HTTP response type.
+ * @tparam T A specific type of value to get from the raw HTTP response.
  */
 template <class T> class Response {
 
 public:
-  Azure::Core::Http::HttpStatusCode StatusCode;
+  /// The value returned by the service.
   T Value;
+  /// The HTTP status code returned by the service as part of the response.
+  Azure::Core::Http::HttpStatusCode StatusCode;
+  /// The HTTP response returned by the service.
   std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
   /**
-   * @brief Initialize a #Azure::Core::Response<T> with an initial value.
+   * @brief Initialize an #Azure::Response<T> with the value and raw response returned by the
+   * service.
    *
-   * @param initialValue Initial value.
-   * @param rawResponse Raw HTTP response.
+   * @param value The value returned by the service.
+   * @param rawResponse The HTTP response returned by the service.
    */
-  // Require a raw response to create a Response T
-  explicit Response(T initialValue, std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
-      : StatusCode(rawResponse->GetStatusCode()), Value(std::move(initialValue)),
+  explicit Response(T value, std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
+      : Value(std::move(value)), StatusCode(rawResponse->GetStatusCode()),
         RawResponse(std::move(rawResponse))
   {
   }
