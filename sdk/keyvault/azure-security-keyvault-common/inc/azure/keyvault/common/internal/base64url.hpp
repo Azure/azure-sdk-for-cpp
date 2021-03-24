@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
    */
   struct Base64url
   {
-    static std::string Base64UrlEncode(const std::vector<uint8_t>& data)
+    static inline std::string Base64UrlEncode(const std::vector<uint8_t>& data)
     {
       auto base64 = Azure::Core::Convert::Base64Encode(data);
       // update to base64url
@@ -33,7 +33,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
       std::replace(base64.begin(), base64.end(), '/', '_');
       return base64;
     }
-    static std::vector<uint8_t> Base64UrlDecode(const std::string& text)
+
+    static inline std::vector<uint8_t> Base64UrlDecode(const std::string& text)
     {
       std::string base64url(text);
       // base64url to base64

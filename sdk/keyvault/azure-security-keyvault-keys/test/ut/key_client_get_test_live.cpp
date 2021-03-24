@@ -21,8 +21,10 @@ TEST_F(KeyVaultClientTest, GetKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   // Assuming and RS Key exists in the KeyVault Account.
-  std::string keyName("testKey");
+  std::string keyName(GetUniqueName());
 
+  auto createKeyResponse = keyClient.CreateEcKey(CreateEcKeyOptions(keyName));
+  CheckValidResponse(createKeyResponse);
   auto keyResponse = keyClient.GetKey(keyName);
   CheckValidResponse(keyResponse);
   auto key = keyResponse.ExtractValue();
