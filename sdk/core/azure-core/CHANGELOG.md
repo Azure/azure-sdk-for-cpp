@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.8 (Unreleased)
 
+### Breaking Changes
+
+- Simplified the `Response<T>` API surface to only have two public fields: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 
