@@ -102,7 +102,7 @@
 
 - Removed `c_` for constants and renamed to pascal format.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 

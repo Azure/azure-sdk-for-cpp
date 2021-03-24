@@ -81,7 +81,7 @@
 - Removed `BlobPrefix` struct, use `std::string` instead.
 - Refined `BlobContainerItem`, `BlobItem`, `DownloadBlobResult` and `DownloadBlobToResult`.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 
