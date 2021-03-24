@@ -43,10 +43,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Response<T>& response,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok)
     {
-      auto rawResponse = std::move(response.RawResponse);
+      auto const& rawResponse = response.RawResponse;
       EXPECT_EQ(
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-              rawResponse->GetStatusCode()),
+              rawResponse.GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
     }
