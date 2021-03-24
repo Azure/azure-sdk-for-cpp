@@ -98,7 +98,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
           Azure::Core::Http::RawResponse const& rawResponse);
 
       // Create from json node directly. Used from listKeys
-      static void KeyVaultKeyDeserialize(KeyVaultKey& key, Azure::Core::Json::_internal::json const& json);
+      static void KeyVaultKeyDeserialize(
+          KeyVaultKey& key,
+          Azure::Core::Json::_internal::json const& json);
 
       void static inline ParseKeyUrl(KeyProperties& keyProperties, std::string const& url)
       {

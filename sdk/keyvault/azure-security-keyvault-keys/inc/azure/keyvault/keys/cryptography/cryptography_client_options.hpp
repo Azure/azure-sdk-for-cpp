@@ -13,20 +13,25 @@
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
+namespace Azure {
+  namespace Security {
+    namespace KeyVault {
+      namespace Keys {
+        namespace Cryptography {
 
   /**
    * @brief Define the options to create an SDK Keys client.
    *
    */
-  struct KeyClientOptions : public Azure::Security::KeyVault::Common::ClientOptions
+  struct CryptographyClientOptions : public Azure::Security::KeyVault::Common::ClientOptions
   {
+
     /**
      * @brief Construct a new Key Client Options object.
      *
      * @param version Optional version for the client.
      */
-    KeyClientOptions(
+    CryptographyClientOptions(
         Azure::Security::KeyVault::Common::ServiceVersion version
         = Azure::Security::KeyVault::Common::ServiceVersion::V7_2)
         : ClientOptions(version)
@@ -34,4 +39,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     }
   };
 
-}}}} // namespace Azure::Security::KeyVault::Keys
+}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
