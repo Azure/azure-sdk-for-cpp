@@ -11,9 +11,9 @@ param (
     [ValidateNotNullOrEmpty()]
     [string] $VcpkgPortName,
 
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [string] $GitCommitParameters
+    [string] $GitCommitParameters,
+
+    [switch] $TestRelease
 )
 
 ."$PSScriptRoot/../common/scripts/common.ps1"
@@ -77,8 +77,14 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "./vcpkg.exe x-add-version $VcpkgPortName"
-./vcpkg.exe x-add-version $VcpkgPortName
+$addVersionAdditionalParameters = if ($TestRelease) { 
+    '--overwrite-version'
+} else { 
+    ''
+}
+
+Write-Host "./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters"
+./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters
 
 if ($LASTEXITCODE -ne 0) { 
     Write-Error "Failed to run vcpkg x-add-version $VcpkgPortName"
@@ -146,5 +152,10 @@ Name of the vcpkg port (e.g. azure-template-cpp)
 Additional parameters to supply to the `git commit` command. These are useful
 in the context of Azure DevOps where the git client does not have a configured
 user.name and user.email.
+
+.PARAMETER TestRelease
+In the case of a test release set this to ensure that the x-add-version step
+includes `--overwrite-version` to ensure nightly packages are properly updated
+in the vcpkg repo.
 
 #>
