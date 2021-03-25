@@ -12,7 +12,7 @@ namespace {
 // server.
 inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawResponse const& response)
 {
-  auto code = response.GetStatusCode();
+  auto const code = response.GetStatusCode();
   switch (code)
   {
     case Azure::Core::Http::HttpStatusCode::Ok:

@@ -52,7 +52,9 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Properties.RecoverableDays,
       payload[_detail::AttributesPropertyName],
       _detail::RecoverableDaysPropertyName);
+
   payload[_detail::RecoveryLevelPropertyName] = importKeyOptions.Properties.RecoveryLevel;
+
   SetFromNullable<Azure::DateTime, uint64_t>(
       importKeyOptions.Properties.UpdatedOn,
       payload[_detail::AttributesPropertyName],

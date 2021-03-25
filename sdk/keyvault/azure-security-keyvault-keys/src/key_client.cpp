@@ -327,7 +327,7 @@ Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::KeyBackup::Deserialize(rawResponse);
       },
-      {_detail::KeysPath, name, "/backup"});
+      {_detail::KeysPath, name, "backup"});
 
   // Convert the internal KeyBackup model to a raw vector<uint8_t>.
   return Azure::Response<std::vector<uint8_t>>(

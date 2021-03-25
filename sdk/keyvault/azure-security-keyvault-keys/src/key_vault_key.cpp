@@ -49,7 +49,7 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  auto& body = rawResponse.GetBody();
+  auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
   _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(key, jsonParser);
 }
