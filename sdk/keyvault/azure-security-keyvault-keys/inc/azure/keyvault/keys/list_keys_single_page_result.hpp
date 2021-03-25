@@ -19,17 +19,17 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  struct GetSinglePage
+  struct SinglePage
   {
     Azure::Nullable<std::string> ContinuationToken;
   };
 
-  struct KeyPropertiesSinglePage : public GetSinglePage
+  struct KeyPropertiesSinglePage : public SinglePage
   {
     std::vector<KeyProperties> Items;
   };
 
-  struct DeletedKeySinglePage : public GetSinglePage
+  struct DeletedKeySinglePage : public SinglePage
   {
     std::vector<DeletedKey> Items;
   };
