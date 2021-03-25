@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace _internal {
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-    }
+      }
 #endif
     };
 }}} // namespace Azure::Core::_internal
