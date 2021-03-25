@@ -47,7 +47,6 @@ set(
     ${WIN_TRANSPORT_ADAPTER_INC}
     inc/azure/core/credentials/credentials.hpp
     inc/azure/core/cryptography/hash.hpp
-    inc/azure/core/cryptography/key_encryption_key.hpp
     inc/azure/core/diagnostics/logger.hpp
     inc/azure/core/http/http.hpp
     inc/azure/core/http/policies/policy.hpp

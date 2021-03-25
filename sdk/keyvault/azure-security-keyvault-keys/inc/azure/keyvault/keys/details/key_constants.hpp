@@ -79,4 +79,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /***************** Import Key  *****************/
   constexpr static const char HsmPropertyName[] = "hsm";
 
+  /***************** Encryption Algorithm *********/
+  constexpr static const char Rsa15Value[] = "RSA1_5";
+  constexpr static const char RsaOaepValue[] = "RSA-OAEP";
+  constexpr static const char RsaOaep256Value[] = "RSA-OAEP-256";
+  constexpr static const char A128GcmValue[] = "A128GCM";
+  constexpr static const char A192GcmValue[] = "A192GCM";
+  constexpr static const char A256GcmValue[] = "A256GCM";
+  constexpr static const char A128CbcValue[] = "A128CBC";
+  constexpr static const char A192CbcValue[] = "A192CBC";
+  constexpr static const char A256CbcValue[] = "A256CBC";
+  constexpr static const char A128CbcPadValue[] = "A128CBCPAD";
+  constexpr static const char A192CbcPadValue[] = "A192CBCPAD";
+  constexpr static const char A256CbcPadValue[] = "A256CBCPAD";
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

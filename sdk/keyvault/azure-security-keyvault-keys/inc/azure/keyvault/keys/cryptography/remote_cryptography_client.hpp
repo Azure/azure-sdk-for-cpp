@@ -9,11 +9,15 @@
 
 #pragma once
 
-#include <azure/keyvault/keys/cryptography/cryptography_provider.hpp>
+#include <azure/core/response.hpp>
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
+#include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 
 #include <functional>
 #include <list>
@@ -26,8 +30,7 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    class RemoteCryptographyClient
-        : public Azure::Security::KeyVault::Keys::Cryptography::ICryptographyProvider {
+    class RemoteCryptographyClient {
     private:
       std::string m_keyId;
       std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
@@ -45,6 +48,14 @@ namespace Azure {
           std::string const& keyId,
           std::shared_ptr<Core::Credentials::TokenCredential const> credential,
           CryptographyClientOptions options = CryptographyClientOptions());
+
+      Azure::Response<EncryptResult> Encrypt(
+          EncryptParameters parameters,
+          Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+      Azure::Response<DecryptResult> Decrypt(
+          DecryptParameters parameters,
+          Azure::Core::Context const& context = Azure::Core::Context()) const;
     };
 
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

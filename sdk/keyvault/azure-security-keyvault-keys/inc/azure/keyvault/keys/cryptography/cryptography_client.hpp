@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include <azure/core/cryptography/key_encryption_key.hpp>
-
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
@@ -27,7 +25,7 @@ namespace Azure {
       namespace Keys {
         namespace Cryptography {
 
-  class CryptographyClient : public Azure::Core::Cryptography::IKeyEncryptionKey {
+  class CryptographyClient {
   private:
     std::string m_keyId;
     std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
@@ -48,6 +46,21 @@ namespace Azure {
         std::string const& keyId,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         CryptographyClientOptions options = CryptographyClientOptions());
+
+    /**
+     * @brief Encrypts the specified plaintext.
+     * 
+     * @param parameters An #EncryptParameters containing the data to encrypt and other parameters for algorithm-dependent encryption.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<EncryptResult> 
+     */
+    Azure::Response<EncryptResult> Encrypt(
+        EncryptParameters parameters,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<DecryptResult> Decrypt(
+        DecryptParameters parameters,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

@@ -6,12 +6,15 @@
 #include <azure/core/http/policies/policy.hpp>
 
 #include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
 using namespace Azure::Security::KeyVault::Keys::Cryptography::_detail;
+using namespace Azure::Security::KeyVault::Keys;
+using namespace Azure::Security::KeyVault::Keys::Cryptography;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 
@@ -36,4 +39,32 @@ RemoteCryptographyClient::RemoteCryptographyClient(
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
           options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
+}
+
+Azure::Response<EncryptResult> RemoteCryptographyClient::Encrypt(
+    EncryptParameters parameters,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<EncryptResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&parameters]() { return std::string(""); },
+      [&parameters](Azure::Core::Http::RawResponse const&) {
+        return EncryptResult(parameters.Algorithm);
+      },
+      {"encrypt"});
+}
+
+Azure::Response<DecryptResult> RemoteCryptographyClient::Decrypt(
+    DecryptParameters parameters,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<DecryptResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&parameters]() { return std::string(""); },
+      [&parameters](Azure::Core::Http::RawResponse const&) {
+        return DecryptResult(parameters.Algorithm);
+      },
+      {"decrypt"});
 }

@@ -10,7 +10,9 @@
 #include <azure/core/context.hpp>
 
 #include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 
 #pragma once
@@ -27,17 +29,17 @@ namespace Azure {
    */
   struct ICryptographyProvider
   {
-    virtual bool CanRemote() = 0;
+    virtual bool CanRemote() const = 0;
 
-    virtual bool SupportsOperation(KeyOperation const& operation) = 0;
+    virtual bool SupportsOperation(KeyOperation const& operation) const = 0;
 
-    // EncryptResult Encrypt(
-    //     EncryptParameters parameters,
-    //     Azure::Core::Context const& context = Azure::Core::Context()) = 0;
+    virtual EncryptResult Encrypt(
+        EncryptParameters parameters,
+        Azure::Core::Context const& context = Azure::Core::Context()) const = 0;
 
-    // DecryptResult Decrypt(
-    //     DecryptParameters parameters,
-    //     Azure::Core::Context const& context = Azure::Core::Context()) = 0;
+    virtual DecryptResult Decrypt(
+        DecryptParameters parameters,
+        Azure::Core::Context const& context = Azure::Core::Context()) const = 0;
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
