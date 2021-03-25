@@ -187,7 +187,7 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
 
     return {
         std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        Azure::Core::_internal::SystemClock::Now() + std::chrono::seconds(expiresInSeconds),
+        Core::_internal::SystemClock::Now() + std::chrono::seconds(expiresInSeconds),
     };
   }
   catch (AuthenticationException const&)

@@ -9,16 +9,25 @@
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/internal/client_options.hpp>
 
 #include <memory>
 
 namespace Azure { namespace Identity {
 
   /**
+   * @brief Defines options for #Azure::Identity::EnvironmentCredential.
+   */
+  struct EnvironmentCredentialOptions : public Azure::Core::_internal::ClientOptions
+  {
+  };
+
+  /**
    * @brief An environment credential.
    */
   class EnvironmentCredential : public Core::Credentials::TokenCredential {
     std::unique_ptr<TokenCredential> m_credentialImpl;
+    EnvironmentCredentialOptions m_options;
 
   public:
     /**
@@ -32,7 +41,8 @@ namespace Azure { namespace Identity {
      * - AZURE_USERNAME
      * - AZURE_PASSWORD
      */
-    explicit EnvironmentCredential();
+    explicit EnvironmentCredential(
+        EnvironmentCredentialOptions options = EnvironmentCredentialOptions());
 
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,

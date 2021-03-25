@@ -76,6 +76,7 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
 endif()
 
 if(BUILD_TESTING)
+  add_compile_definitions(AZ_BUILD_TESTING)
   include(AddGoogleTest)
   enable_testing ()  
 endif()

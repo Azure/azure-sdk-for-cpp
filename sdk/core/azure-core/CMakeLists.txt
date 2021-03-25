@@ -60,6 +60,7 @@ set(
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/json/json.hpp
+    inc/azure/core/internal/environment.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/internal/system_clock.hpp
     inc/azure/core/io/body_stream.hpp
@@ -103,6 +104,7 @@ set(
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/environment.cpp
     src/environment_log_level_listener.cpp
     src/environment_log_level_listener_private.hpp
     src/logger.cpp

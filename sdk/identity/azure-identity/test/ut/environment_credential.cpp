@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/identity/environment_credential.hpp"
 
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/http/test_transport.hpp>
 #include <azure/core/internal/system_clock.hpp>
 #include <azure/core/io/body_stream.hpp>
@@ -25,11 +26,15 @@ struct CredentialResult
   Azure::Core::Credentials::AccessToken Response;
 };
 
-CredentialResult TestClientSecretCredential(
+CredentialResult TestEnvironmentCredential(
     std::string const& tenantId,
     std::string const& clientId,
     std::string const& clientSecret,
-    ClientSecretCredentialOptions credentialOptions,
+    std::string const& authorityHost,
+    std::string const& username,
+    std::string const& password,
+    std::string const& clientCertificatePath,
+    EnvironmentCredentialOptions credentialOptions,
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::DateTime const& clockOverride,
     std::string const& responseBody)
@@ -54,7 +59,46 @@ CredentialResult TestClientSecretCredential(
           return response;
         });
 
-  ClientSecretCredential credential(tenantId, clientId, clientSecret, credentialOptions);
+  std::map<std::string, std::string> env;
+  if (!tenantId.empty())
+  {
+    env["AZURE_TENANT_ID"] = tenantId;
+  }
+
+  if (!clientId.empty())
+  {
+    env["AZURE_CLIENT_ID"] = clientId;
+  }
+
+  if (!clientSecret.empty())
+  {
+    env["AZURE_CLIENT_SECRET"] = clientSecret;
+  }
+
+  if (!authorityHost.empty())
+  {
+    env["AZURE_AUTHORITY_HOST"] = authorityHost;
+  }
+
+  if (!username.empty())
+  {
+    env["AZURE_USERNAME"] = username;
+  }
+
+  if (!password.empty())
+  {
+    env["AZURE_PASSWORD"] = password;
+  }
+
+  if (!clientCertificatePath.empty())
+  {
+    env["AZURE_CLIENT_CERTIFICATE_PATH"] = clientCertificatePath;
+  }
+
+  Azure::Core::_internal::Environment overriddenEnvironment(
+      [&](auto varName) { return env.at(varName).c_str(); });
+
+  EnvironmentCredential credential(credentialOptions);
 
   Azure::Core::_internal::SystemClock overriddenSystemClock(
       [&]() { return static_cast<std::chrono::system_clock::time_point>(clockOverride); });
@@ -65,15 +109,17 @@ CredentialResult TestClientSecretCredential(
 }
 } // namespace
 
-TEST(ClientSecretCredential, Regular)
+TEST(EnvironmentCredential, RegularClientSecretCredential)
 {
-  ClientSecretCredentialOptions options;
-  options.AuthorityHost = "https://microsoft.com/";
-  auto const actual = TestClientSecretCredential(
+  auto const actual = TestEnvironmentCredential(
       "01234567-89ab-cdef-fedc-ba8976543210",
       "fedcba98-7654-3210-0123-456789abcdef",
       "CLIENTSECRET",
-      options,
+      "https://microsoft.com/",
+      "",
+      "",
+      "",
+      EnvironmentCredentialOptions(),
       {{"https://azure.com/.default"}},
       Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
@@ -103,15 +149,17 @@ TEST(ClientSecretCredential, Regular)
   EXPECT_EQ(actual.Response.ExpiresOn.ToString(), Azure::DateTime(2021, 1, 1, 1).ToString());
 }
 
-TEST(ClientSecretCredential, AzureStack)
+TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 {
-  ClientSecretCredentialOptions options;
-  options.AuthorityHost = "https://microsoft.com/";
-  auto const actual = TestClientSecretCredential(
+  auto const actual = TestEnvironmentCredential(
       "adfs",
       "fedcba98-7654-3210-0123-456789abcdef",
       "CLIENTSECRET",
-      options,
+      "https://microsoft.com/",
+      "",
+      "",
+      "",
+      EnvironmentCredentialOptions(),
       {{"https://azure.com/.default"}},
       Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");

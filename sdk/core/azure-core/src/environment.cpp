@@ -3,30 +3,30 @@
 
 #if defined(AZ_BUILD_TESTING)
 
-#include "azure/core/internal/system_clock.hpp"
+#include "azure/core/internal/environment.hpp"
 
 #include <mutex>
 #include <shared_mutex>
 
 using namespace Azure::Core::_internal;
 
-std::atomic<bool> SystemClock::g_isOverridden(false);
+std::atomic<bool> Environment::g_isOverridden(false);
 
 namespace {
 std::shared_timed_mutex g_mutex;
-SystemClock::NowCallback g_now(nullptr);
+Environment::GetEnvCallback g_getEnv(nullptr);
 } // namespace
 
-SystemClock::NowCallback::result_type SystemClock::OverriddenNow()
+Environment::GetEnvCallback::result_type Environment::OverriddenGetEnv(char const* varName)
 {
   std::shared_lock<std::shared_timed_mutex> lock(g_mutex);
-  return g_now();
+  return g_getEnv(varName);
 }
 
-void SystemClock::Override(SystemClock::NowCallback now)
+void Environment::Override(Environment::GetEnvCallback now)
 {
   std::unique_lock<std::shared_timed_mutex> lock(g_mutex);
-  g_now = now;
+  g_getEnv = now;
   g_isOverridden = now != nullptr;
 }
 

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#if defined(AZ_BUILD_TESTING)
+
 #include <functional>
 
 #include "azure/core/http/transport.hpp"
@@ -25,3 +27,5 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     }
   };
 }}}} // namespace Azure::Core::Http::_internal
+
+#endif

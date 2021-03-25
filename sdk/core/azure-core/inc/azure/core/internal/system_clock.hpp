@@ -12,6 +12,7 @@
 
 namespace Azure { namespace Core { namespace _internal {
   class SystemClock {
+#if defined(AZ_BUILD_TESTING)
   public:
     typedef std::function<std::chrono::system_clock::time_point()> NowCallback;
 
@@ -30,5 +31,9 @@ namespace Azure { namespace Core { namespace _internal {
     {
       return g_isOverridden ? OverriddenNow() : std::chrono::system_clock::now();
     }
+#else
+  public:
+    static std::chrono::system_clock::time_point Now() { return std::chrono::system_clock::now(); }
+#endif
   };
 }}} // namespace Azure::Core::_internal
