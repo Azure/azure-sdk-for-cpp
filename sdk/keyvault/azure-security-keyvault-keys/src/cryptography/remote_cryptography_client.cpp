@@ -5,20 +5,20 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-#include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
+#include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-using namespace Azure::Security::KeyVault::Keys::Cryptography;
+using namespace Azure::Security::KeyVault::Keys::Cryptography::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 
-CryptographyClient::CryptographyClient(
+RemoteCryptographyClient::RemoteCryptographyClient(
     std::string const& keyId,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    CryptographyClientOptions options) : m_keyId(keyId)
+    CryptographyClientOptions options)
 {
   auto apiVersion = options.GetVersionString();
 

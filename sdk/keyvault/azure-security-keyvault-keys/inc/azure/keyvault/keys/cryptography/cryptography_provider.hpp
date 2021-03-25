@@ -31,13 +31,13 @@ namespace Azure {
 
     virtual bool SupportsOperation(KeyOperation const& operation) = 0;
 
-    EncryptResult Encrypt(
-        EncryptParameters parameters,
-        Azure::Core::Context const& context = Azure::Core::Context());
+    // EncryptResult Encrypt(
+    //     EncryptParameters parameters,
+    //     Azure::Core::Context const& context = Azure::Core::Context()) = 0;
 
-    DecryptResult Decrypt(
-        DecryptParameters parameters,
-        Azure::Core::Context const& context = Azure::Core::Context());
+    // DecryptResult Decrypt(
+    //     DecryptParameters parameters,
+    //     Azure::Core::Context const& context = Azure::Core::Context()) = 0;
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

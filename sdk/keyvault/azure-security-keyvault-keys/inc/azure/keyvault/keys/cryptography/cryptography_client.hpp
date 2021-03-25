@@ -13,10 +13,12 @@
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
-#include "azure/keyvault/keys/Cryptography/cryptography_client_options.hpp"
+#include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
+#include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
 
 #include <functional>
 #include <list>
+#include <memory>
 #include <vector>
 
 namespace Azure {
@@ -29,6 +31,9 @@ namespace Azure {
   private:
     std::string m_keyId;
     std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
+    std::unique_ptr<
+        Azure::Security::KeyVault::Keys::Cryptography::_detail::RemoteCryptographyClient>
+        m_remoteProvider;
 
   public:
     /**
@@ -36,14 +41,13 @@ namespace Azure {
      *
      * @param keyId The key identifier of the #KeyVaultKey which will be used for cryptographic
      * operations.
-     * @param credential
-     * @param options
+     * @param credential The authentication method to use.
+     * @param options The options to customize the client behavior.
      */
     explicit CryptographyClient(
         std::string const& keyId,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        CryptographyClientOptions options = CryptographyClientOptions())
-        : m_keyId(keyId);
+        CryptographyClientOptions options = CryptographyClientOptions());
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
