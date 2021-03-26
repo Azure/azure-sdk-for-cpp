@@ -45,6 +45,12 @@ std::string KeyRequestParameters::Serialize() const
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
 
+  SetFromNullable<Azure::DateTime, uint64_t>(
+      m_options.NotBefore,
+      payload[_detail::AttributesPropertyName],
+      _detail::NbfPropertyName,
+      UnixTimeConverter::DatetimeToUnixTime);
+
   // tags
   for (auto tag : m_options.Tags)
   {

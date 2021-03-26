@@ -3,18 +3,13 @@
 
 /**
  * @brief The next sample provides the code implementation to use the Key Vault SDK client for C++
- * to create a key client and get a key from Key Vault service.
+ * to create, get, update, delete and purge a key.
  *
  * @remark Make sure to set the next environment variables before running the sample.
- * - AZURE_KEYVAULT_URL:           To the KeyVault account url.
+ * - AZURE_KEYVAULT_URL:  To the KeyVault account url.
  * - AZURE_TENANT_ID:     Tenant id for the Azure account.
  * - AZURE_CLIENT_ID:     The client id to authenticate the request.
  * - AZURE_CLIENT_SECRET: The secret id from the client id.
- *
- * Also, make sure the key is already created. Then set the key name as `KEY_VAULT_KEY_NAME` before
- * the main() method below.
- *
- * @remark The sample has logging enabled and will log the HTTP response into the standard output.
  *
  */
 
