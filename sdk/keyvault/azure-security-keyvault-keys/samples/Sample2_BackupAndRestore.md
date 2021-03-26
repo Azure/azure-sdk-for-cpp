@@ -51,15 +51,14 @@ std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).ExtractValue());
 
 If the key is deleted for any reason, we can use the backup value to restore it in the Azure Key Vault.
 
-```C# Snippet:KeysSample2RestoreKey
-KeyVaultKey restoredKey = client.RestoreKeyBackup(memoryStream.ToArray());
+```cpp Snippet:KeysSample2RestoreKey
+auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
 ```
 
 ## Source
 
 To see the full example source, see:
 
-* [Synchronous Sample2_BackupAndRestore.cs](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/tests/samples/Sample2_BackupAndRestore.cs)
-* [Asynchronous Sample2_BackupAndRestore.cs](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/tests/samples/Sample2_BackupAndRestoreAsync.cs)
+- sample-2-backup-and-restore
 
-[DefaultAzureCredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md

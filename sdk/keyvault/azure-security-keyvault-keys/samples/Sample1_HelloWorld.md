@@ -89,12 +89,7 @@ the deleted key needs to be purged. Before it can be purged, you need to wait un
 
 ```cpp Snippet:KeysSample1PurgeKey
 // You only need to wait for completion if you want to purge or recover the key.
-while (!operation.IsDone())
-{
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-    operation.Poll();
-}
+operation.PollUntilDone(std::chrono::milliseconds(2000));
 
 keyClient.PurgeDeletedKey(rsaKeyName);
 ```

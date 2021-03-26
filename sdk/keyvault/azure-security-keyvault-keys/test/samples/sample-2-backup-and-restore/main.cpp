@@ -72,12 +72,7 @@ int main()
     std::cout << "\t-Delete and purge key" << std::endl;
     DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
     // You only need to wait for completion if you want to purge or recover the key.
-    while (!operation.IsDone())
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-      operation.Poll();
-    }
+    operation.PollUntilDone(std::chrono::milliseconds(2000));
     keyClient.PurgeDeletedKey(rsaKeyName);
     // let's wait for one minute so we know the key was purged.
     std::this_thread::sleep_for(std::chrono::seconds(60));
@@ -97,12 +92,7 @@ int main()
 
     operation = keyClient.StartDeleteKey(rsaKeyName);
     // You only need to wait for completion if you want to purge or recover the key.
-    while (!operation.IsDone())
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-      operation.Poll();
-    }
+    operation.PollUntilDone(std::chrono::milliseconds(2000));
     keyClient.PurgeDeletedKey(rsaKeyName);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
