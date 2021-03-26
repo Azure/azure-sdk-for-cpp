@@ -23,7 +23,7 @@ class EnvironmentOverride {
 // C++ conformant name: _putenv. See online help for details.
 #pragma warning(disable : 4996)
 #endif
-      putenv((name + "=" + value).c_str());
+      static_cast<void>(putenv(const_cast<char*>((name + "=" + value).c_str())));
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
