@@ -4,11 +4,26 @@
 #include "azure/identity/environment_credential.hpp"
 
 #include <azure/core/io/body_stream.hpp>
+#include <azure/core/platform.hpp>
 
 #include "test_transport.hpp"
 
 #include <gtest/gtest.h>
 #include <stdlib.h>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 
 using namespace Azure::Identity;
 
@@ -22,14 +37,10 @@ class EnvironmentOverride {
 // warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and
 // C++ conformant name: _putenv. See online help for details.
 #pragma warning(disable : 4996)
-#endif
-      // putenv() takes non-const char* on Mac and Linux, so we put string into a mutable array.
-      auto const statement = name + "=" + value;
-      std::vector<char> statementCString(statement.begin(), statement.end());
-      statementCString.push_back(0);
-      static_cast<void>(putenv(statementCString.data()));
-#if defined(_MSC_VER)
+      static_cast<void>(putenv((name + "=" + value).c_str()));
 #pragma warning(pop)
+#else
+      static_cast<void>(setenv(name.c_str(), value.c_str(), 1));
 #endif
     }
 
@@ -240,3 +251,5 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + 3600s);
   EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + 3600s);
 }
+
+#endif
