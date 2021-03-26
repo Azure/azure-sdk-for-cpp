@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/key_vault_key.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/key_curve_name.hpp"
-
-#include <azure/keyvault/common/internal/unix_time_helper.hpp>
-
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/url.hpp>
+
+#include <azure/keyvault/common/internal/unix_time_helper.hpp>
+
+#include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_serializers.hpp"
+#include "azure/keyvault/keys/key_curve_name.hpp"
+#include "azure/keyvault/keys/key_vault_key.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;

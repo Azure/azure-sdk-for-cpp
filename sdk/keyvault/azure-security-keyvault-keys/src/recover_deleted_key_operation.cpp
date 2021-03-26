@@ -3,6 +3,7 @@
 
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 

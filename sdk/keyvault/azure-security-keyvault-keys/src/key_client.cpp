@@ -8,6 +8,7 @@
 #include "azure/keyvault/keys/details/key_backup.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
+#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 
 #include <memory>
@@ -128,7 +129,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
           context,
           Azure::Core::Http::HttpMethod::Get,
           [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+            return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+                rawResponse);
           },
           {_detail::KeysPath},
           {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
@@ -138,7 +140,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
         context,
         Azure::Core::Http::HttpMethod::Get,
         [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+          return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+              rawResponse);
         },
         {_detail::KeysPath});
   }
@@ -154,7 +157,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+        return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+            rawResponse);
       },
       {nextPageUrl.GetPath()},
       query);
@@ -173,7 +177,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSi
           context,
           Azure::Core::Http::HttpMethod::Get,
           [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+            return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+                rawResponse);
           },
           {_detail::KeysPath, name, "versions"},
           {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
@@ -183,7 +188,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSi
         context,
         Azure::Core::Http::HttpMethod::Get,
         [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+          return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+              rawResponse);
         },
         {_detail::KeysPath, name, "versions"});
   }
@@ -198,7 +204,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSi
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesSinglePageDeserialize(rawResponse);
+        return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+            rawResponse);
       },
       {nextPageUrl.GetPath()},
       query);
@@ -214,7 +221,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::DeletedKeyDeserialize(name, rawResponse);
+            return _detail::DeletedKeySerializer::DeletedKeyDeserialize(name, rawResponse);
           },
           {_detail::KeysPath, name}));
 }
@@ -242,7 +249,7 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::DeletedKeyDeserialize(name, rawResponse);
+        return _detail::DeletedKeySerializer::DeletedKeyDeserialize(name, rawResponse);
       },
       {_detail::DeletedKeysPath, name});
 }
@@ -259,7 +266,8 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
           context,
           Azure::Core::Http::HttpMethod::Get,
           [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::DeletedKeySinglePageDeserialize(rawResponse);
+            return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
+                rawResponse);
           },
           {_detail::DeletedKeysPath},
           {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
@@ -269,7 +277,8 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
         context,
         Azure::Core::Http::HttpMethod::Get,
         [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::DeletedKeySinglePageDeserialize(rawResponse);
+          return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
+              rawResponse);
         },
         {_detail::DeletedKeysPath});
   }
@@ -284,7 +293,8 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::DeletedKeySinglePageDeserialize(rawResponse);
+        return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
+            rawResponse);
       },
       {nextPageUrl.GetPath()},
       query);

@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/deleted_key.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include <azure/core/internal/json/json.hpp>
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include <azure/core/internal/json/json.hpp>
+#include "azure/keyvault/keys/deleted_key.hpp"
+#include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_serializers.hpp"
+#include "azure/keyvault/keys/key_vault_key.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
-DeletedKey _detail::DeletedKeyDeserialize(
+DeletedKey _detail::DeletedKeySerializer::DeletedKeyDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {

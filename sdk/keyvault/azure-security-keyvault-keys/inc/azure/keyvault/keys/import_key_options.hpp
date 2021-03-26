@@ -63,13 +63,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::string const& Name() const { return Properties.Name; }
   };
-
-  /***********************  Deserializer / Serializer ******************************/
-  namespace _detail {
-    struct ImportKeyOptionsSerializer
-    {
-      static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
-    };
-  } // namespace _detail
-
 }}}} // namespace Azure::Security::KeyVault::Keys

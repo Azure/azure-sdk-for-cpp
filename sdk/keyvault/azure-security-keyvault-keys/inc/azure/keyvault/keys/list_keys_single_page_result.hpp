@@ -49,14 +49,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   struct GetDeletedKeysSinglePageOptions : public GetSinglePageOptions
   {
-  };
-
-  /***********************  Deserializer / Serializer ******************************/
-  namespace _detail {
-    KeyPropertiesSinglePage KeyPropertiesSinglePageDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-    DeletedKeySinglePage DeletedKeySinglePageDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-  } // namespace _detail
-
+  };  
 }}}} // namespace Azure::Security::KeyVault::Keys

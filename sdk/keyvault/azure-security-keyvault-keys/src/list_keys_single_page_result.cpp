@@ -3,6 +3,7 @@
 
 #include "azure/keyvault/keys/list_keys_single_page_result.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_serializers.hpp"
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
@@ -15,7 +16,8 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 using Azure::Security::KeyVault::Common::_internal::UnixTimeConverter;
 
-KeyPropertiesSinglePage _detail::KeyPropertiesSinglePageDeserialize(
+KeyPropertiesSinglePage
+_detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   KeyPropertiesSinglePage result;
@@ -81,7 +83,7 @@ KeyPropertiesSinglePage _detail::KeyPropertiesSinglePageDeserialize(
   return result;
 }
 
-DeletedKeySinglePage _detail::DeletedKeySinglePageDeserialize(
+DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
