@@ -23,7 +23,11 @@ class EnvironmentOverride {
 // C++ conformant name: _putenv. See online help for details.
 #pragma warning(disable : 4996)
 #endif
-      static_cast<void>(putenv(const_cast<char*>((name + "=" + value).c_str())));
+      // putenv() takes non-const char* on Mac and Linux, so we put string into a mutable array.
+      auto const statement = name + "=" + value;
+      std::vector<char> statementCString(statement.begin(), statement.end());
+      statementCString.push_back(0);
+      static_cast<void>(putenv(statementCString.data()));
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
@@ -38,7 +42,8 @@ class EnvironmentOverride {
 // instead.
 #pragma warning(disable : 4996)
 #endif
-      return std::getenv(name.c_str());
+      auto const result = std::getenv(name.c_str());
+      return result != nullptr ? result : "";
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
