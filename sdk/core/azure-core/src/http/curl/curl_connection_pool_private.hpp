@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
-    static std::unique_ptr<CurlNetworkConnection> GetCurlConnection(
+    static std::unique_ptr<CurlNetworkConnection> ExtractCurlConnection(
         Request& request,
         CurlTransportOptions const& options,
         bool resetPool = false);

@@ -161,7 +161,9 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
   auto session = std::make_unique<CurlSession>(
-      request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
+      request,
+      CurlConnectionPool::ExtractCurlConnection(request, m_options),
+      m_options.HttpKeepAlive);
   CURLcode performing;
 
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
@@ -184,7 +186,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     // won't be no longer valid.
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::GetCurlConnection(
+        CurlConnectionPool::ExtractCurlConnection(
             request,
             m_options,
             getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
@@ -202,7 +204,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
       LogMsgPrefix + "Request completed. Moving response out of session and session to response.");
 
   // Move Response out of the session
-  auto response = session->GetResponse();
+  auto response = session->ExtractResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
   return response;
@@ -573,7 +575,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     }
   }
 
-  this->m_response = parser.GetResponse();
+  this->m_response = parser.ExtractResponse();
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
   this->m_lastStatusCode = this->m_response->GetStatusCode();
 
@@ -818,7 +820,7 @@ int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Cont
   return readBytes;
 }
 
-std::unique_ptr<RawResponse> CurlSession::GetResponse() { return std::move(this->m_response); }
+std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
 
 int64_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
@@ -1113,7 +1115,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 }
 } // namespace
 
-std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
+std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractCurlConnection(
     Request& request,
     CurlTransportOptions const& options,
     bool resetPool)
