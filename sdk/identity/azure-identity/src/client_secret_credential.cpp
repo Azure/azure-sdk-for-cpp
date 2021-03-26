@@ -5,7 +5,6 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/system_clock.hpp>
 
 #include <chrono>
 #include <sstream>
@@ -187,7 +186,7 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
 
     return {
         std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        Core::_internal::SystemClock::Now() + std::chrono::seconds(expiresInSeconds),
+        std::chrono::system_clock::now() + std::chrono::seconds(expiresInSeconds),
     };
   }
   catch (AuthenticationException const&)

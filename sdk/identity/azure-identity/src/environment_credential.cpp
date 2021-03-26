@@ -4,11 +4,9 @@
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
 
-#include <azure/core/internal/environment.hpp>
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 #include <cstdlib>
-#include <utility>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -23,48 +21,62 @@
 
 using namespace Azure::Identity;
 
-EnvironmentCredential::EnvironmentCredential(EnvironmentCredentialOptions options)
-    : m_options(std::move(options))
+EnvironmentCredential::EnvironmentCredential(
+    Azure::Core::Credentials::TokenCredentialOptions options)
 {
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-  auto tenantId = Core::_internal::Environment::Get("AZURE_TENANT_ID");
-  auto clientId = Core::_internal::Environment::Get("AZURE_CLIENT_ID");
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
 
-  auto clientSecret = Core::_internal::Environment::Get("AZURE_CLIENT_SECRET");
-  auto authority = Core::_internal::Environment::Get("AZURE_AUTHORITY_HOST");
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
 
-  // auto username = Core::_internal::Environment::Get("AZURE_USERNAME");
-  // auto password = Core::_internal::Environment::Get("AZURE_PASSWORD");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto authority = std::getenv("AZURE_AUTHORITY_HOST");
+
+  // auto username = std::getenv("AZURE_USERNAME");
+  // auto password = std::getenv("AZURE_PASSWORD");
   //
-  // auto clientCertificatePath =
-  // Core::_internal::Environment::Get("AZURE_CLIENT_CERTIFICATE_PATH");
+  // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
   if (tenantId != nullptr && clientId != nullptr)
   {
     if (clientSecret != nullptr)
     {
-      ClientSecretCredentialOptions clientSecretCredentialOptions;
-      static_cast<Core::_internal::ClientOptions&>(clientSecretCredentialOptions) = m_options;
       if (authority != nullptr)
       {
+        ClientSecretCredentialOptions clientSecretCredentialOptions;
+        static_cast<Core::_internal::ClientOptions&>(clientSecretCredentialOptions) = options;
         clientSecretCredentialOptions.AuthorityHost = authority;
-      }
 
-      m_credentialImpl.reset(new ClientSecretCredential(
-          tenantId, clientId, clientSecret, clientSecretCredentialOptions));
+        m_credentialImpl.reset(new ClientSecretCredential(
+            tenantId, clientId, clientSecret, clientSecretCredentialOptions));
+      }
+      else
+      {
+        m_credentialImpl.reset(
+            new ClientSecretCredential(tenantId, clientId, clientSecret, options));
+      }
     }
     // TODO: These credential types are not implemented. Uncomment when implemented.
     // else if (username != nullptr && password != nullptr)
-    //{
-    //  m_credentialImpl.reset(
-    //      new UsernamePasswordCredential(username, password, tenantId, clientId));
-    //}
+    // {
+    //   m_credentialImpl.reset(
+    //       new UsernamePasswordCredential(tenantId, clientId, username, password, options));
+    // }
     // else if (clientCertificatePath != nullptr)
-    //{
-    //  m_credentialImpl.reset(
-    //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
-    //}
+    // {
+    //   m_credentialImpl.reset(new ClientCertificateCredential(tenantId, clientId, options));
+    // }
   }
 #endif
 }

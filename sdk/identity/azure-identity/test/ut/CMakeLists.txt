@@ -18,6 +18,7 @@ add_executable (
     macro_guard.cpp
     main.cpp
     simplified_header.cpp
+    test_transport.hpp
 )
 
 if (MSVC)

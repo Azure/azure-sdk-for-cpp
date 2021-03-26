@@ -3,27 +3,102 @@
 
 #include "azure/identity/environment_credential.hpp"
 
-#include <azure/core/internal/environment.hpp>
-#include <azure/core/internal/http/test_transport.hpp>
-#include <azure/core/internal/system_clock.hpp>
 #include <azure/core/io/body_stream.hpp>
+
+#include "test_transport.hpp"
 
 #include <gtest/gtest.h>
 
 using namespace Azure::Identity;
 
 namespace {
+class EnvironmentOverride {
+  class Environment {
+    static void SetVariable(std::string const& name, std::string const& value)
+    {
+      putenv((name + "=" + value).c_str());
+    }
+
+  public:
+    static std::string GetVariable(std::string const& name)
+    {
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+      return std::getenv(name.c_str());
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+    }
+
+    static void SetVariables(std::map<std::string, std::string> const& vars)
+    {
+      for (auto var : vars)
+      {
+        SetVariable(var.first, var.second);
+      }
+    }
+  };
+
+  std::map<std::string, std::string> m_originalEnv;
+
+public:
+  ~EnvironmentOverride() { Environment::SetVariables(m_originalEnv); }
+
+  EnvironmentOverride(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret,
+      std::string const& authorityHost,
+      std::string const& username,
+      std::string const& password,
+      std::string const& clientCertificatePath)
+  {
+    std::map<std::string, std::string> const NewEnv = {
+        {"AZURE_TENANT_ID", tenantId},
+        {"AZURE_CLIENT_ID", clientId},
+        {"AZURE_CLIENT_SECRET", clientSecret},
+        {"AZURE_AUTHORITY_HOST", authorityHost},
+        {"AZURE_USERNAME", username},
+        {"AZURE_PASSWORD", password},
+        {"AZURE_CLIENT_CERTIFICATE_PATH", clientCertificatePath},
+    };
+
+    for (auto var : NewEnv)
+    {
+      m_originalEnv[var.first] = Environment::GetVariable(var.first);
+    }
+
+    try
+    {
+      Environment::SetVariables(NewEnv);
+    }
+    catch (...)
+    {
+      Environment::SetVariables(m_originalEnv);
+      throw;
+    }
+  }
+};
 
 struct CredentialResult
 {
-  struct RequestInfo
+  struct
   {
     std::string AbsoluteUrl;
     Azure::Core::CaseInsensitiveMap Headers;
     std::string Body;
   } Request;
 
-  Azure::Core::Credentials::AccessToken Response;
+  struct
+  {
+    std::chrono::system_clock::time_point Earliest;
+    std::chrono::system_clock::time_point Latest;
+    Azure::Core::Credentials::AccessToken AccessToken;
+  } Response;
 };
 
 CredentialResult TestEnvironmentCredential(
@@ -34,7 +109,6 @@ CredentialResult TestEnvironmentCredential(
     std::string const& username,
     std::string const& password,
     std::string const& clientCertificatePath,
-    EnvironmentCredentialOptions credentialOptions,
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::DateTime const& clockOverride,
     std::string const& responseBody)
@@ -42,68 +116,31 @@ CredentialResult TestEnvironmentCredential(
   CredentialResult result;
 
   auto responseVec = std::vector<uint8_t>(responseBody.begin(), responseBody.end());
-  credentialOptions.Transport.Transport
-      = std::make_shared<Azure::Core::Http::_internal::TestTransport>([&](auto request, auto) {
-          auto const bodyVec = request.GetBodyStream()->ReadToEnd(Azure::Core::Context());
 
-          result.Request
-              = {request.GetUrl().GetAbsoluteUrl(),
-                 request.GetHeaders(),
-                 std::string(bodyVec.begin(), bodyVec.end())};
+  Azure::Core::Credentials::TokenCredentialOptions credentialOptions;
+  credentialOptions.Transport.Transport = std::make_shared<TestTransport>([&](auto request, auto) {
+    auto const bodyVec = request.GetBodyStream()->ReadToEnd(Azure::Core::Context());
 
-          auto response = std::make_unique<Azure::Core::Http::RawResponse>(
-              1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+    result.Request
+        = {request.GetUrl().GetAbsoluteUrl(),
+           request.GetHeaders(),
+           std::string(bodyVec.begin(), bodyVec.end())};
 
-          response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseVec));
+    auto response = std::make_unique<Azure::Core::Http::RawResponse>(
+        1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
-          return response;
-        });
+    response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseVec));
 
-  std::map<std::string, std::string> env;
-  if (!tenantId.empty())
-  {
-    env["AZURE_TENANT_ID"] = tenantId;
-  }
+    result.Response.Earliest = std::chrono::system_clock::now();
+    return response;
+  });
 
-  if (!clientId.empty())
-  {
-    env["AZURE_CLIENT_ID"] = clientId;
-  }
-
-  if (!clientSecret.empty())
-  {
-    env["AZURE_CLIENT_SECRET"] = clientSecret;
-  }
-
-  if (!authorityHost.empty())
-  {
-    env["AZURE_AUTHORITY_HOST"] = authorityHost;
-  }
-
-  if (!username.empty())
-  {
-    env["AZURE_USERNAME"] = username;
-  }
-
-  if (!password.empty())
-  {
-    env["AZURE_PASSWORD"] = password;
-  }
-
-  if (!clientCertificatePath.empty())
-  {
-    env["AZURE_CLIENT_CERTIFICATE_PATH"] = clientCertificatePath;
-  }
-
-  Azure::Core::_internal::Environment overriddenEnvironment(
-      [&](auto varName) { return env.at(varName).c_str(); });
+  EnvironmentOverride env(
+      tenantId, clientId, clientSecret, authorityHost, username, password, clientCertificatePath);
 
   EnvironmentCredential credential(credentialOptions);
-
-  Azure::Core::_internal::SystemClock overriddenSystemClock(
-      [&]() { return static_cast<std::chrono::system_clock::time_point>(clockOverride); });
-
-  result.Response = credential.GetToken(tokenRequestContext, Azure::Core::Context());
+  result.Response.AccessToken = credential.GetToken(tokenRequestContext, Azure::Core::Context());
+  result.Response.Latest = std::chrono::system_clock::now();
 
   return result;
 }
@@ -119,7 +156,6 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
       "",
       "",
       "",
-      EnvironmentCredentialOptions(),
       {{"https://azure.com/.default"}},
       Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
@@ -144,9 +180,11 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
   EXPECT_NE(actual.Request.Headers.find("Content-Type"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(actual.Response.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(actual.Response.ExpiresOn, Azure::DateTime(2021, 1, 1, 1));
-  EXPECT_EQ(actual.Response.ExpiresOn.ToString(), Azure::DateTime(2021, 1, 1, 1).ToString());
+  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
+  EXPECT_GT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
+  EXPECT_LT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
 }
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
@@ -159,7 +197,6 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
       "",
       "",
       "",
-      EnvironmentCredentialOptions(),
       {{"https://azure.com/.default"}},
       Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
@@ -185,6 +222,9 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   EXPECT_NE(actual.Request.Headers.find("Host"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Host"), "microsoft.com");
 
-  EXPECT_EQ(actual.Response.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(actual.Response.ExpiresOn, Azure::DateTime(2021, 1, 1, 1));
+  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
+  EXPECT_GT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
+  EXPECT_LT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
 }

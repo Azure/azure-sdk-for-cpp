@@ -11,8 +11,8 @@
 #include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/client_options.hpp>
 
 #include <string>
 #include <utility>
@@ -25,7 +25,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief Defines options for token authentication.
    */
-  struct ClientSecretCredentialOptions : public Azure::Core::_internal::ClientOptions
+  struct ClientSecretCredentialOptions : public Azure::Core::Credentials::TokenCredentialOptions
   {
   public:
     /**
@@ -68,6 +68,26 @@ namespace Azure { namespace Identity {
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
           m_clientSecret(std::move(clientSecret)), m_options(std::move(options))
     {
+    }
+
+    /**
+     * @brief Construct a Client Secret credential.
+     *
+     * @param tenantId Tenant ID.
+     * @param clientId Client ID.
+     * @param clientSecret Client Secret.
+     * @param options #Azure::Core::Credentials::TokenCredentialOptions.
+     */
+    explicit ClientSecretCredential(
+        std::string tenantId,
+        std::string clientId,
+        std::string clientSecret,
+        Azure::Core::Credentials::TokenCredentialOptions const& options
+        = Azure::Core::Credentials::TokenCredentialOptions())
+        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
+          m_clientSecret(std::move(clientSecret))
+    {
+      static_cast<Azure::Core::Credentials::TokenCredentialOptions&>(m_options) = options;
     }
 
     Core::Credentials::AccessToken GetToken(

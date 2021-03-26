@@ -3,9 +3,9 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 
-#include <azure/core/internal/http/test_transport.hpp>
-#include <azure/core/internal/system_clock.hpp>
 #include <azure/core/io/body_stream.hpp>
+
+#include "test_transport.hpp"
 
 #include <gtest/gtest.h>
 
@@ -22,7 +22,12 @@ struct CredentialResult
     std::string Body;
   } Request;
 
-  Azure::Core::Credentials::AccessToken Response;
+  struct
+  {
+    std::chrono::system_clock::time_point Earliest;
+    std::chrono::system_clock::time_point Latest;
+    Azure::Core::Credentials::AccessToken AccessToken;
+  } Response;
 };
 
 CredentialResult TestClientSecretCredential(
@@ -37,29 +42,26 @@ CredentialResult TestClientSecretCredential(
   CredentialResult result;
 
   auto responseVec = std::vector<uint8_t>(responseBody.begin(), responseBody.end());
-  credentialOptions.Transport.Transport
-      = std::make_shared<Azure::Core::Http::_internal::TestTransport>([&](auto request, auto) {
-          auto const bodyVec = request.GetBodyStream()->ReadToEnd(Azure::Core::Context());
+  credentialOptions.Transport.Transport = std::make_shared<TestTransport>([&](auto request, auto) {
+    auto const bodyVec = request.GetBodyStream()->ReadToEnd(Azure::Core::Context());
 
-          result.Request
-              = {request.GetUrl().GetAbsoluteUrl(),
-                 request.GetHeaders(),
-                 std::string(bodyVec.begin(), bodyVec.end())};
+    result.Request
+        = {request.GetUrl().GetAbsoluteUrl(),
+           request.GetHeaders(),
+           std::string(bodyVec.begin(), bodyVec.end())};
 
-          auto response = std::make_unique<Azure::Core::Http::RawResponse>(
-              1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+    auto response = std::make_unique<Azure::Core::Http::RawResponse>(
+        1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
-          response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseVec));
+    response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseVec));
 
-          return response;
-        });
+    result.Response.Earliest = std::chrono::system_clock::now();
+    return response;
+  });
 
   ClientSecretCredential credential(tenantId, clientId, clientSecret, credentialOptions);
-
-  Azure::Core::_internal::SystemClock overriddenSystemClock(
-      [&]() { return static_cast<std::chrono::system_clock::time_point>(clockOverride); });
-
-  result.Response = credential.GetToken(tokenRequestContext, Azure::Core::Context());
+  result.Response.AccessToken = credential.GetToken(tokenRequestContext, Azure::Core::Context());
+  result.Response.Latest = std::chrono::system_clock::now();
 
   return result;
 }
@@ -98,9 +100,11 @@ TEST(ClientSecretCredential, Regular)
   EXPECT_NE(actual.Request.Headers.find("Content-Type"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(actual.Response.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(actual.Response.ExpiresOn, Azure::DateTime(2021, 1, 1, 1));
-  EXPECT_EQ(actual.Response.ExpiresOn.ToString(), Azure::DateTime(2021, 1, 1, 1).ToString());
+  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
+  EXPECT_GT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
+  EXPECT_LT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
 }
 
 TEST(ClientSecretCredential, AzureStack)
@@ -137,6 +141,9 @@ TEST(ClientSecretCredential, AzureStack)
   EXPECT_NE(actual.Request.Headers.find("Host"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Host"), "microsoft.com");
 
-  EXPECT_EQ(actual.Response.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(actual.Response.ExpiresOn, Azure::DateTime(2021, 1, 1, 1));
+  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
+  EXPECT_GT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
+  EXPECT_LT(
+      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
 }

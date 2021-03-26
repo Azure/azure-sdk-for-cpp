@@ -10,6 +10,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/datetime.hpp"
+#include "azure/core/internal/client_options.hpp"
 
 #include <exception>
 #include <memory>
