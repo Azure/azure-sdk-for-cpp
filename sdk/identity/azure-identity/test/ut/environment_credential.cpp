@@ -8,6 +8,7 @@
 #include "test_transport.hpp"
 
 #include <gtest/gtest.h>
+#include <stdlib.h>
 
 using namespace Azure::Identity;
 
@@ -16,7 +17,16 @@ class EnvironmentOverride {
   class Environment {
     static void SetVariable(std::string const& name, std::string const& value)
     {
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and
+// C++ conformant name: _putenv. See online help for details.
+#pragma warning(disable : 4996)
+#endif
       putenv((name + "=" + value).c_str());
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
     }
 
   public:
@@ -110,7 +120,6 @@ CredentialResult TestEnvironmentCredential(
     std::string const& password,
     std::string const& clientCertificatePath,
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::DateTime const& clockOverride,
     std::string const& responseBody)
 {
   CredentialResult result;
@@ -157,7 +166,6 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
       "",
       "",
       {{"https://azure.com/.default"}},
-      Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
 
   EXPECT_EQ(
@@ -180,11 +188,11 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
   EXPECT_NE(actual.Request.Headers.find("Content-Type"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
-  EXPECT_GT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
-  EXPECT_LT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
+  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+
+  using namespace std::chrono_literals;
+  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + 3600s);
+  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + 3600s);
 }
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
@@ -198,7 +206,6 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
       "",
       "",
       {{"https://azure.com/.default"}},
-      Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
 
   EXPECT_EQ(actual.Request.AbsoluteUrl, "https://microsoft.com/adfs/oauth2/token");
@@ -222,9 +229,9 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   EXPECT_NE(actual.Request.Headers.find("Host"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Host"), "microsoft.com");
 
-  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
-  EXPECT_GT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
-  EXPECT_LT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
+  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+
+  using namespace std::chrono_literals;
+  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + 3600s);
+  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + 3600s);
 }

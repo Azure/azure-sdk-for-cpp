@@ -36,7 +36,6 @@ CredentialResult TestClientSecretCredential(
     std::string const& clientSecret,
     ClientSecretCredentialOptions credentialOptions,
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::DateTime const& clockOverride,
     std::string const& responseBody)
 {
   CredentialResult result;
@@ -77,7 +76,6 @@ TEST(ClientSecretCredential, Regular)
       "CLIENTSECRET",
       options,
       {{"https://azure.com/.default"}},
-      Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
 
   EXPECT_EQ(
@@ -100,11 +98,11 @@ TEST(ClientSecretCredential, Regular)
   EXPECT_NE(actual.Request.Headers.find("Content-Type"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
-  EXPECT_GT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
-  EXPECT_LT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
+  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+
+  using namespace std::chrono_literals;
+  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + 3600s);
+  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + 3600s);
 }
 
 TEST(ClientSecretCredential, AzureStack)
@@ -117,7 +115,6 @@ TEST(ClientSecretCredential, AzureStack)
       "CLIENTSECRET",
       options,
       {{"https://azure.com/.default"}},
-      Azure::DateTime(2021, 1, 1, 0),
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
 
   EXPECT_EQ(actual.Request.AbsoluteUrl, "https://microsoft.com/adfs/oauth2/token");
@@ -141,9 +138,9 @@ TEST(ClientSecretCredential, AzureStack)
   EXPECT_NE(actual.Request.Headers.find("Host"), actual.Request.Headers.end());
   EXPECT_EQ(actual.Request.Headers.at("Host"), "microsoft.com");
 
-  EXPECT_EQ(actual.Response.AccessToken, "ACCESSTOKEN1");
-  EXPECT_GT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + std::chrono::seconds(3600));
-  EXPECT_LT(
-      actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + std::chrono::seconds(3600));
+  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+
+  using namespace std::chrono_literals;
+  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.Earliest + 3600s);
+  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.Latest + 3600s);
 }

@@ -64,7 +64,7 @@ namespace Azure { namespace Identity {
         std::string tenantId,
         std::string clientId,
         std::string clientSecret,
-        ClientSecretCredentialOptions options = ClientSecretCredentialOptions())
+        ClientSecretCredentialOptions options)
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
           m_clientSecret(std::move(clientSecret)), m_options(std::move(options))
     {
