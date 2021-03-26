@@ -34,11 +34,7 @@ class EnvironmentOverride {
     {
 #if defined(_MSC_VER)
 #pragma warning(push)
-// warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and
-// C++ conformant name: _putenv. See online help for details.
-#pragma warning(disable : 4996)
-      static_cast<void>(putenv((name + "=" + value).c_str()));
-#pragma warning(pop)
+      static_cast<void>(_putenv((name + "=" + value).c_str()));
 #else
       if (value.empty())
       {
