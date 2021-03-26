@@ -33,7 +33,6 @@ class EnvironmentOverride {
     static void SetVariable(std::string const& name, std::string const& value)
     {
 #if defined(_MSC_VER)
-#pragma warning(push)
       static_cast<void>(_putenv((name + "=" + value).c_str()));
 #else
       if (value.empty())
