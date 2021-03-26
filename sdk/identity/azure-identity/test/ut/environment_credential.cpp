@@ -37,7 +37,7 @@ class EnvironmentOverride {
 #else
       if (value.empty())
       {
-        static_cast<void>(unsetenv(name.c_str());
+        static_cast<void>(unsetenv(name.c_str()));
       }
       else
       {
