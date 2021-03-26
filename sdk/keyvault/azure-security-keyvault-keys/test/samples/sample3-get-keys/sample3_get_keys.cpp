@@ -3,7 +3,8 @@
 
 /**
  * @brief The next sample provides the code implementation to use the Key Vault SDK client for C++
- * to back up and restore a key.
+ * to list keys and versions of a given key, and list deleted keys in a soft-delete enabled Key
+ * Vault.
  *
  * @remark Make sure to set the next environment variables before running the sample.
  * - AZURE_KEYVAULT_URL:  To the KeyVault account url.
@@ -21,7 +22,6 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/key_vault.hpp>
 
-#include <assert.h>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -29,8 +29,6 @@
 #include <thread>
 
 using namespace Azure::Security::KeyVault::Keys;
-
-static void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& actual);
 
 int main()
 {
@@ -42,66 +40,95 @@ int main()
 
   KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
-  std::string rsaKeyName("CloudRsaKey" + Azure::Core::Uuid::CreateUuid().ToString());
   try
   {
+    std::string rsaKeyName("CloudRsaKey-" + Azure::Core::Uuid::CreateUuid().ToString());
     auto rsaKey = CreateRsaKeyOptions(rsaKeyName);
     rsaKey.KeySize = 2048;
     rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
 
-    std::cout << "\t-Create Key" << std::endl;
-    auto storedKey = keyClient.CreateRsaKey(rsaKey).ExtractValue();
-    size_t backUpSize = 0;
+    std::string ecKeyName("CloudEcKey-" + Azure::Core::Uuid::CreateUuid().ToString());
+    auto ecKey = CreateEcKeyOptions(ecKeyName);
+    ecKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
+
+    std::cout << "\t-Create Keys" << std::endl;
+    keyClient.CreateRsaKey(rsaKey);
+    keyClient.CreateEcKey(ecKey);
+
+    bool nextPage = true;
+    while (nextPage)
     {
-      std::cout << "\t-Backup Key" << std::endl;
-      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).ExtractValue());
-      backUpSize = backupKey.size();
-
-      // save data to file
-      std::cout << "\t-Save to file" << std::endl;
-      std::ofstream savedFile;
-      savedFile.open("backup.dat");
-      for (auto const& data : backupKey)
+      auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValue();
+      for (auto const& key : keysSinglePage.Items)
       {
-        savedFile << data;
+        if (key.Managed)
+        {
+          continue;
+        }
+        auto keyWithType = keyClient.GetKey(key.Name).ExtractValue();
+        std::cout << "Key is returned with name: " << keyWithType.Name()
+                  << " and type: " << KeyType::KeyTypeToString(keyWithType.GetKeyType())
+                  << std::endl;
       }
-      savedFile.close();
+      // check if there are more pages to get
+      nextPage = keysSinglePage.ContinuationToken.HasValue();
     }
-    // backup key is destroy at this point as it is out of the scope.
-    // The storage account key is no longer in use, so you delete it.
-    std::cout << "\t-Delete and purge key" << std::endl;
-    DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
+
+    // update key
+    CreateRsaKeyOptions newRsaKey(rsaKeyName);
+    newRsaKey.KeySize = 4096;
+    newRsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
+
+    keyClient.CreateRsaKey(newRsaKey);
+
+    // List key versions
+    nextPage = true;
+    while (nextPage)
+    {
+      auto keyVersionsSinglePage
+          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).ExtractValue();
+      for (auto const& key : keyVersionsSinglePage.Items)
+      {
+        std::cout << "Key's version: " << key.Version << " with name: " << key.Name << std::endl;
+      }
+      // check if there are more pages to get
+      nextPage = keyVersionsSinglePage.ContinuationToken.HasValue();
+    }
+
+    DeleteKeyOperation rsaOperation = keyClient.StartDeleteKey(rsaKeyName);
+    DeleteKeyOperation ecOperation = keyClient.StartDeleteKey(ecKeyName);
+
     // You only need to wait for completion if you want to purge or recover the key.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
+    rsaOperation.PollUntilDone(std::chrono::milliseconds(2000));
+    ecOperation.PollUntilDone(std::chrono::milliseconds(2000));
+
+    nextPage = true;
+    while (nextPage)
+    {
+      auto keysDeleted = keyClient.GetDeletedKeysSinglePage().ExtractValue();
+      for (auto const& key : keysDeleted.Items)
+      {
+        std::cout << "Deleted key's name: " << key.Name() << " and recovery Id: " << key.RecoveryId
+                  << std::endl;
+      }
+      // check if there are more pages to get
+      nextPage = keysDeleted.ContinuationToken.HasValue();
+    }
+
+    // If the keyvault is soft-delete enabled, then for permanent deletion, deleted keys needs to be
+    // purged.
     keyClient.PurgeDeletedKey(rsaKeyName);
-    // let's wait for one minute so we know the key was purged.
-    std::this_thread::sleep_for(std::chrono::seconds(60));
-
-    // Restore the key from the file backup
-    std::cout << "\t-Read from file." << std::endl;
-    std::ifstream inFile;
-    inFile.open("backup.dat");
-    std::vector<uint8_t> inMemoryBackup(backUpSize);
-    inFile >> inMemoryBackup.data();
-    inFile.close();
-
-    std::cout << "\t-Restore Key" << std::endl;
-    auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
-
-    AssertKeysEqual(storedKey.Properties, restoredKey.Properties);
-
-    operation = keyClient.StartDeleteKey(rsaKeyName);
-    // You only need to wait for completion if you want to purge or recover the key.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
-    keyClient.PurgeDeletedKey(rsaKeyName);
+    keyClient.PurgeDeletedKey(ecKeyName);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
+    return 1;
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
+    return 1;
   }
 
   return 0;
@@ -123,19 +150,4 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
     return false;
   }
   return left.GetValue() == right.GetValue();
-}
-
-void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& actual)
-{
-#if defined(NDEBUG)
-  // Use (void) to silent unused warnings.
-  (void)expected;
-  (void)actual;
-#endif
-  assert(expected.Name == actual.Name);
-  assert(expected.Version == actual.Version);
-  assert(expected.Managed == actual.Managed);
-  assert(expected.RecoveryLevel == actual.RecoveryLevel);
-  assert(CompareNullableT(expected.ExpiresOn, actual.ExpiresOn));
-  assert(CompareNullableT(expected.NotBefore, actual.NotBefore));
 }

@@ -73,10 +73,12 @@ int main()
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
+    return 1;
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
+    return 1;
   }
 
   return 0;

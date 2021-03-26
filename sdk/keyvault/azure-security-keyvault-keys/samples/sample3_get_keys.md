@@ -6,36 +6,42 @@ To get started, you'll need a URI to an Azure Key Vault. See the [README](https:
 ## Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
-You can use the [DefaultAzureCredential][defaultazurecredential] to try a number of common authentication methods optimized for both running as a service and development.
 
-In the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
+Key Vault Keys client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
-```C# Snippet:KeysSample3KeyClient
-var client = new KeyClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
+In the sample below, you can create a credential by setting the tenant id, client id and client secret as environment variables.
+
+```cpp Snippet:KeysSample1CreateCredential
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 ```
 
-## Creating keys
+Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
-Let's create EC and RSA keys valid for 1 year.
+```cpp Snippet:KeysSample1KeyClient
+KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+```
+
+## Creating a key
+
+Let's create an RSA key valid for 1 year.
 If the key already exists in the Azure Key Vault, then a new version of the key is created.
 
-```C# Snippet:KeysSample3CreateKey
-string rsaKeyName = $"CloudRsaKey-{Guid.NewGuid()}";
-var rsaKey = new CreateRsaKeyOptions(rsaKeyName, hardwareProtected: false)
-{
-    KeySize = 2048,
-    ExpiresOn = DateTimeOffset.Now.AddYears(1)
-};
+```cpp Snippet:KeysSample1CreateKey
+std::string rsaKeyName("CloudRsaKey-" + Azure::Core::Uuid::CreateUuid().ToString());
+auto rsaKey = CreateRsaKeyOptions(rsaKeyName);
+rsaKey.KeySize = 2048;
+rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
 
-client.CreateRsaKey(rsaKey);
+std::string ecKeyName("CloudEcKey-" + Azure::Core::Uuid::CreateUuid().ToString());
+auto ecKey = CreateEcKeyOptions(ecKeyName);
+ecKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
 
-string ecKeyName = $"CloudECKey-{Guid.NewGuid()}";
-var ecKey = new CreateEcKeyOptions(ecKeyName, hardwareProtected: false)
-{
-    ExpiresOn = DateTimeOffset.Now.AddYears(1)
-};
-
-client.CreateEcKey(ecKey);
+std::cout << "\t-Create Keys" << std::endl;
+keyClient.CreateRsaKey(rsaKey);
+keyClient.CreateEcKey(ecKey);
 ```
 
 ## Listing keys
@@ -44,12 +50,23 @@ You need to check the type of keys that already exist in your Azure Key Vault.
 Let's list the keys and print their types. List operations don't return the actual key, but only properties of the key.
 So, for each returned key we call GetKey to get the actual key.
 
-```C# Snippet:KeysSample3ListKeys
-IEnumerable<KeyProperties> keys = client.GetPropertiesOfKeys();
-foreach (KeyProperties key in keys)
+```cpp Snippet:KeysSample3ListKeys
+bool nextPage = true;
+while (nextPage)
 {
-    KeyVaultKey keyWithType = client.GetKey(key.Name);
-    Debug.WriteLine($"Key is returned with name {keyWithType.Name} and type {keyWithType.KeyType}");
+    auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValue();
+    for (auto const& key : keysSinglePage.Items)
+    {
+    if (key.Managed)
+    {
+        continue;
+    }
+    auto keyWithType = keyClient.GetKey(key.Name).ExtractValue();
+    std::cout << "Key is returned with name " << keyWithType.Name() << " and type "
+                << KeyType::KeyTypeToString(keyWithType.GetKeyType()) << std::endl;
+    }
+    // check if there are more pages to get
+    nextPage = keysSinglePage.ContinuationToken.HasValue();
 }
 ```
 
@@ -58,14 +75,12 @@ foreach (KeyProperties key in keys)
 We need the cloud RSA key with bigger key size, so you want to update the key in Azure Key Vault to ensure it has the required size.
 Calling `CreateRsaKey` on an existing key creates a new version of the key in the Azure Key Vault with the new specified size.
 
-```C# Snippet:KeysSample3UpdateKey
-var newRsaKey = new CreateRsaKeyOptions(rsaKeyName, hardwareProtected: false)
-{
-    KeySize = 4096,
-    ExpiresOn = DateTimeOffset.Now.AddYears(1)
-};
+```cpp Snippet:KeysSample3UpdateKey
+CreateRsaKeyOptions newRsaKey(rsaKeyName);
+newRsaKey.KeySize = 4096;
+newRsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
 
-client.CreateRsaKey(newRsaKey);
+keyClient.CreateRsaKey(newRsaKey);
 ```
 
 ## Listing key versions
@@ -73,11 +88,18 @@ client.CreateRsaKey(newRsaKey);
 You need to check all the different versions cloud RSA key had previously.
 Lets print all the versions of this key.
 
-```C# Snippet:KeysSample3ListKeyVersions
-IEnumerable<KeyProperties> keysVersions = client.GetPropertiesOfKeyVersions(rsaKeyName);
-foreach (KeyProperties key in keysVersions)
+```cpp Snippet:KeysSample3ListKeyVersions
+nextPage = true;
+while (nextPage)
 {
-    Debug.WriteLine($"Key's version {key.Version} with name {key.Name}");
+    auto keyVersionsSinglePage
+        = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).ExtractValue();
+    for (auto const& key : keyVersionsSinglePage.Items)
+    {
+    std::cout << "Key's version " << key.Version << " with name " << key.Name << std::endl;
+    }
+    // check if there are more pages to get
+    nextPage = keyVersionsSinglePage.ContinuationToken.HasValue();
 }
 ```
 
@@ -86,29 +108,30 @@ foreach (KeyProperties key in keysVersions)
 The cloud RSA Key and the cloud EC keys are no longer needed.
 You need to delete them from the Azure Key Vault.
 
-```C# Snippet:KeysSample3DeletedKeys
-DeleteKeyOperation rsaKeyOperation = client.StartDeleteKey(rsaKeyName);
-DeleteKeyOperation ecKeyOperation = client.StartDeleteKey(ecKeyName);
+```cpp Snippet:KeysSample3DeletedKeys
+DeleteKeyOperation rsaOperation = keyClient.StartDeleteKey(rsaKeyName);
+DeleteKeyOperation ecOperation = keyClient.StartDeleteKey(ecKeyName);
 
 // You only need to wait for completion if you want to purge or recover the key.
-while (!rsaKeyOperation.HasCompleted || !ecKeyOperation.HasCompleted)
-{
-    Thread.Sleep(2000);
-
-    rsaKeyOperation.UpdateStatus();
-    ecKeyOperation.UpdateStatus();
-}
+rsaOperation.PollUntilDone(std::chrono::milliseconds(2000));
+ecOperation.PollUntilDone(std::chrono::milliseconds(2000));
 ```
 
 ## Listing deleted keys
 
 You can list all the deleted and non-purged keys, assuming Azure Key Vault is soft delete-enabled.
 
-```C# Snippet:KeysSample3ListDeletedKeys
-IEnumerable<DeletedKey> keysDeleted = client.GetDeletedKeys();
-foreach (DeletedKey key in keysDeleted)
+```cpp Snippet:KeysSample3ListDeletedKeys
+nextPage = true;
+while (nextPage)
 {
-    Debug.WriteLine($"Deleted key's recovery Id {key.RecoveryId}");
+    auto keysDeleted = keyClient.GetDeletedKeysSinglePage().ExtractValue();
+    for (auto const& key : keysDeleted.Items)
+    {
+    std::cout << "Deleted key's recovery Id " << key.RecoveryId << std::endl;
+    }
+    // check if there are more pages to get
+    nextPage = keysDeleted.ContinuationToken.HasValue();
 }
 ```
 
