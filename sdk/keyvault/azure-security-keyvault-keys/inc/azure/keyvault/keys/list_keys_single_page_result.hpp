@@ -49,5 +49,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   struct GetDeletedKeysSinglePageOptions : public GetSinglePageOptions
   {
-  };  
+  };
 }}}} // namespace Azure::Security::KeyVault::Keys
