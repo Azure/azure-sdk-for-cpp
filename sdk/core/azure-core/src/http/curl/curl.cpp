@@ -164,6 +164,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
       request,
       CurlConnectionPool::ExtractCurlConnection(request, m_options),
       m_options.HttpKeepAlive);
+
   CURLcode performing;
 
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
