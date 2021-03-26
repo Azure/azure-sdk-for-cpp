@@ -64,7 +64,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     {
       if (jsonKey.contains(key))
       {
-        destination = decorator(jsonKey[key].get<V>());
+        if (!jsonKey[key].is_null())
+        {
+          destination = decorator(jsonKey[key].get<V>());
+        }
       }
     }
 

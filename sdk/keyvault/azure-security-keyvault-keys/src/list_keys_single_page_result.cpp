@@ -99,6 +99,27 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
     deletedKey.Properties.Id = key[_detail::KeyIdPropertyName].get<std::string>();
     _detail::KeyVaultKeySerializer::ParseKeyUrl(deletedKey.Properties, deletedKey.Properties.Id);
 
+    if (!key[_detail::RecoveryIdPropertyName].is_null())
+    {
+      deletedKey.RecoveryId = key[_detail::RecoveryIdPropertyName].get<std::string>();
+    }
+    if (!key[_detail::AttributesPropertyName][_detail::RecoveryLevelPropertyName].is_null())
+    {
+      deletedKey.Properties.RecoveryLevel
+          = key[_detail::AttributesPropertyName][_detail::RecoveryLevelPropertyName]
+                .get<std::string>();
+    }
+    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+        deletedKey.DeletedDate,
+        key,
+        _detail::DeletedOnPropertyName,
+        UnixTimeConverter::UnixTimeToDatetime);
+    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+        deletedKey.ScheduledPurgeDate,
+        key,
+        _detail::ScheduledPurgeDatePropertyName,
+        UnixTimeConverter::UnixTimeToDatetime);
+
     deletedKeySinglePage.Items.emplace_back(deletedKey);
   }
 

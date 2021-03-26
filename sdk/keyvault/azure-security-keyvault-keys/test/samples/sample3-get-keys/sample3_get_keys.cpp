@@ -55,10 +55,9 @@ int main()
     keyClient.CreateRsaKey(rsaKey);
     keyClient.CreateEcKey(ecKey);
 
-    bool nextPage = true;
-    while (nextPage)
+    std::cout << "\t-List Keys" << std::endl;
+    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValue();;)
     {
-      auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValue();
       for (auto const& key : keysSinglePage.Items)
       {
         if (key.Managed)
@@ -70,8 +69,17 @@ int main()
                   << " and type: " << KeyType::KeyTypeToString(keyWithType.GetKeyType())
                   << std::endl;
       }
-      // check if there are more pages to get
-      nextPage = keysSinglePage.ContinuationToken.HasValue();
+
+      if (!keysSinglePage.ContinuationToken.HasValue())
+      {
+        // No more pages for the response, break the loop
+        break;
+      }
+
+      // Get the next page
+      GetPropertiesOfKeysSinglePageOptions options;
+      options.ContinuationToken = keysSinglePage.ContinuationToken.GetValue();
+      keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).ExtractValue();
     }
 
     // update key
@@ -82,19 +90,30 @@ int main()
     keyClient.CreateRsaKey(newRsaKey);
 
     // List key versions
-    nextPage = true;
-    while (nextPage)
+    std::cout << "\t-List Key versions" << std::endl;
+    for (auto keyVersionsSinglePage
+         = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).ExtractValue();
+         ;)
     {
-      auto keyVersionsSinglePage
-          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).ExtractValue();
       for (auto const& key : keyVersionsSinglePage.Items)
       {
         std::cout << "Key's version: " << key.Version << " with name: " << key.Name << std::endl;
       }
-      // check if there are more pages to get
-      nextPage = keyVersionsSinglePage.ContinuationToken.HasValue();
+
+      if (!keyVersionsSinglePage.ContinuationToken.HasValue())
+      {
+        // No more pages for the response, break the loop
+        break;
+      }
+
+      // Get the next page
+      GetPropertiesOfKeyVersionsSinglePageOptions options;
+      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.GetValue();
+      keyVersionsSinglePage
+          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).ExtractValue();
     }
 
+    std::cout << "\t-Delete Keys" << std::endl;
     DeleteKeyOperation rsaOperation = keyClient.StartDeleteKey(rsaKeyName);
     DeleteKeyOperation ecOperation = keyClient.StartDeleteKey(ecKeyName);
 
@@ -102,17 +121,28 @@ int main()
     rsaOperation.PollUntilDone(std::chrono::milliseconds(2000));
     ecOperation.PollUntilDone(std::chrono::milliseconds(2000));
 
-    nextPage = true;
-    while (nextPage)
+    std::cout << "\t-List Deleted Keys" << std::endl;
+
+    // Start getting the first page.
+    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().ExtractValue();;)
     {
-      auto keysDeleted = keyClient.GetDeletedKeysSinglePage().ExtractValue();
-      for (auto const& key : keysDeleted.Items)
+      for (auto const& key : keysDeletedPage.Items)
       {
-        std::cout << "Deleted key's name: " << key.Name() << " and recovery Id: " << key.RecoveryId
-                  << std::endl;
+        std::cout << "Deleted key's name: " << key.Name()
+                  << ", recovery level: " << key.Properties.RecoveryLevel
+                  << " and recovery Id: " << key.RecoveryId << std::endl;
       }
-      // check if there are more pages to get
-      nextPage = keysDeleted.ContinuationToken.HasValue();
+
+      if (!keysDeletedPage.ContinuationToken.HasValue())
+      {
+        // No more pages for the response, break the loop
+        break;
+      }
+
+      // Get the next page
+      GetDeletedKeysSinglePageOptions options;
+      options.ContinuationToken = keysDeletedPage.ContinuationToken.GetValue();
+      keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).ExtractValue();
     }
 
     // If the keyvault is soft-delete enabled, then for permanent deletion, deleted keys needs to be
