@@ -29,6 +29,7 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
+#include <thread>
 
 using namespace Azure::Security::KeyVault::Keys;
 
@@ -60,6 +61,24 @@ int main()
     KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).ExtractValue();
     std::cout << "Key's updated expiry time is " << updatedKey.Properties.ExpiresOn->ToString()
               << std::endl;
+
+    CreateRsaKeyOptions newRsaKey(rsaKeyName);
+    newRsaKey.KeySize = 4096;
+    newRsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
+
+    keyClient.CreateRsaKey(newRsaKey);
+
+    DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
+
+    // You only need to wait for completion if you want to purge or recover the key.
+    while (!operation.IsDone())
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+      operation.Poll();
+    }
+
+    keyClient.PurgeDeletedKey(rsaKeyName);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
