@@ -16,7 +16,7 @@ void Azure::Security::KeyVault::Keys::to_json(
     Azure::Core::Json::_internal::json& j,
     JsonWebKey const& p)
 {
-  j[_detail::KeyTypePropertyName] = _detail::KeyTypeToString(p.KeyType);
+  j[_detail::KeyTypePropertyName] = KeyType::KeyTypeToString(p.KeyType);
   j[_detail::NPropertyName] = Base64url::Base64UrlEncode(p.N);
   j[_detail::EPropertyName] = Base64url::Base64UrlEncode(p.E);
   j[_detail::DPropertyName] = Base64url::Base64UrlEncode(p.D);

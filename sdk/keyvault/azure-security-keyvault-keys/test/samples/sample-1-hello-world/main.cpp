@@ -7,9 +7,9 @@
  *
  * @remark Make sure to set the next environment variables before running the sample.
  * - AZURE_KEYVAULT_URL:           To the KeyVault account url.
- * - AZURE_KEYVAULT_TENANT_ID:     Tenant id for the Azure account.
- * - AZURE_KEYVAULT_CLIENT_ID:     The client id to authenticate the request.
- * - AZURE_KEYVAULT_CLIENT_SECRET: The secret id from the client id.
+ * - AZURE_TENANT_ID:     Tenant id for the Azure account.
+ * - AZURE_CLIENT_ID:     The client id to authenticate the request.
+ * - AZURE_CLIENT_SECRET: The secret id from the client id.
  *
  * Also, make sure the key is already created. Then set the key name as `KEY_VAULT_KEY_NAME` before
  * the main() method below.
@@ -22,40 +22,44 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <azure/core/http/http.hpp>
-#include <azure/core/logging/logging.hpp>
-#include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/common/keyvault_exception.hpp>
+#include <azure/core.hpp>
+#include <azure/identity.hpp>
 #include <azure/keyvault/key_vault.hpp>
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 
 using namespace Azure::Security::KeyVault::Keys;
 
-// Define the name of the key to get
-#define KEY_VAULT_KEY_NAME "keyName"
-
 int main()
 {
-  auto tenantId = std::getenv("AZURE_KEYVAULT_TENANT_ID");
-  auto clientId = std::getenv("AZURE_KEYVAULT_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_KEYVAULT_CLIENT_SECRET");
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
+  std::string rsaKeyName("CloudRsaKey" + Azure::Core::Uuid::CreateUuid().ToString());
   try
   {
-    auto responseT = keyClient.GetKey(KEY_VAULT_KEY_NAME);
-    auto key = responseT.ExtractValue();
-    std::cout << "KeyId: " << key.Key.Id << std::endl;
-    std::cout << "Operations:" << std::endl;
-    for (KeyOperation operation : key.KeyOperations())
-    {
-      std::cout << " - " << operation.ToString() << std::endl;
-    }
+    auto rsaKey = CreateRsaKeyOptions(rsaKeyName);
+    rsaKey.KeySize = 2048;
+    rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
+
+    keyClient.CreateRsaKey(rsaKey);
+
+    KeyVaultKey cloudRsaKey = keyClient.GetKey(rsaKeyName).ExtractValue();
+    std::cout << "Key is returned with name " << cloudRsaKey.Name() << " and type "
+              << KeyType::KeyTypeToString(cloudRsaKey.GetKeyType()) << std::endl;
+
+    cloudRsaKey.Properties.ExpiresOn
+        = cloudRsaKey.Properties.ExpiresOn.GetValue() + std::chrono::hours(24 * 365);
+    KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).ExtractValue();
+    std::cout << "Key's updated expiry time is " << updatedKey.Properties.ExpiresOn->ToString()
+              << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

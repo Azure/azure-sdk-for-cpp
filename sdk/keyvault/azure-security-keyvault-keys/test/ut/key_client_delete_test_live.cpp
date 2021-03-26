@@ -316,7 +316,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
     EXPECT_EQ(deletedKey.Name(), keyName);
     auto expectedType = Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec;
     EXPECT_EQ(
-        Azure::Security::KeyVault::Keys::_detail::KeyTypeToString(expectedType),
-        Azure::Security::KeyVault::Keys::_detail::KeyTypeToString(deletedKey.Key.KeyType));
+        Azure::Security::KeyVault::Keys::KeyType::KeyTypeToString(expectedType),
+        Azure::Security::KeyVault::Keys::KeyType::KeyTypeToString(deletedKey.Key.KeyType));
   }
 }

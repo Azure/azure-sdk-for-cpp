@@ -3,4 +3,4 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-add_subdirectory(get-key)
+add_subdirectory(sample-1-hello-world)

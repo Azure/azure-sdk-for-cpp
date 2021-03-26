@@ -73,7 +73,7 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     }
     key.Key.Id = jsonKey[_detail::KeyIdPropertyName].get<std::string>();
     key.Key.KeyType
-        = _detail::KeyTypeFromString(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
+        = KeyType::KeyTypeFromString(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
 
     JsonOptional::SetIfExists<std::string, KeyCurveName>(
         key.Key.CurveName, jsonKey, _detail::CurveNamePropertyName, [](std::string const& keyName) {
