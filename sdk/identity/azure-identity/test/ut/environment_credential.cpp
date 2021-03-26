@@ -40,7 +40,14 @@ class EnvironmentOverride {
       static_cast<void>(putenv((name + "=" + value).c_str()));
 #pragma warning(pop)
 #else
-      static_cast<void>(setenv(name.c_str(), value.c_str(), 1));
+      if (value.empty())
+      {
+        static_cast<void>(unsetenv(name.c_str());
+      }
+      else
+      {
+        static_cast<void>(setenv(name.c_str(), value.c_str(), 1));
+      }
 #endif
     }
 
