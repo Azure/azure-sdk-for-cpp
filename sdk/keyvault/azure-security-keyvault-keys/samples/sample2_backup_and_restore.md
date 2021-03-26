@@ -59,6 +59,6 @@ auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
 
 To see the full example source, see:
 
-- sample-2-backup-and-restore
+- sample2_backup_and_restore.cpp
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md

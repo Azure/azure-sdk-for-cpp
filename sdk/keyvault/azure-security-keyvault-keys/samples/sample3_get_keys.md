@@ -6,7 +6,7 @@ To get started, you'll need a URI to an Azure Key Vault. See the [README](https:
 ## Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
-You can use the [DefaultAzureCredential][DefaultAzureCredential] to try a number of common authentication methods optimized for both running as a service and development.
+You can use the [DefaultAzureCredential][defaultazurecredential] to try a number of common authentication methods optimized for both running as a service and development.
 
 In the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
@@ -116,7 +116,6 @@ foreach (DeletedKey key in keysDeleted)
 
 To see the full example source, see:
 
-* [Synchronous Sample3_GetKeys.cs](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/tests/samples/Sample3_GetKeys.cs)
-* [ASynchronous Sample3_GetKeysAsync.cs](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/tests/samples/Sample3_GetKeysAsync.cs)
+- sample3_get_keys.cpp
 
-[DefaultAzureCredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md

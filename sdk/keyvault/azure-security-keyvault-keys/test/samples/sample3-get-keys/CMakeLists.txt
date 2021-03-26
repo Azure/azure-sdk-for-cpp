@@ -3,13 +3,13 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-project (sample-1-hello-world LANGUAGES CXX)
+project (sample3-get-keys LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
-  sample-1-hello-world
-  main.cpp
+  sample3-get-keys
+  sample3_get_keys.cpp
 )
 
-target_link_libraries(sample-1-hello-world PRIVATE azure-security-keyvault-keys azure-identity)
+target_link_libraries(sample3-get-keys PRIVATE azure-security-keyvault-keys azure-identity)

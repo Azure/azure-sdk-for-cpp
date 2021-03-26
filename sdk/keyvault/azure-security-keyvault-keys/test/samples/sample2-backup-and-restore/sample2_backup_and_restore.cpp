@@ -127,6 +127,11 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
 
 void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& actual)
 {
+#if defined(NDEBUG)
+  // Use (void) to silent unused warnings.
+  (void)expected;
+  (void)actual;
+#endif
   assert(expected.Name == actual.Name);
   assert(expected.Version == actual.Version);
   assert(expected.Managed == actual.Managed);
