@@ -3,6 +3,7 @@
 ## 1.0.0-beta.8 (Unreleased)
 
 ### Breaking Changes
+
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 
 ## 1.0.0-beta.7 (2021-03-11)
