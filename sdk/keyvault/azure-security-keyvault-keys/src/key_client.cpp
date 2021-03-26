@@ -19,6 +19,41 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 
+namespace {
+struct RequestWithContinuationToken
+{
+  std::vector<std::string> Path;
+  std::unique_ptr<std::map<std::string, std::string>> Query;
+};
+
+static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
+    GetSinglePageOptions const& options,
+    std::vector<std::string>&& defaultPath)
+{
+  RequestWithContinuationToken request;
+  request.Path = defaultPath;
+  if (options.ContinuationToken)
+  {
+    // Using a continuation token requires to send the request to the continuation token url instead
+    // of the default url which is used only for the first page.
+    Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
+    request.Query
+        = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
+    request.Path.clear();
+    request.Path.emplace_back(nextPageUrl.GetPath());
+  }
+  if (options.MaxResults)
+  {
+    if (request.Query == nullptr)
+    {
+      request.Query = std::make_unique<std::map<std::string, std::string>>();
+    }
+    request.Query->emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
+  }
+  return request;
+}
+} // namespace
+
 KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
@@ -121,38 +156,7 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
     GetPropertiesOfKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
-  if (!options.ContinuationToken) // First page when no continuation token //
-  {
-    if (options.MaxResults) // Update max-results //
-    {
-      return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
-          context,
-          Azure::Core::Http::HttpMethod::Get,
-          [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
-                rawResponse);
-          },
-          {_detail::KeysPath},
-          {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
-    }
-    // let server choose max-results //
-    return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
-        context,
-        Azure::Core::Http::HttpMethod::Get,
-        [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
-              rawResponse);
-        },
-        {_detail::KeysPath});
-  }
-  // Get next page //
-  // Get next page //
-  Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
-  auto query = nextPageUrl.GetQueryParameters();
-  if (options.MaxResults)
-  {
-    query.emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
-  }
+  auto const request = BuildRequestFromContinuationToken(options, {_detail::KeysPath});
   return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -160,8 +164,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
         return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
             rawResponse);
       },
-      {nextPageUrl.GetPath()},
-      query);
+      request.Path,
+      request.Query);
 }
 
 Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSinglePage(
@@ -169,37 +173,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSi
     GetPropertiesOfKeyVersionsSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
-  if (!options.ContinuationToken) // First page when no continuation token //
-  {
-    if (options.MaxResults) // Update max-results //
-    {
-      return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
-          context,
-          Azure::Core::Http::HttpMethod::Get,
-          [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
-                rawResponse);
-          },
-          {_detail::KeysPath, name, "versions"},
-          {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
-    }
-    // let server choose max-results //
-    return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
-        context,
-        Azure::Core::Http::HttpMethod::Get,
-        [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
-              rawResponse);
-        },
-        {_detail::KeysPath, name, "versions"});
-  }
-  // Get next page //
-  Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
-  auto query = nextPageUrl.GetQueryParameters();
-  if (options.MaxResults)
-  {
-    query.emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
-  }
+  auto const request
+      = BuildRequestFromContinuationToken(options, {_detail::KeysPath, name, "versions"});
   return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -207,8 +182,8 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSi
         return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
             rawResponse);
       },
-      {nextPageUrl.GetPath()},
-      query);
+      request.Path,
+      request.Query);
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -258,37 +233,7 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
     GetDeletedKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
-  if (!options.ContinuationToken) // First page when no continuation token //
-  {
-    if (options.MaxResults) // Update max-results //
-    {
-      return m_pipeline->SendRequest<DeletedKeySinglePage>(
-          context,
-          Azure::Core::Http::HttpMethod::Get,
-          [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
-                rawResponse);
-          },
-          {_detail::DeletedKeysPath},
-          {{"maxResults", std::to_string(options.MaxResults.GetValue())}});
-    }
-    // let server choose max-results //
-    return m_pipeline->SendRequest<DeletedKeySinglePage>(
-        context,
-        Azure::Core::Http::HttpMethod::Get,
-        [](Azure::Core::Http::RawResponse const& rawResponse) {
-          return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
-              rawResponse);
-        },
-        {_detail::DeletedKeysPath});
-  }
-  // Get next page //
-  Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
-  auto query = nextPageUrl.GetQueryParameters();
-  if (options.MaxResults)
-  {
-    query.emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
-  }
+  auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
   return m_pipeline->SendRequest<DeletedKeySinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -296,8 +241,8 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
         return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
             rawResponse);
       },
-      {nextPageUrl.GetPath()},
-      query);
+      request.Path,
+      request.Query);
 }
 
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(

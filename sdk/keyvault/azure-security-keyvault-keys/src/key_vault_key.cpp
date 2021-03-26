@@ -90,6 +90,7 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     auto attributes = jsonParser[_detail::AttributesPropertyName];
 
     JsonOptional::SetIfExists(key.Properties.Enabled, attributes, _detail::EnabledPropertyName);
+
     JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
         key.Properties.NotBefore,
         attributes,
