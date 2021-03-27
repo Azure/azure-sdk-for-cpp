@@ -39,6 +39,9 @@ namespace Azure { namespace Core {
    */
   class Context {
   public:
+    /**
+     * @brief A context key.
+     */
     struct Key final
     {
       Key const* m_uniqueAddress;
