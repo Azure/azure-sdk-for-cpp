@@ -162,7 +162,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 
   auto session = std::make_unique<CurlSession>(
       request,
-      CurlConnectionPool::ExtractCurlConnection(request, m_options),
+      CurlConnectionPool::ExtractOrCreateCurlConnection(request, m_options),
       m_options.HttpKeepAlive);
 
   CURLcode performing;
@@ -187,7 +187,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     // won't be no longer valid.
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::ExtractCurlConnection(
+        CurlConnectionPool::ExtractOrCreateCurlConnection(
             request,
             m_options,
             getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
@@ -1116,7 +1116,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 }
 } // namespace
 
-std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractCurlConnection(
+std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlConnection(
     Request& request,
     CurlTransportOptions const& options,
     bool resetPool)

@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
         // Creating a new connection with default options
         Azure::Core::Http::CurlTransportOptions options;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractCurlConnection(req, options);
+            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
 
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
 
@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Test {
         // Creating a new connection with default options
         Azure::Core::Http::CurlTransportOptions options;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractCurlConnection(req, options);
+            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
 
         // There was just one connection in the pool, it should be empty now
         EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::CurlTransportOptions options;
         options.CAInfo = CAinfo;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractCurlConnection(req, options);
+            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
 
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
         // One connection still in the pool after getting a new connection and with first expected
@@ -127,7 +127,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::CurlTransportOptions options;
         options.CAInfo = CAinfo;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractCurlConnection(req, options);
+            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
 
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
         // One connection still in the pool after getting a new connection and with first expected
@@ -186,7 +186,8 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
 
       Azure::Core::Http::CurlTransportOptions options;
-      auto connection = Azure::Core::Http::CurlConnectionPool::ExtractCurlConnection(req, options);
+      auto connection
+          = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
       // Simulate connection lost (like server disconnection).
       connection->Shutdown();
 
