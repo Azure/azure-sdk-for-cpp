@@ -199,15 +199,15 @@ namespace Azure { namespace Core { namespace Http {
     }
   }
 
-  namespace Policies {
+  namespace Policies { namespace _internal {
     class RetryPolicy;
-  }
+  }} // namespace Policies::_internal
 
   /**
    * @brief HTTP request.
    */
   class Request {
-    friend class Azure::Core::Http::Policies::RetryPolicy;
+    friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
 #if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;

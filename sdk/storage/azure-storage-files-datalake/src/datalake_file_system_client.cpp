@@ -56,8 +56,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_fileSystemUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
@@ -80,8 +82,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                             credential,
                                             _detail::GetBlobClientOptions(options))
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_fileSystemUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
@@ -89,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
     perOperationPolicies.emplace_back(
@@ -109,8 +113,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             _detail::GetBlobClientOptions(options))
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_fileSystemUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());

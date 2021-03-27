@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  class SharedKeyPolicy : public Core::Http::Policies::HttpPolicy {
+  class SharedKeyPolicy : public Core::Http::Policies::_internal::HttpPolicy {
   public:
     explicit SharedKeyPolicy(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))
@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        Core::Http::Policies::_internal::NextHttpPolicy nextHttpPolicy,
         Core::Context const& ctx) const override
     {
       request.SetHeader(

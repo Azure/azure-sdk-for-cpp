@@ -15,6 +15,7 @@ using Azure::Core::Context;
 using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTransportAdapter()
 {

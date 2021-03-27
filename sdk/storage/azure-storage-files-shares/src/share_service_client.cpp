@@ -44,8 +44,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
@@ -62,8 +64,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_serviceUrl(serviceUrl)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
+        perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));

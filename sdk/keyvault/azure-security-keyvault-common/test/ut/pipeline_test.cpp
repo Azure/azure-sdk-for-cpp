@@ -14,8 +14,9 @@ using namespace Azure::Security::KeyVault::Common::_internal;
 
 TEST(KeyVaultPipeline, initPipeline)
 {
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
-  policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::TransportPolicy>());
+  std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+  policies.emplace_back(
+      std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>());
   Azure::Core::Url url("urlTest");
   Azure::Core::_internal::ClientOptions options;
   Azure::Core::Http::_internal::HttpPipeline pipeline(

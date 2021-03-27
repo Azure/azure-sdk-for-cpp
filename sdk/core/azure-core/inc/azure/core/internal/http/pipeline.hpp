@@ -31,19 +31,20 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
    */
   class HttpPipeline {
   protected:
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> m_policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> m_policies;
 
   public:
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
-     * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy representing a stack,
-     * first element corresponding to the top of the stack.
+     * @param policies A sequence of #Azure::Core::Http::Policies::_internal::HttpPolicy
+     * representing a stack, first element corresponding to the top of the stack.
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
     explicit HttpPipeline(
-        const std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>& policies)
+        const std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>&
+            policies)
     {
       if (policies.size() == 0)
       {
@@ -73,8 +74,10 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
         Azure::Core::_internal::ClientOptions const& clientOptions,
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
-        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perRetryPolicies,
-        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies)
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>&&
+            perRetryPolicies,
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>&&
+            perCallPolicies)
     {
       auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
       auto const& perRetryClientPolicies = clientOptions.PerRetryPolicies;
@@ -101,14 +104,16 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       }
 
       // Request Id
-      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::RequestIdPolicy>());
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::RequestIdPolicy>());
       // Telemetry
-      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>(
-          telemetryServiceName, telemetryServiceVersion, clientOptions.Telemetry));
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>(
+              telemetryServiceName, telemetryServiceVersion, clientOptions.Telemetry));
 
       // Retry policy
-      m_policies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::RetryPolicy>(clientOptions.Retry));
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::_internal::RetryPolicy>(
+          clientOptions.Retry));
 
       // service-specific per retry policies.
       for (auto& policy : perRetryPolicies)
@@ -123,23 +128,24 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
       // logging - won't update request
       m_policies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::LogPolicy>(clientOptions.Log));
+          std::make_unique<Azure::Core::Http::Policies::_internal::LogPolicy>(clientOptions.Log));
 
       // transport
       m_policies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(clientOptions.Transport));
+          std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(
+              clientOptions.Transport));
     }
 
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
-     * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy representing a stack,
-     * first element corresponding to the top of the stack.
+     * @param policies A sequence of #Azure::Core::Http::Policies::_internal::HttpPolicy
+     * representing a stack, first element corresponding to the top of the stack.
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
     explicit HttpPipeline(
-        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& policies)
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>&& policies)
         : m_policies(std::move(policies))
     {
       if (m_policies.size() == 0)
@@ -180,7 +186,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
       return m_policies[0]->Send(
-          request, Azure::Core::Http::Policies::NextHttpPolicy(0, m_policies), ctx);
+          request, Azure::Core::Http::Policies::_internal::NextHttpPolicy(0, m_policies), ctx);
     }
   };
 }}}} // namespace Azure::Core::Http::_internal
