@@ -13,33 +13,47 @@
 
 using namespace Azure::Core;
 
+namespace {
+extern char const KeyId[] = "key";
+extern char const Key2Id[] = "key2";
+extern char const Key3Id[] = "key3";
+extern char const Key4Id[] = "key4";
+extern char const Key5Id[] = "key5";
+extern char const Key6Id[] = "key6";
+extern char const Key7Id[] = "key7";
+extern char const KeyFinalId[] = "keyFinal";
+
+Context::Key const Key = _internal::ContextKey::Create<KeyId>();
+Context::Key const Key2 = _internal::ContextKey::Create<Key2Id>();
+Context::Key const Key3 = _internal::ContextKey::Create<Key3Id>();
+Context::Key const Key4 = _internal::ContextKey::Create<Key4Id>();
+Context::Key const Key5 = _internal::ContextKey::Create<Key5Id>();
+Context::Key const Key6 = _internal::ContextKey::Create<Key6Id>();
+Context::Key const Key7 = _internal::ContextKey::Create<Key7Id>();
+Context::Key const KeyFinal = _internal::ContextKey::Create<KeyFinalId>();
+} // namespace
+
 TEST(Context, Basic)
 {
   Context context;
-  Context::Key const key;
-
-  EXPECT_FALSE(context.HasKey(key));
+  EXPECT_FALSE(context.HasKey(Key));
 }
 
 TEST(Context, BasicBool)
 {
   Context context;
-  Context::Key const key;
-
   // New context from previous
-  auto c2 = context.WithValue(key, true);
-  auto& value = c2.Get<bool>(key);
+  auto c2 = context.WithValue(Key, true);
+  auto& value = c2.Get<bool>(Key);
   EXPECT_TRUE(value == true);
 }
 
 TEST(Context, BasicInt)
 {
   Context context;
-  Context::Key const key;
-
   // New context from previous
-  auto c2 = context.WithValue(key, 123);
-  auto& value = c2.Get<int>(key);
+  auto c2 = context.WithValue(Key, 123);
+  auto& value = c2.Get<int>(Key);
   EXPECT_TRUE(value == 123);
 }
 
@@ -48,11 +62,9 @@ TEST(Context, BasicStdString)
   std::string s("Test String");
 
   Context context;
-  Context::Key const key;
-
   // New context from previous
-  auto c2 = context.WithValue(key, s);
-  auto& value = c2.Get<std::string>(key);
+  auto c2 = context.WithValue(Key, s);
+  auto& value = c2.Get<std::string>(Key);
   EXPECT_TRUE(value == s);
 }
 
@@ -62,11 +74,9 @@ TEST(Context, BasicChar)
   std::string s(str);
 
   Context context;
-  Context::Key const key;
-
   // New context from previous
-  auto c2 = context.WithValue(key, str);
-  auto& value = c2.Get<const char*>(key);
+  auto c2 = context.WithValue(Key, str);
+  auto& value = c2.Get<const char*>(Key);
   EXPECT_TRUE(value == s);
   EXPECT_TRUE(value == str);
 }
@@ -89,12 +99,10 @@ TEST(Context, NestedIsCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  Context::Key const key;
-
-  auto c2 = context.WithValue(key, "Value");
+  auto c2 = context.WithValue(Key, "Value");
   EXPECT_FALSE(c2.IsCancelled());
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
+  EXPECT_TRUE(c2.HasKey(Key));
+  EXPECT_FALSE(context.HasKey(Key));
 
   auto c3 = context.WithDeadline(deadline);
   EXPECT_FALSE(context.IsCancelled());
@@ -106,28 +114,26 @@ TEST(Context, NestedIsCancelled)
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_TRUE(c3.IsCancelled());
 
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
-  EXPECT_FALSE(c3.HasKey(key));
+  EXPECT_TRUE(c2.HasKey(Key));
+  EXPECT_FALSE(context.HasKey(Key));
+  EXPECT_FALSE(c3.HasKey(Key));
 }
 
 TEST(Context, CancelWithValue)
 {
   Context context;
-  Context::Key const key;
-
-  auto c2 = context.WithValue(key, "Value");
+  auto c2 = context.WithValue(Key, "Value");
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
+  EXPECT_TRUE(c2.HasKey(Key));
+  EXPECT_FALSE(context.HasKey(Key));
 
   c2.Cancel();
   EXPECT_TRUE(c2.IsCancelled());
   EXPECT_FALSE(context.IsCancelled());
 
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
+  EXPECT_TRUE(c2.HasKey(Key));
+  EXPECT_FALSE(context.HasKey(Key));
 }
 
 TEST(Context, ThrowIfCancelled)
@@ -145,30 +151,22 @@ TEST(Context, ThrowIfCancelled)
 TEST(Context, Chain)
 {
   Context context;
-  Context::Key const key2;
-  Context::Key const key3;
-  Context::Key const key4;
-  Context::Key const key5;
-  Context::Key const key6;
-  Context::Key const key7;
-  Context::Key const keyFinal;
-
   // New context from previous
-  auto c2 = context.WithValue(key2, 123);
-  auto c3 = c2.WithValue(key3, 456);
-  auto c4 = c3.WithValue(key4, 789);
-  auto c5 = c4.WithValue(key5, "5");
-  auto c6 = c5.WithValue(key6, "6");
-  auto c7 = c6.WithValue(key7, "7");
-  auto finalContext = c7.WithValue(keyFinal, "Final");
+  auto c2 = context.WithValue(Key2, 123);
+  auto c3 = c2.WithValue(Key3, 456);
+  auto c4 = c3.WithValue(Key4, 789);
+  auto c5 = c4.WithValue(Key5, "5");
+  auto c6 = c5.WithValue(Key6, "6");
+  auto c7 = c6.WithValue(Key7, "7");
+  auto finalContext = c7.WithValue(KeyFinal, "Final");
 
-  auto& valueT2 = finalContext.Get<int>(key2);
-  auto& valueT3 = finalContext.Get<int>(key3);
-  auto& valueT4 = finalContext.Get<int>(key4);
-  auto& valueT5 = finalContext.Get<const char*>(key5);
-  auto& valueT6 = finalContext.Get<const char*>(key6);
-  auto& valueT7 = finalContext.Get<const char*>(key7);
-  auto& valueT8 = finalContext.Get<const char*>(keyFinal);
+  auto& valueT2 = finalContext.Get<int>(Key2);
+  auto& valueT3 = finalContext.Get<int>(Key3);
+  auto& valueT4 = finalContext.Get<int>(Key4);
+  auto& valueT5 = finalContext.Get<const char*>(Key5);
+  auto& valueT6 = finalContext.Get<const char*>(Key6);
+  auto& valueT7 = finalContext.Get<const char*>(Key7);
+  auto& valueT8 = finalContext.Get<const char*>(KeyFinal);
 
   EXPECT_TRUE(valueT2 == 123);
   EXPECT_TRUE(valueT3 == 456);
@@ -182,14 +180,12 @@ TEST(Context, Chain)
 TEST(Context, MatchingKeys)
 {
   Context context;
-  Context::Key const key;
-
   // New context from previous
-  auto c2 = context.WithValue(key, 123);
-  auto c3 = c2.WithValue(key, 456);
+  auto c2 = context.WithValue(Key, 123);
+  auto c3 = c2.WithValue(Key, 456);
 
-  auto& valueT2 = c2.Get<int>(key);
-  auto& valueT3 = c3.Get<int>(key);
+  auto& valueT2 = c2.Get<int>(Key);
+  auto& valueT3 = c3.Get<int>(Key);
 
   EXPECT_TRUE(valueT2 == 123);
   EXPECT_TRUE(valueT3 == 456);
@@ -202,17 +198,15 @@ struct SomeStructForContext
 
 TEST(Context, InstanceValue)
 {
-  Context::Key const key;
-  auto contextP = Context::GetApplicationContext().WithValue(key, SomeStructForContext());
-  auto& contextValueRef = contextP.Get<SomeStructForContext>(key);
+  auto contextP = Context::GetApplicationContext().WithValue(Key, SomeStructForContext());
+  auto& contextValueRef = contextP.Get<SomeStructForContext>(Key);
   EXPECT_EQ(contextValueRef.someField, 12345);
 }
 
 TEST(Context, UniquePtr)
 {
-  Context::Key const key;
   auto contextP
-      = Context::GetApplicationContext().WithValue(key, std::make_unique<SomeStructForContext>());
-  auto& contextValueRef = contextP.Get<std::unique_ptr<SomeStructForContext>>(key);
+      = Context::GetApplicationContext().WithValue(Key, std::make_unique<SomeStructForContext>());
+  auto& contextValueRef = contextP.Get<std::unique_ptr<SomeStructForContext>>(Key);
   EXPECT_EQ(contextValueRef->someField, 12345);
 }

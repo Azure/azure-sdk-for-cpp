@@ -20,11 +20,16 @@
 
 using namespace Azure::Core;
 
+namespace {
+extern char const KeyId[] = "key";
+Context::Key const Key = _internal::ContextKey::Create<KeyId>();
+} // namespace
+
 TEST(Context, ApplicationContext)
 {
   Context appContext = Context::GetApplicationContext();
 
-  EXPECT_FALSE(appContext.HasKey(Context::Key()));
+  EXPECT_FALSE(appContext.HasKey(Key));
 
   auto duration = std::chrono::milliseconds(250);
   EXPECT_FALSE(appContext.IsCancelled());

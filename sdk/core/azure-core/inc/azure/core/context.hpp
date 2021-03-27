@@ -34,6 +34,10 @@ namespace Azure { namespace Core {
     }
   };
 
+  namespace _internal {
+    class ContextKey;
+  }
+
   /**
    * @brief A context is a node within a tree that represents expiration times and key/value pairs.
    */
@@ -44,16 +48,12 @@ namespace Azure { namespace Core {
      */
     struct Key final
     {
-      Key const* m_uniqueAddress;
+      friend class _internal::ContextKey;
+      char const* m_idPtr;
+      explicit Key(char const* idPtr) : m_idPtr(idPtr) {}
 
     public:
-      Key() : m_uniqueAddress(this) {}
-
-      bool operator==(Key const& other) const
-      {
-        return this->m_uniqueAddress == other.m_uniqueAddress;
-      }
-
+      bool operator==(Key const& other) const { return this->m_idPtr == other.m_idPtr; }
       bool operator!=(Key const& other) const { return !(*this == other); }
     };
 
@@ -82,19 +82,11 @@ namespace Azure { namespace Core {
         return time_point() + static_cast<std::chrono::milliseconds>(msec);
       }
 
-      explicit ContextSharedState()
-          : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)())), Value(nullptr),
-            ValueType(typeid(std::nullptr_t))
-      {
-      }
+      explicit ContextSharedState();
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          time_point cancelAt)
-          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Value(nullptr),
-            ValueType(typeid(std::nullptr_t))
-      {
-      }
+          time_point cancelAt);
 
       template <class T>
       explicit ContextSharedState(
@@ -235,4 +227,30 @@ namespace Azure { namespace Core {
      */
     static Context& GetApplicationContext();
   };
+
+  namespace _internal {
+    class ContextKey final {
+      ContextKey() = delete;
+      ~ContextKey() = delete;
+
+    public:
+      template <char const* IdPtr> static Context::Key Create() { return Context::Key(IdPtr); }
+    };
+  } // namespace _internal
+
+  inline Context::ContextSharedState::ContextSharedState()
+      : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)())),
+        Key(_internal::ContextKey::Create<nullptr>()), Value(nullptr),
+        ValueType(typeid(std::nullptr_t))
+  {
+  }
+
+  inline Context::ContextSharedState::ContextSharedState(
+      const std::shared_ptr<Context::ContextSharedState>& parent,
+      time_point cancelAt)
+      : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)),
+        Key(_internal::ContextKey::Create<nullptr>()), Value(nullptr),
+        ValueType(typeid(std::nullptr_t))
+  {
+  }
 }} // namespace Azure::Core

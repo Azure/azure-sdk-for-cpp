@@ -3,9 +3,15 @@
 
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
+namespace {
+extern char const SecondaryHostReplicaStatusKeyId[]
+    = "AzureSdkStorageSecondaryHostReplicaStatusKey";
+}
+
 namespace Azure { namespace Storage { namespace _internal {
 
-  Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
+  Azure::Core::Context::Key const SecondaryHostReplicaStatusKey
+      = Azure::Core::_internal::ContextKey::Create<SecondaryHostReplicaStatusKeyId>();
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
