@@ -5,6 +5,8 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
+  Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
+
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,

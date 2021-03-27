@@ -8,10 +8,11 @@
 
 #include <azure/core/http/policies/policy.hpp>
 
+#include "azure/storage/common/dll_import_export.hpp"
+
 namespace Azure { namespace Storage { namespace _internal {
 
-  static constexpr const char* SecondaryHostReplicaStatusKey
-      = "AzureSdkStorageSecondaryHostReplicaStatusKey";
+  AZ_STORAGE_COMMON_DLLEXPORT extern Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
 
   inline Azure::Core::Context WithReplicaStatus(const Azure::Core::Context& context)
   {
