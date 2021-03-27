@@ -41,7 +41,7 @@ namespace Azure { namespace Core {
   public:
     struct Key final
     {
-      Key* m_uniqueAddress;
+      Key const* m_uniqueAddress;
 
     public:
       Key() : m_uniqueAddress(this) {}
