@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource
-        = "/" + m_pathUrl.GetPath() + _internal::UrlEncodePath(fileName);
+        = "/" + m_pathUrl.GetPath() + "/" + _internal::UrlEncodePath(fileName);
     auto result = _detail::DataLakeRestClient::Path::Create(
         destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
