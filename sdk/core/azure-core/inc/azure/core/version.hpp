@@ -15,7 +15,7 @@
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
-#define AZURE_CORE_VERSION_PRERELEASE "beta.8"
+#define AZURE_CORE_VERSION_PRERELEASE ""
 
 namespace Azure { namespace Core {
 
