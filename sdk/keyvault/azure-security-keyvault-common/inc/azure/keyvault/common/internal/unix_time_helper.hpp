@@ -37,6 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      */
     static inline uint64_t DatetimeToUnixTime(Azure::DateTime dateTime)
     {
+      //  This count starts at the Unix Epoch which was January 1st, 1970 at UTC. 
       auto secondsSince1970
           = std::chrono::duration_cast<std::chrono::seconds>(dateTime - Azure::DateTime(1970));
       return secondsSince1970.count();

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines the based options to create a Key Vault client.
+ * @brief Defines the base options to create a Key Vault client.
  *
  */
 
@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
   };
 
   /**
-   * @brief Define the based options to create an KeyVault SDK client.
+   * @brief Define the base options to create an KeyVault SDK client.
    *
    */
   struct ClientOptions : public Azure::Core::_internal::ClientOptions
