@@ -4,6 +4,45 @@ parameters:
   TestPipeline: false
 
 stages:
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - stage: Integration
+      dependsOn: Build
+
+      jobs:
+        - deployment: PublishNightlyVcpkg
+          displayName: Publish to vcpkg nightly branch
+          dependsOn: Build
+          # TODO: Condition?
+          environment: github
+
+          pool:
+            name: azsdk-pool-mms-win-2019-general
+            vmImage: MMS2019
+
+          strategy: 
+            runOnce:
+              deploy:
+                steps:
+                  - checkout: self
+
+                  - pwsh: |
+                      $formattedDate = Get-Date -Format 'yyyy-MM-dd'
+                      $branchName = "nightly/$formattedDate"
+                      Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
+                    displayName: Set branch name in fork repo
+
+                  # Placing artifacts in the same branch in sequence reduces the
+                  # potential for race conditions. If this job does fail to push
+                  # because another job has already pushed to the same branch it
+                  # can be re-run.
+                  - ${{ each artifact in parameters.Artifacts }}:
+                    - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
+                      parameters:
+                        ArtifactName: ${{ artifact.Name }}
+                        VcpkgPortName: ${{ artifact.VcpkgPortName }}
+                        PRBranchName: $(PrBranchName)
+                        DisplayNameExtension: ${{ artifact.Name }}
+
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
       - stage: Release_${{ replace(artifact.Name, '-', '_') }}
@@ -122,52 +161,11 @@ stages:
                           Write-Host "##vso[task.setvariable variable=PrTitle]$title"
                         displayName: Set PR title
 
-                      - task: Powershell@2
-                        inputs:
-                          filePath: eng/scripts/Initialize-VcpkgRelease.ps1
-                          arguments: >-
-                            -GitHubRepo "$(Build.Repository.Name)"
-                            -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
-                            -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
-                            -Verbose
-                          pwsh: true
-                        displayName: Initialize vcpkg release
-
-                      # There are potential race conditions if this script runs
-                      # in parallel against the same branch name. Release only 
-                      # one package at a time.
-                      - pwsh: |
-                          Write-Host "git clone https://github.com/azure-sdk/vcpkg $(Pipeline.Workspace)/vcpkg"
-                          git clone https://github.com/azure-sdk/vcpkg $(Pipeline.Workspace)/vcpkg
-                          if ($LASTEXITCODE -ne 0) {
-                            Write-Error "Unable to check out vcpkg fork repo"
-                            exit $LASTEXITCODE
-                          }
-                          Write-Host "##vso[task.setvariable variable=VcpkgWorkspace]$(Pipeline.Workspace)/vcpkg"
-                        displayName: Clone vcpkg from upstream
-
-                      # Check out the PR branch if it's already in remote. 
-                      # Ignore failures.
-                      - pwsh: |
-                          $ErrorActionPreference = "Continue"
-                          git checkout "origin/$(PrBranchName)" 2>&1 | Out-Null
-                          $LASTEXITCODE = 0 # This ignores any error from git checkout
-                          git status
-                        displayName: Checkout Previous PRBranch if it exist.
-                        workingDirectory: $(VcpkgWorkspace)
-
-                      - task: Powershell@2
-                        inputs:
-                          pwsh: true
-                          targetType: filePath
-                          filePath: eng/scripts/Update-VcpkgPort.ps1
-                          arguments: >-
-                            -ReleaseArtifactSourceDirectory "$(Pipeline.Workspace)/packages/${{ artifact.Name }}"
-                            -PortDestinationDirectory 'ports/${{ artifact.VcpkgPortName }}'
-                            -VcpkgPortName '${{ artifact.VcpkgPortName }}'
-                            -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
-                          workingDirectory: $(VcpkgWorkspace)
-                        displayName: Update vcpkg port
+                      - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
+                        parameters:
+                          ArtifactName: ${{ artifact.Name }}
+                          VcpkgPortName: ${{ artifact.VcpkgPortName }}
+                          PRBranchName: $(PrBranchName)
 
                       # Set $(HasChanges) to $true so that 
                       # create-pull-request.yml completes the push and PR 
