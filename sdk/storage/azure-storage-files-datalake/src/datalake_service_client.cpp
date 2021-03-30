@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        _internal::FileServicePackageName,
+        _internal::DatalakeServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        _internal::FileServicePackageName,
+        _internal::DatalakeServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        _internal::FileServicePackageName,
+        _internal::DatalakeServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
