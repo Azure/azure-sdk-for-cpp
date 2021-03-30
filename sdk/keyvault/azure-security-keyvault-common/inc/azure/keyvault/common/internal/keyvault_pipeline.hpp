@@ -166,7 +166,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @param path The path for the request.
      * @return A unique ptr to an Http raw response.
      */
-    std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse(
+    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path)
