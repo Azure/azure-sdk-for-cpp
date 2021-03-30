@@ -17,12 +17,12 @@ void Azure::Security::KeyVault::Keys::to_json(
     JsonWebKey const& p)
 {
   j[_detail::KeyTypePropertyName] = KeyType::KeyTypeToString(p.KeyType);
-  j[_detail::NPropertyName] = Base64url::Base64UrlEncode(p.N);
-  j[_detail::EPropertyName] = Base64url::Base64UrlEncode(p.E);
-  j[_detail::DPropertyName] = Base64url::Base64UrlEncode(p.D);
-  j[_detail::DPPropertyName] = Base64url::Base64UrlEncode(p.DP);
-  j[_detail::DQPropertyName] = Base64url::Base64UrlEncode(p.DQ);
-  j[_detail::QIPropertyName] = Base64url::Base64UrlEncode(p.QI);
-  j[_detail::PPropertyName] = Base64url::Base64UrlEncode(p.P);
-  j[_detail::QPropertyName] = Base64url::Base64UrlEncode(p.Q);
+  j[_detail::NPropertyName] = Base64Url::Base64UrlEncode(p.N);
+  j[_detail::EPropertyName] = Base64Url::Base64UrlEncode(p.E);
+  j[_detail::DPropertyName] = Base64Url::Base64UrlEncode(p.D);
+  j[_detail::DPPropertyName] = Base64Url::Base64UrlEncode(p.DP);
+  j[_detail::DQPropertyName] = Base64Url::Base64UrlEncode(p.DQ);
+  j[_detail::QIPropertyName] = Base64Url::Base64UrlEncode(p.QI);
+  j[_detail::PPropertyName] = Base64Url::Base64UrlEncode(p.P);
+  j[_detail::QPropertyName] = Base64Url::Base64UrlEncode(p.Q);
 }

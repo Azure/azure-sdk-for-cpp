@@ -35,7 +35,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())
   {
-    rawResponse = m_pipeline->GetResponse(
+    rawResponse = m_pipeline->Send(
         context,
         Azure::Core::Http::HttpMethod::Get,
         {_detail::KeysPath, m_value.Name(), m_value.Properties.Version});

@@ -19,7 +19,7 @@ std::string KeyBackup::Serialize() const
 {
   Azure::Core::Json::_internal::json payload;
 
-  payload["value"] = Base64url::Base64UrlEncode(Value);
+  payload["value"] = Base64Url::Base64UrlEncode(Value);
 
   // release_policy
   return payload.dump();
@@ -32,7 +32,7 @@ KeyBackup KeyBackup::Deserialize(Azure::Core::Http::RawResponse const& rawRespon
   KeyBackup keyBackup;
   JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
       keyBackup.Value, jsonParser, "value", [](std::string const& value) {
-        return Base64url::Base64UrlDecode(value);
+        return Base64Url::Base64UrlDecode(value);
       });
   return keyBackup;
 }

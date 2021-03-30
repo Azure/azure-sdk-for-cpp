@@ -90,6 +90,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @param method The method for the request.
      * @param factoryFn The function to deserialize and produce T from the raw response.
      * @param path A path for the request represented as a vector of strings.
+     * @param query Optional query parameters for constructing the request.
      * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>

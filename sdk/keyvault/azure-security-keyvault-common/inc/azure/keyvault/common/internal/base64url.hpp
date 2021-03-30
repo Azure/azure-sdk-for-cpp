@@ -18,7 +18,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
   /**
    * @brief Provides conversion methods for base64url.
    */
-  struct Base64url
+  struct Base64Url
   {
     static inline std::string Base64UrlEncode(const std::vector<uint8_t>& data)
     {

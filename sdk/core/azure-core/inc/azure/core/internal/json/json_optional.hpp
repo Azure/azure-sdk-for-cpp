@@ -54,6 +54,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
      * @param jsonKey The json node to review.
      * @param key The key name for the optional property.
      * @param destination The value to update if the key name property is in the json node.
+     * @param decorator A callback used to convert the Json value from `V` type to the `T` type. For
+     * example, getting std::string from Json (the V type) and setting a Nullable<Datatime> (where T
+     * type is Datetime), the decorator would define how to create the Datetime from the
+     * std::string.
      */
     template <class V, class T>
     static inline void SetIfExists(

@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include <azure/core/http/http.hpp>
 #include <azure/core/internal/client_options.hpp>
-#include <azure/core/response.hpp>
+
+#include <stdexcept>
+#include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Common {
 
@@ -21,8 +22,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
    */
   enum class ServiceVersion
   {
+    /**
+     * @brief Use to send request to the 7.0 version of Key Vault service.
+     *
+     */
     V7_0,
+    /**
+     * @brief Use to send request to the 7.1 version of Key Vault service.
+     *
+     */
     V7_1,
+    /**
+     * @brief Use to send request to the 7.2 version of Key Vault service.
+     *
+     */
     V7_2
   };
 

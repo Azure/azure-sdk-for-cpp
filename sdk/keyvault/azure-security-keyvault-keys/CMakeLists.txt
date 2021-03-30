@@ -30,18 +30,17 @@ set(
   AZURE_KEYVAULT_KEYS_HEADER
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
-    inc/azure/keyvault/keys/import_key_options.hpp
-    inc/azure/keyvault/keys/json_web_key.hpp
-    inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/details/key_backup.hpp
     inc/azure/keyvault/keys/details/key_constants.hpp
     inc/azure/keyvault/keys/details/key_request_parameters.hpp
+    inc/azure/keyvault/keys/import_key_options.hpp
+    inc/azure/keyvault/keys/json_web_key.hpp
+    inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/key_create_options.hpp
     inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/key_operation.hpp
     inc/azure/keyvault/keys/key_properties.hpp
-    inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
     inc/azure/keyvault/keys/list_keys_single_page_result.hpp
