@@ -469,7 +469,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   namespace _detail {
-    struct RawResponse
+    struct RawResponseHelpers
     {
       /**
        * @brief Insert a header into \p headers checking that \p headerName does not contain invalid

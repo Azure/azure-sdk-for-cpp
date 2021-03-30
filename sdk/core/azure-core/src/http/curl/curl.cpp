@@ -144,7 +144,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
 
 void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::string const& header)
 {
-  return Azure::Core::Http::_detail::RawResponse::SetHeader(
+  return Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
       response,
       reinterpret_cast<uint8_t const*>(header.data()),
       reinterpret_cast<uint8_t const*>(header.data() + header.size()));
@@ -923,7 +923,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // will throw if header is invalid
-          Azure::Core::Http::_detail::RawResponse::SetHeader(
+          Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
               *this->m_response, buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n

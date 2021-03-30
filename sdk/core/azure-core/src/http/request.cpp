@@ -25,9 +25,9 @@ static Azure::Core::CaseInsensitiveMap MergeMaps(
 void Request::SetHeader(std::string const& name, std::string const& value)
 {
   auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
-  return this->m_retryModeEnabled ? _detail::RawResponse::InsertHeaderWithValidation(
+  return this->m_retryModeEnabled ? _detail::RawResponseHelpers::InsertHeaderWithValidation(
              this->m_retryHeaders, headerNameLowerCase, value)
-                                  : _detail::RawResponse::InsertHeaderWithValidation(
+                                  : _detail::RawResponseHelpers::InsertHeaderWithValidation(
                                       this->m_headers, headerNameLowerCase, value);
 }
 

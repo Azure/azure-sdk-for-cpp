@@ -20,7 +20,7 @@ Azure::Core::CaseInsensitiveMap const& RawResponse::GetHeaders() const { return 
 
 void RawResponse::SetHeader(std::string const& name, std::string const& value)
 {
-  return _detail::RawResponse::InsertHeaderWithValidation(this->m_headers, name, value);
+  return _detail::RawResponseHelpers::InsertHeaderWithValidation(this->m_headers, name, value);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)

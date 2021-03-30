@@ -164,7 +164,7 @@ void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      Azure::Core::Http::_detail::RawResponse::SetHeader(
+      Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
           *rawResponse,
           reinterpret_cast<uint8_t const*>(begin),
           reinterpret_cast<uint8_t const*>(delimiter));
