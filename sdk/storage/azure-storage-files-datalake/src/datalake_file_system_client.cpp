@@ -347,7 +347,46 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const RenameFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    return this->GetDirectoryClient("").RenameFile(fileName, destinationFilePath, options, context);
+    std::string destinationFileSystem;
+    if (options.DestinationFileSystem.HasValue())
+    {
+      destinationFileSystem = options.DestinationFileSystem.GetValue();
+    }
+    else
+    {
+      const std::string& currentPath = m_fileSystemUrl.GetPath();
+      destinationFileSystem = currentPath.substr(0, currentPath.find('/'));
+    }
+
+    auto sourceDfsUrl = m_fileSystemUrl;
+    sourceDfsUrl.AppendPath(_internal::UrlEncodePath(fileName));
+
+    auto destinationDfsUrl = m_fileSystemUrl;
+    destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
+    destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
+
+    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
+    auto result = _detail::DataLakeRestClient::Path::Create(
+        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
+
+    auto renamedBlobClient
+        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedFileClient = DataLakeFileClient(
+        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+    return Azure::Response<DataLakeFileClient>(
+        std::move(renamedFileClient), result.ExtractRawResponse());
   }
 
   Azure::Response<DataLakeDirectoryClient> DataLakeFileSystemClient::RenameDirectory(
@@ -356,8 +395,46 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const RenameDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    return this->GetDirectoryClient("").RenameSubdirectory(
-        directoryName, destinationDirectoryPath, options, context);
+    std::string destinationFileSystem;
+    if (options.DestinationFileSystem.HasValue())
+    {
+      destinationFileSystem = options.DestinationFileSystem.GetValue();
+    }
+    else
+    {
+      const std::string& currentPath = m_fileSystemUrl.GetPath();
+      destinationFileSystem = currentPath.substr(0, currentPath.find('/'));
+    }
+
+    auto sourceDfsUrl = m_fileSystemUrl;
+    sourceDfsUrl.AppendPath(_internal::UrlEncodePath(directoryName));
+
+    auto destinationDfsUrl = m_fileSystemUrl;
+    destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
+    destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
+
+    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
+    auto result = _detail::DataLakeRestClient::Path::Create(
+        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
+
+    auto renamedBlobClient
+        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedDirectoryClient = DataLakeDirectoryClient(
+        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+    return Azure::Response<DataLakeDirectoryClient>(
+        std::move(renamedDirectoryClient), result.ExtractRawResponse());
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake
