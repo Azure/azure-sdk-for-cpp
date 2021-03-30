@@ -40,6 +40,20 @@ DateTime GetSystemClockEpoch()
       static_cast<int8_t>(systemClockEpochUtcStructTm->tm_sec));
 }
 
+DateTime GetMaxDateTime()
+{
+  auto const systemClockMax = std::chrono::duration_cast<DateTime::clock::duration>(
+                                  std::chrono::system_clock::time_point::max().time_since_epoch())
+                                  .count();
+
+  auto const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
+
+  constexpr auto repMax = std::numeric_limits<DateTime::clock::duration::rep>::max();
+
+  return DateTime(DateTime::time_point(
+      DateTime::duration(systemClockMax + std::min(systemClockEpoch, (repMax - systemClockMax)))));
+}
+
 template <typename T>
 void ValidateDateElementRange(
     T value,
@@ -409,7 +423,7 @@ DateTime::DateTime(
 DateTime::operator std::chrono::system_clock::time_point() const
 {
   static DateTime SystemClockMin(std::chrono::system_clock::time_point::min());
-  static DateTime SystemClockMax(std::chrono::system_clock::time_point::max());
+  static DateTime SystemClockMax(GetMaxDateTime());
 
   auto outOfRange = 0;
   if (*this < SystemClockMin)
