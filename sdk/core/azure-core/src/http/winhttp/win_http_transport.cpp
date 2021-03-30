@@ -165,7 +165,7 @@ void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     if (delimiter < end)
     {
       Azure::Core::Http::_detail::RawResponse::SetHeader(
-          rawResponse,
+          *rawResponse,
           reinterpret_cast<uint8_t const*>(begin),
           reinterpret_cast<uint8_t const*>(delimiter));
     }
@@ -269,7 +269,6 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
 void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   auto streamBody = handleManager->m_request.GetBodyStream();
-  int64_t streamLength = streamBody->Length();
 
   auto unique_buffer
       = std::make_unique<uint8_t[]>(static_cast<size_t>(_detail::DefaultUploadChunkSize));
