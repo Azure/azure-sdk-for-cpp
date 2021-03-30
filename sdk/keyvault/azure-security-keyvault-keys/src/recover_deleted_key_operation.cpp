@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/delete_key_operation.hpp"
+#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 
@@ -13,12 +13,12 @@ namespace {
 // server.
 inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawResponse const& response)
 {
-  auto code = response.GetStatusCode();
+  auto const code = response.GetStatusCode();
   switch (code)
   {
     case Azure::Core::Http::HttpStatusCode::Ok:
-    case Azure::Core::Http::HttpStatusCode::Forbidden: // Access denied but proof the key was
-                                                       // deleted.
+    // Access denied but proof the key was deleted.
+    case Azure::Core::Http::HttpStatusCode::Forbidden:
       return Azure::Core::OperationStatus::Succeeded;
     case Azure::Core::Http::HttpStatusCode::NotFound:
       return Azure::Core::OperationStatus::Running;
@@ -29,17 +29,21 @@ inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawRespons
 } // namespace
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
-Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::Context& context)
+Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
+    Azure::Core::Context& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())
   {
     rawResponse = m_pipeline->Send(
-        context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
+        context,
+        Azure::Core::Http::HttpMethod::Get,
+        {_detail::KeysPath, m_value.Name(), m_value.Properties.Version});
     m_status = CheckCompleted(*rawResponse);
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::DeletedKeySerializer::DeletedKeyDeserialize(m_value.Name(), *rawResponse);
+      m_value
+          = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(m_value.Name(), *rawResponse);
     }
   }
 
@@ -49,10 +53,10 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   return rawResponse;
 }
 
-Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
+Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOperation(
     std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
         keyvaultPipeline,
-    Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
+    Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response)
     : m_pipeline(keyvaultPipeline)
 {
   if (!response.HasValue())
@@ -71,11 +75,4 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
   // build this url.
   m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(_detail::DeletedKeysPath)
       + "/" + m_value.Name();
-
-  // The recoveryId is only returned if soft-delete is enabled.
-  // The LRO is considered completed for non soft-delete (key will be eventually removed).
-  if (m_value.RecoveryId.empty())
-  {
-    m_status = Azure::Core::OperationStatus::Succeeded;
-  }
 }

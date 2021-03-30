@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
+
+#include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
@@ -9,14 +12,22 @@
 #include <string>
 
 using namespace Azure::Security::KeyVault::Keys::_detail;
+using namespace Azure::Core::Json::_internal;
+using namespace Azure::Security::KeyVault::Common::_internal;
 
 std::string KeyRequestParameters::Serialize() const
 {
 
   Azure::Core::Json::_internal::json payload;
-  /* Mandatory */
   // kty
-  payload[_detail::KeyTypePropertyName] = KeyTypeToString(m_keyType);
+  SetFromNullable<JsonWebKeyType, std::string>(
+      m_keyType, payload, _detail::KeyTypePropertyName, [](JsonWebKeyType type) {
+        return KeyType::KeyTypeToString(type);
+      });
+
+  // attributes
+  SetFromNullable(
+      m_options.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
 
   /* Optional */
   // key_size
@@ -28,6 +39,18 @@ std::string KeyRequestParameters::Serialize() const
   }
 
   // attributes
+  SetFromNullable<Azure::DateTime, uint64_t>(
+      m_options.ExpiresOn,
+      payload[_detail::AttributesPropertyName],
+      _detail::ExpPropertyName,
+      UnixTimeConverter::DatetimeToUnixTime);
+
+  SetFromNullable<Azure::DateTime, uint64_t>(
+      m_options.NotBefore,
+      payload[_detail::AttributesPropertyName],
+      _detail::NbfPropertyName,
+      UnixTimeConverter::DatetimeToUnixTime);
+
   // tags
   for (auto tag : m_options.Tags)
   {

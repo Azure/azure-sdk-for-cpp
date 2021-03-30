@@ -52,9 +52,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     OctHsm,
   };
 
-  namespace _detail {
-    JsonWebKeyType KeyTypeFromString(std::string const& name);
-    std::string KeyTypeToString(JsonWebKeyType kty);
-  } // namespace _detail
+  struct KeyType
+  {
+    static JsonWebKeyType KeyTypeFromString(std::string const& name);
+    static std::string KeyTypeToString(JsonWebKeyType kty);
+  };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

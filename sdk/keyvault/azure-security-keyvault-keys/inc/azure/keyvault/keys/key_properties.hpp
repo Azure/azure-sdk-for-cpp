@@ -53,7 +53,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * Key Vault certificate, the value will be true.
      *
      */
-    bool Managed;
+    bool Managed = false;
 
     /**
      * @brief Dictionary of tags with specific metadata about the key.

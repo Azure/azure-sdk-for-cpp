@@ -3,11 +3,13 @@
 
 /**
  * @file
- * @brief Defines the Key Vault Key.
+ * @brief Defines the properties to import a Key.
  *
  */
 
 #pragma once
+
+#include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/json_web_key.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
@@ -15,15 +17,15 @@
 
 #include <azure/core/http/http.hpp>
 
-#include <string>
 #include <vector>
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   /**
    * @brief A key resource and its properties.
    *
    */
-  struct KeyVaultKey
+  struct ImportKeyOptions
   {
     /**
      * @brief The cryptographic key, the key type, and the operations you can perform using the key.
@@ -38,24 +40,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     KeyProperties Properties;
 
     /**
-     * @brief Construct an empty Key.
+     * @brief Get or Set a value indicating whether to import the key into a hardware security
+     * module (HSM).
      *
      */
-    KeyVaultKey() = default;
+    Azure::Nullable<bool> HardwareProtected;
 
     /**
-     * @brief Construct a new Key Vault Key object.
+     * @brief Construct a new Key Vault ImportKeyOptions object.
      *
      * @param name The name of the key.
      */
-    KeyVaultKey(std::string name) : Properties(std::move(name)) {}
-
-    /**
-     * @brief Get the Key identifier.
-     *
-     * @return The key id.
-     */
-    std::string const& Id() const { return Key.Id; }
+    ImportKeyOptions(std::string name, JsonWebKey keyMaterial)
+        : Key(keyMaterial), Properties(std::move(name))
+    {
+    }
 
     /**
      * @brief Gets the name of the Key.
@@ -63,19 +62,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The name of the key.
      */
     std::string const& Name() const { return Properties.Name; }
-
-    /**
-     * @brief Get the Key Type.
-     *
-     * @return The type of the key.
-     */
-    JsonWebKeyType const& GetKeyType() const { return Key.KeyType; }
-
-    /**
-     * @brief Gets the operations you can perform using the key.
-     *
-     * @return A vector with the supported operations for the key.
-     */
-    std::vector<KeyOperation> const& KeyOperations() const { return Key.KeyOperations(); }
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
