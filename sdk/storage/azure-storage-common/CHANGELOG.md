@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0-beta.10 (Unreleased)
+## 12.0.0-beta.10 (2021-03-30)
 
 
 ## 12.0.0-beta.9 (2021-03-23)
