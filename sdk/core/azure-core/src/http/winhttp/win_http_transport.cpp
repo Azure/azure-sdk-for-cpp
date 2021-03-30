@@ -269,6 +269,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
 void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   auto streamBody = handleManager->m_request.GetBodyStream();
+  int64_t streamLength = streamBody->Length();
 
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
   int64_t uploadChunkSize = _detail::DefaultUploadChunkSize;
