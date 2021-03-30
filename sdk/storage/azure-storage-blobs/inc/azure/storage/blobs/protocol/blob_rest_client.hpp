@@ -4747,7 +4747,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
-          response.BodyStream = httpResponse.GetBodyStream();
+          response.BodyStream = httpResponse.ExtractBodyStream();
           {
             const auto& headers = httpResponse.GetHeaders();
             auto content_md5_iterator = headers.find("content-md5");
