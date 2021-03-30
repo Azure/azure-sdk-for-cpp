@@ -150,10 +150,12 @@ void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::stri
       reinterpret_cast<uint8_t const*>(header.data() + header.size()));
 }
 
+// Writes an HTTP request with RFC 7230 without the body (head line and headers)
+// https://tools.ietf.org/html/rfc7230#section-3.1.1
 static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request)
 {
   std::string httpRequest(HttpMethodToString(request.GetMethod()));
-  // HTTP version harcoded to 1.0
+  // HTTP version hardcoded to 1.1
   auto const url = request.GetUrl().GetRelativeUrl();
   httpRequest += " /" + url + " HTTP/1.1\r\n";
 
