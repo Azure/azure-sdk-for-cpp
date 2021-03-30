@@ -164,8 +164,10 @@ void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->SetHeader(
-          reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
+      Azure::Core::Http::_detail::RawResponse::SetHeader(
+          rawResponse,
+          reinterpret_cast<uint8_t const*>(begin),
+          reinterpret_cast<uint8_t const*>(delimiter));
     }
     else
     {
@@ -269,26 +271,13 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   auto streamBody = handleManager->m_request.GetBodyStream();
   int64_t streamLength = streamBody->Length();
 
-  int64_t uploadChunkSize = handleManager->m_request.GetUploadChunkSize();
-  if (uploadChunkSize <= 0)
-  {
-    // use default size
-    if (streamLength < _detail::MaximumUploadChunkSize)
-    {
-      uploadChunkSize = streamLength;
-    }
-    else
-    {
-      uploadChunkSize = _detail::DefaultUploadChunkSize;
-    }
-  }
-
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer
+      = std::make_unique<uint8_t[]>(static_cast<size_t>(_detail::DefaultUploadChunkSize));
 
   while (true)
   {
-    auto rawRequestLen
-        = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
+    auto rawRequestLen = streamBody->Read(
+        unique_buffer.get(), _detail::DefaultUploadChunkSize, handleManager->m_context);
     if (rawRequestLen == 0)
     {
       break;

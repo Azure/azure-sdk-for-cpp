@@ -496,4 +496,38 @@ namespace Azure { namespace Core { namespace Http {
     std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
 
+  namespace _detail {
+    struct RawResponse
+    {
+      static void inline SetHeader(
+          Azure::Core::Http::RawResponse& response,
+          uint8_t const* const first,
+          uint8_t const* const last)
+      {
+        // get name and value from header
+        auto start = first;
+        auto end = std::find(start, last, ':');
+
+        if (end == last)
+        {
+          throw std::invalid_argument("Invalid header. No delimiter ':' found.");
+        }
+
+        // Always toLower() headers
+        auto headerName
+            = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
+        start = end + 1; // start value
+        while (start < last && (*start == ' ' || *start == '\t'))
+        {
+          ++start;
+        }
+
+        end = std::find(start, last, '\r');
+        auto headerValue = std::string(start, end); // remove \r
+
+        response.SetHeader(headerName, headerValue);
+      }
+    };
+  } // namespace _detail
+
 }}} // namespace Azure::Core::Http

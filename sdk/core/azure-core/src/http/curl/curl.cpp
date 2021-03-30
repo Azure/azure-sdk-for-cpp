@@ -142,37 +142,9 @@ void WinSocketSetBuffSize(curl_socket_t socket)
 }
 #endif
 
-static void inline SetHeader(
-    Azure::Core::Http::RawResponse& response,
-    uint8_t const* const first,
-    uint8_t const* const last)
-{
-  // get name and value from header
-  auto start = first;
-  auto end = std::find(start, last, ':');
-
-  if (end == last)
-  {
-    throw std::invalid_argument("Invalid header. No delimiter ':' found.");
-  }
-
-  // Always toLower() headers
-  auto headerName = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
-  start = end + 1; // start value
-  while (start < last && (*start == ' ' || *start == '\t'))
-  {
-    ++start;
-  }
-
-  end = std::find(start, last, '\r');
-  auto headerValue = std::string(start, end); // remove \r
-
-  response.SetHeader(headerName, headerValue);
-}
-
 void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::string const& header)
 {
-  return SetHeader(
+  return Azure::Core::Http::_detail::RawResponse::SetHeader(
       response,
       reinterpret_cast<uint8_t const*>(header.data()),
       reinterpret_cast<uint8_t const*>(header.data() + header.size()));
@@ -946,7 +918,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // will throw if header is invalid
-          SetHeader(*this->m_response, buffer + start, buffer + index - 1);
+          Azure::Core::Http::_detail::RawResponse::SetHeader(
+              *this->m_response, buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
