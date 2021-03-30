@@ -124,7 +124,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   KeyClient keyClient(m_keyVaultUrl, m_credential);
 
   // Delete and purge anything before starting the test to ensure test will work
-  EmptyTrashFromVault(keyClient);
+  CleanUpKeyVault(keyClient);
 
   // Create 5 keys
   std::vector<std::string> keyNames;

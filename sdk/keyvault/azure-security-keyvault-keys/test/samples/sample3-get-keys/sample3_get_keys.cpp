@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief The next sample provides the code implementation to use the Key Vault SDK client for C++
+ * @brief This sample provides the code implementation to use the Key Vault SDK client for C++
  * to list keys and versions of a given key, and list deleted keys in a soft-delete enabled Key
  * Vault.
  *
- * @remark Make sure to set the next environment variables before running the sample.
+ * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the KeyVault account url.
  * - AZURE_TENANT_ID:     Tenant id for the Azure account.
  * - AZURE_CLIENT_ID:     The client id to authenticate the request.

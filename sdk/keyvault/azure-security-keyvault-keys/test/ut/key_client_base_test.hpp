@@ -55,7 +55,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
 
-    static inline void EmptyTrashFromVault(KeyClient const& keyClient)
+    static inline void CleanUpKeyVault(KeyClient const& keyClient)
     {
       std::vector<DeletedKey> deletedKeys;
       GetDeletedKeysSinglePageOptions options;

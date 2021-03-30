@@ -17,8 +17,8 @@ inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawRespons
   switch (code)
   {
     case Azure::Core::Http::HttpStatusCode::Ok:
-    case Azure::Core::Http::HttpStatusCode::Forbidden: // Access denied but proof the key was
-                                                       // deleted.
+    // Access denied but proof the key was deleted.
+    case Azure::Core::Http::HttpStatusCode::Forbidden:
       return Azure::Core::OperationStatus::Succeeded;
     case Azure::Core::Http::HttpStatusCode::NotFound:
       return Azure::Core::OperationStatus::Running;
