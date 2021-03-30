@@ -417,34 +417,6 @@ namespace Azure { namespace Core { namespace Http {
     void SetHeader(std::string const& name, std::string const& value);
 
     /**
-     * @brief Set an HTTP header to the #RawResponse.
-     *
-     * @remark The \p header must contain valid header name characters (RFC 7230).
-     * @remark Header name, value and delimiter are expected to be in \p header.
-     *
-     * @param header The complete header to be added, in the form "name:value".
-     *
-     * @throw if \p header has an invalid header name or if the delimiter is missing.
-     */
-    // void SetHeader(std::string const& header);
-
-    /**
-     * @brief Set an HTTP header to the #RawResponse.
-     *
-     * @remark The string referenced by \p first and \p last must contain valid header name
-     * characters (RFC 7230).
-     * @remark Header name, value and delimiter are expected to be in the string referenced by \p
-     * first and \p last, in the form "name:value".
-     *
-     * @param first Reference to the start of an std::string.
-     * @param last Reference to the end of an std::string.
-     *
-     * @throw if the string referenced by \p first and \p last contains an invalid header name or if
-     * the delimiter is missing.
-     */
-    // void SetHeader(uint8_t const* const first, uint8_t const* const last);
-
-    /**
      * @brief Set #Azure::Core::IO::BodyStream for this HTTP response.
      *
      * @param stream #Azure::Core::IO::BodyStream.
