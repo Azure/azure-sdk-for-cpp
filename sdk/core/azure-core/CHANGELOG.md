@@ -2,6 +2,17 @@
 
 ## 1.0.0-beta.8 (Unreleased)
 
+### Breaking Changes
+
+- Removed from `Azure::Core::Http::Request`:
+  - `SetUploadChunkSize`.
+  - `GetHTTPMessagePreBody`.
+  - `GetUploadChunkSize`.
+- Removed from `Azure::Core::Http::RawResponse`:
+  - `SetHeader(std::string const& header)`
+  - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
+  - `GetMajorVersion`.
+  - `GetMinorVersion`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 

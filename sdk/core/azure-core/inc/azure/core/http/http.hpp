@@ -229,11 +229,6 @@ namespace Azure { namespace Core { namespace Http {
     bool m_retryModeEnabled{false};
     bool m_isDownloadViaStream;
 
-    // This value can be used to override the default value that an http transport adapter uses to
-    // read and upload chunks of data from the payload body stream. If it is not set, the transport
-    // adapter will decide chunk size.
-    int64_t m_uploadChunkSize = 0;
-
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
     void StartTry();
@@ -308,13 +303,6 @@ namespace Azure { namespace Core { namespace Http {
      */
     void RemoveHeader(std::string const& name);
 
-    /**
-     * @brief Set upload chunk size.
-     *
-     * @param size Upload chunk size.
-     */
-    void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
-
     // Methods used by transport layer (and logger) to send request
     /**
      * @brief Get HTTP method.
@@ -335,16 +323,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get the list of headers prior to HTTP body.
      */
     std::string GetHeadersAsString() const;
-
-    /**
-     * @brief Get HTTP message prior to HTTP body.
-     */
-    std::string GetHTTPMessagePreBody() const;
-
-    /**
-     * @brief Get upload chunk size.
-     */
-    int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
 
     /**
      * @brief A value indicating whether download is happening via stream.
@@ -448,7 +426,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @throw if \p header has an invalid header name or if the delimiter is missing.
      */
-    void SetHeader(std::string const& header);
+    // void SetHeader(std::string const& header);
 
     /**
      * @brief Set an HTTP header to the #RawResponse.
@@ -464,7 +442,7 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if the string referenced by \p first and \p last contains an invalid header name or if
      * the delimiter is missing.
      */
-    void SetHeader(uint8_t const* const first, uint8_t const* const last);
+    // void SetHeader(uint8_t const* const first, uint8_t const* const last);
 
     /**
      * @brief Set #Azure::Core::IO::BodyStream for this HTTP response.
@@ -482,16 +460,6 @@ namespace Azure { namespace Core { namespace Http {
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
-
-    /**
-     * @brief Get major number of the HTTP response protocol version.
-     */
-    int32_t GetMajorVersion() const { return this->m_majorVersion; }
-
-    /**
-     * @brief Get minor number of the HTTP response protocol version.
-     */
-    int32_t GetMinorVersion() const { return this->m_minorVersion; }
 
     /**
      * @brief Get HTTP status code of the HTTP response.

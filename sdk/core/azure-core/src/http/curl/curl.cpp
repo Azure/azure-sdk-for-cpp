@@ -141,6 +141,55 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   }
 }
 #endif
+
+static void inline SetHeader(
+    Azure::Core::Http::RawResponse& response,
+    uint8_t const* const first,
+    uint8_t const* const last)
+{
+  // get name and value from header
+  auto start = first;
+  auto end = std::find(start, last, ':');
+
+  if (end == last)
+  {
+    throw std::invalid_argument("Invalid header. No delimiter ':' found.");
+  }
+
+  // Always toLower() headers
+  auto headerName = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
+  start = end + 1; // start value
+  while (start < last && (*start == ' ' || *start == '\t'))
+  {
+    ++start;
+  }
+
+  end = std::find(start, last, '\r');
+  auto headerValue = std::string(start, end); // remove \r
+
+  response.SetHeader(headerName, headerValue);
+}
+
+void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::string const& header)
+{
+  return SetHeader(
+      response,
+      reinterpret_cast<uint8_t const*>(header.data()),
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
+}
+
+static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request)
+{
+  std::string httpRequest(HttpMethodToString(request.GetMethod()));
+  // HTTP version harcoded to 1.0
+  auto const url = request.GetUrl().GetRelativeUrl();
+  httpRequest += " /" + url + " HTTP/1.1\r\n";
+
+  // headers
+  httpRequest += request.GetHeadersAsString();
+
+  return httpRequest;
+}
 } // namespace
 
 using Azure::Core::Context;
@@ -403,17 +452,13 @@ CURLcode CurlSession::UploadBody(Context const& context)
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
 
-  int64_t uploadChunkSize = this->m_request.GetUploadChunkSize();
-  if (uploadChunkSize <= 0)
-  {
-    // use default size
-    uploadChunkSize = _detail::DefaultUploadChunkSize;
-  }
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer
+      = std::make_unique<uint8_t[]>(static_cast<size_t>(_detail::DefaultUploadChunkSize));
 
   while (true)
   {
-    auto rawRequestLen = streamBody->Read(unique_buffer.get(), uploadChunkSize, context);
+    auto rawRequestLen
+        = streamBody->Read(unique_buffer.get(), _detail::DefaultUploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
@@ -432,7 +477,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
 CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
-  auto rawRequest = this->m_request.GetHTTPMessagePreBody();
+  auto rawRequest = GetHTTPMessagePreBody(this->m_request);
   int64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = m_connection->SendBuffer(
@@ -864,7 +909,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         else if (this->state == ResponseParserState::Headers)
         {
           // will throw if header is invalid
-          this->m_response->SetHeader(this->m_internalBuffer);
+          SetHeader(*this->m_response, this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -901,7 +946,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // will throw if header is invalid
-          this->m_response->SetHeader(buffer + start, buffer + index - 1);
+          SetHeader(*this->m_response, buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -1048,14 +1093,14 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
     // will throw if header is invalid
-    m_response->SetHeader(this->m_internalBuffer);
+    SetHeader(*m_response, this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
     std::string header(std::string(start, indexOfEndOfStatusLine));
     // will throw if header is invalid
-    this->m_response->SetHeader(header);
+    SetHeader(*this->m_response, header);
   }
 
   // reuse buffer
