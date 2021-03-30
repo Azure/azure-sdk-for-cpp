@@ -10,7 +10,7 @@ parameters:
     default: false
   - name: Coverage
     type: string
-    default: ''
+    default: ""
   - name: CtestRegex
     type: string
     default: .*
@@ -19,344 +19,344 @@ parameters:
     default: true
   - name: CoverageReportPath
     type: string
-    default: 'sdk/*/*/*cov_xml.xml'
+    default: "sdk/*/*/*cov_xml.xml"
 
 jobs:
-- job: Validate
-  condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
-  strategy:
-    matrix:
-      Linux_x64_gcc8:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CC: '/usr/bin/gcc-8'
-        CXX: '/usr/bin/g++-8'
-        BuildArgs: '-j 10'
-      Linux_x64_gcc9:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CC: '/usr/bin/gcc-9'
-        CXX: '/usr/bin/g++-9'
-        BuildArgs: '-j 10'
-      Linux_x64:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        BuildArgs: '-j 10'
-      Win_x86:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] libxml2'
-        VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
-        CMAKE_GENERATOR: 'Visual Studio 16 2019'
-        CMAKE_GENERATOR_PLATFORM: Win32
-        CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #Leaving curl on here to explicitly test what the default behavior is on windows.
-        BuildArgs: '-v --parallel 8'
-      Win_x64:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] libxml2'
-        VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
-        CMAKE_GENERATOR: 'Visual Studio 16 2019'
-        CMAKE_GENERATOR_PLATFORM: x64
-        BuildArgs: '-v --parallel 8'
-      MacOS_x64:
-        Pool: Azure Pipelines
-        OSVmImage: 'macOS-10.14'
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
-        CHECK_CLANG_FORMAT: 1
+  - job: Validate
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    strategy:
+      matrix:
+        Linux_x64_gcc8:
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-linux"
+          CC: "/usr/bin/gcc-8"
+          CXX: "/usr/bin/g++-8"
+          BuildArgs: "-j 10"
+        Linux_x64_gcc9:
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-linux"
+          CC: "/usr/bin/gcc-9"
+          CXX: "/usr/bin/g++-9"
+          BuildArgs: "-j 10"
+        Linux_x64:
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-linux"
+          BuildArgs: "-j 10"
+        Win_x86:
+          Pool: azsdk-pool-mms-win-2019-general
+          OSVmImage: MMS2019
+          VcpkgInstall: "curl[winssl] libxml2"
+          VCPKG_DEFAULT_TRIPLET: "x86-windows-static"
+          CMAKE_GENERATOR: "Visual Studio 16 2019"
+          CMAKE_GENERATOR_PLATFORM: Win32
+          CmakeArgs: " -DBUILD_TRANSPORT_CURL=ON" #Leaving curl on here to explicitly test what the default behavior is on windows.
+          BuildArgs: "--parallel 8"
+        Win_x64:
+          Pool: azsdk-pool-mms-win-2019-general
+          OSVmImage: MMS2019
+          VcpkgInstall: "curl[winssl] libxml2"
+          VCPKG_DEFAULT_TRIPLET: "x64-windows-static"
+          CMAKE_GENERATOR: "Visual Studio 16 2019"
+          CMAKE_GENERATOR_PLATFORM: x64
+          BuildArgs: "--parallel 8"
+        MacOS_x64:
+          Pool: Azure Pipelines
+          OSVmImage: "macOS-10.14"
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-osx"
+          CHECK_CLANG_FORMAT: 1
 
-      # Unit testing ON
-      Linux_x64_with_unit_test:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
-        AptDependencies: 'gcovr lcov'
-        CODE_COVERAGE: '${{ parameters.Coverage }}'
-        # Make coverage report to avoid running the test exe because CI step will run it
-        CODE_COVERAGE_COLLECT_ONLY: 1
-        BuildArgs: '-j 10'
-      Linux_x64_with_unit_test_release:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CmakeArgs: ' -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
-        BuildArgs: '-j 10'        
-      Win_x86_with_unit_test:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] libxml2'
-        VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
-        CMAKE_GENERATOR: 'Visual Studio 16 2019'
-        CMAKE_GENERATOR_PLATFORM: Win32
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
-        BuildArgs: '-v --parallel 8'
-      Win_x64_with_unit_test:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] libxml2'
-        VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
-        CMAKE_GENERATOR: 'Visual Studio 16 2019'
-        CMAKE_GENERATOR_PLATFORM: x64
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
-        BuildArgs: '-v --parallel 8'
-      MacOS_x64_with_unit_test:
-        Pool: Azure Pipelines
-        OSVmImage: 'macOS-10.14'
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
-  pool:
-    name: $(Pool)
-    vmImage: $(OSVmImage)
-
-  variables:
-  - name: CMOCKA_XML_FILE
-    value: "%g-test-results.xml"
-  - name: CMOCKA_MESSAGE_OUTPUT
-    value: "xml"
-  - name: BuildArgs
-    value: ""
-
-  steps:
-  - checkout: self
-    submodules: recursive
-
-  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-    parameters:
-      AgentImage: $(OSVmImage)
-
-  # Validate all the files are formatted correctly according to the
-  # .clang-format file. This step is macOS only to use clang-format-11
-  - bash: |
-      # Run clang-format recursively on each source and header file within the repo sdk folder.
-      echo "Check clang-formatting"
-      brew install clang-format
-      clang-format --version
-      find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;
-
-      if [[ `git status | grep modified | awk '{print $2}'` ]]; then
-        echo Some files were not formatted correctly according to the .clang-format file.
-        echo Please run clang-format version 10 or greater to fix the issue by using this bash command at the root of the repo:
-        echo "find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;"
-        echo ""
-        echo "List of files not formatted correctly:"
-        git status | grep modified | awk '{print $2}'
-        exit 1
-      fi
-
-      echo Success, all files are formatted correctly according to the .clang-format file.
-      exit 0
-
-    displayName: Validate Clang Format
-    condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
-  
-  - ${{ each artifact in parameters.Artifacts }}: 
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: ${{ artifact.Name }}
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-
-  # Install apt dependencies (if appropriate)
-  - bash: sudo apt install -y $(AptDependencies)
-    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
-    displayName: Install dependencies from apt
-
-  - template: /eng/pipelines/templates/steps/vcpkg.yml
-    parameters:
-      DependenciesVariableName: VcpkgInstall
-
-  - script: |
-      dotnet tool install -g dotnet-reportgenerator-globaltool
-      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
-    displayName: Install coverage tools
-    # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
-    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
-
-  - template: /eng/pipelines/templates/steps/cmake-build.yml
-    parameters:
-      GenerateArgs: "$(CmakeArgs)"
-      BuildArgs: "$(BuildArgs)"
-
-  - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
-    workingDirectory: build
-    displayName: ctest
-
-  # Make coverage targets (specified in coverage_targets.txt) and assemble
-  # coverage report
-  - bash: |
-      make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
-      ../tools/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
-    workingDirectory: build
-    displayName: Generate Code Coverage Data
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
-  
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
-    displayName: Publish Code Coverage to DevOps
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
-
-# Disable build for cpp - client
-- ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
-  - job: GenerateReleaseArtifacts
+        # Unit testing ON
+        Linux_x64_with_unit_test:
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-linux"
+          CmakeArgs: " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON"
+          AptDependencies: "gcovr lcov"
+          CODE_COVERAGE: "${{ parameters.Coverage }}"
+          # Make coverage report to avoid running the test exe because CI step will run it
+          CODE_COVERAGE_COLLECT_ONLY: 1
+          BuildArgs: "-j 10"
+        Linux_x64_with_unit_test_release:
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-linux"
+          CmakeArgs: " -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON"
+          BuildArgs: "-j 10"
+        Win_x86_with_unit_test:
+          Pool: azsdk-pool-mms-win-2019-general
+          OSVmImage: MMS2019
+          VcpkgInstall: "curl[winssl] libxml2"
+          VCPKG_DEFAULT_TRIPLET: "x86-windows-static"
+          CMAKE_GENERATOR: "Visual Studio 16 2019"
+          CMAKE_GENERATOR_PLATFORM: Win32
+          CmakeArgs: " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON"
+          BuildArgs: "--parallel 8"
+        Win_x64_with_unit_test:
+          Pool: azsdk-pool-mms-win-2019-general
+          OSVmImage: MMS2019
+          VcpkgInstall: "curl[winssl] libxml2"
+          VCPKG_DEFAULT_TRIPLET: "x64-windows-static"
+          CMAKE_GENERATOR: "Visual Studio 16 2019"
+          CMAKE_GENERATOR_PLATFORM: x64
+          CmakeArgs: " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON"
+          BuildArgs: "--parallel 8"
+        MacOS_x64_with_unit_test:
+          Pool: Azure Pipelines
+          OSVmImage: "macOS-10.14"
+          VcpkgInstall: "curl[ssl] libxml2 openssl"
+          VCPKG_DEFAULT_TRIPLET: "x64-osx"
+          CmakeArgs: " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON"
     pool:
-      name: azsdk-pool-mms-win-2019-general
-      vmImage: MMS2019
+      name: $(Pool)
+      vmImage: $(OSVmImage)
+
     variables:
-      VcpkgDependencies: curl[winssl] libxml2
-      VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
+      - name: CMOCKA_XML_FILE
+        value: "%g-test-results.xml"
+      - name: CMOCKA_MESSAGE_OUTPUT
+        value: "xml"
+      - name: BuildArgs
+        value: ""
+
     steps:
-      - template: /eng/common/pipelines/templates/steps/verify-links.yml
+      - checkout: self
+        submodules: recursive
+
+      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
-          Directory: ''
-          CheckLinkGuidance: $true
+          AgentImage: $(OSVmImage)
 
-      - ${{ each artifact in parameters.Artifacts }}: 
-        - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-          parameters:
-            PackageName: ${{ artifact.Name }}
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            TestPipeline: ${{ parameters.TestPipeline }}
+      # Validate all the files are formatted correctly according to the
+      # .clang-format file. This step is macOS only to use clang-format-11
+      - bash: |
+          # Run clang-format recursively on each source and header file within the repo sdk folder.
+          echo "Check clang-formatting"
+          brew install clang-format
+          clang-format --version
+          find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;
 
-      - pwsh: |
-          $setupFile="doxygen-1.8.18-setup.exe";
+          if [[ `git status | grep modified | awk '{print $2}'` ]]; then
+            echo Some files were not formatted correctly according to the .clang-format file.
+            echo Please run clang-format version 10 or greater to fix the issue by using this bash command at the root of the repo:
+            echo "find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;"
+            echo ""
+            echo "List of files not formatted correctly:"
+            git status | grep modified | awk '{print $2}'
+            exit 1
+          fi
 
-          Invoke-WebRequest `
-            -MaximumRetryCount 10 `
-            -Uri "https://azuresdktooling.blob.core.windows.net/dependencies/$setupFile" `
-            -OutFile $setupFile `
-          | Wait-Process;
+          echo Success, all files are formatted correctly according to the .clang-format file.
+          exit 0
 
-          Start-Process -Filepath .\$setupFile -ArgumentList @("/VERYSILENT") -Wait
-        workingDirectory: $(Agent.TempDirectory)
-        displayName: Download and Install Doxygen
+        displayName: Validate Clang Format
+        condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
 
-      # Install dependencies required for build from vcpkg
-      # TODO: We should be able to generate docs without having to install these
-      # prerequisites:
+      - ${{ each artifact in parameters.Artifacts }}:
+          - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+            parameters:
+              PackageName: ${{ artifact.Name }}
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              TestPipeline: ${{ parameters.TestPipeline }}
+
+      # Install apt dependencies (if appropriate)
+      - bash: sudo apt install -y $(AptDependencies)
+        condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
+        displayName: Install dependencies from apt
+
       - template: /eng/pipelines/templates/steps/vcpkg.yml
         parameters:
-          DependenciesVariableName: VcpkgDependencies
+          DependenciesVariableName: VcpkgInstall
+
+      - script: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+        displayName: Install coverage tools
+        # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
+        # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled)
+        condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
-          Build: false
-          GenerateArgs: >-
-            -DINSTALL_GTEST=OFF
-            -DBUILD_TESTING=OFF
-            -DBUILD_TRANSPORT_CURL=OFF
-            -DBUILD_DOCUMENTATION=YES
+          GenerateArgs: "$(CmakeArgs)"
+          BuildArgs: "$(BuildArgs)"
 
-      - pwsh: npm install -g moxygen
-        displayName: Install Moxygen to generate markdown for docs.microsoft.com
+      - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
+        workingDirectory: build
+        displayName: ctest
 
-      # Generate package spec JSON files for tagging the repo
-      - ${{ each artifact in parameters.Artifacts }}:
-          - pwsh: >-
-              New-Item
-              -ItemType directory
-              -Path $(Build.ArtifactStagingDirectory)
-              -Name packages/${{ artifact.Name }}
-            displayName: Create package info artifact location
+      # Make coverage targets (specified in coverage_targets.txt) and assemble
+      # coverage report
+      - bash: |
+          make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
+          ../tools/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
+        workingDirectory: build
+        displayName: Generate Code Coverage Data
+        condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
-          - pwsh: |
-              $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
-
-              $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
-              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
-
-              Set-Content -Path $outputPath -Value $outputObject
-
-              # Set AZURE_SDK_VERSION for use in Doxygen generation
-              Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
-            displayName: Create package info JSON file
-
-          - task: Powershell@2
-            inputs:
-              targetType: inline
-              script: |
-                # If there is no vcpkg directory skip staging the vcpkg port artifacts
-                if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
-                  Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
-                  exit
-                }
-
-                New-Item `
-                  -ItemType Directory `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
-
-                Copy-Item -Recurse `
-                  build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
-              pwsh: true
-            displayName: Copy vcpkg port files from build
-
-          - pwsh: |
-              $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
-              $changelogPath = "sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md"
-
-              if (Test-Path $changeLogPath) {
-                Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md $outputPath
-              } else {
-                Write-Warning "$changeLogPath does not exist"
-              }
-            displayName: Copy CHANGELOG.md to package artifact
-
-          - script: cmake --build . --target ${{ artifact.Name }}-docs
-            workingDirectory: build
-            displayName: Generate docs (${{ artifact.Name }}-docs)
-
-          - task: PowerShell@2
-            inputs:
-              targetType: filePath
-              filePath: eng/scripts/New-DocsMsArtifact.ps1
-              arguments: >-
-                -ServiceDirectory ${{ parameters.ServiceDirectory }}
-                -PackageName ${{ artifact.Name }}
-                -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/docs/docs.ms
-              ignoreLASTEXITCODE: true
-              pwsh: true
-            displayName: Generate artifacts for docs.ms
-
-          - pwsh: |
-              New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
-            displayName: Create doc artifact location
-
-          - task: CopyFiles@2
-            inputs:
-              sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}
-              contents: package-info.json
-              targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
-            displayName: Copy package-info.json to documentation path
-
-          - task: CopyFiles@2
-            inputs:
-              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
-              targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
-            displayName: Copy documentation to artifact staging directory
-
-      - task: PublishPipelineArtifact@1
+      - task: PublishCodeCoverageResults@1
         inputs:
-          artifactName: packages
-          path: $(Build.ArtifactStagingDirectory)/packages
+          codeCoverageTool: Cobertura
+          summaryFileLocation: "$(Build.SourcesDirectory)/**/Cobertura.xml"
+        displayName: Publish Code Coverage to DevOps
+        condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
-      # After all docs artifacts are generated publish docs artifacts
-      - task: PublishPipelineArtifact@1
-        inputs:
-          artifactName: docs
-          path: $(Build.ArtifactStagingDirectory)/docs
+  # Disable build for cpp - client
+  - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
+      - job: GenerateReleaseArtifacts
+        pool:
+          name: azsdk-pool-mms-win-2019-general
+          vmImage: MMS2019
+        variables:
+          VcpkgDependencies: curl[winssl] libxml2
+          VCPKG_DEFAULT_TRIPLET: "x64-windows-static"
+        steps:
+          - template: /eng/common/pipelines/templates/steps/verify-links.yml
+            parameters:
+              Directory: ""
+              CheckLinkGuidance: $true
 
-      - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+          - ${{ each artifact in parameters.Artifacts }}:
+              - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                parameters:
+                  PackageName: ${{ artifact.Name }}
+                  ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                  TestPipeline: ${{ parameters.TestPipeline }}
+
+          - pwsh: |
+              $setupFile="doxygen-1.8.18-setup.exe";
+
+              Invoke-WebRequest `
+                -MaximumRetryCount 10 `
+                -Uri "https://azuresdktooling.blob.core.windows.net/dependencies/$setupFile" `
+                -OutFile $setupFile `
+              | Wait-Process;
+
+              Start-Process -Filepath .\$setupFile -ArgumentList @("/VERYSILENT") -Wait
+            workingDirectory: $(Agent.TempDirectory)
+            displayName: Download and Install Doxygen
+
+          # Install dependencies required for build from vcpkg
+          # TODO: We should be able to generate docs without having to install these
+          # prerequisites:
+          - template: /eng/pipelines/templates/steps/vcpkg.yml
+            parameters:
+              DependenciesVariableName: VcpkgDependencies
+
+          - template: /eng/pipelines/templates/steps/cmake-build.yml
+            parameters:
+              Build: false
+              GenerateArgs: >-
+                -DINSTALL_GTEST=OFF
+                -DBUILD_TESTING=OFF
+                -DBUILD_TRANSPORT_CURL=OFF
+                -DBUILD_DOCUMENTATION=YES
+
+          - pwsh: npm install -g moxygen
+            displayName: Install Moxygen to generate markdown for docs.microsoft.com
+
+          # Generate package spec JSON files for tagging the repo
+          - ${{ each artifact in parameters.Artifacts }}:
+              - pwsh: >-
+                  New-Item
+                  -ItemType directory
+                  -Path $(Build.ArtifactStagingDirectory)
+                  -Name packages/${{ artifact.Name }}
+                displayName: Create package info artifact location
+
+              - pwsh: |
+                  $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
+
+                  $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
+                  $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
+
+                  Set-Content -Path $outputPath -Value $outputObject
+
+                  # Set AZURE_SDK_VERSION for use in Doxygen generation
+                  Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
+                displayName: Create package info JSON file
+
+              - task: Powershell@2
+                inputs:
+                  targetType: inline
+                  script: |
+                    # If there is no vcpkg directory skip staging the vcpkg port artifacts
+                    if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
+                      Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
+                      exit
+                    }
+
+                    New-Item `
+                      -ItemType Directory `
+                      $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
+
+                    Copy-Item -Recurse `
+                      build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
+                      $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port
+                  pwsh: true
+                displayName: Copy vcpkg port files from build
+
+              - pwsh: |
+                  $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
+                  $changelogPath = "sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md"
+
+                  if (Test-Path $changeLogPath) {
+                    Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md $outputPath
+                  } else {
+                    Write-Warning "$changeLogPath does not exist"
+                  }
+                displayName: Copy CHANGELOG.md to package artifact
+
+              - script: cmake --build . --target ${{ artifact.Name }}-docs
+                workingDirectory: build
+                displayName: Generate docs (${{ artifact.Name }}-docs)
+
+              - task: PowerShell@2
+                inputs:
+                  targetType: filePath
+                  filePath: eng/scripts/New-DocsMsArtifact.ps1
+                  arguments: >-
+                    -ServiceDirectory ${{ parameters.ServiceDirectory }}
+                    -PackageName ${{ artifact.Name }}
+                    -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/docs/docs.ms
+                  ignoreLASTEXITCODE: true
+                  pwsh: true
+                displayName: Generate artifacts for docs.ms
+
+              - pwsh: |
+                  New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
+                displayName: Create doc artifact location
+
+              - task: CopyFiles@2
+                inputs:
+                  sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}
+                  contents: package-info.json
+                  targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+                displayName: Copy package-info.json to documentation path
+
+              - task: CopyFiles@2
+                inputs:
+                  sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+                  targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
+                displayName: Copy documentation to artifact staging directory
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              artifactName: packages
+              path: $(Build.ArtifactStagingDirectory)/packages
+
+          # After all docs artifacts are generated publish docs artifacts
+          - task: PublishPipelineArtifact@1
+            inputs:
+              artifactName: docs
+              path: $(Build.ArtifactStagingDirectory)/docs
+
+          - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml

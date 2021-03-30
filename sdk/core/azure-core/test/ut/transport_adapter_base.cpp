@@ -24,10 +24,6 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  namespace Datails {
-    constexpr int64_t FileSize = 1024 * 100;
-  }
-
   TEST_P(TransportAdapter, get)
   {
     Azure::Core::Url host("http://httpbin.org/get");
