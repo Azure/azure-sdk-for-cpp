@@ -53,12 +53,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::DateTime ScheduledPurgeDate;
   };
-
-  /***********************  Deserializer / Serializer ******************************/
-  namespace _detail {
-    DeletedKey DeletedKeyDeserialize(
-        std::string const& name,
-        Azure::Core::Http::RawResponse const& rawResponse);
-  } // namespace _detail
-
 }}}} // namespace Azure::Security::KeyVault::Keys

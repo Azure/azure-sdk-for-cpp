@@ -451,7 +451,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response body as #Azure::Core::IO::BodyStream.
      */
-    std::unique_ptr<Azure::Core::IO::BodyStream> GetBodyStream()
+    std::unique_ptr<Azure::Core::IO::BodyStream> ExtractBodyStream()
     {
       // If m_bodyStream was moved before. nullptr is returned
       return std::move(this->m_bodyStream);

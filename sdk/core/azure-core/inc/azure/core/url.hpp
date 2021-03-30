@@ -229,6 +229,13 @@ namespace Azure { namespace Core {
     std::string GetUrlWithoutQuery() const { return GetUrlWithoutQuery(false); }
 
     /**
+     * @brief Get Scheme, host and port.
+     *
+     * @return Url authority.
+     */
+    std::string GetUrlAuthorityWithScheme() const;
+
+    /**
      * @brief Get the path and query parameters.
      *
      * @return Relative URL with URL-encoded query parameters.

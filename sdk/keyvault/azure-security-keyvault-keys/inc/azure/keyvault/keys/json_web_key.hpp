@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_curve_name.hpp"
@@ -71,8 +72,31 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Nullable<KeyCurveName> CurveName;
 
+    /**** RSA fields ****/
+
+    /// The RSA modulus.
+    std::vector<uint8_t> N;
+    /// The RSA public exponent.
+    std::vector<uint8_t> E;
+    /// The RSA private key parameter.
+    std::vector<uint8_t> DP;
+    /// The RSA private key parameter.
+    std::vector<uint8_t> DQ;
+    /// The RSA private key parameter.
+    std::vector<uint8_t> QI;
+    /// The RSA secret prime.
+    std::vector<uint8_t> P;
+    /// The RSA secret prime.
+    std::vector<uint8_t> Q;
+
+    /// The RSA private exponent or EC private key.
+    std::vector<uint8_t> D;
+
   private:
     std::vector<KeyOperation> m_keyOps;
   };
+
+  // Define the serialization of a JsonWebKey
+  void to_json(Azure::Core::Json::_internal::json& j, JsonWebKey const& p);
 
 }}}} // namespace Azure::Security::KeyVault::Keys

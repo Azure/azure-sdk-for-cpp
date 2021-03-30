@@ -13,6 +13,7 @@
   - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
   - `GetMajorVersion`.
   - `GetMinorVersion`.
+- Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 
