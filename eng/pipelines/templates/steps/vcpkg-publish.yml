@@ -1,9 +1,12 @@
 parameters:
   GitHubRepo: $(Build.Repository.Name)
+  ArtifactPath: $()
   Workspace: $(Pipeline.Workspace)
   ArtifactName: not-set
   VcpkgPortName: not-set
   DisplayNameExtension: 
+  TestReleaseRef: 
+  TestRelease: false
 
 steps:
   - task: Powershell@2
@@ -13,6 +16,7 @@ steps:
         -GitHubRepo "${{ parameters.GitHubRepo }}"
         -PackageSpecPath ${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}/package-info.json
         -SourceDirectory ${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}/vcpkg
+        -TestReleaseRef '${{ parameters.TestReleaseRef }}'
         -Verbose
       pwsh: true
     displayName: Initialize vcpkg release ${{ parameters.DisplayNameExtension }}
@@ -27,5 +31,6 @@ steps:
         -PortDestinationDirectory 'ports/${{ parameters.VcpkgPortName }}'
         -VcpkgPortName '${{ parameters.VcpkgPortName }}'
         -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
+        -TestRelease:$${{ parameters.TestRelease }}
       workingDirectory: $(VcpkgWorkspace)
     displayName: Update vcpkg port ${{ parameters.DisplayNameExtension }}

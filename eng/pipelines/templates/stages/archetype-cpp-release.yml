@@ -5,6 +5,7 @@ parameters:
   TestPipeline: false
 
 stages:
+  # TODO: Check for scheduled run
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
       dependsOn: Build
@@ -46,6 +47,8 @@ stages:
                         ArtifactName: ${{ artifact.Name }}
                         VcpkgPortName: ${{ artifact.VcpkgPortName }}
                         DisplayNameExtension: ${{ artifact.Name }}
+                        TestRelease: true
+                        TestReleaseRef: $(Build.SourceVersion)
 
                   - pwsh: |
                       Write-Host "git reset --soft HEAD^${{ length(parameters.Artifacts) }}"
