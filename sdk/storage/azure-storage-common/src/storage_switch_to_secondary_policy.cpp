@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace _internal {
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
         && !m_secondaryHost.empty() && replicaStatus && *replicaStatus;
 
-    if (considerSecondary && Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(ctx) > 0)
+    if (considerSecondary && Azure::Core::Http::Policies::RetryPolicy::GetRetryCount(ctx) > 0)
     {
       // switch host
       if (request.GetUrl().GetHost() == m_primaryHost)
