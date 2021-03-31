@@ -51,7 +51,7 @@ TEST(BearerTokenAuthenticationPolicy, InitialGet)
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
   policies.emplace_back(
-      std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+      std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
           Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
 
@@ -84,7 +84,7 @@ TEST(BearerTokenAuthenticationPolicy, ReuseWhileValid)
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
   policies.emplace_back(
-      std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+      std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
           Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
 
@@ -126,7 +126,7 @@ TEST(BearerTokenAuthenticationPolicy, RefreshNearExpiry)
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
   policies.emplace_back(
-      std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+      std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
           Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
 
@@ -168,7 +168,7 @@ TEST(BearerTokenAuthenticationPolicy, RefreshAfterExpiry)
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
   policies.emplace_back(
-      std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+      std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
           Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
 

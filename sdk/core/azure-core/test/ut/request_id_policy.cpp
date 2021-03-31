@@ -9,6 +9,7 @@
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 class NoOpPolicy : public HttpPolicy {

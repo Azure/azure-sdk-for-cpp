@@ -18,6 +18,7 @@ void SendRequest(LogOptions const& logOptions)
   using namespace Azure::Core::Http;
   using namespace Azure::Core::Http::_internal;
   using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
 
   class TestTransportPolicy : public HttpPolicy {
   public:
