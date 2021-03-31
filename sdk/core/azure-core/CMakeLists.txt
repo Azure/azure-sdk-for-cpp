@@ -94,6 +94,7 @@ set(
     src/http/raw_response.cpp
     src/http/request.cpp
     src/http/retry_policy.cpp
+    src/http/retry_policy_private.hpp
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp

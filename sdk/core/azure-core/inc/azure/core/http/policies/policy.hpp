@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief Maximum number of attempts to retry.
      */
-    int MaxRetries = 3;
+    int32_t MaxRetries = 3;
 
     /**
      * @brief Mimimum amount of time between retry attempts.
