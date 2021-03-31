@@ -12,7 +12,6 @@ include(GoogleTest)
 add_executable (
   azure-identity-livetest
   client_secret_credential.cpp
-  common.hpp
   environment_credential.cpp
   main.cpp
 )
