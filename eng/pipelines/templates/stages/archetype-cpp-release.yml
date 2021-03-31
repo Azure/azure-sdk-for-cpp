@@ -12,7 +12,6 @@ stages:
       jobs:
         - deployment: PublishNightlyVcpkg
           displayName: Publish to vcpkg nightly branch
-          dependsOn: Build
           # TODO: Condition?
           environment: github
 
