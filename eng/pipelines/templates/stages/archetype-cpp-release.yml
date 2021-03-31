@@ -11,7 +11,7 @@ stages:
       dependsOn: Build
 
       jobs:
-        - deployment: PublishNightlyVcpkg
+        - job: PublishNightlyVcpkg
           displayName: Publish to vcpkg nightly branch
           # TODO: Condition?
 
