@@ -22,6 +22,10 @@ stages:
           steps:
             - checkout: self
 
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                artifact: packages
+
             - pwsh: |
                 $formattedDate = Get-Date -Format 'yyyy-MM-dd'
                 $branchName = "nightly/$formattedDate"
