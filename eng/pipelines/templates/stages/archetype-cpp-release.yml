@@ -52,7 +52,10 @@ stages:
 
             - pwsh: |
                 Write-Host "git reset --soft HEAD^${{ length(parameters.Artifacts) }}"
-                git reset --soft HEAD~${{ length(parameters.Artifacts) }}
+                git reset --soft HEAD^${{ length(parameters.Artifacts) }}
+
+                Write-Host "git status"
+                git status
               displayName: Reset commits to enable pushing a single commit
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
