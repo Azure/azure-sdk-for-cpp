@@ -21,7 +21,7 @@ stages:
 
           strategy: 
             runOnce:
-              deploy:
+              job:
                 steps:
                   - checkout: self
 
