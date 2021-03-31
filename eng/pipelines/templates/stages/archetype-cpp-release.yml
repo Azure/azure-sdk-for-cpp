@@ -13,7 +13,6 @@ stages:
         - deployment: PublishNightlyVcpkg
           displayName: Publish to vcpkg nightly branch
           # TODO: Condition?
-          environment: github
 
           pool:
             name: azsdk-pool-mms-win-2019-general
