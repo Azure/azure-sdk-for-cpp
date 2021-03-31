@@ -6,6 +6,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/platform.hpp>
 
+#include <algorithm>
 #include <chrono>
 
 namespace Azure { namespace Storage { namespace _internal {
@@ -28,6 +29,22 @@ namespace Azure { namespace Storage { namespace _internal {
               .ToString(Azure::DateTime::DateFormat::Rfc1123));
     }
 
+    const char* HttpHeaderTimeout = "timeout";
+    auto cancelTimepoint = ctx.GetDeadline();
+    if (cancelTimepoint == Azure::DateTime::max())
+    {
+      request.GetUrl().RemoveQueryParameter(HttpHeaderTimeout);
+    }
+    else
+    {
+      auto currentTimepoint = std::chrono::system_clock::now();
+      int64_t numSeconds
+          = std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::system_clock::time_point(cancelTimepoint) - currentTimepoint)
+                .count();
+      request.GetUrl().AppendQueryParameter(
+          HttpHeaderTimeout, std::to_string(std::max(numSeconds, int64_t(1))));
+    }
     return nextHttpPolicy.Send(request, ctx);
   }
 
