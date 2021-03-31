@@ -33,7 +33,6 @@ stages:
       ServiceDirectory: identity
       CtestRegex: azure-identity-unittest.
       LiveTestCtestRegex: azure-identity-livetest.
-      Coverage: disabled
       Artifacts:
         - Name: azure-identity
           Path: azure-identity

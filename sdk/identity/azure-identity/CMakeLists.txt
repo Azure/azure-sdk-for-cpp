@@ -53,7 +53,7 @@ add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 add_library(Azure::azure-identity ALIAS azure-identity)
 
 create_code_coverage(identity azure-identity azure-identity-test)
-create_code_coverage(identity azure-identity azure-identity-livetest)
+create_code_coverage(identity azure-identity-livetest azure-identity-livetest)
 
 target_include_directories(
   azure-identity
