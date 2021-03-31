@@ -15,6 +15,7 @@
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 bool GetResponseHeaderBasedDelay(RawResponse const& response, std::chrono::milliseconds& retryAfter)

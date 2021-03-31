@@ -37,8 +37,8 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
-     * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy representing a stack,
-     * first element corresponding to the top of the stack.
+     * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy
+     * representing a stack, first element corresponding to the top of the stack.
      *
      * @throw `std::invalid_argument` when policies is empty.
      */
@@ -101,14 +101,16 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       }
 
       // Request Id
-      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::RequestIdPolicy>());
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::RequestIdPolicy>());
       // Telemetry
-      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>(
-          telemetryServiceName, telemetryServiceVersion, clientOptions.Telemetry));
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>(
+              telemetryServiceName, telemetryServiceVersion, clientOptions.Telemetry));
 
       // Retry policy
-      m_policies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::RetryPolicy>(clientOptions.Retry));
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::_internal::RetryPolicy>(
+          clientOptions.Retry));
 
       // service-specific per retry policies.
       for (auto& policy : perRetryPolicies)
@@ -123,18 +125,19 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
       // logging - won't update request
       m_policies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::LogPolicy>(clientOptions.Log));
+          std::make_unique<Azure::Core::Http::Policies::_internal::LogPolicy>(clientOptions.Log));
 
       // transport
       m_policies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(clientOptions.Transport));
+          std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(
+              clientOptions.Transport));
     }
 
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
-     * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy representing a stack,
-     * first element corresponding to the top of the stack.
+     * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy
+     * representing a stack, first element corresponding to the top of the stack.
      *
      * @throw `std::invalid_argument` when policies is empty.
      */

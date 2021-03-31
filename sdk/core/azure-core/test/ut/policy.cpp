@@ -38,7 +38,10 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Azure::Core::Context const& ctx) const override
   {
-    EXPECT_EQ(retryCounterState, Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(ctx));
+    EXPECT_EQ(
+        retryCounterState,
+        Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryNumber(ctx));
+
     retryCounterState += 1;
     return nextHttpPolicy.Send(request, ctx);
   }
@@ -83,7 +86,7 @@ public:
       Azure::Core::Http::Policies::NextHttpPolicy,
       Azure::Core::Context const& context) const override
   {
-    auto retryNumber = Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(context);
+    auto retryNumber = Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryNumber(context);
     if (retryNumber == m_successAfter)
     {
       auto response = std::make_unique<Azure::Core::Http::RawResponse>(
@@ -104,13 +107,13 @@ TEST(Policy, throwWhenNoTransportPolicy)
   // Construct pipeline without exception
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
   Azure::Core::Url url("");
@@ -124,13 +127,13 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   // Construct pipeline without exception
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
   Azure::Core::Url url("");
@@ -150,8 +153,9 @@ TEST(Policy, RetryPolicyCounter)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
   // Clean the validation global state
   retryCounterState = 0;
 
@@ -177,8 +181,9 @@ TEST(Policy, RetryPolicyRetryCycle)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
   // Clean the validation global state
   retryCounterState = 0;
 
@@ -200,8 +205,9 @@ TEST(Policy, RetryPolicyKeepContext)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
   // Clean the validation global state
   retryCounterState = 0;
 
