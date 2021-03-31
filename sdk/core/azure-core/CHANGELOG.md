@@ -13,6 +13,7 @@
   - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
   - `GetMajorVersion`.
   - `GetMinorVersion`.
+- Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 
 ## 1.0.0-beta.7 (2021-03-11)
