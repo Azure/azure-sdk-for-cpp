@@ -1,6 +1,7 @@
 parameters:
   Artifacts: []
   ArtifactName: 'not-specified'
+  ServiceDirectory: not-specified
   TestPipeline: false
 
 stages:
@@ -31,6 +32,12 @@ stages:
                       Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
                     displayName: Set branch name in fork repo
 
+                  # TODO: Can we do a sparse checkout?
+                  - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+                    parameters:
+                      RepoOwner: azure-sdk
+                      PRBranchName: $(PrBranchName)
+
                   # Placing artifacts in the same branch in sequence reduces the
                   # potential for race conditions. If this job does fail to push
                   # because another job has already pushed to the same branch it
@@ -40,8 +47,22 @@ stages:
                       parameters:
                         ArtifactName: ${{ artifact.Name }}
                         VcpkgPortName: ${{ artifact.VcpkgPortName }}
-                        PRBranchName: $(PrBranchName)
                         DisplayNameExtension: ${{ artifact.Name }}
+
+                  - pwsh: |
+                      Write-Host "git reset --soft HEAD^${{ length(parameters.Artifacts) }}"
+                      git reset --soft HEAD~${{ length(parameters.Artifacts) }}
+                    displayName: Reset commits to enable pushing a single commit
+
+                  - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+                    parameters:
+                      BaseRepoBranch: $(PrBranchName)
+                      CommitMsg: Nightly vcpkg ports for ${{ parameters.ServiceDirectory }}
+                      TargetRepoOwner: azure-sdk
+                      TargetRepoName: vcpkg
+                      WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                      ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
+
 
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
@@ -161,11 +182,15 @@ stages:
                           Write-Host "##vso[task.setvariable variable=PrTitle]$title"
                         displayName: Set PR title
 
+                      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+                        parameters:
+                          RepoOwner: azure-sdk
+                          PRBranchName: $(PrBranchName)
+
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
                           ArtifactName: ${{ artifact.Name }}
                           VcpkgPortName: ${{ artifact.VcpkgPortName }}
-                          PRBranchName: $(PrBranchName)
 
                       # Set $(HasChanges) to $true so that 
                       # create-pull-request.yml completes the push and PR 

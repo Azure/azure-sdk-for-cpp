@@ -3,7 +3,6 @@ parameters:
   Workspace: $(Pipeline.Workspace)
   ArtifactName: not-set
   VcpkgPortName: not-set
-  PRBranchName: not-set
   DisplayNameExtension: 
 
 steps:
@@ -17,29 +16,6 @@ steps:
         -Verbose
       pwsh: true
     displayName: Initialize vcpkg release ${{ parameters.DisplayNameExtension }}
-
-  # There are potential race conditions if this script runs
-  # in parallel against the same branch name. Release only 
-  # one package at a time.
-  - pwsh: |
-      Write-Host "git clone https://github.com/azure-sdk/vcpkg ${{ parameters.Workspace }}/vcpkg"
-      git clone https://github.com/azure-sdk/vcpkg ${{ parameters.Workspace }}/vcpkg
-      if ($LASTEXITCODE -ne 0) {
-        Write-Error "Unable to check out vcpkg fork repo"
-        exit $LASTEXITCODE
-      }
-      Write-Host "##vso[task.setvariable variable=VcpkgWorkspace]${{ parameters.Workspace }}/vcpkg"
-    displayName: Clone vcpkg from upstream ${{ parameters.DisplayNameExtension }}
-
-  # Check out the PR branch if it's already in remote. 
-  # Ignore failures.
-  - pwsh: |
-      $ErrorActionPreference = "Continue"
-      git checkout "origin/${{ parameters.PRBranchName }}" 2>&1 | Out-Null
-      $LASTEXITCODE = 0 # This ignores any error from git checkout
-      git status
-    displayName: Checkout Previous PRBranch if it exist. ${{ parameters.DisplayNameExtension }}
-    workingDirectory: $(VcpkgWorkspace)
 
   - task: Powershell@2
     inputs:
