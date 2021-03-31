@@ -18,6 +18,7 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 struct RequestWithContinuationToken
