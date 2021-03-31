@@ -34,7 +34,8 @@ namespace Azure { namespace Core { namespace Test {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
     options.Transport = transportAdapter;
-    auto transportPolicy = std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(options);
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -64,7 +65,8 @@ namespace Azure { namespace Core { namespace Test {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
     options.Transport = transportAdapter;
-    auto transportPolicy = std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(options);
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -98,7 +100,7 @@ namespace Azure { namespace Core { namespace Test {
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
-  std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(transportAdapter);
+  std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(transportAdapter);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -124,7 +126,7 @@ namespace Azure { namespace Core { namespace Test {
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
-  std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(transportAdapter);
+  std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(transportAdapter);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -150,7 +152,7 @@ namespace Azure { namespace Core { namespace Test {
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
-  std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(transportAdapter);
+  std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(transportAdapter);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -180,7 +182,8 @@ namespace Azure { namespace Core { namespace Test {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
     options.Transport = transportAdapter;
-    auto transportPolicy = std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(options);
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -211,7 +214,8 @@ namespace Azure { namespace Core { namespace Test {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
     Azure::Core::Http::Policies::TransportOptions options;
     options.Transport = transportAdapter;
-    auto transportPolicy = std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(options);
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -245,7 +249,8 @@ namespace Azure { namespace Core { namespace Test {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
     options.Transport = transportAdapter;
-    auto transportPolicy = std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(options);
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
     {
       // use inner scope to remove the pipeline and make sure we don't keep the connection in the

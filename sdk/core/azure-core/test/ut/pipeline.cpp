@@ -12,7 +12,7 @@ TEST(Pipeline, createPipeline)
   // Construct pipeline without exception
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
 
   EXPECT_NO_THROW(Azure::Core::Http::_internal::HttpPipeline pipeline(policies));
 }
@@ -30,7 +30,7 @@ TEST(Pipeline, clonePipeline)
   // Construct pipeline without exception and clone
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
   EXPECT_NO_THROW(Azure::Core::Http::_internal::HttpPipeline pipeline2(pipeline));
