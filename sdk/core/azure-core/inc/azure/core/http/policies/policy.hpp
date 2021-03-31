@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   struct TelemetryOptions
   {
     /**
-     * @brief The Application id is the last part of the user agent for telemetry.
+     * @brief The Application ID is the last part of the user agent for telemetry.
      *
      * @remark This option allows an end-user to create an SDK client and report telemetry with a
      * specific ID for it. The default is an empty string.
