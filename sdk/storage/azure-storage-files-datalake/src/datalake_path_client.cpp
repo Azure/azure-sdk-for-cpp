@@ -19,42 +19,42 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace {
-    Models::LeaseStateType FromBlobLeaseState(Blobs::Models::LeaseState state)
+    Models::LeaseState FromBlobLeaseState(Blobs::Models::LeaseState state)
     {
       if (state == Blobs::Models::LeaseState::Available)
       {
-        return Models::LeaseStateType::Available;
+        return Models::LeaseState::Available;
       }
       if (state == Blobs::Models::LeaseState::Breaking)
       {
-        return Models::LeaseStateType::Breaking;
+        return Models::LeaseState::Breaking;
       }
       if (state == Blobs::Models::LeaseState::Broken)
       {
-        return Models::LeaseStateType::Broken;
+        return Models::LeaseState::Broken;
       }
       if (state == Blobs::Models::LeaseState::Expired)
       {
-        return Models::LeaseStateType::Expired;
+        return Models::LeaseState::Expired;
       }
       if (state == Blobs::Models::LeaseState::Leased)
       {
-        return Models::LeaseStateType::Leased;
+        return Models::LeaseState::Leased;
       }
-      return Models::LeaseStateType();
+      return Models::LeaseState();
     }
 
-    Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
+    Models::LeaseStatus FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
     {
       if (status == Blobs::Models::LeaseStatus::Locked)
       {
-        return Models::LeaseStatusType::Locked;
+        return Models::LeaseStatus::Locked;
       }
       if (status == Blobs::Models::LeaseStatus::Unlocked)
       {
-        return Models::LeaseStatusType::Unlocked;
+        return Models::LeaseStatus::Unlocked;
       }
-      return Models::LeaseStatusType();
+      return Models::LeaseStatus();
     }
   } // namespace
 
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        _internal::FileServicePackageName,
+        _internal::DatalakeServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -126,14 +126,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        _internal::FileServicePackageName,
+        _internal::DatalakeServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        _internal::FileServicePackageName,
+        _internal::DatalakeServicePackageName,
         PackageVersion::VersionString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result->Metadata);
     if (result->LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = Models::LeaseDurationType(result->LeaseDuration.GetValue().ToString());
+      ret.LeaseDuration = Models::LeaseDuration(result->LeaseDuration.GetValue().ToString());
     }
     ret.LeaseState = result->LeaseState.HasValue()
         ? FromBlobLeaseState(result->LeaseState.GetValue())

@@ -199,15 +199,15 @@ namespace Azure { namespace Core { namespace Http {
     }
   }
 
-  namespace Policies {
+  namespace Policies { namespace _internal {
     class RetryPolicy;
-  }
+  }} // namespace Policies::_internal
 
   /**
    * @brief HTTP request.
    */
   class Request {
-    friend class Azure::Core::Http::Policies::RetryPolicy;
+    friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
 #if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
@@ -511,7 +511,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get HTTP response body as #Azure::Core::IO::BodyStream.
      */
-    std::unique_ptr<Azure::Core::IO::BodyStream> GetBodyStream()
+    std::unique_ptr<Azure::Core::IO::BodyStream> ExtractBodyStream()
     {
       // If m_bodyStream was moved before. nullptr is returned
       return std::move(this->m_bodyStream);

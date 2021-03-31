@@ -74,10 +74,11 @@ namespace Azure { namespace Core { namespace Test {
       opt.RetryDelay = std::chrono::milliseconds(10);
 
       // Retry policy will help to prevent server-occasionally-errors
-      policies.push_back(std::make_unique<Azure::Core::Http::Policies::RetryPolicy>(opt));
+      policies.push_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::RetryPolicy>(opt));
       // Will get transport policy options from test param
       // auto param = GetParam();
-      policies.push_back(std::make_unique<Azure::Core::Http::Policies::TransportPolicy>(
+      policies.push_back(std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(
           GetParam().TransportAdapter));
 
       m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(policies);

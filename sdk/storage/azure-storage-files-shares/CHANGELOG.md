@@ -1,6 +1,9 @@
 # Release History
 
-## 12.0.0-beta.9 (Unreleased)
+## 12.0.0-beta.10 (Unreleased)
+
+
+## 12.0.0-beta.9 (2021-03-23)
 
 ### New Features
 
@@ -29,7 +32,11 @@
 - Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
 - Renamed `ShareProtocolSettings` to `ProtocolSettings`.
 - Renamed `CopyStatusType` to `CopyStatus`
-- Removed `FileRangeWriteType`, `ShareFileRangeList` and `ShareStats`.
+- Removed `FileRangeWriteType`, `ShareFileRangeList`, `FileRangeWriteFromUrlType`, `FileRange`, `ClearRange`, `SharePermission`, `LeaseAction` and `ShareStats`.
+- Renamed `LeaseDurationType` to `LeaseDuration`, `LeaseStateType` to `LeaseState` and `LeaseStatusType` to `LeaseStatus`.
+- Renamed `ListSharesIncludeType` to `ListSharesIncludeFlags`.
+- Renamed `DeleteSnapshotsOptionType` to `DeleteSnapshotsOption`.
+- Renamed `PermissionCopyModeType` to `PermissionCopyMode`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
@@ -98,7 +105,7 @@
 
 - Removed `c_` for constants and renamed to pascal format.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 

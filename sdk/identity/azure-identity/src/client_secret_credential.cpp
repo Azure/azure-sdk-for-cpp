@@ -9,6 +9,40 @@
 #include <chrono>
 #include <sstream>
 
+namespace {
+// Assumes !scopes.empty()
+std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource)
+{
+  if (asResource && scopes.size() == 1)
+  {
+    auto resource = scopes[0];
+    constexpr char suffix[] = "/.default";
+    constexpr int suffixLen = sizeof(suffix) - 1;
+    auto const resourceLen = resource.length();
+
+    // If scopes[0] ends with '/.default', remove it.
+    if (resourceLen >= suffixLen
+        && resource.find(suffix, resourceLen - suffixLen) != std::string::npos)
+    {
+      resource = resource.substr(0, resourceLen - suffixLen);
+    }
+
+    return Azure::Core::Url::Encode(resource);
+  }
+
+  auto scopesIter = scopes.begin();
+  auto scopesStr = Azure::Core::Url::Encode(*scopesIter);
+
+  auto const scopesEnd = scopes.end();
+  for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+  {
+    scopesStr += std::string(" ") + Azure::Core::Url::Encode(*scopesIter);
+  }
+
+  return scopesStr;
+}
+} // namespace
+
 using namespace Azure::Identity;
 
 std::string const Azure::Identity::_detail::g_aadGlobalAuthority
@@ -27,24 +61,21 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
+    auto const isAdfs = m_tenantId == "adfs";
+
     Url url(m_options.AuthorityHost);
     url.AppendPath(m_tenantId);
-    url.AppendPath("oauth2/v2.0/token");
+    url.AppendPath(isAdfs ? "oauth2/token" : "oauth2/v2.0/token");
 
     std::ostringstream body;
     body << "grant_type=client_credentials&client_id=" << Url::Encode(m_clientId)
          << "&client_secret=" << Url::Encode(m_clientSecret);
 
-    auto const& scopes = tokenRequestContext.Scopes;
-    if (!scopes.empty())
     {
-      auto scopesIter = scopes.begin();
-      body << "&scope=" << Url::Encode(*scopesIter);
-
-      auto const scopesEnd = scopes.end();
-      for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+      auto const& scopes = tokenRequestContext.Scopes;
+      if (!scopes.empty())
       {
-        body << " " << *scopesIter;
+        body << "&scope=" << FormatScopes(scopes, isAdfs);
       }
     }
 
@@ -57,6 +88,11 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
 
     request.SetHeader("Content-Type", "application/x-www-form-urlencoded");
     request.SetHeader("Content-Length", std::to_string(bodyString.size()));
+
+    if (isAdfs)
+    {
+      request.SetHeader("Host", url.GetHost());
+    }
 
     HttpPipeline httpPipeline(m_options, "Identity-client-secret-credential", "", {}, {});
 

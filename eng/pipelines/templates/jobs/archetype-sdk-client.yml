@@ -5,6 +5,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: TestPipeline
+    type: boolean
+    default: false
   - name: Coverage
     type: string
     default: ''
@@ -132,6 +135,17 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
+  # Install gcc and g++ 8 if it is needed on the image.
+  - bash: sudo apt-get install gcc-8 g++-8 -y
+    displayName: Install gcc and g++ 8 
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CC'], 'gcc-8'), 
+        contains(variables['CXX'], 'g++-8')
+      )
+
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |
@@ -156,6 +170,13 @@ jobs:
 
     displayName: Validate Clang Format
     condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
+  
+  - ${{ each artifact in parameters.Artifacts }}: 
+    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+      parameters:
+        PackageName: ${{ artifact.Name }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
 
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
@@ -213,7 +234,14 @@ jobs:
         parameters:
           Directory: ''
           CheckLinkGuidance: $true
-          
+
+      - ${{ each artifact in parameters.Artifacts }}: 
+        - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+          parameters:
+            PackageName: ${{ artifact.Name }}
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            TestPipeline: ${{ parameters.TestPipeline }}
+
       - pwsh: |
           $setupFile="doxygen-1.8.18-setup.exe";
 
