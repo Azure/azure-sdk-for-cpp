@@ -13,25 +13,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   const static std::string DfsEndPointIdentifier = ".dfs.";
   const static std::string BlobEndPointIdentifier = ".blob.";
 
-  std::string GetBlobUrlFromUrl(const std::string& url)
+  Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url)
   {
-    std::string result = url;
-    auto pos = result.find(DfsEndPointIdentifier);
-    if (pos != std::string::npos)
+    std::string host = url.GetHost();
+    auto pos = host.rfind(DfsEndPointIdentifier);
+    if (pos == std::string::npos)
     {
-      result.replace(pos, DfsEndPointIdentifier.size(), BlobEndPointIdentifier);
+      return url;
     }
+    host.replace(pos, DfsEndPointIdentifier.size(), BlobEndPointIdentifier);
+    Azure::Core::Url result = url;
+    result.SetHost(host);
     return result;
   }
 
-  std::string GetDfsUrlFromUrl(const std::string& url)
+  Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url)
   {
-    std::string result = url;
-    auto pos = result.find(BlobEndPointIdentifier);
-    if (pos != std::string::npos)
+    std::string host = url.GetHost();
+    auto pos = host.rfind(BlobEndPointIdentifier);
+    if (pos == std::string::npos)
     {
-      result.replace(pos, BlobEndPointIdentifier.size(), DfsEndPointIdentifier);
+      return url;
     }
+    host.replace(pos, BlobEndPointIdentifier.size(), DfsEndPointIdentifier);
+    Azure::Core::Url result = url;
+    result.SetHost(host);
     return result;
   }
 

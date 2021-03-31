@@ -46,6 +46,7 @@ set(
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
     inc/azure/core/credentials/credentials.hpp
+    inc/azure/core/credentials/token_credential_options.hpp
     inc/azure/core/cryptography/hash.hpp
     inc/azure/core/diagnostics/logger.hpp
     inc/azure/core/http/http.hpp

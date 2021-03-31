@@ -3,11 +3,12 @@
 
 #include <azure/storage/files/datalake.hpp>
 
+#include "datalake_service_client_test.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class DataLakeFileSystemClientTest : public ::testing::Test {
+  class DataLakeFileSystemClientTest : public DataLakeServiceClientTest {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();

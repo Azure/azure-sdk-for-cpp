@@ -12,8 +12,16 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 
-  std::string GetBlobUrlFromUrl(const std::string& url);
-  std::string GetDfsUrlFromUrl(const std::string& url);
+  Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url);
+  Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url);
+  inline std::string GetBlobUrlFromUrl(const std::string& url)
+  {
+    return GetBlobUrlFromUrl(Azure::Core::Url(url)).GetAbsoluteUrl();
+  }
+  inline std::string GetDfsUrlFromUrl(const std::string& url)
+  {
+    return GetDfsUrlFromUrl(Azure::Core::Url(url)).GetAbsoluteUrl();
+  }
 
   std::string SerializeMetadata(const Storage::Metadata& dataLakePropertiesMap);
 
