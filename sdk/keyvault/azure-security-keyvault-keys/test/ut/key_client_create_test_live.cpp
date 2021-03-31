@@ -19,7 +19,7 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 TEST_F(KeyVaultClientTest, CreateKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createKey");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
@@ -40,7 +40,7 @@ TEST_F(KeyVaultClientTest, CreateKey)
 TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createKeyWithOptions");
+  auto keyName = GetUniqueName();
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign());
@@ -75,7 +75,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
 TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("myKeyWithOptionsTags");
+  auto keyName = GetUniqueName();
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.Tags.emplace("one", "value=1");
@@ -102,7 +102,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 TEST_F(KeyVaultClientTest, CreateEcKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createEcKey");
+  auto keyName = GetUniqueName();
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
@@ -123,7 +123,7 @@ TEST_F(KeyVaultClientTest, CreateEcKey)
 TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createEcKey");
+  auto keyName = GetUniqueName();
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
@@ -150,7 +150,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
 TEST_F(KeyVaultClientTest, CreateRsaKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createRsaKey");
+  auto keyName = GetUniqueName();
 
   {
     auto rsaKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, false);
@@ -173,7 +173,7 @@ TEST_F(KeyVaultClientTest, CreateRsaKey)
 TEST_F(KeyVaultClientTest, CreateEcHsmKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultHsmUrl, m_credential);
-  std::string keyName("createEcHsmKey");
+  auto keyName = GetUniqueName();
 
   {
     auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
@@ -202,7 +202,7 @@ TEST_F(KeyVaultClientTest, CreateEcHsmKey)
 TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultHsmUrl, m_credential);
-  std::string keyName("createRsaHsmKey");
+  auto keyName = GetUniqueName();
 
   {
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);

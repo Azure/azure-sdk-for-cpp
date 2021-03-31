@@ -131,111 +131,150 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, RenameFile)
+  {
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldFilename = RandomString();
+    auto oldFileClient = baseDirectoryClient.GetSubdirectoryClient(oldFilename);
+    oldFileClient.Create();
+    const std::string newFilename = RandomString();
+    auto newFileClient
+        = baseDirectoryClient.RenameFile(oldFilename, baseDirectoryName + "/" + newFilename).Value;
+    EXPECT_NO_THROW(newFileClient.GetProperties());
+    EXPECT_NO_THROW(baseDirectoryClient.GetSubdirectoryClient(newFilename).GetProperties());
+    EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+
+    const std::string newFileSystemName = LowercaseRandomString();
+    const std::string newFilename2 = RandomString();
+
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
+
+    Files::DataLake::RenameFileOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newFileClient2 = baseDirectoryClient.RenameFile(newFilename, newFilename2, options).Value;
+
+    EXPECT_NO_THROW(newFileClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetFileClient(newFilename2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newFileClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, RenameFileAccessCondition)
+  {
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldFilename = RandomString();
+    auto oldFileClient = baseDirectoryClient.GetSubdirectoryClient(oldFilename);
+    oldFileClient.Create();
+    const std::string newFilename = RandomString();
+
+    Files::DataLake::RenameFileOptions options;
+    options.SourceAccessConditions.IfModifiedSince
+        = oldFileClient.GetProperties().Value.LastModified;
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+
+    options = Files::DataLake::RenameFileOptions();
+    options.SourceAccessConditions.IfUnmodifiedSince
+        = oldFileClient.GetProperties().Value.LastModified - std::chrono::minutes(5);
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+
+    options = Files::DataLake::RenameFileOptions();
+    options.SourceAccessConditions.IfMatch = DummyETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+
+    options = Files::DataLake::RenameFileOptions();
+    options.SourceAccessConditions.IfNoneMatch = oldFileClient.GetProperties().Value.ETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+  }
+
   TEST_F(DataLakeDirectoryClientTest, RenameDirectory)
   {
-    {
-      // Normal create/rename/delete.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClients;
-      for (int32_t i = 0; i < 5; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClients.emplace_back(std::move(client));
-      }
-      std::vector<Files::DataLake::DataLakeDirectoryClient> newDirectoryClients;
-      for (auto& client : directoryClients)
-      {
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(
-            newDirectoryClients.emplace_back(client.RenameSubdirectory("", newPath).Value));
-      }
-      for (const auto& client : directoryClients)
-      {
-        EXPECT_THROW(client.DeleteEmpty(), StorageException);
-      }
-      for (const auto& client : newDirectoryClients)
-      {
-        EXPECT_NO_THROW(client.DeleteEmpty());
-      }
-    }
-    {
-      // Normal rename with last modified access condition.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
-      }
-      for (auto& client : directoryClient)
-      {
-        auto response = client.GetProperties();
-        Files::DataLake::RenameDirectoryOptions options1;
-        options1.SourceAccessConditions.IfModifiedSince = response.Value.LastModified;
-        EXPECT_TRUE(IsValidTime(response.Value.LastModified));
-        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
-        Files::DataLake::RenameDirectoryOptions options2;
-        options2.SourceAccessConditions.IfUnmodifiedSince = response.Value.LastModified;
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
-      }
-    }
-    {
-      // Normal rename with if match access condition.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
-      }
-      for (auto& client : directoryClient)
-      {
-        auto response = client.GetProperties();
-        Files::DataLake::RenameDirectoryOptions options1;
-        options1.SourceAccessConditions.IfNoneMatch = response.Value.ETag;
-        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
-        Files::DataLake::RenameDirectoryOptions options2;
-        options2.SourceAccessConditions.IfMatch = response.Value.ETag;
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(client.RenameSubdirectory("", newPath, options2).Value.DeleteEmpty());
-      }
-    }
-    {
-      // Rename to a destination file system.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
-      }
-      {
-        // Rename to a non-existing file system will fail and source is not changed.
-        Files::DataLake::RenameDirectoryOptions options;
-        options.DestinationFileSystem = LowercaseRandomString();
-        for (auto& client : directoryClient)
-        {
-          EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options), StorageException);
-          EXPECT_NO_THROW(client.GetProperties());
-        }
-      }
-      {
-        // Rename to an existing file system will succeed and changes URI.
-        auto newfileSystemName = LowercaseRandomString(10);
-        auto newfileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
-            Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-                AdlsGen2ConnectionString(), newfileSystemName));
-        newfileSystemClient->Create();
-        Files::DataLake::RenameDirectoryOptions options;
-        options.DestinationFileSystem = newfileSystemName;
-        for (auto& client : directoryClient)
-        {
-          auto newPath = RandomString();
-          EXPECT_NO_THROW(client.RenameSubdirectory("", newPath, options).Value.DeleteEmpty());
-        }
-      }
-    }
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldDirectoryName = RandomString();
+    auto oldDirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldDirectoryName);
+    oldDirectoryClient.Create();
+    const std::string newDirectoryName = RandomString();
+    auto newDirectoryClient
+        = baseDirectoryClient
+              .RenameSubdirectory(oldDirectoryName, baseDirectoryName + "/" + newDirectoryName)
+              .Value;
+    EXPECT_NO_THROW(newDirectoryClient.GetProperties());
+    EXPECT_NO_THROW(baseDirectoryClient.GetSubdirectoryClient(newDirectoryName).GetProperties());
+    EXPECT_THROW(oldDirectoryClient.GetProperties(), StorageException);
+
+    const std::string newFileSystemName = LowercaseRandomString();
+    const std::string newDirectoryName2 = RandomString();
+
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
+
+    Files::DataLake::RenameDirectoryOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newDirectoryClient2
+        = baseDirectoryClient.RenameSubdirectory(newDirectoryName, newDirectoryName2, options)
+              .Value;
+
+    EXPECT_NO_THROW(newDirectoryClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, RenameDirectoryAccessCondition)
+  {
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldDirectoryName = RandomString();
+    auto oldDirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldDirectoryName);
+    oldDirectoryClient.Create();
+    const std::string newDirectoryName = RandomString();
+
+    Files::DataLake::RenameDirectoryOptions options;
+    options.SourceAccessConditions.IfModifiedSince
+        = oldDirectoryClient.GetProperties().Value.LastModified;
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
+
+    options = Files::DataLake::RenameDirectoryOptions();
+    options.SourceAccessConditions.IfUnmodifiedSince
+        = oldDirectoryClient.GetProperties().Value.LastModified - std::chrono::minutes(5);
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
+
+    options = Files::DataLake::RenameDirectoryOptions();
+    options.SourceAccessConditions.IfMatch = DummyETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
+
+    options = Files::DataLake::RenameDirectoryOptions();
+    options.SourceAccessConditions.IfNoneMatch = oldDirectoryClient.GetProperties().Value.ETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
   }
 
   TEST_F(DataLakeDirectoryClientTest, DirectoryMetadata)

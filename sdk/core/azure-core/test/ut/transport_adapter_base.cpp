@@ -530,7 +530,7 @@ namespace Azure { namespace Core { namespace Test {
       int64_t size,
       std::string expectedBody)
   {
-    auto body = response.GetBodyStream();
+    auto body = response.ExtractBodyStream();
     EXPECT_EQ(body, nullptr);
     std::vector<uint8_t> bodyVector = response.GetBody();
     int64_t bodySize = bodyVector.size();
@@ -552,7 +552,7 @@ namespace Azure { namespace Core { namespace Test {
       int64_t size,
       std::string expectedBody)
   {
-    auto body = response.GetBodyStream();
+    auto body = response.ExtractBodyStream();
     EXPECT_NE(body, nullptr);
 
     std::vector<uint8_t> bodyVector

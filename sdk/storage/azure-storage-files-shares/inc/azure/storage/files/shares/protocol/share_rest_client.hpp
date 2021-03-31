@@ -5984,7 +5984,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Succeeded to read the entire file.
             FileDownloadResult result;
-            result.BodyStream = response.GetBodyStream();
+            result.BodyStream = response.ExtractBodyStream();
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
@@ -6141,7 +6141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Succeeded to read a specified range of the file.
             FileDownloadResult result;
-            result.BodyStream = response.GetBodyStream();
+            result.BodyStream = response.ExtractBodyStream();
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);

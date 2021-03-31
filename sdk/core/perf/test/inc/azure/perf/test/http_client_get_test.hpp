@@ -59,7 +59,7 @@ namespace Azure { namespace Perf { namespace Test {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, m_url);
       auto response = _detail::HttpClient->Send(request, ctx);
       // Read the body from network
-      auto bodyStream = response->GetBodyStream();
+      auto bodyStream = response->ExtractBodyStream();
       response->SetBody(bodyStream->ReadToEnd(ctx));
     }
 

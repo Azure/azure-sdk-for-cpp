@@ -3,6 +3,7 @@
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
+#include "azure/keyvault/keys/details/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 
@@ -33,12 +34,12 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())
   {
-    rawResponse = m_pipeline->GetResponse(
+    rawResponse = m_pipeline->Send(
         context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
     m_status = CheckCompleted(*rawResponse);
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::DeletedKeyDeserialize(m_value.Name(), *rawResponse);
+      m_value = _detail::DeletedKeySerializer::DeletedKeyDeserialize(m_value.Name(), *rawResponse);
     }
   }
 

@@ -90,6 +90,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @param method The method for the request.
      * @param factoryFn The function to deserialize and produce T from the raw response.
      * @param path A path for the request represented as a vector of strings.
+     * @param query Optional query parameters for constructing the request.
      * @return The object produced by the \p factoryFn and the raw response from the network.
      */
     template <class T>
@@ -97,9 +98,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
-        std::vector<std::string> const& path)
+        std::vector<std::string> const& path,
+        std::unique_ptr<std::map<std::string, std::string>> const& query = nullptr)
     {
       auto request = CreateRequest(method, path);
+      if (query != nullptr)
+      {
+        for (auto const& queryParameter : *query)
+        {
+          request.GetUrl().AppendQueryParameter(queryParameter.first, queryParameter.second);
+        }
+      }
       auto response = SendRequest(context, request);
       // Saving the value in a local is required before passing it in to Response<T> to avoid
       // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
@@ -138,6 +147,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
       return Azure::Response<T>(value, std::move(response));
     }
 
+    template <class T>
+    Azure::Response<T> SendRequest(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::HttpMethod method,
+        std::function<std::string()> serializeContentFn,
+        std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
+        std::vector<std::string> const& path)
+    {
+      auto serialContent = serializeContentFn();
+      auto streamContent = Azure::Core::IO::MemoryBodyStream(
+          reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
+
+      auto request = CreateRequest(method, &streamContent, path);
+      auto response = SendRequest(context, request);
+      return Azure::Response<T>(factoryFn(*response), std::move(response));
+    }
+
     /**
      * @brief Create a key vault request and send it using the Azure Core pipeline directly to avoid
      * checking the respone code.
@@ -147,7 +173,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
      * @param path The path for the request.
      * @return A unique ptr to an Http raw response.
      */
-    std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse(
+    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Context const& context,
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path)

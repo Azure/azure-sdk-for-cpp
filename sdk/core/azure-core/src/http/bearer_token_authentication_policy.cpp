@@ -8,6 +8,7 @@
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     Request& request,

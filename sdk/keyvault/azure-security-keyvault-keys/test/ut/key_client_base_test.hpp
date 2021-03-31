@@ -10,10 +10,12 @@
 #include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
+#include <azure/core/uuid.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/key_vault.hpp>
 
 #include <cstdio>
+#include <iostream>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
@@ -46,9 +48,76 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       auto const& rawResponse = response.RawResponse;
       EXPECT_EQ(
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-              rawResponse->GetStatusCode()),
+              rawResponse.GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
+    }
+
+    static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
+
+    static inline void CleanUpKeyVault(KeyClient const& keyClient)
+    {
+      std::vector<DeletedKey> deletedKeys;
+      GetDeletedKeysSinglePageOptions options;
+      while (true)
+      {
+        auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
+        for (auto& key : keyResponse.Value.Items)
+        {
+          deletedKeys.emplace_back(key);
+        }
+        if (!keyResponse.Value.ContinuationToken)
+        {
+          break;
+        }
+        options.ContinuationToken = keyResponse.Value.ContinuationToken;
+      }
+      if (deletedKeys.size() > 0)
+      {
+        for (auto& deletedKey : deletedKeys)
+        {
+          keyClient.PurgeDeletedKey(deletedKey.Name());
+        }
+        // Wait for purge is completed
+        std::this_thread::sleep_for(std::chrono::minutes(1));
+      }
+    }
+
+    static inline void RemoveAllKeysFromVault(KeyClient const& keyClient, bool waitForPurge = true)
+    {
+      std::vector<DeleteKeyOperation> deletedKeys;
+      GetPropertiesOfKeysSinglePageOptions options;
+      while (true)
+      {
+        auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
+        for (auto& key : keyResponse.Value.Items)
+        {
+          deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
+        }
+        if (!keyResponse.Value.ContinuationToken)
+        {
+          break;
+        }
+        options.ContinuationToken = keyResponse.Value.ContinuationToken;
+      }
+      if (deletedKeys.size() > 0)
+      {
+        std::cout << std::endl
+                  << "Cleaning vault. " << deletedKeys.size()
+                  << " Will be deleted and purged now...";
+        for (auto& deletedKey : deletedKeys)
+        {
+          auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::milliseconds(1000));
+          keyClient.PurgeDeletedKey(readyToPurgeKey.Value.Name());
+          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey.Value.Name();
+        }
+        std::cout << std::endl << "Complete purge operation.";
+        // Wait for purge is completed
+        if (waitForPurge)
+        {
+          std::this_thread::sleep_for(std::chrono::minutes(1));
+        }
+      }
     }
   };
 
