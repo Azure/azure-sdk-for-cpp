@@ -1,6 +1,5 @@
 parameters:
   GitHubRepo: $(Build.Repository.Name)
-  ArtifactPath: $()
   Workspace: $(Pipeline.Workspace)
   ArtifactName: not-set
   VcpkgPortName: not-set
@@ -32,5 +31,5 @@ steps:
         -VcpkgPortName '${{ parameters.VcpkgPortName }}'
         -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
         -TestRelease:$${{ parameters.TestRelease }}
-      workingDirectory: $(VcpkgWorkspace)
+      workingDirectory: ${{ parameters.Workspace }}/vcpkg
     displayName: Update vcpkg port ${{ parameters.DisplayNameExtension }}
