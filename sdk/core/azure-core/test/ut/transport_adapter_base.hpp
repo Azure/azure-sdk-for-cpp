@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Test {
     // Befor each test, create pipeline
     virtual void SetUp() override
     {
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
       Azure::Core::Http::Policies::RetryOptions opt;
       opt.RetryDelay = std::chrono::milliseconds(10);
 

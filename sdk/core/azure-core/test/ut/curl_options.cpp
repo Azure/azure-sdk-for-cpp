@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy
         = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy
         = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy =
   std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(transportAdapter);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy =
   std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(transportAdapter);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -154,7 +154,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy =
   std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(transportAdapter);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -185,7 +185,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy
         = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -217,7 +217,7 @@ namespace Azure { namespace Core { namespace Test {
     auto transportPolicy
         = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
@@ -255,7 +255,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       // use inner scope to remove the pipeline and make sure we don't keep the connection in the
       // pool
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
       policies.emplace_back(std::move(transportPolicy));
       Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 

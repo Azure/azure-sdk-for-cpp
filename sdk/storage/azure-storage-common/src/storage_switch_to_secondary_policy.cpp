@@ -7,7 +7,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::_internal::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       const Azure::Core::Context& ctx) const
   {
     std::shared_ptr<bool> replicaStatus;

@@ -117,86 +117,87 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     std::shared_ptr<HttpTransport> Transport = _detail::GetTransportAdapter();
   };
 
-  namespace _internal {
-    class NextHttpPolicy;
+  class NextHttpPolicy;
+
+  /**
+   * @brief HTTP policy.
+   * An HTTP pipeline inside SDK clients is an stack sequence of HTTP policies.
+   */
+  class HttpPolicy {
+  public:
+    // If we get a response that goes up the stack
+    // Any errors in the pipeline throws an exception
+    // At the top of the pipeline we might want to turn certain responses into exceptions
 
     /**
-     * @brief HTTP policy.
-     * An HTTP pipeline inside SDK clients is an stack sequence of HTTP policies.
-     */
-    class HttpPolicy {
-    public:
-      // If we get a response that goes up the stack
-      // Any errors in the pipeline throws an exception
-      // At the top of the pipeline we might want to turn certain responses into exceptions
-
-      /**
-       * @brief Apply this HTTP policy.
-       *
-       * @param context #Azure::Core::Context so that operation can be cancelled.
-       * @param request An #Azure::Core::Http::Request being sent.
-       * @param policy #Azure::Core::Http::Policies::_internal::NextHttpPolicy to invoke after this
-       * policy has been applied.
-       *
-       * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
-       * policies in the stack sequence of policies have been applied.
-       */
-      virtual std::unique_ptr<RawResponse> Send(
-          Request& request,
-          NextHttpPolicy policy,
-          Context const& context) const = 0;
-
-      /// Destructor.
-      virtual ~HttpPolicy() {}
-
-      /**
-       * @brief Creates a clone of this HTTP policy.
-       * @return A clone of this HTTP policy.
-       */
-      virtual std::unique_ptr<HttpPolicy> Clone() const = 0;
-
-    protected:
-      HttpPolicy() = default;
-      HttpPolicy(const HttpPolicy& other) = default;
-      HttpPolicy(HttpPolicy&& other) = default;
-      HttpPolicy& operator=(const HttpPolicy& other) = default;
-    };
-
-    /**
-     * @brief Represents the next HTTP policy in the stack sequence of policies.
+     * @brief Apply this HTTP policy.
      *
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param request An #Azure::Core::Http::Request being sent.
+     * @param policy #Azure::Core::Http::Policies::NextHttpPolicy to invoke after this
+     * policy has been applied.
+     *
+     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
+     * policies in the stack sequence of policies have been applied.
      */
-    class NextHttpPolicy {
-      const std::size_t m_index;
-      const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
+    virtual std::unique_ptr<RawResponse> Send(
+        Request& request,
+        NextHttpPolicy policy,
+        Context const& context) const = 0;
 
-    public:
-      /**
-       * @brief Construct an abstraction representing a next line in the stack sequence  of
-       * policies, from the caller's perspective.
-       *
-       * @param index An sequential index of this policy in the stack sequence of policies.
-       * @param policies A vector of unique pointers next in the line to be invoked after the
-       * current policy.
-       */
-      explicit NextHttpPolicy(
-          std::size_t index,
-          const std::vector<std::unique_ptr<HttpPolicy>>& policies)
-          : m_index(index), m_policies(policies)
-      {
-      }
+    /// Destructor.
+    virtual ~HttpPolicy() {}
 
-      /**
-       * @brief Apply this HTTP policy.
-       *
-       * @param request An #Azure::Core::Http::Request being sent.
-       * @param context #Azure::Core::Context so that operation can be cancelled.
-       *
-       * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
-       * policies in the stack sequence of policies have been applied.
-       */
-      std::unique_ptr<RawResponse> Send(Request& request, Context const& context);
-    };
+    /**
+     * @brief Creates a clone of this HTTP policy.
+     * @return A clone of this HTTP policy.
+     */
+    virtual std::unique_ptr<HttpPolicy> Clone() const = 0;
+
+  protected:
+    HttpPolicy() = default;
+    HttpPolicy(const HttpPolicy& other) = default;
+    HttpPolicy(HttpPolicy&& other) = default;
+    HttpPolicy& operator=(const HttpPolicy& other) = default;
+  };
+
+  /**
+   * @brief Represents the next HTTP policy in the stack sequence of policies.
+   *
+   */
+  class NextHttpPolicy {
+    const std::size_t m_index;
+    const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
+
+  public:
+    /**
+     * @brief Construct an abstraction representing a next line in the stack sequence  of
+     * policies, from the caller's perspective.
+     *
+     * @param index An sequential index of this policy in the stack sequence of policies.
+     * @param policies A vector of unique pointers next in the line to be invoked after the
+     * current policy.
+     */
+    explicit NextHttpPolicy(
+        std::size_t index,
+        const std::vector<std::unique_ptr<HttpPolicy>>& policies)
+        : m_index(index), m_policies(policies)
+    {
+    }
+
+    /**
+     * @brief Apply this HTTP policy.
+     *
+     * @param request An #Azure::Core::Http::Request being sent.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     *
+     * @return An #Azure::Core::Http::RawResponse after this policy, and all subsequent HTTP
+     * policies in the stack sequence of policies have been applied.
+     */
+    std::unique_ptr<RawResponse> Send(Request& request, Context const& context);
+  };
+
+  namespace _internal {
 
     /**
      * @brief Applying this policy sends an HTTP request over the wire.

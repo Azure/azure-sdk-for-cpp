@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class MockTransportPolicy : public Core::Http::Policies::_internal::HttpPolicy {
+  class MockTransportPolicy : public Core::Http::Policies::HttpPolicy {
   public:
     MockTransportPolicy() {}
 
@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::Policies::_internal::NextHttpPolicy nextHttpPolicy,
+        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
         Core::Context const& context) const override
     {
       (void)context;

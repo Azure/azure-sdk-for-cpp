@@ -8,16 +8,16 @@
 #include <vector>
 
 namespace {
-class NoOpPolicy : public Azure::Core::Http::Policies::_internal::HttpPolicy {
+class NoOpPolicy : public Azure::Core::Http::Policies::HttpPolicy {
 public:
-  std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy> Clone() const override
+  std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
   {
     return std::make_unique<NoOpPolicy>(*this);
   }
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request&,
-      Azure::Core::Http::Policies::_internal::NextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy,
       Azure::Core::Context const&) const override
   {
     return nullptr;
@@ -26,7 +26,7 @@ public:
 
 // A policy to test retry state
 static int retryCounterState = 0;
-struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::_internal::HttpPolicy
+struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
   {
@@ -35,7 +35,7 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::_interna
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::_internal::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Azure::Core::Context const& ctx) const override
   {
     EXPECT_EQ(
@@ -47,12 +47,12 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::_interna
   }
 };
 
-class SuccessAfter : public Azure::Core::Http::Policies::_internal::HttpPolicy {
+class SuccessAfter : public Azure::Core::Http::Policies::HttpPolicy {
 private:
   int m_successAfter; // Always success
 
 public:
-  std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy> Clone() const override
+  std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
   {
     return std::make_unique<SuccessAfter>(*this);
   }
@@ -61,7 +61,7 @@ public:
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request&,
-      Azure::Core::Http::Policies::_internal::NextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy,
       Azure::Core::Context const& context) const override
   {
     auto retryNumber = Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryNumber(context);
@@ -83,7 +83,7 @@ public:
 TEST(Policy, throwWhenNoTransportPolicy)
 {
   // Construct pipeline without exception
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
@@ -103,7 +103,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
 TEST(Policy, throwWhenNoTransportPolicyMessage)
 {
   // Construct pipeline without exception
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>> policies;
+  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(

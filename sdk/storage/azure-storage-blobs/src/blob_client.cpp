@@ -52,10 +52,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
-        perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
-        perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_blobUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
@@ -75,10 +73,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
       : BlobClient(blobUrl, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
-        perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
-        perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_blobUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
@@ -103,10 +99,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_blobUrl(blobUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
-        perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::_internal::HttpPolicy>>
-        perOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_blobUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
