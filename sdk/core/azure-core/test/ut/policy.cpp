@@ -47,6 +47,28 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
   }
 };
 
+struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
+{
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<TestContextTreeIntegrity>(*this);
+  }
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Azure::Core::Http::Request& request,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Context const& ctx) const override
+  {
+    EXPECT_TRUE(ctx.HasKey("TheKey"));
+    if (ctx.HasKey("TheKey"))
+    {
+      auto value = ctx.Get<std::string>("TheKey");
+      EXPECT_EQ("TheValue", value);
+    }
+    return nextHttpPolicy.Send(request, ctx);
+  }
+};
+
 class SuccessAfter : public Azure::Core::Http::Policies::HttpPolicy {
 private:
   int m_successAfter; // Always success
@@ -176,4 +198,30 @@ TEST(Policy, RetryPolicyRetryCycle)
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
   pipeline.Send(request, Context::GetApplicationContext());
+}
+
+// Makes sure that the context tree is not corrupted/broken by some policy
+TEST(Policy, RetryPolicyKeepContext)
+{
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::_internal;
+  // Clean the validation global state
+  retryCounterState = 0;
+
+  // Pipeline with retry test
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+  RetryOptions opt;
+  opt.RetryDelay = std::chrono::milliseconds(10);
+  policies.push_back(std::make_unique<RetryPolicy>(opt));
+  policies.push_back(std::make_unique<TestRetryPolicySharedState>());
+  policies.push_back(std::make_unique<TestContextTreeIntegrity>());
+  policies.push_back(std::make_unique<SuccessAfter>(3));
+
+  HttpPipeline pipeline(policies);
+  Request request(HttpMethod::Get, Url("url"));
+  auto withValueContext
+      = Context::GetApplicationContext().WithValue("TheKey", std::string("TheValue"));
+  pipeline.Send(request, withValueContext);
 }

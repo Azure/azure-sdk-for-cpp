@@ -22,6 +22,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char AttributesPropertyName[] = "attributes";
   constexpr static const char TagsPropertyName[] = "tags";
   constexpr static const char ReleasePolicyPropertyName[] = "release_policy";
+  constexpr static const char EnabledPropertyName[] = "enabled";
+  constexpr static const char NbfPropertyName[] = "nbf";
+  constexpr static const char ExpPropertyName[] = "exp";
+  constexpr static const char CreatedPropertyName[] = "created";
+  constexpr static const char UpdatedPropertyName[] = "updated";
+  constexpr static const char RecoverableDaysPropertyName[] = "recoverableDays";
+  constexpr static const char RecoveryLevelPropertyName[] = "recoveryLevel";
 
   /***************** Key Request Parameters *****************/
   constexpr static const char KeyTypePropertyName[] = "kty";
@@ -68,5 +75,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char P256KOidValue[] = "1.3.132.0.10";
   constexpr static const char P384OidValue[] = "1.3.132.0.34";
   constexpr static const char P521OidValue[] = "1.3.132.0.35";
+
+  /***************** Import Key  *****************/
+  constexpr static const char HsmPropertyName[] = "hsm";
+
+  /***************** Encryption Algorithm *********/
+  constexpr static const char Rsa15Value[] = "RSA1_5";
+  constexpr static const char RsaOaepValue[] = "RSA-OAEP";
+  constexpr static const char RsaOaep256Value[] = "RSA-OAEP-256";
+  constexpr static const char A128GcmValue[] = "A128GCM";
+  constexpr static const char A192GcmValue[] = "A192GCM";
+  constexpr static const char A256GcmValue[] = "A256GCM";
+  constexpr static const char A128CbcValue[] = "A128CBC";
+  constexpr static const char A192CbcValue[] = "A192CBC";
+  constexpr static const char A256CbcValue[] = "A256CBC";
+  constexpr static const char A128CbcPadValue[] = "A128CBCPAD";
+  constexpr static const char A192CbcPadValue[] = "A192CBCPAD";
+  constexpr static const char A256CbcPadValue[] = "A256CBCPAD";
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail
