@@ -71,7 +71,7 @@ void SendRequest(LogOptions const& logOptions)
 }
 
 class TestLogger {
-  void Deinitialize()
+  static void Deinitialize()
   {
     Logger::SetLevel(Logger::Level::Error);
     Logger::SetListener(nullptr);
