@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Test {
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
-      std::string const expectedConnectionKey = "azure-sdk-for-cpp-httpbin.azurewebsites.net0011";
+      std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "0011";
 
       {
         // Creating a new connection with default options
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
       // Now test that using a different connection config won't re-use the same connection
-      std::string const secondExpectedKey = "azure-sdk-for-cpp-httpbin.azurewebsites.net0010";
+      std::string const secondExpectedKey = AzureSdkHttpbinServer::Host() + "0010";
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
