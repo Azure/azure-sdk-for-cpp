@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicy`, `NextHttpPolicy`, `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
+- Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 
