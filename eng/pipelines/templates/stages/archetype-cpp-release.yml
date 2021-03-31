@@ -57,6 +57,7 @@ stages:
                 Write-Host "git status"
                 git status
               displayName: Reset commits to enable pushing a single commit
+              workingDirectory: $(Pipeline.Workspace)/vcpkg
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:
