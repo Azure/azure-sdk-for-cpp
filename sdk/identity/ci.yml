@@ -31,8 +31,8 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: identity
-      CtestRegex: azure-identity
-      LiveTestCtestRegex: azure-identity-livetest
+      CtestRegex: azure-identity.
+      LiveTestCtestRegex: azure-identity-livetest.
       Coverage: disabled
       Artifacts:
         - Name: azure-identity
