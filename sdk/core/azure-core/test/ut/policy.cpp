@@ -205,8 +205,9 @@ TEST(Policy, RetryPolicyKeepContext)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
   // Clean the validation global state
   retryCounterState = 0;
 
