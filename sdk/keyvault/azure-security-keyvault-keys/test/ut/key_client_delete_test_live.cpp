@@ -73,7 +73,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     // recover
     auto recoverOperation = keyClient.StartRecoverDeletedKey(keyName);
     auto keyResponse = recoverOperation.PollUntilDone(std::chrono::milliseconds(500));
-    auto key = keyResponse.ExtractValue();
+    auto key = keyResponse.Value;
     // Delete again for purging
     auto deleteOp = keyClient.StartDeleteKey(key.Name());
     deleteOp.PollUntilDone(std::chrono::milliseconds(200));

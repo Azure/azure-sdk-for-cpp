@@ -455,7 +455,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto oldFileClient = m_fileSystemClient->GetFileClient(oldFilename);
     oldFileClient.Create();
 
-    auto newFileClient = *m_fileSystemClient->RenameFile(oldFilename, newFilename);
+    auto newFileClient = m_fileSystemClient->RenameFile(oldFilename, newFilename).Value;
 
     EXPECT_NO_THROW(newFileClient.GetProperties());
     EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(newFilename).GetProperties());
@@ -469,7 +469,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Files::DataLake::RenameFileOptions options;
     options.DestinationFileSystem = newFileSystemName;
-    auto newFileClient2 = *m_fileSystemClient->RenameFile(newFilename, newFilename2, options);
+    auto newFileClient2 = m_fileSystemClient->RenameFile(newFilename, newFilename2, options).Value;
 
     EXPECT_NO_THROW(newFileClient2.GetProperties());
     EXPECT_NO_THROW(newFileSystem.GetFileClient(newFilename2).GetProperties());
@@ -488,7 +488,7 @@ namespace Azure { namespace Storage { namespace Test {
     oldDirectoryClient.GetSubdirectoryClient(RandomString()).Create();
 
     auto newDirectoryClient
-        = *m_fileSystemClient->RenameDirectory(oldDirectoryName, newDirectoryName);
+        = m_fileSystemClient->RenameDirectory(oldDirectoryName, newDirectoryName).Value;
 
     EXPECT_NO_THROW(newDirectoryClient.GetProperties());
     EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newDirectoryName).GetProperties());
@@ -503,7 +503,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::RenameDirectoryOptions options;
     options.DestinationFileSystem = newFileSystemName;
     auto newDirectoryClient2
-        = *m_fileSystemClient->RenameDirectory(newDirectoryName, newDirectoryName2, options);
+        = m_fileSystemClient->RenameDirectory(newDirectoryName, newDirectoryName2, options).Value;
 
     EXPECT_NO_THROW(newDirectoryClient2.GetProperties());
     EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
