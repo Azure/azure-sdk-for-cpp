@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Test {
 
   namespace _detail {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https://";
-    constexpr static const char AzureSdkHttpbinServer[] = "azuresdkforcpp.azurewebsites.net/";
+    constexpr static const char AzureSdkHttpbinServer[] = "azuresdkforcpp.azurewebsites.net";
   } // namespace _detail
 
   struct AzureSdkHttpbinServer
