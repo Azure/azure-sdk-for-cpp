@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/core/case_insensitive_containers.hpp"
+#include "azure/core/dll_import_export.hpp"
 #include "azure/core/exception.hpp"
 #include "azure/core/http/http_status_code.hpp"
 #include "azure/core/http/raw_response.hpp"
@@ -310,5 +311,29 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
   } // namespace _detail
+
+  namespace _internal {
+
+    struct HttpShared
+    {
+      AZ_CORE_DLLEXPORT static char const ContentType[];
+      AZ_CORE_DLLEXPORT static char const ApplicationJson[];
+      AZ_CORE_DLLEXPORT static char const Accept[];
+      AZ_CORE_DLLEXPORT static char const MsRequestId[];
+      AZ_CORE_DLLEXPORT static char const MsClientRequestId[];
+
+      static inline std::string GetHeaderOrEmptyString(
+          Azure::Core::CaseInsensitiveMap const& headers,
+          std::string const& headerName)
+      {
+        auto header = headers.find(headerName);
+        if (header != headers.end())
+        {
+          return header->second; // second is the header value.
+        }
+        return {}; // empty string
+      }
+    };
+  } // namespace _internal
 
 }}} // namespace Azure::Core::Http

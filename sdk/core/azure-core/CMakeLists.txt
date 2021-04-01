@@ -104,6 +104,7 @@ set(
     src/datetime.cpp
     src/environment_log_level_listener.cpp
     src/environment_log_level_listener_private.hpp
+    src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp

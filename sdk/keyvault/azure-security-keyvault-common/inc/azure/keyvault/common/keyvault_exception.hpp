@@ -20,8 +20,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
    * @brief The general exception thrown by the Key Vault SDK clients.
    *
    */
-  struct KeyVaultException : public Azure::Core::RequestFailedException
-  {
+  class KeyVaultException : public Azure::Core::RequestFailedException {
+  public:
     /**
      * @brief Construct a new Key Vault Exception object without an Http raw response.
      *
@@ -34,7 +34,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
 
     /**
      * @brief Construct a new Key Vault Exception object with an Http raw response.
-     * 
+     *
      * @param message  An error message for the exception.
      * @param rawResponse The Http raw response from the service.
      */

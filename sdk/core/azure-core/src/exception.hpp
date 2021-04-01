@@ -81,11 +81,15 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct a new Request Failed Exception object with an Http raw response.
      *
-     * @param message The error description.
-     * @param rawResponse The Http raw response from the service.
+     * @param message
+     * @param rawResponse
      */
     explicit RequestFailedException(
         const std::string& message,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
+
+  private:
+    // Concrete classes to implement this to parse specific data from the Http raw response.
+    virtual void ParseRawResponse(Azure::Core::Http::RawResponse const& rawResponse) = 0;
   };
 }} // namespace Azure::Core
