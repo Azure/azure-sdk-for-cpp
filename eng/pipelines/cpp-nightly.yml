@@ -46,7 +46,7 @@ jobs:
           workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
-      - pwsh: "##vso[task.setvariable variable=HasChanges]$true"
+      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
         displayName: Set $(HasChanges) to $true
 
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
