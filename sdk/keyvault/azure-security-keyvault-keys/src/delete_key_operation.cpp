@@ -55,16 +55,11 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
     Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
     : m_pipeline(keyvaultPipeline)
 {
-  if (!response.HasValue())
-  {
-    throw Azure::Security::KeyVault::Common::KeyVaultException(
-        "The response does not contain a value.");
-  }
   // The response becomes useless and the value and rawResponse are now owned by the
   // DeleteKeyOperation. This is fine because the DeleteKeyOperation is what the delete key api
   // will return.
-  m_value = response.ExtractValue();
-  m_rawResponse = response.ExtractRawResponse();
+  m_value = response.Value;
+  m_rawResponse = std::move(response.RawResponse);
 
   // Build the full url for continuation token. It is only used in case customers wants to use
   // it on their own. The Operation uses the KeyVaultPipeline from the client which knows how to
