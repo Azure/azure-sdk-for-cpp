@@ -110,7 +110,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         }
       }
       auto response = SendRequest(context, request);
-      return Azure::Response<T>(factoryFn(*response), std::move(response));
+      // Saving the value in a local is required before passing it in to Response<T> to avoid
+      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
+      T value = factoryFn(*response);
+      return Azure::Response<T>(value, std::move(response));
     }
 
     /**
@@ -138,7 +141,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
-      return Azure::Response<T>(factoryFn(*response), std::move(response));
+      // Saving the value in a local is required before passing it in to Response<T> to avoid
+      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
+      T value = factoryFn(*response);
+      return Azure::Response<T>(value, std::move(response));
     }
 
     template <class T>
@@ -155,7 +161,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
-      return Azure::Response<T>(factoryFn(*response), std::move(response));
+      // Saving the value in a local is required before passing it in to Response<T> to avoid
+      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
+      T value = factoryFn(*response);
+      return Azure::Response<T>(value, std::move(response));
     }
 
     /**

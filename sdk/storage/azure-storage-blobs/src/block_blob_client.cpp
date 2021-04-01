@@ -157,14 +157,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult ret;
-    ret.ETag = std::move(commitBlockListResponse->ETag);
-    ret.LastModified = std::move(commitBlockListResponse->LastModified);
-    ret.VersionId = std::move(commitBlockListResponse->VersionId);
-    ret.IsServerEncrypted = commitBlockListResponse->IsServerEncrypted;
-    ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
-    ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
+    ret.ETag = std::move(commitBlockListResponse.Value.ETag);
+    ret.LastModified = std::move(commitBlockListResponse.Value.LastModified);
+    ret.VersionId = std::move(commitBlockListResponse.Value.VersionId);
+    ret.IsServerEncrypted = commitBlockListResponse.Value.IsServerEncrypted;
+    ret.EncryptionKeySha256 = std::move(commitBlockListResponse.Value.EncryptionKeySha256);
+    ret.EncryptionScope = std::move(commitBlockListResponse.Value.EncryptionScope);
     return Azure::Response<Models::UploadBlockBlobFromResult>(
-        std::move(ret), commitBlockListResponse.ExtractRawResponse());
+        std::move(ret), std::move(commitBlockListResponse.RawResponse));
   }
 
   Azure::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -229,14 +229,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult result;
-    result.ETag = commitBlockListResponse->ETag;
-    result.LastModified = commitBlockListResponse->LastModified;
-    result.VersionId = commitBlockListResponse->VersionId;
-    result.IsServerEncrypted = commitBlockListResponse->IsServerEncrypted;
-    result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
-    result.EncryptionScope = commitBlockListResponse->EncryptionScope;
+    result.ETag = commitBlockListResponse.Value.ETag;
+    result.LastModified = commitBlockListResponse.Value.LastModified;
+    result.VersionId = commitBlockListResponse.Value.VersionId;
+    result.IsServerEncrypted = commitBlockListResponse.Value.IsServerEncrypted;
+    result.EncryptionKeySha256 = commitBlockListResponse.Value.EncryptionKeySha256;
+    result.EncryptionScope = commitBlockListResponse.Value.EncryptionScope;
     return Azure::Response<Models::UploadBlockBlobFromResult>(
-        std::move(result), commitBlockListResponse.ExtractRawResponse());
+        std::move(result), std::move(commitBlockListResponse.RawResponse));
   }
 
   Azure::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
