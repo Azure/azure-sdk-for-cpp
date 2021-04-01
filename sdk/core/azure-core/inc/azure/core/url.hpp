@@ -18,21 +18,6 @@
 
 namespace Azure { namespace Core {
   namespace _detail {
-    /**
-     * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
-     * characters.
-     *
-     * @param headers The headers map where to insert header.
-     * @param headerName The header name for the header to be inserted.
-     * @param headerValue The header value for the header to be inserted.
-     *
-     * @throw if \p headerName is invalid.
-     */
-    void InsertHeaderWithValidation(
-        CaseInsensitiveMap& headers,
-        std::string const& headerName,
-        std::string const& headerValue);
-
     inline std::string FormatEncodedUrlQueryParameters(
         std::map<std::string, std::string> const& encodedQueryParameters)
     {

@@ -12,7 +12,7 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::IO::_internal;
 
-void Azure::Core::_detail::InsertHeaderWithValidation(
+void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)

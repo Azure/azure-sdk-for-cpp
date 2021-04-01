@@ -4,6 +4,16 @@
 
 ### Breaking Changes
 
+- Simplified the `Response<T>` API surface to expose two public fields with direct access: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
+- Removed from `Azure::Core::Http::Request`:
+  - `SetUploadChunkSize`.
+  - `GetHTTPMessagePreBody`.
+  - `GetUploadChunkSize`.
+- Removed from `Azure::Core::Http::RawResponse`:
+  - `SetHeader(std::string const& header)`
+  - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
+  - `GetMajorVersion`.
+  - `GetMinorVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 

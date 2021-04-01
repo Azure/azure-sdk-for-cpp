@@ -61,14 +61,14 @@ TEST_F(KeyVaultClientTest, BackupKey)
   {
     // Restore
     std::cout << std::endl << "- Restore key";
-    auto respone = keyClient.RestoreKeyBackup(*backUpResponse);
+    auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value);
     CheckValidResponse(backUpResponse);
   }
   {
     // Check key is restored
     auto response = keyClient.GetKey(keyName);
     CheckValidResponse(response);
-    EXPECT_EQ(keyName, response->Name());
+    EXPECT_EQ(keyName, response.Value.Name());
   }
   {
     // Delete

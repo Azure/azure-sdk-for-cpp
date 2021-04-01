@@ -47,13 +47,13 @@ int main()
 
     keyClient.CreateRsaKey(rsaKey);
 
-    KeyVaultKey cloudRsaKey = keyClient.GetKey(rsaKeyName).ExtractValue();
+    KeyVaultKey cloudRsaKey = keyClient.GetKey(rsaKeyName).Value;
     std::cout << "Key is returned with name " << cloudRsaKey.Name() << " and type "
               << KeyType::KeyTypeToString(cloudRsaKey.GetKeyType()) << std::endl;
 
     cloudRsaKey.Properties.ExpiresOn
         = cloudRsaKey.Properties.ExpiresOn.GetValue() + std::chrono::hours(24 * 365);
-    KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).ExtractValue();
+    KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).Value;
     std::cout << "Key's updated expiry time is " << updatedKey.Properties.ExpiresOn->ToString()
               << std::endl;
 

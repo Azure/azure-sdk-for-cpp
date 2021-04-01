@@ -113,13 +113,13 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res->ServiceEndpoint.empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
 
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& container : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& container : res.Value.Items)
       {
         listContainers.insert(container.Name);
       }
@@ -135,13 +135,13 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res->ServiceEndpoint.empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
 
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& container : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& container : res.Value.Items)
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_TRUE(container.Details.ETag.HasValue());
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, GetProperties)
   {
     auto ret = m_blobServiceClient.GetProperties();
-    auto properties = *ret;
+    auto properties = ret.Value;
     auto logging = properties.Logging;
     EXPECT_FALSE(logging.Version.empty());
     if (logging.RetentionPolicy.IsEnabled)
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, SetProperties)
   {
-    auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
+    auto getServicePropertiesResult = m_blobServiceClient.GetProperties().Value;
     Blobs::Models::BlobServiceProperties properties;
     properties.Logging = getServicePropertiesResult.Logging;
     properties.HourMetrics = getServicePropertiesResult.HourMetrics;
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = *m_blobServiceClient.GetProperties();
+    auto downloadedProperties = m_blobServiceClient.GetProperties().Value;
     EXPECT_EQ(downloadedProperties.Logging.Version, properties.Logging.Version);
     EXPECT_EQ(downloadedProperties.Logging.Delete, properties.Logging.Delete);
     EXPECT_EQ(downloadedProperties.Logging.Read, properties.Logging.Read);
@@ -318,14 +318,14 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
-    auto accountInfo = *m_blobServiceClient.GetAccountInfo();
+    auto accountInfo = m_blobServiceClient.GetAccountInfo().Value;
     EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
     EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
     EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
 
     auto dataLakeServiceClient
         = Blobs::BlobServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString());
-    accountInfo = *dataLakeServiceClient.GetAccountInfo();
+    accountInfo = dataLakeServiceClient.GetAccountInfo().Value;
     EXPECT_TRUE(accountInfo.IsHierarchicalNamespaceEnabled);
   }
 
@@ -337,7 +337,7 @@ namespace Azure { namespace Storage { namespace Test {
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto secondaryServiceClient
         = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
-    auto serviceStatistics = *secondaryServiceClient.GetStatistics();
+    auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
@@ -349,10 +349,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string containerName = LowercaseRandomString();
     auto containerClient = m_blobServiceClient.CreateBlobContainer(containerName);
-    EXPECT_NO_THROW(containerClient->GetProperties());
+    EXPECT_NO_THROW(containerClient.Value.GetProperties());
 
     m_blobServiceClient.DeleteBlobContainer(containerName);
-    EXPECT_THROW(containerClient->GetProperties(), StorageException);
+    EXPECT_THROW(containerClient.Value.GetProperties(), StorageException);
   }
 
   TEST_F(BlobServiceClientTest, UndeleteBlobContainer)
@@ -370,8 +370,8 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-        options.ContinuationToken = res->ContinuationToken;
-        for (const auto& container : res->Items)
+        options.ContinuationToken = res.Value.ContinuationToken;
+        for (const auto& container : res.Value.Items)
         {
           if (container.Name == containerName)
           {
@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
 
-    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
+    auto userDelegationKey = blobServiceClient1.GetUserDelegationKey(sasExpiresOn).Value;
 
     EXPECT_FALSE(userDelegationKey.SignedObjectId.empty());
     EXPECT_FALSE(userDelegationKey.SignedTenantId.empty());
