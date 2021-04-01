@@ -135,6 +135,17 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
+  # Install gcc and g++ 8 if it is needed on the image.
+  - bash: sudo apt-get install gcc-8 g++-8 -y
+    displayName: Install gcc and g++ 8 
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CC'], 'gcc-8'), 
+        contains(variables['CXX'], 'g++-8')
+      )
+
   # Validate all the files are formatted correctly according to the
   # .clang-format file. This step is macOS only to use clang-format-11
   - bash: |

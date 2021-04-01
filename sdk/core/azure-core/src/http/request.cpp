@@ -25,9 +25,10 @@ static Azure::Core::CaseInsensitiveMap MergeMaps(
 void Request::SetHeader(std::string const& name, std::string const& value)
 {
   auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
-  return this->m_retryModeEnabled
-      ? _detail::InsertHeaderWithValidation(this->m_retryHeaders, headerNameLowerCase, value)
-      : _detail::InsertHeaderWithValidation(this->m_headers, headerNameLowerCase, value);
+  return this->m_retryModeEnabled ? _detail::RawResponseHelpers::InsertHeaderWithValidation(
+             this->m_retryHeaders, headerNameLowerCase, value)
+                                  : _detail::RawResponseHelpers::InsertHeaderWithValidation(
+                                      this->m_headers, headerNameLowerCase, value);
 }
 
 void Request::RemoveHeader(std::string const& name)
@@ -72,19 +73,4 @@ std::string Request::GetHeadersAsString() const
   requestHeaderString += "\r\n";
 
   return requestHeaderString;
-}
-
-// Writes an HTTP request with RFC 7230 without the body (head line and headers)
-// https://tools.ietf.org/html/rfc7230#section-3.1.1
-std::string Request::GetHTTPMessagePreBody() const
-{
-  std::string httpRequest(HttpMethodToString(this->m_method));
-  // HTTP version harcoded to 1.0
-  auto const url = this->m_url.GetRelativeUrl();
-  httpRequest += " /" + url + " HTTP/1.1\r\n";
-
-  // headers
-  httpRequest += GetHeadersAsString();
-
-  return httpRequest;
 }
