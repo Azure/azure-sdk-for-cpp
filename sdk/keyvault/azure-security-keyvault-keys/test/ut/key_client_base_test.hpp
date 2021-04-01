@@ -20,6 +20,18 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   class KeyVaultClientTest : public ::testing::Test {
+  private:
+    std::string GetEnv(const std::string& name)
+    {
+      const char* ret = std::getenv(name.data());
+      if (!ret)
+      {
+        throw std::runtime_error(
+            name + " is required to run the tests but not set as an environment variable.");
+      }
+      return std::string(ret);
+    }
+
   protected:
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::string m_keyVaultUrl;
@@ -29,14 +41,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      std::string tenantId = std::getenv("AZURE_TENANT_ID");
-      std::string clientId = std::getenv("AZURE_CLIENT_ID");
-      std::string secretId = std::getenv("AZURE_CLIENT_SECRET");
+      std::string tenantId = GetEnv("AZURE_TENANT_ID");
+      std::string clientId = GetEnv("AZURE_CLIENT_ID");
+      std::string secretId = GetEnv("AZURE_CLIENT_SECRET");
       m_credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, secretId);
 
-      m_keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-      m_keyVaultHsmUrl = std::getenv("AZURE_KEYVAULT_HSM_URL");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
+      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
     }
 
   public:
