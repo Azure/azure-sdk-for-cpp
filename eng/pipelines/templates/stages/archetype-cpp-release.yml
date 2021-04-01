@@ -5,10 +5,10 @@ parameters:
   TestPipeline: false
 
 stages:
-  - ${{if and(eq(variables['System.TeamProject'], 'internal'), or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule'))) }}:
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
       dependsOn: Build
-
+      condition: or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule'))
       jobs:
         - job: PublishNightlyVcpkg
           displayName: Publish to vcpkg nightly branch
