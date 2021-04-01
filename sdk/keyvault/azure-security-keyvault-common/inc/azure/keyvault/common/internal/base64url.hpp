@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
    * @brief Provides conversion methods for base64url.
@@ -56,4 +56,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
       return Azure::Core::Convert::Base64Decode(base64url);
     }
   };
-}}}}} // namespace Azure::Security::KeyVault::Common::_internal
+}}}} // namespace Azure::Security::KeyVault::_internal

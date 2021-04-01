@@ -10,7 +10,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using namespace Azure::Security::KeyVault::Common::_internal;
+using namespace Azure::Security::KeyVault::_internal;
 
 void Azure::Security::KeyVault::Keys::to_json(
     Azure::Core::Json::_internal::json& j,

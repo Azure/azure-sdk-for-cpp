@@ -35,7 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * The constructor is private and requires internal components.*/
     friend class KeyClient;
 
-    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
     Azure::Security::KeyVault::Keys::KeyVaultKey m_value;
     std::string m_continuationToken;
 
@@ -68,8 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     RecoverDeletedKeyOperation(
-        std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
-            keyvaultPipeline,
+        std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
         Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response);
 
     /**
