@@ -5,9 +5,6 @@ parameters:
   PRBranchName: not-set
 
 steps: 
-  # There are potential race conditions if this script runs
-  # in parallel against the same branch name. Release only 
-  # one package at a time.
   - pwsh: |
       Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/vcpkg"
       git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/vcpkg

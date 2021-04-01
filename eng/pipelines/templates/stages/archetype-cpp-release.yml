@@ -123,6 +123,9 @@ stages:
                           Write-Host "##vso[task.setvariable variable=PrTitle]$title"
                         displayName: Set PR title
 
+                      # There are potential race conditions if this script runs
+                      # in parallel against the same branch name. Release only 
+                      # one package at a time.
                       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                         parameters:
                           RepoOwner: azure-sdk
