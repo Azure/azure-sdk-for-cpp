@@ -7,8 +7,16 @@
 
 #include <chrono>
 
+#include "getenv.hpp"
+
 TEST(EnvironmentCredential, ClientSecret)
 {
+  // See EnvironmentCredential's documentation - these below are the environment variables it reads
+  // from.
+  EXPECT_FALSE(GetEnv("AZURE_TENANT_ID").empty());
+  EXPECT_FALSE(GetEnv("AZURE_CLIENT_ID").empty());
+  EXPECT_FALSE(GetEnv("AZURE_CLIENT_SECRET").empty());
+
   Azure::Identity::EnvironmentCredential const credential;
 
   auto const token = credential.GetToken(

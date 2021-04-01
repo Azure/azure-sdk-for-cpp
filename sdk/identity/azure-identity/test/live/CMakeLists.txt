@@ -13,6 +13,7 @@ add_executable (
   azure-identity-livetest
   client_secret_credential.cpp
   environment_credential.cpp
+  getenv.hpp
   main.cpp
 )
 
