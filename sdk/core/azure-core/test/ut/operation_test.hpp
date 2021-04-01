@@ -53,9 +53,8 @@ namespace Azure { namespace Core { namespace Test {
         // that raw response.
         auto const& response = Poll(context);
         // We can use the rawResponse from the Operation here
-        // Major and minor version are mocked on `PollInternal`
-        EXPECT_EQ(response.GetMajorVersion(), 1);
-        EXPECT_EQ(response.GetMinorVersion(), 0);
+        // status code is mocked on `PollInternal`
+        EXPECT_EQ("OK", response.GetReasonPhrase());
       }
 
       return Response<std::string>(m_value, std::make_unique<Http::RawResponse>(*m_rawResponse));

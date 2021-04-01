@@ -24,10 +24,6 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  namespace Datails {
-    constexpr int64_t FileSize = 1024 * 100;
-  }
-
   TEST_P(TransportAdapter, get)
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -328,7 +324,6 @@ namespace Azure { namespace Core { namespace Test {
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
     // Make transport adapter to read all stream content for uploading instead of chunks
-    request.SetUploadChunkSize(1024 * 1024);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
       checkResponseCode(response->GetStatusCode());
@@ -448,8 +443,6 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
-    // Make transport adapter to read all stream content for uploading instead of chunks
-    request.SetUploadChunkSize(Azure::Core::Test::Datails::FileSize);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
       checkResponseCode(response->GetStatusCode());
@@ -501,8 +494,6 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
-    // Make transport adapter to read more than file size (5Mb)
-    request.SetUploadChunkSize(Azure::Core::Test::Datails::FileSize * 5);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
       checkResponseCode(response->GetStatusCode());
