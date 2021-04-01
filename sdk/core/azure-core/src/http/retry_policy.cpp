@@ -229,7 +229,6 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
 
       if (!RetryLogic::ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
-
         throw;
       }
     }
