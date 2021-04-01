@@ -301,7 +301,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = _detail::BlobRestClient::PageBlob::StartCopyIncremental(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
     StartBlobCopyOperation res;
-    res.m_rawResponse = response.ExtractRawResponse();
+    res.m_rawResponse = std::move(response.RawResponse);
     res.m_blobClient = std::make_shared<BlobClient>(*this);
     return res;
   }

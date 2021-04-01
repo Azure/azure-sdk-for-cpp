@@ -57,10 +57,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Response<T>& response,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok)
     {
-      auto const& rawResponse = response.GetRawResponse();
+      auto const& rawResponse = response.RawResponse;
       EXPECT_EQ(
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-              rawResponse.GetStatusCode()),
+              rawResponse->GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
     }
@@ -74,15 +74,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       while (true)
       {
         auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
-        for (auto& key : keyResponse->Items)
+        for (auto& key : keyResponse.Value.Items)
         {
           deletedKeys.emplace_back(key);
         }
-        if (!keyResponse->ContinuationToken)
+        if (!keyResponse.Value.ContinuationToken)
         {
           break;
         }
-        options.ContinuationToken = keyResponse->ContinuationToken;
+        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {
@@ -102,15 +102,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       while (true)
       {
         auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-        for (auto& key : keyResponse->Items)
+        for (auto& key : keyResponse.Value.Items)
         {
           deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
         }
-        if (!keyResponse->ContinuationToken)
+        if (!keyResponse.Value.ContinuationToken)
         {
           break;
         }
-        options.ContinuationToken = keyResponse->ContinuationToken;
+        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {
@@ -120,8 +120,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         for (auto& deletedKey : deletedKeys)
         {
           auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::milliseconds(1000));
-          keyClient.PurgeDeletedKey(readyToPurgeKey->Name());
-          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey->Name();
+          keyClient.PurgeDeletedKey(readyToPurgeKey.Value.Name());
+          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey.Value.Name();
         }
         std::cout << std::endl << "Complete purge operation.";
         // Wait for purge is completed

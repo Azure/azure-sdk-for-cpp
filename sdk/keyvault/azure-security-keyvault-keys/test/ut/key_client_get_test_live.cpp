@@ -27,7 +27,7 @@ TEST_F(KeyVaultClientTest, GetSingleKey)
   CheckValidResponse(createKeyResponse);
   auto keyResponse = keyClient.GetKey(keyName);
   CheckValidResponse(keyResponse);
-  auto key = keyResponse.ExtractValue();
+  auto key = keyResponse.Value;
 
   EXPECT_EQ(key.Name(), keyName);
   EXPECT_EQ(key.GetKeyType(), JsonWebKeyType::Ec);
@@ -56,15 +56,15 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
   while (true)
   {
     auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-    for (auto& key : keyResponse->Items)
+    for (auto& key : keyResponse.Value.Items)
     {
       keyPropertiesList.emplace_back(key);
     }
-    if (!keyResponse->ContinuationToken)
+    if (!keyResponse.Value.ContinuationToken)
     {
       break;
     }
-    options.ContinuationToken = keyResponse->ContinuationToken;
+    options.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(keyNames.size(), keyPropertiesList.size());
@@ -98,15 +98,15 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   while (true)
   {
     auto keyResponse = keyClient.GetPropertiesOfKeyVersionsSinglePage(keyName, getKeyOptions);
-    for (auto& key : keyResponse->Items)
+    for (auto& key : keyResponse.Value.Items)
     {
       keyPropertiesList.emplace_back(key);
     }
-    if (!keyResponse->ContinuationToken)
+    if (!keyResponse.Value.ContinuationToken)
     {
       break;
     }
-    getKeyOptions.ContinuationToken = keyResponse->ContinuationToken;
+    getKeyOptions.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(expectedVersions, keyPropertiesList.size());
@@ -154,15 +154,15 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   while (true)
   {
     auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
-    for (auto& key : keyResponse->Items)
+    for (auto& key : keyResponse.Value.Items)
     {
       deletedKeys.emplace_back(key);
     }
-    if (!keyResponse->ContinuationToken)
+    if (!keyResponse.Value.ContinuationToken)
     {
       break;
     }
-    options.ContinuationToken = keyResponse->ContinuationToken;
+    options.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(keyNames.size(), deletedKeys.size());

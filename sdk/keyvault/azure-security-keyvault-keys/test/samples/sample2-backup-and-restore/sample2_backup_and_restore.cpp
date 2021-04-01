@@ -50,11 +50,11 @@ int main()
     rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
 
     std::cout << "\t-Create Key" << std::endl;
-    auto storedKey = keyClient.CreateRsaKey(rsaKey).ExtractValue();
+    auto storedKey = keyClient.CreateRsaKey(rsaKey).Value;
     size_t backUpSize = 0;
     {
       std::cout << "\t-Backup Key" << std::endl;
-      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).ExtractValue());
+      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).Value);
       backUpSize = backupKey.size();
 
       // save data to file
@@ -86,7 +86,7 @@ int main()
     inFile.close();
 
     std::cout << "\t-Restore Key" << std::endl;
-    auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
+    auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).Value;
 
     AssertKeysEqual(storedKey.Properties, restoredKey.Properties);
 
