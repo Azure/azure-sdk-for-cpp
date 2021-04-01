@@ -37,6 +37,7 @@ jobs:
             -SourceBranch $(NightlyBranchName)
             -TargetBranch $(TargetPrBranch)
             -MainBranchName $(DefaultBranch)
+            -GitIdentityParameters -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"
           pwsh: true
           workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch

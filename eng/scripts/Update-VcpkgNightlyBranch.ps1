@@ -1,7 +1,8 @@
 param(
     [string] $SourceBranch,
     [string] $TargetBranch,
-    [string] $MainBranchName
+    [string] $MainBranchName,
+    [string] $GitIdentityParameters = ''
 )
 
 $ErrorActionPreference = "Continue"
@@ -37,16 +38,16 @@ if ($currentBranch -ne $TargetBranch) {
     }
 }
 
-Write-Host "git merge $MainBranchName --strategy-option=theirs" 
-git merge $MainBranchName --strategy-option=theirs
+Write-Host "git merge $GitIdentityParameters $MainBranchName --strategy-option=theirs" 
+git merge $GitIdentityParameters $MainBranchName --strategy-option=theirs
 
 if ($LASTEXITCODE -ne 0) { 
     Write-Error "Could not merge $MainBranchName into $TargetBranch"
     exit 1
 }
 
-Write-Host "git merge $SourceBranch --strategy-option=theirs" 
-git merge $SourceBranch --strategy-option=theirs
+Write-Host "git merge $GitIdentityParameters $SourceBranch --strategy-option=theirs" 
+git merge $GitIdentityParameters $SourceBranch --strategy-option=theirs
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Could not merge $SourceBranch into $TargetBranch" 
