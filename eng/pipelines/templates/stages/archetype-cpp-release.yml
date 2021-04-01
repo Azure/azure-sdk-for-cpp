@@ -5,7 +5,7 @@ parameters:
   TestPipeline: false
 
 stages:
-  - ${{if and(eq(variables['System.TeamProject'], 'internal'), or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')) }}:
+  - ${{if and(eq(variables['System.TeamProject'], 'internal'), or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule'))) }}:
     - stage: Integration
       dependsOn: Build
 
