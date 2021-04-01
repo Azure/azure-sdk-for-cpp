@@ -62,13 +62,13 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(sasExpiresOn);
+    auto userDelegationKey = serviceClient1.GetUserDelegationKey(sasExpiresOn).Value;
 
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
       auto downloadedContent = fileClient.Download();
-      EXPECT_TRUE(ReadBodyStream(downloadedContent->Body).empty());
+      EXPECT_TRUE(ReadBodyStream(downloadedContent.Value.Body).empty());
     };
 
     auto verify_file_write = [&](const std::string& sas) {
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verify_file_permissions = [&](const std::string& sas) {
       fileClient0.Create();
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto acls = fileClient0.GetAccessControlList()->Acls;
+      auto acls = fileClient0.GetAccessControlList().Value.Acls;
       EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
 
@@ -425,20 +425,20 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sasToken);
       fileClient0.Create();
       auto p = fileClient.GetProperties();
-      EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
-      EXPECT_EQ(p->HttpHeaders.ContentLanguage, headers.ContentLanguage);
-      EXPECT_EQ(p->HttpHeaders.ContentDisposition, headers.ContentDisposition);
-      EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
-      EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentType, headers.ContentType);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentLanguage, headers.ContentLanguage);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentDisposition, headers.ContentDisposition);
+      EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
 
       auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sasToken);
       p = fileClient.GetProperties();
-      EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
-      EXPECT_EQ(p->HttpHeaders.ContentLanguage, headers.ContentLanguage);
-      EXPECT_EQ(p->HttpHeaders.ContentDisposition, headers.ContentDisposition);
-      EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
-      EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentType, headers.ContentType);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentLanguage, headers.ContentLanguage);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentDisposition, headers.ContentDisposition);
+      EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
+      EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
     }
   }
 

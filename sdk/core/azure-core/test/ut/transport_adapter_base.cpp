@@ -298,20 +298,19 @@ namespace Azure { namespace Core { namespace Test {
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
 
     Azure::Response<std::string> responseT(expectedType, std::move(response));
-    auto& r = responseT.GetRawResponse();
+    auto& r = responseT.RawResponse;
 
-    EXPECT_TRUE(r.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
-    auto expectedResponseBodySize = std::stoull(r.GetHeaders().at("content-length"));
-    CheckBodyFromBuffer(r, expectedResponseBodySize);
+    EXPECT_TRUE(r->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    auto expectedResponseBodySize = std::stoull(r->GetHeaders().at("content-length"));
+    CheckBodyFromBuffer(*r, expectedResponseBodySize);
 
     // Direct access
-    EXPECT_STREQ((*responseT).data(), expectedType.data());
-    EXPECT_STREQ(responseT->data(), expectedType.data());
-    // extracting T out of response
-    auto result = responseT.ExtractValue();
+    auto result = responseT.Value;
     EXPECT_STREQ(result.data(), expectedType.data());
     // Test that calling getValue again will return empty
-    result = responseT.ExtractValue();
+    result = std::move(responseT.Value);
+    EXPECT_STREQ(result.data(), expectedType.data());
+    result = responseT.Value;
     EXPECT_STREQ(result.data(), std::string("").data());
   }
 
