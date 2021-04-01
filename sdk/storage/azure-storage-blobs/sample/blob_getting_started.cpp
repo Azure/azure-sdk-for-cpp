@@ -28,7 +28,7 @@ void BlobsGettingStarted()
   Azure::Storage::Metadata blobMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   blobClient.SetMetadata(blobMetadata);
 
-  auto properties = *blobClient.GetProperties();
+  auto properties = blobClient.GetProperties().Value;
   for (auto metadata : properties.Metadata)
   {
     std::cout << metadata.first << ":" << metadata.second << std::endl;

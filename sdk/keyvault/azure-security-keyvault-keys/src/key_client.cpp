@@ -287,7 +287,7 @@ Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
 
   // Convert the internal KeyBackup model to a raw vector<uint8_t>.
   return Azure::Response<std::vector<uint8_t>>(
-      response.ExtractValue().Value, response.ExtractRawResponse());
+      response.Value.Value, std::move(response.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::RestoreKeyBackup(

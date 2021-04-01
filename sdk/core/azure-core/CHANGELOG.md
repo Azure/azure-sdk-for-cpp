@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+- Simplified the `Response<T>` API surface to expose two public fields with direct access: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
 - Removed from `Azure::Core::Http::Request`:
   - `SetUploadChunkSize`.
   - `GetHTTPMessagePreBody`.
