@@ -5,15 +5,13 @@ parameters:
   TestPipeline: false
 
 stages:
-  # TODO: Check for scheduled run
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+  - ${{if and(eq(variables['System.TeamProject'], 'internal'), or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')) }}:
     - stage: Integration
       dependsOn: Build
 
       jobs:
         - job: PublishNightlyVcpkg
           displayName: Publish to vcpkg nightly branch
-          # TODO: Condition?
 
           pool:
             name: azsdk-pool-mms-win-2019-general
@@ -21,21 +19,15 @@ stages:
 
           steps:
             - checkout: self
-
             - download: current
               artifact: packages
 
-            - pwsh: |
-                $formattedDate = Get-Date -Format 'yyyy-MM-dd'
-                $branchName = "nightly/$formattedDate"
-                Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
-              displayName: Set branch name in fork repo
+            - template: /eng/pipelines/templates/steps/generate-nightly-branch-name.yml
 
-            # TODO: Can we do a sparse checkout?
             - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
               parameters:
                 RepoOwner: azure-sdk
-                PRBranchName: $(PrBranchName)
+                PRBranchName: $(NightlyBranchName)
 
             # Placing artifacts in the same branch in sequence reduces the
             # potential for race conditions. If this job does fail to push
@@ -61,7 +53,7 @@ stages:
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:
-                BaseRepoBranch: $(PrBranchName)
+                BaseRepoBranch: $(NightlyBranchName)
                 CommitMsg: Nightly vcpkg ports for ${{ parameters.ServiceDirectory }}
                 TargetRepoOwner: azure-sdk
                 TargetRepoName: vcpkg
