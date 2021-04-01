@@ -20,7 +20,7 @@ jobs:
           Write-Host "##vso[task.setvariable variable=NightlyBranchName]$branchName"
         displayName: Set branch name in fork repo
 
-      - template: eng/pipelines/templates/steps/vcpkg-clone.yml
+      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
         parameters:
           Workspace: $(Pipeline.Workspace)
           RepoOwner: azure-sdk
