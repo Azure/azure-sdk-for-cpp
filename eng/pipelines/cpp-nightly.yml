@@ -30,6 +30,9 @@ jobs:
         parameters:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+      - pwsh: git config --global user.name "azure-sdk" user.email "azuresdk@microsoft.com"
+        displayName: Configure git identity
+
       - task: Powershell@2
         inputs: 
           filePath: eng/scripts/Update-VcpkgNightlyBranch.ps1
@@ -37,7 +40,6 @@ jobs:
             -SourceBranch $(NightlyBranchName)
             -TargetBranch $(TargetPrBranch)
             -MainBranchName $(DefaultBranch)
-            -GitIdentityParameters -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"
           pwsh: true
           workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
