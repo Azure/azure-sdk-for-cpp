@@ -305,7 +305,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
     auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto expectedStatusToken = m_keyVaultUrl + "/"
+    auto expectedStatusToken = m_keyVaultUrl
         + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
     auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
