@@ -30,7 +30,9 @@ jobs:
         parameters:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
-      - pwsh: git config --global user.name "azure-sdk" user.email "azuresdk@microsoft.com"
+      - pwsh: |
+          git config --global user.name "azure-sdk" 
+          git config --global user.email "azuresdk@microsoft.com"
         displayName: Configure git identity
 
       - task: Powershell@2
