@@ -218,8 +218,8 @@ stages:
                   TestReleaseRef: $(Build.SourceVersion)
 
             - pwsh: |
-                Write-Host "git reset --soft -- HEAD^${{ length(parameters.Artifacts) }}"
-                git reset --soft -- HEAD^${{ length(parameters.Artifacts) }}
+                Write-Host "git reset --soft -- HEAD~${{ length(parameters.Artifacts) }}"
+                git reset --soft -- HEAD~${{ length(parameters.Artifacts) }}
 
                 Write-Host "git status"
                 git status
