@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl,
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
-    for (auto& i : response->Items)
+    for (auto& i : response.Value.Items)
     {
       if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
       {
@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl,
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
-    for (auto& i : response->Items)
+    for (auto& i : response.Value.Items)
     {
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
       {
@@ -336,7 +336,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto blockBlobClient = GetBlockBlobClient(blobName);
     auto response = blockBlobClient.Upload(content, options, context);
     return Azure::Response<BlockBlobClient>(
-        std::move(blockBlobClient), response.ExtractRawResponse());
+        std::move(blockBlobClient), std::move(response.RawResponse));
   }
 
 }}} // namespace Azure::Storage::Blobs

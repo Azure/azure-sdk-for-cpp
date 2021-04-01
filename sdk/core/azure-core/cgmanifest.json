@@ -72,6 +72,16 @@
             }
           },
           "DevelopmentDependency": true
+        },
+        {
+            "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://github.com/postmanlabs/httpbin",
+                    "CommitHash": "f8ec666b4d1b654e4ff6aedd356f510dcac09f83"
+                }
+            },
+            "DevelopmentDependency": true
         }
     ]
 }

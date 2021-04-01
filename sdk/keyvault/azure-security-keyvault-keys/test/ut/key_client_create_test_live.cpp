@@ -25,14 +25,14 @@ TEST_F(KeyVaultClientTest, CreateKey)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -49,7 +49,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
     auto keyResponse = keyClient.CreateKey(
         keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec, options);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
@@ -85,7 +85,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
     auto keyResponse = keyClient.CreateKey(
         keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa, options);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa);
@@ -108,14 +108,14 @@ TEST_F(KeyVaultClientTest, CreateEcKey)
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
     auto keyResponse = keyClient.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -130,7 +130,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
     ecKey.CurveName = Azure::Security::KeyVault::Keys::KeyCurveName::P384();
     auto keyResponse = keyClient.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_EQ(ecKey.CurveName->ToString(), keyVaultKey.Key.CurveName->ToString());
   }
@@ -138,7 +138,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_TRUE(keyVaultKey.Key.CurveName.HasValue());
     EXPECT_EQ(
@@ -156,14 +156,14 @@ TEST_F(KeyVaultClientTest, CreateRsaKey)
     auto rsaKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, false);
     auto keyResponse = keyClient.CreateRsaKey(rsaKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -179,14 +179,14 @@ TEST_F(KeyVaultClientTest, CreateEcHsmKey)
     auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
     auto keyResponse = keyClient.CreateEcKey(ecHsmKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -194,7 +194,7 @@ TEST_F(KeyVaultClientTest, CreateEcHsmKey)
     auto keyResponseOperation = keyClient.StartDeleteKey(keyName);
     auto keyResponse = keyResponseOperation.PollUntilDone(std::chrono::milliseconds(1000));
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -208,14 +208,14 @@ TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
     auto keyResponse = keyClient.CreateRsaKey(rsaHsmKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -223,7 +223,7 @@ TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
     auto keyResponseOperation = keyClient.StartDeleteKey(keyName);
     auto keyResponse = keyResponseOperation.PollUntilDone(std::chrono::milliseconds(1000));
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
