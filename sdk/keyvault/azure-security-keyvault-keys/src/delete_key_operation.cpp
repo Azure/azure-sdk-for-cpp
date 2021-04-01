@@ -1,32 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/keyvault/common/keyvault_exception.hpp"
+
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
-
-namespace {
-
-// For delete key, the LRO ends when we can retreive the Key from the deleted keys list from the
-// server.
-inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawResponse const& response)
-{
-  auto code = response.GetStatusCode();
-  switch (code)
-  {
-    case Azure::Core::Http::HttpStatusCode::Ok:
-    case Azure::Core::Http::HttpStatusCode::Forbidden: // Access denied but proof the key was
-                                                       // deleted.
-      return Azure::Core::OperationStatus::Succeeded;
-    case Azure::Core::Http::HttpStatusCode::NotFound:
-      return Azure::Core::OperationStatus::Running;
-    default:
-      throw Azure::Security::KeyVault::Common::KeyVaultException::CreateFromResponse(response);
-  }
-}
-} // namespace
+using namespace Azure::Security::KeyVault::Common;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::Context& context)
@@ -36,7 +18,25 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
   {
     rawResponse = m_pipeline->Send(
         context, Azure::Core::Http::HttpMethod::Get, {_detail::DeletedKeysPath, m_value.Name()});
-    m_status = CheckCompleted(*rawResponse);
+
+    switch (rawResponse->GetStatusCode())
+    {
+      case Azure::Core::Http::HttpStatusCode::Ok:
+      case Azure::Core::Http::HttpStatusCode::Forbidden: // Access denied but proof the key was
+                                                         // deleted.
+      {
+        m_status = Azure::Core::OperationStatus::Succeeded;
+        break;
+      }
+      case Azure::Core::Http::HttpStatusCode::NotFound: {
+        m_status = Azure::Core::OperationStatus::Running;
+        break;
+      }
+      default:
+        throw KeyVaultException(
+            "Unexpected operation status from Service response.", std::move(rawResponse));
+    }
+
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
       m_value = _detail::DeletedKeySerializer::DeletedKeyDeserialize(m_value.Name(), *rawResponse);

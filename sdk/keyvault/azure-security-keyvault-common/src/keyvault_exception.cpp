@@ -27,47 +27,42 @@ inline std::string GetHeaderOrEmptyString(
 
 } // namespace
 
-KeyVaultException KeyVaultException::CreateFromResponse(
-    std::unique_ptr<Azure::Core::Http::RawResponse> response)
+KeyVaultException::KeyVaultException(
+    const std::string& message,
+    std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
+    : RequestFailedException(message)
 {
-  return CreateFromResponse(*response);
-}
+  std::vector<uint8_t> bodyBuffer = std::move(rawResponse->GetBody());
 
-KeyVaultException KeyVaultException::CreateFromResponse(
-    Azure::Core::Http::RawResponse const& response)
-{
-  std::vector<uint8_t> bodyBuffer = std::move(response.GetBody());
-
-  auto httpStatusCode = response.GetStatusCode();
-  std::string reasonPhrase = response.GetReasonPhrase();
-  auto& headers = response.GetHeaders();
+  auto httpStatusCode = rawResponse->GetStatusCode();
+  std::string reasonPhrase = rawResponse->GetReasonPhrase();
+  auto& headers = rawResponse->GetHeaders();
   std::string requestId = GetHeaderOrEmptyString(headers, _detail::MsRequestId);
   std::string clientRequestId = GetHeaderOrEmptyString(headers, _detail::MsClientRequestId);
   std::string contentType = GetHeaderOrEmptyString(headers, _detail::ContentType);
   std::string errorCode;
-  std::string message;
+  std::string generatedMessage = message;
 
   if (contentType.find("json") != std::string::npos)
   {
     auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
     auto& error = jsonParser["error"];
     errorCode = error["code"].get<std::string>();
-    message = error["message"].get<std::string>();
+    generatedMessage = error["message"].get<std::string>();
   }
   else
   {
-    message = std::string(bodyBuffer.begin(), bodyBuffer.end());
+    generatedMessage = std::string(bodyBuffer.begin(), bodyBuffer.end());
   }
 
   KeyVaultException result = KeyVaultException(
       std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
           httpStatusCode))
       + " " + reasonPhrase + "\n" + message + "\nRequest ID: " + requestId);
-  result.StatusCode = httpStatusCode;
-  result.ReasonPhrase = std::move(reasonPhrase);
-  result.RequestId = std::move(requestId);
-  result.ErrorCode = std::move(errorCode);
-  result.Message = std::move(message);
-  result.RawResponse = std::make_unique<Azure::Core::Http::RawResponse>(response);
-  return result;
+  StatusCode = httpStatusCode;
+  ReasonPhrase = std::move(reasonPhrase);
+  RequestId = std::move(requestId);
+  ErrorCode = std::move(errorCode);
+  Message = std::move(generatedMessage);
+  RawResponse = std::move(rawResponse);
 }

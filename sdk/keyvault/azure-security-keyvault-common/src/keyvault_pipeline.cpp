@@ -66,7 +66,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
     case Azure::Core::Http::HttpStatusCode::NoContent:
       break;
     default:
-      throw KeyVaultException::CreateFromResponse(std::move(response));
+      throw KeyVaultException("Key Vault Keys error response received: ", std::move(response));
   }
   return response;
 }

@@ -11,7 +11,6 @@
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 
-#include <map>
 #include <stdexcept>
 #include <string>
 
@@ -24,71 +23,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
   struct KeyVaultException : public Azure::Core::RequestFailedException
   {
     /**
-     * @brief Construct a new Key Vault Exception object.
+     * @brief Construct a new Key Vault Exception object without an Http raw response.
      *
-     * @param message
+     * @remark A Key Vault Exception without an Http raw response represent an exception happend
+     * before sending the request to the server. There is no response yet.
+     *
+     * @param message An error message for the exception.
      */
     explicit KeyVaultException(const std::string& message) : RequestFailedException(message) {}
 
     /**
-     * @brief The Http response code.
-     *
+     * @brief Construct a new Key Vault Exception object with an Http raw response.
+     * 
+     * @param message  An error message for the exception.
+     * @param rawResponse The Http raw response from the service.
      */
-    Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
-
-    /**
-     * @brief The Http reason phrase from the response.
-     *
-     */
-    std::string ReasonPhrase;
-
-    /**
-     * @brief The client request header from the Http response.
-     *
-     */
-    std::string ClientRequestId;
-
-    /**
-     * @brief The request id header from the Http response.
-     *
-     */
-    std::string RequestId;
-
-    /**
-     * @brief The error code from the Key Vault service returned in the Http response.
-     *
-     */
-    std::string ErrorCode;
-
-    /**
-     * @brief The error message from the Key Vault service returned in the Http response.
-     *
-     */
-    std::string Message;
-
-    /**
-     * @brief The entire Http raw response.
-     *
-     */
-    std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
-
-    /**
-     * @brief Create a #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
-     * response.
-     *
-     * @param response The Http raw response from the network.
-     * @return KeyVaultException.
-     */
-    static KeyVaultException CreateFromResponse(
-        std::unique_ptr<Azure::Core::Http::RawResponse> response);
-
-    /**
-     * @brief Create #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
-     * response reference.
-     *
-     * @param response The Http raw response from the network.
-     * @return KeyVaultException.
-     */
-    static KeyVaultException CreateFromResponse(Azure::Core::Http::RawResponse const& response);
+    explicit KeyVaultException(
+        const std::string& message,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
   };
 }}}} // namespace Azure::Security::KeyVault::Common

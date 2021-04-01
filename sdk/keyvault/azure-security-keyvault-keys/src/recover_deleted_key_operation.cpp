@@ -1,33 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
+#include "azure/keyvault/common/keyvault_exception.hpp"
+
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
+#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
-
-namespace {
-
-// For delete key, the LRO ends when we can retreive the Key from the deleted keys list from the
-// server.
-inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawResponse const& response)
-{
-  auto const code = response.GetStatusCode();
-  switch (code)
-  {
-    case Azure::Core::Http::HttpStatusCode::Ok:
-    // Access denied but proof the key was deleted.
-    case Azure::Core::Http::HttpStatusCode::Forbidden:
-      return Azure::Core::OperationStatus::Succeeded;
-    case Azure::Core::Http::HttpStatusCode::NotFound:
-      return Azure::Core::OperationStatus::Running;
-    default:
-      throw Azure::Security::KeyVault::Common::KeyVaultException::CreateFromResponse(response);
-  }
-}
-} // namespace
-
+using namespace Azure::Security::KeyVault::Common;
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
     Azure::Core::Context& context)
@@ -39,7 +20,23 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
         context,
         Azure::Core::Http::HttpMethod::Get,
         {_detail::KeysPath, m_value.Name(), m_value.Properties.Version});
-    m_status = CheckCompleted(*rawResponse);
+
+    switch (rawResponse->GetStatusCode())
+    {
+      case Azure::Core::Http::HttpStatusCode::Ok:
+      // Access denied but proof the key was deleted.
+      case Azure::Core::Http::HttpStatusCode::Forbidden: {
+        m_status = Azure::Core::OperationStatus::Succeeded;
+        break;
+      }
+      case Azure::Core::Http::HttpStatusCode::NotFound: {
+        m_status = Azure::Core::OperationStatus::Running;
+        break;
+      }
+      default:
+        throw KeyVaultException(
+            "Unexpected operation status from Service response.", std::move(rawResponse));
+    }
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
       m_value
