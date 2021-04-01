@@ -81,6 +81,11 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct a new Request Failed Exception object with an Http raw response.
      *
+     * @remark The Http raw response is parsed to get the always expected information for all Azure
+     * Services like the status code, reason phrase and some headers like the request id. A concrete
+     * Service exception which derives from this exception uses its constructor to parse the Http
+     * raw response and assing the service specific values to the exception.
+     *
      * @param message The error description.
      * @param rawResponse The Http raw response from the service.
      */
