@@ -20,6 +20,18 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   class KeyVaultClientTest : public ::testing::Test {
+  private:
+    std::string GetEnv(const std::string& name)
+    {
+      const char* ret = std::getenv(name.data());
+      if (!ret)
+      {
+        throw std::runtime_error(
+            name + " is required to run the tests but not set as an environment variable.");
+      }
+      return std::string(ret);
+    }
+
   protected:
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::string m_keyVaultUrl;
@@ -29,14 +41,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      std::string tenantId = std::getenv("AZURE_TENANT_ID");
-      std::string clientId = std::getenv("AZURE_CLIENT_ID");
-      std::string secretId = std::getenv("AZURE_CLIENT_SECRET");
+      std::string tenantId = GetEnv("AZURE_TENANT_ID");
+      std::string clientId = GetEnv("AZURE_CLIENT_ID");
+      std::string secretId = GetEnv("AZURE_CLIENT_SECRET");
       m_credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, secretId);
 
-      m_keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-      m_keyVaultHsmUrl = std::getenv("AZURE_KEYVAULT_HSM_URL");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
+      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
     }
 
   public:
@@ -45,10 +57,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Response<T>& response,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok)
     {
-      auto const& rawResponse = response.GetRawResponse();
+      auto const& rawResponse = response.RawResponse;
       EXPECT_EQ(
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-              rawResponse.GetStatusCode()),
+              rawResponse->GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
     }
@@ -62,15 +74,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       while (true)
       {
         auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
-        for (auto& key : keyResponse->Items)
+        for (auto& key : keyResponse.Value.Items)
         {
           deletedKeys.emplace_back(key);
         }
-        if (!keyResponse->ContinuationToken)
+        if (!keyResponse.Value.ContinuationToken)
         {
           break;
         }
-        options.ContinuationToken = keyResponse->ContinuationToken;
+        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {
@@ -90,15 +102,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       while (true)
       {
         auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-        for (auto& key : keyResponse->Items)
+        for (auto& key : keyResponse.Value.Items)
         {
           deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
         }
-        if (!keyResponse->ContinuationToken)
+        if (!keyResponse.Value.ContinuationToken)
         {
           break;
         }
-        options.ContinuationToken = keyResponse->ContinuationToken;
+        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {
@@ -108,8 +120,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         for (auto& deletedKey : deletedKeys)
         {
           auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::milliseconds(1000));
-          keyClient.PurgeDeletedKey(readyToPurgeKey->Name());
-          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey->Name();
+          keyClient.PurgeDeletedKey(readyToPurgeKey.Value.Name());
+          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey.Value.Name();
         }
         std::cout << std::endl << "Complete purge operation.";
         // Wait for purge is completed
