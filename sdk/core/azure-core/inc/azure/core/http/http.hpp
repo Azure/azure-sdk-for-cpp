@@ -199,15 +199,15 @@ namespace Azure { namespace Core { namespace Http {
     }
   }
 
-  namespace Policies {
+  namespace Policies { namespace _internal {
     class RetryPolicy;
-  }
+  }} // namespace Policies::_internal
 
   /**
    * @brief HTTP request.
    */
   class Request {
-    friend class Azure::Core::Http::Policies::RetryPolicy;
+    friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
 #if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
@@ -228,11 +228,6 @@ namespace Azure { namespace Core { namespace Http {
     // flag to know where to insert header
     bool m_retryModeEnabled{false};
     bool m_isDownloadViaStream;
-
-    // This value can be used to override the default value that an http transport adapter uses to
-    // read and upload chunks of data from the payload body stream. If it is not set, the transport
-    // adapter will decide chunk size.
-    int64_t m_uploadChunkSize = 0;
 
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
@@ -308,13 +303,6 @@ namespace Azure { namespace Core { namespace Http {
      */
     void RemoveHeader(std::string const& name);
 
-    /**
-     * @brief Set upload chunk size.
-     *
-     * @param size Upload chunk size.
-     */
-    void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
-
     // Methods used by transport layer (and logger) to send request
     /**
      * @brief Get HTTP method.
@@ -335,16 +323,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get the list of headers prior to HTTP body.
      */
     std::string GetHeadersAsString() const;
-
-    /**
-     * @brief Get HTTP message prior to HTTP body.
-     */
-    std::string GetHTTPMessagePreBody() const;
-
-    /**
-     * @brief Get upload chunk size.
-     */
-    int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
 
     /**
      * @brief A value indicating whether download is happening via stream.
@@ -439,34 +417,6 @@ namespace Azure { namespace Core { namespace Http {
     void SetHeader(std::string const& name, std::string const& value);
 
     /**
-     * @brief Set an HTTP header to the #RawResponse.
-     *
-     * @remark The \p header must contain valid header name characters (RFC 7230).
-     * @remark Header name, value and delimiter are expected to be in \p header.
-     *
-     * @param header The complete header to be added, in the form "name:value".
-     *
-     * @throw if \p header has an invalid header name or if the delimiter is missing.
-     */
-    void SetHeader(std::string const& header);
-
-    /**
-     * @brief Set an HTTP header to the #RawResponse.
-     *
-     * @remark The string referenced by \p first and \p last must contain valid header name
-     * characters (RFC 7230).
-     * @remark Header name, value and delimiter are expected to be in the string referenced by \p
-     * first and \p last, in the form "name:value".
-     *
-     * @param first Reference to the start of an std::string.
-     * @param last Reference to the end of an std::string.
-     *
-     * @throw if the string referenced by \p first and \p last contains an invalid header name or if
-     * the delimiter is missing.
-     */
-    void SetHeader(uint8_t const* const first, uint8_t const* const last);
-
-    /**
      * @brief Set #Azure::Core::IO::BodyStream for this HTTP response.
      *
      * @param stream #Azure::Core::IO::BodyStream.
@@ -482,16 +432,6 @@ namespace Azure { namespace Core { namespace Http {
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
-
-    /**
-     * @brief Get major number of the HTTP response protocol version.
-     */
-    int32_t GetMajorVersion() const { return this->m_majorVersion; }
-
-    /**
-     * @brief Get minor number of the HTTP response protocol version.
-     */
-    int32_t GetMinorVersion() const { return this->m_minorVersion; }
 
     /**
      * @brief Get HTTP status code of the HTTP response.
@@ -527,5 +467,54 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
+
+  namespace _detail {
+    struct RawResponseHelpers
+    {
+      /**
+       * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
+       * characters.
+       *
+       * @param headers The headers map where to insert header.
+       * @param headerName The header name for the header to be inserted.
+       * @param headerValue The header value for the header to be inserted.
+       *
+       * @throw if \p headerName is invalid.
+       */
+      static void InsertHeaderWithValidation(
+          CaseInsensitiveMap& headers,
+          std::string const& headerName,
+          std::string const& headerValue);
+
+      static void inline SetHeader(
+          Azure::Core::Http::RawResponse& response,
+          uint8_t const* const first,
+          uint8_t const* const last)
+      {
+        // get name and value from header
+        auto start = first;
+        auto end = std::find(start, last, ':');
+
+        if (end == last)
+        {
+          throw std::invalid_argument("Invalid header. No delimiter ':' found.");
+        }
+
+        // Always toLower() headers
+        auto headerName
+            = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
+        start = end + 1; // start value
+        while (start < last && (*start == ' ' || *start == '\t'))
+        {
+          ++start;
+        }
+
+        end = std::find(start, last, '\r');
+        auto headerValue = std::string(start, end); // remove \r
+
+        response.SetHeader(headerName, headerValue);
+      }
+    };
+  } // namespace _detail
 
 }}} // namespace Azure::Core::Http

@@ -95,6 +95,7 @@ std::string TrimString(std::string s)
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 std::string TelemetryPolicy::BuildTelemetryId(
     std::string const& componentName,

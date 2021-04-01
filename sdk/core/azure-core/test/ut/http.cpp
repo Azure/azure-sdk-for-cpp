@@ -105,12 +105,8 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected2);
 
-    // Response SetHeader overload method to add from string
-    EXPECT_THROW(response.SetHeader("inv(): header"), std::invalid_argument);
-    EXPECT_THROW(response.SetHeader("no delimiter header"), std::invalid_argument);
-
     // adding header after previous error just happened on add from string
-    EXPECT_NO_THROW(response.SetHeader("valid3: header3"));
+    EXPECT_NO_THROW(response.SetHeader("valid3", "header3"));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
           auto secondtHeader = headers.begin();
