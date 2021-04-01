@@ -37,8 +37,8 @@ jobs:
         inputs: 
           filePath: eng/scripts/Update-VcpkgNightlyBranch.ps1
           arguments: >-
-            -SourceBranch $(NightlyBranchName)
-            -TargetBranch $(TargetPrBranch)
+            -SourceBranchName $(NightlyBranchName)
+            -TargetBranchName $(TargetPrBranch)
             -MainBranchName $(DefaultBranch)
           pwsh: true
           workingDirectory: $(Pipeline.Workspace)/vcpkg
