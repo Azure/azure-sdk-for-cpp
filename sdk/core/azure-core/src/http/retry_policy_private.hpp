@@ -10,17 +10,23 @@
 
 namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _detail {
 
-  bool ShouldRetryOnTransportFailure(
-      RetryOptions const& retryOptions,
-      int32_t attempt,
-      std::chrono::milliseconds& retryAfter,
-      double jitterFactor = -1);
+  class RetryLogic {
+    RetryLogic() = delete;
+    ~RetryLogic() = delete;
 
-  bool ShouldRetryOnResponse(
-      RawResponse const& response,
-      RetryOptions const& retryOptions,
-      int32_t attempt,
-      std::chrono::milliseconds& retryAfter,
-      double jitterFactor = -1);
+  public:
+    static bool ShouldRetryOnTransportFailure(
+        RetryOptions const& retryOptions,
+        int32_t attempt,
+        std::chrono::milliseconds& retryAfter,
+        double jitterFactor = -1);
+
+    static bool ShouldRetryOnResponse(
+        RawResponse const& response,
+        RetryOptions const& retryOptions,
+        int32_t attempt,
+        std::chrono::milliseconds& retryAfter,
+        double jitterFactor = -1);
+  };
 
 }}}}} // namespace Azure::Core::Http::Policies::_detail

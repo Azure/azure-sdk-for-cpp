@@ -29,8 +29,8 @@ void SendRequest(LogOptions const& logOptions)
 
     std::unique_ptr<RawResponse> Send(Request&, NextHttpPolicy, Context const&) const override
     {
-      constexpr uint8_t const responseBody[] = "Response Body";
-      constexpr uint8_t const responseBodyStream[] = "Request Body Stream";
+      static constexpr uint8_t const responseBody[] = "Response Body";
+      static constexpr uint8_t const responseBodyStream[] = "Request Body Stream";
 
       auto response = std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "OKAY");
 

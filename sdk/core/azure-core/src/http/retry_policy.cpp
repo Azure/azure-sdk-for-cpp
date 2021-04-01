@@ -15,6 +15,7 @@
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_detail;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
@@ -125,7 +126,7 @@ int32_t RetryPolicy::GetRetryNumber(Context const& context)
   return context.Get<int32_t>(RetryKey);
 }
 
-bool _detail::ShouldRetryOnTransportFailure(
+bool RetryLogic::ShouldRetryOnTransportFailure(
     RetryOptions const& retryOptions,
     int32_t attempt,
     std::chrono::milliseconds& retryAfter,
@@ -141,7 +142,7 @@ bool _detail::ShouldRetryOnTransportFailure(
   return true;
 }
 
-bool _detail::ShouldRetryOnResponse(
+bool RetryLogic::ShouldRetryOnResponse(
     RawResponse const& response,
     RetryOptions const& retryOptions,
     int32_t attempt,
@@ -212,7 +213,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
-      if (!_detail::ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
+      if (!RetryLogic::ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
       {
         // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
         // trying to perform same request would use last retry query/headers
@@ -226,7 +227,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
         Log::Write(Logger::Level::Warning, std::string("HTTP Transport error: ") + e.what());
       }
 
-      if (!_detail::ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
+      if (!RetryLogic::ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
         throw;
       }
