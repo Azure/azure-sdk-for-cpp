@@ -14,11 +14,7 @@ jobs:
     steps:
       - checkout: self
 
-      - pwsh: |
-          $formattedDate = Get-Date -Format 'yyyy-MM-dd'
-          $branchName = "nightly/$formattedDate"
-          Write-Host "##vso[task.setvariable variable=NightlyBranchName]$branchName"
-        displayName: Set branch name in fork repo
+      - template: /eng/pipelines/templates/steps/generate-nightly-branch-name.yml
 
       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
         parameters:
@@ -30,6 +26,8 @@ jobs:
         parameters:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+      # Git merge does not support the -c parameter. For the scope of this job
+      # it's ok to configure the user.name and user.email at a global level
       - pwsh: |
           git config --global user.name "azure-sdk" 
           git config --global user.email "azuresdk@microsoft.com"
@@ -46,9 +44,12 @@ jobs:
           workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
+      # Set $(HasChanges) to $true so create-pull-request.yml will push the
+      # branch.
       - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
         displayName: Set $(HasChanges) to $true
 
+      # This step will skip creating the PR if the PR already exists
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
         parameters:
           BaseBranchName: $(DefaultBranch)
