@@ -26,6 +26,14 @@ jobs:
   condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
   strategy:
     matrix:
+      Linux_x64_gcc48:
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CC: '/usr/bin/gcc-4.8'
+        CXX: '/usr/bin/g++-4.8'
+        BuildArgs: '-j 10'
       Linux_x64_gcc8:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -144,6 +152,17 @@ jobs:
         contains(variables['OSVmImage'], 'Ubuntu'), 
         contains(variables['CC'], 'gcc-8'), 
         contains(variables['CXX'], 'g++-8')
+      )
+
+  # Install gcc and g++ 4.8 if it is needed on the image.
+  - bash: sudo apt-get install gcc-4.8 g++-4.8 -y
+    displayName: Install gcc and g++ 4.8 
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CC'], 'gcc-4.8'), 
+        contains(variables['CXX'], 'g++-4.8')
       )
 
   # Validate all the files are formatted correctly according to the
