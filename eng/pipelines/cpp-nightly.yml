@@ -27,7 +27,13 @@ jobs:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
       - pwsh: |
-          Write-Host "git merge $(NightlyBranchName) ---strategy-option=theirs --no-commit"
+          Write-Host "git checkout $(NightlyBranchName)"
+          git checkout $(NightlyBranchName)
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Cannot check out $(NightlyBranchName) LASTEXITCODE=$LASTEXITCODE"
+          }
+
+          Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit"
           git merge $(NightlyBranchName) --strategy-option=theirs --no-commit
         workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
