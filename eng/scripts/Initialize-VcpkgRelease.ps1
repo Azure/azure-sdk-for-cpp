@@ -42,13 +42,12 @@ if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
     exit
 }
 
-$tarGzUri = if (-not $TestReleaseRef) {
-    Write-Verbose "Initializing Production Release"
-    $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-    "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).tar.gz" 
-} else { 
+$packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
+$tarGzUri = "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).tar.gz" 
+
+if ($TestReleaseRef) {
     Write-Verbose "Initializing Test Release"
-    "https://github.com/$GitHubRepo/archive/$TestReleaseRef.tar.gz"         
+    $tarGzUri =  "https://github.com/$GitHubRepo/archive/$TestReleaseRef.tar.gz"    
 }
 
 Write-Host "Downloading tarball to compute hash from $tarGzUri" 

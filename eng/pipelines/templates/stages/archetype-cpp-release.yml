@@ -186,7 +186,7 @@ stages:
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
       dependsOn: Build
-      condition: or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule'))
+      condition: and(succeeded(), or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')))
       jobs:
         - job: PublishNightlyVcpkg
           displayName: Publish to vcpkg nightly branch
@@ -220,14 +220,17 @@ stages:
                   TestRelease: true
                   TestReleaseRef: $(Build.SourceVersion)
 
-            - pwsh: |
-                Write-Host "git reset --soft HEAD~${{ length(parameters.Artifacts) }}"
-                git reset --soft HEAD~${{ length(parameters.Artifacts) }}
+              # Reset commit after vcpkg-publish.yml so git-push-changes.yml
+              # has changes to commit and push, and all changes go into one
+              # commit
+              - pwsh: |
+                  Write-Host "git reset HEAD^"
+                  git reset HEAD^
 
-                Write-Host "git status"
-                git status
-              displayName: Reset commits to enable pushing a single commit
-              workingDirectory: $(Pipeline.Workspace)/vcpkg
+                  Write-Host "git status"
+                  git status
+                displayName: Reset commit
+                workingDirectory: $(Pipeline.Workspace)/vcpkg
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:

@@ -77,10 +77,9 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-$addVersionAdditionalParameters = if ($TestRelease) { 
-    '--overwrite-version'
-} else { 
-    ''
+$addVersionAdditionalParameters = ''
+if ($TestRelease) { 
+    $addVersionAdditionalParameters = '--overwrite-version'
 }
 
 Write-Host "./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters"

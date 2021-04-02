@@ -7,7 +7,7 @@ jobs:
       vmImage: MMS2019
 
     variables:
-      # The branch in the azure-sdk/vcpkg repo that is updated nigthly with the
+      # The branch in the azure-sdk/vcpkg repo that is updated nightly with the
       # latest set of ports
       TargetPrBranch: azure-sdk-for-cpp-nightly-verification
 
@@ -20,45 +20,31 @@ jobs:
         parameters:
           Workspace: $(Pipeline.Workspace)
           RepoOwner: azure-sdk
-          PRBranchName: $(TargetPrBranch)
+          SkipCheckout: true
 
       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
         parameters:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
-      # Git merge does not support the -c parameter. For the scope of this job
-      # it's ok to configure the user.name and user.email at a global level
       - pwsh: |
-          git config --global user.name "azure-sdk" 
-          git config --global user.email "azuresdk@microsoft.com"
-        displayName: Configure git identity
-
-      - task: Powershell@2
-        inputs: 
-          filePath: eng/scripts/Update-VcpkgNightlyBranch.ps1
-          arguments: >-
-            -SourceBranchName $(NightlyBranchName)
-            -TargetBranchName $(TargetPrBranch)
-            -MainBranchName $(DefaultBranch)
-          pwsh: true
-          workingDirectory: $(Pipeline.Workspace)/vcpkg
+          Write-Host "git merge $(NightlyBranchName) ---strategy-option=theirs --no-commit"
+          git merge $(NightlyBranchName) ---strategy-option=theirs --no-commit
+        workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
-
-      # Set $(HasChanges) to $true so create-pull-request.yml will push the
-      # branch.
-      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
-        displayName: Set $(HasChanges) to $true
 
       # This step will skip creating the PR if the PR already exists
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
         parameters:
+          # Force push because Update-VcpkgNightlyBranch.ps1 re-creates the 
+          # nightly branch from the tip of the default branch
+          PushArgs: --force
           BaseBranchName: $(DefaultBranch)
           PRBranchName: $(TargetPrBranch)
           RepoOwner: Microsoft
           RepoName: vcpkg
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+          CommitMsg: Update with changes from $(NightlyBranchName)
           PRTitle: "[DO NOT MERGE] Nightly Azure SDK for C++ CI validation"
           PRBody: This is a long-lived draft PR should not be merged. Its branch is be updated periodically to validate the Azure SDK for C++ against the vcpkg CI.
           ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
-          SkipCheckingForChanges: true
           OpenAsDraft: true
