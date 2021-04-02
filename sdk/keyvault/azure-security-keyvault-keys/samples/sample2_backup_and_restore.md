@@ -1,7 +1,7 @@
 # Back up and restore a key
 
 This sample demonstrates how to back up and restore a Key from Azure Key Vault.
-To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/README.md) for links and instructions.
+To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
 ## Creating a KeyClient
 
@@ -59,6 +59,6 @@ auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
 
 To see the full example source, see:
 
-- sample2_backup_and_restore.cpp
+- [sample2_backup_and_restore.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample2-backup-and-restore/sample2_backup_and_restore.cpp)
 
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/identity/azure-identity/README.md
