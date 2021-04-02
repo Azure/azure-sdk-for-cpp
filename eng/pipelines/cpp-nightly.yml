@@ -27,6 +27,7 @@ jobs:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
       - pwsh: |
+          git config user.email "azuresdk@microsoft.com"
           Write-Host "git checkout $(NightlyBranchName)"
           git checkout $(NightlyBranchName)
           if ($LASTEXITCODE -ne 0) {
@@ -35,8 +36,11 @@ jobs:
 
           git checkout $(DefaultBranch)
 
-          Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit --no-ff"
-          git merge $(NightlyBranchName) --strategy-option=theirs --no-commit --no-ff
+          Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit"
+          git merge $(NightlyBranchName) --strategy-option=theirs --no-commit
+
+          Write-Host "git reset HEAD~1"
+          git reset HEAD~1
         workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
