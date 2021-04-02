@@ -248,16 +248,39 @@ TEST(Context, HeapLinkIntegrity)
 
 TEST(Context, Expiration)
 {
-  Context ctx;
-  EXPECT_EQ(ctx.GetExpiration(), Azure::DateTime::max());
-
-  ctx.Cancel();
-  EXPECT_EQ(ctx.GetExpiration(), Azure::DateTime::min());
-
   auto const expiration = Azure::DateTime(2021, 4, 1, 23, 45, 15);
-  ctx = ctx.CreateWithExpiration(expiration);
-  EXPECT_EQ(ctx.GetExpiration(), expiration);
+  {
+    Context ctx;
+    EXPECT_EQ(ctx.GetExpiration(), Azure::DateTime::max());
 
-  auto childCtx = ctx.CreateWithValue("key", "val").CreateWithValue("key2", "val2");
-  EXPECT_EQ(childCtx.GetExpiration(), expiration);
+    ctx.Cancel();
+    EXPECT_EQ(ctx.GetExpiration(), Azure::DateTime::min());
+  }
+
+  {
+    Context ctx;
+    ctx = ctx.CreateWithExpiration(expiration);
+    EXPECT_EQ(ctx.GetExpiration(), expiration);
+  }
+
+  {
+    Context ctx;
+
+    auto childCtx = ctx.CreateWithExpiration(expiration)
+                        .CreateWithValue("key", "val")
+                        .CreateWithValue("key2", "val2");
+
+    EXPECT_EQ(childCtx.GetExpiration(), expiration);
+  }
+
+  {
+    Context ctx;
+    ctx.Cancel();
+
+    auto childCtx = ctx.CreateWithExpiration(expiration)
+                        .CreateWithValue("key", "val")
+                        .CreateWithValue("key2", "val2");
+
+    EXPECT_EQ(childCtx.GetExpiration(), Azure::DateTime::min());
+  }
 }
