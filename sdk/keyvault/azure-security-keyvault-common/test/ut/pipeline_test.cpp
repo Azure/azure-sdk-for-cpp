@@ -10,7 +10,7 @@
 
 #include <memory>
 
-using namespace Azure::Security::KeyVault::Common::_internal;
+using namespace Azure::Security::KeyVault::_internal;
 
 TEST(KeyVaultPipeline, initPipeline)
 {

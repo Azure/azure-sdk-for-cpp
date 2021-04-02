@@ -19,7 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define the options to create an SDK Keys client.
    *
    */
-  struct KeyClientOptions : public Azure::Security::KeyVault::Common::ClientOptions
+  struct KeyClientOptions : public Azure::Security::KeyVault::ClientOptions
   {
     /**
      * @brief Construct a new Key Client Options object.
@@ -27,8 +27,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param version Optional version for the client.
      */
     KeyClientOptions(
-        Azure::Security::KeyVault::Common::ServiceVersion version
-        = Azure::Security::KeyVault::Common::ServiceVersion::V7_2)
+        Azure::Security::KeyVault::ServiceVersion version
+        = Azure::Security::KeyVault::ServiceVersion::V7_2)
         : ClientOptions(version)
     {
     }

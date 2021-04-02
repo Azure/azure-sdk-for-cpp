@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common {
+namespace Azure { namespace Security { namespace KeyVault {
 
   /**
    * @brief The general exception thrown by the Key Vault SDK clients.
@@ -73,7 +73,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     /**
-     * @brief Create a #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
+     * @brief Create a #Azure::Security::KeyVault::KeyVaultException by parsing the \p
      * response.
      *
      * @param response The Http raw response from the network.
@@ -83,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
 
     /**
-     * @brief Create #Azure::Security::KeyVault::Common::KeyVaultException by parsing the \p
+     * @brief Create #Azure::Security::KeyVault::KeyVaultException by parsing the \p
      * response reference.
      *
      * @param response The Http raw response from the network.
@@ -91,4 +91,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
      */
     static KeyVaultException CreateFromResponse(Azure::Core::Http::RawResponse const& response);
   };
-}}}} // namespace Azure::Security::KeyVault::Common
+}}} // namespace Azure::Security::KeyVault
