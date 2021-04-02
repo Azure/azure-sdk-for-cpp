@@ -1,10 +1,9 @@
 steps:
   - pwsh: |
-      $branchName = if ($env:NIGHTLYBRANCHOVERRIDE) { 
-        $env:NIGHTLYBRANCHOVERRIDE
-      } else { 
+      $branchName = $env:NIGHTLYBRANCHOVERRIDE
+      if (!$branchName) { 
         $formattedDate = Get-Date -Format 'yyyy-MM-dd'
-        "nightly/$formattedDate"
+        $branchName"nightly/$formattedDate"
       }
       Write-Host "##vso[task.setvariable variable=NightlyBranchName]$branchName"
     displayName: Set branch name in fork repo
