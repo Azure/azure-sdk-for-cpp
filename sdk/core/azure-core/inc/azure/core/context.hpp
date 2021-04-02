@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/core/datetime.hpp"
+
 #include <atomic>
 #include <chrono>
 #include <memory>
@@ -38,42 +40,35 @@ namespace Azure { namespace Core {
    * @brief A context is a node within a tree that represents expiration times and key/value pairs.
    */
   class Context {
-  public:
-    /**
-     * @brief A type used to provide a point in time for context expiration.
-     */
-    using time_point = std::chrono::system_clock::time_point;
-
   private:
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      std::atomic_int64_t CancelAtMsecSinceEpoch;
+      std::atomic<DateTime::rep> Expiration;
       std::string Key;
       std::shared_ptr<void> Value;
       const std::type_info& ValueType;
 
-      static constexpr int64_t ToMsecSinceEpoch(time_point time)
+      static constexpr DateTime::rep ToDateTimeRepresentation(DateTime const& dateTime)
       {
-        return static_cast<int64_t>(
-            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()).count());
+        return dateTime.time_since_epoch().count();
       }
 
-      static constexpr time_point FromMsecSinceEpoch(int64_t msec)
+      static constexpr DateTime FromDateTimeRepresentation(DateTime::rep dtRepresentation)
       {
-        return time_point() + static_cast<std::chrono::milliseconds>(msec);
+        return DateTime(DateTime::time_point(DateTime::duration(dtRepresentation)));
       }
 
       explicit ContextSharedState()
-          : CancelAtMsecSinceEpoch(ToMsecSinceEpoch((time_point::max)())), Value(nullptr),
+          : Expiration(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr),
             ValueType(typeid(std::nullptr_t))
       {
       }
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          time_point cancelAt)
-          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Value(nullptr),
+          DateTime const& expiration)
+          : Parent(parent), Expiration(ToDateTimeRepresentation(expiration)), Value(nullptr),
             ValueType(typeid(std::nullptr_t))
       {
       }
@@ -81,10 +76,10 @@ namespace Azure { namespace Core {
       template <class T>
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          time_point cancelAt,
+          DateTime const& expiration,
           const std::string& key,
           T value) // NOTE, should this be T&&
-          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Key(key),
+          : Parent(parent), Expiration(ToDateTimeRepresentation(expiration)), Key(key),
             Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
       {
       }
@@ -96,8 +91,6 @@ namespace Azure { namespace Core {
         : m_contextSharedState(std::move(impl))
     {
     }
-
-    time_point CancelWhen() const;
 
   public:
     /**
@@ -113,13 +106,13 @@ namespace Azure { namespace Core {
     /**
      * @brief Create a context with expiration.
      *
-     * @param cancelWhen A point in time after which a context expires.
+     * @param expiration A point in time after which a context expires.
      *
      * @return A child context with expiration.
      */
-    Context WithDeadline(time_point cancelWhen) const
+    Context CreateWithExpiration(DateTime const& expiration) const
     {
-      return Context{std::make_shared<ContextSharedState>(m_contextSharedState, cancelWhen)};
+      return Context{std::make_shared<ContextSharedState>(m_contextSharedState, expiration)};
     }
 
     /**
@@ -131,11 +124,20 @@ namespace Azure { namespace Core {
      *
      * @return A child context with no expiration and the \p key and \p value associated with it.
      */
-    template <class T> Context WithValue(const std::string& key, T&& value) const
+    template <class T> Context CreateWithValue(const std::string& key, T&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
-          m_contextSharedState, (time_point::max)(), key, std::forward<T>(value))};
+          m_contextSharedState, (DateTime::max)(), key, std::forward<T>(value))};
     }
+
+    /**
+     * @brief Get an expiration time point associated with this context or the branch of contexts
+     * this context belongs to.
+     *
+     * @return An expiration associated with the context found; an empty value if a specific value
+     * can't be found.
+     */
+    DateTime GetExpiration() const;
 
     /**
      * @brief Get a value associated with a \p key parameter within this context or the branch of
@@ -146,7 +148,7 @@ namespace Azure { namespace Core {
      * @return A value associated with the context found; an empty value if a specific value can't
      * be found.
      */
-    template <class T> const T& Get(const std::string& key) const
+    template <class T> const T& GetValue(const std::string& key) const
     {
       if (!key.empty())
       {
@@ -197,15 +199,15 @@ namespace Azure { namespace Core {
      */
     void Cancel()
     {
-      m_contextSharedState->CancelAtMsecSinceEpoch
-          = ContextSharedState::ToMsecSinceEpoch((time_point::min)());
+      m_contextSharedState->Expiration
+          = ContextSharedState::ToDateTimeRepresentation((DateTime::min)());
     }
 
     /**
      * @brief Check if the context is cancelled.
      * @return `true` if this context is cancelled, `false` otherwise.
      */
-    bool IsCancelled() const { return CancelWhen() < std::chrono::system_clock::now(); }
+    bool IsCancelled() const { return GetExpiration() < std::chrono::system_clock::now(); }
 
     /**
      * @brief Throw an exception if the context was cancelled.

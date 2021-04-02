@@ -4,7 +4,6 @@
 #include "azure/core/context.hpp"
 
 using namespace Azure::Core;
-using time_point = std::chrono::system_clock::time_point;
 
 Context& Azure::Core::Context::GetApplicationContext()
 {
@@ -12,12 +11,12 @@ Context& Azure::Core::Context::GetApplicationContext()
   return context;
 }
 
-time_point Azure::Core::Context::CancelWhen() const
+Azure::DateTime Azure::Core::Context::GetExpiration() const
 {
-  auto result = time_point::max();
+  auto result = DateTime::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    auto cancelAt = ContextSharedState::FromMsecSinceEpoch(ptr->CancelAtMsecSinceEpoch);
+    auto cancelAt = ContextSharedState::FromDateTimeRepresentation(ptr->Expiration);
     if (result > cancelAt)
     {
       result = cancelAt;

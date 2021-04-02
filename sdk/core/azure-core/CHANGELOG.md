@@ -14,6 +14,10 @@
   - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
   - `GetMajorVersion`.
   - `GetMinorVersion`.
+- Changes to `Azure::Core::Context`:
+  - Renamed `Get()` to `GetValue()`.
+  - Renamed `WithValue()` to `CreateWithValue()`.
+  - Renamed `WithDeadline()` to `CreateWithExpiration()`, changed input parameter type to `Azure::DateTime`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 
@@ -25,6 +29,7 @@
 - Added `Azure::Core::Operation<T>::GetRawResponse()`.
 - Added `Azure::Core::PackageVersion`.
 - Added support for logging to console when `AZURE_LOG_LEVEL` environment variable is set.
+- Added `Azure::Core::Context::GetExpiration()`.
 
 ### Breaking Changes
 
