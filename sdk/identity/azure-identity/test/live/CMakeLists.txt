@@ -3,22 +3,18 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set(azure-identity-test)
-
-project (azure-identity-test LANGUAGES CXX)
+project (azure-identity-livetest LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
 add_executable (
-  azure-identity-test
-    client_secret_credential.cpp
-    environment_credential.cpp
-    macro_guard.cpp
-    main.cpp
-    simplified_header.cpp
-    test_transport.hpp
+  azure-identity-livetest
+  client_secret_credential.cpp
+  environment_credential.cpp
+  getenv.hpp
+  main.cpp
 )
 
 if (MSVC)
@@ -33,17 +29,15 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  target_compile_options(azure-identity-test PUBLIC /wd26495 /wd26812 /wd6326)
+  target_compile_options(azure-identity-livetest PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
-# Adding private headers from identity to the tests so we can test the private APIs with no relative paths include.
-target_include_directories (azure-identity-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+target_link_libraries(azure-identity-livetest PRIVATE azure-identity gtest gmock)
 
-target_link_libraries(azure-identity-test PRIVATE azure-identity gtest gmock)
-
-# gtest_discover_tests will scan the test from azure-identity-test and call add_test
+# gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_discover_tests(azure-identity-test
-     TEST_PREFIX azure-identity-unittest.
-     NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+gtest_discover_tests(azure-identity-livetest
+  TEST_PREFIX azure-identity-livetest.
+  NO_PRETTY_TYPES
+  NO_PRETTY_VALUES
+)
