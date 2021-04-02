@@ -274,3 +274,54 @@ TEST(Context, HeapLinkIntegrity)
   EXPECT_TRUE(thirdGeneration.HasKey(e));
   EXPECT_EQ("e", thirdGeneration.Get<std::string>(e));
 }
+
+Context::Key const GlobalKey1;
+Context::Key const GlobalKey2;
+
+namespace {
+Context::Key const UnnamedNamespaceKey1;
+Context::Key const UnnamedNamespaceKey2;
+} // namespace
+
+TEST(Context, KeyComparison)
+{
+  EXPECT_EQ(GlobalKey1, GlobalKey1);
+  EXPECT_EQ(GlobalKey2, GlobalKey2);
+
+  EXPECT_NE(GlobalKey1, GlobalKey2);
+  EXPECT_NE(GlobalKey2, GlobalKey1);
+
+  EXPECT_EQ(UnnamedNamespaceKey1, UnnamedNamespaceKey1);
+  EXPECT_EQ(UnnamedNamespaceKey2, UnnamedNamespaceKey2);
+
+  EXPECT_NE(UnnamedNamespaceKey1, UnnamedNamespaceKey2);
+  EXPECT_NE(UnnamedNamespaceKey2, UnnamedNamespaceKey1);
+
+  Context::Key const localKey1;
+  Context::Key const localKey2;
+
+  EXPECT_EQ(localKey1, localKey1);
+  EXPECT_EQ(localKey2, localKey2);
+
+  EXPECT_NE(localKey1, localKey2);
+  EXPECT_NE(localKey2, localKey1);
+
+  Context::Key const localKey1Copy = localKey1;
+  Context::Key const localKey2Copy = localKey2;
+
+  EXPECT_EQ(localKey1Copy, localKey1Copy);
+  EXPECT_EQ(localKey2Copy, localKey2Copy);
+
+  EXPECT_NE(localKey1Copy, localKey2Copy);
+  EXPECT_NE(localKey2Copy, localKey1Copy);
+
+  EXPECT_EQ(localKey1, localKey1Copy);
+  EXPECT_EQ(localKey2, localKey2Copy);
+  EXPECT_EQ(localKey1Copy, localKey1);
+  EXPECT_EQ(localKey2Copy, localKey2);
+
+  EXPECT_NE(localKey1, localKey2Copy);
+  EXPECT_NE(localKey2, localKey1Copy);
+  EXPECT_NE(localKey1Copy, localKey2);
+  EXPECT_NE(localKey2Copy, localKey1);
+}
