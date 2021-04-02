@@ -33,6 +33,8 @@ jobs:
             Write-Error "Cannot check out $(NightlyBranchName) LASTEXITCODE=$LASTEXITCODE"
           }
 
+          git checkout $(DefaultBranch)
+
           Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit"
           git merge $(NightlyBranchName) --strategy-option=theirs --no-commit
         workingDirectory: $(Pipeline.Workspace)/vcpkg
