@@ -1,7 +1,7 @@
 # Creating, getting, updating, and deleting keys
 
 This sample demonstrates how to create, get, update, and delete a key in Azure Key Vault.
-To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/README.md) for links and instructions.
+To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
 ## Creating a KeyClient
 
@@ -96,6 +96,6 @@ keyClient.PurgeDeletedKey(rsaKeyName);
 
 ## Source
 
-- sample1_hello_world.cpp
+- [sample1_hello_world.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample1-hello-world/sample1_hello_world.cpp)
 
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/identity/azure-identity/README.md
