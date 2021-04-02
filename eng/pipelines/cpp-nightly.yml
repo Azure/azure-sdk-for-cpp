@@ -35,8 +35,8 @@ jobs:
 
           git checkout $(DefaultBranch)
 
-          Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit"
-          git merge $(NightlyBranchName) --strategy-option=theirs --no-commit
+          Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit --no-ff"
+          git merge $(NightlyBranchName) --strategy-option=theirs --no-commit --no-ff
         workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
