@@ -16,10 +16,10 @@ Azure::DateTime Azure::Core::Context::GetExpiration() const
   auto result = DateTime::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    auto cancelAt = ContextSharedState::FromDateTimeRepresentation(ptr->Expiration);
-    if (result > cancelAt)
+    auto expiration = ContextSharedState::FromDateTimeRepresentation(ptr->Expiration);
+    if (result > expiration)
     {
-      result = cancelAt;
+      result = expiration;
     }
   }
 
