@@ -28,7 +28,7 @@ jobs:
 
       - pwsh: |
           Write-Host "git merge $(NightlyBranchName) ---strategy-option=theirs --no-commit"
-          git merge $(NightlyBranchName) ---strategy-option=theirs --no-commit
+          git merge $(NightlyBranchName) --strategy-option=theirs --no-commit
         workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
