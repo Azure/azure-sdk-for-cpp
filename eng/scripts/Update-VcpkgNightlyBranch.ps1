@@ -27,7 +27,7 @@ param(
 
 $ErrorActionPreference = "Continue"
 
-if ((Get-Command git | Measure-Object).Count -eq 0) { 
+if (!(Get-Command git-ErrorAction SilentlyContinue)) { 
     LogError "Could not locate git. Install git https://git-scm.com/downloads"
     exit 1
 }
