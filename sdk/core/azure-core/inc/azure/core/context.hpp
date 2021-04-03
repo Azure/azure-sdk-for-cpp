@@ -37,14 +37,14 @@ namespace Azure { namespace Core {
   };
 
   /**
-   * @brief A context is a node within a tree that represents expiration times and key/value pairs.
+   * @brief A context is a node within a tree that represents deadline times and key/value pairs.
    */
   class Context {
   private:
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      std::atomic<DateTime::rep> Expiration;
+      std::atomic<DateTime::rep> Deadline;
       std::string Key;
       std::shared_ptr<void> Value;
       const std::type_info& ValueType;
@@ -60,15 +60,15 @@ namespace Azure { namespace Core {
       }
 
       explicit ContextSharedState()
-          : Expiration(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr),
+          : Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr),
             ValueType(typeid(std::nullptr_t))
       {
       }
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          DateTime const& expiration)
-          : Parent(parent), Expiration(ToDateTimeRepresentation(expiration)), Value(nullptr),
+          DateTime const& deadline)
+          : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Value(nullptr),
             ValueType(typeid(std::nullptr_t))
       {
       }
@@ -76,10 +76,10 @@ namespace Azure { namespace Core {
       template <class T>
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          DateTime const& expiration,
+          DateTime const& deadline,
           const std::string& key,
           T value) // NOTE, should this be T&&
-          : Parent(parent), Expiration(ToDateTimeRepresentation(expiration)), Key(key),
+          : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Key(key),
             Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
       {
       }
@@ -94,7 +94,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct a new context with no expiration, and no value associated.
+     * @brief Construct a new context with no deadline, and no value associated.
      */
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
@@ -104,40 +104,39 @@ namespace Azure { namespace Core {
     Context& operator=(const Context&) = default;
 
     /**
-     * @brief Create a context with expiration.
+     * @brief Create a context with a deadline.
      *
-     * @param expiration A point in time after which a context expires.
+     * @param deadline A point in time after which a context expires.
      *
-     * @return A child context with expiration.
+     * @return A child context with deadline.
      */
-    Context CreateWithExpiration(DateTime const& expiration) const
+    Context CreateChildContext(DateTime const& deadline) const
     {
-      return Context{std::make_shared<ContextSharedState>(m_contextSharedState, expiration)};
+      return Context{std::make_shared<ContextSharedState>(m_contextSharedState, deadline)};
     }
 
     /**
-     * @brief Create a context without an expiration, but with \p key and \p value associated with
-     * it.
+     * @brief Create a context without a deadline, but with \p key and \p value associated with it.
      *
      * @param key A key to associate with this context.
      * @param value A value to associate with this context.
      *
-     * @return A child context with no expiration and the \p key and \p value associated with it.
+     * @return A child context with no deadline and the \p key and \p value associated with it.
      */
-    template <class T> Context CreateWithValue(const std::string& key, T&& value) const
+    template <class T> Context CreateChildContext(const std::string& key, T&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, (DateTime::max)(), key, std::forward<T>(value))};
     }
 
     /**
-     * @brief Get an expiration time point associated with this context or the branch of contexts
-     * this context belongs to.
+     * @brief Get a deadline time point associated with this context or the branch of contexts this
+     * context belongs to.
      *
-     * @return An expiration associated with the context found; an empty value if a specific value
-     * can't be found.
+     * @return A deadline associated with the context found; `Azure::DateTime::max()` value if a
+     * specific value can't be found.
      */
-    DateTime GetExpiration() const;
+    DateTime GetDeadline() const;
 
     /**
      * @brief Get a value associated with a \p key parameter within this context or the branch of
@@ -171,6 +170,15 @@ namespace Azure { namespace Core {
     }
 
     /**
+     * @brief Check whether the context has a deadline in it itself, or in the branch the context
+     * belongs to.
+     *
+     * @return `true` if this context, or the tree branch this context belongs to has a deadline
+     * associated with it. `false` otherwise.
+     */
+    bool HasDeadline() const { return GetDeadline() != DateTime::max(); }
+
+    /**
      * @brief Check whether the context has a key matching \p key parameter in it itself, or in the
      * branch the context belongs to.
      *
@@ -199,7 +207,7 @@ namespace Azure { namespace Core {
      */
     void Cancel()
     {
-      m_contextSharedState->Expiration
+      m_contextSharedState->Deadline
           = ContextSharedState::ToDateTimeRepresentation((DateTime::min)());
     }
 
@@ -207,7 +215,7 @@ namespace Azure { namespace Core {
      * @brief Check if the context is cancelled.
      * @return `true` if this context is cancelled, `false` otherwise.
      */
-    bool IsCancelled() const { return GetExpiration() < std::chrono::system_clock::now(); }
+    bool IsCancelled() const { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
      * @brief Throw an exception if the context was cancelled.

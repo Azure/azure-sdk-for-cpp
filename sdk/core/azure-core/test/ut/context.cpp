@@ -24,7 +24,7 @@ TEST(Context, BasicBool)
 {
   Context context;
   // New context from previous
-  auto c2 = context.CreateWithValue("key", true);
+  auto c2 = context.CreateChildContext("key", true);
   auto& value = c2.GetValue<bool>("key");
   EXPECT_TRUE(value == true);
 }
@@ -33,7 +33,7 @@ TEST(Context, BasicInt)
 {
   Context context;
   // New context from previous
-  auto c2 = context.CreateWithValue("key", 123);
+  auto c2 = context.CreateChildContext("key", 123);
   auto& value = c2.GetValue<int>("key");
   EXPECT_TRUE(value == 123);
 }
@@ -44,7 +44,7 @@ TEST(Context, BasicStdString)
 
   Context context;
   // New context from previous
-  auto c2 = context.CreateWithValue("key", s);
+  auto c2 = context.CreateChildContext("key", s);
   auto& value = c2.GetValue<std::string>("key");
   EXPECT_TRUE(value == s);
 }
@@ -56,7 +56,7 @@ TEST(Context, BasicChar)
 
   Context context;
   // New context from previous
-  auto c2 = context.CreateWithValue("key", str);
+  auto c2 = context.CreateChildContext("key", str);
   auto& value = c2.GetValue<const char*>("key");
   EXPECT_TRUE(value == s);
   EXPECT_TRUE(value == str);
@@ -68,7 +68,7 @@ TEST(Context, IsCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  auto c2 = context.CreateWithExpiration(deadline);
+  auto c2 = context.CreateChildContext(deadline);
   EXPECT_FALSE(c2.IsCancelled());
   std::this_thread::sleep_for(duration);
   EXPECT_TRUE(c2.IsCancelled());
@@ -80,12 +80,12 @@ TEST(Context, NestedIsCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  auto c2 = context.CreateWithValue("Key", "Value");
+  auto c2 = context.CreateChildContext("Key", "Value");
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_TRUE(c2.HasKey("Key"));
   EXPECT_FALSE(context.HasKey("Key"));
 
-  auto c3 = context.CreateWithExpiration(deadline);
+  auto c3 = context.CreateChildContext(deadline);
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_FALSE(c3.IsCancelled());
@@ -103,7 +103,7 @@ TEST(Context, NestedIsCancelled)
 TEST(Context, CancelWithValue)
 {
   Context context;
-  auto c2 = context.CreateWithValue("Key", "Value");
+  auto c2 = context.CreateChildContext("Key", "Value");
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_TRUE(c2.HasKey("Key"));
@@ -123,7 +123,7 @@ TEST(Context, ThrowIfCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  auto c2 = context.CreateWithExpiration(deadline);
+  auto c2 = context.CreateChildContext(deadline);
   EXPECT_NO_THROW(c2.ThrowIfCancelled());
   std::this_thread::sleep_for(duration);
   EXPECT_THROW(c2.ThrowIfCancelled(), Azure::Core::OperationCancelledException);
@@ -133,13 +133,13 @@ TEST(Context, Chain)
 {
   Context context;
   // New context from previous
-  auto c2 = context.CreateWithValue("c2", 123);
-  auto c3 = c2.CreateWithValue("c3", 456);
-  auto c4 = c3.CreateWithValue("c4", 789);
-  auto c5 = c4.CreateWithValue("c5", "5");
-  auto c6 = c5.CreateWithValue("c6", "6");
-  auto c7 = c6.CreateWithValue("c7", "7");
-  auto finalContext = c7.CreateWithValue("finalContext", "Final");
+  auto c2 = context.CreateChildContext("c2", 123);
+  auto c3 = c2.CreateChildContext("c3", 456);
+  auto c4 = c3.CreateChildContext("c4", 789);
+  auto c5 = c4.CreateChildContext("c5", "5");
+  auto c6 = c5.CreateChildContext("c6", "6");
+  auto c7 = c6.CreateChildContext("c7", "7");
+  auto finalContext = c7.CreateChildContext("finalContext", "Final");
 
   auto& valueT2 = finalContext.GetValue<int>("c2");
   auto& valueT3 = finalContext.GetValue<int>("c3");
@@ -162,8 +162,8 @@ TEST(Context, MatchingKeys)
 {
   Context context;
   // New context from previous
-  auto c2 = context.CreateWithValue("key", 123);
-  auto c3 = c2.CreateWithValue("key", 456);
+  auto c2 = context.CreateChildContext("key", 123);
+  auto c3 = c2.CreateChildContext("key", 456);
 
   auto& valueT2 = c2.GetValue<int>("key");
   auto& valueT3 = c3.GetValue<int>("key");
@@ -180,14 +180,14 @@ struct SomeStructForContext
 TEST(Context, InstanceValue)
 {
   auto contextP
-      = Context::GetApplicationContext().CreateWithValue("struct", SomeStructForContext());
+      = Context::GetApplicationContext().CreateChildContext("struct", SomeStructForContext());
   auto& contextValueRef = contextP.GetValue<SomeStructForContext>("struct");
   EXPECT_EQ(contextValueRef.someField, 12345);
 }
 
 TEST(Context, UniquePtr)
 {
-  auto contextP = Context::GetApplicationContext().CreateWithValue(
+  auto contextP = Context::GetApplicationContext().CreateChildContext(
       "struct", std::make_unique<SomeStructForContext>());
   auto& contextValueRef = contextP.GetValue<std::unique_ptr<SomeStructForContext>>("struct");
   EXPECT_EQ(contextValueRef->someField, 12345);
@@ -198,17 +198,17 @@ TEST(Context, HeapLinkIntegrity)
   Context thirdGeneration; // To be used at the end
   {
     Context root;
-    auto firstGeneration = root.CreateWithValue("a", std::string("a"));
+    auto firstGeneration = root.CreateChildContext("a", std::string("a"));
     EXPECT_TRUE(firstGeneration.HasKey("a"));
 
-    auto secondGeneration = firstGeneration.CreateWithValue("b", std::string("b"));
+    auto secondGeneration = firstGeneration.CreateChildContext("b", std::string("b"));
     EXPECT_TRUE(secondGeneration.HasKey("a"));
     EXPECT_EQ("a", secondGeneration.GetValue<std::string>("a"));
     EXPECT_TRUE(secondGeneration.HasKey("b"));
     EXPECT_EQ("b", secondGeneration.GetValue<std::string>("b"));
 
     // Now overide the generation
-    secondGeneration = secondGeneration.CreateWithValue("c", std::string("c"));
+    secondGeneration = secondGeneration.CreateChildContext("c", std::string("c"));
     EXPECT_TRUE(
         secondGeneration.HasKey("a")); // Still know about first gen - The link is still in heap
     EXPECT_EQ("a", secondGeneration.GetValue<std::string>("a"));
@@ -219,7 +219,7 @@ TEST(Context, HeapLinkIntegrity)
     EXPECT_EQ("c", secondGeneration.GetValue<std::string>("c"));
 
     // One more override
-    secondGeneration = secondGeneration.CreateWithValue("d", std::string("d"));
+    secondGeneration = secondGeneration.CreateChildContext("d", std::string("d"));
     EXPECT_TRUE(secondGeneration.HasKey("a"));
     EXPECT_EQ("a", secondGeneration.GetValue<std::string>("a"));
     EXPECT_TRUE(secondGeneration.HasKey("b"));
@@ -230,7 +230,7 @@ TEST(Context, HeapLinkIntegrity)
     EXPECT_EQ("d", secondGeneration.GetValue<std::string>("d"));
 
     // New Gen
-    thirdGeneration = secondGeneration.CreateWithValue("e", std::string("e"));
+    thirdGeneration = secondGeneration.CreateChildContext("e", std::string("e"));
   }
   // Went out of scope, root and secondGeneration are destroyed. but should remain in heap for the
   // third-generation since the previous geneations are still alive inside his heart <3.
@@ -246,41 +246,47 @@ TEST(Context, HeapLinkIntegrity)
   EXPECT_EQ("e", thirdGeneration.GetValue<std::string>("e"));
 }
 
-TEST(Context, Expiration)
+TEST(Context, Deadline)
 {
-  auto const expiration = Azure::DateTime(2021, 4, 1, 23, 45, 15);
+  auto const deadline = Azure::DateTime(2021, 4, 1, 23, 45, 15);
   {
     Context ctx;
-    EXPECT_EQ(ctx.GetExpiration(), Azure::DateTime::max());
+    EXPECT_FALSE(ctx.HasDeadline());
+    EXPECT_EQ(ctx.GetDeadline(), Azure::DateTime::max());
 
     ctx.Cancel();
-    EXPECT_EQ(ctx.GetExpiration(), Azure::DateTime::min());
+    EXPECT_TRUE(ctx.HasDeadline());
+    EXPECT_EQ(ctx.GetDeadline(), Azure::DateTime::min());
   }
 
   {
     Context ctx;
-    ctx = ctx.CreateWithExpiration(expiration);
-    EXPECT_EQ(ctx.GetExpiration(), expiration);
+    ctx = ctx.CreateChildContext(deadline);
+
+    EXPECT_TRUE(ctx.HasDeadline());
+    EXPECT_EQ(ctx.GetDeadline(), deadline);
   }
 
   {
     Context ctx;
 
-    auto childCtx = ctx.CreateWithExpiration(expiration)
-                        .CreateWithValue("key", "val")
-                        .CreateWithValue("key2", "val2");
+    auto childCtx = ctx.CreateChildContext(deadline)
+                        .CreateChildContext("key", "val")
+                        .CreateChildContext("key2", "val2");
 
-    EXPECT_EQ(childCtx.GetExpiration(), expiration);
+    EXPECT_TRUE(ctx.HasDeadline());
+    EXPECT_EQ(childCtx.GetDeadline(), deadline);
   }
 
   {
     Context ctx;
     ctx.Cancel();
 
-    auto childCtx = ctx.CreateWithExpiration(expiration)
-                        .CreateWithValue("key", "val")
-                        .CreateWithValue("key2", "val2");
+    auto childCtx = ctx.CreateChildContext(deadline)
+                        .CreateChildContext("key", "val")
+                        .CreateChildContext("key2", "val2");
 
-    EXPECT_EQ(childCtx.GetExpiration(), Azure::DateTime::min());
+    EXPECT_TRUE(ctx.HasDeadline());
+    EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
   }
 }

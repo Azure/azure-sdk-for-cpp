@@ -223,6 +223,6 @@ TEST(Policy, RetryPolicyKeepContext)
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
   auto withValueContext
-      = Context::GetApplicationContext().CreateWithValue("TheKey", std::string("TheValue"));
+      = Context::GetApplicationContext().CreateChildContext("TheKey", std::string("TheValue"));
   pipeline.Send(request, withValueContext);
 }
