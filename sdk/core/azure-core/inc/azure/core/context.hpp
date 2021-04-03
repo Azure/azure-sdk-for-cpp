@@ -176,7 +176,10 @@ namespace Azure { namespace Core {
      * @return `true` if this context, or the tree branch this context belongs to has a deadline
      * associated with it. `false` otherwise.
      */
-    bool HasDeadline() const { return GetDeadline() != (DateTime::max)(); }
+    bool HasDeadline() const
+    {
+      return static_cast<DateTime::time_point>(GetDeadline()) != (DateTime::max)();
+    }
 
     /**
      * @brief Check whether the context has a key matching \p key parameter in it itself, or in the

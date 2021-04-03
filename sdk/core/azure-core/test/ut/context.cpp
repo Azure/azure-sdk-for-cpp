@@ -274,7 +274,7 @@ TEST(Context, Deadline)
                         .CreateChildContext("key", "val")
                         .CreateChildContext("key2", "val2");
 
-    EXPECT_TRUE(ctx.HasDeadline());
+    EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), deadline);
   }
 
@@ -286,7 +286,7 @@ TEST(Context, Deadline)
                         .CreateChildContext("key", "val")
                         .CreateChildContext("key2", "val2");
 
-    EXPECT_TRUE(ctx.HasDeadline());
+    EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
   }
 }
