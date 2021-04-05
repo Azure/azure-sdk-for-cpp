@@ -212,25 +212,29 @@ stages:
             # because another job has already pushed to the same branch it
             # can be re-run.
             - ${{ each artifact in parameters.Artifacts }}:
-              - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
-                parameters:
-                  ArtifactName: ${{ artifact.Name }}
-                  VcpkgPortName: ${{ artifact.VcpkgPortName }}
-                  DisplayNameExtension: ${{ artifact.Name }}
-                  TestRelease: true
-                  TestReleaseRef: $(Build.SourceVersion)
+              # Only run vcpkg publish if the artifact has a "VcpkgPortName"
+              # property. Absence of VcpkgPortName implies that the artifact 
+              # does not ship to vcpkg.
+              - ${{ if ne(artifact.VcpkgPortName, '') }}:
+                - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
+                  parameters:
+                    ArtifactName: ${{ artifact.Name }}
+                    VcpkgPortName: ${{ artifact.VcpkgPortName }}
+                    DisplayNameExtension: ${{ artifact.Name }}
+                    TestRelease: true
+                    TestReleaseRef: $(Build.SourceVersion)
 
-              # Reset commit after vcpkg-publish.yml so git-push-changes.yml
-              # has changes to commit and push, and all changes go into one
-              # commit
-              - pwsh: |
-                  Write-Host "git reset HEAD^"
-                  git reset HEAD^
+                # Reset commit after vcpkg-publish.yml so git-push-changes.yml
+                # has changes to commit and push, and all changes go into one
+                # commit
+                - pwsh: |
+                    Write-Host "git reset HEAD^"
+                    git reset HEAD^
 
-                  Write-Host "git status"
-                  git status
-                displayName: Reset commit
-                workingDirectory: $(Pipeline.Workspace)/vcpkg
+                    Write-Host "git status"
+                    git status
+                  displayName: Reset commit
+                  workingDirectory: $(Pipeline.Workspace)/vcpkg
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:
