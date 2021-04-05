@@ -173,8 +173,7 @@ public:
     //   Must end with a /"
     const bool weak = m_value && (m_value.Value().length() >= 4)
         && ((m_value.Value()[0] == 'W') && (m_value.Value()[1] == '/')
-            && (m_value.Value()[2] == '"')
-            && (m_value.Value()[m_value.Value().size() - 1] == '"'));
+            && (m_value.Value()[2] == '"') && (m_value.Value()[m_value.Value().size() - 1] == '"'));
 
     return weak;
   }

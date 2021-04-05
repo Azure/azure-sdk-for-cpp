@@ -196,8 +196,7 @@ namespace Azure { namespace Storage { namespace Test {
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
       EXPECT_NO_THROW(
-          permissionKey
-          = client3.Create(1024, options3).Value.SmbProperties.PermissionKey.Value());
+          permissionKey = client3.Create(1024, options3).Value.SmbProperties.PermissionKey.Value());
       auto result3 = client3.GetProperties().Value.SmbProperties.PermissionKey;
       EXPECT_TRUE(result3.HasValue());
       EXPECT_EQ(permissionKey, result3.Value());
@@ -636,9 +635,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(result = fileClient.Download(downloadOptions).Value);
         auto resultBuffer = result.BodyStream->ReadToEnd(Core::Context());
         EXPECT_EQ(rangeContent, resultBuffer);
-        EXPECT_EQ(
-            downloadOptions.Range.Value().Length.Value(),
-            result.ContentRange.Length.Value());
+        EXPECT_EQ(downloadOptions.Range.Value().Length.Value(), result.ContentRange.Length.Value());
         EXPECT_EQ(downloadOptions.Range.Value().Offset, result.ContentRange.Offset);
         EXPECT_EQ(static_cast<int64_t>(numOfChunks) * rangeSize, result.FileSize);
       }

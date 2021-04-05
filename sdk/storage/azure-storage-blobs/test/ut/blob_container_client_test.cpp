@@ -578,8 +578,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
-          blobContentInfo.EncryptionKeySha256.Value(),
-          options.CustomerProvidedKey.Value().KeyHash);
+          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
 
       bodyStream.Rewind();
       EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
@@ -616,8 +615,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
-          blobContentInfo.EncryptionKeySha256.Value(),
-          options.CustomerProvidedKey.Value().KeyHash);
+          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
       EXPECT_NO_THROW(pageBlob.UploadPages(0, bodyStream));

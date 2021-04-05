@@ -187,8 +187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
         {
-          newOptions.Range.Value().Length
-              = options.Range.Value().Length.Value() - retryInfo.Offset;
+          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryInfo.Offset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {

@@ -544,8 +544,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 _detail::QueryTimeout,
-                _internal::UrlEncodeQueryParameter(
-                    std::to_string(createOptions.Timeout.Value())));
+                _internal::UrlEncodeQueryParameter(std::to_string(createOptions.Timeout.Value())));
           }
           request.SetHeader(_detail::HeaderVersion, createOptions.ApiVersionParameter);
           if (createOptions.Resource.HasValue())
@@ -691,8 +690,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 _detail::QueryPathGetPropertiesAction,
-                _internal::UrlEncodeQueryParameter(
-                    getPropertiesOptions.Action.Value().ToString()));
+                _internal::UrlEncodeQueryParameter(getPropertiesOptions.Action.Value().ToString()));
           }
           if (getPropertiesOptions.Upn.HasValue())
           {
@@ -703,8 +701,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           if (getPropertiesOptions.LeaseIdOptional.HasValue())
           {
-            request.SetHeader(
-                _detail::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.Value());
+            request.SetHeader(_detail::HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.Value());
           }
           if (getPropertiesOptions.IfMatch.HasValue())
           {
@@ -756,8 +753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 _detail::QueryTimeout,
-                _internal::UrlEncodeQueryParameter(
-                    std::to_string(deleteOptions.Timeout.Value())));
+                _internal::UrlEncodeQueryParameter(std::to_string(deleteOptions.Timeout.Value())));
           }
           request.SetHeader(_detail::HeaderVersion, deleteOptions.ApiVersionParameter);
           if (deleteOptions.RecursiveOptional.HasValue())
@@ -1013,8 +1009,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           if (flushDataOptions.CacheControl.HasValue())
           {
-            request.SetHeader(
-                _detail::HeaderCacheControl, flushDataOptions.CacheControl.Value());
+            request.SetHeader(_detail::HeaderCacheControl, flushDataOptions.CacheControl.Value());
           }
           if (flushDataOptions.ContentType.HasValue())
           {
@@ -1047,15 +1042,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.SetHeader(
                 _detail::HeaderIfModifiedSince,
-                flushDataOptions.IfModifiedSince.Value().ToString(
-                    DateTime::DateFormat::Rfc1123));
+                flushDataOptions.IfModifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
           }
           if (flushDataOptions.IfUnmodifiedSince.HasValue())
           {
             request.SetHeader(
                 _detail::HeaderIfUnmodifiedSince,
-                flushDataOptions.IfUnmodifiedSince.Value().ToString(
-                    DateTime::DateFormat::Rfc1123));
+                flushDataOptions.IfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
           }
           request.SetHeader(_detail::HeaderVersion, flushDataOptions.ApiVersionParameter);
           return FlushDataParseResult(context, pipeline.Send(request, context));

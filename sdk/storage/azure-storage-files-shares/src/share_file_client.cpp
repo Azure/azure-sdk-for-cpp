@@ -123,9 +123,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -230,8 +229,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         protocolLayerOptions.Range = std::string("bytes=")
             + std::to_string(options.Range.Value().Offset) + std::string("-")
-            + std::to_string(options.Range.Value().Offset
-                             + options.Range.Value().Length.Value() - 1);
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
       }
       else
       {
@@ -269,8 +268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryInfo.Offset;
         if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
         {
-          newOptions.Range.Value().Length
-              = options.Range.Value().Length.Value() - retryInfo.Offset;
+          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryInfo.Offset;
         }
 
         auto newResponse = Download(newOptions, context);
@@ -541,8 +539,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
             + std::to_string(options.Range.Value().Offset) + std::string("-")
-            + std::to_string(options.Range.Value().Offset
-                             + options.Range.Value().Length.Value() - 1);
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
       }
       else
       {
@@ -568,8 +566,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
             + std::to_string(options.Range.Value().Offset) + std::string("-")
-            + std::to_string(options.Range.Value().Offset
-                             + options.Range.Value().Length.Value() - 1);
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
       }
       else
       {
@@ -868,9 +866,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -972,9 +969,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -1081,8 +1077,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
     if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
-        && options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm
-            == HashAlgorithm::Md5)
+        && options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm == HashAlgorithm::Md5)
     {
       // IfMatchContentHash now only supports Crc64 hash algorithm.
       std::abort();
