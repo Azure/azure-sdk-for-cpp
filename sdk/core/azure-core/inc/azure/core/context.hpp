@@ -37,7 +37,7 @@ namespace Azure { namespace Core {
   };
 
   /**
-   * @brief A context is a node within a tree that represents deadline times and key/value pairs.
+   * @brief A context is a node within a tree that represents deadlines and key/value pairs.
    */
   class Context {
   public:
@@ -148,8 +148,8 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get a deadline time point associated with this context or the branch of contexts this
-     * context belongs to.
+     * @brief Get a deadline associated with this context or the branch of contexts this context
+     * belongs to.
      *
      * @return A deadline associated with the context found; `Azure::DateTime::max()` value if a
      * specific value can't be found.
@@ -182,18 +182,6 @@ namespace Azure { namespace Core {
       std::abort();
       // It should be expected that keys may not exist
       //  That implies we return T* and NOT a T&
-    }
-
-    /**
-     * @brief Check whether the context has a deadline in it itself, or in the branch the context
-     * belongs to.
-     *
-     * @return `true` if this context, or the tree branch this context belongs to has a deadline
-     * associated with it. `false` otherwise.
-     */
-    bool HasDeadline() const
-    {
-      return static_cast<DateTime::time_point>(GetDeadline()) != (DateTime::max)();
     }
 
     /**

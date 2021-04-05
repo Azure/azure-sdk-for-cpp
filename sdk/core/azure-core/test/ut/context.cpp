@@ -334,28 +334,21 @@ TEST(Context, Deadline)
 
   {
     Context ctx;
-    EXPECT_FALSE(ctx.HasDeadline());
     EXPECT_EQ(ctx.GetDeadline(), Azure::DateTime::max());
 
     ctx.Cancel();
-    EXPECT_TRUE(ctx.HasDeadline());
     EXPECT_EQ(ctx.GetDeadline(), Azure::DateTime::min());
   }
 
   {
     Context ctx;
     ctx = ctx.WithDeadline(deadline);
-
-    EXPECT_TRUE(ctx.HasDeadline());
     EXPECT_EQ(ctx.GetDeadline(), deadline);
   }
 
   {
     Context ctx;
-
     auto childCtx = ctx.WithDeadline(deadline).WithValue(key1, "val").WithValue(key2, "val2");
-
-    EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), deadline);
   }
 
@@ -365,7 +358,6 @@ TEST(Context, Deadline)
 
     auto childCtx = ctx.WithDeadline(deadline).WithValue(key1, "val").WithValue(key2, "val2");
 
-    EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
   }
 }

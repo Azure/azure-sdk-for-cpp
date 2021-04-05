@@ -29,7 +29,7 @@
 - Added `Azure::Core::Operation<T>::GetRawResponse()`.
 - Added `Azure::Core::PackageVersion`.
 - Added support for logging to console when `AZURE_LOG_LEVEL` environment variable is set.
-- Added `Azure::Core::Context::GetDeadline()` and `Azure::Core::Context::HasDeadline()`.
+- Added `Azure::Core::Context::GetDeadline()`.
 
 ### Breaking Changes
 
