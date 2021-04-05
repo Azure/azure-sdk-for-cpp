@@ -8,7 +8,8 @@
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
-using namespace Azure::Security::KeyVault::Common;
+using namespace Azure::Security::KeyVault;
+
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
     Azure::Core::Context& context)
@@ -51,8 +52,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOperation(
-    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
-        keyvaultPipeline,
+    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
     Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response)
     : m_pipeline(keyvaultPipeline)
 {

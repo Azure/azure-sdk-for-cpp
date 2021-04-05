@@ -8,8 +8,8 @@
 
 #pragma once
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _detail {
+namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
   /**************** KeyVault QueryParameters *********/
   static constexpr char const ApiVersion[] = "api-version";
-}}}}} // namespace Azure::Security::KeyVault::Common::_detail
+}}}} // namespace Azure::Security::KeyVault::_detail

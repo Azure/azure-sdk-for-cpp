@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common {
+namespace Azure { namespace Security { namespace KeyVault {
 
   /**
    * @brief The general exception thrown by the Key Vault SDK clients.
@@ -42,4 +42,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
         const std::string& message,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
   };
-}}}} // namespace Azure::Security::KeyVault::Common
+}}} // namespace Azure::Security::KeyVault

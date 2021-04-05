@@ -8,7 +8,7 @@
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
-using namespace Azure::Security::KeyVault::Common;
+using namespace Azure::Security::KeyVault;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::Context& context)
@@ -50,8 +50,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
-    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
-        keyvaultPipeline,
+    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
     Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
     : m_pipeline(keyvaultPipeline)
 {

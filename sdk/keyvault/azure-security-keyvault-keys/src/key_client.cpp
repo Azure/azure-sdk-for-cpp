@@ -71,7 +71,7 @@ KeyClient::KeyClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>(
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(

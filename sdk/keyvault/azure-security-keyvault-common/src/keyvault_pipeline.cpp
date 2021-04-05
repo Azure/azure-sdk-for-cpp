@@ -7,7 +7,7 @@
 #include "azure/keyvault/common/keyvault_constants.hpp"
 #include "azure/keyvault/common/keyvault_exception.hpp"
 
-using namespace Azure::Security::KeyVault::Common;
+using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
 namespace {
