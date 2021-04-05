@@ -12,6 +12,12 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::IO::_internal;
 
+char const Azure::Core::Http::_internal::HttpShared::ContentType[] = "content-type";
+char const Azure::Core::Http::_internal::HttpShared::ApplicationJson[] = "application/json";
+char const Azure::Core::Http::_internal::HttpShared::Accept[] = "accept";
+char const Azure::Core::Http::_internal::HttpShared::MsRequestId[] = "x-ms-request-id";
+char const Azure::Core::Http::_internal::HttpShared::MsClientRequestId[] = "x-ms-client-request-id";
+
 void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
