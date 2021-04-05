@@ -274,146 +274,140 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @details Applies an HTTP header with a unique ID to each HTTP request, so that each
      * individual request can be traced for troubleshooting.
      */
-    static int GetRetryCount(Context const& context);
-  }; // namespace _internal
+    class RequestIdPolicy : public HttpPolicy {
+    private:
+      constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
 
-  /**
-   * @brief HTTP Request ID policy.
-   *
-   * @details Applies an HTTP header with a unique ID to each HTTP request, so that each
-   * individual request can be traced for troubleshooting.
-   */
-  class RequestIdPolicy : public HttpPolicy {
-  private:
-    constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
+    public:
+      /**
+       * @brief Constructs HTTP request ID policy.
+       */
+      explicit RequestIdPolicy() {}
 
-  public:
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<RequestIdPolicy>(*this);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy nextHttpPolicy,
+          Context const& ctx) const override
+      {
+        auto uuid = Uuid::CreateUuid().ToString();
+
+        request.SetHeader(RequestIdHeader, uuid);
+        return nextHttpPolicy.Send(request, ctx);
+      }
+    };
+
     /**
-     * @brief Constructs HTTP request ID policy.
-     */
-    explicit RequestIdPolicy() {}
-
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<RequestIdPolicy>(*this);
-    }
-
-    std::unique_ptr<RawResponse> Send(
-        Request& request,
-        NextHttpPolicy nextHttpPolicy,
-        Context const& ctx) const override
-    {
-      auto uuid = Uuid::CreateUuid().ToString();
-
-      request.SetHeader(RequestIdHeader, uuid);
-      return nextHttpPolicy.Send(request, ctx);
-    }
-  };
-
-  /**
-   * @brief HTTP telemetry policy.
-   *
-   * @details Applies an HTTP header with a component name and version to each HTTP request,
-   * includes Azure SDK version information, and operating system information.
-   * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
-   */
-  class TelemetryPolicy : public HttpPolicy {
-    std::string const m_telemetryId;
-
-    static std::string BuildTelemetryId(
-        std::string const& componentName,
-        std::string const& componentVersion,
-        std::string const& applicationId);
-
-  public:
-    /**
-     * @brief Construct HTTP telemetry policy.
+     * @brief HTTP telemetry policy.
      *
-     * @param componentName Azure SDK component name (e.g. "storage.blobs").
-     * @param componentVersion Azure SDK component version (e.g. "11.0.0").
-     * @param options The optional parameters for the policy (e.g. "AzCopy")
+     * @details Applies an HTTP header with a component name and version to each HTTP request,
+     * includes Azure SDK version information, and operating system information.
+     * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
      */
-    explicit TelemetryPolicy(
-        std::string const& componentName,
-        std::string const& componentVersion,
-        TelemetryOptions options = TelemetryOptions())
-        : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
-    {
-    }
+    class TelemetryPolicy : public HttpPolicy {
+      std::string const m_telemetryId;
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<TelemetryPolicy>(*this);
-    }
+      static std::string BuildTelemetryId(
+          std::string const& componentName,
+          std::string const& componentVersion,
+          std::string const& applicationId);
 
-    std::unique_ptr<RawResponse> Send(
-        Request& request,
-        NextHttpPolicy nextHttpPolicy,
-        Context const& ctx) const override;
-  };
+    public:
+      /**
+       * @brief Construct HTTP telemetry policy.
+       *
+       * @param componentName Azure SDK component name (e.g. "storage.blobs").
+       * @param componentVersion Azure SDK component version (e.g. "11.0.0").
+       * @param options The optional parameters for the policy (e.g. "AzCopy")
+       */
+      explicit TelemetryPolicy(
+          std::string const& componentName,
+          std::string const& componentVersion,
+          TelemetryOptions options = TelemetryOptions())
+          : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
+      {
+      }
 
-  /**
-   * @brief Bearer Token authentication policy.
-   */
-  class BearerTokenAuthenticationPolicy : public HttpPolicy {
-  private:
-    std::shared_ptr<Credentials::TokenCredential const> const m_credential;
-    Credentials::TokenRequestContext m_tokenRequestContext;
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<TelemetryPolicy>(*this);
+      }
 
-    mutable Credentials::AccessToken m_accessToken;
-    mutable std::mutex m_accessTokenMutex;
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy nextHttpPolicy,
+          Context const& ctx) const override;
+    };
 
-    BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
-    void operator=(BearerTokenAuthenticationPolicy const&) = delete;
-
-  public:
     /**
-     * @brief Construct a Bearer Token authentication policy.
+     * @brief Bearer Token authentication policy.
+     */
+    class BearerTokenAuthenticationPolicy : public HttpPolicy {
+    private:
+      std::shared_ptr<Credentials::TokenCredential const> const m_credential;
+      Credentials::TokenRequestContext m_tokenRequestContext;
+
+      mutable Credentials::AccessToken m_accessToken;
+      mutable std::mutex m_accessTokenMutex;
+
+      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
+      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
+
+    public:
+      /**
+       * @brief Construct a Bearer Token authentication policy.
+       *
+       * @param credential An #Azure::Core::TokenCredential to use with this policy.
+       * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext.
+       */
+      explicit BearerTokenAuthenticationPolicy(
+          std::shared_ptr<Credentials::TokenCredential const> credential,
+          Credentials::TokenRequestContext tokenRequestContext)
+          : m_credential(std::move(credential)),
+            m_tokenRequestContext(std::move(tokenRequestContext))
+      {
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<BearerTokenAuthenticationPolicy>(
+            m_credential, m_tokenRequestContext);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy policy,
+          Context const& context) const override;
+    };
+
+    /**
+     * @brief Logs every HTTP request.
      *
-     * @param credential An #Azure::Core::TokenCredential to use with this policy.
-     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext.
+     * @details Logs every HTTP request and response.
+     * @remark See Azure::Core::Diagnostics::Logger.
      */
-    explicit BearerTokenAuthenticationPolicy(
-        std::shared_ptr<Credentials::TokenCredential const> credential,
-        Credentials::TokenRequestContext tokenRequestContext)
-        : m_credential(std::move(credential)), m_tokenRequestContext(std::move(tokenRequestContext))
-    {
-    }
+    class LogPolicy : public HttpPolicy {
+      LogOptions m_options;
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_tokenRequestContext);
-    }
+    public:
+      /**
+       * @brief Constructs HTTP logging policy.
+       */
+      explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
 
-    std::unique_ptr<RawResponse> Send(
-        Request& request,
-        NextHttpPolicy policy,
-        Context const& context) const override;
-  };
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<LogPolicy>(*this);
+      }
 
-  /**
-   * @brief Logs every HTTP request.
-   *
-   * @details Logs every HTTP request and response.
-   * @remark See Azure::Core::Diagnostics::Logger.
-   */
-  class LogPolicy : public HttpPolicy {
-    LogOptions m_options;
-
-  public:
-    /**
-     * @brief Constructs HTTP logging policy.
-     */
-    explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
-
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<LogPolicy>(*this);
-    }
-
-    std::unique_ptr<RawResponse> Send(
-        Request& request,
-        NextHttpPolicy nextHttpPolicy,
-        Context const& ctx) const override;
-  };
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy nextHttpPolicy,
+          Context const& ctx) const override;
+    };
+  } // namespace _internal
 }}}} // namespace Azure::Core::Http::Policies

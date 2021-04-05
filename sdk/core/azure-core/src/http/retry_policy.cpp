@@ -144,7 +144,7 @@ bool ShouldRetryOnResponse(
   return true;
 }
 
-static constexpr char RetryKey[] = "AzureSdkRetryPolicyCounter";
+Context::Key RetryKey;
 } // namespace
 
 int RetryPolicy::GetRetryCount(Context const& context)
@@ -158,7 +158,7 @@ int RetryPolicy::GetRetryCount(Context const& context)
     // ...
     return -1;
   }
-  return *context.Get<int*>(RetryKey);
+  return *context.GetValue<int*>(RetryKey);
 }
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
