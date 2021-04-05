@@ -47,6 +47,8 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
   }
 };
 
+Azure::Core::Context::Key const TheKey;
+
 struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
@@ -59,10 +61,10 @@ struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Azure::Core::Context const& ctx) const override
   {
-    EXPECT_TRUE(ctx.HasKey("TheKey"));
-    if (ctx.HasKey("TheKey"))
+    EXPECT_TRUE(ctx.HasKey(TheKey));
+    if (ctx.HasKey(TheKey))
     {
-      auto value = ctx.GetValue<std::string>("TheKey");
+      auto value = ctx.GetValue<std::string>(TheKey);
       EXPECT_EQ("TheValue", value);
     }
     return nextHttpPolicy.Send(request, ctx);
@@ -223,6 +225,6 @@ TEST(Policy, RetryPolicyKeepContext)
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
   auto withValueContext
-      = Context::GetApplicationContext().CreateChildContext("TheKey", std::string("TheValue"));
+      = Context::GetApplicationContext().WithValue(TheKey, std::string("TheValue"));
   pipeline.Send(request, withValueContext);
 }

@@ -144,7 +144,9 @@ bool ShouldRetryOnResponse(
   return true;
 }
 
-static constexpr char RetryKey[] = "AzureSdkRetryPolicyCounter";
+namespace {
+  Context::Key const RetryKey;
+}
 
 /**
  * @brief Creates a new #Context node from \p parent with the information about the retrying while
