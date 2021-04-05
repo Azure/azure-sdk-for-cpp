@@ -119,7 +119,7 @@ TEST_F(KeyVaultClientTest, DeleteInvalidKey)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -157,7 +157,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -192,7 +192,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -232,7 +232,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -269,7 +269,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
