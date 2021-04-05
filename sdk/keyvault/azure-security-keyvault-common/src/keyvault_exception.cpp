@@ -9,7 +9,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <type_traits>
 
-using namespace Azure::Security::KeyVault::Common;
+using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
 KeyVaultException::KeyVaultException(
