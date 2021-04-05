@@ -15,7 +15,7 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Core::Json::_internal;
-using namespace Azure::Security::KeyVault::Common::_internal;
+using namespace Azure::Security::KeyVault::_internal;
 
 std::string
 Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyOptionsSerialize(

@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
     perOperationPolicies.emplace_back(
@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto blobContainerClient = GetBlobContainerClient(blobContainerName);
     auto response = blobContainerClient.Create(options, context);
     return Azure::Response<BlobContainerClient>(
-        std::move(blobContainerClient), response.ExtractRawResponse());
+        std::move(blobContainerClient), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::DeleteBlobContainerResult> BlobServiceClient::DeleteBlobContainer(
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     std::string destinationBlobContainerName = options.DestinationBlobContainerName.HasValue()
-        ? options.DestinationBlobContainerName.GetValue()
+        ? options.DestinationBlobContainerName.Value()
         : deletedBlobContainerName;
     auto blobContainerClient = GetBlobContainerClient(destinationBlobContainerName);
 
@@ -236,7 +236,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, Azure::Core::Url(blobContainerClient.GetUrl()), protocolLayerOptions, context);
 
     return Azure::Response<BlobContainerClient>(
-        std::move(blobContainerClient), response.ExtractRawResponse());
+        std::move(blobContainerClient), std::move(response.RawResponse));
   }
 
 }}} // namespace Azure::Storage::Blobs

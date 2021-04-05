@@ -50,11 +50,11 @@ int main()
     rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
 
     std::cout << "\t-Create Key" << std::endl;
-    auto storedKey = keyClient.CreateRsaKey(rsaKey).ExtractValue();
+    auto storedKey = keyClient.CreateRsaKey(rsaKey).Value;
     size_t backUpSize = 0;
     {
       std::cout << "\t-Backup Key" << std::endl;
-      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).ExtractValue());
+      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).Value);
       backUpSize = backupKey.size();
 
       // save data to file
@@ -86,7 +86,7 @@ int main()
     inFile.close();
 
     std::cout << "\t-Restore Key" << std::endl;
-    auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
+    auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).Value;
 
     AssertKeysEqual(storedKey.Properties, restoredKey.Properties);
 
@@ -100,7 +100,7 @@ int main()
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
     return 1;
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& e)
+  catch (Azure::Security::KeyVault::KeyVaultException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;
@@ -124,7 +124,7 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
   {
     return false;
   }
-  return left.GetValue() == right.GetValue();
+  return left.Value() == right.Value();
 }
 
 void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& actual)

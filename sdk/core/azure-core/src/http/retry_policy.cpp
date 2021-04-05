@@ -13,6 +13,7 @@
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 typedef decltype(RetryOptions::RetryDelay) Delay;

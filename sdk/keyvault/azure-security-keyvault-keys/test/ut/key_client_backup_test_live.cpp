@@ -56,19 +56,19 @@ TEST_F(KeyVaultClientTest, BackupKey)
     std::this_thread::sleep_for(std::chrono::minutes(2));
   }
   { // Check key is gone
-    EXPECT_THROW(keyClient.GetKey(keyName), Azure::Security::KeyVault::Common::KeyVaultException);
+    EXPECT_THROW(keyClient.GetKey(keyName), Azure::Security::KeyVault::KeyVaultException);
   }
   {
     // Restore
     std::cout << std::endl << "- Restore key";
-    auto respone = keyClient.RestoreKeyBackup(*backUpResponse);
+    auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value);
     CheckValidResponse(backUpResponse);
   }
   {
     // Check key is restored
     auto response = keyClient.GetKey(keyName);
     CheckValidResponse(response);
-    EXPECT_EQ(keyName, response->Name());
+    EXPECT_EQ(keyName, response.Value.Name());
   }
   {
     // Delete

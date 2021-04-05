@@ -108,9 +108,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreateShareResult ret;
     ret.Created = true;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
-    return Azure::Response<Models::CreateShareResult>(std::move(ret), result.ExtractRawResponse());
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
+    return Azure::Response<Models::CreateShareResult>(
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::CreateShareResult> ShareClient::CreateIfNotExists(
@@ -138,7 +139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Share::DeleteOptions();
-    if (options.DeleteSnapshots.HasValue() && options.DeleteSnapshots.GetValue())
+    if (options.DeleteSnapshots.HasValue() && options.DeleteSnapshots.Value())
     {
       protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOption::Include;
     }
@@ -146,7 +147,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeleteShareResult ret;
     ret.Deleted = true;
-    return Azure::Response<Models::DeleteShareResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeleteShareResult>(
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeleteShareResult> ShareClient::DeleteIfExists(
@@ -267,8 +269,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::Share::GetPermission(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
 
-    return Azure::Response<std::string>(
-        result.ExtractValue().FilePermission, result.ExtractRawResponse());
+    return Azure::Response<std::string>(result.Value.FilePermission, std::move(result.RawResponse));
   }
 
   Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
@@ -284,18 +285,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto result = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
         m_shareUrl, *m_pipeline, context, protocolLayerOptions);
     Models::ListFilesAndDirectoriesSinglePageResult ret;
-    ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
-    ret.ShareName = std::move(result->ShareName);
-    ret.ShareSnapshot = std::move(result->ShareSnapshot);
-    ret.DirectoryPath = std::move(result->DirectoryPath);
-    ret.Prefix = std::move(result->Prefix);
-    ret.PageSizeHint = result->PageSizeHint;
-    ret.ContinuationToken = std::move(result->ContinuationToken);
-    ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);
-    ret.FileItems = std::move(result->SinglePage.FileItems);
+    ret.ServiceEndpoint = std::move(result.Value.ServiceEndpoint);
+    ret.ShareName = std::move(result.Value.ShareName);
+    ret.ShareSnapshot = std::move(result.Value.ShareSnapshot);
+    ret.DirectoryPath = std::move(result.Value.DirectoryPath);
+    ret.Prefix = std::move(result.Value.Prefix);
+    ret.PageSizeHint = result.Value.PageSizeHint;
+    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
+    ret.DirectoryItems = std::move(result.Value.SinglePage.DirectoryItems);
+    ret.FileItems = std::move(result.Value.SinglePage.FileItems);
 
     return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
 }}}} // namespace Azure::Storage::Files::Shares
