@@ -14,6 +14,7 @@
   - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
   - `GetMajorVersion`.
   - `GetMinorVersion`.
+- Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
 - Changes to `Azure::Core::Context`:
   - Renamed `Get()` to `GetValue()`.
   - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.

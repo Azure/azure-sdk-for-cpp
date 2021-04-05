@@ -218,7 +218,7 @@ public:
   /**
    * @brief Get the contained value.
    */
-  const T& GetValue() const& noexcept
+  const T& Value() const& noexcept
   {
     if (!m_hasValue)
     {
@@ -233,7 +233,7 @@ public:
   /**
    * @brief Get the contained value reference.
    */
-  T& GetValue() & noexcept
+  T& Value() & noexcept
   {
     if (!m_hasValue)
     {
@@ -248,7 +248,7 @@ public:
   /**
    * @brief Get the contained value (as rvalue reference).
    */
-  T&& GetValue() && noexcept
+  T&& Value() && noexcept
   {
     if (!m_hasValue)
     {

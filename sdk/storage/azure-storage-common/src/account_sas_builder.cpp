@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Sas {
     }
 
     std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().ToString(
+        ? StartsOn.Value().ToString(
             Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = ExpiresOn.ToString(
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
         + resourceTypes + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
         + _internal::DefaultSasVersion + "\n";
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Sas {
     builder.AppendQueryParameter("se", expiresOnStr);
     if (IPRange.HasValue())
     {
-      builder.AppendQueryParameter("sip", _internal::UrlEncodeQueryParameter(IPRange.GetValue()));
+      builder.AppendQueryParameter("sip", _internal::UrlEncodeQueryParameter(IPRange.Value()));
     }
     builder.AppendQueryParameter("spr", _internal::UrlEncodeQueryParameter(protocol));
     builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));

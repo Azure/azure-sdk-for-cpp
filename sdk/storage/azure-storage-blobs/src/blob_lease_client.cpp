@@ -31,8 +31,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = _detail::BlobRestClient::Blob::AcquireLease(
-          *(m_blobClient.GetValue().m_pipeline),
-          m_blobClient.GetValue().m_blobUrl,
+          *(m_blobClient.Value().m_pipeline),
+          m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
           context);
 
@@ -59,8 +59,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::abort();
       }
       auto response = _detail::BlobRestClient::BlobContainer::AcquireLease(
-          *(m_blobContainerClient.GetValue().m_pipeline),
-          m_blobContainerClient.GetValue().m_blobContainerUrl,
+          *(m_blobContainerClient.Value().m_pipeline),
+          m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
           context);
 
@@ -93,8 +93,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = _detail::BlobRestClient::Blob::RenewLease(
-          *(m_blobClient.GetValue().m_pipeline),
-          m_blobClient.GetValue().m_blobUrl,
+          *(m_blobClient.Value().m_pipeline),
+          m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
           context);
 
@@ -121,8 +121,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = _detail::BlobRestClient::BlobContainer::RenewLease(
-          *(m_blobContainerClient.GetValue().m_pipeline),
-          m_blobContainerClient.GetValue().m_blobContainerUrl,
+          *(m_blobContainerClient.Value().m_pipeline),
+          m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
           context);
 
@@ -155,8 +155,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = _detail::BlobRestClient::Blob::ReleaseLease(
-          *(m_blobClient.GetValue().m_pipeline),
-          m_blobClient.GetValue().m_blobUrl,
+          *(m_blobClient.Value().m_pipeline),
+          m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
           context);
 
@@ -182,8 +182,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = _detail::BlobRestClient::BlobContainer::ReleaseLease(
-          *(m_blobContainerClient.GetValue().m_pipeline),
-          m_blobContainerClient.GetValue().m_blobContainerUrl,
+          *(m_blobContainerClient.Value().m_pipeline),
+          m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
           context);
 
@@ -217,8 +217,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = _detail::BlobRestClient::Blob::ChangeLease(
-          *(m_blobClient.GetValue().m_pipeline),
-          m_blobClient.GetValue().m_blobUrl,
+          *(m_blobClient.Value().m_pipeline),
+          m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
           context);
 
@@ -246,8 +246,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = _detail::BlobRestClient::BlobContainer::ChangeLease(
-          *(m_blobContainerClient.GetValue().m_pipeline),
-          m_blobContainerClient.GetValue().m_blobContainerUrl,
+          *(m_blobContainerClient.Value().m_pipeline),
+          m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
           context);
 
@@ -280,8 +280,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
       auto response = _detail::BlobRestClient::Blob::BreakLease(
-          *(m_blobClient.GetValue().m_pipeline),
-          m_blobClient.GetValue().m_blobUrl,
+          *(m_blobClient.Value().m_pipeline),
+          m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
           context);
 
@@ -307,8 +307,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       auto response = _detail::BlobRestClient::BlobContainer::BreakLease(
-          *(m_blobContainerClient.GetValue().m_pipeline),
-          m_blobContainerClient.GetValue().m_blobContainerUrl,
+          *(m_blobContainerClient.Value().m_pipeline),
+          m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
           context);
 

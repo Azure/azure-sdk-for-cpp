@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     {
       return false;
     }
-    if (lhs.Days.HasValue() && rhs.Days.HasValue() && lhs.Days.GetValue() != rhs.Days.GetValue())
+    if (lhs.Days.HasValue() && rhs.Days.HasValue() && lhs.Days.Value() != rhs.Days.Value())
     {
       return false;
     }
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
       return false;
     }
     if (lhs.DefaultIndexDocumentPath.HasValue() && rhs.DefaultIndexDocumentPath.HasValue()
-        && lhs.DefaultIndexDocumentPath.GetValue() != rhs.DefaultIndexDocumentPath.GetValue())
+        && lhs.DefaultIndexDocumentPath.Value() != rhs.DefaultIndexDocumentPath.Value())
     {
       return false;
     }
@@ -54,12 +54,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
       return false;
     }
     if (lhs.ErrorDocument404Path.HasValue() && rhs.ErrorDocument404Path.HasValue()
-        && lhs.ErrorDocument404Path.GetValue() != rhs.ErrorDocument404Path.GetValue())
+        && lhs.ErrorDocument404Path.Value() != rhs.ErrorDocument404Path.Value())
     {
       return false;
     }
     if (lhs.IndexDocument.HasValue() && rhs.IndexDocument.HasValue()
-        && lhs.IndexDocument.GetValue() != rhs.IndexDocument.GetValue())
+        && lhs.IndexDocument.Value() != rhs.IndexDocument.Value())
     {
       return false;
     }
@@ -276,8 +276,8 @@ namespace Azure { namespace Storage { namespace Test {
         == properties.HourMetrics.IncludeApis.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.HourMetrics.IncludeApis.GetValue(),
-          properties.HourMetrics.IncludeApis.GetValue());
+          downloadedProperties.HourMetrics.IncludeApis.Value(),
+          properties.HourMetrics.IncludeApis.Value());
     }
     EXPECT_EQ(
         downloadedProperties.HourMetrics.RetentionPolicy, properties.HourMetrics.RetentionPolicy);
@@ -291,8 +291,8 @@ namespace Azure { namespace Storage { namespace Test {
         == properties.MinuteMetrics.IncludeApis.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.MinuteMetrics.IncludeApis.GetValue(),
-          properties.MinuteMetrics.IncludeApis.GetValue());
+          downloadedProperties.MinuteMetrics.IncludeApis.Value(),
+          properties.MinuteMetrics.IncludeApis.Value());
     }
     EXPECT_EQ(
         downloadedProperties.MinuteMetrics.RetentionPolicy,
@@ -304,8 +304,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (downloadedProperties.DefaultServiceVersion.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.DefaultServiceVersion.GetValue(),
-          properties.DefaultServiceVersion.GetValue());
+          downloadedProperties.DefaultServiceVersion.Value(),
+          properties.DefaultServiceVersion.Value());
     }
     EXPECT_EQ(downloadedProperties.Cors, properties.Cors);
 
@@ -341,7 +341,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
-      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.GetValue()));
+      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.Value()));
     }
   }
 
@@ -384,11 +384,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(deletedContainerItem.Name, containerName);
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
     EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
-    EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
+    EXPECT_FALSE(deletedContainerItem.VersionId.Value().empty());
     EXPECT_TRUE(deletedContainerItem.Details.DeletedOn.HasValue());
-    EXPECT_TRUE(IsValidTime(deletedContainerItem.Details.DeletedOn.GetValue()));
+    EXPECT_TRUE(IsValidTime(deletedContainerItem.Details.DeletedOn.Value()));
     EXPECT_TRUE(deletedContainerItem.Details.RemainingRetentionDays.HasValue());
-    EXPECT_GE(deletedContainerItem.Details.RemainingRetentionDays.GetValue(), 0);
+    EXPECT_GE(deletedContainerItem.Details.RemainingRetentionDays.Value(), 0);
 
     std::string containerName2 = LowercaseRandomString();
     for (int i = 0; i < 60; ++i)
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Storage::Blobs::UndeleteBlobContainerOptions options;
         options.DestinationBlobContainerName = containerName2;
         m_blobServiceClient.UndeleteBlobContainer(
-            deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue(), options);
+            deletedContainerItem.Name, deletedContainerItem.VersionId.Value(), options);
         break;
       }
       catch (StorageException& e)

@@ -19,7 +19,7 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
       {"Warmup", p.Warmup}};
   if (p.Port)
   {
-    j["Port"] = p.Port.GetValue();
+    j["Port"] = p.Port.Value();
   }
   else
   {
@@ -27,7 +27,7 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
   }
   if (p.Rate)
   {
-    j["Rate"] = p.Rate.GetValue();
+    j["Rate"] = p.Rate.Value();
   }
   else
   {

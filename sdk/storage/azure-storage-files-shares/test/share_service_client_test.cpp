@@ -11,7 +11,7 @@ namespace Azure { namespace Storage { namespace Test {
   namespace {
     bool NullableEquals(const Azure::Nullable<bool>& lhs, const Azure::Nullable<bool>& rhs)
     {
-      return (lhs.HasValue() && rhs.HasValue() && (lhs.GetValue() == rhs.GetValue()))
+      return (lhs.HasValue() && rhs.HasValue() && (lhs.Value() == rhs.Value()))
           || (!lhs.HasValue() && !rhs.HasValue());
     }
   } // namespace
@@ -200,8 +200,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.HourMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.HourMetrics.RetentionPolicy.Days.GetValue(),
-          properties.HourMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.HourMetrics.RetentionPolicy.Days.Value(),
+          properties.HourMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
@@ -217,8 +217,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.MinuteMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.GetValue(),
-          properties.MinuteMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.Value(),
+          properties.MinuteMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.Cors.size(), properties.Cors.size());
@@ -296,8 +296,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.HourMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.HourMetrics.RetentionPolicy.Days.GetValue(),
-          properties.HourMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.HourMetrics.RetentionPolicy.Days.Value(),
+          properties.HourMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
@@ -313,8 +313,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.MinuteMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.GetValue(),
-          properties.MinuteMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.Value(),
+          properties.MinuteMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.Cors.size(), properties.Cors.size());
@@ -333,7 +333,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NE(properties.Cors.end(), iter);
     }
 
-    EXPECT_EQ(true, properties.Protocol.GetValue().Settings.Multichannel.Enabled);
+    EXPECT_EQ(true, properties.Protocol.Value().Settings.Multichannel.Enabled);
 
     premiumFileShareServiceClient->SetProperties(originalProperties);
   }
