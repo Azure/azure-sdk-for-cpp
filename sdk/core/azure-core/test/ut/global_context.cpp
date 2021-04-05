@@ -15,6 +15,7 @@
 #include <azure/core/context.hpp>
 
 #include <chrono>
+#include <stdexcept>
 #include <string>
 #include <thread>
 
@@ -24,12 +25,12 @@ TEST(Context, ApplicationContext)
 {
   Context appContext = Context::GetApplicationContext();
 
-  EXPECT_FALSE(appContext.HasKey("Key"));
-  EXPECT_FALSE(appContext.HasKey("key"));
-  EXPECT_FALSE(appContext.HasKey("Value"));
-  EXPECT_FALSE(appContext.HasKey("value"));
-  EXPECT_FALSE(appContext.HasKey("1"));
-  EXPECT_FALSE(appContext.HasKey(""));
+  EXPECT_THROW(appContext.Get<int>("Key"), std::logic_error);
+  EXPECT_THROW(appContext.Get<int>("key"), std::logic_error);
+  EXPECT_THROW(appContext.Get<int>("Value"), std::logic_error);
+  EXPECT_THROW(appContext.Get<int>("value"), std::logic_error);
+  EXPECT_THROW(appContext.Get<int>("1"), std::logic_error);
+  EXPECT_THROW(appContext.Get<int>(""), std::logic_error);
 
   auto duration = std::chrono::milliseconds(250);
   EXPECT_FALSE(appContext.IsCancelled());

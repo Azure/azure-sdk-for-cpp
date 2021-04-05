@@ -169,30 +169,6 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Check whether the context has a key matching \p key parameter in it itself, or in the
-     * branch the context belongs to.
-     *
-     * @param key A key associated with a context to find.
-     *
-     * @return `true` if this context, or the tree branch this context belongs to has a \p key
-     * associated with it. `false` otherwise.
-     */
-    bool HasKey(const std::string& key) const
-    {
-      if (!key.empty())
-      {
-        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
-        {
-          if (ptr->Key == key)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    /**
      * @brief Cancels the context.
      */
     void Cancel()
