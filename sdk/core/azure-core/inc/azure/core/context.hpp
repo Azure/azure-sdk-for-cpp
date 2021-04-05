@@ -40,6 +40,23 @@ namespace Azure { namespace Core {
   class Context {
   public:
     /**
+     * @brief A context key.
+     */
+    class Key final {
+      Key const* m_uniqueAddress;
+
+    public:
+      Key() : m_uniqueAddress(this) {}
+
+      bool operator==(Key const& other) const
+      {
+        return this->m_uniqueAddress == other.m_uniqueAddress;
+      }
+
+      bool operator!=(Key const& other) const { return !(*this == other); }
+    };
+
+    /**
      * @brief A type used to provide a point in time for context expiration.
      */
     using time_point = std::chrono::system_clock::time_point;
@@ -49,7 +66,7 @@ namespace Azure { namespace Core {
     {
       std::shared_ptr<ContextSharedState> Parent;
       std::atomic_int64_t CancelAtMsecSinceEpoch;
-      std::string Key;
+      Context::Key Key;
       std::shared_ptr<void> Value;
       const std::type_info& ValueType;
 
@@ -82,7 +99,7 @@ namespace Azure { namespace Core {
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
           time_point cancelAt,
-          const std::string& key,
+          Context::Key const& key,
           T value) // NOTE, should this be T&&
           : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Key(key),
             Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
@@ -131,7 +148,7 @@ namespace Azure { namespace Core {
      *
      * @return A child context with no expiration and the \p key and \p value associated with it.
      */
-    template <class T> Context WithValue(const std::string& key, T&& value) const
+    template <class T> Context WithValue(Key const& key, T&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, (time_point::max)(), key, std::forward<T>(value))};
@@ -146,21 +163,18 @@ namespace Azure { namespace Core {
      * @return A value associated with the context found; an empty value if a specific value can't
      * be found.
      */
-    template <class T> const T& Get(const std::string& key) const
+    template <class T> const T& Get(Key const& key) const
     {
-      if (!key.empty())
+      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
-        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+        if (ptr->Key == key)
         {
-          if (ptr->Key == key)
+          if (typeid(T) != ptr->ValueType)
           {
-            if (typeid(T) != ptr->ValueType)
-            {
-              // type mismatch
-              std::abort();
-            }
-            return *reinterpret_cast<const T*>(ptr->Value.get());
+            // type mismatch
+            std::abort();
           }
+          return *reinterpret_cast<const T*>(ptr->Value.get());
         }
       }
       std::abort();
@@ -177,16 +191,13 @@ namespace Azure { namespace Core {
      * @return `true` if this context, or the tree branch this context belongs to has a \p key
      * associated with it. `false` otherwise.
      */
-    bool HasKey(const std::string& key) const
+    bool HasKey(Key const& key) const
     {
-      if (!key.empty())
+      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
-        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+        if (ptr->Key == key)
         {
-          if (ptr->Key == key)
-          {
-            return true;
-          }
+          return true;
         }
       }
       return false;
