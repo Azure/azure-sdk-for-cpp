@@ -23,7 +23,7 @@ inline Azure::Core::OperationStatus CheckCompleted(Azure::Core::Http::RawRespons
     case Azure::Core::Http::HttpStatusCode::NotFound:
       return Azure::Core::OperationStatus::Running;
     default:
-      throw Azure::Security::KeyVault::Common::KeyVaultException::CreateFromResponse(response);
+      throw Azure::Security::KeyVault::KeyVaultException::CreateFromResponse(response);
   }
 }
 } // namespace
@@ -54,8 +54,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOperation(
-    std::shared_ptr<Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline>
-        keyvaultPipeline,
+    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
     Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response)
     : m_pipeline(keyvaultPipeline)
 {

@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
    * @brief The HTTP pipeline used by KeyVault clients.
@@ -188,10 +188,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
     /**
      * @brief Get the Vault Url which was used to create the
-     * #Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline.
+     * #Azure::Security::KeyVault::_internal::KeyVaultPipeline.
      *
      * @return The vault Url as string.
      */
     std::string GetVaultUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
   };
-}}}}} // namespace Azure::Security::KeyVault::Common::_internal
+}}}} // namespace Azure::Security::KeyVault::_internal
