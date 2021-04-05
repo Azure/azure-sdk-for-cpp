@@ -124,7 +124,7 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
   {
     return false;
   }
-  return left.GetValue() == right.GetValue();
+  return left.Value() == right.Value();
 }
 
 void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& actual)

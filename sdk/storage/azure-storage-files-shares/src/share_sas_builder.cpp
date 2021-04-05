@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string resource = ShareSasResourceToString(Resource);
 
     std::string startsOnStr = StartsOn.HasValue()
-        ? StartsOn.GetValue().ToString(
+        ? StartsOn.Value().ToString(
             Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = Identifier.empty()
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Sas {
         : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
-        + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
+        + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
         + "\n" + protocol + "\n" + _internal::DefaultSasVersion + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Sas {
     }
     if (IPRange.HasValue())
     {
-      builder.AppendQueryParameter("sip", _internal::UrlEncodeQueryParameter(IPRange.GetValue()));
+      builder.AppendQueryParameter("sip", _internal::UrlEncodeQueryParameter(IPRange.Value()));
     }
     if (!Identifier.empty())
     {

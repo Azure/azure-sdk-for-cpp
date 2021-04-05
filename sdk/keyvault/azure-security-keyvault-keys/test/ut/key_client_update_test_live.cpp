@@ -30,7 +30,7 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_TRUE(keyVaultKey.Properties.Enabled);
-    EXPECT_TRUE(keyVaultKey.Properties.Enabled.GetValue());
+    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
 
     // Update Key
     keyVaultKey.Properties.Enabled = false;
@@ -44,6 +44,6 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
     CheckValidResponse(updatedKey);
     auto key = updatedKey.Value;
     EXPECT_TRUE(key.Properties.Enabled);
-    EXPECT_FALSE(key.Properties.Enabled.GetValue());
+    EXPECT_FALSE(key.Properties.Enabled.Value());
   }
 }
