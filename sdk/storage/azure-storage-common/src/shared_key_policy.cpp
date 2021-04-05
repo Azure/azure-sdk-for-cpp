@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace _internal {
   std::string SharedKeyPolicy::GetSignature(const Core::Http::Request& request) const
   {
     std::string string_to_sign;
-    string_to_sign += Azure::Core::Http::HttpMethodToString(request.GetMethod()) + "\n";
+    string_to_sign += request.GetMethod().ToString() + "\n";
 
     const auto& headers = request.GetHeaders();
     for (std::string headerName :

@@ -42,7 +42,7 @@ inline std::string GetRequestLogMessage(LogOptions const& options, Request const
   auto const& requestUrl = request.GetUrl();
 
   std::ostringstream log;
-  log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " "
+  log << "HTTP Request : " << request.GetMethod().ToString() << " "
       << requestUrl.GetUrlWithoutQuery();
   {
     auto encodedRequestQueryParams = requestUrl.GetQueryParameters();
