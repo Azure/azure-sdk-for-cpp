@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @param context The context used to call send request.
        * @return A positive number indicating the current intent to send the request.
        */
-      static int GetRetryNumber(Context const& context);
+      static int GetRetryCount(Context const& context);
     };
 
     /**
