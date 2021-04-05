@@ -57,7 +57,7 @@ namespace Azure { namespace Core {
 
       bool operator!=(Key const& other) const { return !(*this == other); }
     };
-    
+
   private:
     struct ContextSharedState
     {

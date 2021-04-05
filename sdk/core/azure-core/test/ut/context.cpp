@@ -331,7 +331,7 @@ TEST(Context, Deadline)
   auto const deadline = Azure::DateTime(2021, 4, 1, 23, 45, 15);
   Context::Key const key1;
   Context::Key const key2;
-  
+
   {
     Context ctx;
     EXPECT_FALSE(ctx.HasDeadline());
@@ -353,9 +353,7 @@ TEST(Context, Deadline)
   {
     Context ctx;
 
-    auto childCtx = ctx.WithDeadline(deadline)
-                        .WithValue(key, "val")
-                        .WithValue(key2, "val2");
+    auto childCtx = ctx.WithDeadline(deadline).WithValue(key1, "val").WithValue(key2, "val2");
 
     EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), deadline);
@@ -365,9 +363,7 @@ TEST(Context, Deadline)
     Context ctx;
     ctx.Cancel();
 
-    auto childCtx = ctx.WithDeadline(deadline)
-                        .WithValue(key, "val")
-                        .WithValue(key2, "val2");
+    auto childCtx = ctx.WithDeadline(deadline).WithValue(key1, "val").WithValue(key2, "val2");
 
     EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
