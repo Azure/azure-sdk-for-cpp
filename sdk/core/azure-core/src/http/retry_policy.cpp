@@ -227,7 +227,6 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
 
     // Update retry number
-    // retryContext = CreateRetryContext(retryContext);
     retryCount += 1;
   }
 }
