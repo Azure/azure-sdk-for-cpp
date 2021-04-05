@@ -15,6 +15,9 @@
   - `GetMajorVersion`.
   - `GetMinorVersion`.
 - Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
+- Changes to `Azure::Core::Context`:
+  - Renamed `Get()` to `GetValue()`.
+  - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 - Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
@@ -27,6 +30,7 @@
 - Added `Azure::Core::Operation<T>::GetRawResponse()`.
 - Added `Azure::Core::PackageVersion`.
 - Added support for logging to console when `AZURE_LOG_LEVEL` environment variable is set.
+- Added `Azure::Core::Context::GetDeadline()`.
 
 ### Breaking Changes
 
