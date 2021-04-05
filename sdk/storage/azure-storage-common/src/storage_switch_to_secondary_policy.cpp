@@ -5,6 +5,8 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
+  Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
+
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
@@ -13,7 +15,7 @@ namespace Azure { namespace Storage { namespace _internal {
     std::shared_ptr<bool> replicaStatus;
     if (ctx.HasKey(SecondaryHostReplicaStatusKey))
     {
-      replicaStatus = ctx.Get<std::shared_ptr<bool>>(SecondaryHostReplicaStatusKey);
+      replicaStatus = ctx.GetValue<std::shared_ptr<bool>>(SecondaryHostReplicaStatusKey);
     }
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get

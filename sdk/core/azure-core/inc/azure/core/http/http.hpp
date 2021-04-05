@@ -9,7 +9,10 @@
 #pragma once
 
 #include "azure/core/case_insensitive_containers.hpp"
+#include "azure/core/dll_import_export.hpp"
 #include "azure/core/exception.hpp"
+#include "azure/core/http/http_status_code.hpp"
+#include "azure/core/http/raw_response.hpp"
 #include "azure/core/internal/contract.hpp"
 #include "azure/core/io/body_stream.hpp"
 #include "azure/core/nullable.hpp"
@@ -56,86 +59,6 @@ namespace Azure { namespace Core { namespace Http {
         : Azure::Core::RequestFailedException(message)
     {
     }
-  };
-
-  /**
-   * @brief Defines the possible HTTP status codes.
-   */
-  enum class HttpStatusCode
-  {
-    /// No HTTP status code.
-    None = 0,
-
-    // === 1xx (information) Status Codes: ===
-    Continue = 100, ///< HTTP 100 Continue.
-    SwitchingProtocols = 101, ///< HTTP 101 Switching Protocols.
-    Processing = 102, ///< HTTP 102 Processing.
-    EarlyHints = 103, ///< HTTP 103 Early Hints.
-
-    // === 2xx (successful) Status Codes: ===
-    Ok = 200, ///< HTTP 200 OK.
-    Created = 201, ///< HTTP 201 Created.
-    Accepted = 202, ///< HTTP 202 Accepted.
-    NonAuthoritativeInformation = 203, ///< HTTP 203 Non-Authoritative Information.
-    NoContent = 204, ///< HTTP 204 No Content.
-    ResetContent = 205, ///< HTTP 205 Rest Content.
-    PartialContent = 206, ///< HTTP 206 Partial Content.
-    MultiStatus = 207, ///< HTTP 207 Multi-Status.
-    AlreadyReported = 208, ///< HTTP 208 Already Reported.
-    IMUsed = 226, ///< HTTP 226 IM Used.
-
-    // === 3xx (redirection) Status Codes: ===
-    MultipleChoices = 300, ///< HTTP 300 Multiple Choices.
-    MovedPermanently = 301, ///< HTTP 301 Moved Permanently.
-    Found = 302, ///< HTTP 302 Found.
-    SeeOther = 303, ///< HTTP 303 See Other.
-    NotModified = 304, ///< HTTP 304 Not Modified.
-    UseProxy = 305, ///< HTTP 305 Use Proxy.
-    TemporaryRedirect = 307, ///< HTTP 307 Temporary Redirect.
-    PermanentRedirect = 308, ///< HTTP 308 Permanent Redirect.
-
-    // === 4xx (client error) Status Codes: ===
-    BadRequest = 400, ///< HTTP 400 Bad Request.
-    Unauthorized = 401, ///< HTTP 401 Unauthorized.
-    PaymentRequired = 402, ///< HTTP 402 Payment Required.
-    Forbidden = 403, ///< HTTP 403 Forbidden.
-    NotFound = 404, ///< HTTP 404 Not Found.
-    MethodNotAllowed = 405, ///< HTTP 405 Method Not Allowed.
-    NotAcceptable = 406, ///< HTTP 406 Not Acceptable.
-    ProxyAuthenticationRequired = 407, ///< HTTP 407 Proxy Authentication Required.
-    RequestTimeout = 408, ///< HTTP 408 Request Timeout.
-    Conflict = 409, ///< HTTP 409 Conflict.
-    Gone = 410, ///< HTTP 410 Gone.
-    LengthRequired = 411, ///< HTTP 411 Length Required.
-    PreconditionFailed = 412, ///< HTTP 412 Precondition Failed.
-    PayloadTooLarge = 413, ///< HTTP 413 Payload Too Large.
-    UriTooLong = 414, ///< HTTP 414 URI Too Long.
-    UnsupportedMediaType = 415, ///< HTTP 415 Unsupported Media Type.
-    RangeNotSatisfiable = 416, ///< HTTP 416 Range Not Satisfiable.
-    ExpectationFailed = 417, ///< HTTP 417 Expectation Failed.
-    MisdirectedRequest = 421, ///< HTTP 421 Misdirected Request.
-    UnprocessableEntity = 422, ///< HTTP 422 Unprocessable Entity.
-    Locked = 423, ///< HTTP 423 Locked.
-    FailedDependency = 424, ///< HTTP 424 Failed Dependency.
-    TooEarly = 425, ///< HTTP 425 Too Early.
-    UpgradeRequired = 426, ///< HTTP 426 Upgrade Required.
-    PreconditionRequired = 428, ///< HTTP 428 Precondition Required.
-    TooManyRequests = 429, ///< HTTP 429 Too Many Requests.
-    RequestHeaderFieldsTooLarge = 431, ///< HTTP 431 Request Header Fields Too Large.
-    UnavailableForLegalReasons = 451, ///< HTTP 451 Unavailable For Legal Reasons.
-
-    // === 5xx (server error) Status Codes: ===
-    InternalServerError = 500, ///< HTTP 500 Internal Server Error.
-    NotImplemented = 501, ///< HTTP 501 Not Implemented.
-    BadGateway = 502, ///< HTTP 502 Bad Gateway.
-    ServiceUnavailable = 503, ///< HTTP 503 Unavailable.
-    GatewayTimeout = 504, ///< HTTP 504 Gateway Timeout.
-    HttpVersionNotSupported = 505, ///< HTTP 505 HTTP Version Not Supported.
-    VariantAlsoNegotiates = 506, ///< HTTP 506 Variant Also Negotiates.
-    InsufficientStorage = 507, ///< HTTP 507 Insufficient Storage.
-    LoopDetected = 508, ///< HTTP 508 Loop Detected.
-    NotExtended = 510, ///< HTTP 510 Not Extended.
-    NetworkAuthenticationRequired = 511, ///< HTTP 511 Network Authentication Required.
   };
 
   /**
@@ -340,134 +263,6 @@ namespace Azure { namespace Core { namespace Http {
     Url const& GetUrl() const { return this->m_url; }
   };
 
-  /**
-   * @brief Raw HTTP response.
-   */
-  class RawResponse {
-
-  private:
-    int32_t m_majorVersion;
-    int32_t m_minorVersion;
-    HttpStatusCode m_statusCode;
-    std::string m_reasonPhrase;
-    CaseInsensitiveMap m_headers;
-
-    std::unique_ptr<Azure::Core::IO::BodyStream> m_bodyStream;
-    std::vector<uint8_t> m_body;
-
-    explicit RawResponse(
-        int32_t majorVersion,
-        int32_t minorVersion,
-        HttpStatusCode statusCode,
-        std::string const& reasonPhrase,
-        std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream)
-        : m_majorVersion(majorVersion), m_minorVersion(minorVersion), m_statusCode(statusCode),
-          m_reasonPhrase(reasonPhrase), m_bodyStream(std::move(BodyStream))
-    {
-    }
-
-  public:
-    /**
-     * @brief Construct raw HTTP response.
-     *
-     * @param majorVersion HTTP protocol version major number.
-     * @param minorVersion HTTP protocol version minor number.
-     * @param statusCode HTTP status code.
-     * @param reasonPhrase HTP reason phrase.
-     */
-    explicit RawResponse(
-        int32_t majorVersion,
-        int32_t minorVersion,
-        HttpStatusCode statusCode,
-        std::string const& reasonPhrase)
-        : RawResponse(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
-    {
-    }
-
-    /**
-     * @brief Copy a raw response to construct a new one.
-     *
-     * @remark The body stream won't be copied.
-     *
-     * @param response A reference for copying the raw response.
-     */
-    RawResponse(RawResponse const& response)
-        : RawResponse(
-            response.m_majorVersion,
-            response.m_minorVersion,
-            response.m_statusCode,
-            response.m_reasonPhrase)
-    {
-      // Copy body
-      m_body = response.GetBody();
-    }
-
-    // ===== Methods used to build HTTP response =====
-
-    /**
-     * @brief Set an HTTP header to the #RawResponse.
-     *
-     * @remark The \p name must contain valid header name characters (RFC 7230).
-     *
-     * @param name The name for the header to be set or added.
-     * @param value The value for the header to be set or added.
-     *
-     * @throw if \p name contains invalid characters.
-     */
-    void SetHeader(std::string const& name, std::string const& value);
-
-    /**
-     * @brief Set #Azure::Core::IO::BodyStream for this HTTP response.
-     *
-     * @param stream #Azure::Core::IO::BodyStream.
-     */
-    void SetBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream> stream);
-
-    /**
-     * @brief Set HTTP response body for this HTTP response.
-     *
-     * @param body HTTP response body bytes.
-     */
-    void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
-
-    // adding getters for version and stream body. Clang will complain on Mac if we have unused
-    // fields in a class
-
-    /**
-     * @brief Get HTTP status code of the HTTP response.
-     */
-    HttpStatusCode GetStatusCode() const;
-
-    /**
-     * @brief Get HTTP reason phrase code of the HTTP response.
-     */
-    std::string const& GetReasonPhrase() const;
-
-    /**
-     * @brief Get HTTP response headers.
-     */
-    CaseInsensitiveMap const& GetHeaders() const;
-
-    /**
-     * @brief Get HTTP response body as #Azure::Core::IO::BodyStream.
-     */
-    std::unique_ptr<Azure::Core::IO::BodyStream> ExtractBodyStream()
-    {
-      // If m_bodyStream was moved before. nullptr is returned
-      return std::move(this->m_bodyStream);
-    }
-
-    /**
-     * @brief Get HTTP response body as vector of bytes.
-     */
-    std::vector<uint8_t>& GetBody() { return this->m_body; }
-
-    /**
-     * @brief Get HTTP response body as vector of bytes.
-     */
-    std::vector<uint8_t> const& GetBody() const { return this->m_body; }
-  };
-
   namespace _detail {
     struct RawResponseHelpers
     {
@@ -516,5 +311,29 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
   } // namespace _detail
+
+  namespace _internal {
+
+    struct HttpShared
+    {
+      AZ_CORE_DLLEXPORT static char const ContentType[];
+      AZ_CORE_DLLEXPORT static char const ApplicationJson[];
+      AZ_CORE_DLLEXPORT static char const Accept[];
+      AZ_CORE_DLLEXPORT static char const MsRequestId[];
+      AZ_CORE_DLLEXPORT static char const MsClientRequestId[];
+
+      static inline std::string GetHeaderOrEmptyString(
+          Azure::Core::CaseInsensitiveMap const& headers,
+          std::string const& headerName)
+      {
+        auto header = headers.find(headerName);
+        if (header != headers.end())
+        {
+          return header->second; // second is the header value.
+        }
+        return {}; // empty string
+      }
+    };
+  } // namespace _internal
 
 }}} // namespace Azure::Core::Http

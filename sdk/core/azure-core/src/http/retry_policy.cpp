@@ -190,6 +190,43 @@ bool RetryLogic::ShouldRetryOnResponse(
   return true;
 }
 
+namespace {
+  Context::Key const RetryKey;
+}
+
+/**
+ * @brief Creates a new #Context node from \p parent with the information about the retrying while
+ * sending an Http request.
+ *
+ * @param parent The parent context for the new created.
+ * @return Context with information about retry counter.
+ */
+Context inline CreateRetryContext(Context const& parent)
+{
+  // First try as default
+  int32_t retryCount = 0;
+  if (parent.HasKey(RetryKey))
+  {
+    retryCount = parent.GetValue<int32_t>(RetryKey) + 1;
+  }
+  return parent.WithValue(RetryKey, retryCount);
+}
+} // namespace
+
+int RetryPolicy::GetRetryNumber(Context const& context)
+{
+  if (!context.HasKey(RetryKey))
+  {
+    // Context with no data abut sending request with retry policy = -1
+    // First try = 0
+    // Second try = 1
+    // third try = 2
+    // ...
+    return -1;
+  }
+  return context.GetValue<int>(RetryKey);
+}
+
 std::unique_ptr<RawResponse> RetryPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
