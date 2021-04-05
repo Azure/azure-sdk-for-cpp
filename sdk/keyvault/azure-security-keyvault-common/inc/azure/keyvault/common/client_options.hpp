@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common {
+namespace Azure { namespace Security { namespace KeyVault {
 
   /**
    * @brief Available and supported service versions.
@@ -72,4 +72,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common {
     }
   };
 
-}}}} // namespace Azure::Security::KeyVault::Common
+}}} // namespace Azure::Security::KeyVault
