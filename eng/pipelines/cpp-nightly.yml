@@ -26,8 +26,14 @@ jobs:
         parameters:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+      # We have to set git identity because git merge will create a merge commit
+      # in some cases and event when specifying --no-commit.
       - pwsh: |
+          Write-Host 'git config user.name "azure-sdk"'
+          git config user.name "azure-sdk"
+          Write-Host 'git config user.email "azuresdk@microsoft.com"'
           git config user.email "azuresdk@microsoft.com"
+
           Write-Host "git checkout $(NightlyBranchName)"
           git checkout $(NightlyBranchName)
           if ($LASTEXITCODE -ne 0) {
@@ -41,6 +47,12 @@ jobs:
 
           Write-Host "git reset HEAD~1"
           git reset HEAD~1
+
+          # Remove git identity configuration
+          Write-Host 'git config --unset user.name'
+          git config --unset user.name
+          Write-Host 'git config --unset user.email'
+          git config --unset user.email
         workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
