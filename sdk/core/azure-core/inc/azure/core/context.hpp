@@ -146,7 +146,7 @@ namespace Azure { namespace Core {
      * @return A value associated with the context found; an empty value if a specific value can't
      * be found.
      */
-    template <class T> const T& Get(const std::string& key) const
+    template <class T> const T& GetValue(const std::string& key) const
     {
       if (!key.empty())
       {
