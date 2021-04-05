@@ -77,7 +77,7 @@ TEST(Context, IsCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  auto c2 = context.CreateChildContext(deadline);
+  auto c2 = context.WithDeadline(deadline);
   EXPECT_FALSE(c2.IsCancelled());
   std::this_thread::sleep_for(duration);
   EXPECT_TRUE(c2.IsCancelled());
@@ -96,7 +96,7 @@ TEST(Context, NestedIsCancelled)
   EXPECT_TRUE(c2.HasKey(key));
   EXPECT_FALSE(context.HasKey(key));
 
-  auto c3 = context.CreateChildContext(deadline);
+  auto c3 = context.WithDeadline(deadline);
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_FALSE(c3.IsCancelled());
@@ -136,7 +136,7 @@ TEST(Context, ThrowIfCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  auto c2 = context.CreateChildContext(deadline);
+  auto c2 = context.WithDeadline(deadline);
   EXPECT_NO_THROW(c2.ThrowIfCancelled());
   std::this_thread::sleep_for(duration);
   EXPECT_THROW(c2.ThrowIfCancelled(), Azure::Core::OperationCancelledException);
@@ -227,7 +227,6 @@ TEST(Context, HeapLinkIntegrity)
   Context thirdGeneration; // To be used at the end
   {
     Context root;
-
     auto firstGeneration = root.WithValue(a, std::string("a"));
     EXPECT_TRUE(firstGeneration.HasKey(a));
 
@@ -345,7 +344,7 @@ TEST(Context, Deadline)
 
   {
     Context ctx;
-    ctx = ctx.CreateChildContext(deadline);
+    ctx = ctx.WithDeadline(deadline);
 
     EXPECT_TRUE(ctx.HasDeadline());
     EXPECT_EQ(ctx.GetDeadline(), deadline);
@@ -354,9 +353,9 @@ TEST(Context, Deadline)
   {
     Context ctx;
 
-    auto childCtx = ctx.CreateChildContext(deadline)
-                        .CreateChildContext(key, "val")
-                        .CreateChildContext(key2, "val2");
+    auto childCtx = ctx.WithDeadline(deadline)
+                        .WithValue(key, "val")
+                        .WithValue(key2, "val2");
 
     EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), deadline);
@@ -366,9 +365,9 @@ TEST(Context, Deadline)
     Context ctx;
     ctx.Cancel();
 
-    auto childCtx = ctx.CreateChildContext(deadline)
-                        .CreateChildContext(key, "val")
-                        .CreateChildContext(key2, "val2");
+    auto childCtx = ctx.WithDeadline(deadline)
+                        .WithValue(key, "val")
+                        .WithValue(key2, "val2");
 
     EXPECT_TRUE(childCtx.HasDeadline());
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());

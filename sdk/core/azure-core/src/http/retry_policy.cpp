@@ -163,7 +163,7 @@ Context inline CreateRetryContext(Context const& parent)
   {
     retryCount = parent.GetValue<int>(RetryKey) + 1;
   }
-  return parent.CreateChildContext(RetryKey, retryCount);
+  return parent.WithValue(RetryKey, retryCount);
 }
 } // namespace
 

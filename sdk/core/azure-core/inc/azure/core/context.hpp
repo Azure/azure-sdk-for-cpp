@@ -128,7 +128,7 @@ namespace Azure { namespace Core {
      *
      * @return A child context with deadline.
      */
-    Context CreateChildContext(DateTime const& deadline) const
+    Context WithDeadline(DateTime const& deadline) const
     {
       return Context{std::make_shared<ContextSharedState>(m_contextSharedState, deadline)};
     }
