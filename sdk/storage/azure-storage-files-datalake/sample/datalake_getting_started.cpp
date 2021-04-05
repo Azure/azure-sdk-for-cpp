@@ -93,7 +93,7 @@ void DataLakeGettingStarted()
       auto response = serviceClient.ListFileSystemsSinglePage();
       if (response.Value.ContinuationToken.HasValue())
       {
-        continuation = response.Value.ContinuationToken.GetValue();
+        continuation = response.Value.ContinuationToken.Value();
       }
       fileSystems.insert(
           fileSystems.end(), response.Value.Items.begin(), response.Value.Items.end());

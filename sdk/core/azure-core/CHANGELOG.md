@@ -14,6 +14,7 @@
   - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
   - `GetMajorVersion`.
   - `GetMinorVersion`.
+- Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 

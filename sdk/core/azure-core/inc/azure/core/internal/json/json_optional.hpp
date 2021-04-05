@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   {
     if (source)
     {
-      jsonKey[keyName] = factory(source.GetValue());
+      jsonKey[keyName] = factory(source.Value());
     }
   }
 
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   {
     if (source)
     {
-      jsonKey[keyName] = source.GetValue();
+      jsonKey[keyName] = source.Value();
     }
   }
 

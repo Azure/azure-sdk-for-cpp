@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     std::string destinationBlobContainerName = options.DestinationBlobContainerName.HasValue()
-        ? options.DestinationBlobContainerName.GetValue()
+        ? options.DestinationBlobContainerName.Value()
         : deletedBlobContainerName;
     auto blobContainerClient = GetBlobContainerClient(destinationBlobContainerName);
 

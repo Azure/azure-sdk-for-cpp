@@ -300,9 +300,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pathClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::DataLake::Models::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::Models::LeaseStatusType::Locked);
-    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    EXPECT_EQ(properties.LeaseState.Value(), Files::DataLake::Models::LeaseStateType::Leased);
+    EXPECT_EQ(properties.LeaseStatus.Value(), Files::DataLake::Models::LeaseStatusType::Locked);
+    EXPECT_FALSE(properties.LeaseDuration.Value().empty());
 
     lastModified = properties.LastModified;
     auto rLease = *m_pathClient->RenewLease(leaseId1);
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
     lastModified = m_pathClient->GetProperties().Value.LastModified;
     aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pathClient->GetProperties();
-    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    EXPECT_FALSE(properties.LeaseDuration.Value().empty());
     auto brokenLease = *m_pathClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
     EXPECT_FALSE(brokenLease.LastModified > lastModified);

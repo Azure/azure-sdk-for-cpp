@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+          = options.SmbProperties.LastWrittenOn.Value().ToString(
               Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.DirectoryPermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.DirectoryPermission.GetValue();
+      protocolLayerOptions.FilePermission = options.DirectoryPermission.Value();
     }
     else if (options.SmbProperties.PermissionKey.HasValue())
     {
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (smbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().ToString(
+      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -252,7 +252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.GetValue().ToString(
+      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.FilePermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
+      protocolLayerOptions.FilePermission = options.FilePermission.Value();
     }
     else if (smbProperties.PermissionKey.HasValue())
     {

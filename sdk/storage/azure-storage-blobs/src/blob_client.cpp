@@ -165,9 +165,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
 
     auto downloadResponse = _detail::BlobRestClient::Blob::Download(
@@ -183,12 +183,12 @@ namespace Azure { namespace Storage { namespace Blobs {
               const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
-        newOptions.Range.GetValue().Offset
-            = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
-        if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+        newOptions.Range.Value().Offset
+            = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryInfo.Offset;
+        if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
         {
-          newOptions.Range.GetValue().Length
-              = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
+          newOptions.Range.Value().Length
+              = options.Range.Value().Length.Value() - retryInfo.Offset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {
@@ -224,18 +224,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.Value().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
-    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+    if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
+      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
     if (firstChunkOptions.Range.HasValue())
     {
-      firstChunkOptions.Range.GetValue().Length = firstChunkLength;
+      firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
 
     auto firstChunk = Download(firstChunkOptions, context);
@@ -246,9 +246,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (firstChunkOptions.Range.HasValue())
     {
       blobRangeSize = blobSize - firstChunkOffset;
-      if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+      if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
       {
-        blobRangeSize = std::min(blobRangeSize, options.Range.GetValue().Length.GetValue());
+        blobRangeSize = std::min(blobRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
@@ -287,8 +287,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadBlobOptions chunkOptions;
             chunkOptions.Range = Core::Http::HttpRange();
-            chunkOptions.Range.GetValue().Offset = offset;
-            chunkOptions.Range.GetValue().Length = length;
+            chunkOptions.Range.Value().Offset = offset;
+            chunkOptions.Range.Value().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
               chunkOptions.AccessConditions.IfMatch = eTag;
@@ -296,9 +296,9 @@ namespace Azure { namespace Storage { namespace Blobs {
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Range.GetValue().Length.GetValue(),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
-            if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
+            if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
               throw Azure::Core::RequestFailedException("error when reading body stream");
             }
@@ -332,18 +332,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    const int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.Value().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
-    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+    if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
+      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
     if (firstChunkOptions.Range.HasValue())
     {
-      firstChunkOptions.Range.GetValue().Length = firstChunkLength;
+      firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
 
     _internal::FileWriter fileWriter(fileName);
@@ -356,9 +356,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (firstChunkOptions.Range.HasValue())
     {
       blobRangeSize = blobSize - firstChunkOffset;
-      if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+      if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
       {
-        blobRangeSize = std::min(blobRangeSize, options.Range.GetValue().Length.GetValue());
+        blobRangeSize = std::min(blobRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
@@ -408,8 +408,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadBlobOptions chunkOptions;
             chunkOptions.Range = Core::Http::HttpRange();
-            chunkOptions.Range.GetValue().Offset = offset;
-            chunkOptions.Range.GetValue().Length = length;
+            chunkOptions.Range.Value().Offset = offset;
+            chunkOptions.Range.Value().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
               chunkOptions.AccessConditions.IfMatch = eTag;
@@ -419,7 +419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                chunkOptions.Range.GetValue().Length.GetValue(),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
 
             if (chunkId == numChunks - 1)
@@ -456,9 +456,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     auto response = _detail::BlobRestClient::Blob::GetProperties(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
@@ -514,9 +514,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::Blob::SetMetadata(
@@ -593,9 +593,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::Blob::CreateSnapshot(

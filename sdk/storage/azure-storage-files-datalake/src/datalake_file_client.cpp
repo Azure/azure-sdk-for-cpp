@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ContentLength = content.Length();
     if (options.TransactionalContentHash.HasValue())
     {
-      if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
       {
         protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentHash;
       }
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
     if (options.ContentHash.HasValue()
-        && options.ContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
+        && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5)
     {
       std::abort();
     }
@@ -227,13 +227,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (result.Value.Details.LeaseDuration.HasValue())
     {
       ret.Details.LeaseDuration
-          = Models::LeaseDuration(result.Value.Details.LeaseDuration.GetValue().ToString());
+          = Models::LeaseDuration(result.Value.Details.LeaseDuration.Value().ToString());
     }
     ret.Details.LeaseState = result.Value.Details.LeaseState.HasValue()
-        ? FromBlobLeaseState(result.Value.Details.LeaseState.GetValue())
+        ? FromBlobLeaseState(result.Value.Details.LeaseState.Value())
         : ret.Details.LeaseState;
     ret.Details.LeaseStatus = result.Value.Details.LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result.Value.Details.LeaseStatus.GetValue())
+        ? FromBlobLeaseStatus(result.Value.Details.LeaseStatus.Value())
         : ret.Details.LeaseStatus;
     ret.Details.Metadata = std::move(result.Value.Details.Metadata);
     ret.Details.CreatedOn = std::move(result.Value.Details.CreatedOn);
@@ -301,13 +301,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (result.Value.Details.LeaseDuration.HasValue())
     {
       ret.Details.LeaseDuration
-          = Models::LeaseDuration(result.Value.Details.LeaseDuration.GetValue().ToString());
+          = Models::LeaseDuration(result.Value.Details.LeaseDuration.Value().ToString());
     }
     ret.Details.LeaseState = result.Value.Details.LeaseState.HasValue()
-        ? FromBlobLeaseState(result.Value.Details.LeaseState.GetValue())
+        ? FromBlobLeaseState(result.Value.Details.LeaseState.Value())
         : ret.Details.LeaseState;
     ret.Details.LeaseStatus = result.Value.Details.LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result.Value.Details.LeaseStatus.GetValue())
+        ? FromBlobLeaseStatus(result.Value.Details.LeaseStatus.Value())
         : ret.Details.LeaseStatus;
     ret.Details.Metadata = std::move(result.Value.Details.Metadata);
     ret.Details.CreatedOn = std::move(result.Value.Details.CreatedOn);
@@ -343,13 +343,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (result.Value.Details.LeaseDuration.HasValue())
     {
       ret.Details.LeaseDuration
-          = Models::LeaseDuration(result.Value.Details.LeaseDuration.GetValue().ToString());
+          = Models::LeaseDuration(result.Value.Details.LeaseDuration.Value().ToString());
     }
     ret.Details.LeaseState = result.Value.Details.LeaseState.HasValue()
-        ? FromBlobLeaseState(result.Value.Details.LeaseState.GetValue())
+        ? FromBlobLeaseState(result.Value.Details.LeaseState.Value())
         : ret.Details.LeaseState;
     ret.Details.LeaseStatus = result.Value.Details.LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result.Value.Details.LeaseStatus.GetValue())
+        ? FromBlobLeaseStatus(result.Value.Details.LeaseStatus.Value())
         : ret.Details.LeaseStatus;
     ret.Details.Metadata = std::move(result.Value.Details.Metadata);
     ret.Details.CreatedOn = std::move(result.Value.Details.CreatedOn);
@@ -385,11 +385,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (options.ExpiresOn.HasValue())
     {
       protocolLayerOptions.ExpiryTime
-          = options.ExpiresOn.GetValue().ToString(Azure::DateTime::DateFormat::Rfc1123);
+          = options.ExpiresOn.Value().ToString(Azure::DateTime::DateFormat::Rfc1123);
     }
     else if (options.TimeToExpire.HasValue())
     {
-      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpire.GetValue().count());
+      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpire.Value().count());
     }
     return Blobs::_detail::BlobRestClient::Blob::ScheduleDeletion(
         *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions, context);
