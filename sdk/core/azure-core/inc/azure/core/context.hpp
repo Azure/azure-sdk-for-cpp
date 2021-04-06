@@ -142,13 +142,13 @@ namespace Azure { namespace Core {
      * branch of contexts this context belongs to.
      *
      * @param key A key associated with a context to find.
-     * @param outputValue A reference to the value corresponding to the key to be set, if found
+     * @param outputValue A pointer to the value corresponding to the key to be set, if found
      * within the context tree.
      *
      * @return If found, returns true, with outputValue set to the value associated with the context
      * found; otherwise returns false.
      */
-    template <class T> bool TryGetValue(const std::string& key, T& outputValue) const
+    template <class T> bool TryGetValue(const std::string& key, T* outputValue) const
     {
       // if (!outputValue)
       //{
@@ -166,7 +166,7 @@ namespace Azure { namespace Core {
               // type mismatch
               std::abort();
             }
-            outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
+            outputValue = reinterpret_cast<T*>(ptr->Value.get());
             return true;
           }
         }
