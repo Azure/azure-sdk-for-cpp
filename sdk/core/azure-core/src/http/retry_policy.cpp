@@ -16,10 +16,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
-typedef decltype(RetryOptions::RetryDelay) Delay;
-typedef decltype(RetryOptions::MaxRetries) RetryNumber;
-
-bool GetResponseHeaderBasedDelay(RawResponse const& response, Delay& retryAfter)
+bool GetResponseHeaderBasedDelay(RawResponse const& response, std::chrono::milliseconds& retryAfter)
 {
   // Try to find retry-after headers. There are several of them possible.
   auto const& responseHeaders = response.GetHeaders();
@@ -56,98 +53,44 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, Delay& retryAfter)
   return false;
 }
 
-Delay CalculateExponentialDelay(RetryOptions const& retryOptions, RetryNumber attempt)
+std::chrono::milliseconds CalculateExponentialDelay(
+    RetryOptions const& retryOptions,
+    int32_t attempt,
+    double jitterFactor)
 {
-  constexpr auto beforeLastBit = std::numeric_limits<RetryNumber>::digits
-      - (std::numeric_limits<RetryNumber>::is_signed ? 1 : 0);
+  if (jitterFactor < 0.8 || jitterFactor > 1.3)
+  {
+    // jitterFactor is a random double number in the range [0.8 .. 1.3]
+    jitterFactor
+        = 0.8 + ((static_cast<double>(static_cast<int32_t>(std::rand())) / RAND_MAX) * 0.5);
+  }
+
+  constexpr auto beforeLastBit
+      = std::numeric_limits<int32_t>::digits - (std::numeric_limits<int32_t>::is_signed ? 1 : 0);
 
   // Scale exponentially: 1 x RetryDelay on 1st attempt, 2x on 2nd, 4x on 3rd, 8x on 4th ... all the
-  // way up to std::numeric_limits<RetryNumber>::max() * RetryDelay.
+  // way up to std::numeric_limits<int32_t>::max() * RetryDelay.
   auto exponentialRetryAfter = retryOptions.RetryDelay
-      * ((attempt <= beforeLastBit) ? (1 << attempt) : std::numeric_limits<RetryNumber>::max());
-
-  // jitterFactor is a random double number in the range [0.8 .. 1.3)
-  auto jitterFactor = 0.8 + (static_cast<double>(std::rand()) / RAND_MAX) * 0.5;
+      * (((attempt - 1) <= beforeLastBit) ? (1 << (attempt - 1))
+                                          : std::numeric_limits<int32_t>::max());
 
   // Multiply exponentialRetryAfter by jitterFactor
-  exponentialRetryAfter = Delay(static_cast<Delay::rep>(
-      (std::chrono::duration<double, Delay::period>(exponentialRetryAfter) * jitterFactor)
+  exponentialRetryAfter = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(
+      (std::chrono::duration<double, std::chrono::milliseconds::period>(exponentialRetryAfter)
+       * jitterFactor)
           .count()));
 
   return std::min(exponentialRetryAfter, retryOptions.MaxRetryDelay);
 }
 
-bool WasLastAttempt(RetryOptions const& retryOptions, RetryNumber attempt)
+bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt)
 {
   return attempt > retryOptions.MaxRetries;
 }
 
-bool ShouldRetryOnTransportFailure(
-    RetryOptions const& retryOptions,
-    RetryNumber attempt,
-    Delay& retryAfter)
-{
-  // Are we out of retry attempts?
-  if (WasLastAttempt(retryOptions, attempt))
-  {
-    return false;
-  }
+Context::Key const RetryKey;
 
-  retryAfter = CalculateExponentialDelay(retryOptions, attempt);
-  return true;
-}
-
-bool ShouldRetryOnResponse(
-    RawResponse const& response,
-    RetryOptions const& retryOptions,
-    RetryNumber attempt,
-    Delay& retryAfter)
-{
-  using Azure::Core::Diagnostics::Logger;
-  using Azure::Core::Diagnostics::_internal::Log;
-  // Are we out of retry attempts?
-  if (WasLastAttempt(retryOptions, attempt))
-  {
-    return false;
-  }
-
-  // Should we retry on the given response retry code?
-  {
-    auto const& statusCodes = retryOptions.StatusCodes;
-    auto const sc = response.GetStatusCode();
-    if (statusCodes.find(sc) == statusCodes.end())
-    {
-      if (Log::ShouldWrite(Logger::Level::Warning))
-      {
-        Log::Write(
-            Logger::Level::Warning,
-            std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
-                + " won't be retried.");
-      }
-
-      return false;
-    }
-    else if (Log::ShouldWrite(Logger::Level::Informational))
-    {
-      Log::Write(
-          Logger::Level::Informational,
-          std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
-              + " will be retried.");
-    }
-  }
-
-  if (!GetResponseHeaderBasedDelay(response, retryAfter))
-  {
-    retryAfter = CalculateExponentialDelay(retryOptions, attempt);
-  }
-
-  return true;
-}
-
-Context::Key RetryKey;
-} // namespace
-
-int RetryPolicy::GetRetryCount(Context const& context)
+int32_t RetryPolicy::GetRetryCount(Context const& context)
 {
   if (!context.HasKey(RetryKey))
   {
@@ -158,7 +101,7 @@ int RetryPolicy::GetRetryCount(Context const& context)
     // ...
     return -1;
   }
-  return *context.GetValue<int*>(RetryKey);
+  return *context.GetValue<int32_t*>(RetryKey);
 }
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
@@ -169,12 +112,12 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
   // retryCount needs to be apart from RetryNumber attempt.
-  int retryCount = 0;
+  int32_t retryCount = 0;
   auto retryContext = ctx.WithValue(RetryKey, &retryCount);
 
-  for (RetryNumber attempt = 1;; ++attempt)
+  for (int32_t attempt = 1;; ++attempt)
   {
-    Delay retryAfter{};
+    std::chrono::milliseconds retryAfter{};
     request.StartTry();
     // creates a copy of original query parameters from request
     auto originalQueryParameters = request.GetUrl().GetQueryParameters();
@@ -229,4 +172,69 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     // Update retry number
     retryCount += 1;
   }
+}
+
+bool RetryPolicy::ShouldRetryOnTransportFailure(
+    RetryOptions const& retryOptions,
+    int32_t attempt,
+    std::chrono::milliseconds& retryAfter,
+    double jitterFactor) const
+{
+  // Are we out of retry attempts?
+  if (WasLastAttempt(retryOptions, attempt))
+  {
+    return false;
+  }
+
+  retryAfter = CalculateExponentialDelay(retryOptions, attempt, jitterFactor);
+  return true;
+}
+
+bool RetryPolicy::ShouldRetryOnResponse(
+    RawResponse const& response,
+    RetryOptions const& retryOptions,
+    int32_t attempt,
+    std::chrono::milliseconds& retryAfter,
+    double jitterFactor) const
+{
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
+
+  // Are we out of retry attempts?
+  if (WasLastAttempt(retryOptions, attempt))
+  {
+    return false;
+  }
+
+  // Should we retry on the given response retry code?
+  {
+    auto const& statusCodes = retryOptions.StatusCodes;
+    auto const sc = response.GetStatusCode();
+    if (statusCodes.find(sc) == statusCodes.end())
+    {
+      if (Log::ShouldWrite(Logger::Level::Warning))
+      {
+        Log::Write(
+            Logger::Level::Warning,
+            std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
+                + " won't be retried.");
+      }
+
+      return false;
+    }
+    else if (Log::ShouldWrite(Logger::Level::Informational))
+    {
+      Log::Write(
+          Logger::Level::Informational,
+          std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
+              + " will be retried.");
+    }
+  }
+
+  if (!GetResponseHeaderBasedDelay(response, retryAfter))
+  {
+    retryAfter = CalculateExponentialDelay(retryOptions, attempt, jitterFactor);
+  }
+
+  return true;
 }

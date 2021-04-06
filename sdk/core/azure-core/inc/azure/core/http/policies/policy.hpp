@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief Maximum number of attempts to retry.
      */
-    int MaxRetries = 3;
+    int32_t MaxRetries = 3;
 
     /**
      * @brief Mimimum amount of time between retry attempts.
@@ -265,7 +265,21 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @param context The context used to call send request.
        * @return A positive number indicating the current intent to send the request.
        */
-      static int GetRetryCount(Context const& context);
+      static int32_t GetRetryCount(Context const& context);
+
+    protected:
+      virtual bool ShouldRetryOnTransportFailure(
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
+
+      virtual bool ShouldRetryOnResponse(
+          RawResponse const& response,
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
     };
 
     /**
