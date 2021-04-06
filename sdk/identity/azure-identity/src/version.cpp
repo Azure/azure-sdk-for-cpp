@@ -6,11 +6,11 @@
 #include <sstream>
 #include <string>
 
-using namespace Azure::Identity;
+using namespace Azure::Identity::_detail;
 
 std::string const PackageVersion::PreRelease = secret;
 
-std::string PackageVersion::VersionString()
+std::string PackageVersion::ToString()
 {
   static const std::string versionString = [] {
     std::string version;

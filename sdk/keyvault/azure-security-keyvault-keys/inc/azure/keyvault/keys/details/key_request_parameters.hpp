@@ -42,15 +42,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (key.Enabled)
       {
-        m_options.Enabled = key.Enabled.GetValue();
+        m_options.Enabled = key.Enabled.Value();
       }
       if (key.ExpiresOn)
       {
-        m_options.ExpiresOn = key.ExpiresOn.GetValue();
+        m_options.ExpiresOn = key.ExpiresOn.Value();
       }
       if (key.NotBefore)
       {
-        m_options.NotBefore = key.NotBefore.GetValue();
+        m_options.NotBefore = key.NotBefore.Value();
       }
       if (key.Tags.size() > 0)
       {
@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       }
       if (operations)
       {
-        m_options.KeyOperations = std::list<KeyOperation>(operations.GetValue());
+        m_options.KeyOperations = std::list<KeyOperation>(operations.Value());
       }
     }
 
@@ -72,7 +72,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (ecKey.CurveName.HasValue())
       {
-        Curve = ecKey.CurveName.GetValue();
+        Curve = ecKey.CurveName.Value();
       }
     }
 
@@ -81,11 +81,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (rsaKey.KeySize.HasValue())
       {
-        KeySize = rsaKey.KeySize.GetValue();
+        KeySize = rsaKey.KeySize.Value();
       }
       if (rsaKey.PublicExponent.HasValue())
       {
-        PublicExponent = rsaKey.PublicExponent.GetValue();
+        PublicExponent = rsaKey.PublicExponent.Value();
       }
     }
 
@@ -94,7 +94,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (octKey.KeySize.HasValue())
       {
-        KeySize = octKey.KeySize.GetValue();
+        KeySize = octKey.KeySize.Value();
       }
     }
 

@@ -52,16 +52,10 @@ namespace _detail {
  * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
  */
 class DateTime : public _detail::Clock::time_point {
-  AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
-
-public:
-  /**
-   * @brief Construct a default instance of #Azure::DateTime (00:00:00.0000000 on Janualy
-   * 1st, 0001).
-   */
-  constexpr DateTime() : time_point() {}
 
 private:
+  AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
+
   DateTime(
       int16_t year,
       int8_t month,
@@ -90,6 +84,12 @@ private:
   std::string ToStringRfc1123() const;
 
 public:
+  /**
+   * @brief Construct a default instance of #Azure::DateTime (00:00:00.0000000 on Janualy
+   * 1st, 0001).
+   */
+  constexpr DateTime() : time_point() {}
+
   /**
    * @brief Construct an instance of #Azure::DateTime.
    *

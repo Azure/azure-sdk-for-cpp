@@ -25,12 +25,7 @@ TEST(Context, ApplicationContext)
 {
   Context appContext = Context::GetApplicationContext();
 
-  EXPECT_THROW(appContext.Get<int>("Key"), std::logic_error);
-  EXPECT_THROW(appContext.Get<int>("key"), std::logic_error);
-  EXPECT_THROW(appContext.Get<int>("Value"), std::logic_error);
-  EXPECT_THROW(appContext.Get<int>("value"), std::logic_error);
-  EXPECT_THROW(appContext.Get<int>("1"), std::logic_error);
-  EXPECT_THROW(appContext.Get<int>(""), std::logic_error);
+  EXPECT_FALSE(appContext.HasKey(Context::Key()));
 
   auto duration = std::chrono::milliseconds(250);
   EXPECT_FALSE(appContext.IsCancelled());

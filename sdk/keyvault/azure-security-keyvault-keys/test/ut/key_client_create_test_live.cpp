@@ -142,7 +142,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_TRUE(keyVaultKey.Key.CurveName.HasValue());
     EXPECT_EQ(
-        keyVaultKey.Key.CurveName.GetValue().ToString(),
+        keyVaultKey.Key.CurveName.Value().ToString(),
         Azure::Security::KeyVault::Keys::KeyCurveName::P384().ToString());
   }
 }
