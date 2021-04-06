@@ -107,7 +107,7 @@ TEST(RetryPolicy, ShouldRetryOnResponse)
         retryOptions,
         [&](auto options, auto attempt, auto, auto jitter) {
           ++onTransportFailureInvoked;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
@@ -116,7 +116,7 @@ TEST(RetryPolicy, ShouldRetryOnResponse)
         [&](RawResponse const& response, auto options, auto attempt, auto, auto jitter) {
           ++onResponseInvoked;
           responsePtrReceived = &response;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
@@ -168,7 +168,7 @@ TEST(RetryPolicy, ShouldRetryOnResponse)
         retryOptions,
         [&](auto options, auto attempt, auto, auto jitter) {
           ++onTransportFailureInvoked;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
@@ -177,7 +177,7 @@ TEST(RetryPolicy, ShouldRetryOnResponse)
         [&](RawResponse const& response, auto options, auto attempt, auto retryAfter, auto jitter) {
           ++onResponseInvoked;
           responsePtrReceived = &response;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
@@ -232,15 +232,15 @@ TEST(RetryPolicy, ShouldRetryOnTransportFailure)
         retryOptions,
         [&](auto options, auto attempt, auto, auto jitter) {
           ++onTransportFailureInvoked;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
           return false;
         },
-        [&](auto response, auto options, auto attempt, auto, auto jitter) {
+        [&](auto, auto options, auto attempt, auto, auto jitter) {
           ++onResponseInvoked;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
@@ -281,15 +281,15 @@ TEST(RetryPolicy, ShouldRetryOnTransportFailure)
         retryOptions,
         [&](auto options, auto attempt, auto, auto jitter) {
           ++onTransportFailureInvoked;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 
           return onTransportFailureInvoked < 3;
         },
-        [&](auto response, auto options, auto attempt, auto retryAfter, auto jitter) {
+        [&](auto, auto options, auto attempt, auto retryAfter, auto jitter) {
           ++onResponseInvoked;
-          retryOptionsReceived = retryOptions;
+          retryOptionsReceived = options;
           attemptReceived = attempt;
           jitterReceived = jitter;
 

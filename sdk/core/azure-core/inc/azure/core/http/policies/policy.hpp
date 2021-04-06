@@ -238,8 +238,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     public:
       /**
-       * Constructs HTTP retry policy with the provided
-       * #Azure::Core::Http::Policies::RetryOptions.
+       * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
        *
        * @param options #Azure::Core::Http::Policies::RetryOptions.
        */
