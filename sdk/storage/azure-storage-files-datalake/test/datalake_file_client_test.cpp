@@ -272,7 +272,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto downloaded = ReadBodyStream(result.Value.Body);
     EXPECT_EQ(buffer, downloaded);
     EXPECT_EQ(bufferSize, result.Value.FileSize);
-    EXPECT_EQ(bufferSize, result.Value.ContentRange.Length.GetValue());
+    EXPECT_EQ(bufferSize, result.Value.ContentRange.Length.Value());
     EXPECT_EQ(0, result.Value.ContentRange.Offset);
 
     // Read Range
@@ -280,27 +280,27 @@ namespace Azure { namespace Storage { namespace Test {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
       Files::DataLake::DownloadFileOptions options;
       options.Range = Azure::Core::Http::HttpRange();
-      options.Range.GetValue().Offset = 0;
-      options.Range.GetValue().Length = bufferSize / 2;
+      options.Range.Value().Offset = 0;
+      options.Range.Value().Length = bufferSize / 2;
       result = newFileClient->Download(options);
       downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(firstHalf.size(), downloaded.size());
       EXPECT_EQ(firstHalf, downloaded);
       EXPECT_EQ(bufferSize, result.Value.FileSize);
-      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Length.GetValue());
+      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Length.Value());
       EXPECT_EQ(0, result.Value.ContentRange.Offset);
     }
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
       Files::DataLake::DownloadFileOptions options;
       options.Range = Azure::Core::Http::HttpRange();
-      options.Range.GetValue().Offset = bufferSize / 2;
-      options.Range.GetValue().Length = bufferSize / 2;
+      options.Range.Value().Offset = bufferSize / 2;
+      options.Range.Value().Length = bufferSize / 2;
       result = newFileClient->Download(options);
       downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(secondHalf, downloaded);
       EXPECT_EQ(bufferSize, result.Value.FileSize);
-      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Length.GetValue());
+      EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Length.Value());
       EXPECT_EQ(bufferSize / 2, result.Value.ContentRange.Offset);
     }
     {

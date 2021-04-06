@@ -37,7 +37,7 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
   {
     // Using a continuation token requires to send the request to the continuation token url instead
     // of the default url which is used only for the first page.
-    Azure::Core::Url nextPageUrl(options.ContinuationToken.GetValue());
+    Azure::Core::Url nextPageUrl(options.ContinuationToken.Value());
     request.Query
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
     request.Path.clear();
@@ -49,7 +49,7 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     {
       request.Query = std::make_unique<std::map<std::string, std::string>>();
     }
-    request.Query->emplace("maxResults", std::to_string(options.MaxResults.GetValue()));
+    request.Query->emplace("maxResults", std::to_string(options.MaxResults.Value()));
   }
   return request;
 }

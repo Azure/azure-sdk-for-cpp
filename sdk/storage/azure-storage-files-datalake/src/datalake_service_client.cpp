@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         if (item.Details.LeaseDuration.HasValue())
         {
           fileSystem.Details.LeaseDuration
-              = Models::LeaseDuration((item.Details.LeaseDuration.GetValue().ToString()));
+              = Models::LeaseDuration((item.Details.LeaseDuration.Value().ToString()));
         }
         fileSystem.Details.LeaseState = Models::LeaseState(item.Details.LeaseState.ToString());
         fileSystem.Details.LeaseStatus = Models::LeaseStatus(item.Details.LeaseStatus.ToString());

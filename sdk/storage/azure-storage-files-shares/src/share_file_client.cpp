@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -123,9 +123,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -226,22 +225,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareRestClient::File::DownloadOptions();
     if (options.Range.HasValue())
     {
-      if (options.Range.GetValue().Length.HasValue())
+      if (options.Range.Value().Length.HasValue())
       {
         protocolLayerOptions.Range = std::string("bytes=")
-            + std::to_string(options.Range.GetValue().Offset) + std::string("-")
-            + std::to_string(options.Range.GetValue().Offset
-                             + options.Range.GetValue().Length.GetValue() - 1);
+            + std::to_string(options.Range.Value().Offset) + std::string("-")
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
       }
       else
       {
         protocolLayerOptions.Range = std::string("bytes=")
-            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+            + std::to_string(options.Range.Value().Offset) + std::string("-");
       }
     }
     if (options.RangeHashAlgorithm.HasValue())
     {
-      if (options.RangeHashAlgorithm.GetValue() == HashAlgorithm::Md5)
+      if (options.RangeHashAlgorithm.Value() == HashAlgorithm::Md5)
       {
         protocolLayerOptions.GetRangeContentMd5 = true;
       }
@@ -265,12 +264,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadFileOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
-        newOptions.Range.GetValue().Offset
-            = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
-        if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+        newOptions.Range.Value().Offset
+            = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryInfo.Offset;
+        if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
         {
-          newOptions.Range.GetValue().Length
-              = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
+          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryInfo.Offset;
         }
 
         auto newResponse = Download(newOptions, context);
@@ -323,7 +321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileCreationTime
-          = options.SmbProperties.CreatedOn.GetValue().ToString(
+          = options.SmbProperties.CreatedOn.Value().ToString(
               Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -333,7 +331,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
+          = options.SmbProperties.LastWrittenOn.Value().ToString(
               Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -342,8 +340,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.PermissionCopyMode.HasValue())
     {
-      protocolLayerOptions.XMsFilePermissionCopyMode = options.PermissionCopyMode.GetValue();
-      if (options.PermissionCopyMode.GetValue() == Models::PermissionCopyMode::Override)
+      protocolLayerOptions.XMsFilePermissionCopyMode = options.PermissionCopyMode.Value();
+      if (options.PermissionCopyMode.Value() == Models::PermissionCopyMode::Override)
       {
         if (options.Permission.HasValue())
         {
@@ -413,7 +411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (smbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().ToString(
+      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -422,7 +420,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.GetValue().ToString(
+      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -493,7 +491,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content.Length() - 1);
     if (options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
+        && options.TransactionalContentHash.Value().Algorithm != HashAlgorithm::Md5)
     {
       std::abort();
     }
@@ -537,17 +535,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
     if (options.Range.HasValue())
     {
-      if (options.Range.GetValue().Length.HasValue())
+      if (options.Range.Value().Length.HasValue())
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
-            + std::to_string(options.Range.GetValue().Offset) + std::string("-")
-            + std::to_string(options.Range.GetValue().Offset
-                             + options.Range.GetValue().Length.GetValue() - 1);
+            + std::to_string(options.Range.Value().Offset) + std::string("-")
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
       }
       else
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
-            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+            + std::to_string(options.Range.Value().Offset) + std::string("-");
       }
     }
 
@@ -564,17 +562,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareRestClient::File::GetRangeListOptions();
     if (options.Range.HasValue())
     {
-      if (options.Range.GetValue().Length.HasValue())
+      if (options.Range.Value().Length.HasValue())
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
-            + std::to_string(options.Range.GetValue().Offset) + std::string("-")
-            + std::to_string(options.Range.GetValue().Offset
-                             + options.Range.GetValue().Length.GetValue() - 1);
+            + std::to_string(options.Range.Value().Offset) + std::string("-")
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
       }
       else
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
-            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+            + std::to_string(options.Range.Value().Offset) + std::string("-");
       }
     }
 
@@ -636,19 +634,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // Just start downloading using an initial chunk. If it's a small file, we'll get the whole
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.Value().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
 
-    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+    if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
+      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadFileOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
     if (firstChunkOptions.Range.HasValue())
     {
-      firstChunkOptions.Range.GetValue().Length = firstChunkLength;
+      firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
 
     auto firstChunk = Download(firstChunkOptions, context);
@@ -659,9 +657,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       fileSize = firstChunk.Value.FileSize;
       fileRangeSize = fileSize - firstChunkOffset;
-      if (options.Range.GetValue().Length.HasValue())
+      if (options.Range.Value().Length.HasValue())
       {
-        fileRangeSize = std::min(fileRangeSize, options.Range.GetValue().Length.GetValue());
+        fileRangeSize = std::min(fileRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
@@ -699,14 +697,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadFileOptions chunkOptions;
             chunkOptions.Range = Core::Http::HttpRange();
-            chunkOptions.Range.GetValue().Offset = offset;
-            chunkOptions.Range.GetValue().Length = length;
+            chunkOptions.Range.Value().Offset = offset;
+            chunkOptions.Range.Value().Length = length;
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Range.GetValue().Length.GetValue(),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
-            if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
+            if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
               throw Azure::Core::RequestFailedException("error when reading body stream");
             }
@@ -739,18 +737,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // Just start downloading using an initial chunk. If it's a small file, we'll get the whole
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
+    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.Value().Offset : 0;
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
-    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
+    if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
+      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadFileOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
     if (firstChunkOptions.Range.HasValue())
     {
-      firstChunkOptions.Range.GetValue().Length = firstChunkLength;
+      firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
 
     _internal::FileWriter fileWriter(fileName);
@@ -763,9 +761,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       fileSize = firstChunk.Value.FileSize;
       fileRangeSize = fileSize - firstChunkOffset;
-      if (options.Range.GetValue().Length.HasValue())
+      if (options.Range.Value().Length.HasValue())
       {
-        fileRangeSize = std::min(fileRangeSize, options.Range.GetValue().Length.GetValue());
+        fileRangeSize = std::min(fileRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
@@ -814,14 +812,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadFileOptions chunkOptions;
             chunkOptions.Range = Core::Http::HttpRange();
-            chunkOptions.Range.GetValue().Offset = offset;
-            chunkOptions.Range.GetValue().Length = length;
+            chunkOptions.Range.Value().Offset = offset;
+            chunkOptions.Range.Value().Length = length;
             auto chunk = Download(chunkOptions, context);
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                chunkOptions.Range.GetValue().Length.GetValue(),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
 
             if (chunkId == numChunks - 1)
@@ -859,7 +857,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -868,9 +866,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -963,7 +960,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.GetValue().ToString(
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
@@ -972,9 +969,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime
-          = options.SmbProperties.LastWrittenOn.GetValue().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -1065,7 +1061,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       // sourceRange must have length to perform this operation.
       std::abort();
     }
-    int64_t rangeLength = sourceRange.Length.GetValue();
+    int64_t rangeLength = sourceRange.Length.Value();
 
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeFromUrlOptions();
     protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(destinationOffset)
@@ -1074,22 +1070,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     if (options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
+        && options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
     {
       // SourceContentHash now only supports Crc64 hash algorithm.
       std::abort();
     }
     protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
     if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
-        && options.SourceAccessCondition.IfMatchContentHash.GetValue().Algorithm
-            == HashAlgorithm::Md5)
+        && options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm == HashAlgorithm::Md5)
     {
       // IfMatchContentHash now only supports Crc64 hash algorithm.
       std::abort();
     }
     protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
     if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue()
-        && options.SourceAccessCondition.IfNoneMatchContentHash.GetValue().Algorithm
+        && options.SourceAccessCondition.IfNoneMatchContentHash.Value().Algorithm
             == HashAlgorithm::Md5)
     {
       // IfNoneMatchContentHash now only supports Crc64 hash algorithm.
@@ -1098,7 +1093,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.SourceIfNoneMatchCrc64
         = options.SourceAccessCondition.IfNoneMatchContentHash;
     protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
-        + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.GetValue() - 1);
+        + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.Value() - 1);
     protocolLayerOptions.XMsWrite = _detail::FileRangeWriteFromUrlType::Update;
 
     return _detail::ShareRestClient::File::UploadRangeFromUrl(

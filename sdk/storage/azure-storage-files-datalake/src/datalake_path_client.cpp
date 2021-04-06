@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreatePathResult ret;
     ret.ETag = std::move(result.Value.ETag);
-    ret.LastModified = std::move(result.Value.LastModified.GetValue());
+    ret.LastModified = std::move(result.Value.LastModified.Value());
     ret.FileSize = std::move(result.Value.ContentLength);
     return Azure::Response<Models::CreatePathResult>(std::move(ret), std::move(result.RawResponse));
   }
@@ -330,13 +330,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result.Value.Metadata);
     if (result.Value.LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = Models::LeaseDuration(result.Value.LeaseDuration.GetValue().ToString());
+      ret.LeaseDuration = Models::LeaseDuration(result.Value.LeaseDuration.Value().ToString());
     }
     ret.LeaseState = result.Value.LeaseState.HasValue()
-        ? FromBlobLeaseState(result.Value.LeaseState.GetValue())
+        ? FromBlobLeaseState(result.Value.LeaseState.Value())
         : ret.LeaseState;
     ret.LeaseStatus = result.Value.LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result.Value.LeaseStatus.GetValue())
+        ? FromBlobLeaseStatus(result.Value.LeaseStatus.Value())
         : ret.LeaseStatus;
     ret.HttpHeaders.CacheControl = std::move(result.Value.HttpHeaders.CacheControl);
     ret.HttpHeaders.ContentDisposition = std::move(result.Value.HttpHeaders.ContentDisposition);
@@ -381,7 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Nullable<std::vector<Models::Acl>> acl;
     if (result.Value.Acl.HasValue())
     {
-      acl = Models::Acl::DeserializeAcls(result.Value.Acl.GetValue());
+      acl = Models::Acl::DeserializeAcls(result.Value.Acl.Value());
     }
     Models::PathAccessControlList ret;
     if (!acl.HasValue())
@@ -389,18 +389,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       throw Azure::Core::RequestFailedException(
           "Got null value returned when getting access control.");
     }
-    ret.Acls = std::move(acl.GetValue());
+    ret.Acls = std::move(acl.Value());
     if (result.Value.Owner.HasValue())
     {
-      ret.Owner = result.Value.Owner.GetValue();
+      ret.Owner = result.Value.Owner.Value();
     }
     if (result.Value.Group.HasValue())
     {
-      ret.Group = result.Value.Group.GetValue();
+      ret.Group = result.Value.Group.Value();
     }
     if (result.Value.Permissions.HasValue())
     {
-      ret.Permissions = result.Value.Permissions.GetValue();
+      ret.Permissions = result.Value.Permissions.Value();
     }
     return Azure::Response<Models::PathAccessControlList>(
         std::move(ret), std::move(result.RawResponse));

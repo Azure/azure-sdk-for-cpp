@@ -52,7 +52,7 @@ int main()
               << KeyType::KeyTypeToString(cloudRsaKey.GetKeyType()) << std::endl;
 
     cloudRsaKey.Properties.ExpiresOn
-        = cloudRsaKey.Properties.ExpiresOn.GetValue() + std::chrono::hours(24 * 365);
+        = cloudRsaKey.Properties.ExpiresOn.Value() + std::chrono::hours(24 * 365);
     KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).Value;
     std::cout << "Key's updated expiry time is " << updatedKey.Properties.ExpiresOn->ToString()
               << std::endl;
