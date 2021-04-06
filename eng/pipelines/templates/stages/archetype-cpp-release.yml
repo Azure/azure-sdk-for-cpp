@@ -224,18 +224,6 @@ stages:
                     TestRelease: true
                     TestReleaseRef: $(Build.SourceVersion)
 
-                # Reset commit after vcpkg-publish.yml so git-push-changes.yml
-                # has changes to commit and push, and all changes go into one
-                # commit
-                - pwsh: |
-                    Write-Host "git reset HEAD^"
-                    git reset HEAD^
-
-                    Write-Host "git status"
-                    git status
-                  displayName: Reset commit
-                  workingDirectory: $(Pipeline.Workspace)/vcpkg
-
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:
                 BaseRepoBranch: $(DailyBranchName)
