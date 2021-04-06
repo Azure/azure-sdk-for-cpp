@@ -18,8 +18,9 @@ TEST(Context, Basic)
   Context context;
   Context::Key const key;
 
-  int placeholder;
-  EXPECT_FALSE(context.TryGetValue<int>(key, placeholder));
+  int placeholder = -15;
+  EXPECT_FALSE(context.TryGetValue(key, placeholder));
+  EXPECT_EQ(placeholder, -15);
 }
 
 TEST(Context, BasicBool)
@@ -32,6 +33,17 @@ TEST(Context, BasicBool)
   bool value;
   EXPECT_TRUE(c2.TryGetValue<bool>(key, value));
   EXPECT_TRUE(value == true);
+
+  Context::Key const anotherKey;
+  auto c3 = c2.WithValue(anotherKey, std::make_shared<bool>(true));
+
+  std::shared_ptr<bool> sharedPtrBool;
+  EXPECT_FALSE(c2.TryGetValue<std::shared_ptr<bool>>(anotherKey, sharedPtrBool));
+  EXPECT_FALSE(sharedPtrBool);
+
+  EXPECT_TRUE(c3.TryGetValue(anotherKey, sharedPtrBool));
+  EXPECT_TRUE(sharedPtrBool);
+  EXPECT_TRUE(*sharedPtrBool);
 }
 
 TEST(Context, BasicInt)
@@ -102,8 +114,9 @@ TEST(Context, NestedIsCancelled)
   std::string value = "a";
   EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
   EXPECT_EQ(value, "Value");
+  value = "temp";
   EXPECT_FALSE(context.TryGetValue<std::string>(key, value));
-  EXPECT_EQ(value, "Value");
+  EXPECT_EQ(value, "temp");
 
   auto c3 = context.WithDeadline(deadline);
   EXPECT_FALSE(context.IsCancelled());
@@ -236,12 +249,46 @@ TEST(Context, InstanceValue)
 TEST(Context, Ptr)
 {
   Context::Key const key;
+  SomeStructForContext value;
   auto contextP
-      = Context::GetApplicationContext().WithValue(key, std::make_unique<SomeStructForContext>());
+      = Context::GetApplicationContext().WithValue(key, &value);
 
   SomeStructForContext* contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
   EXPECT_EQ(contextValueRef->someField, 12345);
+  EXPECT_EQ(&value, contextValueRef);
+}
+
+TEST(Context, NestedClassPtr)
+{
+  class TestClass {
+  private:
+    int* m_instanceCount;
+
+  public:
+    TestClass(int* instanceCount) : m_instanceCount(instanceCount) { ++(*m_instanceCount); }
+    ~TestClass() { --(*m_instanceCount); }
+  };
+
+  int instanceCount = 0;
+  {
+    auto sharedPtr = std::make_shared<TestClass>(&instanceCount);
+    EXPECT_EQ(sharedPtr.use_count(), 1);
+   
+    Context::Key const key;
+
+    auto context = Context::GetApplicationContext().WithValue(key, sharedPtr);
+    EXPECT_EQ(sharedPtr.use_count(), 2);
+
+    std::shared_ptr<TestClass> foundPtr;
+    EXPECT_TRUE(context.TryGetValue(key, foundPtr));
+    EXPECT_EQ(foundPtr.get(), sharedPtr.get());
+    EXPECT_EQ(instanceCount, 1);
+    EXPECT_EQ(sharedPtr.use_count(), 3);
+  }
+
+  // Verify that context calls the destructor of shared_ptr it is holding
+  EXPECT_EQ(instanceCount, 0);
 }
 
 TEST(Context, HeapLinkIntegrity)

@@ -20,7 +20,7 @@
   - `GetMinorVersion`.
 - Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
 - Changes to `Azure::Core::Context`:
-  - Removed `Get()` and `HasKey()`.
+  - Removed `Get()` and `HasKey()` in favor of a new method `TryGetValue()`.
   - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
 - Removed `Azure::Core::PackageVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.

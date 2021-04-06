@@ -94,16 +94,17 @@ Context::Key const RetryKey;
 int32_t RetryPolicy::GetRetryCount(Context const& context)
 {
   int32_t number = -1;
-  if (!context.TryGetValue<int32_t>(RetryKey, number))
+  int32_t* ptr = &number;
+  if (!context.TryGetValue<int32_t*>(RetryKey, ptr))
   {
     // Context with no data abut sending request with retry policy = -1
     // First try = 0
     // Second try = 1
     // third try = 2
     // ...
-    number = -1;
+    *ptr = -1;
   }
-  return number;
+  return *ptr;
 }
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
