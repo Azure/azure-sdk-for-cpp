@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::FileServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::FileServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
