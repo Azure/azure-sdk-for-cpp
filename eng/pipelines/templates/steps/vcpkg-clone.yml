@@ -3,7 +3,6 @@ parameters:
   RepoOwner: not-set
   RepoName: vcpkg
   PRBranchName: not-set
-  SkipCheckout: false
 
 steps: 
   - pwsh: |
@@ -15,12 +14,11 @@ steps:
       }
     displayName: Clone vcpkg from upstream
 
-  - ${{ if ne(parameters.SkipCheckout, 'true') }}:
-    # Check out the PR branch if it's already in remote. Ignore failures.
-    - pwsh: |
-        $ErrorActionPreference = "Continue"
-        git checkout "origin/${{ parameters.PRBranchName }}" 2>&1 | Out-Null
-        $LASTEXITCODE = 0 # This ignores any error from git checkout
-        git status
-      displayName: Checkout Previous PRBranch if it exists
-      workingDirectory: ${{ parameters.Workspace }}/vcpkg
+  # Check out the PR branch if it's already in remote. Ignore failures.
+  - pwsh: |
+      $ErrorActionPreference = "Continue"
+      git checkout "origin/${{ parameters.PRBranchName }}" 2>&1 | Out-Null
+      $LASTEXITCODE = 0 # This ignores any error from git checkout
+      git status
+    displayName: Checkout Previous PRBranch if it exists
+    workingDirectory: ${{ parameters.Workspace }}/vcpkg

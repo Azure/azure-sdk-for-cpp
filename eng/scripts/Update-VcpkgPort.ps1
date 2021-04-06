@@ -94,30 +94,34 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "git reset HEAD^"
 git reset HEAD^
 
-# Grab content needed for commit message and place in a temporary file
-$packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
-$commitMessageFile = New-TemporaryFile
-$chagelogEntry = Get-ChangeLogEntryAsString `
-    -ChangeLogLocation $ReleaseArtifactSourceDirectory/CHANGELOG.md `
-    -VersionString $PackageVersion
+# Only perform the final commit if this is not a test release
+if (!$TestRelease) { 
+    # Grab content needed for commit message and place in a temporary file
+    $packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
+    $commitMessageFile = New-TemporaryFile
+    $chagelogEntry = Get-ChangeLogEntryAsString `
+        -ChangeLogLocation $ReleaseArtifactSourceDirectory/CHANGELOG.md `
+        -VersionString $PackageVersion
 
-"[$VcpkgPortName] Update to $PackageVersion`n$chagelogEntry" `
-    | Set-Content $commitMessageFile
+    "[$VcpkgPortName] Update to $PackageVersion`n$chagelogEntry" `
+        | Set-Content $commitMessageFile
 
-Write-Host "Commit Message:"
-Write-host (Get-Content $commitMessageFile -Raw)
+    Write-Host "Commit Message:"
+    Write-host (Get-Content $commitMessageFile -Raw)
 
 
-Write-Host "git add -A"
-git add -A
+    Write-Host "git add -A"
+    git add -A
 
-# Final commit using commit message from the temporary file. Using the file
-# enables the commit message to be formatted properly without having to write
-# code to escape certain characters that might appear in the changelog file.
-Write-Host "git $GitCommitParameters commit --file $commitMessageFile"
-"git $GitCommitParameters commit --file $commitMessageFile" `
-    | Invoke-Expression -Verbose `
-    | Write-Host
+    # Final commit using commit message from the temporary file. Using the file
+    # enables the commit message to be formatted properly without having to write
+    # code to escape certain characters that might appear in the changelog file.
+    Write-Host "git $GitCommitParameters commit --file $commitMessageFile"
+    "git $GitCommitParameters commit --file $commitMessageFile" `
+        | Invoke-Expression -Verbose `
+        | Write-Host
+}
+
 
 <# 
 .SYNOPSIS

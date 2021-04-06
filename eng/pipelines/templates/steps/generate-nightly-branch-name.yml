@@ -3,7 +3,7 @@ steps:
       $branchName = $env:NIGHTLYBRANCHOVERRIDE
       if (!$branchName) { 
         $formattedDate = Get-Date -Format 'yyyy-MM-dd'
-        $branchName = "nightly/$formattedDate"
+        $branchName = "release/daily-$formattedDate"
       }
       Write-Host "##vso[task.setvariable variable=NightlyBranchName]$branchName"
     displayName: Set branch name in fork repo

@@ -9,7 +9,7 @@ jobs:
     variables:
       # The branch in the azure-sdk/vcpkg repo that is updated nightly with the
       # latest set of ports
-      TargetPrBranch: azure-sdk-for-cpp-nightly-verification
+      TargetPrBranch: release/azure-sdk-for-cpp-daily-verification
 
     steps:
       - checkout: self
@@ -20,20 +20,12 @@ jobs:
         parameters:
           Workspace: $(Pipeline.Workspace)
           RepoOwner: azure-sdk
-          SkipCheckout: true
 
       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
         parameters:
           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
-      # We have to set git identity because git merge will create a merge commit
-      # in some cases and event when specifying --no-commit.
       - pwsh: |
-          Write-Host 'git config user.name "azure-sdk"'
-          git config user.name "azure-sdk"
-          Write-Host 'git config user.email "azuresdk@microsoft.com"'
-          git config user.email "azuresdk@microsoft.com"
-
           Write-Host "git checkout $(NightlyBranchName)"
           git checkout $(NightlyBranchName)
           if ($LASTEXITCODE -ne 0) {
@@ -41,18 +33,7 @@ jobs:
           }
 
           git checkout $(DefaultBranch)
-
-          Write-Host "git merge $(NightlyBranchName) --strategy-option=theirs --no-commit"
-          git merge $(NightlyBranchName) --strategy-option=theirs --no-commit
-
-          Write-Host "git reset HEAD~1"
-          git reset HEAD~1
-
-          # Remove git identity configuration
-          Write-Host 'git config --unset user.name'
-          git config --unset user.name
-          Write-Host 'git config --unset user.email'
-          git config --unset user.email
+          Write-Host "##vso[task.setvariable variable=HasChanges]$true"
         workingDirectory: $(Pipeline.Workspace)/vcpkg
         displayName: Update vcpkg Nightly Branch
 
