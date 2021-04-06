@@ -323,6 +323,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
      */
     class TelemetryPolicy : public HttpPolicy {
+    private:
       std::string const m_telemetryId;
 
       static std::string BuildTelemetryId(
