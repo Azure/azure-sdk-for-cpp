@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.Create(options2));
       auto result1 = client1.GetProperties().Value.SmbProperties.PermissionKey;
       auto result2 = client2.GetProperties().Value.SmbProperties.PermissionKey;
-      EXPECT_EQ(result1.GetValue(), result2.GetValue());
+      EXPECT_EQ(result1.Value(), result2.Value());
 
       auto client3
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Test {
       options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(options3));
       auto result3 = client3.GetProperties().Value.SmbProperties.PermissionKey;
-      EXPECT_EQ(result1.GetValue(), result3.GetValue());
+      EXPECT_EQ(result1.Value(), result3.Value());
     }
 
     {
@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.SetProperties(properties, options2));
       auto result1 = client1.GetProperties().Value.SmbProperties.PermissionKey;
       auto result2 = client2.GetProperties().Value.SmbProperties.PermissionKey;
-      EXPECT_EQ(result1.GetValue(), result2.GetValue());
+      EXPECT_EQ(result1.Value(), result2.Value());
 
       auto client3
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
@@ -254,8 +254,8 @@ namespace Azure { namespace Storage { namespace Test {
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
       EXPECT_NO_THROW(
-          permissionKey = client3.Create(options3).Value.SmbProperties.PermissionKey.GetValue());
-      auto result3 = client3.GetProperties().Value.SmbProperties.PermissionKey.GetValue();
+          permissionKey = client3.Create(options3).Value.SmbProperties.PermissionKey.Value());
+      auto result3 = client3.GetProperties().Value.SmbProperties.PermissionKey.Value();
       EXPECT_EQ(permissionKey, result3);
     }
   }
@@ -285,11 +285,11 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
       EXPECT_EQ(
-          directoryProperties2.Value.SmbProperties.CreatedOn.GetValue(),
-          directoryProperties1.Value.SmbProperties.CreatedOn.GetValue());
+          directoryProperties2.Value.SmbProperties.CreatedOn.Value(),
+          directoryProperties1.Value.SmbProperties.CreatedOn.Value());
       EXPECT_EQ(
-          directoryProperties2.Value.SmbProperties.LastWrittenOn.GetValue(),
-          directoryProperties1.Value.SmbProperties.LastWrittenOn.GetValue());
+          directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
+          directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
@@ -309,11 +309,11 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
       EXPECT_EQ(
-          directoryProperties2.Value.SmbProperties.CreatedOn.GetValue(),
-          directoryProperties1.Value.SmbProperties.CreatedOn.GetValue());
+          directoryProperties2.Value.SmbProperties.CreatedOn.Value(),
+          directoryProperties1.Value.SmbProperties.CreatedOn.Value());
       EXPECT_EQ(
-          directoryProperties2.Value.SmbProperties.LastWrittenOn.GetValue(),
-          directoryProperties1.Value.SmbProperties.LastWrittenOn.GetValue());
+          directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
+          directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);

@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobContentInfo.Value.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(blobContentInfo.Value.LastModified));
     EXPECT_TRUE(blobContentInfo.Value.VersionId.HasValue());
-    EXPECT_FALSE(blobContentInfo.Value.VersionId.GetValue().empty());
+    EXPECT_FALSE(blobContentInfo.Value.VersionId.Value().empty());
     EXPECT_FALSE(blobContentInfo.Value.EncryptionScope.HasValue());
     EXPECT_FALSE(blobContentInfo.Value.EncryptionKeySha256.HasValue());
 
@@ -103,17 +103,17 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 3_KB);
-    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.GetValue()), 3_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.Value()), 3_KB);
 
     Azure::Storage::Blobs::GetPageRangesOptions options;
     options.Range = Core::Http::HttpRange();
-    options.Range.GetValue().Offset = 4_KB;
-    options.Range.GetValue().Length = 1_KB;
+    options.Range.Value().Offset = 4_KB;
+    options.Range.Value().Length = 1_KB;
     pageRanges = pageBlobClient.GetPageRanges(options).Value;
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 4_KB);
-    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.GetValue()), 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.Value()), 1_KB);
 
     auto snapshot = pageBlobClient.CreateSnapshot().Value.Snapshot;
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
@@ -127,9 +127,9 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_FALSE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(pageRanges.PageRanges[0].Offset, 0);
-    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.GetValue()), 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length.Value()), 1_KB);
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.ClearRanges[0].Offset), 3_KB);
-    EXPECT_EQ(static_cast<uint64_t>(pageRanges.ClearRanges[0].Length.GetValue()), 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.ClearRanges[0].Length.Value()), 1_KB);
   }
 
   TEST_F(PageBlobClientTest, UploadFromUri)
@@ -153,19 +153,19 @@ namespace Azure { namespace Storage { namespace Test {
         copyInfo.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     auto getPropertiesResult = copyInfo.PollUntilDone(std::chrono::seconds(1));
     ASSERT_TRUE(getPropertiesResult.Value.CopyStatus.HasValue());
-    EXPECT_EQ(getPropertiesResult.Value.CopyStatus.GetValue(), Blobs::Models::CopyStatus::Success);
+    EXPECT_EQ(getPropertiesResult.Value.CopyStatus.Value(), Blobs::Models::CopyStatus::Success);
     ASSERT_TRUE(getPropertiesResult.Value.CopyId.HasValue());
-    EXPECT_FALSE(getPropertiesResult.Value.CopyId.GetValue().empty());
+    EXPECT_FALSE(getPropertiesResult.Value.CopyId.Value().empty());
     ASSERT_TRUE(getPropertiesResult.Value.CopySource.HasValue());
-    EXPECT_FALSE(getPropertiesResult.Value.CopySource.GetValue().empty());
+    EXPECT_FALSE(getPropertiesResult.Value.CopySource.Value().empty());
     ASSERT_TRUE(getPropertiesResult.Value.IsIncrementalCopy.HasValue());
-    EXPECT_TRUE(getPropertiesResult.Value.IsIncrementalCopy.GetValue());
+    EXPECT_TRUE(getPropertiesResult.Value.IsIncrementalCopy.Value());
     ASSERT_TRUE(getPropertiesResult.Value.IncrementalCopyDestinationSnapshot.HasValue());
-    EXPECT_FALSE(getPropertiesResult.Value.IncrementalCopyDestinationSnapshot.GetValue().empty());
+    EXPECT_FALSE(getPropertiesResult.Value.IncrementalCopyDestinationSnapshot.Value().empty());
     ASSERT_TRUE(getPropertiesResult.Value.CopyCompletedOn.HasValue());
-    EXPECT_TRUE(IsValidTime(getPropertiesResult.Value.CopyCompletedOn.GetValue()));
+    EXPECT_TRUE(IsValidTime(getPropertiesResult.Value.CopyCompletedOn.Value()));
     ASSERT_TRUE(getPropertiesResult.Value.CopyProgress.HasValue());
-    EXPECT_FALSE(getPropertiesResult.Value.CopyProgress.GetValue().empty());
+    EXPECT_FALSE(getPropertiesResult.Value.CopyProgress.Value().empty());
   }
 
   TEST_F(PageBlobClientTest, Lease)
@@ -184,9 +184,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = m_pageBlobClient->GetProperties().Value;
-    EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::Models::LeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::Models::LeaseStatus::Locked);
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Fixed);
+    EXPECT_EQ(properties.LeaseState.Value(), Blobs::Models::LeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus.Value(), Blobs::Models::LeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Fixed);
 
     auto rLease = leaseClient.Renew().Value;
     EXPECT_TRUE(rLease.ETag.HasValue());
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobLeaseClient(*m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
     aLease = leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration).Value;
     properties = m_pageBlobClient->GetProperties().Value;
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::LeaseDurationType::Infinite);
+    EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Infinite);
     auto brokenLease = leaseClient.Break().Value;
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));

@@ -60,7 +60,7 @@ std::string KeyRequestParameters::Serialize() const
   // crv
   if (Curve.HasValue())
   {
-    payload[_detail::CurveNamePropertyName] = Curve.GetValue().ToString();
+    payload[_detail::CurveNamePropertyName] = Curve.Value().ToString();
   }
 
   // release_policy

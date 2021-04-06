@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Test {
         result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
         if (response.Value.ContinuationToken.HasValue())
         {
-          continuation = response.Value.ContinuationToken.GetValue();
+          continuation = response.Value.ContinuationToken.Value();
           options.ContinuationToken = continuation;
         }
         else
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Test {
         result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
         if (response.Value.ContinuationToken.HasValue())
         {
-          continuation = response.Value.ContinuationToken.GetValue();
+          continuation = response.Value.ContinuationToken.Value();
           options.ContinuationToken = continuation;
         }
         else
