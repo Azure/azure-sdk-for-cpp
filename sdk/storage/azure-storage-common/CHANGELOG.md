@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.10 (Unreleased)
 
+### Breaking Changes
+
+- Removed `Azure::Storage::Common::PackageVersion`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 

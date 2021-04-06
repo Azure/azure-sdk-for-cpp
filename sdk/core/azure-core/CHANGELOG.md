@@ -18,6 +18,7 @@
 - Changes to `Azure::Core::Context`:
   - Renamed `Get()` to `GetValue()`.
   - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
+- Removed `Azure::Core::PackageVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 - Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString` helper method.

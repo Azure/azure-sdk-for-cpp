@@ -17,7 +17,7 @@
 #define AZURE_IDENTITY_VERSION_PATCH 0
 #define AZURE_IDENTITY_VERSION_PRERELEASE "beta.5"
 
-namespace Azure { namespace Identity {
+namespace Azure { namespace Identity { namespace _detail {
 
   /**
    * @brief Provides version information.
@@ -40,7 +40,7 @@ namespace Azure { namespace Identity {
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static std::string VersionString();
+    static std::string ToString();
 
   private:
     // To avoid leaking out the #define values we smuggle out the value
@@ -48,7 +48,7 @@ namespace Azure { namespace Identity {
     static constexpr char const* secret = AZURE_IDENTITY_VERSION_PRERELEASE;
   };
 
-}} // namespace Azure::Identity
+}}} // namespace Azure::Identity::_detail
 
 #undef AZURE_IDENTITY_VERSION_MAJOR
 #undef AZURE_IDENTITY_VERSION_MINOR
