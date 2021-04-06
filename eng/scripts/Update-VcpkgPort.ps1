@@ -11,9 +11,9 @@ param (
     [ValidateNotNullOrEmpty()]
     [string] $VcpkgPortName,
 
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [string] $GitCommitParameters
+    [string] $GitCommitParameters,
+
+    [switch] $DailyRelease
 )
 
 ."$PSScriptRoot/../common/scripts/common.ps1"
@@ -77,8 +77,13 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "./vcpkg.exe x-add-version $VcpkgPortName"
-./vcpkg.exe x-add-version $VcpkgPortName
+$addVersionAdditionalParameters = ''
+if ($DailyRelease) { 
+    $addVersionAdditionalParameters = '--overwrite-version'
+}
+
+Write-Host "./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters"
+./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters
 
 if ($LASTEXITCODE -ne 0) { 
     Write-Error "Failed to run vcpkg x-add-version $VcpkgPortName"
@@ -89,30 +94,37 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "git reset HEAD^"
 git reset HEAD^
 
-# Grab content needed for commit message and place in a temporary file
-$packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
-$commitMessageFile = New-TemporaryFile
-$chagelogEntry = Get-ChangeLogEntryAsString `
-    -ChangeLogLocation $ReleaseArtifactSourceDirectory/CHANGELOG.md `
-    -VersionString $PackageVersion
+# Only perform the final commit if this is not a test release
+if (!$DailyRelease) { 
+    # Grab content needed for commit message and place in a temporary file
+    $packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
+    $commitMessageFile = New-TemporaryFile
+    $chagelogEntry = Get-ChangeLogEntryAsString `
+        -ChangeLogLocation $ReleaseArtifactSourceDirectory/CHANGELOG.md `
+        -VersionString $PackageVersion
 
-"[$VcpkgPortName] Update to $PackageVersion`n$chagelogEntry" `
-    | Set-Content $commitMessageFile
+    "[$VcpkgPortName] Update to $PackageVersion`n$chagelogEntry" `
+        | Set-Content $commitMessageFile
 
-Write-Host "Commit Message:"
-Write-host (Get-Content $commitMessageFile -Raw)
+    Write-Host "Commit Message:"
+    Write-host (Get-Content $commitMessageFile -Raw)
 
+    Write-Host "git add -A"
+    git add -A
 
-Write-Host "git add -A"
-git add -A
+    # Final commit using commit message from the temporary file. Using the file
+    # enables the commit message to be formatted properly without having to write
+    # code to escape certain characters that might appear in the changelog file.
+    Write-Host "git $GitCommitParameters commit --file $commitMessageFile"
+    "git $GitCommitParameters commit --file $commitMessageFile" `
+        | Invoke-Expression -Verbose `
+        | Write-Host
 
-# Final commit using commit message from the temporary file. Using the file
-# enables the commit message to be formatted properly without having to write
-# code to escape certain characters that might appear in the changelog file.
-Write-Host "git $GitCommitParameters commit --file $commitMessageFile"
-"git $GitCommitParameters commit --file $commitMessageFile" `
-    | Invoke-Expression -Verbose `
-    | Write-Host
+    # Set $(HasChanges) to $true so that create-pull-request.yml completes the 
+    # push and PR submission steps
+    Write-Host "##vso[task.setvariable variable=HasChanges]$true"
+}
+
 
 <# 
 .SYNOPSIS
@@ -146,5 +158,10 @@ Name of the vcpkg port (e.g. azure-template-cpp)
 Additional parameters to supply to the `git commit` command. These are useful
 in the context of Azure DevOps where the git client does not have a configured
 user.name and user.email.
+
+.PARAMETER DailyRelease
+In the case of a test release set this to ensure that the x-add-version step
+includes `--overwrite-version` to ensure daily packages are properly updated
+in the vcpkg repo.
 
 #>
