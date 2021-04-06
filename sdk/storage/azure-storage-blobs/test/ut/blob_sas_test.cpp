@@ -10,6 +10,35 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
+  static std::string AppendQP(Azure::Core::Url url, std::string qp)
+  {
+    std::string absoluteUrl = url.GetAbsoluteUrl();
+    auto existingQP = url.GetQueryParameters();
+    bool startWithQuestion = qp[0] == '?';
+    if (existingQP.size() == 0)
+    {
+      if (startWithQuestion)
+      {
+        absoluteUrl = absoluteUrl + qp;
+      }
+      else
+      {
+        absoluteUrl = absoluteUrl + '?' + qp;
+      }
+    }
+    else
+    {
+      if (startWithQuestion)
+      {
+        absoluteUrl = absoluteUrl + qp.substr(1);
+      }
+      else
+      {
+        absoluteUrl = absoluteUrl + qp;
+      }
+    }
+    return absoluteUrl;
+  }
   TEST_F(BlobContainerClientTest, BlobSasTest)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
@@ -440,16 +469,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_snapshot_read = [&](const std::string sas) {
       Azure::Core::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
-      blobSnapshotUrlWithSas.AppendQueryParameters(sas);
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
+      auto blobSnapshotClient = Blobs::AppendBlobClient(AppendQP(blobSnapshotUrlWithSas, sas));
       auto downloadedContent = blobSnapshotClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent.Value.BodyStream).empty());
     };
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
       Azure::Core::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
-      blobSnapshotUrlWithSas.AppendQueryParameters(sas);
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
+      auto blobSnapshotClient = Blobs::AppendBlobClient(AppendQP(blobSnapshotUrlWithSas, sas));
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
     };
 
@@ -501,16 +528,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_version_read = [&](const std::string sas) {
       Azure::Core::Url blobVersionUrlWithSas(blobVersionUrl);
-      blobVersionUrlWithSas.AppendQueryParameters(sas);
-      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
+      auto blobVersionClient = Blobs::AppendBlobClient(AppendQP(blobVersionUrlWithSas, sas));
       auto downloadedContent = blobVersionClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent.Value.BodyStream).empty());
     };
 
     auto verify_blob_delete_version = [&](const std::string& sas) {
       Azure::Core::Url blobVersionUrlWithSas(blobVersionUrl);
-      blobVersionUrlWithSas.AppendQueryParameters(sas);
-      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
+      auto blobVersionClient = Blobs::AppendBlobClient(AppendQP(blobVersionUrlWithSas, sas));
       blobVersionClient.Delete();
     };
 
