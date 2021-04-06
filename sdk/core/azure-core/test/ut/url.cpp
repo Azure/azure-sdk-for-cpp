@@ -206,6 +206,28 @@ namespace Azure { namespace Core { namespace Test {
         expected);
   }
 
+  TEST(URL, getScheme)
+  {
+    Core::Url url("http://test.com:9090");
+    std::string expected = "http";
+
+    EXPECT_PRED2(
+        [](std::string expectedValue, std::string value) { return expectedValue == value; },
+        url.GetScheme(),
+        expected);
+  }
+
+  TEST(URL, getSchemeConst)
+  {
+    Core::Url const url("http://test.com:9090");
+    std::string expected = "http";
+
+    EXPECT_PRED2(
+        [](std::string expectedValue, std::string value) { return expectedValue == value; },
+        url.GetScheme(),
+        expected);
+  }
+
   TEST(URL, getPortMax) { EXPECT_THROW(Core::Url url("http://test.com:65540"), std::out_of_range); }
 
   TEST(URL, getPortAfterSet)

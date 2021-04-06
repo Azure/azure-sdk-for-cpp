@@ -40,11 +40,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         KeyVaultKey& key,
         Azure::Core::Json::_internal::json const& json);
 
+    std::string static inline GetUrlAuthorityWithScheme(Azure::Core::Url url)
+    {
+      std::string urlString;
+      if (!url.GetScheme().empty())
+      {
+        urlString += url.GetScheme() + "://";
+      }
+      urlString += url.GetHost();
+      if (url.GetPort() != 0)
+      {
+        urlString += ":" + std::to_string(url.GetPort());
+      }
+      return urlString;
+    }
+
     void static inline ParseKeyUrl(KeyProperties& keyProperties, std::string const& url)
     {
       Azure::Core::Url kid(url);
       keyProperties.Id = url;
-      keyProperties.VaultUrl = kid.GetUrlAuthorityWithScheme();
+      keyProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
       auto const& path = kid.GetPath();
       //  path is in the form of `verb/keyName{/keyVersion}`
       auto const separatorChar = '/';
