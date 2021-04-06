@@ -84,7 +84,10 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    int64_t Read(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
+    int64_t Read(
+        uint8_t* buffer,
+        int64_t count,
+        Azure::Core::Context const& context = Azure::Core::Context())
     {
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
@@ -100,7 +103,10 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    int64_t ReadToCount(uint8_t* buffer, int64_t count, Azure::Core::Context const& context);
+    int64_t ReadToCount(
+        uint8_t* buffer,
+        int64_t count,
+        Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
      * @brief Read #Azure::Core::IO::BodyStream until the stream is read to end, allocating memory
@@ -110,7 +116,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */
-    std::vector<uint8_t> ReadToEnd(Azure::Core::Context const& context);
+    std::vector<uint8_t> ReadToEnd(Azure::Core::Context const& context = Azure::Core::Context());
   };
 
   /**

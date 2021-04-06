@@ -18,6 +18,13 @@ char const Azure::Core::Http::_internal::HttpShared::Accept[] = "accept";
 char const Azure::Core::Http::_internal::HttpShared::MsRequestId[] = "x-ms-request-id";
 char const Azure::Core::Http::_internal::HttpShared::MsClientRequestId[] = "x-ms-client-request-id";
 
+const HttpMethod HttpMethod::Get("GET");
+const HttpMethod HttpMethod::Head("HEAD");
+const HttpMethod HttpMethod::Post("POST");
+const HttpMethod HttpMethod::Put("PUT");
+const HttpMethod HttpMethod::Delete("DELETE");
+const HttpMethod HttpMethod::Patch("PATCH");
+
 void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,

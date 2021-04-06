@@ -154,7 +154,7 @@ void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::stri
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
 static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request)
 {
-  std::string httpRequest(HttpMethodToString(request.GetMethod()));
+  std::string httpRequest(request.GetMethod().ToString());
   // HTTP version hardcoded to 1.1
   auto const url = request.GetUrl().GetRelativeUrl();
   httpRequest += " /" + url + " HTTP/1.1\r\n";

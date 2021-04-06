@@ -27,7 +27,6 @@
 #include "azure/core/response.hpp"
 #include "azure/core/url.hpp"
 #include "azure/core/uuid.hpp"
-#include "azure/core/version.hpp"
 
 // azure/core/credentials
 #include "azure/core/credentials/credentials.hpp"
