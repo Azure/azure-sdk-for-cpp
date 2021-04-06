@@ -84,43 +84,24 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * HTTP request method.
    */
-  enum class HttpMethod
-  {
-    Get, ///< GET
-    Head, ///< HEAD
-    Post, ///< POST
-    Put, ///< PUT
-    Delete, ///< DELETE
-    Patch, ///< PATCH
-  };
+  class HttpMethod {
+  public:
+    HttpMethod() = delete;
+    explicit HttpMethod(std::string value) : m_value(std::move(value)) {}
+    bool operator==(const HttpMethod& other) const { return m_value == other.m_value; }
+    bool operator!=(const HttpMethod& other) const { return !(*this == other); }
+    const std::string& ToString() const { return m_value; }
 
-  /**
-   * @brief Get a string representation for a value of #HttpMethod.
-   *
-   * @param method A value of #Azure::Core::Http::HttpMethod value.
-   *
-   * @return String name that corresponds to a value of #Azure::Core::Http::HttpMethod type.
-   */
-  inline std::string HttpMethodToString(const HttpMethod& method)
-  {
-    switch (method)
-    {
-      case HttpMethod::Get:
-        return "GET";
-      case HttpMethod::Head:
-        return "HEAD";
-      case HttpMethod::Post:
-        return "POST";
-      case HttpMethod::Put:
-        return "PUT";
-      case HttpMethod::Delete:
-        return "DELETE";
-      case HttpMethod::Patch:
-        return "PATCH";
-      default:
-        return "";
-    }
-  }
+    AZ_CORE_DLLEXPORT const static HttpMethod Get;
+    AZ_CORE_DLLEXPORT const static HttpMethod Head;
+    AZ_CORE_DLLEXPORT const static HttpMethod Post;
+    AZ_CORE_DLLEXPORT const static HttpMethod Put;
+    AZ_CORE_DLLEXPORT const static HttpMethod Delete;
+    AZ_CORE_DLLEXPORT const static HttpMethod Patch;
+
+  private:
+    std::string m_value;
+  }; // extensible enum HttpMethod
 
   namespace Policies { namespace _internal {
     class RetryPolicy;
