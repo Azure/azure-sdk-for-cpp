@@ -1,13 +1,355 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "http/retry_policy_private.hpp"
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/http/pipeline.hpp"
 
 #include <gtest/gtest.h>
 
+#include <functional>
+
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
-using namespace Azure::Core::Http::Policies::_detail;
+using namespace Azure::Core::Http::Policies::_internal;
+
+namespace {
+class TestTransportPolicy : public HttpPolicy {
+private:
+  std::function<std::unique_ptr<RawResponse>()> m_send;
+
+public:
+  TestTransportPolicy(std::function<std::unique_ptr<RawResponse>()> send) : m_send(send) {}
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Request&,
+      NextHttpPolicy,
+      Azure::Core::Context const&) const override
+  {
+    return m_send();
+  };
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<TestTransportPolicy>(*this);
+  };
+};
+
+class RetryPolicyTest : public RetryPolicy {
+private:
+  std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
+      m_shouldRetryOnTransportFailure;
+
+  std::function<
+      bool(RawResponse const&, RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
+      m_shouldRetryOnResponse;
+
+public:
+  RetryPolicyTest(
+      RetryOptions const& retryOptions,
+      std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
+          shouldRetryOnTransportFailure,
+      std::function<bool(
+          RawResponse const&,
+          RetryOptions const&,
+          int32_t,
+          std::chrono::milliseconds&,
+          double)> shouldRetryOnResponse)
+      : RetryPolicy(retryOptions), m_shouldRetryOnTransportFailure(shouldRetryOnTransportFailure),
+        m_shouldRetryOnResponse(shouldRetryOnResponse)
+  {
+  }
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<RetryPolicyTest>(*this);
+  };
+
+protected:
+  bool ShouldRetryOnTransportFailure(
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const override
+  {
+    return m_shouldRetryOnTransportFailure(retryOptions, attempt, retryAfter, jitterFactor);
+  }
+
+  bool ShouldRetryOnResponse(
+      RawResponse const& response,
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const override
+  {
+    return m_shouldRetryOnResponse(response, retryOptions, attempt, retryAfter, jitterFactor);
+  }
+};
+} // namespace
+
+TEST(RetryPolicy, ShouldRetryOnResponse)
+{
+  using namespace std::chrono_literals;
+  RetryOptions const retryOptions{5, 10s, 5min, {HttpStatusCode::Ok}};
+
+  RawResponse const* responsePtrSent = nullptr;
+
+  RawResponse const* responsePtrReceived = nullptr;
+  RetryOptions retryOptionsReceived{0, 0ms, 0ms, {}};
+  int32_t attemptReceived = -1234;
+  double jitterReceived = -5678;
+
+  int onTransportFailureInvoked = 0;
+  int onResponseInvoked = 0;
+
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<RetryPolicyTest>(
+        retryOptions,
+        [&](auto options, auto attempt, auto, auto jitter) {
+          ++onTransportFailureInvoked;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          return false;
+        },
+        [&](RawResponse const& response, auto options, auto attempt, auto, auto jitter) {
+          ++onResponseInvoked;
+          responsePtrReceived = &response;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          return false;
+        }));
+
+    policies.emplace_back(std::make_unique<TestTransportPolicy>([&]() {
+      auto response = std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Test");
+
+      responsePtrSent = response.get();
+
+      return response;
+    }));
+
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+    Request request(HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com"));
+    pipeline.Send(request, Azure::Core::Context());
+  }
+
+  EXPECT_EQ(onTransportFailureInvoked, 0);
+  EXPECT_EQ(onResponseInvoked, 1);
+
+  EXPECT_NE(responsePtrSent, nullptr);
+  EXPECT_EQ(responsePtrSent, responsePtrReceived);
+
+  EXPECT_EQ(retryOptionsReceived.MaxRetries, retryOptions.MaxRetries);
+  EXPECT_EQ(retryOptionsReceived.RetryDelay, retryOptions.RetryDelay);
+  EXPECT_EQ(retryOptionsReceived.MaxRetryDelay, retryOptions.MaxRetryDelay);
+  EXPECT_EQ(retryOptionsReceived.StatusCodes, retryOptions.StatusCodes);
+
+  EXPECT_EQ(attemptReceived, 1);
+  EXPECT_EQ(jitterReceived, -1);
+
+  // 3 attempts
+  responsePtrSent = nullptr;
+
+  responsePtrReceived = nullptr;
+  retryOptionsReceived = RetryOptions{0, 0ms, 0ms, {}};
+  attemptReceived = -1234;
+  jitterReceived = -5678;
+
+  onTransportFailureInvoked = 0;
+  onResponseInvoked = 0;
+
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<RetryPolicyTest>(
+        retryOptions,
+        [&](auto options, auto attempt, auto, auto jitter) {
+          ++onTransportFailureInvoked;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          return false;
+        },
+        [&](RawResponse const& response, auto options, auto attempt, auto retryAfter, auto jitter) {
+          ++onResponseInvoked;
+          responsePtrReceived = &response;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          retryAfter = 1ms;
+          return onResponseInvoked < 3;
+        }));
+
+    policies.emplace_back(std::make_unique<TestTransportPolicy>([&]() {
+      auto response = std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Test");
+
+      responsePtrSent = response.get();
+
+      return response;
+    }));
+
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+    Request request(HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com"));
+    pipeline.Send(request, Azure::Core::Context());
+  }
+
+  EXPECT_EQ(onTransportFailureInvoked, 0);
+  EXPECT_EQ(onResponseInvoked, 3);
+
+  EXPECT_NE(responsePtrSent, nullptr);
+  EXPECT_EQ(responsePtrSent, responsePtrReceived);
+
+  EXPECT_EQ(retryOptionsReceived.MaxRetries, retryOptions.MaxRetries);
+  EXPECT_EQ(retryOptionsReceived.RetryDelay, retryOptions.RetryDelay);
+  EXPECT_EQ(retryOptionsReceived.MaxRetryDelay, retryOptions.MaxRetryDelay);
+  EXPECT_EQ(retryOptionsReceived.StatusCodes, retryOptions.StatusCodes);
+
+  EXPECT_EQ(attemptReceived, 3);
+  EXPECT_EQ(jitterReceived, -1);
+}
+
+TEST(RetryPolicy, ShouldRetryOnTransportFailure)
+{
+  using namespace std::chrono_literals;
+  RetryOptions const retryOptions{5, 10s, 5min, {HttpStatusCode::Ok}};
+
+  RetryOptions retryOptionsReceived{0, 0ms, 0ms, {}};
+  int32_t attemptReceived = -1234;
+  double jitterReceived = -5678;
+
+  int onTransportFailureInvoked = 0;
+  int onResponseInvoked = 0;
+
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<RetryPolicyTest>(
+        retryOptions,
+        [&](auto options, auto attempt, auto, auto jitter) {
+          ++onTransportFailureInvoked;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          return false;
+        },
+        [&](auto response, auto options, auto attempt, auto, auto jitter) {
+          ++onResponseInvoked;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          return false;
+        }));
+
+    policies.emplace_back(std::make_unique<TestTransportPolicy>(
+        []() -> std::unique_ptr<RawResponse> { throw TransportException("Test"); }));
+
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+    Request request(HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com"));
+    EXPECT_THROW(pipeline.Send(request, Azure::Core::Context()), TransportException);
+  }
+
+  EXPECT_EQ(onTransportFailureInvoked, 1);
+  EXPECT_EQ(onResponseInvoked, 0);
+
+  EXPECT_EQ(retryOptionsReceived.MaxRetries, retryOptions.MaxRetries);
+  EXPECT_EQ(retryOptionsReceived.RetryDelay, retryOptions.RetryDelay);
+  EXPECT_EQ(retryOptionsReceived.MaxRetryDelay, retryOptions.MaxRetryDelay);
+  EXPECT_EQ(retryOptionsReceived.StatusCodes, retryOptions.StatusCodes);
+
+  EXPECT_EQ(attemptReceived, 1);
+  EXPECT_EQ(jitterReceived, -1);
+
+  // 3 attempts
+  retryOptionsReceived = RetryOptions{0, 0ms, 0ms, {}};
+  attemptReceived = -1234;
+  jitterReceived = -5678;
+
+  onTransportFailureInvoked = 0;
+  onResponseInvoked = 0;
+
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<RetryPolicyTest>(
+        retryOptions,
+        [&](auto options, auto attempt, auto, auto jitter) {
+          ++onTransportFailureInvoked;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          return onTransportFailureInvoked < 3;
+        },
+        [&](auto response, auto options, auto attempt, auto retryAfter, auto jitter) {
+          ++onResponseInvoked;
+          retryOptionsReceived = retryOptions;
+          attemptReceived = attempt;
+          jitterReceived = jitter;
+
+          retryAfter = 1ms;
+          return false;
+        }));
+
+    policies.emplace_back(std::make_unique<TestTransportPolicy>(
+        []() -> std::unique_ptr<RawResponse> { throw TransportException("Test"); }));
+
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+    Request request(HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com"));
+    EXPECT_THROW(pipeline.Send(request, Azure::Core::Context()), TransportException);
+  }
+
+  EXPECT_EQ(onTransportFailureInvoked, 3);
+  EXPECT_EQ(onResponseInvoked, 0);
+
+  EXPECT_EQ(retryOptionsReceived.MaxRetries, retryOptions.MaxRetries);
+  EXPECT_EQ(retryOptionsReceived.RetryDelay, retryOptions.RetryDelay);
+  EXPECT_EQ(retryOptionsReceived.MaxRetryDelay, retryOptions.MaxRetryDelay);
+  EXPECT_EQ(retryOptionsReceived.StatusCodes, retryOptions.StatusCodes);
+
+  EXPECT_EQ(attemptReceived, 3);
+  EXPECT_EQ(jitterReceived, -1);
+}
+
+namespace {
+class RetryLogic : private RetryPolicy {
+  RetryLogic() : RetryPolicy(RetryOptions()){};
+  ~RetryLogic(){};
+
+  static RetryLogic const g_retryPolicy;
+
+public:
+  static bool ShouldRetryOnTransportFailure(
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor)
+  {
+    return g_retryPolicy.RetryPolicy::ShouldRetryOnTransportFailure(
+        retryOptions, attempt, retryAfter, jitterFactor);
+  }
+
+  static bool ShouldRetryOnResponse(
+      RawResponse const& response,
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor)
+  {
+    return g_retryPolicy.RetryPolicy::ShouldRetryOnResponse(
+        response, retryOptions, attempt, retryAfter, jitterFactor);
+  }
+};
+
+RetryLogic const RetryLogic::g_retryPolicy;
+} // namespace
 
 TEST(RetryPolicy, Exponential)
 {

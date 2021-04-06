@@ -8,6 +8,7 @@
 
 namespace {
 class TestTokenCredential : public Azure::Core::Credentials::TokenCredential {
+private:
   std::shared_ptr<Azure::Core::Credentials::AccessToken const> m_accessToken;
 
 public:

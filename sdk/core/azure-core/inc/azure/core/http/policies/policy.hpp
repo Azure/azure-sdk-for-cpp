@@ -238,7 +238,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     public:
       /**
-       * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
+       * Constructs HTTP retry policy with the provided
+       * #Azure::Core::Http::Policies::RetryOptions.
        *
        * @param options #Azure::Core::Http::Policies::RetryOptions.
        */
@@ -266,6 +267,20 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @return A positive number indicating the current intent to send the request.
        */
       static int32_t GetRetryNumber(Context const& context);
+
+    protected:
+      virtual bool ShouldRetryOnTransportFailure(
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
+
+      virtual bool ShouldRetryOnResponse(
+          RawResponse const& response,
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
     };
 
     /**

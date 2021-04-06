@@ -4,8 +4,6 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
 
-#include "retry_policy_private.hpp"
-
 #include <algorithm>
 #include <cstdlib>
 #include <limits>
@@ -15,7 +13,6 @@
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
-using namespace Azure::Core::Http::Policies::_detail;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
@@ -126,11 +123,80 @@ int32_t RetryPolicy::GetRetryNumber(Context const& context)
   return context.GetValue<int32_t>(RetryKey);
 }
 
-bool RetryLogic::ShouldRetryOnTransportFailure(
+std::unique_ptr<RawResponse> RetryPolicy::Send(
+    Request& request,
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
+{
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
+
+  auto retryContext = CreateRetryContext(ctx);
+
+  for (int32_t attempt = 1;; ++attempt)
+  {
+    std::chrono::milliseconds retryAfter{};
+    request.StartTry();
+    // creates a copy of original query parameters from request
+    auto originalQueryParameters = request.GetUrl().GetQueryParameters();
+
+    try
+    {
+      auto response = nextHttpPolicy.Send(request, retryContext);
+
+      // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
+      // doesn't need to be retried), then ShouldRetry returns false.
+      if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
+      {
+        // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
+        // trying to perform same request would use last retry query/headers
+        return response;
+      }
+    }
+    catch (const TransportException& e)
+    {
+      if (Log::ShouldWrite(Logger::Level::Warning))
+      {
+        Log::Write(Logger::Level::Warning, std::string("HTTP Transport error: ") + e.what());
+      }
+
+      if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
+      {
+        throw;
+      }
+    }
+
+    if (Log::ShouldWrite(Logger::Level::Informational))
+    {
+      std::ostringstream log;
+
+      log << "HTTP Retry attempt #" << attempt << " will be made in "
+          << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
+
+      Log::Write(Logger::Level::Informational, log.str());
+    }
+
+    // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure
+    // we proceed immediately if it is 0.
+    if (retryAfter.count() > 0)
+    {
+      ctx.ThrowIfCancelled();
+      std::this_thread::sleep_for(retryAfter);
+    }
+
+    // Restore the original query parameters before next retry
+    request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
+
+    // Update retry number
+    retryContext = CreateRetryContext(retryContext);
+  }
+}
+
+bool RetryPolicy::ShouldRetryOnTransportFailure(
     RetryOptions const& retryOptions,
     int32_t attempt,
     std::chrono::milliseconds& retryAfter,
-    double jitterFactor)
+    double jitterFactor) const
 {
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
@@ -142,15 +208,16 @@ bool RetryLogic::ShouldRetryOnTransportFailure(
   return true;
 }
 
-bool RetryLogic::ShouldRetryOnResponse(
+bool RetryPolicy::ShouldRetryOnResponse(
     RawResponse const& response,
     RetryOptions const& retryOptions,
     int32_t attempt,
     std::chrono::milliseconds& retryAfter,
-    double jitterFactor)
+    double jitterFactor) const
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
+
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
   {
@@ -188,73 +255,4 @@ bool RetryLogic::ShouldRetryOnResponse(
   }
 
   return true;
-}
-
-std::unique_ptr<RawResponse> RetryPolicy::Send(
-    Request& request,
-    NextHttpPolicy nextHttpPolicy,
-    Context const& ctx) const
-{
-  using Azure::Core::Diagnostics::Logger;
-  using Azure::Core::Diagnostics::_internal::Log;
-
-  auto retryContext = CreateRetryContext(ctx);
-
-  for (int32_t attempt = 1;; ++attempt)
-  {
-    std::chrono::milliseconds retryAfter{};
-    request.StartTry();
-    // creates a copy of original query parameters from request
-    auto originalQueryParameters = request.GetUrl().GetQueryParameters();
-
-    try
-    {
-      auto response = nextHttpPolicy.Send(request, retryContext);
-
-      // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
-      // doesn't need to be retried), then ShouldRetry returns false.
-      if (!RetryLogic::ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
-      {
-        // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
-        // trying to perform same request would use last retry query/headers
-        return response;
-      }
-    }
-    catch (const TransportException& e)
-    {
-      if (Log::ShouldWrite(Logger::Level::Warning))
-      {
-        Log::Write(Logger::Level::Warning, std::string("HTTP Transport error: ") + e.what());
-      }
-
-      if (!RetryLogic::ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
-      {
-        throw;
-      }
-    }
-
-    if (Log::ShouldWrite(Logger::Level::Informational))
-    {
-      std::ostringstream log;
-
-      log << "HTTP Retry attempt #" << attempt << " will be made in "
-          << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
-
-      Log::Write(Logger::Level::Informational, log.str());
-    }
-
-    // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure
-    // we proceed immediately if it is 0.
-    if (retryAfter.count() > 0)
-    {
-      ctx.ThrowIfCancelled();
-      std::this_thread::sleep_for(retryAfter);
-    }
-
-    // Restore the original query parameters before next retry
-    request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
-
-    // Update retry number
-    retryContext = CreateRetryContext(retryContext);
-  }
 }

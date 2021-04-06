@@ -72,6 +72,7 @@ void SendRequest(LogOptions const& logOptions)
 }
 
 class TestLogger {
+private:
   static void Deinitialize()
   {
     Logger::SetLevel(Logger::Level::Error);

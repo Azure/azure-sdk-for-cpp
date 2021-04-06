@@ -14,6 +14,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 namespace {
 
 class NoOpPolicy : public HttpPolicy {
+private:
   std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
       const override
   {
