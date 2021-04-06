@@ -88,7 +88,8 @@ bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt)
   return attempt > retryOptions.MaxRetries;
 }
 
-Context::Key const RetryKey;
+  Context::Key const RetryKey;
+} // namespace
 
 int32_t RetryPolicy::GetRetryCount(Context const& context)
 {
