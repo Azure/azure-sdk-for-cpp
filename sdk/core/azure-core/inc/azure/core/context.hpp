@@ -12,11 +12,13 @@
 
 #include <atomic>
 #include <chrono>
+#include <cstdlib> // For abort
 #include <memory>
 #include <new> //For the non-allocating placement new
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 namespace Azure { namespace Core {
 
@@ -182,6 +184,29 @@ namespace Azure { namespace Core {
       std::abort();
       // It should be expected that keys may not exist
       //  That implies we return T* and NOT a T&
+    }
+
+    /**
+     * @brief Get the contained value, returns \p val if value is absent.
+     * @param val A value to return when no value is contained.
+     * @return A contained value (when present), or \p val.
+     */
+    template <class T> const T& ValueOr(Key const& key, T&& val) const
+    {
+      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+      {
+        if (ptr->Key == key)
+        {
+          if (typeid(T) != ptr->ValueType)
+          {
+            // type mismatch
+            std::abort();
+          }
+          return *reinterpret_cast<const T*>(ptr->Value.get());
+        }
+      }
+      return val;
+       //static_cast<typename std::remove_cv<T>::type>(std::forward<T>(val));
     }
 
     /**

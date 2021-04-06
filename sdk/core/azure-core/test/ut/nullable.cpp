@@ -171,3 +171,21 @@ TEST(Nullable, ValueOr)
   // Ensure val2 is still disengaged after call to ValueOr
   EXPECT_FALSE(val2);
 }
+
+TEST(Nullable, ValueOrString)
+{
+  std::string s("Test");
+  Nullable<std::string> val1(s);
+  Nullable<std::string> val2;
+
+  EXPECT_TRUE(val1);
+  EXPECT_TRUE(val1.ValueOr(s) == s);
+  // Ensure the value was unmodified in ValueOr
+  EXPECT_TRUE(val1.GetValue() == s);
+
+  EXPECT_FALSE(val2);
+  EXPECT_TRUE(val2.ValueOr(s) == s);
+  // Ensure val2 is still disengaged after call to ValueOr
+  EXPECT_FALSE(val2);
+}
+

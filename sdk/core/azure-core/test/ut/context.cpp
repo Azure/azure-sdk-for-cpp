@@ -361,3 +361,17 @@ TEST(Context, Deadline)
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
   }
 }
+
+TEST(Context, ValueOr)
+{
+  const char* str = "Test String";
+  std::string s(str);
+
+  Context context;
+  Context::Key const key;
+
+  auto value = context.ValueOr<std::string>(key, str);
+
+  EXPECT_TRUE(value == s);
+  EXPECT_TRUE(value == str);
+}
