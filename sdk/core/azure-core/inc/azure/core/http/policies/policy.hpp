@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @param context The context used to call send request.
        * @return A positive number indicating the current intent to send the request.
        */
-      static int32_t GetRetryNumber(Context const& context);
+      static int32_t GetRetryCount(Context const& context);
 
     protected:
       virtual bool ShouldRetryOnTransportFailure(
