@@ -93,8 +93,8 @@ Context::Key const RetryKey;
 
 int32_t RetryPolicy::GetRetryCount(Context const& context)
 {
-  int number = -1;
-  if (!context.TryGetValue<int>(RetryKey, number))
+  int32_t number = -1;
+  if (!context.TryGetValue<int32_t>(RetryKey, number))
   {
     // Context with no data abut sending request with retry policy = -1
     // First try = 0

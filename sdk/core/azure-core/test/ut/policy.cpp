@@ -61,8 +61,7 @@ struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
   {
     std::string valueHolder;
     EXPECT_TRUE(ctx.TryGetValue<std::string>(TheKey, valueHolder));
-    auto value = ctx.GetValue<std::string>(TheKey);
-    EXPECT_EQ("TheValue", value);
+    EXPECT_EQ("TheValue", valueHolder);
     return nextHttpPolicy.Send(request, ctx);
   }
 };

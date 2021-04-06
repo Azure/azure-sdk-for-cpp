@@ -161,11 +161,13 @@ namespace Azure { namespace Core {
      * branch of contexts this context belongs to.
      *
      * @param key A key associated with a context to find.
-     * @param outputValue A reference to the value corresponding to the key to be set, if found
+     * @param outputValue A reference to the value corresponding to the \p key to be set, if found
      * within the context tree.
      *
-     * @return If found, returns true, with outputValue set to the value associated with the context
-     * found; otherwise returns false.
+     * @return If found, returns `true`, with \p outputValue set to the value associated with the
+     * key found; otherwise returns `false`.
+     *
+     * @remark The \p outputValue is left unmodified it the \p key is not found.
      */
     template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
@@ -183,34 +185,6 @@ namespace Azure { namespace Core {
         }
       }
       return false;
-    }
-
-    /**
-     * @brief Get a value associated with a \p key parameter within this context or the branch of
-     * contexts this context belongs to.
-     *
-     * @param key A key associated with a context to find.
-     *
-     * @return A value associated with the context found; an empty value if a specific value can't
-     * be found.
-     */
-    template <class T> const T& GetValue(Key const& key) const
-    {
-      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
-      {
-        if (ptr->Key == key)
-        {
-          if (typeid(T) != ptr->ValueType)
-          {
-            // type mismatch
-            std::abort();
-          }
-          return *reinterpret_cast<const T*>(ptr->Value.get());
-        }
-      }
-      std::abort();
-      // It should be expected that keys may not exist
-      //  That implies we return T* and NOT a T&
     }
 
     /**
