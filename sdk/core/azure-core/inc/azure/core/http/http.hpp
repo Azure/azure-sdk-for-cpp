@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class HttpMethod {
   public:
-    HttpMethod() = default;
+    HttpMethod() = delete;
     explicit HttpMethod(std::string value) : m_value(std::move(value)) {}
     bool operator==(const HttpMethod& other) const { return m_value == other.m_value; }
     bool operator!=(const HttpMethod& other) const { return !(*this == other); }
