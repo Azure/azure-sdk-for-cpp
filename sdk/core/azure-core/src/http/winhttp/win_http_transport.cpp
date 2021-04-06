@@ -292,6 +292,22 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   }
 }
 
+static inline std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
+{
+  std::string requestHeaderString;
+
+  for (auto const& header : request.GetHeaders())
+  {
+    requestHeaderString += header.first; // string (key)
+    requestHeaderString += ": ";
+    requestHeaderString += header.second; // string's value
+    requestHeaderString += "\r\n";
+  }
+  requestHeaderString += "\r\n";
+
+  return requestHeaderString;
+}
+
 void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
   std::wstring encodedHeaders;
@@ -302,7 +318,7 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
   {
     // The encodedHeaders will be null-terminated and the length is calculated.
     encodedHeadersLength = -1;
-    std::string requestHeaderString = handleManager->m_request.GetHeadersAsString();
+    std::string requestHeaderString = GetHeadersAsString(handleManager->m_request);
     requestHeaderString.append("\0");
 
     encodedHeaders = StringToWideString(requestHeaderString);
