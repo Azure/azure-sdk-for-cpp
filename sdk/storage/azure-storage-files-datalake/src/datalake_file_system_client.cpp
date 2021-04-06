@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -350,7 +350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string destinationFileSystem;
     if (options.DestinationFileSystem.HasValue())
     {
-      destinationFileSystem = options.DestinationFileSystem.GetValue();
+      destinationFileSystem = options.DestinationFileSystem.Value();
     }
     else
     {
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string destinationFileSystem;
     if (options.DestinationFileSystem.HasValue())
     {
-      destinationFileSystem = options.DestinationFileSystem.GetValue();
+      destinationFileSystem = options.DestinationFileSystem.Value();
     }
     else
     {

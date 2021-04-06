@@ -75,3 +75,49 @@ TEST(FileBodyStream, Length)
   stream.Rewind();
   EXPECT_EQ(stream.Length(), FileSize);
 }
+
+TEST(FileBodyStream, Read)
+{
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  // ReadToEnd
+  auto readResult = stream.ReadToEnd();
+  EXPECT_EQ(readResult.size(), FileSize);
+
+  stream.Rewind();
+
+  readResult = stream.ReadToEnd(Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readResult.size(), FileSize);
+
+  stream.Rewind();
+
+  // ReadToCount
+  std::vector<uint8_t> buffer(FileSize * 2);
+
+  int64_t readSize = stream.ReadToCount(buffer.data(), 10);
+  EXPECT_EQ(readSize, 10);
+  EXPECT_EQ(buffer[10], 0);
+
+  stream.Rewind();
+
+  readSize = stream.ReadToCount(buffer.data(), 10, Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readSize, 10);
+  EXPECT_EQ(buffer[10], 0);
+
+  stream.Rewind();
+
+  // Read
+  readSize = stream.Read(buffer.data(), buffer.size());
+  EXPECT_EQ(readSize, FileSize);
+  EXPECT_EQ(buffer[FileSize], 0);
+
+  stream.Rewind();
+
+  readSize
+      = stream.Read(buffer.data(), buffer.size(), Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readSize, FileSize);
+  EXPECT_EQ(buffer[FileSize], 0);
+}

@@ -30,6 +30,7 @@ include(GoogleTest)
 add_executable (
   azure-core-test
     base64.cpp
+    bearer_token_authentication_policy.cpp
     bodystream.cpp
     case_insensitive_containers.cpp
     client_options.cpp
@@ -41,6 +42,7 @@ add_executable (
     etag.cpp
     http.cpp
     json.cpp
+    log_policy.cpp
     logging.cpp
     macro_guard.cpp
     main.cpp
@@ -52,7 +54,9 @@ add_executable (
     operation_status.cpp
     pipeline.cpp
     policy.cpp
+    request_id_policy.cpp
     response_t.cpp
+    retry_policy.cpp
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp

@@ -22,23 +22,13 @@ inline std::wstring HttpMethodToWideString(HttpMethod method)
   // This string should be all uppercase.
   // Many servers treat HTTP verbs as case-sensitive, and the Internet Engineering Task Force (IETF)
   // Requests for Comments (RFCs) spell these verbs using uppercase characters only.
-  switch (method)
-  {
-    case HttpMethod::Get:
-      return L"GET";
-    case HttpMethod::Head:
-      return L"HEAD";
-    case HttpMethod::Post:
-      return L"POST";
-    case HttpMethod::Put:
-      return L"PUT";
-    case HttpMethod::Delete:
-      return L"DELETE";
-    case HttpMethod::Patch:
-      return L"PATCH";
-    default:
-      throw Azure::Core::Http::TransportException("Invalid or unsupported HTTP method.");
-  }
+
+  std::string httpMethodString = method.ToString();
+
+  // Assuming ASCII here is OK since the input is expected to be an HTTP method string.
+  // Converting this way is only safe when the text is ASCII.
+  std::wstring wideStr(httpMethodString.begin(), httpMethodString.end());
+  return wideStr;
 }
 
 // Convert a UTF-8 string to a wide Unicode string.

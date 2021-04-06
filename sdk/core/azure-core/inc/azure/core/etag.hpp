@@ -92,7 +92,7 @@ public:
         // If either is weak then there is no match
         //  else tags must match character for character
         return !left.IsWeak() && !right.IsWeak()
-            && (left.m_value.GetValue().compare(right.m_value.GetValue()) == 0);
+            && (left.m_value.Value().compare(right.m_value.Value()) == 0);
         break;
 
       case ETagComparison::Weak:
@@ -100,8 +100,8 @@ public:
         auto leftStart = left.IsWeak() ? 2 : 0;
         auto rightStart = right.IsWeak() ? 2 : 0;
 
-        auto leftVal = left.m_value.GetValue();
-        auto rightVal = right.m_value.GetValue();
+        auto leftVal = left.m_value.Value();
+        auto rightVal = right.m_value.Value();
 
         // Compare if lengths are equal
         //   Compare the strings character by character
@@ -141,7 +141,7 @@ public:
     {
       abort();
     }
-    return m_value.GetValue();
+    return m_value.Value();
   }
 
   /**
@@ -171,10 +171,9 @@ public:
     //  W/""
     // Valid weak format must start with W/"
     //   Must end with a /"
-    const bool weak = m_value && (m_value.GetValue().length() >= 4)
-        && ((m_value.GetValue()[0] == 'W') && (m_value.GetValue()[1] == '/')
-            && (m_value.GetValue()[2] == '"')
-            && (m_value.GetValue()[m_value.GetValue().size() - 1] == '"'));
+    const bool weak = m_value && (m_value.Value().length() >= 4)
+        && ((m_value.Value()[0] == 'W') && (m_value.Value()[1] == '/')
+            && (m_value.Value()[2] == '"') && (m_value.Value()[m_value.Value().size() - 1] == '"'));
 
     return weak;
   }
