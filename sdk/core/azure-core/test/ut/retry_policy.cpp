@@ -326,24 +326,24 @@ class RetryLogic : private RetryPolicy {
   static RetryLogic const g_retryPolicy;
 
 public:
-  static bool ShouldRetryOnTransportFailure(
+  static bool TestShouldRetryOnTransportFailure(
       RetryOptions const& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
       double jitterFactor)
   {
-    return g_retryPolicy.RetryPolicy::ShouldRetryOnTransportFailure(
+    return g_retryPolicy.ShouldRetryOnTransportFailure(
         retryOptions, attempt, retryAfter, jitterFactor);
   }
 
-  static bool ShouldRetryOnResponse(
+  static bool TestShouldRetryOnResponse(
       RawResponse const& response,
       RetryOptions const& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
       double jitterFactor)
   {
-    return g_retryPolicy.RetryPolicy::ShouldRetryOnResponse(
+    return g_retryPolicy.ShouldRetryOnResponse(
         response, retryOptions, attempt, retryAfter, jitterFactor);
   }
 };
@@ -359,7 +359,8 @@ TEST(RetryPolicy, Exponential)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 1, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 1, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 1s);
@@ -367,7 +368,8 @@ TEST(RetryPolicy, Exponential)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 2, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 2, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 2s);
@@ -375,7 +377,8 @@ TEST(RetryPolicy, Exponential)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 3, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 3, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 4s);
@@ -383,7 +386,8 @@ TEST(RetryPolicy, Exponential)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 4, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 4, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, false);
   }
@@ -396,7 +400,7 @@ TEST(RetryPolicy, LessThan2Retries)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({1, 1s, 2min, {}}, 1, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure({1, 1s, 2min, {}}, 1, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 1s);
@@ -405,7 +409,7 @@ TEST(RetryPolicy, LessThan2Retries)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({0, 1s, 2min, {}}, 1, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure({0, 1s, 2min, {}}, 1, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, false);
   }
@@ -413,7 +417,7 @@ TEST(RetryPolicy, LessThan2Retries)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({-1, 1s, 2min, {}}, 1, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure({-1, 1s, 2min, {}}, 1, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, false);
   }
@@ -427,7 +431,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 1, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 1, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 1s);
@@ -435,7 +440,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 2, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 2, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 2s);
@@ -443,7 +449,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 3, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 3, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 4s);
@@ -451,7 +458,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 4, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 4, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 8s);
@@ -459,7 +467,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 5, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 5, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 16s);
@@ -467,7 +476,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 6, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 6, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 20s);
@@ -475,7 +485,8 @@ TEST(RetryPolicy, NotExceedingMaxRetryDelay)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 7, retryAfter, 1.0);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 7, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 20s);
@@ -491,7 +502,7 @@ TEST(RetryPolicy, NotExceedingInt32Max)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure(options, 31, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 31, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 1073741824s);
@@ -500,7 +511,7 @@ TEST(RetryPolicy, NotExceedingInt32Max)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure(options, 32, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 32, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 2147483647s);
@@ -509,7 +520,7 @@ TEST(RetryPolicy, NotExceedingInt32Max)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure(options, 33, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 33, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 2147483647s);
@@ -518,7 +529,7 @@ TEST(RetryPolicy, NotExceedingInt32Max)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure(options, 34, retryAfter, 1.0);
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 34, retryAfter, 1.0);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 2147483647s);
@@ -533,7 +544,8 @@ TEST(RetryPolicy, Jitter)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 1, retryAfter, 0.8);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 1, retryAfter, 0.8);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 8s);
@@ -541,7 +553,8 @@ TEST(RetryPolicy, Jitter)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 1, retryAfter, 1.3);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 1, retryAfter, 1.3);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 13s);
@@ -549,7 +562,8 @@ TEST(RetryPolicy, Jitter)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 2, retryAfter, 0.8);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 2, retryAfter, 0.8);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 16s);
@@ -557,7 +571,8 @@ TEST(RetryPolicy, Jitter)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(options, 2, retryAfter, 1.3);
+    bool const shouldRetry
+        = RetryLogic::TestShouldRetryOnTransportFailure(options, 2, retryAfter, 1.3);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 26s);
@@ -571,7 +586,7 @@ TEST(RetryPolicy, JitterExtremes)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({3, 1ms, 2min, {}}, 1, retryAfter, 0.8);
+        = RetryLogic::TestShouldRetryOnTransportFailure({3, 1ms, 2min, {}}, 1, retryAfter, 0.8);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 0ms);
@@ -580,7 +595,7 @@ TEST(RetryPolicy, JitterExtremes)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({3, 2ms, 2min, {}}, 1, retryAfter, 0.8);
+        = RetryLogic::TestShouldRetryOnTransportFailure({3, 2ms, 2min, {}}, 1, retryAfter, 0.8);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 1ms);
@@ -589,7 +604,7 @@ TEST(RetryPolicy, JitterExtremes)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({3, 10s, 21s, {}}, 2, retryAfter, 1.3);
+        = RetryLogic::TestShouldRetryOnTransportFailure({3, 10s, 21s, {}}, 2, retryAfter, 1.3);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 21s);
@@ -598,7 +613,7 @@ TEST(RetryPolicy, JitterExtremes)
   {
     std::chrono::milliseconds retryAfter{};
     bool const shouldRetry
-        = RetryLogic::ShouldRetryOnTransportFailure({3, 10s, 21s, {}}, 3, retryAfter, 1.3);
+        = RetryLogic::TestShouldRetryOnTransportFailure({3, 10s, 21s, {}}, 3, retryAfter, 1.3);
 
     EXPECT_EQ(shouldRetry, true);
     EXPECT_EQ(retryAfter, 21s);
@@ -606,7 +621,7 @@ TEST(RetryPolicy, JitterExtremes)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnTransportFailure(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnTransportFailure(
         {35, 1s, 9999999999999s, {}}, 33, retryAfter, 1.3);
 
     EXPECT_EQ(shouldRetry, true);
@@ -620,7 +635,7 @@ TEST(RetryPolicy, HttpStatusCode)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnResponse(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnResponse(
         RawResponse(1, 1, HttpStatusCode::RequestTimeout, ""),
         {3, 3210s, 3h, {HttpStatusCode::RequestTimeout}},
         1,
@@ -633,7 +648,7 @@ TEST(RetryPolicy, HttpStatusCode)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnResponse(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnResponse(
         RawResponse(1, 1, HttpStatusCode::RequestTimeout, ""),
         {3, 654s, 3h, {HttpStatusCode::Ok}},
         1,
@@ -645,7 +660,7 @@ TEST(RetryPolicy, HttpStatusCode)
 
   {
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnResponse(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnResponse(
         RawResponse(1, 1, HttpStatusCode::Ok, ""),
         {3, 987s, 3h, {HttpStatusCode::Ok}},
         1,
@@ -666,7 +681,7 @@ TEST(RetryPolicy, RetryAfterMs)
     response.SetHeader("rEtRy-aFtEr-mS", "1234");
 
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnResponse(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnResponse(
         response, {3, 1s, 2min, {HttpStatusCode::RequestTimeout}}, 1, retryAfter, 1.3);
 
     EXPECT_EQ(shouldRetry, true);
@@ -678,7 +693,7 @@ TEST(RetryPolicy, RetryAfterMs)
     response.SetHeader("X-mS-ReTrY-aFtEr-MS", "5678");
 
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnResponse(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnResponse(
         response, {3, 1s, 2min, {HttpStatusCode::RequestTimeout}}, 1, retryAfter, 0.8);
 
     EXPECT_EQ(shouldRetry, true);
@@ -695,7 +710,7 @@ TEST(RetryPolicy, RetryAfter)
     response.SetHeader("rEtRy-aFtEr", "90");
 
     std::chrono::milliseconds retryAfter{};
-    bool const shouldRetry = RetryLogic::ShouldRetryOnResponse(
+    bool const shouldRetry = RetryLogic::TestShouldRetryOnResponse(
         response, {3, 1s, 2min, {HttpStatusCode::RequestTimeout}}, 1, retryAfter, 1.1);
 
     EXPECT_EQ(shouldRetry, true);
