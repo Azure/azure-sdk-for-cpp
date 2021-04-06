@@ -78,7 +78,7 @@ int main()
 
       // Get the next page
       GetPropertiesOfKeysSinglePageOptions options;
-      options.ContinuationToken = keysSinglePage.ContinuationToken.GetValue();
+      options.ContinuationToken = keysSinglePage.ContinuationToken.Value();
       keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).Value;
     }
 
@@ -108,7 +108,7 @@ int main()
 
       // Get the next page
       GetPropertiesOfKeyVersionsSinglePageOptions options;
-      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.GetValue();
+      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.Value();
       keyVersionsSinglePage
           = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).Value;
     }
@@ -141,7 +141,7 @@ int main()
 
       // Get the next page
       GetDeletedKeysSinglePageOptions options;
-      options.ContinuationToken = keysDeletedPage.ContinuationToken.GetValue();
+      options.ContinuationToken = keysDeletedPage.ContinuationToken.Value();
       keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).Value;
     }
 
@@ -179,5 +179,5 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
   {
     return false;
   }
-  return left.GetValue() == right.GetValue();
+  return left.Value() == right.Value();
 }

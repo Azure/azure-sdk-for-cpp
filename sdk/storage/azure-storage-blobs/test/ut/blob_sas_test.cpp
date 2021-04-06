@@ -493,7 +493,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string blobVersionUrl;
 
     auto create_version = [&]() {
-      std::string versionId = blobClient0.CreateSnapshot().Value.VersionId.GetValue();
+      std::string versionId = blobClient0.CreateSnapshot().Value.VersionId.Value();
       BlobVersionSasBuilder.BlobVersionId = versionId;
       blobVersionUrl = blobClient0.WithVersionId(versionId).GetUrl();
       blobClient0.SetMetadata({});

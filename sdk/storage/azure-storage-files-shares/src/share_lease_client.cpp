@@ -27,8 +27,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.LeaseDuration = static_cast<int32_t>(duration.count());
 
       auto response = _detail::ShareRestClient::File::AcquireLease(
-          m_fileClient.GetValue().m_shareFileUrl,
-          *(m_fileClient.GetValue().m_pipeline),
+          m_fileClient.Value().m_shareFileUrl,
+          *(m_fileClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -47,8 +47,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.LeaseDuration = static_cast<int32_t>(duration.count());
 
       auto response = _detail::ShareRestClient::Share::AcquireLease(
-          m_shareClient.GetValue().m_shareUrl,
-          *(m_shareClient.GetValue().m_pipeline),
+          m_shareClient.Value().m_shareUrl,
+          *(m_shareClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -82,8 +82,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
       auto response = _detail::ShareRestClient::Share::RenewLease(
-          m_shareClient.GetValue().m_shareUrl,
-          *(m_shareClient.GetValue().m_pipeline),
+          m_shareClient.Value().m_shareUrl,
+          *(m_shareClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -112,8 +112,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
       auto response = _detail::ShareRestClient::File::ReleaseLease(
-          m_fileClient.GetValue().m_shareFileUrl,
-          *(m_fileClient.GetValue().m_pipeline),
+          m_fileClient.Value().m_shareFileUrl,
+          *(m_fileClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -130,8 +130,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
       auto response = _detail::ShareRestClient::Share::ReleaseLease(
-          m_shareClient.GetValue().m_shareUrl,
-          *(m_shareClient.GetValue().m_pipeline),
+          m_shareClient.Value().m_shareUrl,
+          *(m_shareClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -161,8 +161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
 
       auto response = _detail::ShareRestClient::File::ChangeLease(
-          m_fileClient.GetValue().m_shareFileUrl,
-          *(m_fileClient.GetValue().m_pipeline),
+          m_fileClient.Value().m_shareFileUrl,
+          *(m_fileClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -181,8 +181,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
 
       auto response = _detail::ShareRestClient::Share::ChangeLease(
-          m_shareClient.GetValue().m_shareUrl,
-          *(m_shareClient.GetValue().m_pipeline),
+          m_shareClient.Value().m_shareUrl,
+          *(m_shareClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -210,8 +210,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
 
       auto response = _detail::ShareRestClient::File::BreakLease(
-          m_fileClient.GetValue().m_shareFileUrl,
-          *(m_fileClient.GetValue().m_pipeline),
+          m_fileClient.Value().m_shareFileUrl,
+          *(m_fileClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
@@ -227,8 +227,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::ShareRestClient::Share::BreakLeaseOptions protocolLayerOptions;
 
       auto response = _detail::ShareRestClient::Share::BreakLease(
-          m_shareClient.GetValue().m_shareUrl,
-          *(m_shareClient.GetValue().m_pipeline),
+          m_shareClient.Value().m_shareUrl,
+          *(m_shareClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
 
