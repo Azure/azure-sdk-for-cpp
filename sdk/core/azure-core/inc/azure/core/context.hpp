@@ -157,8 +157,8 @@ namespace Azure { namespace Core {
     DateTime GetDeadline() const;
 
     /**
-     * @brief Get a value associated with a \p key parameter within this context or the branch of
-     * contexts this context belongs to.
+     * @brief Try to get a value associated with a \p key parameter within this context or the
+     * branch of contexts this context belongs to.
      *
      * @param key A key associated with a context to find.
      * @param outputValue A reference to the value corresponding to the key to be set, if found
@@ -167,7 +167,7 @@ namespace Azure { namespace Core {
      * @return If found, returns true, with outputValue set to the value associated with the context
      * found; otherwise returns false.
      */
-    template <class T> const T& GetValue(Key const& key) const
+    template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
       for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
@@ -178,7 +178,8 @@ namespace Azure { namespace Core {
             // type mismatch
             std::abort();
           }
-          return *reinterpret_cast<const T*>(ptr->Value.get());
+          outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
+          return true;
         }
       }
       return false;
@@ -193,13 +194,18 @@ namespace Azure { namespace Core {
      * @return A value associated with the context found; an empty value if a specific value can't
      * be found.
      */
-    bool HasKey(Key const& key) const
+    template <class T> const T& GetValue(Key const& key) const
     {
       for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
         if (ptr->Key == key)
         {
-          return true;
+          if (typeid(T) != ptr->ValueType)
+          {
+            // type mismatch
+            std::abort();
+          }
+          return *reinterpret_cast<const T*>(ptr->Value.get());
         }
       }
       std::abort();

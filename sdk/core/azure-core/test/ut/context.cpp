@@ -18,7 +18,8 @@ TEST(Context, Basic)
   Context context;
   Context::Key const key;
 
-  EXPECT_FALSE(context.HasKey(key));
+  int placeholder;
+  EXPECT_FALSE(context.TryGetValue<int>(key, placeholder));
 }
 
 TEST(Context, BasicBool)
@@ -91,10 +92,14 @@ TEST(Context, NestedIsCancelled)
   Context context;
   Context::Key const key;
 
-  auto c2 = context.WithValue(key, "Value");
+  std::string actualValue = "Value";
+  auto c2 = context.WithValue(key, actualValue);
   EXPECT_FALSE(c2.IsCancelled());
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
+  std::string value = "a";
+  EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
+  EXPECT_EQ(value, "Value");
+  EXPECT_FALSE(context.TryGetValue<std::string>(key, value));
+  EXPECT_EQ(value, "Value");
 
   auto c3 = context.WithDeadline(deadline);
   EXPECT_FALSE(context.IsCancelled());
@@ -106,9 +111,11 @@ TEST(Context, NestedIsCancelled)
   EXPECT_FALSE(c2.IsCancelled());
   EXPECT_TRUE(c3.IsCancelled());
 
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
-  EXPECT_FALSE(c3.HasKey(key));
+  value = "b";
+  EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
+  EXPECT_EQ(value, "Value");
+  EXPECT_FALSE(context.TryGetValue<std::string>(key, value));
+  EXPECT_FALSE(c3.TryGetValue<std::string>(key, value));
 }
 
 TEST(Context, CancelWithValue)
@@ -116,18 +123,22 @@ TEST(Context, CancelWithValue)
   Context context;
   Context::Key const key;
 
-  auto c2 = context.WithValue(key, "Value");
+  std::string actualValue = "Value";
+  auto c2 = context.WithValue(key, actualValue);
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
+  std::string value = "a";
+  EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
+  EXPECT_EQ(value, "Value");
+  EXPECT_FALSE(context.TryGetValue<std::string>(key, value));
 
   c2.Cancel();
   EXPECT_TRUE(c2.IsCancelled());
   EXPECT_FALSE(context.IsCancelled());
 
-  EXPECT_TRUE(c2.HasKey(key));
-  EXPECT_FALSE(context.HasKey(key));
+  EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
+  EXPECT_EQ(value, "Value");
+  EXPECT_FALSE(context.TryGetValue<std::string>(key, value));
 }
 
 TEST(Context, ThrowIfCancelled)
@@ -219,6 +230,7 @@ TEST(Context, UniquePtr)
 
 TEST(Context, HeapLinkIntegrity)
 {
+  std::string value = "z";
   Context::Key const a;
   Context::Key const b;
   Context::Key const c;
@@ -228,34 +240,44 @@ TEST(Context, HeapLinkIntegrity)
   {
     Context root;
     auto firstGeneration = root.WithValue(a, std::string("a"));
-    EXPECT_TRUE(firstGeneration.HasKey(a));
+    EXPECT_TRUE(firstGeneration.TryGetValue<std::string>(a, value));
+    EXPECT_EQ(value, "a");
 
     auto secondGeneration = firstGeneration.WithValue(b, std::string("b"));
-    EXPECT_TRUE(secondGeneration.HasKey(a));
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(a, value));
+    EXPECT_EQ(value, "a");
     EXPECT_EQ("a", secondGeneration.GetValue<std::string>(a));
-    EXPECT_TRUE(secondGeneration.HasKey(b));
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(b, value));
+    EXPECT_EQ(value, "b");
     EXPECT_EQ("b", secondGeneration.GetValue<std::string>(b));
 
     // Now overide the generation
     secondGeneration = secondGeneration.WithValue(c, std::string("c"));
-    EXPECT_TRUE(
-        secondGeneration.HasKey(a)); // Still know about first gen - The link is still in heap
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(a, value));
+    EXPECT_EQ(value, "a"); // Still know about first gen - The link is still in heap
     EXPECT_EQ("a", secondGeneration.GetValue<std::string>(a));
-    EXPECT_TRUE(secondGeneration.HasKey(
-        b)); // Still knows about the initial second gen, as a shared_ptr, it is still on heap
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(b, value));
+    EXPECT_EQ(
+        value,
+        "b"); // Still knows about the initial second gen, as a shared_ptr, it is still on heap
     EXPECT_EQ("b", secondGeneration.GetValue<std::string>(b));
-    EXPECT_TRUE(secondGeneration.HasKey(c)); // Check new value
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(c, value));
+    EXPECT_EQ(value, "c"); // Check new value
     EXPECT_EQ("c", secondGeneration.GetValue<std::string>(c));
 
     // One more override
     secondGeneration = secondGeneration.WithValue(d, std::string("d"));
-    EXPECT_TRUE(secondGeneration.HasKey(a));
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(a, value));
+    EXPECT_EQ(value, "a");
     EXPECT_EQ("a", secondGeneration.GetValue<std::string>(a));
-    EXPECT_TRUE(secondGeneration.HasKey(b));
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(b, value));
+    EXPECT_EQ(value, "b");
     EXPECT_EQ("b", secondGeneration.GetValue<std::string>(b));
-    EXPECT_TRUE(secondGeneration.HasKey(c));
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(c, value));
+    EXPECT_EQ(value, "c");
     EXPECT_EQ("c", secondGeneration.GetValue<std::string>(c));
-    EXPECT_TRUE(secondGeneration.HasKey(d));
+    EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(d, value));
+    EXPECT_EQ(value, "d");
     EXPECT_EQ("d", secondGeneration.GetValue<std::string>(d));
 
     // New Gen
@@ -263,15 +285,20 @@ TEST(Context, HeapLinkIntegrity)
   }
   // Went out of scope, root and secondGeneration are destroyed. but should remain in heap for the
   // third-generation since the previous geneations are still alive inside his heart <3.
-  EXPECT_TRUE(thirdGeneration.HasKey(a));
+  EXPECT_TRUE(thirdGeneration.TryGetValue<std::string>(a, value));
+  EXPECT_EQ(value, "a");
   EXPECT_EQ("a", thirdGeneration.GetValue<std::string>(a));
-  EXPECT_TRUE(thirdGeneration.HasKey(b));
+  EXPECT_TRUE(thirdGeneration.TryGetValue<std::string>(b, value));
+  EXPECT_EQ(value, "b");
   EXPECT_EQ("b", thirdGeneration.GetValue<std::string>(b));
-  EXPECT_TRUE(thirdGeneration.HasKey(c));
+  EXPECT_TRUE(thirdGeneration.TryGetValue<std::string>(c, value));
+  EXPECT_EQ(value, "c");
   EXPECT_EQ("c", thirdGeneration.GetValue<std::string>(c));
-  EXPECT_TRUE(thirdGeneration.HasKey(d));
+  EXPECT_TRUE(thirdGeneration.TryGetValue<std::string>(d, value));
+  EXPECT_EQ(value, "d");
   EXPECT_EQ("d", thirdGeneration.GetValue<std::string>(d));
-  EXPECT_TRUE(thirdGeneration.HasKey(e));
+  EXPECT_TRUE(thirdGeneration.TryGetValue<std::string>(e, value));
+  EXPECT_EQ(value, "e");
   EXPECT_EQ("e", thirdGeneration.GetValue<std::string>(e));
 }
 

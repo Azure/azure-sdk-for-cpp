@@ -103,7 +103,7 @@ int32_t RetryPolicy::GetRetryCount(Context const& context)
     // ...
     number = -1;
   }
-  return *context.GetValue<int32_t*>(RetryKey);
+  return number;
 }
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
