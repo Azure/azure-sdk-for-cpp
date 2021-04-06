@@ -221,8 +221,8 @@ stages:
                     ArtifactName: ${{ artifact.Name }}
                     VcpkgPortName: ${{ artifact.VcpkgPortName }}
                     DisplayNameExtension: ${{ artifact.Name }}
-                    TestRelease: true
-                    TestReleaseRef: $(Build.SourceVersion)
+                    DailyRelease: true
+                    DailyReleaseRef: $(Build.SourceVersion)
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:

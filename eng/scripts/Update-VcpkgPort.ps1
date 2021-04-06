@@ -13,7 +13,7 @@ param (
 
     [string] $GitCommitParameters,
 
-    [switch] $TestRelease
+    [switch] $DailyRelease
 )
 
 ."$PSScriptRoot/../common/scripts/common.ps1"
@@ -78,7 +78,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $addVersionAdditionalParameters = ''
-if ($TestRelease) { 
+if ($DailyRelease) { 
     $addVersionAdditionalParameters = '--overwrite-version'
 }
 
@@ -95,7 +95,7 @@ Write-Host "git reset HEAD^"
 git reset HEAD^
 
 # Only perform the final commit if this is not a test release
-if (!$TestRelease) { 
+if (!$DailyRelease) { 
     # Grab content needed for commit message and place in a temporary file
     $packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
     $commitMessageFile = New-TemporaryFile
@@ -109,7 +109,6 @@ if (!$TestRelease) {
     Write-Host "Commit Message:"
     Write-host (Get-Content $commitMessageFile -Raw)
 
-
     Write-Host "git add -A"
     git add -A
 
@@ -120,6 +119,10 @@ if (!$TestRelease) {
     "git $GitCommitParameters commit --file $commitMessageFile" `
         | Invoke-Expression -Verbose `
         | Write-Host
+
+    # Set $(HasChanges) to $true so that create-pull-request.yml completes the 
+    # push and PR submission steps
+    Write-Host "##vso[task.setvariable variable=HasChanges]$true"
 }
 
 
@@ -156,7 +159,7 @@ Additional parameters to supply to the `git commit` command. These are useful
 in the context of Azure DevOps where the git client does not have a configured
 user.name and user.email.
 
-.PARAMETER TestRelease
+.PARAMETER DailyRelease
 In the case of a test release set this to ensure that the x-add-version step
 includes `--overwrite-version` to ensure daily packages are properly updated
 in the vcpkg repo.
