@@ -186,10 +186,10 @@ stages:
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
       dependsOn: Build
-      condition: and(succeeded(), or(eq(variables['PublishNightlyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')))
+      condition: and(succeeded(), or(eq(variables['PublishDailyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')))
       jobs:
-        - job: PublishNightlyVcpkg
-          displayName: Publish to vcpkg nightly branch
+        - job: PublishDailyVcpkg
+          displayName: Publish to vcpkg daily branch
 
           pool:
             name: azsdk-pool-mms-win-2019-general
@@ -200,12 +200,12 @@ stages:
             - download: current
               artifact: packages
 
-            - template: /eng/pipelines/templates/steps/generate-nightly-branch-name.yml
+            - template: /eng/pipelines/templates/steps/generate-daily-branch-name.yml
 
             - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
               parameters:
                 RepoOwner: azure-sdk
-                PRBranchName: $(NightlyBranchName)
+                PRBranchName: $(DailyBranchName)
 
             # Placing artifacts in the same branch in sequence reduces the
             # potential for race conditions. If this job does fail to push
@@ -238,8 +238,8 @@ stages:
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:
-                BaseRepoBranch: $(NightlyBranchName)
-                CommitMsg: Nightly vcpkg ports for ${{ parameters.ServiceDirectory }}
+                BaseRepoBranch: $(DailyBranchName)
+                CommitMsg: Daily vcpkg ports for ${{ parameters.ServiceDirectory }}
                 TargetRepoOwner: azure-sdk
                 TargetRepoName: vcpkg
                 WorkingDirectory: $(Pipeline.Workspace)/vcpkg

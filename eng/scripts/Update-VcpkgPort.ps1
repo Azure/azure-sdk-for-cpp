@@ -158,7 +158,7 @@ user.name and user.email.
 
 .PARAMETER TestRelease
 In the case of a test release set this to ensure that the x-add-version step
-includes `--overwrite-version` to ensure nightly packages are properly updated
+includes `--overwrite-version` to ensure daily packages are properly updated
 in the vcpkg repo.
 
 #>
