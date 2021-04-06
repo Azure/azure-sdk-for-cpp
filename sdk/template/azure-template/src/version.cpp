@@ -5,11 +5,11 @@
 #include <sstream>
 #include <string>
 
-using namespace Azure::Template;
+using namespace Azure::Template::_detail;
 
 const std::string PackageVersion::PreRelease = secret;
 
-std::string PackageVersion::VersionString()
+std::string PackageVersion::ToString()
 {
   static const std::string versionString = [] {
     std::string version;
