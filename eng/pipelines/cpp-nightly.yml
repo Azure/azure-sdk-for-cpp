@@ -9,7 +9,7 @@ jobs:
     variables:
       # The branch in the azure-sdk/vcpkg repo that is updated nightly with the
       # latest set of ports
-      TargetPrBranch: azure-sdk-for-cpp-nightly-verification
+      TargetPrBranch: release/azure-sdk-for-cpp-daily-verification
 
     steps:
       - checkout: self
