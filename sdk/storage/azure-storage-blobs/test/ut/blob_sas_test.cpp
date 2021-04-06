@@ -28,6 +28,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     else
     {
+      absoluteUrl += '&';
       if (startWithQuestion)
       {
         absoluteUrl = absoluteUrl + qp.substr(1);
@@ -39,6 +40,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     return absoluteUrl;
   }
+
   TEST_F(BlobContainerClientTest, BlobSasTest)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
