@@ -27,7 +27,7 @@ TEST(Context, ApplicationContext)
 
   int value;
   EXPECT_FALSE(appContext.TryGetValue(Context::Key(), value));
-  //EXPECT_THROW(appContext.GetValue<int>(Context::Key()), std::logic_error);
+  // EXPECT_THROW(appContext.GetValue<int>(Context::Key()), std::logic_error);
 
   auto duration = std::chrono::milliseconds(250);
   EXPECT_FALSE(appContext.IsCancelled());
