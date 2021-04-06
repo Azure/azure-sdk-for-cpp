@@ -138,6 +138,43 @@ namespace Azure { namespace Core {
     }
 
     /**
+     * @brief Try to get a value associated with a \p key parameter within this context or the
+     * branch of contexts this context belongs to.
+     *
+     * @param key A key associated with a context to find.
+     * @param outputValue A reference to the value corresponding to the key to be set, if found
+     * within the context tree.
+     *
+     * @return If found, returns true, with outputValue set to the value associated with the context
+     * found; otherwise returns false.
+     */
+    template <class T> bool TryGetValue(const std::string& key, T& outputValue) const
+    {
+      // if (!outputValue)
+      //{
+      //  // null pointer
+      //  std::abort();
+      //}
+      if (!key.empty())
+      {
+        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+        {
+          if (ptr->Key == key)
+          {
+            if (typeid(T) != ptr->ValueType)
+            {
+              // type mismatch
+              std::abort();
+            }
+            outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    /**
      * @brief Get a value associated with a \p key parameter within this context or the branch of
      * contexts this context belongs to.
      *

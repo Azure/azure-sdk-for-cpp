@@ -156,27 +156,24 @@ static constexpr char RetryKey[] = "AzureSdkRetryPolicyCounter";
 Context inline CreateRetryContext(Context const& parent)
 {
   // First try as default
-  int retryCount = 0;
-  if (parent.HasKey(RetryKey))
-  {
-    retryCount = parent.Get<int>(RetryKey) + 1;
-  }
+  int retryCount = parent.Get<int>(RetryKey) + 1;
   return parent.WithValue(RetryKey, retryCount);
 }
 } // namespace
 
 int RetryPolicy::GetRetryNumber(Context const& context)
 {
-  if (!context.HasKey(RetryKey))
+  int number = -1;
+  if (!context.TryGetValue<int>(RetryKey, number))
   {
     // Context with no data abut sending request with retry policy = -1
     // First try = 0
     // Second try = 1
     // third try = 2
     // ...
-    return -1;
+    number = -1;
   }
-  return context.Get<int>(RetryKey);
+  return number;
 }
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
