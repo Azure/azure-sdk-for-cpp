@@ -11,7 +11,7 @@ namespace Azure { namespace Storage { namespace _internal {
       const Azure::Core::Context& ctx) const
   {
     std::shared_ptr<bool> replicaStatus;
-    ctx.TryGetValue<std::shared_ptr<bool>>(SecondaryHostReplicaStatusKey, &replicaStatus);
+    ctx.TryGetValue<std::shared_ptr<bool>>(SecondaryHostReplicaStatusKey, replicaStatus);
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)

@@ -164,7 +164,7 @@ Context inline CreateRetryContext(Context const& parent)
 int RetryPolicy::GetRetryNumber(Context const& context)
 {
   int number = -1;
-  if (!context.TryGetValue<int>(RetryKey, &number))
+  if (!context.TryGetValue<int>(RetryKey, number))
   {
     // Context with no data abut sending request with retry policy = -1
     // First try = 0
