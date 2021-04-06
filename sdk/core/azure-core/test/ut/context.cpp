@@ -82,7 +82,8 @@ TEST(Context, NestedIsCancelled)
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
-  auto c2 = context.WithValue("Key", "Value");
+  std::string actualValue = "Value";
+  auto c2 = context.WithValue("Key", actualValue);
   EXPECT_FALSE(c2.IsCancelled());
   std::string value = "a";
   EXPECT_TRUE(c2.TryGetValue<std::string>("Key", value));
@@ -110,7 +111,8 @@ TEST(Context, NestedIsCancelled)
 TEST(Context, CancelWithValue)
 {
   Context context;
-  auto c2 = context.WithValue("Key", "Value");
+  std::string actualValue = "Value";
+  auto c2 = context.WithValue("Key", actualValue);
   EXPECT_FALSE(context.IsCancelled());
   EXPECT_FALSE(c2.IsCancelled());
   std::string value = "a";
@@ -210,7 +212,7 @@ TEST(Context, HeapLinkIntegrity)
     Context root;
     auto firstGeneration = root.WithValue("a", std::string("a"));
     EXPECT_TRUE(firstGeneration.TryGetValue<std::string>("a", value));
-    EXPECT_EQ(value, "z");
+    EXPECT_EQ(value, "a");
 
     auto secondGeneration = firstGeneration.WithValue("b", std::string("b"));
     EXPECT_TRUE(secondGeneration.TryGetValue<std::string>("a", value));

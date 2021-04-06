@@ -150,11 +150,6 @@ namespace Azure { namespace Core {
      */
     template <class T> bool TryGetValue(const std::string& key, T& outputValue) const
     {
-      // if (!outputValue)
-      //{
-      //  // null pointer
-      //  std::abort();
-      //}
       if (!key.empty())
       {
         for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
