@@ -46,36 +46,48 @@ inline std::string GetRequestLogMessage(LogOptions const& options, Request const
       << requestUrl.GetUrlWithoutQuery();
   {
     auto encodedRequestQueryParams = requestUrl.GetQueryParameters();
-    auto const& unencodedAllowedQueryParams = options.AllowedHttpQueryParameters;
-    if (!encodedRequestQueryParams.empty() && !unencodedAllowedQueryParams.empty())
-    {
-      std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::type
-          encodedAllowedQueryParams;
-      std::transform(
-          unencodedAllowedQueryParams.begin(),
-          unencodedAllowedQueryParams.end(),
-          std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
-          [](std::string const& s) { return Url::Encode(s); });
 
-      std::remove_const<std::remove_reference<decltype(encodedRequestQueryParams)>::type>::type
-          encodedAllowedRequestQueryParams;
-      for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
+    std::remove_const<std::remove_reference<decltype(encodedRequestQueryParams)>::type>::type
+        loggedQueryParams;
+
+    if (!encodedRequestQueryParams.empty())
+    {
+      auto const& unencodedAllowedQueryParams = options.AllowedHttpQueryParameters;
+      if (!unencodedAllowedQueryParams.empty())
       {
-        if (encodedRequestQueryParam.second.empty()
-            || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
-                != encodedAllowedQueryParams.end()))
+        std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::type
+            encodedAllowedQueryParams;
+        std::transform(
+            unencodedAllowedQueryParams.begin(),
+            unencodedAllowedQueryParams.end(),
+            std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
+            [](std::string const& s) { return Url::Encode(s); });
+
+        for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
         {
-          encodedAllowedRequestQueryParams.insert(encodedRequestQueryParam);
+          if (encodedRequestQueryParam.second.empty()
+              || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
+                  != encodedAllowedQueryParams.end()))
+          {
+            loggedQueryParams.insert(encodedRequestQueryParam);
+          }
+          else
+          {
+            loggedQueryParams.insert(
+                std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
+          }
         }
-        else
+      }
+      else
+      {
+        for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
         {
-          encodedAllowedRequestQueryParams.insert(
+          loggedQueryParams.insert(
               std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
         }
       }
 
-      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(
-          encodedAllowedRequestQueryParams);
+      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(loggedQueryParams);
     }
   }
   AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);
