@@ -89,27 +89,9 @@ bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt)
 }
 
 Context::Key const RetryKey;
-
-/**
- * @brief Creates a new #Context node from \p parent with the information about the retrying while
- * sending an Http request.
- *
- * @param parent The parent context for the new created.
- * @return Context with information about retry counter.
- */
-inline Context CreateRetryContext(Context const& parent)
-{
-  // First try as default
-  int retryCount = 0;
-  if (parent.HasKey(RetryKey))
-  {
-    retryCount = parent.GetValue<int>(RetryKey) + 1;
-  }
-  return parent.WithValue(RetryKey, retryCount);
-}
 } // namespace
 
-int32_t RetryPolicy::GetRetryNumber(Context const& context)
+int32_t RetryPolicy::GetRetryCount(Context const& context)
 {
   if (!context.HasKey(RetryKey))
   {
@@ -120,7 +102,7 @@ int32_t RetryPolicy::GetRetryNumber(Context const& context)
     // ...
     return -1;
   }
-  return context.GetValue<int32_t>(RetryKey);
+  return *context.GetValue<int32_t*>(RetryKey);
 }
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
@@ -130,8 +112,9 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
-
-  auto retryContext = CreateRetryContext(ctx);
+  // retryCount needs to be apart from RetryNumber attempt.
+  int32_t retryCount = 0;
+  auto retryContext = ctx.WithValue(RetryKey, &retryCount);
 
   for (int32_t attempt = 1;; ++attempt)
   {
@@ -188,7 +171,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
 
     // Update retry number
-    retryContext = CreateRetryContext(retryContext);
+    retryCount += 1;
   }
 }
 
