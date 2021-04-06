@@ -250,8 +250,7 @@ TEST(Context, Ptr)
 {
   Context::Key const key;
   SomeStructForContext value;
-  auto contextP
-      = Context::GetApplicationContext().WithValue(key, &value);
+  auto contextP = Context::GetApplicationContext().WithValue(key, &value);
 
   SomeStructForContext* contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
@@ -274,7 +273,7 @@ TEST(Context, NestedClassPtr)
   {
     auto sharedPtr = std::make_shared<TestClass>(&instanceCount);
     EXPECT_EQ(sharedPtr.use_count(), 1);
-   
+
     Context::Key const key;
 
     auto context = Context::GetApplicationContext().WithValue(key, sharedPtr);
