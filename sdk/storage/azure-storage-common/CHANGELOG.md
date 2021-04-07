@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 - Removed `Azure::Storage::Common::PackageVersion`.
+- Moved `HttpGetter` and `HttpGetterInfo` to internal namespace.
 
 ## 12.0.0-beta.9 (2021-03-23)
 

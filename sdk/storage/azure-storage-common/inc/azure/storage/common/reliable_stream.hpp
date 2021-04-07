@@ -10,17 +10,19 @@
 
 namespace Azure { namespace Storage {
 
-  // options used by the fm callback that will get a bodyStream starting from last offset
-  struct HttpGetterInfo
-  {
-    int64_t Offset = 0;
-  };
+  namespace internal_ {
 
-  // Defines a fn signature to be use to get a bodyStream from a specific offset.
-  typedef std::function<std::unique_ptr<Azure::Core::IO::BodyStream>(
-      HttpGetterInfo const&,
-      Azure::Core::Context const&)>
-      HTTPGetter;
+    // options used by the fm callback that will get a bodyStream starting from last offset
+    struct HttpGetterInfo
+    {
+      int64_t Offset = 0;
+    };
+
+    // Defines a fn signature to be use to get a bodyStream from a specific offset.
+    using HttpGetter = std::function<std::unique_ptr<Azure::Core::IO::BodyStream>(
+        HttpGetterInfo const&,
+        Azure::Core::Context const&)>;
+  } // namespace internal_
 
   // Options used by reliable stream
   struct ReliableStreamOptions
@@ -48,9 +50,9 @@ namespace Azure { namespace Storage {
     // Configuration for the re-triable stream
     ReliableStreamOptions const m_options;
     // callback to get a bodyStream in case Read operation fails
-    HTTPGetter m_httpGetter;
+    internal_::HttpGetter m_httpGetter;
     // Options to use when getting a new bodyStream like current offset
-    HttpGetterInfo m_retryInfo;
+    internal_::HttpGetterInfo m_retryInfo;
 
     int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
@@ -58,7 +60,7 @@ namespace Azure { namespace Storage {
     explicit ReliableStream(
         std::unique_ptr<Azure::Core::IO::BodyStream> inner,
         ReliableStreamOptions const options,
-        HTTPGetter httpGetter)
+        internal_::HttpGetter httpGetter)
         : m_inner(std::move(inner)), m_options(options), m_httpGetter(std::move(httpGetter))
     {
     }

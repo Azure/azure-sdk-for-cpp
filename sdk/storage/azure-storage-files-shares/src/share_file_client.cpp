@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       auto retryFunction =
           [this, options, eTag](
-              const HttpGetterInfo& retryInfo,
+              const internal_::HttpGetterInfo& retryInfo,
               const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadFileOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
