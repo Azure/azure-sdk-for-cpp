@@ -44,7 +44,6 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
   EXPECT_NO_THROW(Azure::Core::RequestFailedException("foo"));
   EXPECT_NO_THROW(Azure::Core::OperationStatus("foo"));
-  EXPECT_NO_THROW(Azure::Core::Http::HttpStatusCode::Ok);
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse(0, 0, Azure::Core::Http::HttpStatusCode::Ok, ""));
   EXPECT_NO_THROW(Azure::Core::Credentials::TokenCredentialOptions());
 
