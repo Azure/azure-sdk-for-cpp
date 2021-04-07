@@ -157,15 +157,19 @@ namespace Azure { namespace Core {
     DateTime GetDeadline() const;
 
     /**
-     * @brief Get a value associated with a \p key parameter within this context or the branch of
-     * contexts this context belongs to.
+     * @brief Try to get a value associated with a \p key parameter within this context or the
+     * branch of contexts this context belongs to.
      *
      * @param key A key associated with a context to find.
+     * @param outputValue A reference to the value corresponding to the \p key to be set, if found
+     * within the context tree.
      *
-     * @return A value associated with the context found; an empty value if a specific value can't
-     * be found.
+     * @return If found, returns `true`, with \p outputValue set to the value associated with the
+     * key found; otherwise returns `false`.
+     *
+     * @remark The \p outputValue is left unmodified it the \p key is not found.
      */
-    template <class T> const T& GetValue(Key const& key) const
+    template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
       for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
@@ -176,29 +180,7 @@ namespace Azure { namespace Core {
             // type mismatch
             std::abort();
           }
-          return *reinterpret_cast<const T*>(ptr->Value.get());
-        }
-      }
-      std::abort();
-      // It should be expected that keys may not exist
-      //  That implies we return T* and NOT a T&
-    }
-
-    /**
-     * @brief Check whether the context has a key matching \p key parameter in it itself, or in the
-     * branch the context belongs to.
-     *
-     * @param key A key associated with a context to find.
-     *
-     * @return `true` if this context, or the tree branch this context belongs to has a \p key
-     * associated with it. `false` otherwise.
-     */
-    bool HasKey(Key const& key) const
-    {
-      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
-      {
-        if (ptr->Key == key)
-        {
+          outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
         }
       }
