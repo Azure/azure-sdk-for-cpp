@@ -44,13 +44,12 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::Core::Uuid::CreateUuid());
   EXPECT_NO_THROW(Azure::Core::RequestFailedException("foo"));
   EXPECT_NO_THROW(Azure::Core::OperationStatus("foo"));
-  EXPECT_NO_THROW(Azure::Core::PackageVersion::VersionString());
 
   {
     std::vector<uint8_t> buffer(10);
     EXPECT_NO_THROW(Azure::Core::IO::MemoryBodyStream mb(buffer));
   }
-  EXPECT_NO_THROW(Azure::Core::Http::Policies::TelemetryPolicy tp("", ""));
+  EXPECT_NO_THROW(Azure::Core::Http::Policies::_internal::TelemetryPolicy tp("", ""));
 }
 
 #ifdef _MSC_VER

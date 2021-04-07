@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         if (item.Details.LeaseDuration.HasValue())
         {
           fileSystem.Details.LeaseDuration
-              = Models::LeaseDuration((item.Details.LeaseDuration.GetValue().ToString()));
+              = Models::LeaseDuration((item.Details.LeaseDuration.Value().ToString()));
         }
         fileSystem.Details.LeaseState = Models::LeaseState(item.Details.LeaseState.ToString());
         fileSystem.Details.LeaseStatus = Models::LeaseStatus(item.Details.LeaseStatus.ToString());
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::BearerTokenAuthenticationPolicy>(
+          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
     perOperationPolicies.emplace_back(
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -158,7 +158,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -184,12 +184,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.PageSizeHint = options.PageSizeHint;
     auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions, context);
     auto response = Models::ListFileSystemsSinglePageResult();
-    response.ContinuationToken = std::move(result->ContinuationToken);
-    response.ServiceEndpoint = std::move(result->ServiceEndpoint);
-    response.Prefix = std::move(result->Prefix);
-    response.Items = FileSystemsFromContainerItems(std::move(result->Items));
+    response.ContinuationToken = std::move(result.Value.ContinuationToken);
+    response.ServiceEndpoint = std::move(result.Value.ServiceEndpoint);
+    response.Prefix = std::move(result.Value.Prefix);
+    response.Items = FileSystemsFromContainerItems(std::move(result.Value.Items));
     return Azure::Response<Models::ListFileSystemsSinglePageResult>(
-        std::move(response), result.ExtractRawResponse());
+        std::move(response), std::move(result.RawResponse));
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

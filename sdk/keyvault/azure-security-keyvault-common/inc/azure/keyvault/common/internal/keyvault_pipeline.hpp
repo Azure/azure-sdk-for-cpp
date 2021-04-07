@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
    * @brief The HTTP pipeline used by KeyVault clients.
@@ -110,7 +110,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         }
       }
       auto response = SendRequest(context, request);
-      return Azure::Response<T>(factoryFn(*response), std::move(response));
+      // Saving the value in a local is required before passing it in to Response<T> to avoid
+      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
+      T value = factoryFn(*response);
+      return Azure::Response<T>(value, std::move(response));
     }
 
     /**
@@ -138,7 +141,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
-      return Azure::Response<T>(factoryFn(*response), std::move(response));
+      // Saving the value in a local is required before passing it in to Response<T> to avoid
+      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
+      T value = factoryFn(*response);
+      return Azure::Response<T>(value, std::move(response));
     }
 
     template <class T>
@@ -155,7 +161,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);
-      return Azure::Response<T>(factoryFn(*response), std::move(response));
+      // Saving the value in a local is required before passing it in to Response<T> to avoid
+      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
+      T value = factoryFn(*response);
+      return Azure::Response<T>(value, std::move(response));
     }
 
     /**
@@ -179,10 +188,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
 
     /**
      * @brief Get the Vault Url which was used to create the
-     * #Azure::Security::KeyVault::Common::_internal::KeyVaultPipeline.
+     * #Azure::Security::KeyVault::_internal::KeyVaultPipeline.
      *
      * @return The vault Url as string.
      */
     std::string GetVaultUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
   };
-}}}}} // namespace Azure::Security::KeyVault::Common::_internal
+}}}} // namespace Azure::Security::KeyVault::_internal

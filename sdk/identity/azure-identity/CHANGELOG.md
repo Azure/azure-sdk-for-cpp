@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.5 (2021-04-07)
 
+### Breaking Changes
+
+- Removed `Azure::Identity::PackageVersion`.
 
 ## 1.0.0-beta.4 (2021-03-11)
 

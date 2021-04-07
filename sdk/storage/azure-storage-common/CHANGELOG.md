@@ -2,6 +2,14 @@
 
 ## 12.0.0-beta.10 (Unreleased)
 
+### New Features
+
+- Added server timeout support.
+
+### Breaking Changes
+
+- Removed `Azure::Storage::Common::PackageVersion`.
+- Moved `ReliableStream` to internal namespace.
 
 ## 12.0.0-beta.9 (2021-03-23)
 

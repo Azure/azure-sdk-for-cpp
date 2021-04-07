@@ -22,23 +22,13 @@ inline std::wstring HttpMethodToWideString(HttpMethod method)
   // This string should be all uppercase.
   // Many servers treat HTTP verbs as case-sensitive, and the Internet Engineering Task Force (IETF)
   // Requests for Comments (RFCs) spell these verbs using uppercase characters only.
-  switch (method)
-  {
-    case HttpMethod::Get:
-      return L"GET";
-    case HttpMethod::Head:
-      return L"HEAD";
-    case HttpMethod::Post:
-      return L"POST";
-    case HttpMethod::Put:
-      return L"PUT";
-    case HttpMethod::Delete:
-      return L"DELETE";
-    case HttpMethod::Patch:
-      return L"PATCH";
-    default:
-      throw Azure::Core::Http::TransportException("Invalid or unsupported HTTP method.");
-  }
+
+  std::string httpMethodString = method.ToString();
+
+  // Assuming ASCII here is OK since the input is expected to be an HTTP method string.
+  // Converting this way is only safe when the text is ASCII.
+  std::wstring wideStr(httpMethodString.begin(), httpMethodString.end());
+  return wideStr;
 }
 
 // Convert a UTF-8 string to a wide Unicode string.
@@ -164,8 +154,10 @@ void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->SetHeader(
-          reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
+      Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
+          *rawResponse,
+          reinterpret_cast<uint8_t const*>(begin),
+          reinterpret_cast<uint8_t const*>(delimiter));
     }
     else
     {
@@ -173,6 +165,22 @@ void SetHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     }
     begin = delimiter + 1;
   }
+}
+
+std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
+{
+  std::string requestHeaderString;
+
+  for (auto const& header : request.GetHeaders())
+  {
+    requestHeaderString += header.first; // string (key)
+    requestHeaderString += ": ";
+    requestHeaderString += header.second; // string's value
+    requestHeaderString += "\r\n";
+  }
+  requestHeaderString += "\r\n";
+
+  return requestHeaderString;
 }
 
 } // namespace
@@ -269,20 +277,12 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   auto streamBody = handleManager->m_request.GetBodyStream();
   int64_t streamLength = streamBody->Length();
 
-  int64_t uploadChunkSize = handleManager->m_request.GetUploadChunkSize();
-  if (uploadChunkSize <= 0)
+  // Consider using `MaximumUploadChunkSize` here, after some perf measurements
+  int64_t uploadChunkSize = _detail::DefaultUploadChunkSize;
+  if (streamLength < _detail::MaximumUploadChunkSize)
   {
-    // use default size
-    if (streamLength < _detail::MaximumUploadChunkSize)
-    {
-      uploadChunkSize = streamLength;
-    }
-    else
-    {
-      uploadChunkSize = _detail::DefaultUploadChunkSize;
-    }
+    uploadChunkSize = streamLength;
   }
-
   auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
 
   while (true)
@@ -318,7 +318,7 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
   {
     // The encodedHeaders will be null-terminated and the length is calculated.
     encodedHeadersLength = -1;
-    std::string requestHeaderString = handleManager->m_request.GetHeadersAsString();
+    std::string requestHeaderString = GetHeadersAsString(handleManager->m_request);
     requestHeaderString.append("\0");
 
     encodedHeaders = StringToWideString(requestHeaderString);

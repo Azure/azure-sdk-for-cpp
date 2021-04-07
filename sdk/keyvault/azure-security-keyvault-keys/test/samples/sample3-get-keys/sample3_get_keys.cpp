@@ -56,7 +56,7 @@ int main()
     keyClient.CreateEcKey(ecKey);
 
     std::cout << "\t-List Keys" << std::endl;
-    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValue();;)
+    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().Value;;)
     {
       for (auto const& key : keysSinglePage.Items)
       {
@@ -64,7 +64,7 @@ int main()
         {
           continue;
         }
-        auto keyWithType = keyClient.GetKey(key.Name).ExtractValue();
+        auto keyWithType = keyClient.GetKey(key.Name).Value;
         std::cout << "Key is returned with name: " << keyWithType.Name()
                   << " and type: " << KeyType::KeyTypeToString(keyWithType.GetKeyType())
                   << std::endl;
@@ -78,8 +78,8 @@ int main()
 
       // Get the next page
       GetPropertiesOfKeysSinglePageOptions options;
-      options.ContinuationToken = keysSinglePage.ContinuationToken.GetValue();
-      keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).ExtractValue();
+      options.ContinuationToken = keysSinglePage.ContinuationToken.Value();
+      keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).Value;
     }
 
     // update key
@@ -92,7 +92,7 @@ int main()
     // List key versions
     std::cout << "\t-List Key versions" << std::endl;
     for (auto keyVersionsSinglePage
-         = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).ExtractValue();
+         = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).Value;
          ;)
     {
       for (auto const& key : keyVersionsSinglePage.Items)
@@ -108,9 +108,9 @@ int main()
 
       // Get the next page
       GetPropertiesOfKeyVersionsSinglePageOptions options;
-      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.GetValue();
+      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.Value();
       keyVersionsSinglePage
-          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).ExtractValue();
+          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).Value;
     }
 
     std::cout << "\t-Delete Keys" << std::endl;
@@ -124,7 +124,7 @@ int main()
     std::cout << "\t-List Deleted Keys" << std::endl;
 
     // Start getting the first page.
-    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().ExtractValue();;)
+    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().Value;;)
     {
       for (auto const& key : keysDeletedPage.Items)
       {
@@ -141,8 +141,8 @@ int main()
 
       // Get the next page
       GetDeletedKeysSinglePageOptions options;
-      options.ContinuationToken = keysDeletedPage.ContinuationToken.GetValue();
-      keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).ExtractValue();
+      options.ContinuationToken = keysDeletedPage.ContinuationToken.Value();
+      keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).Value;
     }
 
     // If the keyvault is soft-delete enabled, then for permanent deletion, deleted keys needs to be
@@ -155,7 +155,7 @@ int main()
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
     return 1;
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& e)
+  catch (Azure::Security::KeyVault::KeyVaultException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;
@@ -179,5 +179,5 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
   {
     return false;
   }
-  return left.GetValue() == right.GetValue();
+  return left.Value() == right.Value();
 }

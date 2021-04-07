@@ -50,7 +50,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -62,7 +62,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto expectedStatusToken = m_keyVaultUrl + "/"
+    auto expectedStatusToken = m_keyVaultUrl
         + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
     EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
     // poll each second until key is soft-deleted
@@ -73,7 +73,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     // recover
     auto recoverOperation = keyClient.StartRecoverDeletedKey(keyName);
     auto keyResponse = recoverOperation.PollUntilDone(std::chrono::milliseconds(500));
-    auto key = keyResponse.ExtractValue();
+    auto key = keyResponse.Value;
     // Delete again for purging
     auto deleteOp = keyClient.StartDeleteKey(key.Name());
     deleteOp.PollUntilDone(std::chrono::milliseconds(200));
@@ -94,7 +94,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -119,7 +119,7 @@ TEST_F(KeyVaultClientTest, DeleteInvalidKey)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -157,7 +157,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -192,7 +192,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -232,7 +232,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -269,7 +269,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& error)
+  catch (Azure::Security::KeyVault::KeyVaultException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -296,7 +296,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -305,13 +305,13 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
     auto cancelToken = Azure::Core::Context::GetApplicationContext().WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto expectedStatusToken = m_keyVaultUrl + "/"
+    auto expectedStatusToken = m_keyVaultUrl
         + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
     auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
   }
   {
     // Get the deleted key
-    auto deletedKey = keyClient.GetDeletedKey(keyName).ExtractValue();
+    auto deletedKey = keyClient.GetDeletedKey(keyName).Value;
     EXPECT_FALSE(deletedKey.RecoveryId.empty());
     EXPECT_EQ(deletedKey.Name(), keyName);
     auto expectedType = Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec;

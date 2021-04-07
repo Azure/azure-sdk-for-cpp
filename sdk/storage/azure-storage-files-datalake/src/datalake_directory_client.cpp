@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string destinationFileSystem;
     if (options.DestinationFileSystem.HasValue())
     {
-      destinationFileSystem = options.DestinationFileSystem.GetValue();
+      destinationFileSystem = options.DestinationFileSystem.Value();
     }
     else
     {
@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
     return Azure::Response<DataLakeFileClient>(
-        std::move(renamedFileClient), result.ExtractRawResponse());
+        std::move(renamedFileClient), std::move(result.RawResponse));
   }
 
   Azure::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string destinationFileSystem;
     if (options.DestinationFileSystem.HasValue())
     {
-      destinationFileSystem = options.DestinationFileSystem.GetValue();
+      destinationFileSystem = options.DestinationFileSystem.Value();
     }
     else
     {
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
     return Azure::Response<DataLakeDirectoryClient>(
-        std::move(renamedDirectoryClient), result.ExtractRawResponse());
+        std::move(renamedDirectoryClient), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeleteDirectoryResult> DataLakeDirectoryClient::Delete(
@@ -224,7 +224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           = currentPath.substr(firstSlashPos + 1U, currentPath.size() - firstSlashPos - 1U);
       auto fileSystemUrl = m_pathUrl;
       fileSystemUrl.SetPath(currentPath.substr(
-          0U, currentPath.size() - protocolLayerOptions.Directory.GetValue().size() - 1U));
+          0U, currentPath.size() - protocolLayerOptions.Directory.Value().size() - 1U));
       return _detail::DataLakeRestClient::FileSystem::ListPaths(
           fileSystemUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
     }

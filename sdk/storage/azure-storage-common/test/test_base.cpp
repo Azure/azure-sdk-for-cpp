@@ -141,6 +141,41 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
+  std::string AppendQueryParameters(const Azure::Core::Url& url, const std::string& queryParameters)
+  {
+    std::string absoluteUrl = url.GetAbsoluteUrl();
+    if (queryParameters.empty())
+    {
+      return absoluteUrl;
+    }
+    const auto& existingQP = url.GetQueryParameters();
+    bool startWithQuestion = queryParameters[0] == '?';
+    if (existingQP.empty())
+    {
+      if (startWithQuestion)
+      {
+        absoluteUrl = absoluteUrl + queryParameters;
+      }
+      else
+      {
+        absoluteUrl = absoluteUrl + '?' + queryParameters;
+      }
+    }
+    else
+    {
+      absoluteUrl += '&';
+      if (startWithQuestion)
+      {
+        absoluteUrl = absoluteUrl + queryParameters.substr(1);
+      }
+      else
+      {
+        absoluteUrl = absoluteUrl + queryParameters;
+      }
+    }
+    return absoluteUrl;
+  }
+
   static thread_local std::mt19937_64 random_generator(std::random_device{}());
 
   uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)

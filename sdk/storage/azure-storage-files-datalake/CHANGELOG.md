@@ -2,6 +2,13 @@
 
 ## 12.0.0-beta.10 (Unreleased)
 
+### Breaking Changes
+
+- Removed `Azure::Storage::Files::DataLake::PackageVersion`.
+
+### Bug Fixes
+
+- Rename functions always fail because `/` was left out in rename source path.
 
 ## 12.0.0-beta.9 (2021-03-23)
 
