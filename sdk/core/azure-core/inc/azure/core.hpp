@@ -30,6 +30,7 @@
 
 // azure/core/credentials
 #include "azure/core/credentials/credentials.hpp"
+#include "azure/core/credentials/token_credential_options.hpp"
 
 // azure/core/cryptography
 #include "azure/core/cryptography/hash.hpp"
@@ -39,6 +40,8 @@
 
 // azure/core/http
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/http_status_code.hpp"
+#include "azure/core/http/raw_response.hpp"
 #include "azure/core/http/transport.hpp"
 
 // azure/core/http/policies
