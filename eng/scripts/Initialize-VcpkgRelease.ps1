@@ -12,8 +12,12 @@ Location of the relevant package-info.json file
 .PARAMETER GitHubRepo
 Name of the GitHub repo (of the form Azure/azure-sdk-for-cpp)
 
-#>
+.PARAMETER DailyReleaseRef
+If supplied update the portfile.cmake file's REF and SHA512 with values
+associated with the given ref.
 
+#>
+[CmdletBinding()]
 param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -25,7 +29,9 @@ param (
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $GitHubRepo
+    [string] $GitHubRepo,
+
+    [string] $DailyReleaseRef
 )
 
 # If there's nothing in the "port" folder to upload set SkipVcpkgUpdate to true
@@ -38,6 +44,11 @@ if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
 
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
 $tarGzUri = "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).tar.gz" 
+
+if ($DailyReleaseRef) {
+    Write-Verbose "Initializing Daily Release"
+    $tarGzUri =  "https://github.com/$GitHubRepo/archive/$DailyReleaseRef.tar.gz"    
+}
 
 Write-Host "Downloading tarball to compute hash from $tarGzUri" 
 $localTarGzPath = New-TemporaryFile
@@ -53,7 +64,12 @@ $portfileLocation = "$SourceDirectory/port/portfile.cmake"
 # recommended in vcpkg documentation
 # Before: "   SHA512   1"
 # After:  "   SHA512   f6cf1c16c52" 
-$newContent = Get-Content -Raw -Path $portfileLocation `
-    | ForEach-Object { $_ -replace '(SHA512\s+)1', "`${1}$sha512" }
+$portFileContent = Get-Content -Raw -Path $portfileLocation 
+$newContent = $portFileContent -replace '(SHA512\s+)1', "`${1}$sha512"
+
+if ($DailyReleaseRef) {
+    Write-Verbose "Overriding REF with test release ref: $DailyReleaseRef"
+    $newContent = $newContent -replace '(?m)^(\s+)REF azure.*$', "`${1}REF $DailyReleaseRef"
+}
 
 $newContent | Set-Content $portfileLocation -NoNewLine
