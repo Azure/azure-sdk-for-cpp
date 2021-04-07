@@ -4,7 +4,6 @@
 
 ### New Features
 
-- KeyVault Keys client for get, create, list, delete, backup, restore, import operations.
-- General purpose header `key_vault.hpp`.
-- KeyVault Keys models.
-- Test and samples.
+- Added `Azure::Security::KeyVault::Keys::KeyClient` for get, create, list, delete, backup, restore, and import operations.
+- Added high-level and simplified `key_vault.hpp` file for simpler include experience for customers.
+- Added model types which are returned from the `KeyClient` operations, such as `Azure::Security::KeyVault::Keys::KeyVaultKey`.
