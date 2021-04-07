@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
-        options.SSLVerifyPeer = false;
+        options.SslVerifyPeer = false;
         auto connection
             = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
