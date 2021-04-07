@@ -17,7 +17,7 @@
 
 #include <windows.h>
 
-#include "azure/core/internal/hkeyholder.hpp"
+#include "azure/core/internal/hkey_holder.hpp"
 
 #elif defined(AZ_PLATFORM_POSIX)
 #include <sys/utsname.h>
@@ -32,7 +32,7 @@ std::string GetOSVersion()
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
-    Azure::Core::_internal::HKEYHolder regKey;
+    Azure::Core::_internal::HkeyHolder regKey;
     if (RegOpenKeyExA(
             HKEY_LOCAL_MACHINE,
             "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
