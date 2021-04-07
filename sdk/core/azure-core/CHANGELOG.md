@@ -111,6 +111,12 @@
 
 ## 1.0.0-beta.6 (2021-02-09)
 
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Sylvain Joubert _([GitHub](https://github.com/sjoubert))_
+
 ### New Features
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
@@ -123,7 +129,7 @@
 
 ### Bug Fixes
 
-- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`. (A community contribution, courtesy of _[sjoubert](https://github.com/sjoubert))_
 - Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.
 - Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.
 
