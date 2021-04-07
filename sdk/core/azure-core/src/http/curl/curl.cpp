@@ -1132,7 +1132,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     key.append("1");
   }
@@ -1140,7 +1140,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (options.SSLVerifyPeer)
+  if (options.SslVerifyPeer)
   {
     key.append("1");
   }
@@ -1268,7 +1268,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   }
 
   long sslOption = 0;
-  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
@@ -1281,7 +1281,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (!options.SSLVerifyPeer)
+  if (!options.SslVerifyPeer)
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {
