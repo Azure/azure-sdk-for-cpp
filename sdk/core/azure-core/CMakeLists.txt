@@ -57,7 +57,7 @@ set(
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/diagnostics/log.hpp
-    inc/azure/core/internal/hkeyholder.hpp
+    inc/azure/core/internal/hkey_holder.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
