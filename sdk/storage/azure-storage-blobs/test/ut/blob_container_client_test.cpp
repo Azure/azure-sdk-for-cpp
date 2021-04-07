@@ -622,11 +622,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(pageBlob.ClearPages({0, static_cast<int64_t>(blobContent.size())}));
       EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
           0, copySourceBlob.GetUrl() + GetSas(), {0, static_cast<int64_t>(blobContent.size())}));
-
-      auto pageBlobClientWithoutEncryptionKey
-          = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
-              StandardStorageConnectionString(), m_containerName, pageBlobName);
-      EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.GetPageRanges());
     }
   }
 
@@ -962,14 +957,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(pageBlobClient.Resize(contentSize, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.Resize(contentSize, options));
-    }
-
-    {
-      Blobs::GetPageRangesOptions options;
-      options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
-      options.AccessConditions.TagConditions = successWhereExpression;
-      EXPECT_NO_THROW(pageBlobClient.GetPageRanges(options));
     }
 
     blobName = RandomString();

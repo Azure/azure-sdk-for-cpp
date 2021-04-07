@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Removed `Azure::Storage::Blobs::PackageVersion`.
+- Removed `PageBlobClient::GetPageRanges`, `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 

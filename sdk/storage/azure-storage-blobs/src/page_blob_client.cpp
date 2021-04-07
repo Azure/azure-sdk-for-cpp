@@ -233,58 +233,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetPageRanges(
-      const GetPageRangesOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.Range = options.Range;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
-  }
-
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetPageRangesDiff(
-      const std::string& previousSnapshot,
-      const GetPageRangesOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshot = previousSnapshot;
-    protocolLayerOptions.Range = options.Range;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
-  }
-
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetManagedDiskPageRangesDiff(
-      const std::string& previousSnapshotUrl,
-      const GetPageRangesOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshotUrl = previousSnapshotUrl;
-    protocolLayerOptions.Range = options.Range;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
-  }
-
   StartBlobCopyOperation PageBlobClient::StartCopyIncremental(
       const std::string& sourceUri,
       const StartBlobCopyIncrementalOptions& options,

@@ -1003,23 +1003,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::GetPageRanges.
-   */
-  struct GetPageRangesOptions
-  {
-    /**
-     * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
-     * omitted, then all ranges for the blob are returned.
-     */
-    Azure::Nullable<Core::Http::HttpRange> Range;
-
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
-    BlobAccessConditions AccessConditions;
-  };
-
-  /**
    * @brief Optional parameters for PageBlobClient::StartCopyIncremental.
    */
   struct StartBlobCopyIncrementalOptions
