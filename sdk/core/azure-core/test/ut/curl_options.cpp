@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noRevoke)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.EnableCertificateRevocationListCheck = true;
+    curlOptions.SslOptions.EnableCertificateRevocationListCheck = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
@@ -98,7 +98,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, nativeCA)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.NativeCa = true;
+    curlOptions.SslOptions.NativeCa = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noPartialChain)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.NoPartialchain = true;
+    curlOptions.SslOptions.NoPartialchain = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, bestEffort)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.RevokeBestEffort = true;
+    curlOptions.SslOptions.RevokeBestEffort = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
@@ -177,7 +177,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
     // If ssl verify is not disabled, this test would fail because the caInfo is not OK
-    curlOptions.SSLVerifyPeer = false;
+    curlOptions.SslVerifyPeer = false;
     // This ca info should be ignored by verify disable and test should work
     curlOptions.CAInfo = "/";
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.8 (Unreleased)
+## 1.0.0-beta.8 (2021-04-07)
 
 ### New Features
 
@@ -30,6 +30,9 @@
 - Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString()` helper method.
 - Removed `Azure::Core::Http::Request::GetHeadersAsString()`.
 - Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
+- Renamed type `Azure::Core::Http::CurlTransportSSLOptions` to `Azure::Core::Http::CurlTransportSslOptions`.
+- Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `Azure::Core::Http::CurlTransportOptions::SslOptions`.
+- Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `Azure::Core::Http::CurlTransportOptions::SslVerifyPeer`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 

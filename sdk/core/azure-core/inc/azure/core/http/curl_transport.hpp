@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Http {
    * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
    *
    */
-  struct CurlTransportSSLOptions
+  struct CurlTransportSslOptions
   {
     /**
      * @brief This option can enable the revocation list check.
@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace Http {
      * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html
      *
      */
-    bool SSLVerifyPeer = true;
+    bool SslVerifyPeer = true;
 
     /**
      * @brief Define the SSL options for the libcurl handle.
@@ -88,7 +88,7 @@ namespace Azure { namespace Core { namespace Http {
      * The default option is all options `false`.
      *
      */
-    CurlTransportSSLOptions SSLOptions;
+    CurlTransportSslOptions SslOptions;
   };
 
   /**
