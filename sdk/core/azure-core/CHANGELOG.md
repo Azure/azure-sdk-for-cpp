@@ -5,28 +5,29 @@
 ### New Features
 
 - Added `Azure::Core::Url::GetScheme()`.
+- Added `Azure::Core::Context::TryGetValue()`.
 
 ### Breaking Changes
 
 - Simplified the `Response<T>` API surface to expose two public fields with direct access: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
 - Removed from `Azure::Core::Http::Request`:
-  - `SetUploadChunkSize`.
-  - `GetHTTPMessagePreBody`.
-  - `GetUploadChunkSize`.
+  - `SetUploadChunkSize()`.
+  - `GetHTTPMessagePreBody()`.
+  - `GetUploadChunkSize()`.
 - Removed from `Azure::Core::Http::RawResponse`:
   - `SetHeader(std::string const& header)`
   - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
-  - `GetMajorVersion`.
-  - `GetMinorVersion`.
+  - `GetMajorVersion()`.
+  - `GetMinorVersion()`.
 - Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
 - Changes to `Azure::Core::Context`:
-  - Renamed `Get()` to `GetValue()`.
+  - Removed `Get()` and `HasKey()` in favor of a new method `TryGetValue()`.
   - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
 - Removed `Azure::Core::PackageVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
-- Removed `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
-- Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString` helper method.
+- Removed `AppendQueryParameters()`, `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
+- Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString()` helper method.
 - Removed `Azure::Core::Http::Request::GetHeadersAsString()`.
 - Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
 

@@ -440,16 +440,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_snapshot_read = [&](const std::string sas) {
       Azure::Core::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
-      blobSnapshotUrlWithSas.AppendQueryParameters(sas);
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
+      auto blobSnapshotClient
+          = Blobs::AppendBlobClient(AppendQueryParameters(blobSnapshotUrlWithSas, sas));
       auto downloadedContent = blobSnapshotClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent.Value.BodyStream).empty());
     };
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
       Azure::Core::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
-      blobSnapshotUrlWithSas.AppendQueryParameters(sas);
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
+      auto blobSnapshotClient
+          = Blobs::AppendBlobClient(AppendQueryParameters(blobSnapshotUrlWithSas, sas));
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
     };
 
@@ -501,16 +501,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_version_read = [&](const std::string sas) {
       Azure::Core::Url blobVersionUrlWithSas(blobVersionUrl);
-      blobVersionUrlWithSas.AppendQueryParameters(sas);
-      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
+      auto blobVersionClient
+          = Blobs::AppendBlobClient(AppendQueryParameters(blobVersionUrlWithSas, sas));
       auto downloadedContent = blobVersionClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent.Value.BodyStream).empty());
     };
 
     auto verify_blob_delete_version = [&](const std::string& sas) {
       Azure::Core::Url blobVersionUrlWithSas(blobVersionUrl);
-      blobVersionUrlWithSas.AppendQueryParameters(sas);
-      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
+      auto blobVersionClient
+          = Blobs::AppendBlobClient(AppendQueryParameters(blobVersionUrlWithSas, sas));
       blobVersionClient.Delete();
     };
 
