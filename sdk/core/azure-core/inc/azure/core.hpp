@@ -39,6 +39,8 @@
 
 // azure/core/http
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/http_status_code.hpp"
+#include "azure/core/http/raw_response.hpp"
 #include "azure/core/http/transport.hpp"
 
 // azure/core/http/policies
