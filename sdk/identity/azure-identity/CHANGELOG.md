@@ -2,6 +2,10 @@
 
 ## 1.0.0-beta.5 (2021-04-07)
 
+### New Features
+
+- Add Active Directory Federation Service (ADFS) support to `ClientSecretCredential`.
+
 ### Breaking Changes
 
 - Removed `Azure::Identity::PackageVersion`.
