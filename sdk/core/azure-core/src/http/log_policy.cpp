@@ -37,13 +37,31 @@ inline void AppendHeaders(
   }
 }
 
+inline void LogUrlWithoutQuery(std::ostringstream& log, Url const& url)
+{
+  if (!url.GetScheme().empty())
+  {
+    log << url.GetScheme() << "://";
+  }
+  log << url.GetHost();
+  if (url.GetPort() != 0)
+  {
+    log << ":" << url.GetPort();
+  }
+  if (!url.GetPath().empty())
+  {
+    log << "/" << url.GetPath();
+  }
+}
+
 inline std::string GetRequestLogMessage(LogOptions const& options, Request const& request)
 {
   auto const& requestUrl = request.GetUrl();
 
   std::ostringstream log;
-  log << "HTTP Request : " << request.GetMethod().ToString() << " "
-      << requestUrl.GetUrlWithoutQuery();
+  log << "HTTP Request : " << request.GetMethod().ToString() << " ";
+  LogUrlWithoutQuery(log, requestUrl);
+
   {
     auto encodedRequestQueryParams = requestUrl.GetQueryParameters();
 

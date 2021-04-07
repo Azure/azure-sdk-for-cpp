@@ -178,29 +178,21 @@ void Url::AppendQueryParameters(const std::string& query)
   }
 }
 
-std::string Url::GetUrlAuthorityWithScheme() const
-{
-  std::string url;
-
-  if (!m_scheme.empty())
-  {
-    url += m_scheme + "://";
-  }
-  url += m_host;
-  if (m_port != 0)
-  {
-    url += ":" + std::to_string(m_port);
-  }
-  return url;
-}
-
 std::string Url::GetUrlWithoutQuery(bool relative) const
 {
   std::string url;
 
   if (!relative)
   {
-    url += GetUrlAuthorityWithScheme();
+    if (!m_scheme.empty())
+    {
+      url += m_scheme + "://";
+    }
+    url += m_host;
+    if (m_port != 0)
+    {
+      url += ":" + std::to_string(m_port);
+    }
   }
 
   if (!m_encodedPath.empty())
