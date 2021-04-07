@@ -30,6 +30,7 @@
 
 // azure/core/credentials
 #include "azure/core/credentials/credentials.hpp"
+#include "azure/core/credentials/token_credential_options.hpp"
 
 // azure/core/cryptography
 #include "azure/core/cryptography/hash.hpp"
