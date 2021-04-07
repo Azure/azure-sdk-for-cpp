@@ -7,6 +7,8 @@
 - Added `Azure::Core::Url::GetScheme()`.
 - Added `Azure::Core::Context::TryGetValue()`.
 - Added `Azure::Core::Context::GetDeadline()`.
+- Added `Azure::Core::Credentials::TokenCredentialOptions`.
+- Added useful fields to the `Azure::Core::RequestFailedException` class such as `StatusCode`, `ReasonPhrase`, and the `RawResponse`, for better diagnosis of errors.
 
 ### Breaking Changes
 
@@ -23,7 +25,6 @@
   - Removed `GetMajorVersion()`.
   - Removed `GetMinorVersion()`.
   - Renamed `GetBodyStream()` to `ExtractBodyStream()`.
-  - Moved to its own header file from `http.hpp` to `inc/azure/core/http/raw_response.hpp`.
 - Changes to `Azure::Core::Context`:
   - Removed `Get()` and `HasKey()` in favor of a new method `TryGetValue()`.
   - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
@@ -32,11 +33,15 @@
 - Removed `AppendQueryParameters()`, `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
 - Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString()` helper method.
 - Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
-- Moved `HttpStatusCode` to its own header file from `http.hpp` to `inc/azure/core/http/http_status_code.hpp`.
 - Changed the casing of `SSL` in API names to `Ssl`:
   - Renamed type `Azure::Core::Http::CurlTransportSSLOptions` to `CurlTransportSslOptions`.
   - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `SslOptions`.
   - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `SslVerifyPeer`.
+
+### Other changes and Improvements
+
+- Moved `Azure::Core::Http::Request` to its own header file from `http.hpp` to `inc/azure/core/http/raw_response.hpp`.
+- Moved `Azure::Core::Http::HttpStatusCode` to its own header file from `http.hpp` to `inc/azure/core/http/http_status_code.hpp`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 
