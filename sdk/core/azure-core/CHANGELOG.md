@@ -10,29 +10,30 @@
 ### Breaking Changes
 
 - Simplified the `Response<T>` API surface to expose two public fields with direct access: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
+- Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
 - Removed from `Azure::Core::Http::Request`:
   - `SetUploadChunkSize()`.
   - `GetHTTPMessagePreBody()`.
   - `GetUploadChunkSize()`.
-- Removed from `Azure::Core::Http::RawResponse`:
-  - `SetHeader(std::string const& header)`
-  - `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
-  - `GetMajorVersion()`.
-  - `GetMinorVersion()`.
-- Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
+  - `GetHeadersAsString()`.
+- Changes to `Azure::Core::Http::RawResponse`:
+  - Removed `SetHeader(std::string const& header)`
+  - Removed `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
+  - Removed `GetMajorVersion()`.
+  - Removed `GetMinorVersion()`.
+  - Renamed `GetBodyStream()` to `ExtractBodyStream()`.
 - Changes to `Azure::Core::Context`:
   - Removed `Get()` and `HasKey()` in favor of a new method `TryGetValue()`.
   - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
 - Removed `Azure::Core::PackageVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
-- Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
 - Removed `AppendQueryParameters()`, `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
 - Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString()` helper method.
-- Removed `Azure::Core::Http::Request::GetHeadersAsString()`.
 - Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
-- Renamed type `Azure::Core::Http::CurlTransportSSLOptions` to `Azure::Core::Http::CurlTransportSslOptions`.
-- Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `Azure::Core::Http::CurlTransportOptions::SslOptions`.
-- Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `Azure::Core::Http::CurlTransportOptions::SslVerifyPeer`.
+- Changed the casing of `SSL` in API names to `Ssl`:
+  - Renamed type `Azure::Core::Http::CurlTransportSSLOptions` to `CurlTransportSslOptions`.
+  - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `SslOptions`.
+  - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `SslVerifyPeer`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 
