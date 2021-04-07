@@ -7,12 +7,14 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::_internal;
+using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 
 class NoOpPolicy : public HttpPolicy {
+private:
   std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
       const override
   {

@@ -38,8 +38,30 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Azure::Core::Context const& ctx) const override
   {
-    EXPECT_EQ(retryCounterState, Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(ctx));
+    EXPECT_EQ(
+        retryCounterState, Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(ctx));
     retryCounterState += 1;
+    return nextHttpPolicy.Send(request, ctx);
+  }
+};
+
+Azure::Core::Context::Key const TheKey;
+
+struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
+{
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<TestContextTreeIntegrity>(*this);
+  }
+
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Azure::Core::Http::Request& request,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Context const& ctx) const override
+  {
+    std::string valueHolder;
+    EXPECT_TRUE(ctx.TryGetValue<std::string>(TheKey, valueHolder));
+    EXPECT_EQ("TheValue", valueHolder);
     return nextHttpPolicy.Send(request, ctx);
   }
 };
@@ -61,7 +83,7 @@ public:
       Azure::Core::Http::Policies::NextHttpPolicy,
       Azure::Core::Context const& context) const override
   {
-    auto retryNumber = Azure::Core::Http::Policies::RetryPolicy::GetRetryNumber(context);
+    auto retryNumber = Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(context);
     if (retryNumber == m_successAfter)
     {
       auto response = std::make_unique<Azure::Core::Http::RawResponse>(
@@ -82,13 +104,13 @@ TEST(Policy, throwWhenNoTransportPolicy)
   // Construct pipeline without exception
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
   Azure::Core::Url url("");
@@ -102,13 +124,13 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
   // Construct pipeline without exception
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
   policies.push_back(
-      std::make_unique<Azure::Core::Http::Policies::TelemetryPolicy>("test", "test"));
+      std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>("test", "test"));
 
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
   Azure::Core::Url url("");
@@ -128,14 +150,15 @@ TEST(Policy, RetryPolicyCounter)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
   // Clean the validation global state
   retryCounterState = 0;
 
   // Check when there's no info about retry on the context
   auto initialContext = Context::GetApplicationContext();
-  EXPECT_EQ(-1, RetryPolicy::GetRetryNumber(initialContext));
+  EXPECT_EQ(-1, RetryPolicy::GetRetryCount(initialContext));
 
   // Pipeline with retry test
   std::vector<std::unique_ptr<HttpPolicy>> policies;
@@ -155,8 +178,9 @@ TEST(Policy, RetryPolicyRetryCycle)
 {
   using namespace Azure::Core;
   using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
   // Clean the validation global state
   retryCounterState = 0;
 
@@ -171,4 +195,31 @@ TEST(Policy, RetryPolicyRetryCycle)
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
   pipeline.Send(request, Context::GetApplicationContext());
+}
+
+// Makes sure that the context tree is not corrupted/broken by some policy
+TEST(Policy, RetryPolicyKeepContext)
+{
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+  using namespace Azure::Core::Http::_internal;
+  using namespace Azure::Core::Http::Policies;
+  using namespace Azure::Core::Http::Policies::_internal;
+  // Clean the validation global state
+  retryCounterState = 0;
+
+  // Pipeline with retry test
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+  RetryOptions opt;
+  opt.RetryDelay = std::chrono::milliseconds(10);
+  policies.push_back(std::make_unique<RetryPolicy>(opt));
+  policies.push_back(std::make_unique<TestRetryPolicySharedState>());
+  policies.push_back(std::make_unique<TestContextTreeIntegrity>());
+  policies.push_back(std::make_unique<SuccessAfter>(3));
+
+  HttpPipeline pipeline(policies);
+  Request request(HttpMethod::Get, Url("url"));
+  auto withValueContext
+      = Context::GetApplicationContext().WithValue(TheKey, std::string("TheValue"));
+  pipeline.Send(request, withValueContext);
 }

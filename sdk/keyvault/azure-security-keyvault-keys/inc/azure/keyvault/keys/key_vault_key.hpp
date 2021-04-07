@@ -15,8 +15,8 @@
 
 #include <azure/core/http/http.hpp>
 
+#include <string>
 #include <vector>
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   /**
@@ -78,18 +78,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::vector<KeyOperation> const& KeyOperations() const { return Key.KeyOperations(); }
   };
-
-  /***********************  Deserializer / Serializer ******************************/
-  namespace _detail {
-    // Creates a new key based on a name and an http raw response.
-    KeyVaultKey KeyVaultKeyDeserialize(
-        std::string const& name,
-        Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Updates a Key based on an Http raw response.
-    void KeyVaultKeyDeserialize(
-        KeyVaultKey& key,
-        Azure::Core::Http::RawResponse const& rawResponse);
-  } // namespace _detail
-
 }}}} // namespace Azure::Security::KeyVault::Keys

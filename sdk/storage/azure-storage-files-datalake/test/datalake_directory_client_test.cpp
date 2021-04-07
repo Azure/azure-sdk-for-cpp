@@ -60,11 +60,11 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         Files::DataLake::DeleteDirectoryOptions options1;
-        options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_TRUE(IsValidTime(response->LastModified));
+        options1.AccessConditions.IfModifiedSince = response.Value.LastModified;
+        EXPECT_TRUE(IsValidTime(response.Value.LastModified));
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
-        options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
+        options2.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
         EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
     }
@@ -80,12 +80,12 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        EXPECT_TRUE(response->IsDirectory);
+        EXPECT_TRUE(response.Value.IsDirectory);
         Files::DataLake::DeleteDirectoryOptions options1;
-        options1.AccessConditions.IfNoneMatch = response->ETag;
+        options1.AccessConditions.IfNoneMatch = response.Value.ETag;
         EXPECT_THROW(client.DeleteEmpty(options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
-        options2.AccessConditions.IfMatch = response->ETag;
+        options2.AccessConditions.IfMatch = response.Value.ETag;
         EXPECT_NO_THROW(client.DeleteEmpty(options2));
       }
     }
@@ -113,132 +113,168 @@ namespace Azure { namespace Storage { namespace Test {
       auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
       bool created = false;
       bool deleted = false;
-      EXPECT_NO_THROW(created = client.Create()->Created);
+      EXPECT_NO_THROW(created = client.Create().Value.Created);
       EXPECT_TRUE(created);
-      EXPECT_NO_THROW(created = client.CreateIfNotExists()->Created);
+      EXPECT_NO_THROW(created = client.CreateIfNotExists().Value.Created);
       EXPECT_FALSE(created);
-      EXPECT_NO_THROW(deleted = client.DeleteEmpty()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmpty().Value.Deleted);
       EXPECT_TRUE(deleted);
-      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
     {
       auto client = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), RandomString());
       bool deleted = false;
-      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists()->Deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteEmptyIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, RenameFile)
+  {
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldFilename = RandomString();
+    auto oldFileClient = baseDirectoryClient.GetSubdirectoryClient(oldFilename);
+    oldFileClient.Create();
+    const std::string newFilename = RandomString();
+    auto newFileClient
+        = baseDirectoryClient.RenameFile(oldFilename, baseDirectoryName + "/" + newFilename).Value;
+    EXPECT_NO_THROW(newFileClient.GetProperties());
+    EXPECT_NO_THROW(baseDirectoryClient.GetSubdirectoryClient(newFilename).GetProperties());
+    EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+
+    const std::string newFileSystemName = LowercaseRandomString();
+    const std::string newFilename2 = RandomString();
+
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
+
+    Files::DataLake::RenameFileOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newFileClient2 = baseDirectoryClient.RenameFile(newFilename, newFilename2, options).Value;
+
+    EXPECT_NO_THROW(newFileClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetFileClient(newFilename2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newFileClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, RenameFileAccessCondition)
+  {
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldFilename = RandomString();
+    auto oldFileClient = baseDirectoryClient.GetSubdirectoryClient(oldFilename);
+    oldFileClient.Create();
+    const std::string newFilename = RandomString();
+
+    Files::DataLake::RenameFileOptions options;
+    options.SourceAccessConditions.IfModifiedSince
+        = oldFileClient.GetProperties().Value.LastModified;
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+
+    options = Files::DataLake::RenameFileOptions();
+    options.SourceAccessConditions.IfUnmodifiedSince
+        = oldFileClient.GetProperties().Value.LastModified - std::chrono::minutes(5);
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+
+    options = Files::DataLake::RenameFileOptions();
+    options.SourceAccessConditions.IfMatch = DummyETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+
+    options = Files::DataLake::RenameFileOptions();
+    options.SourceAccessConditions.IfNoneMatch = oldFileClient.GetProperties().Value.ETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameFile(oldFilename, newFilename, options), StorageException);
+  }
+
   TEST_F(DataLakeDirectoryClientTest, RenameDirectory)
   {
-    {
-      // Normal create/rename/delete.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClients;
-      for (int32_t i = 0; i < 5; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClients.emplace_back(std::move(client));
-      }
-      std::vector<Files::DataLake::DataLakeDirectoryClient> newDirectoryClients;
-      for (auto& client : directoryClients)
-      {
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(newDirectoryClients.emplace_back(
-            client.RenameSubdirectory("", newPath).ExtractValue()));
-      }
-      for (const auto& client : directoryClients)
-      {
-        EXPECT_THROW(client.DeleteEmpty(), StorageException);
-      }
-      for (const auto& client : newDirectoryClients)
-      {
-        EXPECT_NO_THROW(client.DeleteEmpty());
-      }
-    }
-    {
-      // Normal rename with last modified access condition.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
-      }
-      for (auto& client : directoryClient)
-      {
-        auto response = client.GetProperties();
-        Files::DataLake::RenameDirectoryOptions options1;
-        options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_TRUE(IsValidTime(response->LastModified));
-        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
-        Files::DataLake::RenameDirectoryOptions options2;
-        options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteEmpty());
-      }
-    }
-    {
-      // Normal rename with if match access condition.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
-      }
-      for (auto& client : directoryClient)
-      {
-        auto response = client.GetProperties();
-        Files::DataLake::RenameDirectoryOptions options1;
-        options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options1), StorageException);
-        Files::DataLake::RenameDirectoryOptions options2;
-        options2.SourceAccessConditions.IfMatch = response->ETag;
-        auto newPath = RandomString();
-        EXPECT_NO_THROW(
-            client.RenameSubdirectory("", newPath, options2).ExtractValue().DeleteEmpty());
-      }
-    }
-    {
-      // Rename to a destination file system.
-      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
-      for (int32_t i = 0; i < 2; ++i)
-      {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
-      }
-      {
-        // Rename to a non-existing file system will fail and source is not changed.
-        Files::DataLake::RenameDirectoryOptions options;
-        options.DestinationFileSystem = LowercaseRandomString();
-        for (auto& client : directoryClient)
-        {
-          EXPECT_THROW(client.RenameSubdirectory("", RandomString(), options), StorageException);
-          EXPECT_NO_THROW(client.GetProperties());
-        }
-      }
-      {
-        // Rename to an existing file system will succeed and changes URI.
-        auto newfileSystemName = LowercaseRandomString(10);
-        auto newfileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
-            Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-                AdlsGen2ConnectionString(), newfileSystemName));
-        newfileSystemClient->Create();
-        Files::DataLake::RenameDirectoryOptions options;
-        options.DestinationFileSystem = newfileSystemName;
-        for (auto& client : directoryClient)
-        {
-          auto newPath = RandomString();
-          EXPECT_NO_THROW(
-              client.RenameSubdirectory("", newPath, options).ExtractValue().DeleteEmpty());
-        }
-      }
-    }
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldDirectoryName = RandomString();
+    auto oldDirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldDirectoryName);
+    oldDirectoryClient.Create();
+    const std::string newDirectoryName = RandomString();
+    auto newDirectoryClient
+        = baseDirectoryClient
+              .RenameSubdirectory(oldDirectoryName, baseDirectoryName + "/" + newDirectoryName)
+              .Value;
+    EXPECT_NO_THROW(newDirectoryClient.GetProperties());
+    EXPECT_NO_THROW(baseDirectoryClient.GetSubdirectoryClient(newDirectoryName).GetProperties());
+    EXPECT_THROW(oldDirectoryClient.GetProperties(), StorageException);
+
+    const std::string newFileSystemName = LowercaseRandomString();
+    const std::string newDirectoryName2 = RandomString();
+
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
+
+    Files::DataLake::RenameDirectoryOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newDirectoryClient2
+        = baseDirectoryClient.RenameSubdirectory(newDirectoryName, newDirectoryName2, options)
+              .Value;
+
+    EXPECT_NO_THROW(newDirectoryClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, RenameDirectoryAccessCondition)
+  {
+    const std::string baseDirectoryName = RandomString();
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+
+    const std::string oldDirectoryName = RandomString();
+    auto oldDirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldDirectoryName);
+    oldDirectoryClient.Create();
+    const std::string newDirectoryName = RandomString();
+
+    Files::DataLake::RenameDirectoryOptions options;
+    options.SourceAccessConditions.IfModifiedSince
+        = oldDirectoryClient.GetProperties().Value.LastModified;
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
+
+    options = Files::DataLake::RenameDirectoryOptions();
+    options.SourceAccessConditions.IfUnmodifiedSince
+        = oldDirectoryClient.GetProperties().Value.LastModified - std::chrono::minutes(5);
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
+
+    options = Files::DataLake::RenameDirectoryOptions();
+    options.SourceAccessConditions.IfMatch = DummyETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
+
+    options = Files::DataLake::RenameDirectoryOptions();
+    options.SourceAccessConditions.IfNoneMatch = oldDirectoryClient.GetProperties().Value.ETag;
+
+    EXPECT_THROW(
+        baseDirectoryClient.RenameSubdirectory(oldDirectoryName, newDirectoryName, options),
+        StorageException);
   }
 
   TEST_F(DataLakeDirectoryClientTest, DirectoryMetadata)
@@ -248,10 +284,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
-      auto result = m_directoryClient->GetProperties()->Metadata;
+      auto result = m_directoryClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
-      result = m_directoryClient->GetProperties()->Metadata;
+      result = m_directoryClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -266,11 +302,11 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
-      auto result = client1.GetProperties()->Metadata;
+      auto result = client1.GetProperties().Value.Metadata;
       metadata1["hdi_isfolder"] = "true";
       metadata2["hdi_isfolder"] = "true";
       EXPECT_EQ(metadata1, result);
-      result = client2.GetProperties()->Metadata;
+      result = client2.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
@@ -283,25 +319,25 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
       auto result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata1, result->Metadata);
+      EXPECT_EQ(metadata1, result.Value.Metadata);
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
       result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata2, result->Metadata);
+      EXPECT_EQ(metadata2, result.Value.Metadata);
     }
 
     {
       // Last modified Etag works.
       auto properties1 = m_directoryClient->GetProperties();
       auto properties2 = m_directoryClient->GetProperties();
-      EXPECT_EQ(properties1->ETag, properties2->ETag);
-      EXPECT_TRUE(IsValidTime(properties1->LastModified));
-      EXPECT_EQ(properties1->LastModified, properties2->LastModified);
+      EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_TRUE(IsValidTime(properties1.Value.LastModified));
+      EXPECT_EQ(properties1.Value.LastModified, properties2.Value.LastModified);
 
       // This operation changes ETag/LastModified.
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
 
       auto properties3 = m_directoryClient->GetProperties();
-      EXPECT_NE(properties1->ETag, properties3->ETag);
+      EXPECT_NE(properties1.Value.ETag, properties3.Value.ETag);
     }
 
     {
@@ -319,10 +355,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : directoryClient)
       {
         auto result = client.GetProperties();
-        EXPECT_EQ(httpHeader.CacheControl, result->HttpHeaders.CacheControl);
-        EXPECT_EQ(httpHeader.ContentDisposition, result->HttpHeaders.ContentDisposition);
-        EXPECT_EQ(httpHeader.ContentLanguage, result->HttpHeaders.ContentLanguage);
-        EXPECT_EQ(httpHeader.ContentType, result->HttpHeaders.ContentType);
+        EXPECT_EQ(httpHeader.CacheControl, result.Value.HttpHeaders.CacheControl);
+        EXPECT_EQ(httpHeader.ContentDisposition, result.Value.HttpHeaders.ContentDisposition);
+        EXPECT_EQ(httpHeader.ContentLanguage, result.Value.HttpHeaders.ContentLanguage);
+        EXPECT_EQ(httpHeader.ContentType, result.Value.HttpHeaders.ContentType);
         EXPECT_NO_THROW(client.DeleteEmpty());
       }
     }
@@ -349,8 +385,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -376,8 +412,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.UpdateAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -453,8 +489,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(rootDirectoryClient.RemoveAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
@@ -529,8 +565,8 @@ namespace Azure { namespace Storage { namespace Test {
       (rootDirectoryClient.SetAccessControlListRecursiveSinglePage(acls));
       std::vector<Files::DataLake::Models::Acl> resultAcls1;
       std::vector<Files::DataLake::Models::Acl> resultAcls2;
-      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList()->Acls);
-      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList()->Acls);
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControlList().Value.Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControlList().Value.Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(

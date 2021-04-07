@@ -18,21 +18,6 @@
 
 namespace Azure { namespace Core {
   namespace _detail {
-    /**
-     * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
-     * characters.
-     *
-     * @param headers The headers map where to insert header.
-     * @param headerName The header name for the header to be inserted.
-     * @param headerValue The header value for the header to be inserted.
-     *
-     * @throw if \p headerName is invalid.
-     */
-    void InsertHeaderWithValidation(
-        CaseInsensitiveMap& headers,
-        std::string const& headerName,
-        std::string const& headerValue);
-
     inline std::string FormatEncodedUrlQueryParameters(
         std::map<std::string, std::string> const& encodedQueryParameters)
     {
@@ -72,6 +57,14 @@ namespace Azure { namespace Core {
     const static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
     std::string GetUrlWithoutQuery(bool relative) const;
+
+    /**
+     * @brief Finds the first '?' symbol and parses everything after it as query parameters.
+     * separated by '&'.
+     *
+     * @param encodedQueryParameters String containing one or more query parameters.
+     */
+    void AppendQueryParameters(const std::string& encodedQueryParameters);
 
   public:
     /**
@@ -184,14 +177,6 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Finds the first '?' symbol and parses everything after it as query parameters.
-     * separated by '&'.
-     *
-     * @param encodedQueryParameters String containing one or more query parameters.
-     */
-    void AppendQueryParameters(const std::string& encodedQueryParameters);
-
-    /**
      * @brief Removes an existing query parameter.
      *
      * @param encodedKey The name of the query parameter to be removed.
@@ -238,10 +223,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get Scheme, host, and path, without query parameters.
-     * @return Absolute URL without query parameters.
+     * @brief Get the URL scheme.
      */
-    std::string GetUrlWithoutQuery() const { return GetUrlWithoutQuery(false); }
+    const std::string& GetScheme() const { return m_scheme; };
 
     /**
      * @brief Get the path and query parameters.

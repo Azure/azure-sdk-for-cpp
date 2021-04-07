@@ -141,6 +141,45 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   }
 }
 #endif
+
+void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::string const& header)
+{
+  return Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
+      response,
+      reinterpret_cast<uint8_t const*>(header.data()),
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
+}
+
+static inline std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
+{
+  std::string requestHeaderString;
+
+  for (auto const& header : request.GetHeaders())
+  {
+    requestHeaderString += header.first; // string (key)
+    requestHeaderString += ": ";
+    requestHeaderString += header.second; // string's value
+    requestHeaderString += "\r\n";
+  }
+  requestHeaderString += "\r\n";
+
+  return requestHeaderString;
+}
+
+// Writes an HTTP request with RFC 7230 without the body (head line and headers)
+// https://tools.ietf.org/html/rfc7230#section-3.1.1
+static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request)
+{
+  std::string httpRequest(request.GetMethod().ToString());
+  // HTTP version hardcoded to 1.1
+  auto const url = request.GetUrl().GetRelativeUrl();
+  httpRequest += " /" + url + " HTTP/1.1\r\n";
+
+  // headers
+  httpRequest += GetHeadersAsString(request);
+
+  return httpRequest;
+}
 } // namespace
 
 using Azure::Core::Context;
@@ -161,7 +200,10 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
   auto session = std::make_unique<CurlSession>(
-      request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
+      request,
+      CurlConnectionPool::ExtractOrCreateCurlConnection(request, m_options),
+      m_options.HttpKeepAlive);
+
   CURLcode performing;
 
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
@@ -184,7 +226,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     // won't be no longer valid.
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::GetCurlConnection(
+        CurlConnectionPool::ExtractOrCreateCurlConnection(
             request,
             m_options,
             getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
@@ -202,7 +244,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
       LogMsgPrefix + "Request completed. Moving response out of session and session to response.");
 
   // Move Response out of the session
-  auto response = session->GetResponse();
+  auto response = session->ExtractResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
   return response;
@@ -403,17 +445,13 @@ CURLcode CurlSession::UploadBody(Context const& context)
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
 
-  int64_t uploadChunkSize = this->m_request.GetUploadChunkSize();
-  if (uploadChunkSize <= 0)
-  {
-    // use default size
-    uploadChunkSize = _detail::DefaultUploadChunkSize;
-  }
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer
+      = std::make_unique<uint8_t[]>(static_cast<size_t>(_detail::DefaultUploadChunkSize));
 
   while (true)
   {
-    auto rawRequestLen = streamBody->Read(unique_buffer.get(), uploadChunkSize, context);
+    auto rawRequestLen
+        = streamBody->Read(unique_buffer.get(), _detail::DefaultUploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
@@ -432,7 +470,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
 CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
-  auto rawRequest = this->m_request.GetHTTPMessagePreBody();
+  auto rawRequest = GetHTTPMessagePreBody(this->m_request);
   int64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = m_connection->SendBuffer(
@@ -573,7 +611,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     }
   }
 
-  this->m_response = parser.GetResponse();
+  this->m_response = parser.ExtractResponse();
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
   this->m_lastStatusCode = this->m_response->GetStatusCode();
 
@@ -818,7 +856,7 @@ int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Cont
   return readBytes;
 }
 
-std::unique_ptr<RawResponse> CurlSession::GetResponse() { return std::move(this->m_response); }
+std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
 
 int64_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
@@ -864,7 +902,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         else if (this->state == ResponseParserState::Headers)
         {
           // will throw if header is invalid
-          this->m_response->SetHeader(this->m_internalBuffer);
+          SetHeader(*this->m_response, this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -901,7 +939,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // will throw if header is invalid
-          this->m_response->SetHeader(buffer + start, buffer + index - 1);
+          Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
+              *this->m_response, buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -1048,14 +1087,14 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
     // will throw if header is invalid
-    m_response->SetHeader(this->m_internalBuffer);
+    SetHeader(*m_response, this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
     std::string header(std::string(start, indexOfEndOfStatusLine));
     // will throw if header is invalid
-    this->m_response->SetHeader(header);
+    SetHeader(*this->m_response, header);
   }
 
   // reuse buffer
@@ -1093,7 +1132,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     key.append("1");
   }
@@ -1101,7 +1140,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (options.SSLVerifyPeer)
+  if (options.SslVerifyPeer)
   {
     key.append("1");
   }
@@ -1113,7 +1152,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 }
 } // namespace
 
-std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
+std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlConnection(
     Request& request,
     CurlTransportOptions const& options,
     bool resetPool)
@@ -1229,7 +1268,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
 
   long sslOption = 0;
-  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
@@ -1242,7 +1281,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (!options.SSLVerifyPeer)
+  if (!options.SslVerifyPeer)
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {

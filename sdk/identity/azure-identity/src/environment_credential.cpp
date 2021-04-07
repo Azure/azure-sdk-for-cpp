@@ -21,7 +21,8 @@
 
 using namespace Azure::Identity;
 
-EnvironmentCredential::EnvironmentCredential()
+EnvironmentCredential::EnvironmentCredential(
+    Azure::Core::Credentials::TokenCredentialOptions options)
 {
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
@@ -53,28 +54,29 @@ EnvironmentCredential::EnvironmentCredential()
     {
       if (authority != nullptr)
       {
-        ClientSecretCredentialOptions options;
-        options.AuthorityHost = authority;
+        ClientSecretCredentialOptions clientSecretCredentialOptions;
+        static_cast<Core::_internal::ClientOptions&>(clientSecretCredentialOptions) = options;
+        clientSecretCredentialOptions.AuthorityHost = authority;
 
-        m_credentialImpl.reset(
-            new ClientSecretCredential(tenantId, clientId, clientSecret, options));
+        m_credentialImpl.reset(new ClientSecretCredential(
+            tenantId, clientId, clientSecret, clientSecretCredentialOptions));
       }
       else
       {
-        m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret));
+        m_credentialImpl.reset(
+            new ClientSecretCredential(tenantId, clientId, clientSecret, options));
       }
     }
     // TODO: These credential types are not implemented. Uncomment when implemented.
     // else if (username != nullptr && password != nullptr)
-    //{
-    //  m_credentialImpl.reset(
-    //      new UsernamePasswordCredential(username, password, tenantId, clientId));
-    //}
+    // {
+    //   m_credentialImpl.reset(
+    //       new UsernamePasswordCredential(tenantId, clientId, username, password, options));
+    // }
     // else if (clientCertificatePath != nullptr)
-    //{
-    //  m_credentialImpl.reset(
-    //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
-    //}
+    // {
+    //   m_credentialImpl.reset(new ClientCertificateCredential(tenantId, clientId, options));
+    // }
   }
 #endif
 }

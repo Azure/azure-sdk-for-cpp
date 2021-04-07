@@ -16,6 +16,7 @@
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  class DataLakeFileSystemClient;
   class DataLakeDirectoryClient;
   class DataLakeFileClient;
 }}}} // namespace Azure::Storage::Files::DataLake
@@ -353,8 +354,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobClient(
         Azure::Core::Url blobUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        Azure::Nullable<EncryptionKey> customerProvidedKey,
-        Azure::Nullable<std::string> encryptionScope)
+        Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>(),
+        Azure::Nullable<std::string> encryptionScope = Azure::Nullable<std::string>())
         : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))
@@ -362,6 +363,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     friend class BlobContainerClient;
+    friend class Files::DataLake::DataLakeFileSystemClient;
     friend class Files::DataLake::DataLakeDirectoryClient;
     friend class Files::DataLake::DataLakeFileClient;
     friend class BlobLeaseClient;
