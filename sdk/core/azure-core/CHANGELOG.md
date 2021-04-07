@@ -38,7 +38,7 @@
   - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `SslOptions`.
   - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `SslVerifyPeer`.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Moved `Azure::Core::Http::Request` to its own header file from `http.hpp` to `inc/azure/core/http/raw_response.hpp`.
 - Moved `Azure::Core::Http::HttpStatusCode` to its own header file from `http.hpp` to `inc/azure/core/http/http_status_code.hpp`.
@@ -184,7 +184,7 @@
 - Initialize class data members to avoid MSVC warning.
 - Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Added support for distributing the C++ SDK as a source package via vcpkg.
 
@@ -224,7 +224,7 @@
 - Avoid re-using a connection when a request to upload data fails while using the `CurlTransport`.
 - Add entropy to `Uuid` generation.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
 - Add code coverage using gcov with gcc.
@@ -247,7 +247,7 @@
 - Switched to a more stable wait on sockets to address connection timeouts.
 - Replace `Nullable(const T&)` with `Nullable(T)` to avoid extra copy when initialized with an rvalue.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Improved performance on windows when using libcurl.
 - Pinned the version of package dependencies.
