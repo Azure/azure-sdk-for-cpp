@@ -40,7 +40,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         KeyVaultKey& key,
         Azure::Core::Json::_internal::json const& json);
 
-    std::string static inline GetUrlAuthorityWithScheme(Azure::Core::Url url)
+    static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
     {
       std::string urlString;
       if (!url.GetScheme().empty())

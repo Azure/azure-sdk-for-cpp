@@ -223,7 +223,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get URL scheme.
+     * @brief Get the URL scheme.
      */
     const std::string& GetScheme() const { return m_scheme; };
 
