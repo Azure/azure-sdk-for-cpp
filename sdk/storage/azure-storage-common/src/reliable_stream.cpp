@@ -8,7 +8,7 @@
 using Azure::Core::Context;
 using Azure::Core::IO::BodyStream;
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace _internal {
 
   int64_t ReliableStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
   {
@@ -22,13 +22,13 @@ namespace Azure { namespace Storage {
         // if this fails, throw bubbles up
         // As m_inner is unique_pr, it will be destructed on reassignment, cleaning up network
         // session.
-        this->m_inner = this->m_httpGetter(this->m_retryInfo, context);
+        this->m_inner = this->m_streamReconnector(this->m_retryOffset, context);
       }
       try
       {
         auto const readBytes = this->m_inner->Read(buffer, count, context);
         // update offset
-        this->m_retryInfo.Offset += readBytes;
+        this->m_retryOffset += readBytes;
         return readBytes;
       }
       catch (std::runtime_error const& e)
@@ -46,4 +46,4 @@ namespace Azure { namespace Storage {
       }
     }
   }
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::_internal

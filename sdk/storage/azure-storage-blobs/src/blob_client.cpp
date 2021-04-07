@@ -177,17 +177,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       // In case network failure during reading the body
       const Azure::ETag eTag = downloadResponse.Value.Details.ETag;
 
-      auto retryFunction =
-          [this, options, eTag](
-              const internal_::HttpGetterInfo& retryInfo,
-              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      auto retryFunction
+          = [this, options, eTag](int64_t retryOffset, const Azure::Core::Context& context)
+          -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
         newOptions.Range.Value().Offset
-            = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryInfo.Offset;
+            = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryOffset;
         if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
         {
-          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryInfo.Offset;
+          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryOffset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {
@@ -196,9 +195,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return std::move(Download(newOptions, context).Value.BodyStream);
       };
 
-      ReliableStreamOptions reliableStreamOptions;
+      _internal::ReliableStreamOptions reliableStreamOptions;
       reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
-      downloadResponse.Value.BodyStream = std::make_unique<ReliableStream>(
+      downloadResponse.Value.BodyStream = std::make_unique<_internal::ReliableStream>(
           std::move(downloadResponse.Value.BodyStream), reliableStreamOptions, retryFunction);
     }
     if (downloadResponse.Value.BlobType == Models::BlobType::AppendBlob

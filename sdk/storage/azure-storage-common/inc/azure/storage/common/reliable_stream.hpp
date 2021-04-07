@@ -8,21 +8,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/io/body_stream.hpp>
 
-namespace Azure { namespace Storage {
-
-  namespace internal_ {
-
-    // options used by the fm callback that will get a bodyStream starting from last offset
-    struct HttpGetterInfo
-    {
-      int64_t Offset = 0;
-    };
-
-    // Defines a fn signature to be use to get a bodyStream from a specific offset.
-    using HttpGetter = std::function<std::unique_ptr<Azure::Core::IO::BodyStream>(
-        HttpGetterInfo const&,
-        Azure::Core::Context const&)>;
-  } // namespace internal_
+namespace Azure { namespace Storage { namespace _internal {
 
   // Options used by reliable stream
   struct ReliableStreamOptions
@@ -50,9 +36,11 @@ namespace Azure { namespace Storage {
     // Configuration for the re-triable stream
     ReliableStreamOptions const m_options;
     // callback to get a bodyStream in case Read operation fails
-    internal_::HttpGetter m_httpGetter;
+    std::function<
+        std::unique_ptr<Azure::Core::IO::BodyStream>(int64_t, Azure::Core::Context const&)>
+        m_streamReconnector;
     // Options to use when getting a new bodyStream like current offset
-    internal_::HttpGetterInfo m_retryInfo;
+    int64_t m_retryOffset;
 
     int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
@@ -60,8 +48,11 @@ namespace Azure { namespace Storage {
     explicit ReliableStream(
         std::unique_ptr<Azure::Core::IO::BodyStream> inner,
         ReliableStreamOptions const options,
-        internal_::HttpGetter httpGetter)
-        : m_inner(std::move(inner)), m_options(options), m_httpGetter(std::move(httpGetter))
+        std::function<
+            std::unique_ptr<Azure::Core::IO::BodyStream>(int64_t, Azure::Core::Context const&)>
+            streamReconnector)
+        : m_inner(std::move(inner)), m_options(options),
+          m_streamReconnector(std::move(streamReconnector)), m_retryOffset(0)
     {
     }
 
@@ -70,8 +61,8 @@ namespace Azure { namespace Storage {
     {
       // Rewind directly from a transportAdapter body stream (like libcurl) would throw
       this->m_inner->Rewind();
-      this->m_retryInfo.Offset = 0;
+      this->m_retryOffset = 0;
     }
   };
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::_internal

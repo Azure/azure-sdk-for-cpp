@@ -258,17 +258,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       // In case network failure during reading the body
       auto eTag = downloadResponse.Value.ETag;
 
-      auto retryFunction =
-          [this, options, eTag](
-              const internal_::HttpGetterInfo& retryInfo,
-              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      auto retryFunction
+          = [this, options, eTag](int64_t retryOffset, const Azure::Core::Context& context)
+          -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadFileOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
         newOptions.Range.Value().Offset
-            = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryInfo.Offset;
+            = (options.Range.HasValue() ? options.Range.Value().Offset : 0) + retryOffset;
         if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
         {
-          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryInfo.Offset;
+          newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryOffset;
         }
 
         auto newResponse = Download(newOptions, context);
@@ -280,9 +279,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return std::move(newResponse.Value.BodyStream);
       };
 
-      ReliableStreamOptions reliableStreamOptions;
+      _internal::ReliableStreamOptions reliableStreamOptions;
       reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
-      downloadResponse.Value.BodyStream = std::make_unique<ReliableStream>(
+      downloadResponse.Value.BodyStream = std::make_unique<_internal::ReliableStream>(
           std::move(downloadResponse.Value.BodyStream), reliableStreamOptions, retryFunction);
     }
     Models::DownloadFileResult ret;
