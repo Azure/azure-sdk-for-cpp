@@ -58,6 +58,14 @@ namespace Azure { namespace Core {
 
     std::string GetUrlWithoutQuery(bool relative) const;
 
+    /**
+     * @brief Finds the first '?' symbol and parses everything after it as query parameters.
+     * separated by '&'.
+     *
+     * @param encodedQueryParameters String containing one or more query parameters.
+     */
+    void AppendQueryParameters(const std::string& encodedQueryParameters);
+
   public:
     /**
      * @brief Decodes \p value by transforming all escaped characters to it's non-encoded value.
@@ -167,14 +175,6 @@ namespace Azure { namespace Core {
     {
       m_encodedQueryParameters[encodedKey] = encodedValue;
     }
-
-    /**
-     * @brief Finds the first '?' symbol and parses everything after it as query parameters.
-     * separated by '&'.
-     *
-     * @param encodedQueryParameters String containing one or more query parameters.
-     */
-    void AppendQueryParameters(const std::string& encodedQueryParameters);
 
     /**
      * @brief Removes an existing query parameter.

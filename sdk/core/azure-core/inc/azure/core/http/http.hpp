@@ -224,11 +224,6 @@ namespace Azure { namespace Core { namespace Http {
     Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
-     * @brief Get the list of headers prior to HTTP body.
-     */
-    std::string GetHeadersAsString() const;
-
-    /**
      * @brief A value indicating whether download is happening via stream.
      */
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
