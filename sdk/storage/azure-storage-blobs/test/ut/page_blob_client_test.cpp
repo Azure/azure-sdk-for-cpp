@@ -141,44 +141,13 @@ namespace Azure { namespace Storage { namespace Test {
         0, m_pageBlobClient->GetUrl() + GetSas(), {0, static_cast<int64_t>(m_blobContent.size())});
   }
 
-  static std::string AppendQP(Azure::Core::Url url, std::string qp)
-  {
-    std::string absoluteUrl = url.GetAbsoluteUrl();
-    auto existingQP = url.GetQueryParameters();
-    bool startWithQuestion = qp[0] == '?';
-    if (existingQP.size() == 0)
-    {
-      if (startWithQuestion)
-      {
-        absoluteUrl = absoluteUrl + qp;
-      }
-      else
-      {
-        absoluteUrl = absoluteUrl + '?' + qp;
-      }
-    }
-    else
-    {
-      absoluteUrl += '&';
-      if (startWithQuestion)
-      {
-        absoluteUrl = absoluteUrl + qp.substr(1);
-      }
-      else
-      {
-        absoluteUrl = absoluteUrl + qp;
-      }
-    }
-    return absoluteUrl;
-  }
-
   TEST_F(PageBlobClientTest, StartCopyIncremental)
   {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string snapshot = m_pageBlobClient->CreateSnapshot().Value.Snapshot;
     Azure::Core::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
-    auto copyInfo = pageBlobClient.StartCopyIncremental(AppendQP(sourceUri, GetSas()));
+    auto copyInfo = pageBlobClient.StartCopyIncremental(AppendQueryParameters(sourceUri, GetSas()));
     EXPECT_EQ(
         copyInfo.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     auto getPropertiesResult = copyInfo.PollUntilDone(std::chrono::seconds(1));
