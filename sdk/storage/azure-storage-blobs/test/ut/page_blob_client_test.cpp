@@ -147,8 +147,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string snapshot = m_pageBlobClient->CreateSnapshot().Value.Snapshot;
     Azure::Core::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
-    sourceUri.AppendQueryParameters(GetSas());
-    auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
+    auto copyInfo = pageBlobClient.StartCopyIncremental(AppendQueryParameters(sourceUri, GetSas()));
     EXPECT_EQ(
         copyInfo.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     auto getPropertiesResult = copyInfo.PollUntilDone(std::chrono::seconds(1));

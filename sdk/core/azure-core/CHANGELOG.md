@@ -25,7 +25,7 @@
 - Removed `Azure::Core::PackageVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
 - Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
-- Removed `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
+- Removed `AppendQueryParameters()`, `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
 - Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString` helper method.
 - Removed `Azure::Core::Http::Request::GetHeadersAsString()`.
 - Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
