@@ -44,8 +44,8 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   std::string AppendQueryParameters(
-      Azure::Core::Url const& url,
-      std::string const& queryParameters);
+      const Azure::Core::Url& url,
+      const std::string& queryParameters);
 
   const static Azure::ETag DummyETag("0x8D83B58BDF51D75");
   const static Azure::ETag DummyETag2("0x8D812645BFB0CDE");
