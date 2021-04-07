@@ -26,16 +26,16 @@
 namespace Azure { namespace Core { namespace _internal {
 
   /**
-   * @brief HKEYHolder ensures native handle resource is released.
+   * @brief HKeyHolder ensures native handle resource is released.
    */
-  class HKEYHolder {
+  class HKeyHolder {
   private:
     HKEY m_value = nullptr;
 
   public:
-    explicit HKEYHolder() noexcept : m_value(nullptr){};
+    explicit HKeyHolder() noexcept : m_value(nullptr){};
 
-    ~HKEYHolder() noexcept
+    ~HKeyHolder() noexcept
     {
       if (m_value != nullptr)
       {
