@@ -58,19 +58,3 @@ Azure::Core::CaseInsensitiveMap Request::GetHeaders() const
   // to override them with any duplicate header
   return MergeMaps(this->m_retryHeaders, this->m_headers);
 }
-
-std::string Request::GetHeadersAsString() const
-{
-  std::string requestHeaderString;
-
-  for (auto const& header : this->GetHeaders())
-  {
-    requestHeaderString += header.first; // string (key)
-    requestHeaderString += ": ";
-    requestHeaderString += header.second; // string's value
-    requestHeaderString += "\r\n";
-  }
-  requestHeaderString += "\r\n";
-
-  return requestHeaderString;
-}
