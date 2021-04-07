@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  std::string AppendQueryParameters(Azure::Core::Url const& url, std::string const& queryParameters)
+  std::string AppendQueryParameters(const Azure::Core::Url& url, const std::string& queryParameters)
   {
     std::string absoluteUrl = url.GetAbsoluteUrl();
     if (queryParameters.empty())
