@@ -96,7 +96,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::vector<KeyOperation> m_keyOps;
   };
 
-  // Define the serialization of a JsonWebKey
-  void to_json(Azure::Core::Json::_internal::json& j, JsonWebKey const& p);
-
 }}}} // namespace Azure::Security::KeyVault::Keys
