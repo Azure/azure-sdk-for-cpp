@@ -118,14 +118,6 @@ namespace Azure { namespace Core { namespace Http {
      * @return unique ptr to an HTTP RawResponse.
      */
     std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
-
-    /**
-     * @brief Clean any active libcurl connection.
-     *
-     * @remark Call this function before calling the libcurl function `curl_global_cleanup()`.
-     *
-     */
-    static void CleanUp();
   };
 
 }}} // namespace Azure::Core::Http
