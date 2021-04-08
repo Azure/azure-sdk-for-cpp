@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   ConnectionStringParts ParseConnectionString(const std::string& connectionString)
   {
@@ -59,28 +59,28 @@ namespace Azure { namespace Storage { namespace _detail {
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".blob." + EndpointSuffix;
     }
-    connectionStringParts.BlobServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.BlobServiceUrl = Azure::Core::Url(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "DfsEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".dfs." + EndpointSuffix;
     }
-    connectionStringParts.DataLakeServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.DataLakeServiceUrl = Azure::Core::Url(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "FileEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".file." + EndpointSuffix;
     }
-    connectionStringParts.FileServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.FileServiceUrl = Azure::Core::Url(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "QueueEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".queue." + EndpointSuffix;
     }
-    connectionStringParts.QueueServiceUrl = Azure::Core::Http::Url(std::move(endpoint));
+    connectionStringParts.QueueServiceUrl = Azure::Core::Url(std::move(endpoint));
 
     std::string accountKey = getWithDefault(connectionStringMap, "AccountKey");
     if (!accountKey.empty())
@@ -96,12 +96,20 @@ namespace Azure { namespace Storage { namespace _detail {
     std::string sas = getWithDefault(connectionStringMap, "SharedAccessSignature");
     if (!sas.empty())
     {
-      connectionStringParts.BlobServiceUrl.AppendQueryParameters(sas);
-      connectionStringParts.DataLakeServiceUrl.AppendQueryParameters(sas);
-      connectionStringParts.FileServiceUrl.AppendQueryParameters(sas);
-      connectionStringParts.QueueServiceUrl.AppendQueryParameters(sas);
+      if (sas[0] != '?')
+      {
+        sas = '?' + sas;
+      }
+      connectionStringParts.BlobServiceUrl
+          = Azure::Core::Url(connectionStringParts.BlobServiceUrl.GetAbsoluteUrl() + sas);
+      connectionStringParts.DataLakeServiceUrl
+          = Azure::Core::Url(connectionStringParts.DataLakeServiceUrl.GetAbsoluteUrl() + sas);
+      connectionStringParts.FileServiceUrl
+          = Azure::Core::Url(connectionStringParts.FileServiceUrl.GetAbsoluteUrl() + sas);
+      connectionStringParts.QueueServiceUrl
+          = Azure::Core::Url(connectionStringParts.QueueServiceUrl.GetAbsoluteUrl() + sas);
     }
 
     return connectionStringParts;
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

@@ -47,12 +47,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQuerySnapshot, Storage::_detail::UrlEncodeQueryParameter(snapshot));
+          _internal::HttpQuerySnapshot, _internal::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -62,13 +62,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQueryVersionId,
-          Storage::_detail::UrlEncodeQueryParameter(versionId));
+          _internal::HttpQueryVersionId, _internal::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
@@ -88,13 +87,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::AppendBlob::Create(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
@@ -113,7 +112,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           && e.ErrorCode == "BlobAlreadyExists")
       {
         Models::CreateAppendBlobResult ret;
-        ret.RequestId = e.RequestId;
         ret.Created = false;
         return Azure::Response<Models::CreateAppendBlobResult>(
             std::move(ret), std::move(e.RawResponse));
@@ -123,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -139,13 +137,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::AppendBlob::AppendBlock(
-        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
@@ -167,13 +165,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::AppendBlob::AppendBlockFromUri(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
@@ -189,7 +187,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::AppendBlob::Seal(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
 }}} // namespace Azure::Storage::Blobs

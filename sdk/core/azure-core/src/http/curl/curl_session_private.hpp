@@ -198,7 +198,7 @@ namespace Azure { namespace Core { namespace Http {
        * @return Will move the response only if parsing is completed and if the HTTP RawResponse
        * was not moved before.
        */
-      std::unique_ptr<RawResponse> GetResponse()
+      std::unique_ptr<RawResponse> ExtractResponse()
       {
         if (m_parseCompleted && m_response != nullptr)
         {
@@ -385,7 +385,8 @@ namespace Azure { namespace Core { namespace Http {
       // IsEOF will also handle a connection that fail to complete an upload request.
       if (IsEOF() && m_keepAlive)
       {
-        CurlConnectionPool::MoveConnectionBackToPool(std::move(m_connection), m_lastStatusCode);
+        _detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(m_connection), m_lastStatusCode);
       }
     }
 
@@ -404,7 +405,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return the unique ptr to the HTTP RawResponse or null if the HTTP RawResponse is not yet
      * created or was moved before.
      */
-    std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse();
+    std::unique_ptr<Azure::Core::Http::RawResponse> ExtractResponse();
 
     /**
      * @brief Implement #Azure::Core::IO::BodyStream length.

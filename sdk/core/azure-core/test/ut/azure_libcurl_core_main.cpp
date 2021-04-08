@@ -19,9 +19,9 @@
 #include <curl/curl.h>
 
 #include <azure/core/context.hpp>
-#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/curl_transport.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 
@@ -35,12 +35,14 @@ namespace Azure { namespace Core { namespace Test {
   TEST(SdkWithLibcurl, globalCleanUp)
   {
     Azure::Core::Http::Request req(
-        Azure::Core::Http::HttpMethod::Get, Azure::Core::Http::Url("https://httpbin.org/get"));
+        Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://httpbin.org/get"));
 
     {
       // Creating a new connection with default options
       Azure::Core::Http::CurlTransportOptions options;
-      auto connection = Azure::Core::Http::CurlConnectionPool::GetCurlConnection(req, options);
+      auto connection
+          = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+              req, options);
 
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           req, std::move(connection), options.HttpKeepAlive);
@@ -48,30 +50,21 @@ namespace Azure { namespace Core { namespace Test {
       (void)result;
       // Reading all the response
 
-      Azure::Core::IO::BodyStream::ReadToEnd(
-          *session, Azure::Core::Context::GetApplicationContext());
+      session->ReadToEnd(Azure::Core::Context::GetApplicationContext());
     }
     // Check that after the connection is gone, it is moved back to the pool
-    EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+    EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
     auto connectionFromPool
-        = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin()->second.begin()->get();
+        = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin()
+              ->second.begin()
+              ->get();
     (void)connectionFromPool;
   }
 }}} // namespace Azure::Core::Test
 
 int main(int argc, char** argv)
 {
-  curl_global_init(CURL_GLOBAL_ALL);
-
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
-
-  // When using libcurl, we need to call the transport adapter clean up routine.
-  Azure::Core::Http::CurlTransport::CleanUp();
-
-  // Call global clean up
-  curl_global_cleanup();
-
-  // return will destroy the connection pool, making each connection to call clean up.
   return r;
 }

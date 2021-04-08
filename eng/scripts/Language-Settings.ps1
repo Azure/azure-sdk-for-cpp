@@ -7,20 +7,9 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 
 
 
-function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory, $pkgName) 
+function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory) 
 {
-  # Test if the package path ends with the package name (e.g. sdk/storage/azure-storage-common)
-  # This function runs in a loop where $pkgPath might be the path to the package and must return 
-  # $null in cases where $pkgPath is not the path to the package specified by $pkgName
-  if ($pkgName -and ($pkgName -ne (Split-Path -Leaf $pkgPath))) { 
-    return $null
-  }
-
-  if (!$pkgName)
-  {
-    $pkgName = Split-Path -Leaf $pkgPath
-  }
-
+  $pkgName = Split-Path -Leaf $pkgPath
   $packageVersion = & $PSScriptRoot/Get-PkgVersion.ps1 -ServiceDirectory $serviceDirectory -PackageName $pkgName
   if ($null -ne $packageVersion)
   {
@@ -74,7 +63,8 @@ function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
   Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }
 
-function Get-cpp-GithubIoDocIndex() {
+function Get-cpp-GithubIoDocIndex() 
+{
   # Update the main.js and docfx.json language content
   UpdateDocIndexFiles -appTitleLang "C++"
   # Fetch out all package metadata from csv file.
@@ -85,4 +75,10 @@ function Get-cpp-GithubIoDocIndex() {
   $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
   # Generate yml/md toc files and build site.
   GenerateDocfxTocContent -tocContent $tocContent -lang "C++"
+}
+
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory)
+{
+  & "$EngDir/scripts/Update-PkgVersion.ps1" -ServiceDirectory $ServiceDirectory -PackageName $PackageName `
+  -NewVersionString $Version
 }

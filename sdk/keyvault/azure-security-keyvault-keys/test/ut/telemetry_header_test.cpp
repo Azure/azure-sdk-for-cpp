@@ -29,7 +29,7 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
 
   // The response is an echo of the sent headers. Let's find the telemetry id
   auto foundHeader = false;
-  for (auto& header : response.GetRawResponse().GetHeaders())
+  for (auto& header : response.RawResponse->GetHeaders())
   {
     if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
             header.first, "User-Agent"))

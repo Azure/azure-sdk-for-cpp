@@ -23,10 +23,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileSystemClientTest::SetUpTestSuite()
   {
+    DataLakeServiceClientTest::SetUpTestSuite();
+
     m_fileSystemName = LowercaseRandomString();
     m_fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
-        Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-            AdlsGen2ConnectionString(), m_fileSystemName));
+        m_dataLakeServiceClient->GetFileSystemClient(m_fileSystemName));
     m_fileSystemClient->Create();
 
     m_directoryA = LowercaseRandomString();
@@ -48,7 +49,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  void DataLakeFileSystemClientTest::TearDownTestSuite() { m_fileSystemClient->Delete(); }
+  void DataLakeFileSystemClientTest::TearDownTestSuite()
+  {
+    m_fileSystemClient->Delete();
+    DataLakeServiceClientTest::TearDownTestSuite();
+  }
 
   std::vector<Files::DataLake::Models::PathItem> DataLakeFileSystemClientTest::ListAllPaths(
       bool recursive,
@@ -62,10 +67,10 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
-        result.insert(result.end(), response->Items.begin(), response->Items.end());
-        if (response->ContinuationToken.HasValue())
+        result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
+        if (response.Value.ContinuationToken.HasValue())
         {
-          continuation = response->ContinuationToken.GetValue();
+          continuation = response.Value.ContinuationToken.Value();
           options.ContinuationToken = continuation;
         }
         else
@@ -80,10 +85,10 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto response = directoryClient.ListPathsSinglePage(recursive, options);
-        result.insert(result.end(), response->Items.begin(), response->Items.end());
-        if (response->ContinuationToken.HasValue())
+        result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
+        if (response.Value.ContinuationToken.HasValue())
         {
-          continuation = response->ContinuationToken.GetValue();
+          continuation = response.Value.ContinuationToken.Value();
           options.ContinuationToken = continuation;
         }
         else
@@ -140,11 +145,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileSystemClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::DeleteDataLakeFileSystemOptions options1;
-        options1.AccessConditions.IfModifiedSince = response->LastModified;
+        Files::DataLake::DeleteFileSystemOptions options1;
+        options1.AccessConditions.IfModifiedSince = response.Value.LastModified;
         EXPECT_THROW(client.Delete(options1), StorageException);
-        Files::DataLake::DeleteDataLakeFileSystemOptions options2;
-        options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
+        Files::DataLake::DeleteFileSystemOptions options2;
+        options2.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
@@ -168,20 +173,20 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
-        auto created = client.Create()->Created;
+        auto created = client.Create().Value.Created;
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
-        EXPECT_FALSE(createResult->Created);
-        EXPECT_FALSE(createResult->ETag.HasValue());
-        EXPECT_EQ(DateTime(), createResult->LastModified);
-        auto deleted = client.Delete()->Deleted;
+        EXPECT_FALSE(createResult.Value.Created);
+        EXPECT_FALSE(createResult.Value.ETag.HasValue());
+        EXPECT_EQ(DateTime(), createResult.Value.LastModified);
+        auto deleted = client.Delete().Value.Deleted;
         EXPECT_TRUE(deleted);
       }
       {
         auto client = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(), LowercaseRandomString());
         auto deleteResult = client.DeleteIfExists();
-        EXPECT_FALSE(deleteResult->Deleted);
+        EXPECT_FALSE(deleteResult.Value.Deleted);
       }
     }
   }
@@ -193,10 +198,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
-      auto result = m_fileSystemClient->GetProperties()->Metadata;
+      auto result = m_fileSystemClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata2));
-      result = m_fileSystemClient->GetProperties()->Metadata;
+      result = m_fileSystemClient->GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -206,16 +211,16 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), LowercaseRandomString());
       auto client2 = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options1;
-      Files::DataLake::CreateDataLakeFileSystemOptions options2;
+      Files::DataLake::CreateFileSystemOptions options1;
+      Files::DataLake::CreateFileSystemOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
-      auto result = client1.GetProperties()->Metadata;
+      auto result = client1.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata1, result);
-      result = client2.GetProperties()->Metadata;
+      result = client2.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
@@ -228,24 +233,24 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
       auto result = m_fileSystemClient->GetProperties();
-      EXPECT_EQ(metadata1, result->Metadata);
+      EXPECT_EQ(metadata1, result.Value.Metadata);
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata2));
       result = m_fileSystemClient->GetProperties();
-      EXPECT_EQ(metadata2, result->Metadata);
+      EXPECT_EQ(metadata2, result.Value.Metadata);
     }
 
     {
       // Last modified Etag works.
       auto properties1 = m_fileSystemClient->GetProperties();
       auto properties2 = m_fileSystemClient->GetProperties();
-      EXPECT_EQ(properties1->ETag, properties2->ETag);
-      EXPECT_EQ(properties1->LastModified, properties2->LastModified);
+      EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_EQ(properties1.Value.LastModified, properties2.Value.LastModified);
 
       // This operation changes ETag/LastModified.
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
 
       auto properties3 = m_fileSystemClient->GetProperties();
-      EXPECT_NE(properties1->ETag, properties3->ETag);
+      EXPECT_NE(properties1.Value.ETag, properties3.Value.ETag);
     }
   }
 
@@ -302,7 +307,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListPathsSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileSystemClient->ListPathsSinglePage(true, options);
-      EXPECT_LE(2U, response->Items.size());
+      EXPECT_LE(2U, response.Value.Items.size());
     }
   }
 
@@ -316,8 +321,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_fileSystemClient->GetFileClient(pathName);
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
-      EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(pathName));
+      EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(pathName));
     }
     {
       std::string directoryName = baseName + RandomString();
@@ -326,15 +330,14 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryUrl = directoryClient.GetUrl();
       EXPECT_EQ(
           directoryUrl,
-          m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(directoryName));
+          m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(directoryName));
     }
     {
       std::string fileName = baseName + RandomString();
       auto fileClient = m_fileSystemClient->GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create());
       auto fileUrl = fileClient.GetUrl();
-      EXPECT_EQ(
-          fileUrl, m_fileSystemClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(fileName));
+      EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(fileName));
     }
   }
 
@@ -373,9 +376,9 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), LowercaseRandomString());
       fileSystem.Create();
 
-      Files::DataLake::SetDataLakeFileSystemAccessPolicyOptions options;
+      Files::DataLake::SetFileSystemAccessPolicyOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-      Files::DataLake::Models::DataLakeSignedIdentifier identifier;
+      Files::DataLake::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
@@ -388,59 +391,124 @@ namespace Azure { namespace Storage { namespace Test {
       options.SignedIdentifiers.emplace_back(identifier);
 
       auto ret = fileSystem.SetAccessPolicy(options);
-      EXPECT_TRUE(ret->ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(ret->LastModified));
+      EXPECT_TRUE(ret.Value.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
 
       auto ret2 = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(ret2->ETag, ret->ETag);
-      EXPECT_EQ(ret2->LastModified, ret->LastModified);
-      EXPECT_EQ(ret2->AccessType, options.AccessType);
-      for (size_t i = 0; i < ret2->SignedIdentifiers.size(); ++i)
+      EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
+      for (size_t i = 0; i < ret2.Value.SignedIdentifiers.size(); ++i)
       {
-        EXPECT_EQ(ret2->SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
-        EXPECT_EQ(ret2->SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
-        EXPECT_EQ(ret2->SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
-        EXPECT_EQ(ret2->SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
+        EXPECT_EQ(ret2.Value.SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
+        EXPECT_EQ(
+            ret2.Value.SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
+        EXPECT_EQ(ret2.Value.SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
+        EXPECT_EQ(
+            ret2.Value.SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
       }
 
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
       EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
       ret2 = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(ret2->AccessType, options.AccessType);
+      EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
 
       options.AccessType = Files::DataLake::Models::PublicAccessType::None;
       EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
       ret2 = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(ret2->AccessType, options.AccessType);
+      EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
 
       fileSystem.Delete();
     }
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
       fileSystem.Create(options);
       auto ret = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::FileSystem, ret->AccessType);
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::FileSystem, ret.Value.AccessType);
     }
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
       fileSystem.Create(options);
       auto ret = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret->AccessType);
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret.Value.AccessType);
     }
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::CreateDataLakeFileSystemOptions options;
+      Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
       fileSystem.Create(options);
       auto ret = fileSystem.GetAccessPolicy();
-      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret->AccessType);
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret.Value.AccessType);
     }
   }
+
+  TEST_F(DataLakeFileSystemClientTest, RenameFile)
+  {
+    const std::string oldFilename = RandomString();
+    const std::string newFilename = RandomString();
+
+    auto oldFileClient = m_fileSystemClient->GetFileClient(oldFilename);
+    oldFileClient.Create();
+
+    auto newFileClient = m_fileSystemClient->RenameFile(oldFilename, newFilename).Value;
+
+    EXPECT_NO_THROW(newFileClient.GetProperties());
+    EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(newFilename).GetProperties());
+    EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+
+    const std::string newFileSystemName = LowercaseRandomString();
+    const std::string newFilename2 = RandomString();
+
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
+
+    Files::DataLake::RenameFileOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newFileClient2 = m_fileSystemClient->RenameFile(newFilename, newFilename2, options).Value;
+
+    EXPECT_NO_THROW(newFileClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetFileClient(newFilename2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newFileClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, RenameDirectory)
+  {
+    const std::string oldDirectoryName = RandomString();
+    const std::string newDirectoryName = RandomString();
+
+    auto oldDirectoryClient = m_fileSystemClient->GetDirectoryClient(oldDirectoryName);
+    oldDirectoryClient.Create();
+    oldDirectoryClient.GetFileClient(RandomString()).Create();
+    oldDirectoryClient.GetSubdirectoryClient(RandomString()).Create();
+
+    auto newDirectoryClient
+        = m_fileSystemClient->RenameDirectory(oldDirectoryName, newDirectoryName).Value;
+
+    EXPECT_NO_THROW(newDirectoryClient.GetProperties());
+    EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newDirectoryName).GetProperties());
+    EXPECT_THROW(oldDirectoryClient.GetProperties(), StorageException);
+
+    const std::string newFileSystemName = LowercaseRandomString();
+    const std::string newDirectoryName2 = RandomString();
+
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
+
+    Files::DataLake::RenameDirectoryOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newDirectoryClient2
+        = m_fileSystemClient->RenameDirectory(newDirectoryName, newDirectoryName2, options).Value;
+
+    EXPECT_NO_THROW(newDirectoryClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
+  }
+
 }}} // namespace Azure::Storage::Test

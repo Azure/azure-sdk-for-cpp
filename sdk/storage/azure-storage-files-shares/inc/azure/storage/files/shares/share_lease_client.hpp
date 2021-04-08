@@ -54,11 +54,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * duration cannot be changed using renew or change.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A AcquireShareLeaseResult describing the lease.
+     * @return An AcquireLeaseResult describing the lease.
      */
-    Azure::Response<Models::AcquireShareLeaseResult> Acquire(
+    Azure::Response<Models::AcquireLeaseResult> Acquire(
         std::chrono::seconds duration,
-        const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions(),
+        const AcquireLeaseOptions& options = AcquireLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -66,10 +66,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ReleaseShareLeaseResult describing the updated share or file.
+     * @return A ReleaseLeaseResult describing the updated share or file.
      */
-    Azure::Response<Models::ReleaseShareLeaseResult> Release(
-        const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions(),
+    Azure::Response<Models::ReleaseLeaseResult> Release(
+        const ReleaseLeaseOptions& options = ReleaseLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -78,12 +78,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ChangeShareLeaseResult describing the updated lease.
+     * @return A ChangeLeaseResult describing the updated lease.
      * @remarks The current ShareLeaseClient becomes invalid if this operation succeeds.
      */
-    Azure::Response<Models::ChangeShareLeaseResult> Change(
+    Azure::Response<Models::ChangeLeaseResult> Change(
         const std::string& proposedLeaseId,
-        const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions(),
+        const ChangeLeaseOptions& options = ChangeLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -91,10 +91,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A BreakShareLeaseResult describing the broken lease.
+     * @return A BreakLeaseResult describing the broken lease.
      */
-    Azure::Response<Models::BreakShareLeaseResult> Break(
-        const BreakShareLeaseOptions& options = BreakShareLeaseOptions(),
+    Azure::Response<Models::BreakLeaseResult> Break(
+        const BreakLeaseOptions& options = BreakLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
@@ -114,14 +114,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A RenewShareLeaseResult describing the lease.
+     * @return A RenewLeaseResult describing the lease.
      */
-    Azure::Response<Models::RenewShareLeaseResult> Renew(
-        const RenewShareLeaseOptions& options = RenewShareLeaseOptions(),
+    Azure::Response<Models::RenewLeaseResult> Renew(
+        const RenewLeaseOptions& options = RenewLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
-    Azure::Core::Nullable<ShareFileClient> m_fileClient;
-    Azure::Core::Nullable<ShareClient> m_shareClient;
+    Azure::Nullable<ShareFileClient> m_fileClient;
+    Azure::Nullable<ShareClient> m_shareClient;
     std::string m_leaseId;
   };
 

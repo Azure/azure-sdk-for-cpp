@@ -9,21 +9,20 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> StartCopyShareFileOperation::PollInternal(
-      Azure::Core::Context& context)
+  std::unique_ptr<Azure::Core::Http::RawResponse> StartFileCopyOperation::PollInternal(
+      Azure::Core::Context&)
   {
-    (void)context;
 
     auto response = m_fileClient->GetProperties();
-    if (!response->CopyStatus.HasValue())
+    if (!response.Value.CopyStatus.HasValue())
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Pending)
+    else if (response.Value.CopyStatus.Value() == Models::CopyStatus::Pending)
     {
       m_status = Azure::Core::OperationStatus::Running;
     }
-    else if (response->CopyStatus.GetValue() == Models::CopyStatusType::Success)
+    else if (response.Value.CopyStatus.Value() == Models::CopyStatus::Success)
     {
       m_status = Azure::Core::OperationStatus::Succeeded;
     }
@@ -31,21 +30,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       m_status = Azure::Core::OperationStatus::Failed;
     }
-    m_pollResult = *response;
-    return response.ExtractRawResponse();
+    m_pollResult = response.Value;
+    return std::move(response.RawResponse);
   }
 
-  Azure::Response<Models::GetShareFilePropertiesResult> StartCopyShareFileOperation::
-      PollUntilDoneInternal(std::chrono::milliseconds period, Azure::Core::Context& context)
+  Azure::Response<Models::FileProperties> StartFileCopyOperation::PollUntilDoneInternal(
+      std::chrono::milliseconds period,
+      Azure::Core::Context& context)
   {
     while (true)
     {
-      auto rawResponse = PollInternal(context);
+      auto rawResponse = Poll(context);
 
       if (m_status == Azure::Core::OperationStatus::Succeeded)
       {
-        return Azure::Response<Models::GetShareFilePropertiesResult>(
-            m_pollResult, std::move(rawResponse));
+        return Azure::Response<Models::FileProperties>(
+            m_pollResult, std::make_unique<Azure::Core::Http::RawResponse>(rawResponse));
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {

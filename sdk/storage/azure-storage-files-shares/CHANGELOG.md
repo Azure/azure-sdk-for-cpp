@@ -1,16 +1,45 @@
 # Release History
 
-## 12.0.0-beta.9 (Unreleased)
+## 12.0.0-beta.10 (Unreleased)
+
+### Breaking Changes
+
+- Removed `Azure::Storage::Files::Shares::PackageVersion`.
+
+## 12.0.0-beta.9 (2021-03-23)
 
 ### New Features
 
 - Added support for telemetry options.
+- Added `Azure::Storage::Files::Shares::PackageVersion`.
 
 ### Breaking Changes
 
-- Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartCopyShareFileOperation` directly.
+- Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartFileCopyOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
-- Renamed `Azure::Storage::Files::Shares::Details::Version` to `Azure::Storage::Files::Shares::PackageVersion`.
+- Changed the return types of the following APIs:
+  - `ShareClient::GetAccessPolicy` now returns `ShareAccessPolicy`.
+  - `ShareClient::GetPermission` now returns `std::string`.
+  - `ShareClient::AbortCopy` now returns `AbortFileCopyResult`.
+- Renamed `GetShareStatisticsResult` to `ShareStatistics`.
+- Renamed `GetSharePropertiesResult` to `ShareProperties`.
+- Renamed `GetShareDirectoryPropertiesResult` to `DirectoryProperties`.
+- Renamed `GetShareFilePropertiesResult` to `FileProperties`
+- Renamed `GetServicePropertiesResult` to `ShareServiceProperties`.
+- Removed `Share` from the names of return types and option types.
+- Renamed `AbortCopyFileOptions` to `AbortFileCopyOptions`.
+- Removed `RequestId` from the return types.
+- Changed `BodyStream` parameter of `UploadRange` function from pointer to reference.
+- Removed `PreviousShareSnapshot` from `GetShareFileRangeListOptions`, use `ShareFileClient::GetRangeListDiff` instead.
+- Renamed `ShareAccessTier` to `AccessTier`.
+- Renamed `ShareRetentionPolicy` to `RetentionPolicy`.
+- Renamed `ShareProtocolSettings` to `ProtocolSettings`.
+- Renamed `CopyStatusType` to `CopyStatus`
+- Removed `FileRangeWriteType`, `ShareFileRangeList`, `FileRangeWriteFromUrlType`, `FileRange`, `ClearRange`, `SharePermission`, `LeaseAction` and `ShareStats`.
+- Renamed `LeaseDurationType` to `LeaseDuration`, `LeaseStateType` to `LeaseState` and `LeaseStatusType` to `LeaseStatus`.
+- Renamed `ListSharesIncludeType` to `ListSharesIncludeFlags`.
+- Renamed `DeleteSnapshotsOptionType` to `DeleteSnapshotsOption`.
+- Renamed `PermissionCopyModeType` to `PermissionCopyMode`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
@@ -79,7 +108,7 @@
 
 - Removed `c_` for constants and renamed to pascal format.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 

@@ -15,9 +15,9 @@
 #define AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR 4
 #define AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR 0
 #define AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH 0
-#define AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE "beta.1"
+#define AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE "beta.2"
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
+namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
 
   class PackageVersion {
   public:
@@ -25,14 +25,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     static constexpr int Minor = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR;
     static constexpr int Patch = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH;
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static std::string const PreRelease;
-    static std::string VersionString();
+    static std::string ToString();
 
   private:
     // To avoid leaking out the #define values we smuggle out the value
     // which will later be used to initialize the PreRelease std::string
     static constexpr const char* secret = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE;
   };
-}}}} // namespace Azure::Security::KeyVault::Keys
+}}}}} // namespace Azure::Security::KeyVault::Keys::_detail
 
 #undef AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR
 #undef AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR

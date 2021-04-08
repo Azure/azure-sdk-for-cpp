@@ -3,7 +3,8 @@
 
 /**
  * @file
- * @brief Wraps raw HTTP response into a response of a specific type.
+ * @brief Wraps the raw HTTP response from a request made to the service into a response of a
+ * specific type.
  */
 
 #pragma once
@@ -16,91 +17,29 @@
 
 namespace Azure {
 /**
- * @brief Wraps raw HTTP response into a response of a specific type.
+ * @brief Represents the result of an Azure operation over HTTP by wrapping the raw HTTP response
+ * from a request made to the service into a response of a specific type.
  *
- * @tparam T A specific type of value to get from the raw HTTP response type.
+ * @tparam T A specific type of value to get from the raw HTTP response.
  */
 template <class T> class Response {
-  Azure::Core::Nullable<T> m_value;
-  std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
 public:
+  /// The value returned by the service.
+  T Value;
+  /// The HTTP response returned by the service.
+  std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
+
   /**
-   * @brief Initialize a #Azure::Core::Response<T> with an initial value.
+   * @brief Initialize an #Azure::Response<T> with the value and raw response returned by the
+   * service.
    *
-   * @param initialValue Initial value.
-   * @param rawResponse Raw HTTP response.
+   * @param value The value returned by the service.
+   * @param rawResponse The HTTP response returned by the service.
    */
-  // Require a raw response to create a Response T
-  explicit Response(T initialValue, std::unique_ptr<Azure::Core::Http::RawResponse>&& rawResponse)
-      : m_value(std::move(initialValue)), m_rawResponse(std::move(rawResponse))
+  explicit Response(T value, std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
+      : Value(std::move(value)), RawResponse(std::move(rawResponse))
   {
-  }
-
-  /**
-   * @brief Initialize a #Azure::Core::Response<T> with an absent value.
-   *
-   * @param rawResponse Raw HTTP response.
-   */
-  explicit Response(std::unique_ptr<Azure::Core::Http::RawResponse>&& rawResponse)
-      : m_rawResponse(std::move(rawResponse))
-  {
-  }
-
-  /**
-   * @brief Get raw HTTP response.
-   */
-  // Do not give up raw response ownership.
-  Azure::Core::Http::RawResponse& GetRawResponse() const
-  {
-    if (!m_rawResponse)
-    {
-      throw std::runtime_error("The raw response was extracted before.");
-    }
-    return *this->m_rawResponse;
-  }
-
-  /**
-   * @brief Check whether a value is contained.
-   *
-   * @return `true` If a value is contained, `false` if value is absent.
-   */
-  bool HasValue() const noexcept { return this->m_value.HasValue(); }
-
-  /**
-   * @brief Get a pointer to a value of a specific type.
-   */
-  const T* operator->() const
-  {
-    return &this->m_value.GetValue(); // GetValue ensures there is a contained value
-  }
-
-  /**
-   * @brief Get a pointer to a value of a specific type.
-   */
-  T* operator->() { return &this->m_value.GetValue(); }
-
-  /**
-   * @brief Get value of a specific type.
-   */
-  T& operator*() { return this->m_value.GetValue(); }
-
-  /**
-   * @brief Get value of a specific type.
-   */
-  const T& operator*() const { return this->m_value.GetValue(); }
-
-  /**
-   * @brief Get an rvalue reference to the value of a specific type.
-   */
-  T&& ExtractValue() { return std::move(this->m_value).GetValue(); }
-
-  /**
-   * @brief Get a smart pointer rvalue reference to the value of a specific type.
-   */
-  std::unique_ptr<Azure::Core::Http::RawResponse>&& ExtractRawResponse()
-  {
-    return std::move(this->m_rawResponse);
   }
 };
 

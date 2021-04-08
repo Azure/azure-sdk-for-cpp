@@ -14,9 +14,9 @@
 #define AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR 12
 #define AZURE_STORAGE_FILES_SHARES_VERSION_MINOR 0
 #define AZURE_STORAGE_FILES_SHARES_VERSION_PATCH 0
-#define AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE "beta.9"
+#define AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE "beta.10"
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares {
+namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace _detail {
 
   /**
    * @brief Provides version information.
@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static std::string VersionString()
+    static std::string ToString()
     {
       std::string versionString
           = std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Patch);
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   };
 
-}}}} // namespace Azure::Storage::Files::Shares
+}}}}} // namespace Azure::Storage::Files::Shares::_detail
 
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_MINOR

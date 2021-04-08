@@ -3,24 +3,24 @@
 
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
+
+  Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageSwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::NextHttpPolicy nextHttpPolicy,
+      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       const Azure::Core::Context& ctx) const
   {
-    SecondaryHostReplicaStatus* replicaStatus = nullptr;
-    if (ctx.HasKey(SecondaryHostReplicaStatusKey))
-    {
-      replicaStatus = ctx.Get<SecondaryHostReplicaStatus*>(SecondaryHostReplicaStatusKey);
-    }
+    std::shared_ptr<bool> replicaStatus;
+    ctx.TryGetValue(SecondaryHostReplicaStatusKey, replicaStatus);
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
-        && !m_secondaryHost.empty() && replicaStatus && replicaStatus->replicated;
+        && !m_secondaryHost.empty() && replicaStatus && *replicaStatus;
 
-    if (considerSecondary && Azure::Core::Http::RetryPolicy::GetRetryNumber(ctx) > 0)
+    if (considerSecondary
+        && Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(ctx) > 0)
     {
       // switch host
       if (request.GetUrl().GetHost() == m_primaryHost)
@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace _detail {
             || response->GetStatusCode() == Core::Http::HttpStatusCode::PreconditionFailed)
         && request.GetUrl().GetHost() == m_secondaryHost)
     {
-      replicaStatus->replicated = false;
+      *replicaStatus = false;
       // switch back
       request.GetUrl().SetHost(m_primaryHost);
       response = nextHttpPolicy.Send(request, ctx);
@@ -49,4 +49,4 @@ namespace Azure { namespace Storage { namespace _detail {
     return response;
   }
 
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

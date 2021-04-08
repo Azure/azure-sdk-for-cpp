@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/credentials/token_credential_options.hpp>
 
 #include <memory>
 
 namespace Azure { namespace Identity {
-
   /**
    * @brief An environment credential.
    */
@@ -32,7 +32,9 @@ namespace Azure { namespace Identity {
      * - AZURE_USERNAME
      * - AZURE_PASSWORD
      */
-    explicit EnvironmentCredential();
+    explicit EnvironmentCredential(
+        Azure::Core::Credentials::TokenCredentialOptions options
+        = Azure::Core::Credentials::TokenCredentialOptions());
 
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,

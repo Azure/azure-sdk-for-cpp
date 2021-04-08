@@ -9,11 +9,9 @@
 namespace Azure { namespace Storage { namespace Test {
 
   namespace {
-    bool NullableEquals(
-        const Azure::Core::Nullable<bool>& lhs,
-        const Azure::Core::Nullable<bool>& rhs)
+    bool NullableEquals(const Azure::Nullable<bool>& lhs, const Azure::Nullable<bool>& rhs)
     {
-      return (lhs.HasValue() && rhs.HasValue() && (lhs.GetValue() == rhs.GetValue()))
+      return (lhs.HasValue() && rhs.HasValue() && (lhs.Value() == rhs.Value()))
           || (!lhs.HasValue() && !rhs.HasValue());
     }
   } // namespace
@@ -75,8 +73,8 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      result.insert(result.end(), response->Items.begin(), response->Items.end());
-      options.ContinuationToken = response->ContinuationToken;
+      result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
+      options.ContinuationToken = response.Value.ContinuationToken;
     } while (options.ContinuationToken.HasValue());
     return result;
   }
@@ -131,14 +129,14 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ListSharesSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      EXPECT_LE(2U, response->Items.size());
+      EXPECT_LE(2U, response.Value.Items.size());
     }
   }
 
   TEST_F(FileShareServiceClientTest, GetProperties)
   {
     auto ret = m_fileShareServiceClient->GetProperties();
-    auto properties = *ret;
+    auto properties = ret.Value;
     auto hourMetrics = properties.HourMetrics;
     if (hourMetrics.Enabled)
     {
@@ -153,9 +151,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
-    auto properties = *m_fileShareServiceClient->GetProperties();
+    auto properties = m_fileShareServiceClient->GetProperties().Value;
     // Has to remove before set, otherwise would return failure.
-    properties.Protocol = Core::Nullable<Files::Shares::Models::ShareProtocolSettings>();
+    properties.Protocol = Azure::Nullable<Files::Shares::Models::ProtocolSettings>();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -187,7 +185,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = *m_fileShareServiceClient->GetProperties();
+    auto downloadedProperties = m_fileShareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
@@ -202,8 +200,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.HourMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.HourMetrics.RetentionPolicy.Days.GetValue(),
-          properties.HourMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.HourMetrics.RetentionPolicy.Days.Value(),
+          properties.HourMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
@@ -219,8 +217,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.MinuteMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.GetValue(),
-          properties.MinuteMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.Value(),
+          properties.MinuteMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.Cors.size(), properties.Cors.size());
@@ -247,7 +245,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
             PremiumFileConnectionString()));
-    auto properties = *premiumFileShareServiceClient->GetProperties();
+    auto properties = premiumFileShareServiceClient->GetProperties().Value;
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -275,7 +273,7 @@ namespace Azure { namespace Storage { namespace Test {
     corsRule.MaxAgeInSeconds = 20;
     properties.Cors.emplace_back(corsRule);
 
-    auto protocolSettings = Files::Shares::Models::ShareProtocolSettings();
+    auto protocolSettings = Files::Shares::Models::ProtocolSettings();
     protocolSettings.Settings.Multichannel.Enabled = true;
     properties.Protocol = protocolSettings;
 
@@ -283,7 +281,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = *premiumFileShareServiceClient->GetProperties();
+    auto downloadedProperties = premiumFileShareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
@@ -298,8 +296,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.HourMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.HourMetrics.RetentionPolicy.Days.GetValue(),
-          properties.HourMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.HourMetrics.RetentionPolicy.Days.Value(),
+          properties.HourMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
@@ -315,8 +313,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (properties.MinuteMetrics.RetentionPolicy.Days.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.GetValue(),
-          properties.MinuteMetrics.RetentionPolicy.Days.GetValue());
+          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.Value(),
+          properties.MinuteMetrics.RetentionPolicy.Days.Value());
     }
 
     EXPECT_EQ(downloadedProperties.Cors.size(), properties.Cors.size());
@@ -335,7 +333,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NE(properties.Cors.end(), iter);
     }
 
-    EXPECT_EQ(true, properties.Protocol.GetValue().Settings.Multichannel.Enabled);
+    EXPECT_EQ(true, properties.Protocol.Value().Settings.Multichannel.Enabled);
 
     premiumFileShareServiceClient->SetProperties(originalProperties);
   }

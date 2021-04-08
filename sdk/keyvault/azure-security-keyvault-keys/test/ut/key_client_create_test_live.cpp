@@ -19,20 +19,20 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 TEST_F(KeyVaultClientTest, CreateKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createKey");
+  auto keyName = GetUniqueName();
 
   {
     auto keyResponse
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -40,7 +40,7 @@ TEST_F(KeyVaultClientTest, CreateKey)
 TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createKeyWithOptions");
+  auto keyName = GetUniqueName();
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign());
@@ -49,7 +49,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
     auto keyResponse = keyClient.CreateKey(
         keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec, options);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
@@ -75,7 +75,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
 TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("myKeyWithOptionsTags");
+  auto keyName = GetUniqueName();
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.Tags.emplace("one", "value=1");
@@ -85,7 +85,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
     auto keyResponse = keyClient.CreateKey(
         keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa, options);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa);
@@ -102,20 +102,20 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 TEST_F(KeyVaultClientTest, CreateEcKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createEcKey");
+  auto keyName = GetUniqueName();
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
     auto keyResponse = keyClient.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -123,25 +123,26 @@ TEST_F(KeyVaultClientTest, CreateEcKey)
 TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createEcKey");
+  auto keyName = GetUniqueName();
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
     ecKey.CurveName = Azure::Security::KeyVault::Keys::KeyCurveName::P384();
     auto keyResponse = keyClient.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_EQ(ecKey.CurveName->ToString(), keyVaultKey.Key.CurveName->ToString());
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_TRUE(keyVaultKey.Key.CurveName.HasValue());
     EXPECT_EQ(
-        keyVaultKey.Key.CurveName.GetValue().ToString(),
+        keyVaultKey.Key.CurveName.Value().ToString(),
         Azure::Security::KeyVault::Keys::KeyCurveName::P384().ToString());
   }
 }
@@ -149,20 +150,20 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
 TEST_F(KeyVaultClientTest, CreateRsaKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName("createRsaKey");
+  auto keyName = GetUniqueName();
 
   {
     auto rsaKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, false);
     auto keyResponse = keyClient.CreateRsaKey(rsaKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -172,20 +173,20 @@ TEST_F(KeyVaultClientTest, CreateRsaKey)
 TEST_F(KeyVaultClientTest, CreateEcHsmKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultHsmUrl, m_credential);
-  std::string keyName("createEcHsmKey");
+  auto keyName = GetUniqueName();
 
   {
     auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
     auto keyResponse = keyClient.CreateEcKey(ecHsmKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -193,7 +194,7 @@ TEST_F(KeyVaultClientTest, CreateEcHsmKey)
     auto keyResponseOperation = keyClient.StartDeleteKey(keyName);
     auto keyResponse = keyResponseOperation.PollUntilDone(std::chrono::milliseconds(1000));
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
@@ -201,20 +202,20 @@ TEST_F(KeyVaultClientTest, CreateEcHsmKey)
 TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
 {
   Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultHsmUrl, m_credential);
-  std::string keyName("createRsaHsmKey");
+  auto keyName = GetUniqueName();
 
   {
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
     auto keyResponse = keyClient.CreateRsaKey(rsaHsmKey);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
     auto keyResponse = keyClient.GetKey(keyName);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
@@ -222,7 +223,7 @@ TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
     auto keyResponseOperation = keyClient.StartDeleteKey(keyName);
     auto keyResponse = keyResponseOperation.PollUntilDone(std::chrono::milliseconds(1000));
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }

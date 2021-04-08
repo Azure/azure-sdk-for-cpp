@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/internal/log.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/platform.hpp"
 
 // Private incude
@@ -15,6 +15,7 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
+#include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
@@ -110,8 +111,8 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
-using Azure::Core::Logger;
-using Azure::Core::_internal::Log;
+using Azure::Core::Diagnostics::Logger;
+using Azure::Core::Diagnostics::_internal::Log;
 
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
@@ -140,11 +141,49 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   }
 }
 #endif
+
+void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::string const& header)
+{
+  return Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
+      response,
+      reinterpret_cast<uint8_t const*>(header.data()),
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
+}
+
+static inline std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
+{
+  std::string requestHeaderString;
+
+  for (auto const& header : request.GetHeaders())
+  {
+    requestHeaderString += header.first; // string (key)
+    requestHeaderString += ": ";
+    requestHeaderString += header.second; // string's value
+    requestHeaderString += "\r\n";
+  }
+  requestHeaderString += "\r\n";
+
+  return requestHeaderString;
+}
+
+// Writes an HTTP request with RFC 7230 without the body (head line and headers)
+// https://tools.ietf.org/html/rfc7230#section-3.1.1
+static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request)
+{
+  std::string httpRequest(request.GetMethod().ToString());
+  // HTTP version hardcoded to 1.1
+  auto const url = request.GetUrl().GetRelativeUrl();
+  httpRequest += " /" + url + " HTTP/1.1\r\n";
+
+  // headers
+  httpRequest += GetHeadersAsString(request);
+
+  return httpRequest;
+}
 } // namespace
 
 using Azure::Core::Context;
 using Azure::Core::Http::CurlConnection;
-using Azure::Core::Http::CurlConnectionPool;
 using Azure::Core::Http::CurlNetworkConnection;
 using Azure::Core::Http::CurlSession;
 using Azure::Core::Http::CurlTransport;
@@ -153,6 +192,7 @@ using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::RawResponse;
 using Azure::Core::Http::Request;
 using Azure::Core::Http::TransportException;
+using Azure::Core::Http::_detail::CurlConnectionPool;
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const& context)
 {
@@ -160,26 +200,36 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
   auto session = std::make_unique<CurlSession>(
-      request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
+      request,
+      CurlConnectionPool::ExtractOrCreateCurlConnection(request, m_options),
+      m_options.HttpKeepAlive);
+
   CURLcode performing;
 
-  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
-  // either closed or the socket is not usable any more. In that case, let the session be destroyed
-  // and create a new session to get another connection from connection pool.
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL/CURLE_SEND_ERROR back, it means
+  // the connection is either closed or the socket is not usable any more. In that case, let the
+  // session be destroyed and create a new session to get another connection from connection pool.
   // Prevent from trying forever by using DefaultMaxOpenNewConnectionIntentsAllowed.
   for (auto getConnectionOpenIntent = 0;
        getConnectionOpenIntent < _detail::DefaultMaxOpenNewConnectionIntentsAllowed;
        getConnectionOpenIntent++)
   {
     performing = session->Perform(context);
-    if (performing != CURLE_UNSUPPORTED_PROTOCOL)
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL && performing != CURLE_SEND_ERROR)
     {
       break;
     }
-    // Let session be destroyed and create a new one to get a new connection
+    // Let session be destroyed and request a new connection. If the number of
+    // request for connection has reached `RequestPoolResetAfterConnectionFailed`, ask the pool to
+    // clean (remove connections) and create a new one. This is because, keep getting connections
+    // that fail to perform means a general network disconnection where all connections in the pool
+    // won't be no longer valid.
     session = std::make_unique<CurlSession>(
         request,
-        CurlConnectionPool::GetCurlConnection(request, m_options),
+        CurlConnectionPool::ExtractOrCreateCurlConnection(
+            request,
+            m_options,
+            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
         m_options.HttpKeepAlive);
   }
 
@@ -194,7 +244,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
       LogMsgPrefix + "Request completed. Moving response out of session and session to response.");
 
   // Move Response out of the session
-  auto response = session->GetResponse();
+  auto response = session->ExtractResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
   return response;
@@ -395,17 +445,13 @@ CURLcode CurlSession::UploadBody(Context const& context)
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
 
-  int64_t uploadChunkSize = this->m_request.GetUploadChunkSize();
-  if (uploadChunkSize <= 0)
-  {
-    // use default size
-    uploadChunkSize = _detail::DefaultUploadChunkSize;
-  }
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer
+      = std::make_unique<uint8_t[]>(static_cast<size_t>(_detail::DefaultUploadChunkSize));
 
   while (true)
   {
-    auto rawRequestLen = streamBody->Read(unique_buffer.get(), uploadChunkSize, context);
+    auto rawRequestLen
+        = streamBody->Read(unique_buffer.get(), _detail::DefaultUploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
@@ -424,7 +470,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
 CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
-  auto rawRequest = this->m_request.GetHTTPMessagePreBody();
+  auto rawRequest = GetHTTPMessagePreBody(this->m_request);
   int64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = m_connection->SendBuffer(
@@ -565,7 +611,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     }
   }
 
-  this->m_response = parser.GetResponse();
+  this->m_response = parser.ExtractResponse();
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
   this->m_lastStatusCode = this->m_response->GetStatusCode();
 
@@ -746,6 +792,16 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   return totalRead;
 }
 
+void CurlConnection::Shutdown()
+{
+#if defined(AZ_PLATFORM_POSIX)
+  ::shutdown(m_curlSocket, SHUT_RDWR);
+#elif defined(AZ_PLATFORM_WINDOWS)
+  ::shutdown(m_curlSocket, SD_BOTH);
+#endif
+  m_isShutDown = true;
+}
+
 // Read from socket and return the number of bytes taken from socket
 int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
 {
@@ -800,7 +856,7 @@ int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Cont
   return readBytes;
 }
 
-std::unique_ptr<RawResponse> CurlSession::GetResponse() { return std::move(this->m_response); }
+std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
 
 int64_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
@@ -846,7 +902,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         else if (this->state == ResponseParserState::Headers)
         {
           // will throw if header is invalid
-          this->m_response->SetHeader(this->m_internalBuffer);
+          SetHeader(*this->m_response, this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -883,7 +939,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // will throw if header is invalid
-          this->m_response->SetHeader(buffer + start, buffer + index - 1);
+          Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
+              *this->m_response, buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -1030,14 +1087,14 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
     // will throw if header is invalid
-    m_response->SetHeader(this->m_internalBuffer);
+    SetHeader(*m_response, this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
     std::string header(std::string(start, indexOfEndOfStatusLine));
     // will throw if header is invalid
-    this->m_response->SetHeader(header);
+    SetHeader(*this->m_response, header);
   }
 
   // reuse buffer
@@ -1052,7 +1109,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
-int32_t CurlConnectionPool::s_connectionCounter = 0;
+uint64_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 namespace {
@@ -1075,7 +1132,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     key.append("1");
   }
@@ -1083,7 +1140,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   {
     key.append("0");
   }
-  if (options.SSLVerifyPeer)
+  if (options.SslVerifyPeer)
   {
     key.append("1");
   }
@@ -1095,9 +1152,10 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 }
 } // namespace
 
-std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
+std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlConnection(
     Request& request,
-    CurlTransportOptions const& options)
+    CurlTransportOptions const& options,
+    bool resetPool)
 {
   std::string const& host = request.GetUrl().GetHost();
   std::string const connectionKey = GetConnectionKey(host, options);
@@ -1109,26 +1167,36 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
 
     // get a ref to the pool from the map of pools
     auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
+
     if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
         && hostPoolIndex->second.size() > 0)
     {
-      // get ref to first connection
-      auto fistConnectionIterator = hostPoolIndex->second.begin();
-      // move the connection ref to temp ref
-      auto connection = std::move(*fistConnectionIterator);
-      // Remove the connection ref from list
-      hostPoolIndex->second.erase(fistConnectionIterator);
-      // reduce number of connections on the pool
-      CurlConnectionPool::s_connectionCounter -= 1;
-
-      // Remove index if there are no more connections
-      if (hostPoolIndex->second.size() == 0)
+      if (resetPool)
       {
-        CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        // Remove all connections for the connection Key and move to spawn new connection below
+        CurlConnectionPool::s_connectionCounter -= hostPoolIndex->second.size();
+        hostPoolIndex->second.clear();
       }
+      else
+      {
+        // get ref to first connection
+        auto fistConnectionIterator = hostPoolIndex->second.begin();
+        // move the connection ref to temp ref
+        auto connection = std::move(*fistConnectionIterator);
+        // Remove the connection ref from list
+        hostPoolIndex->second.erase(fistConnectionIterator);
+        // reduce number of connections on the pool
+        CurlConnectionPool::s_connectionCounter -= 1;
 
-      // return connection ref
-      return connection;
+        // Remove index if there are no more connections
+        if (hostPoolIndex->second.size() == 0)
+        {
+          CurlConnectionPool::ConnectionPoolIndex.erase(hostPoolIndex);
+        }
+
+        // return connection ref
+        return connection;
+      }
     }
   }
 
@@ -1200,7 +1268,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
 
   long sslOption = 0;
-  if (!options.SSLOptions.EnableCertificateRevocationListCheck)
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
@@ -1213,7 +1281,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (!options.SSLVerifyPeer)
+  if (!options.SslVerifyPeer)
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {
@@ -1249,6 +1317,12 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return;
   }
 
+  if (connection->IsShutdown())
+  {
+    // Can't re-used a shut down connection
+    return;
+  }
+
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
   auto& poolId = connection->GetConnectionKey();
@@ -1275,6 +1349,14 @@ void CurlConnectionPool::CleanUp()
       // wait before trying to clean
       std::this_thread::sleep_for(
           std::chrono::milliseconds(_detail::DefaultCleanerIntervalMilliseconds));
+
+      // while sleeping, it is allowed to explicitly prevent the cleaner to run and stop it, for
+      // example, when the application exits, and the cleaner is sleeping, we don't want it to wake
+      // up and try to access de-allocated memory.
+      if (!CurlConnectionPool::s_isCleanConnectionsRunning)
+      {
+        return;
+      }
 
       {
         // take mutex for reading the pool
@@ -1306,7 +1388,7 @@ void CurlConnectionPool::CleanUp()
             // size() > 0 so we are safe to go end() - 1 and find the last element in the
             // list
             connection--;
-            if (connection->get()->isExpired())
+            if (connection->get()->IsExpired())
             {
               // remove connection from the pool and update the connection to the next one
               // which is going to be list.end()
@@ -1333,10 +1415,4 @@ void CurlConnectionPool::CleanUp()
 
   // let thread run independent. It will be done once ther is not connections in the pool
   backgroundCleanerThread.detach();
-}
-
-void Azure::Core::Http::CurlTransport::CleanUp()
-{
-  // Clean all connections. This will call each connection destructor.
-  Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
 }

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/logger.hpp"
+#include "azure/core/diagnostics/logger.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -16,7 +16,7 @@
 #include <windows.h>
 #endif
 
-namespace Azure { namespace Core { namespace _detail {
+namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
 
   class EnvironmentLogLevelListener {
     EnvironmentLogLevelListener() = delete;
@@ -36,4 +36,4 @@ namespace Azure { namespace Core { namespace _detail {
 
   inline Logger::Listener EnvironmentLogLevelListener::GetLogListener() { return nullptr; }
 #endif
-}}} // namespace Azure::Core::_detail
+}}}} // namespace Azure::Core::Diagnostics::_detail

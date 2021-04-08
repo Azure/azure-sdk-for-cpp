@@ -25,20 +25,14 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  constexpr static const char* StandardStorageConnectionStringValue
-      = "DefaultEndpointsProtocol=https;AccountName=storageunittestahkha;AccountKey="
-        "juzH7ITp1FJ1Nr1OZPB3P8b9iJPP/ajMsYVs/"
-        "kQCaiuursVx8txPstvyC3XxeC6R9SaqmWq0mQ4hRLEJRggK+w==;EndpointSuffix=core.windows.net";
+  constexpr static const char* StandardStorageConnectionStringValue = "";
   constexpr static const char* PremiumStorageConnectionStringValue = "";
   constexpr static const char* BlobStorageConnectionStringValue = "";
   constexpr static const char* PremiumFileConnectionStringValue = "";
-  constexpr static const char* AdlsGen2ConnectionStringValue
-      = "DefaultEndpointsProtocol=https;AccountName=storageunittestdatalake;AccountKey="
-        "Ew7VSFkQy1HUMcnN+t+Fgvn9RbxQYnVicGglVKtbt28N/"
-        "nVfB0N57IyK5jzymU7F5542RKSqmBeNSH91XTzIkg==;EndpointSuffix=core.windows.net";
-  constexpr static const char* AadTenantIdValue = "72f988bf-86f1-41af-91ab-2d7cd011db47";
-  constexpr static const char* AadClientIdValue = "381229fa-de11-41dc-813f-f7d2d784d907";
-  constexpr static const char* AadClientSecretValue = "-.4HT.01.560acJ~7-rsC8z0r3-n2Kgh-j";
+  constexpr static const char* AdlsGen2ConnectionStringValue = "";
+  constexpr static const char* AadTenantIdValue = "";
+  constexpr static const char* AadClientIdValue = "";
+  constexpr static const char* AadClientSecretValue = "";
 
   std::string GetEnv(const std::string& name)
   {
@@ -147,6 +141,41 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
+  std::string AppendQueryParameters(const Azure::Core::Url& url, const std::string& queryParameters)
+  {
+    std::string absoluteUrl = url.GetAbsoluteUrl();
+    if (queryParameters.empty())
+    {
+      return absoluteUrl;
+    }
+    const auto& existingQP = url.GetQueryParameters();
+    bool startWithQuestion = queryParameters[0] == '?';
+    if (existingQP.empty())
+    {
+      if (startWithQuestion)
+      {
+        absoluteUrl = absoluteUrl + queryParameters;
+      }
+      else
+      {
+        absoluteUrl = absoluteUrl + '?' + queryParameters;
+      }
+    }
+    else
+    {
+      absoluteUrl += '&';
+      if (startWithQuestion)
+      {
+        absoluteUrl = absoluteUrl + queryParameters.substr(1);
+      }
+      else
+      {
+        absoluteUrl = absoluteUrl + queryParameters;
+      }
+    }
+    return absoluteUrl;
+  }
+
   static thread_local std::mt19937_64 random_generator(std::random_device{}());
 
   uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
@@ -244,7 +273,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string InferSecondaryUrl(const std::string primaryUrl)
   {
-    Azure::Core::Http::Url secondaryUri(primaryUrl);
+    Azure::Core::Url secondaryUri(primaryUrl);
     std::string primaryHost = secondaryUri.GetHost();
     auto dotPos = primaryHost.find(".");
     std::string accountName = primaryHost.substr(0, dotPos);

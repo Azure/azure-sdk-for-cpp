@@ -1,10 +1,22 @@
 # Release History
 
-## 12.0.0-beta.9 (Unreleased)
+## 12.0.0-beta.10 (Unreleased)
+
+### New Features
+
+- Added server timeout support.
 
 ### Breaking Changes
 
-- Renamed `Azure::Storage::Common::Details::Version` to `Azure::Storage::Common::PackageVersion`.
+- Removed `Azure::Storage::Common::PackageVersion`.
+- Moved `ReliableStream` to internal namespace.
+- Removed `HttpGetterInfo` and `HTTPGetter` from the `Azure::Storage` namespace.
+
+## 12.0.0-beta.9 (2021-03-23)
+
+### New Features
+
+- Added `Azure::Storage::Common::PackageVersion`.
 
 ## 12.0.0-beta.8 (2021-02-12)
 
@@ -27,7 +39,7 @@
 
 - Fixed `ClientRequestId` wasn't filled in `StorageException`.
 
-## 12.0.0-beta.6 (2020-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
 ### New Features
 

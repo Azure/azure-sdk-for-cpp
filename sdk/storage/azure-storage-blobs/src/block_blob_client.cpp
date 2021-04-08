@@ -3,6 +3,7 @@
 
 #include "azure/storage/blobs/block_blob_client.hpp"
 
+#include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -51,12 +52,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQuerySnapshot, Storage::_detail::UrlEncodeQueryParameter(snapshot));
+          _internal::HttpQuerySnapshot, _internal::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -66,19 +67,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::_detail::HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(_internal::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::_detail::HttpQueryVersionId,
-          Storage::_detail::UrlEncodeQueryParameter(versionId));
+          _internal::HttpQueryVersionId, _internal::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
 
   Azure::Response<Models::UploadBlockBlobResult> BlockBlobClient::Upload(
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const UploadBlockBlobOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -95,13 +95,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::BlockBlob::Upload(
-        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -120,8 +120,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions, context);
+      uploadBlockBlobOptions.AccessTier = options.AccessTier;
+      return Upload(contentStream, uploadBlockBlobOptions, context);
     }
 
     std::vector<std::string> blockIds;
@@ -129,20 +129,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
+      return Azure::Core::Convert::Base64Encode(
+          std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
       StageBlockOptions chunkOptions;
-      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
+      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
       }
     };
 
-    Storage::_detail::ConcurrentTransfer(
+    _internal::ConcurrentTransfer(
         0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadBlockFunc);
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
@@ -152,18 +153,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
-    commitBlockListOptions.Tier = options.Tier;
+    commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult ret;
-    ret.ETag = std::move(commitBlockListResponse->ETag);
-    ret.LastModified = std::move(commitBlockListResponse->LastModified);
-    ret.VersionId = std::move(commitBlockListResponse->VersionId);
-    ret.IsServerEncrypted = commitBlockListResponse->IsServerEncrypted;
-    ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
-    ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
+    ret.ETag = std::move(commitBlockListResponse.Value.ETag);
+    ret.LastModified = std::move(commitBlockListResponse.Value.LastModified);
+    ret.VersionId = std::move(commitBlockListResponse.Value.VersionId);
+    ret.IsServerEncrypted = commitBlockListResponse.Value.IsServerEncrypted;
+    ret.EncryptionKeySha256 = std::move(commitBlockListResponse.Value.EncryptionKeySha256);
+    ret.EncryptionScope = std::move(commitBlockListResponse.Value.EncryptionScope);
     return Azure::Response<Models::UploadBlockBlobFromResult>(
-        std::move(ret), commitBlockListResponse.ExtractRawResponse());
+        std::move(ret), std::move(commitBlockListResponse.RawResponse));
   }
 
   Azure::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -173,19 +174,17 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
 
-    Storage::_detail::FileReader fileReader(fileName);
-
-    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
-
-    if (fileReader.GetFileSize() <= options.TransferOptions.SingleUploadThreshold)
     {
-      Azure::Core::IO::FileBodyStream contentStream(
-          fileReader.GetHandle(), 0, fileReader.GetFileSize());
-      UploadBlockBlobOptions uploadBlockBlobOptions;
-      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
-      uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.Tier = options.Tier;
-      return Upload(&contentStream, uploadBlockBlobOptions, context);
+      Azure::Core::IO::FileBodyStream contentStream(fileName);
+
+      if (contentStream.Length() <= options.TransferOptions.SingleUploadThreshold)
+      {
+        UploadBlockBlobOptions uploadBlockBlobOptions;
+        uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
+        uploadBlockBlobOptions.Metadata = options.Metadata;
+        uploadBlockBlobOptions.AccessTier = options.AccessTier;
+        return Upload(contentStream, uploadBlockBlobOptions, context);
+      }
     }
 
     std::vector<std::string> blockIds;
@@ -193,20 +192,26 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(blockId.begin(), blockId.end()));
+      return Azure::Core::Convert::Base64Encode(
+          std::vector<uint8_t>(blockId.begin(), blockId.end()));
     };
 
+    _internal::FileReader fileReader(fileName);
+
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::Core::IO::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
+          fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
-      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions, context);
+      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
       }
     };
 
-    Storage::_detail::ConcurrentTransfer(
+    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
+
+    _internal::ConcurrentTransfer(
         0,
         fileReader.GetFileSize(),
         chunkSize,
@@ -220,23 +225,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
-    commitBlockListOptions.Tier = options.Tier;
+    commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
     Models::UploadBlockBlobFromResult result;
-    result.ETag = commitBlockListResponse->ETag;
-    result.LastModified = commitBlockListResponse->LastModified;
-    result.VersionId = commitBlockListResponse->VersionId;
-    result.IsServerEncrypted = commitBlockListResponse->IsServerEncrypted;
-    result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
-    result.EncryptionScope = commitBlockListResponse->EncryptionScope;
+    result.ETag = commitBlockListResponse.Value.ETag;
+    result.LastModified = commitBlockListResponse.Value.LastModified;
+    result.VersionId = commitBlockListResponse.Value.VersionId;
+    result.IsServerEncrypted = commitBlockListResponse.Value.IsServerEncrypted;
+    result.EncryptionKeySha256 = commitBlockListResponse.Value.EncryptionKeySha256;
+    result.EncryptionScope = commitBlockListResponse.Value.EncryptionScope;
     return Azure::Response<Models::UploadBlockBlobFromResult>(
-        std::move(result), commitBlockListResponse.ExtractRawResponse());
+        std::move(result), std::move(commitBlockListResponse.RawResponse));
   }
 
   Azure::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
       const std::string& blockId,
-      Azure::Core::IO::BodyStream* content,
+      Azure::Core::IO::BodyStream& content,
       const StageBlockOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -246,13 +251,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::BlockBlob::StageBlock(
-        context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(
@@ -273,13 +278,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::BlockBlob::StageBlockFromUri(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::CommitBlockListResult> BlockBlobClient::CommitBlockList(
@@ -295,7 +300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -304,13 +309,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::BlockBlob::CommitBlockList(
-        context, *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::GetBlockListResult> BlockBlobClient::GetBlockList(
@@ -322,7 +327,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::BlockBlob::GetBlockList(
-        Storage::_detail::WithReplicaStatus(context), *m_pipeline, m_blobUrl, protocolLayerOptions);
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
 }}} // namespace Azure::Storage::Blobs

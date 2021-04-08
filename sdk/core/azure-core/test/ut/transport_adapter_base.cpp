@@ -24,13 +24,9 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  namespace Datails {
-    constexpr int64_t FileSize = 1024 * 100;
-  }
-
   TEST_P(TransportAdapter, get)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
@@ -50,7 +46,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, get204)
   {
-    Azure::Core::Http::Url host("http://mt3.google.com/generate_204");
+    Azure::Core::Url host("http://mt3.google.com/generate_204");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
@@ -61,7 +57,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getLoop)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
@@ -77,7 +73,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, head)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host);
@@ -92,7 +88,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, put)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1K
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -108,7 +104,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, deleteRequest)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/delete");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -124,7 +120,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, patch)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/patch");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -140,7 +136,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getChunk)
   {
-    Azure::Core::Http::Url host("http://anglesharp.azurewebsites.net/Chunked");
+    Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length
     auto expectedChunkResponse = std::string(
         "<!DOCTYPE html>\r\n<html lang=en>\r\n<head>\r\n<meta charset='utf-8'>\r\n<title>Chunked "
@@ -158,7 +154,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, putErrorResponse)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     // Try to make a PUT to a GET url. This will return an error code from server.
     // This test makes sure that the connection is not re-used (because it gets closed by server)
@@ -179,7 +175,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getWithStream)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
@@ -198,7 +194,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getLoopWithStream)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
 
@@ -214,7 +210,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, headWithStream)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host, true);
@@ -229,7 +225,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, putWithStream)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -245,7 +241,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, deleteRequestWithStream)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/delete");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -261,7 +257,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, patchWithStream)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/patch");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -277,7 +273,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, getChunkWithStream)
   {
-    Azure::Core::Http::Url host("http://anglesharp.azurewebsites.net/Chunked");
+    Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length
     auto expectedChunkResponse = std::string(
         "<!DOCTYPE html>\r\n<html lang=en>\r\n<head>\r\n<meta charset='utf-8'>\r\n<title>Chunked "
@@ -295,33 +291,32 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, createResponseT)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     std::string expectedType("This is the Response Type");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
 
     Azure::Response<std::string> responseT(expectedType, std::move(response));
-    auto& r = responseT.GetRawResponse();
+    auto& r = responseT.RawResponse;
 
-    EXPECT_TRUE(r.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
-    auto expectedResponseBodySize = std::stoull(r.GetHeaders().at("content-length"));
-    CheckBodyFromBuffer(r, expectedResponseBodySize);
+    EXPECT_TRUE(r->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    auto expectedResponseBodySize = std::stoull(r->GetHeaders().at("content-length"));
+    CheckBodyFromBuffer(*r, expectedResponseBodySize);
 
     // Direct access
-    EXPECT_STREQ((*responseT).data(), expectedType.data());
-    EXPECT_STREQ(responseT->data(), expectedType.data());
-    // extracting T out of response
-    auto result = responseT.ExtractValue();
+    auto result = responseT.Value;
     EXPECT_STREQ(result.data(), expectedType.data());
     // Test that calling getValue again will return empty
-    result = responseT.ExtractValue();
+    result = std::move(responseT.Value);
+    EXPECT_STREQ(result.data(), expectedType.data());
+    result = responseT.Value;
     EXPECT_STREQ(result.data(), std::string("").data());
   }
 
   TEST_P(TransportAdapter, customSizePut)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1MB
     auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
@@ -329,7 +324,6 @@ namespace Azure { namespace Core { namespace Test {
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
     // Make transport adapter to read all stream content for uploading instead of chunks
-    request.SetUploadChunkSize(1024 * 1024);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
       checkResponseCode(response->GetStatusCode());
@@ -341,7 +335,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, putWithStreamOnFail)
   {
     // point to bad address pah to generate server MethodNotAllowed error
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -358,7 +352,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, cancelTransferUpload)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     Azure::Core::Context cancelThis;
 
     auto threadRoutine = [&]() {
@@ -384,7 +378,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, cancelTransferDownload)
   {
     // public big blob (321MB)
-    Azure::Core::Http::Url host("https://bigtestfiles.blob.core.windows.net/cpptestfiles/321MB");
+    Azure::Core::Url host("https://bigtestfiles.blob.core.windows.net/cpptestfiles/321MB");
     Azure::Core::Context cancelThis;
 
     auto threadRoutine = [&]() {
@@ -406,7 +400,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, requestFailedException)
   {
-    Azure::Core::Http::Url host("http://unresolvedHost.org/get");
+    Azure::Core::Url host("http://unresolvedHost.org/get");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     EXPECT_THROW(
@@ -416,7 +410,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, dynamicCast)
   {
-    Azure::Core::Http::Url host("http://unresolvedHost.org/get");
+    Azure::Core::Url host("http://unresolvedHost.org/get");
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
     // test dynamic cast
@@ -435,33 +429,20 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, SizePutFromFile)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
-    auto requestBodyStream
-        = Azure::Core::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+
+    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
-    // Make transport adapter to read all stream content for uploading instead of chunks
-    request.SetUploadChunkSize(Azure::Core::Test::Datails::FileSize);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
       checkResponseCode(response->GetStatusCode());
@@ -473,30 +454,18 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, SizePutFromFileDefault)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::Core::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
@@ -511,34 +480,20 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
   {
-    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
-    HANDLE f = CreateFile(
-        testDataPath.data(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN,
-        NULL);
-    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
 
-    auto requestBodyStream
-        = Azure::Core::IO::FileBodyStream(f, 0, Azure::Core::Test::Datails::FileSize);
+    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
-    // Make transport adapter to read more than file size (5Mb)
-    request.SetUploadChunkSize(Azure::Core::Test::Datails::FileSize * 5);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext());
       checkResponseCode(response->GetStatusCode());
@@ -566,7 +521,7 @@ namespace Azure { namespace Core { namespace Test {
       int64_t size,
       std::string expectedBody)
   {
-    auto body = response.GetBodyStream();
+    auto body = response.ExtractBodyStream();
     EXPECT_EQ(body, nullptr);
     std::vector<uint8_t> bodyVector = response.GetBody();
     int64_t bodySize = bodyVector.size();
@@ -588,11 +543,11 @@ namespace Azure { namespace Core { namespace Test {
       int64_t size,
       std::string expectedBody)
   {
-    auto body = response.GetBodyStream();
+    auto body = response.ExtractBodyStream();
     EXPECT_NE(body, nullptr);
 
-    std::vector<uint8_t> bodyVector = Azure::Core::IO::BodyStream::ReadToEnd(
-        *body, Azure::Core::Context::GetApplicationContext());
+    std::vector<uint8_t> bodyVector
+        = body->ReadToEnd(Azure::Core::Context::GetApplicationContext());
     int64_t bodySize = body->Length();
     EXPECT_EQ(bodySize, size);
     bodySize = bodyVector.size();

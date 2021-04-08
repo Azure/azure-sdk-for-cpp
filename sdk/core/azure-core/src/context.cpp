@@ -4,23 +4,24 @@
 #include "azure/core/context.hpp"
 
 using namespace Azure::Core;
-using time_point = std::chrono::system_clock::time_point;
 
 Context& Azure::Core::Context::GetApplicationContext()
 {
-  static Context ctx;
-  return ctx;
+  static Context context;
+  return context;
 }
 
-time_point Azure::Core::Context::CancelWhen() const
+Azure::DateTime Azure::Core::Context::GetDeadline() const
 {
-  auto result = time_point::max();
+  // Contexts form a tree. Here, we walk from a node all the way back to the root in order to find
+  // the earliest deadline value.
+  auto result = DateTime::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    auto cancelAt = ContextSharedState::FromMsecSinceEpoch(ptr->CancelAtMsecSinceEpoch);
-    if (result > cancelAt)
+    auto deadline = ContextSharedState::FromDateTimeRepresentation(ptr->Deadline);
+    if (result > deadline)
     {
-      result = cancelAt;
+      result = deadline;
     }
   }
 

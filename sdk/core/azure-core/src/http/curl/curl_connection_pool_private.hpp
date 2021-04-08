@@ -27,7 +27,10 @@ namespace Azure { namespace Core { namespace Test {
 }}} // namespace Azure::Core::Test
 #endif
 
-namespace Azure { namespace Core { namespace Http {
+namespace Azure { namespace Core { namespace Http { namespace _detail {
+
+  // In charge of calling the libcurl global functions for the Azure SDK
+  struct CurlGlobalStateForAzureSdk;
 
   /**
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
@@ -41,6 +44,10 @@ namespace Azure { namespace Core { namespace Http {
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
 #endif
+  private:
+    // The cttor and dttor of this member makes sure of calling the libcurl global init and cleanup
+    AZ_CORE_DLLEXPORT static CurlGlobalStateForAzureSdk CurlGlobalState;
+
   public:
     /**
      * @brief Mutex for accessing connection pool for thread-safe reading and writing.
@@ -64,12 +71,17 @@ namespace Azure { namespace Core { namespace Http {
      * @remark If there is not any available connection, a new connection is created.
      *
      * @param request HTTP request to get #Azure::Core::Http::CurlNetworkConnection for.
+     * @param options The connection settings which includes host name and libcurl handle specific
+     * configuration.
+     * @param resetPool Request the pool to remove all current connections for the provided
+     * options to force the creation of a new connection.
      *
      * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
-    static std::unique_ptr<CurlNetworkConnection> GetCurlConnection(
+    static std::unique_ptr<CurlNetworkConnection> ExtractOrCreateCurlConnection(
         Request& request,
-        CurlTransportOptions const& options);
+        CurlTransportOptions const& options,
+        bool resetPool = false);
 
     /**
      * @brief Moves a connection back to the pool to be re-used.
@@ -84,6 +96,8 @@ namespace Azure { namespace Core { namespace Http {
     // Class can't have instances.
     CurlConnectionPool() = delete;
 
+    static void StopCleaner() { s_isCleanConnectionsRunning = false; }
+
   private:
     /**
      * Review all connections in the pool and removes old connections that might be already
@@ -91,7 +105,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     static void CleanUp();
 
-    AZ_CORE_DLLEXPORT static int32_t s_connectionCounter;
+    AZ_CORE_DLLEXPORT static uint64_t s_connectionCounter;
     AZ_CORE_DLLEXPORT static bool s_isCleanConnectionsRunning;
     // Removes all connections and indexes
     static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
@@ -110,4 +124,16 @@ namespace Azure { namespace Core { namespace Http {
       return CurlConnectionPool::ConnectionPoolIndex.size();
     };
   };
-}}} // namespace Azure::Core::Http
+
+  struct CurlGlobalStateForAzureSdk
+  {
+    CurlGlobalStateForAzureSdk() { curl_global_init(CURL_GLOBAL_ALL); }
+
+    ~CurlGlobalStateForAzureSdk()
+    {
+      CurlConnectionPool::StopCleaner();
+      curl_global_cleanup();
+    }
+  };
+
+}}}} // namespace Azure::Core::Http::_detail
