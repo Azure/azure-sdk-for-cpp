@@ -64,14 +64,7 @@ namespace Azure { namespace Core { namespace Test {
 
 int main(int argc, char** argv)
 {
-  curl_global_init(CURL_GLOBAL_ALL);
-
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
-
-  // Call global clean up
-  curl_global_cleanup();
-
-  // return will destroy the connection pool, making each connection to call clean up.
   return r;
 }
