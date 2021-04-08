@@ -41,7 +41,8 @@ namespace Azure { namespace Core { namespace Test {
       // Creating a new connection with default options
       Azure::Core::Http::CurlTransportOptions options;
       auto connection
-          = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
+          = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+              req, options);
 
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           req, std::move(connection), options.HttpKeepAlive);
@@ -52,9 +53,11 @@ namespace Azure { namespace Core { namespace Test {
       session->ReadToEnd(Azure::Core::Context::GetApplicationContext());
     }
     // Check that after the connection is gone, it is moved back to the pool
-    EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+    EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
     auto connectionFromPool
-        = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin()->second.begin()->get();
+        = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin()
+              ->second.begin()
+              ->get();
     (void)connectionFromPool;
   }
 }}} // namespace Azure::Core::Test

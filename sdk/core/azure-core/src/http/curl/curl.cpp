@@ -184,7 +184,6 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 
 using Azure::Core::Context;
 using Azure::Core::Http::CurlConnection;
-using Azure::Core::Http::CurlConnectionPool;
 using Azure::Core::Http::CurlNetworkConnection;
 using Azure::Core::Http::CurlSession;
 using Azure::Core::Http::CurlTransport;
@@ -193,6 +192,7 @@ using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::RawResponse;
 using Azure::Core::Http::Request;
 using Azure::Core::Http::TransportException;
+using Azure::Core::Http::_detail::CurlConnectionPool;
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const& context)
 {
@@ -1349,6 +1349,14 @@ void CurlConnectionPool::CleanUp()
       // wait before trying to clean
       std::this_thread::sleep_for(
           std::chrono::milliseconds(_detail::DefaultCleanerIntervalMilliseconds));
+
+      // while sleeping, it is allowed to explicitly prevent the cleaner to run and stop it, for
+      // example, when the application exits, and the cleaner is sleeping, we don't want it to wake
+      // up and try to access de-allocated memory.
+      if (!CurlConnectionPool::s_isCleanConnectionsRunning)
+      {
+        return;
+      }
 
       {
         // take mutex for reading the pool
