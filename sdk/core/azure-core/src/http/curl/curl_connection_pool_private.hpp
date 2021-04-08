@@ -19,6 +19,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <atomic>
 
 #if defined(TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members
@@ -96,7 +97,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Class can't have instances.
     CurlConnectionPool() = delete;
 
-    static void StopCleaner() { s_isCleanConnectionsRunning = false; }
+    static void StopCleaner() { g_isCleanConnectionsRunning = false; }
 
   private:
     /**
@@ -105,8 +106,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      */
     static void CleanUp();
 
-    AZ_CORE_DLLEXPORT static uint64_t s_connectionCounter;
-    AZ_CORE_DLLEXPORT static bool s_isCleanConnectionsRunning;
+    AZ_CORE_DLLEXPORT static uint64_t g_connectionCounter;
+    AZ_CORE_DLLEXPORT static std::atomic<bool> g_isCleanConnectionsRunning;
     // Removes all connections and indexes
     static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
 

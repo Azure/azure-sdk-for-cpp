@@ -1109,8 +1109,8 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
-uint64_t CurlConnectionPool::s_connectionCounter = 0;
-bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
+uint64_t CurlConnectionPool::g_connectionCounter = 0;
+std::atomic<bool> CurlConnectionPool::g_isCleanConnectionsRunning(false);
 
 namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
@@ -1174,7 +1174,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       if (resetPool)
       {
         // Remove all connections for the connection Key and move to spawn new connection below
-        CurlConnectionPool::s_connectionCounter -= hostPoolIndex->second.size();
+        CurlConnectionPool::g_connectionCounter -= hostPoolIndex->second.size();
         hostPoolIndex->second.clear();
       }
       else
@@ -1186,7 +1186,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         // Remove the connection ref from list
         hostPoolIndex->second.erase(fistConnectionIterator);
         // reduce number of connections on the pool
-        CurlConnectionPool::s_connectionCounter -= 1;
+        CurlConnectionPool::g_connectionCounter -= 1;
 
         // Remove index if there are no more connections
         if (hostPoolIndex->second.size() == 0)
@@ -1330,11 +1330,11 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   // update the time when connection was moved back to pool
   connection->updateLastUsageTime();
   hostPool.push_front(std::move(connection));
-  CurlConnectionPool::s_connectionCounter += 1;
+  CurlConnectionPool::g_connectionCounter += 1;
   // Check if there's no cleaner running and started
-  if (!CurlConnectionPool::s_isCleanConnectionsRunning)
+  if (!CurlConnectionPool::g_isCleanConnectionsRunning)
   {
-    CurlConnectionPool::s_isCleanConnectionsRunning = true;
+    CurlConnectionPool::g_isCleanConnectionsRunning = true;
     CurlConnectionPool::CleanUp();
   }
 }
@@ -1353,7 +1353,7 @@ void CurlConnectionPool::CleanUp()
       // while sleeping, it is allowed to explicitly prevent the cleaner to run and stop it, for
       // example, when the application exits, and the cleaner is sleeping, we don't want it to wake
       // up and try to access de-allocated memory.
-      if (!CurlConnectionPool::s_isCleanConnectionsRunning)
+      if (!CurlConnectionPool::g_isCleanConnectionsRunning)
       {
         return;
       }
@@ -1362,10 +1362,10 @@ void CurlConnectionPool::CleanUp()
         // take mutex for reading the pool
         std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
 
-        if (CurlConnectionPool::s_connectionCounter == 0)
+        if (CurlConnectionPool::g_connectionCounter == 0)
         {
           // stop the cleaner since there are no connections
-          CurlConnectionPool::s_isCleanConnectionsRunning = false;
+          CurlConnectionPool::g_isCleanConnectionsRunning = false;
           return;
         }
 
@@ -1393,7 +1393,7 @@ void CurlConnectionPool::CleanUp()
               // remove connection from the pool and update the connection to the next one
               // which is going to be list.end()
               connection = index->second.erase(connection);
-              CurlConnectionPool::s_connectionCounter -= 1;
+              CurlConnectionPool::g_connectionCounter -= 1;
 
               // Connection removed, break if there are no more connections to check
               if (index->second.size() == 0)
