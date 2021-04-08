@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 
 #include <azure/keyvault/common/internal/base64url.hpp>
+#include <azure/keyvault/common/keyvault_exception.hpp>
 #include <azure/keyvault/key_vault.hpp>
 
 #include "key_client_base_test.hpp"
@@ -55,8 +56,17 @@ TEST_F(KeyVaultClientTest, ImportKey)
       "Uyf9s52ywLylhcVE3jfbjOgEozlSwKyhqfXkLpMLWHqOKj9fcfYd4PWKPOgpzWsqjA6fJbBUM"
       "Yo0CU2G9cWCtVodO7sBJVSIZunWrAlBc");
   std::string keyName(GetUniqueName());
-  auto response = keyClient.ImportKey(keyName, key);
-  CheckValidResponse(response);
+  try
+  {
+    auto response = keyClient.ImportKey(keyName, key);
+    CheckValidResponse(response);
+    auto const& returnedkey = response.Value;
+    EXPECT_EQ(key.N, returnedkey.Key.N);
+  }
+  catch (Azure::Security::KeyVault::KeyVaultException const& e)
+  {
+    std::cout << e.Message;
+  }
 
   {
     // delete + purge

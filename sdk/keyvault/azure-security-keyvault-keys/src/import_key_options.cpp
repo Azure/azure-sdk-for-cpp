@@ -24,8 +24,8 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
 
   Azure::Core::Json::_internal::json payload;
   // key
-  payload[_detail::KeyPropertyName]
-      = JsonWebKeySerializer::JsonWebKeySerialize(importKeyOptions.Key);
+  JsonWebKeySerializer::JsonWebKeySerialize(
+      importKeyOptions.Key, payload[_detail::KeyPropertyName]);
 
   // hsm
   SetFromNullable(importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
