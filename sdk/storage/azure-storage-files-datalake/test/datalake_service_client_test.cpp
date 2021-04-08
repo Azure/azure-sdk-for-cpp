@@ -66,10 +66,10 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
-      result.insert(result.end(), response->Items.begin(), response->Items.end());
-      if (response->ContinuationToken.HasValue())
+      result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
+      if (response.Value.ContinuationToken.HasValue())
       {
-        continuation = response->ContinuationToken.GetValue();
+        continuation = response.Value.ContinuationToken.Value();
         options.ContinuationToken = continuation;
       }
     } while (!continuation.empty());
@@ -134,14 +134,15 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListFileSystemsSinglePageOptions options;
       options.PageSizeHint = 2;
       auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
-      EXPECT_LE(2U, response->Items.size());
+      EXPECT_LE(2U, response.Value.Items.size());
     }
   }
 
   TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks)
   {
     auto keyCredential
-        = Azure::Storage::_detail::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+        = Azure::Storage::_internal::ParseConnectionString(AdlsGen2ConnectionString())
+              .KeyCredential;
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     accountSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);

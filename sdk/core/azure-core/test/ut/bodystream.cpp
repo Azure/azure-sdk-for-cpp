@@ -39,26 +39,85 @@ TEST(BodyStream, Rewind)
 
 #if defined(AZ_PLATFORM_POSIX)
   testDataPath.append("/fileData");
-  int f = open(testDataPath.data(), O_RDONLY);
-  EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
   testDataPath.append("\\fileData");
-  HANDLE f = CreateFile(
-      testDataPath.data(),
-      GENERIC_READ,
-      FILE_SHARE_READ,
-      NULL,
-      OPEN_EXISTING,
-      FILE_FLAG_SEQUENTIAL_SCAN,
-      NULL);
-  EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
-  auto fileBodyStream = Azure::Core::IO::FileBodyStream(f, 0, 0);
+
+  Azure::Core::IO::FileBodyStream fileBodyStream(testDataPath);
   EXPECT_NO_THROW(fileBodyStream.Rewind());
 
   std::vector<uint8_t> data = {1, 2, 3, 4};
   Azure::Core::IO::MemoryBodyStream ms(data);
   EXPECT_NO_THROW(ms.Rewind());
+}
+
+TEST(FileBodyStream, BadInput)
+{
+  EXPECT_THROW(Azure::Core::IO::FileBodyStream(""), std::runtime_error);
+  EXPECT_THROW(Azure::Core::IO::FileBodyStream("FileNotFound"), std::runtime_error);
+}
+
+constexpr int64_t FileSize = 1024 * 100;
+
+TEST(FileBodyStream, Length)
+{
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+  EXPECT_EQ(stream.Length(), FileSize);
+
+  auto readResult = stream.ReadToEnd(Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readResult.size(), FileSize);
+
+  stream.Rewind();
+  EXPECT_EQ(stream.Length(), FileSize);
+}
+
+TEST(FileBodyStream, Read)
+{
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  // ReadToEnd
+  auto readResult = stream.ReadToEnd();
+  EXPECT_EQ(readResult.size(), FileSize);
+
+  stream.Rewind();
+
+  readResult = stream.ReadToEnd(Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readResult.size(), FileSize);
+
+  stream.Rewind();
+
+  // ReadToCount
+  std::vector<uint8_t> buffer(FileSize * 2);
+
+  int64_t readSize = stream.ReadToCount(buffer.data(), 10);
+  EXPECT_EQ(readSize, 10);
+  EXPECT_EQ(buffer[10], 0);
+
+  stream.Rewind();
+
+  readSize = stream.ReadToCount(buffer.data(), 10, Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readSize, 10);
+  EXPECT_EQ(buffer[10], 0);
+
+  stream.Rewind();
+
+  // Read
+  readSize = stream.Read(buffer.data(), buffer.size());
+  EXPECT_EQ(readSize, FileSize);
+  EXPECT_EQ(buffer[FileSize], 0);
+
+  stream.Rewind();
+
+  readSize
+      = stream.Read(buffer.data(), buffer.size(), Azure::Core::Context::GetApplicationContext());
+  EXPECT_EQ(readSize, FileSize);
+  EXPECT_EQ(buffer[FileSize], 0);
 }

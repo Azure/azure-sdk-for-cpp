@@ -1,0 +1,9 @@
+steps:
+  - pwsh: |
+      $branchName = $env:DAILYBRANCHOVERRIDE
+      if (!$branchName) { 
+        $formattedDate = Get-Date -Format 'yyyy-MM-dd'
+        $branchName = "release/daily-$formattedDate"
+      }
+      Write-Host "##vso[task.setvariable variable=DailyBranchName]$branchName"
+    displayName: Set branch name in fork repo

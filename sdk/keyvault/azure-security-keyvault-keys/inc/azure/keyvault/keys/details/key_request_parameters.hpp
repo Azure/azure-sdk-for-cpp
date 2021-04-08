@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/core/internal/json_serializable.hpp>
+#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_create_options.hpp"
@@ -17,21 +17,50 @@
 #include "azure/keyvault/keys/key_type.hpp"
 
 #include <functional>
+#include <list>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
 
   class KeyRequestParameters : public Azure::Core::Json::_internal::JsonSerializable {
   private:
-    JsonWebKeyType m_keyType;
-    CreateKeyOptions const& m_options;
+    Azure::Nullable<JsonWebKeyType> m_keyType;
+    CreateKeyOptions m_options;
 
   public:
-    Azure::Core::Nullable<KeyCurveName> Curve;
-    Azure::Core::Nullable<uint64_t> KeySize;
-    Azure::Core::Nullable<uint64_t> PublicExponent;
+    Azure::Nullable<KeyCurveName> Curve;
+    Azure::Nullable<uint64_t> KeySize;
+    Azure::Nullable<uint64_t> PublicExponent;
+
+    explicit KeyRequestParameters(
+        KeyProperties const& key,
+        Azure::Nullable<std::list<KeyOperation>> const& operations)
+        : m_options(CreateKeyOptions())
+    {
+      if (key.Enabled)
+      {
+        m_options.Enabled = key.Enabled.Value();
+      }
+      if (key.ExpiresOn)
+      {
+        m_options.ExpiresOn = key.ExpiresOn.Value();
+      }
+      if (key.NotBefore)
+      {
+        m_options.NotBefore = key.NotBefore.Value();
+      }
+      if (key.Tags.size() > 0)
+      {
+        m_options.Tags = std::unordered_map<std::string, std::string>(key.Tags);
+      }
+      if (operations)
+      {
+        m_options.KeyOperations = std::list<KeyOperation>(operations.Value());
+      }
+    }
 
     explicit KeyRequestParameters(JsonWebKeyType keyType, CreateKeyOptions const& options)
         : m_keyType(keyType), m_options(options)
@@ -43,7 +72,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (ecKey.CurveName.HasValue())
       {
-        Curve = ecKey.CurveName.GetValue();
+        Curve = ecKey.CurveName.Value();
       }
     }
 
@@ -52,11 +81,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (rsaKey.KeySize.HasValue())
       {
-        KeySize = rsaKey.KeySize.GetValue();
+        KeySize = rsaKey.KeySize.Value();
       }
       if (rsaKey.PublicExponent.HasValue())
       {
-        PublicExponent = rsaKey.PublicExponent.GetValue();
+        PublicExponent = rsaKey.PublicExponent.Value();
       }
     }
 
@@ -65,7 +94,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       if (octKey.KeySize.HasValue())
       {
-        KeySize = octKey.KeySize.GetValue();
+        KeySize = octKey.KeySize.Value();
       }
     }
 

@@ -33,7 +33,7 @@ SOFTWARE.
 
 #include "doctest_compatibility.h"
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::detail::dtoa_impl::reinterpret_bits;
 
 namespace {

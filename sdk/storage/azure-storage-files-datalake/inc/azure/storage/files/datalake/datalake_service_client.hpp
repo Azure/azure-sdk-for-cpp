@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/blobs/blob_service_client.hpp>
@@ -98,11 +98,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::GetUserDelegationKeyResult> containing the user
-     * delegation key related information.
+     * @return Azure::Response<Models::UserDelegationKey> containing the user delegation key.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Response<Models::UserDelegationKey> GetUserDelegationKey(
         const Azure::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const
@@ -111,7 +110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
+    Azure::Core::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
   };

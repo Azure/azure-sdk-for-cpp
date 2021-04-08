@@ -3,7 +3,7 @@
 
 #include "curl_session.hpp"
 
-#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/curl_transport.hpp>
 #include <azure/core/http/http.hpp>
 
 #include <http/curl/curl_connection_private.hpp>
@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     // Move the curlMock to build a session and then send the request
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -117,14 +117,13 @@ namespace Azure { namespace Core { namespace Test {
           request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
-      auto r = session->GetResponse();
+      auto r = session->ExtractResponse();
       r->SetBodyStream(std::move(session));
-      auto bodyS = r->GetBodyStream();
+      auto bodyS = r->ExtractBodyStream();
 
       // Read the bodyStream to get all chunks
       EXPECT_THROW(
-          Azure::Core::IO::BodyStream::ReadToEnd(
-              *bodyS, Azure::Core::Context::GetApplicationContext()),
+          bodyS->ReadToEnd(Azure::Core::Context::GetApplicationContext()),
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
@@ -186,7 +185,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {
@@ -195,13 +194,12 @@ namespace Azure { namespace Core { namespace Test {
           request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
-      auto response = session->GetResponse();
+      auto response = session->ExtractResponse();
       response->SetBodyStream(std::move(session));
-      auto bodyS = response->GetBodyStream();
+      auto bodyS = response->ExtractBodyStream();
 
       // Read the bodyStream to get all chunks
-      EXPECT_NO_THROW(Azure::Core::IO::BodyStream::ReadToEnd(
-          *bodyS, Azure::Core::Context::GetApplicationContext()));
+      EXPECT_NO_THROW(bodyS->ReadToEnd(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
@@ -221,7 +219,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
 
     // Simulate a request to be sent
-    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     {

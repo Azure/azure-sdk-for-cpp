@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policy.hpp"
-#include "azure/core/internal/log.hpp"
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -11,7 +11,10 @@
 #include <type_traits>
 
 using Azure::Core::Context;
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 std::string RedactedPlaceholder = "REDACTED";
@@ -34,46 +37,75 @@ inline void AppendHeaders(
   }
 }
 
-inline std::string GetRequestLogMessage(
-    Azure::Core::Http::LogOptions const& options,
-    Request const& request)
+inline void LogUrlWithoutQuery(std::ostringstream& log, Url const& url)
+{
+  if (!url.GetScheme().empty())
+  {
+    log << url.GetScheme() << "://";
+  }
+  log << url.GetHost();
+  if (url.GetPort() != 0)
+  {
+    log << ":" << url.GetPort();
+  }
+  if (!url.GetPath().empty())
+  {
+    log << "/" << url.GetPath();
+  }
+}
+
+inline std::string GetRequestLogMessage(LogOptions const& options, Request const& request)
 {
   auto const& requestUrl = request.GetUrl();
 
   std::ostringstream log;
-  log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " "
-      << requestUrl.GetUrlWithoutQuery();
+  log << "HTTP Request : " << request.GetMethod().ToString() << " ";
+  LogUrlWithoutQuery(log, requestUrl);
+
   {
     auto encodedRequestQueryParams = requestUrl.GetQueryParameters();
-    auto const& unencodedAllowedQueryParams = options.AllowedHttpQueryParameters;
-    if (!encodedRequestQueryParams.empty() && !unencodedAllowedQueryParams.empty())
-    {
-      std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::type
-          encodedAllowedQueryParams;
-      std::transform(
-          unencodedAllowedQueryParams.begin(),
-          unencodedAllowedQueryParams.end(),
-          std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
-          [](std::string const& s) { return Url::Encode(s); });
 
-      std::remove_const<std::remove_reference<decltype(encodedRequestQueryParams)>::type>::type
-          encodedAllowedRequestQueryParams;
-      for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
+    std::remove_const<std::remove_reference<decltype(encodedRequestQueryParams)>::type>::type
+        loggedQueryParams;
+
+    if (!encodedRequestQueryParams.empty())
+    {
+      auto const& unencodedAllowedQueryParams = options.AllowedHttpQueryParameters;
+      if (!unencodedAllowedQueryParams.empty())
       {
-        if (encodedRequestQueryParam.second.empty()
-            || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
-                != encodedAllowedQueryParams.end()))
+        std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::type
+            encodedAllowedQueryParams;
+        std::transform(
+            unencodedAllowedQueryParams.begin(),
+            unencodedAllowedQueryParams.end(),
+            std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
+            [](std::string const& s) { return Url::Encode(s); });
+
+        for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
         {
-          encodedAllowedRequestQueryParams.insert(encodedRequestQueryParam);
+          if (encodedRequestQueryParam.second.empty()
+              || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
+                  != encodedAllowedQueryParams.end()))
+          {
+            loggedQueryParams.insert(encodedRequestQueryParam);
+          }
+          else
+          {
+            loggedQueryParams.insert(
+                std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
+          }
         }
-        else
+      }
+      else
+      {
+        for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
         {
-          encodedAllowedRequestQueryParams.insert(
+          loggedQueryParams.insert(
               std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
         }
       }
 
-      log << _detail::FormatEncodedUrlQueryParameters(encodedAllowedRequestQueryParams);
+      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(loggedQueryParams);
     }
   }
   AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);
@@ -81,7 +113,7 @@ inline std::string GetRequestLogMessage(
 }
 
 inline std::string GetResponseLogMessage(
-    Azure::Core::Http::LogOptions const& options,
+    LogOptions const& options,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
 {
@@ -97,7 +129,8 @@ inline std::string GetResponseLogMessage(
 }
 } // namespace
 
-Azure::Core::CaseInsensitiveSet Azure::Core::Http::_detail::g_defaultAllowedHttpHeaders
+Azure::Core::CaseInsensitiveSet const
+    Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
     = {"x-ms-client-request-id",
        "x-ms-return-client-request-id",
        "traceparent",
@@ -121,12 +154,13 @@ Azure::Core::CaseInsensitiveSet Azure::Core::Http::_detail::g_defaultAllowedHttp
        "Transfer-Encoding",
        "User-Agent"};
 
-std::unique_ptr<RawResponse> Azure::Core::Http::LogPolicy::Send(
+std::unique_ptr<RawResponse> LogPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  using Azure::Core::_internal::Log;
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {

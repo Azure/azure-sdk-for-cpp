@@ -31,13 +31,13 @@
 
 namespace Azure { namespace Storage {
 
-  namespace _detail {
+  namespace _internal {
     static const char* Subdelimiters = "!$&'()*+,;=";
 
     std::string UrlEncodeQueryParameter(const std::string& value)
     {
       const static std::string DoNotEncodeCharacters = []() {
-        // Core::Http::Url::Encode won't encode unreserved characters.
+        // Core::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = Subdelimiters;
         doNotEncodeCharacters += "/:@?";
         doNotEncodeCharacters.erase(
@@ -54,13 +54,13 @@ namespace Azure { namespace Storage {
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
       }();
-      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
+      return Core::Url::Encode(value, DoNotEncodeCharacters);
     }
 
     std::string UrlEncodePath(const std::string& value)
     {
       const static std::string DoNotEncodeCharacters = []() {
-        // Core::Http::Url::Encode won't encode unreserved characters.
+        // Core::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = Subdelimiters;
         doNotEncodeCharacters += "/:@";
         doNotEncodeCharacters.erase(
@@ -74,13 +74,13 @@ namespace Azure { namespace Storage {
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
       }();
-      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
+      return Core::Url::Encode(value, DoNotEncodeCharacters);
     }
-  } // namespace _detail
+  } // namespace _internal
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  namespace _detail {
+  namespace _internal {
 
     enum class AlgorithmType
     {
@@ -241,11 +241,11 @@ namespace Azure { namespace Storage {
 
       return hash;
     }
-  } // namespace _detail
+  } // namespace _internal
 
 #elif defined(AZ_PLATFORM_POSIX)
 
-  namespace _detail {
+  namespace _internal {
 
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
@@ -275,7 +275,7 @@ namespace Azure { namespace Storage {
       return std::vector<uint8_t>(std::begin(hash), std::begin(hash) + hashLength);
     }
 
-  } // namespace _detail
+  } // namespace _internal
 
 #endif
 

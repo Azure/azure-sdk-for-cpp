@@ -30,7 +30,7 @@ namespace Azure { namespace Perf { namespace Test {
    */
   class HttpClientGetTest : public Azure::Perf::PerfTest {
   protected:
-    Azure::Core::Http::Url m_url;
+    Azure::Core::Url m_url;
 
   public:
     /**
@@ -46,7 +46,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     void Setup() override
     {
-      m_url = Azure::Core::Http::Url(m_options.GetMandatoryOption<std::string>("url"));
+      m_url = Azure::Core::Url(m_options.GetMandatoryOption<std::string>("url"));
     }
 
     /**
@@ -59,8 +59,8 @@ namespace Azure { namespace Perf { namespace Test {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, m_url);
       auto response = _detail::HttpClient->Send(request, ctx);
       // Read the body from network
-      auto bodyStream = response->GetBodyStream();
-      response->SetBody(Azure::Core::IO::BodyStream::ReadToEnd(*bodyStream, ctx));
+      auto bodyStream = response->ExtractBodyStream();
+      response->SetBody(bodyStream->ReadToEnd(ctx));
     }
 
     /**

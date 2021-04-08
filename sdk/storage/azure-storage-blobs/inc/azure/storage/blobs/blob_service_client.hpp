@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
 #include "azure/storage/blobs/blob_container_client.hpp"
@@ -109,9 +109,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A deserialized GetUserDelegationKeyResult instance.
+     * @return A deserialized UserDelegationKey instance.
      */
-    Azure::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Response<Models::UserDelegationKey> GetUserDelegationKey(
         const Azure::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -139,9 +139,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetServicePropertiesResult describing the service properties.
+     * @return A BlobServiceProperties describing the service properties.
      */
-    Azure::Response<Models::GetServicePropertiesResult> GetProperties(
+    Azure::Response<Models::BlobServiceProperties> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -150,9 +150,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return GetAccountInfoResult describing the account.
+     * @return AccountInfo describing the account.
      */
-    Azure::Response<Models::GetAccountInfoResult> GetAccountInfo(
+    Azure::Response<Models::AccountInfo> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -163,9 +163,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A BlobServiceStatistics describing the service replication statistics.
+     * @return A ServiceStatistics describing the service replication statistics.
      */
-    Azure::Response<Models::GetServiceStatisticsResult> GetStatistics(
+    Azure::Response<Models::ServiceStatistics> GetStatistics(
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -232,9 +232,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_serviceUrl;
+    Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
-    Azure::Core::Nullable<std::string> m_encryptionScope;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Nullable<std::string> m_encryptionScope;
   };
 }}} // namespace Azure::Storage::Blobs

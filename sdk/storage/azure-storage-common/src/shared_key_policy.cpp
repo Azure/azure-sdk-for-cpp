@@ -11,12 +11,12 @@
 
 #include "azure/storage/common/crypt.hpp"
 
-namespace Azure { namespace Storage { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   std::string SharedKeyPolicy::GetSignature(const Core::Http::Request& request) const
   {
     std::string string_to_sign;
-    string_to_sign += Azure::Core::Http::HttpMethodToString(request.GetMethod()) + "\n";
+    string_to_sign += request.GetMethod().ToString() + "\n";
 
     const auto& headers = request.GetHeaders();
     for (std::string headerName :
@@ -69,8 +69,8 @@ namespace Azure { namespace Storage { namespace _detail {
     for (const auto& query : request.GetUrl().GetQueryParameters())
     {
       std::string key = Azure::Core::_internal::StringExtensions::ToLower(query.first);
-      ordered_kv.emplace_back(std::make_pair(
-          Azure::Core::Http::Url::Decode(key), Azure::Core::Http::Url::Decode(query.second)));
+      ordered_kv.emplace_back(
+          std::make_pair(Azure::Core::Url::Decode(key), Azure::Core::Url::Decode(query.second)));
     }
     std::sort(ordered_kv.begin(), ordered_kv.end());
     for (const auto& p : ordered_kv)
@@ -81,8 +81,8 @@ namespace Azure { namespace Storage { namespace _detail {
     // remove last linebreak
     string_to_sign.pop_back();
 
-    return Azure::Core::Base64Encode(_detail::HmacSha256(
+    return Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
-        Azure::Core::Base64Decode(m_credential->GetAccountKey())));
+        Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
-}}} // namespace Azure::Storage::_detail
+}}} // namespace Azure::Storage::_internal

@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const BlobSignedIdentifier& lhs, const BlobSignedIdentifier& rhs)
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
   {
     return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
         && lhs.Permissions == rhs.Permissions;
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
     return sasBuilder.GenerateSasToken(
-        *_detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+        *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
   }
 
   TEST_F(BlobContainerClientTest, CreateDelete)
@@ -61,21 +61,17 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key2"] = "TWO";
     options.Metadata = metadata;
     auto res = container_client.Create(options);
-    EXPECT_FALSE(res->RequestId.empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_EQ(res->RequestId, res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId));
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
     EXPECT_THROW(container_client.Create(), StorageException);
 
     auto res2 = container_client.Delete();
-    EXPECT_FALSE(res2->RequestId.empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_EQ(res2->RequestId, res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId));
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
 
     container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString() + "UPPERCASE");
@@ -84,21 +80,19 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), LowercaseRandomString());
     {
       auto response = container_client.DeleteIfExists();
-      EXPECT_FALSE(response->Deleted);
-      EXPECT_FALSE(response->RequestId.empty());
+      EXPECT_FALSE(response.Value.Deleted);
     }
     {
       auto response = container_client.CreateIfNotExists();
-      EXPECT_TRUE(response->Created);
-      EXPECT_FALSE(response->RequestId.empty());
+      EXPECT_TRUE(response.Value.Created);
     }
     {
       auto response = container_client.CreateIfNotExists();
-      EXPECT_FALSE(response->Created);
+      EXPECT_FALSE(response.Value.Created);
     }
     {
       auto response = container_client.DeleteIfExists();
-      EXPECT_TRUE(response->Deleted);
+      EXPECT_TRUE(response.Value.Deleted);
     }
   }
 
@@ -108,26 +102,24 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);
-    EXPECT_FALSE(res->RequestId.empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
-    EXPECT_TRUE(res->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(res->LastModified));
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
 
     auto res2 = m_blobContainerClient->GetProperties();
-    EXPECT_FALSE(res2->RequestId.empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
-    auto properties = *res2;
+    EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+    auto properties = res2.Value;
     EXPECT_TRUE(properties.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(properties.LastModified));
     EXPECT_EQ(properties.Metadata, metadata);
 
     metadata.clear();
     m_blobContainerClient->SetMetadata(metadata);
-    properties = *m_blobContainerClient->GetProperties();
+    properties = m_blobContainerClient->GetProperties().Value;
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
@@ -146,7 +138,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blobName = prefix1 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
       auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
-      blobClient.Upload(&emptyContent);
+      blobClient.Upload(emptyContent);
       p1Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -162,7 +154,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blobName = prefix2 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
       auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
-      blobClient.Upload(&emptyContent);
+      blobClient.Upload(emptyContent);
       p2Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -173,15 +165,14 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      EXPECT_FALSE(res->RequestId.empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res->ServiceEndpoint.empty());
-      EXPECT_EQ(res->BlobContainerName, m_containerName);
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
+      EXPECT_EQ(res.Value.BlobContainerName, m_containerName);
 
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& blob : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& blob : res.Value.Items)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
@@ -190,18 +181,18 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(blob.BlobType.ToString().empty());
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
-          EXPECT_TRUE(blob.Details.Tier.HasValue());
+          EXPECT_TRUE(blob.Details.AccessTier.HasValue());
           EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
         }
-        if (blob.Details.Tier.HasValue())
+        if (blob.Details.AccessTier.HasValue())
         {
-          EXPECT_FALSE(blob.Details.Tier.GetValue().ToString().empty());
+          EXPECT_FALSE(blob.Details.AccessTier.Value().ToString().empty());
         }
         if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {
           if (blob.Details.IsSealed.HasValue())
           {
-            EXPECT_FALSE(blob.Details.IsSealed.GetValue());
+            EXPECT_FALSE(blob.Details.IsSealed.Value());
           }
         }
         else
@@ -227,8 +218,8 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& blob : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& blob : res.Value.Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -250,7 +241,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::string blobName = blobNamePrefix + delimiter + RandomString();
         auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
         auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
-        blobClient.Upload(&emptyContent);
+        blobClient.Upload(emptyContent);
         blobs.insert(blobName);
       }
     }
@@ -261,17 +252,16 @@ namespace Azure { namespace Storage { namespace Test {
     while (true)
     {
       auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
-      EXPECT_FALSE(res->RequestId.empty());
-      EXPECT_EQ(res->Delimiter, delimiter);
-      EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
-      EXPECT_TRUE(res->Items.empty());
-      for (const auto& p : res->BlobPrefixes)
+      EXPECT_EQ(res.Value.Delimiter, delimiter);
+      EXPECT_EQ(res.Value.Prefix, options.Prefix.Value());
+      EXPECT_TRUE(res.Value.Items.empty());
+      for (const auto& p : res.Value.BlobPrefixes)
       {
         items.emplace(p);
       }
-      if (res->ContinuationToken.HasValue())
+      if (res.Value.ContinuationToken.HasValue())
       {
-        options.ContinuationToken = res->ContinuationToken;
+        options.ContinuationToken = res.Value.ContinuationToken;
       }
       else
       {
@@ -287,16 +277,16 @@ namespace Azure { namespace Storage { namespace Test {
       while (true)
       {
         auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
-        EXPECT_EQ(res->Delimiter, delimiter);
-        EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
-        EXPECT_TRUE(res->BlobPrefixes.empty());
-        for (const auto& i : res->Items)
+        EXPECT_EQ(res.Value.Delimiter, delimiter);
+        EXPECT_EQ(res.Value.Prefix, options.Prefix.Value());
+        EXPECT_TRUE(res.Value.BlobPrefixes.empty());
+        for (const auto& i : res.Value.Items)
         {
           items.emplace(i.Name);
         }
-        if (res->ContinuationToken.HasValue())
+        if (res.Value.ContinuationToken.HasValue())
         {
-          options.ContinuationToken = res->ContinuationToken;
+          options.ContinuationToken = res.Value.ContinuationToken;
         }
         else
         {
@@ -318,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.SetMetadata({{"k1", "v1"}});
     std::vector<uint8_t> content(1);
     auto contentStream = Azure::Core::IO::MemoryBodyStream(content.data(), 1);
-    blobClient.AppendBlock(&contentStream);
+    blobClient.AppendBlock(contentStream);
 
     Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
@@ -335,9 +325,8 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      EXPECT_FALSE(res->RequestId.empty());
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& blob : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& blob : res.Value.Items)
       {
         if (!blob.Snapshot.empty())
         {
@@ -345,12 +334,12 @@ namespace Azure { namespace Storage { namespace Test {
         }
         if (blob.VersionId.HasValue())
         {
-          EXPECT_FALSE(blob.VersionId.GetValue().empty());
+          EXPECT_FALSE(blob.VersionId.Value().empty());
           foundVersions = true;
         }
         if (blob.IsCurrentVersion.HasValue())
         {
-          if (blob.IsCurrentVersion.GetValue())
+          if (blob.IsCurrentVersion.Value())
           {
             foundCurrentVersion = true;
           }
@@ -386,7 +375,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::SetBlobContainerAccessPolicyOptions options;
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
-    Blobs::Models::BlobSignedIdentifier identifier;
+    Blobs::Models::SignedIdentifier identifier;
     identifier.Id = RandomString(64);
     identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
@@ -399,16 +388,12 @@ namespace Azure { namespace Storage { namespace Test {
     options.SignedIdentifiers.emplace_back(identifier);
 
     auto ret = container_client.SetAccessPolicy(options);
-    EXPECT_FALSE(ret->RequestId.empty());
-    EXPECT_TRUE(ret->ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(ret->LastModified));
+    EXPECT_TRUE(ret.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
-    EXPECT_FALSE(ret2->RequestId.empty());
-    EXPECT_EQ(ret2->ETag, ret->ETag);
-    EXPECT_EQ(ret2->LastModified, ret->LastModified);
-    EXPECT_EQ(ret2->AccessType, options.AccessType);
-    EXPECT_EQ(ret2->SignedIdentifiers, options.SignedIdentifiers);
+    EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
+    EXPECT_EQ(ret2.Value.SignedIdentifiers, options.SignedIdentifiers);
 
     container_client.Delete();
   }
@@ -422,61 +407,56 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId1 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     auto leaseDuration = std::chrono::seconds(20);
     Blobs::BlobLeaseClient leaseClient(containerClient, leaseId1);
-    auto aLease = *leaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.RequestId.empty());
+    auto aLease = leaseClient.Acquire(leaseDuration).Value;
     EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId1);
-    aLease = *leaseClient.Acquire(leaseDuration);
-    EXPECT_FALSE(aLease.RequestId.empty());
+    aLease = leaseClient.Acquire(leaseDuration).Value;
     EXPECT_TRUE(aLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
-    auto properties = *containerClient.GetProperties();
-    EXPECT_EQ(properties.LeaseState, Blobs::Models::BlobLeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::BlobLeaseStatus::Locked);
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Fixed);
+    auto properties = containerClient.GetProperties().Value;
+    EXPECT_EQ(properties.LeaseState, Blobs::Models::LeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::LeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Fixed);
 
-    auto rLease = *leaseClient.Renew();
-    EXPECT_FALSE(rLease.RequestId.empty());
+    auto rLease = leaseClient.Renew().Value;
     EXPECT_TRUE(rLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(rLease.LastModified));
     EXPECT_EQ(rLease.LeaseId, leaseId1);
 
     std::string leaseId2 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
-    auto cLease = *leaseClient.Change(leaseId2);
-    EXPECT_FALSE(cLease.RequestId.empty());
+    auto cLease = leaseClient.Change(leaseId2).Value;
     EXPECT_TRUE(cLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
     leaseClient = Blobs::BlobLeaseClient(containerClient, cLease.LeaseId);
     EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
-    auto containerInfo = *leaseClient.Release();
-    EXPECT_FALSE(containerInfo.RequestId.empty());
+    auto containerInfo = leaseClient.Release().Value;
     EXPECT_TRUE(containerInfo.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(containerInfo.LastModified));
 
     leaseClient
         = Blobs::BlobLeaseClient(containerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
-    aLease = *leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
-    properties = *containerClient.GetProperties();
-    EXPECT_EQ(properties.LeaseDuration.GetValue(), Blobs::Models::BlobLeaseDurationType::Infinite);
-    auto brokenLease = *leaseClient.Break();
+    aLease = leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration).Value;
+    properties = containerClient.GetProperties().Value;
+    EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Infinite);
+    auto brokenLease = leaseClient.Break().Value;
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
 
     leaseClient
         = Blobs::BlobLeaseClient(containerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
-    aLease = *leaseClient.Acquire(leaseDuration);
-    brokenLease = *leaseClient.Break();
+    aLease = leaseClient.Acquire(leaseDuration).Value;
+    brokenLease = leaseClient.Break().Value;
     EXPECT_TRUE(brokenLease.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
 
-    Blobs::BreakBlobLeaseOptions options;
+    Blobs::BreakLeaseOptions options;
     options.BreakPeriod = std::chrono::seconds(0);
     leaseClient.Break(options);
     containerClient.Delete();
@@ -485,7 +465,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, DISABLED_EncryptionScope)
   {
     {
-      auto properties = *m_blobContainerClient->GetProperties();
+      auto properties = m_blobContainerClient->GetProperties().Value;
       EXPECT_EQ(properties.DefaultEncryptionScope, AccountEncryptionKey);
       EXPECT_EQ(properties.PreventEncryptionScopeOverride, false);
     }
@@ -500,23 +480,23 @@ namespace Azure { namespace Storage { namespace Test {
       createOptions.DefaultEncryptionScope = TestEncryptionScope;
       createOptions.PreventEncryptionScopeOverride = true;
       EXPECT_NO_THROW(containerClient.Create(createOptions));
-      auto properties = *containerClient.GetProperties();
-      EXPECT_EQ(properties.DefaultEncryptionScope, createOptions.DefaultEncryptionScope.GetValue());
+      auto properties = containerClient.GetProperties().Value;
+      EXPECT_EQ(properties.DefaultEncryptionScope, createOptions.DefaultEncryptionScope.Value());
       EXPECT_EQ(
           properties.PreventEncryptionScopeOverride,
-          createOptions.PreventEncryptionScopeOverride.GetValue());
+          createOptions.PreventEncryptionScopeOverride.Value());
       auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
       auto blobContentInfo = appendBlobClient.Create();
       appendBlobClient.Delete();
-      EXPECT_TRUE(blobContentInfo->EncryptionScope.HasValue());
-      EXPECT_EQ(blobContentInfo->EncryptionScope.GetValue(), TestEncryptionScope);
+      EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
       auto appendBlobClientWithoutEncryptionScope
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), containerName, blobName);
       blobContentInfo = appendBlobClientWithoutEncryptionScope.Create();
       appendBlobClientWithoutEncryptionScope.Delete();
-      EXPECT_TRUE(blobContentInfo->EncryptionScope.HasValue());
-      EXPECT_EQ(blobContentInfo->EncryptionScope.GetValue(), TestEncryptionScope);
+      EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
       containerClient.Delete();
     }
     {
@@ -526,21 +506,21 @@ namespace Azure { namespace Storage { namespace Test {
       auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, blobName, options);
       auto blobContentInfo = appendBlobClient.Create();
-      EXPECT_TRUE(blobContentInfo->EncryptionScope.HasValue());
-      EXPECT_EQ(blobContentInfo->EncryptionScope.GetValue(), TestEncryptionScope);
-      auto properties = *appendBlobClient.GetProperties();
+      EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
+      auto properties = appendBlobClient.GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionScope.HasValue());
-      EXPECT_EQ(properties.EncryptionScope.GetValue(), TestEncryptionScope);
+      EXPECT_EQ(properties.EncryptionScope.Value(), TestEncryptionScope);
       std::vector<uint8_t> appendContent(1);
       Azure::Core::IO::MemoryBodyStream bodyStream(appendContent.data(), appendContent.size());
-      EXPECT_NO_THROW(appendBlobClient.AppendBlock(&bodyStream));
+      EXPECT_NO_THROW(appendBlobClient.AppendBlock(bodyStream));
 
       bodyStream.Rewind();
       auto appendBlobClientWithoutEncryptionScope
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, blobName);
       EXPECT_THROW(
-          appendBlobClientWithoutEncryptionScope.AppendBlock(&bodyStream), StorageException);
+          appendBlobClientWithoutEncryptionScope.AppendBlock(bodyStream), StorageException);
       EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageException);
       appendBlobClient.Delete();
     }
@@ -553,8 +533,8 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<uint8_t> aes256Key;
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
-      key.Key = Azure::Core::Base64Encode(aes256Key);
-      key.KeyHash = _detail::Sha256(aes256Key);
+      key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
+      key.KeyHash = _internal::Sha256(aes256Key);
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
     };
@@ -573,11 +553,11 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blockBlobName = RandomString();
       auto blockBlob = containerClient.GetBlockBlobClient(blockBlobName);
       bodyStream.Rewind();
-      EXPECT_NO_THROW(blockBlob.Upload(&bodyStream));
+      EXPECT_NO_THROW(blockBlob.Upload(bodyStream));
       std::string blockId1 = Base64EncodeText("1");
       std::string blockId2 = Base64EncodeText("2");
       bodyStream.Rewind();
-      EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
+      EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
       EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
       EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
@@ -594,15 +574,14 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string appendBlobName = RandomString();
       auto appendBlob = containerClient.GetAppendBlobClient(appendBlobName);
-      auto blobContentInfo = *appendBlob.Create();
+      auto blobContentInfo = appendBlob.Create().Value;
       EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
-          blobContentInfo.EncryptionKeySha256.GetValue(),
-          options.CustomerProvidedKey.GetValue().KeyHash);
+          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
 
       bodyStream.Rewind();
-      EXPECT_NO_THROW(appendBlob.AppendBlock(&bodyStream));
+      EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
       EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(copySourceBlob.GetUrl() + GetSas()));
       EXPECT_NO_THROW(appendBlob.Download());
       EXPECT_NO_THROW(appendBlob.GetProperties());
@@ -613,7 +592,7 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, appendBlobName);
       bodyStream.Rewind();
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(&bodyStream), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(bodyStream), StorageException);
       EXPECT_THROW(
           appendBlobClientWithoutEncryptionKey.AppendBlockFromUri(
               copySourceBlob.GetUrl() + GetSas()),
@@ -632,15 +611,14 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string pageBlobName = RandomString();
       auto pageBlob = containerClient.GetPageBlobClient(pageBlobName);
-      auto blobContentInfo = *pageBlob.Create(0);
+      auto blobContentInfo = pageBlob.Create(0).Value;
       EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
-          blobContentInfo.EncryptionKeySha256.GetValue(),
-          options.CustomerProvidedKey.GetValue().KeyHash);
+          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
-      EXPECT_NO_THROW(pageBlob.UploadPages(0, &bodyStream));
+      EXPECT_NO_THROW(pageBlob.UploadPages(0, bodyStream));
       EXPECT_NO_THROW(pageBlob.ClearPages({0, static_cast<int64_t>(blobContent.size())}));
       EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
           0, copySourceBlob.GetUrl() + GetSas(), {0, static_cast<int64_t>(blobContent.size())}));
@@ -675,7 +653,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
       {
-        auto lastModifiedTime = containerClient.GetProperties()->LastModified;
+        auto lastModifiedTime = containerClient.GetProperties().Value.LastModified;
         auto timeBefore = lastModifiedTime - std::chrono::seconds(1);
         auto timeAfter = lastModifiedTime + std::chrono::seconds(1);
 
@@ -729,11 +707,11 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, blobName);
     blobClient.Create();
 
-    auto properties = *blobClient.GetProperties();
+    auto properties = blobClient.GetProperties().Value;
     EXPECT_FALSE(properties.TagCount.HasValue());
 
     auto downloadRet = blobClient.Download();
-    EXPECT_FALSE(downloadRet->Details.TagCount.HasValue());
+    EXPECT_FALSE(downloadRet.Value.Details.TagCount.HasValue());
 
     std::map<std::string, std::string> tags;
     std::string c1 = "k" + RandomString();
@@ -746,19 +724,19 @@ namespace Azure { namespace Storage { namespace Test {
     tags[c2] = v2;
     tags[c3] = v3;
 
-    auto downloadedTags = blobClient.GetTags()->Tags;
+    auto downloadedTags = blobClient.GetTags().Value;
     EXPECT_TRUE(downloadedTags.empty());
     blobClient.SetTags(tags);
-    downloadedTags = blobClient.GetTags()->Tags;
+    downloadedTags = blobClient.GetTags().Value;
     EXPECT_EQ(downloadedTags, tags);
 
-    properties = *blobClient.GetProperties();
+    properties = blobClient.GetProperties().Value;
     EXPECT_TRUE(properties.TagCount.HasValue());
-    EXPECT_EQ(properties.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
+    EXPECT_EQ(properties.TagCount.Value(), static_cast<int64_t>(tags.size()));
 
     downloadRet = blobClient.Download();
-    EXPECT_TRUE(downloadRet->Details.TagCount.HasValue());
-    EXPECT_EQ(downloadRet->Details.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
+    EXPECT_TRUE(downloadRet.Value.Details.TagCount.HasValue());
+    EXPECT_EQ(downloadRet.Value.Details.TagCount.Value(), static_cast<int64_t>(tags.size()));
 
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
@@ -775,7 +753,8 @@ namespace Azure { namespace Storage { namespace Test {
         {
           options.ContinuationToken = marker;
         }
-        auto findBlobsRet = *blobServiceClient.FindBlobsByTagsSinglePage(whereExpression, options);
+        auto findBlobsRet
+            = blobServiceClient.FindBlobsByTagsSinglePage(whereExpression, options).Value;
         EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
         options.ContinuationToken = findBlobsRet.ContinuationToken;
 
@@ -876,10 +855,10 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::AppendBlockOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(appendBlobClient.AppendBlock(&content, options), StorageException);
+      EXPECT_THROW(appendBlobClient.AppendBlock(content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
-      EXPECT_NO_THROW(appendBlobClient.AppendBlock(&content, options));
+      EXPECT_NO_THROW(appendBlobClient.AppendBlock(content, options));
 
       std::string url = appendBlobClient.GetUrl() + GetSas();
       Blobs::AppendBlockFromUriOptions options2;
@@ -892,7 +871,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string url = appendBlobClient.GetUrl() + GetSas();
 
-      Blobs::StartCopyBlobFromUriOptions options;
+      Blobs::StartBlobCopyFromUriOptions options;
       auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, RandomString());
       options.SourceAccessConditions.TagConditions = failWhereExpression;
@@ -911,14 +890,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-      Blobs::AcquireBlobLeaseOptions options;
+      Blobs::AcquireLeaseOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       auto leaseClient = Blobs::BlobLeaseClient(appendBlobClient, leaseId);
       EXPECT_THROW(leaseClient.Acquire(std::chrono::seconds(60), options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(leaseClient.Acquire(std::chrono::seconds(60), options));
 
-      Blobs::BreakBlobLeaseOptions options2;
+      Blobs::BreakLeaseOptions options2;
       options2.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(leaseClient.Break(options2), StorageException);
       options2.AccessConditions.TagConditions = successWhereExpression;
@@ -950,18 +929,18 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::UploadPageBlobPagesOptions options;
+      Blobs::UploadPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(pageBlobClient.UploadPages(0, &content, options), StorageException);
+      EXPECT_THROW(pageBlobClient.UploadPages(0, content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
-      EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &content, options));
+      EXPECT_NO_THROW(pageBlobClient.UploadPages(0, content, options));
     }
 
     {
       std::string url = pageBlobClient.GetUrl() + GetSas();
-      Blobs::UploadPageBlobPagesFromUriOptions options;
+      Blobs::UploadPagesFromUriOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
           pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options), StorageException);
@@ -970,7 +949,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::ClearPageBlobPagesOptions options;
+      Blobs::ClearPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.ClearPages({0, contentSize}, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
@@ -986,7 +965,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      Blobs::GetPageBlobPageRangesOptions options;
+      Blobs::GetPageRangesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
@@ -1003,10 +982,10 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadBlockBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageException);
+      EXPECT_THROW(blockBlobClient.Upload(content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
-      EXPECT_NO_THROW(blockBlobClient.Upload(&content, options));
+      EXPECT_NO_THROW(blockBlobClient.Upload(content, options));
       blockBlobClient.SetTags(tags);
     }
 
@@ -1014,7 +993,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string blockId = Base64EncodeText("1");
       std::vector<std::string> blockIds = {blockId};
       content.Rewind();
-      blockBlobClient.StageBlock(blockId, &content);
+      blockBlobClient.StageBlock(blockId, content);
 
       Blobs::CommitBlockListOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
@@ -1045,8 +1024,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create());
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1054,8 +1032,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create(1024));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1063,8 +1040,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
 
     {
@@ -1074,8 +1050,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create());
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1084,8 +1059,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.Create(1024));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1094,8 +1068,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
-          blobUrl,
-          m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+          blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
     }
   }
 
@@ -1105,8 +1078,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
     EXPECT_NO_THROW(blobClient.Create());
     auto blobUrl = blobClient.GetUrl();
-    EXPECT_EQ(
-        blobUrl, m_blobContainerClient->GetUrl() + "/" + Storage::_detail::UrlEncodePath(blobName));
+    EXPECT_EQ(blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
   }
 
   TEST_F(BlobContainerClientTest, DeleteBlob)

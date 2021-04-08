@@ -16,7 +16,7 @@
 #include "azure/perf/dynamic_test_options.hpp"
 #include "azure/perf/test_options.hpp"
 
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include <iostream>
 #include <vector>
@@ -82,13 +82,13 @@ namespace Azure { namespace Perf {
      * @brief Port to redirect HTTP requests.
      *
      */
-    Azure::Core::Nullable<int> Port;
+    Azure::Nullable<int> Port;
 
     /**
      * @brief Target throughput (ops/sec).
      *
      */
-    Azure::Core::Nullable<int> Rate;
+    Azure::Nullable<int> Rate;
 
     /**
      * @brief Duration of warmup in seconds.

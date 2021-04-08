@@ -21,7 +21,6 @@ namespace Azure { namespace Core { namespace Test {
   private:
     std::string m_operationToken;
     std::string m_value;
-    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
   private:
     int m_count = 0;
@@ -44,21 +43,28 @@ namespace Azure { namespace Core { namespace Test {
     Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         override
     {
-      std::unique_ptr<Http::RawResponse> response;
       while (!IsDone())
       {
         // Sleep for the period
         // Actual clients should respect the retry after header if present
         std::this_thread::sleep_for(period);
 
-        response = Poll(context);
+        // Poll gets a new rawResponse and replace it inside the Operation. Then return a ref to
+        // that raw response.
+        auto const& response = Poll(context);
+        // We can use the rawResponse from the Operation here
+        // status code is mocked on `PollInternal`
+        EXPECT_EQ("OK", response.GetReasonPhrase());
       }
 
-      return Response<std::string>(m_value, std::move(response));
+      return Response<std::string>(m_value, std::make_unique<Http::RawResponse>(*m_rawResponse));
     }
 
   public:
-    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
 
     std::string GetResumeToken() const override { return m_operationToken; }
 

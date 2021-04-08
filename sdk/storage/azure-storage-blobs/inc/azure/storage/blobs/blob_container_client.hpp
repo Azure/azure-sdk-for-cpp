@@ -180,9 +180,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetBlobContainerPropertiesResult describing the container and its properties.
+     * @return A BlobContainerProperties describing the container and its properties.
      */
-    Azure::Response<Models::GetBlobContainerPropertiesResult> GetProperties(
+    Azure::Response<Models::BlobContainerProperties> GetProperties(
         const GetBlobContainerPropertiesOptions& options = GetBlobContainerPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -239,9 +239,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetBlobContainerAccessPolicyResult describing the container's access policy.
+     * @return A BlobContainerAccessPolicy describing the container's access policy.
      */
-    Azure::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::BlobContainerAccessPolicy> GetAccessPolicy(
         const GetBlobContainerAccessPolicyOptions& options = GetBlobContainerAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -285,21 +285,21 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<BlockBlobClient> UploadBlob(
         const std::string& blobName,
-        Azure::Core::IO::BodyStream* content,
+        Azure::Core::IO::BodyStream& content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
-    Azure::Core::Http::Url m_blobContainerUrl;
+    Azure::Core::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
-    Azure::Core::Nullable<std::string> m_encryptionScope;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
-        Azure::Core::Http::Url blobContainerUrl,
+        Azure::Core::Url blobContainerUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
-        Azure::Core::Nullable<std::string> encryptionScope)
+        Azure::Nullable<EncryptionKey> customerProvidedKey,
+        Azure::Nullable<std::string> encryptionScope)
         : m_blobContainerUrl(std::move(blobContainerUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))

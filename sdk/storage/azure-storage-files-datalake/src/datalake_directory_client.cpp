@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/shared_key_policy.hpp>
@@ -22,10 +22,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& directoryName,
       const DataLakeClientOptions& options)
   {
-    auto parsedConnectionString = Azure::Storage::_detail::ParseConnectionString(connectionString);
+    auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
     auto directoryUrl = std::move(parsedConnectionString.DataLakeServiceUrl);
-    directoryUrl.AppendPath(Storage::_detail::UrlEncodePath(fileSystemName));
-    directoryUrl.AppendPath(Storage::_detail::UrlEncodePath(directoryName));
+    directoryUrl.AppendPath(_internal::UrlEncodePath(fileSystemName));
+    directoryUrl.AppendPath(_internal::UrlEncodePath(directoryName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -64,9 +64,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeFileClient DataLakeDirectoryClient::GetFileClient(const std::string& fileName) const
   {
     auto builder = m_pathUrl;
-    builder.AppendPath(Storage::_detail::UrlEncodePath(fileName));
+    builder.AppendPath(_internal::UrlEncodePath(fileName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::_detail::UrlEncodePath(fileName));
+    blobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(fileName));
     return DataLakeFileClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
@@ -74,32 +74,38 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& subdirectoryName) const
   {
     auto builder = m_pathUrl;
-    builder.AppendPath(Storage::_detail::UrlEncodePath(subdirectoryName));
+    builder.AppendPath(_internal::UrlEncodePath(subdirectoryName));
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(Storage::_detail::UrlEncodePath(subdirectoryName));
+    blobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
     return DataLakeDirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
   Azure::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
       const std::string& fileName,
       const std::string& destinationFilePath,
-      const RenameDataLakeFileOptions& options,
+      const RenameFileOptions& options,
       const Azure::Core::Context& context) const
   {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
-    if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
+    std::string destinationFileSystem;
+    if (options.DestinationFileSystem.HasValue())
     {
-      const auto& currentPath = m_pathUrl.GetPath();
-      std::string::const_iterator cur = currentPath.begin();
-      destinationFileSystem = _detail::GetSubstringTillDelimiter('/', currentPath, cur);
+      destinationFileSystem = options.DestinationFileSystem.Value();
     }
+    else
+    {
+      const std::string& currentPath = m_pathUrl.GetPath();
+      destinationFileSystem = currentPath.substr(0, currentPath.find('/'));
+    }
+
+    auto sourceDfsUrl = m_pathUrl;
+    sourceDfsUrl.AppendPath(_internal::UrlEncodePath(fileName));
+
     auto destinationDfsUrl = m_pathUrl;
-    destinationDfsUrl.SetPath(
-        destinationFileSystem.GetValue() + '/'
-        + Storage::_detail::UrlEncodePath(destinationFilePath));
+    destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
+    destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
 
     _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
+    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -110,40 +116,44 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource
-        = "/" + m_pathUrl.GetPath() + Storage::_detail::UrlEncodePath(fileName);
+    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
     auto result = _detail::DataLakeRestClient::Path::Create(
         destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
-    // At this point, there is not more exception thrown, meaning the rename is successful.
-    // Initialize the file client.
-    auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.SetPath(destinationDfsUrl.GetPath());
-    auto renamedFileClient
-        = DataLakeFileClient(std::move(destinationDfsUrl), std::move(blobClient), m_pipeline);
+
+    auto renamedBlobClient
+        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedFileClient = DataLakeFileClient(
+        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
     return Azure::Response<DataLakeFileClient>(
-        std::move(renamedFileClient), result.ExtractRawResponse());
+        std::move(renamedFileClient), std::move(result.RawResponse));
   }
 
   Azure::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
       const std::string& subdirectoryName,
       const std::string& destinationDirectoryPath,
-      const RenameDataLakeSubdirectoryOptions& options,
+      const RenameSubdirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
-    if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
+    std::string destinationFileSystem;
+    if (options.DestinationFileSystem.HasValue())
     {
-      const auto& currentPath = m_pathUrl.GetPath();
-      std::string::const_iterator cur = currentPath.begin();
-      destinationFileSystem = _detail::GetSubstringTillDelimiter('/', currentPath, cur);
+      destinationFileSystem = options.DestinationFileSystem.Value();
     }
+    else
+    {
+      const std::string& currentPath = m_pathUrl.GetPath();
+      destinationFileSystem = currentPath.substr(0, currentPath.find('/'));
+    }
+
+    auto sourceDfsUrl = m_pathUrl;
+    sourceDfsUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
+
     auto destinationDfsUrl = m_pathUrl;
-    destinationDfsUrl.SetPath(
-        destinationFileSystem.GetValue() + '/'
-        + Storage::_detail::UrlEncodePath(destinationDirectoryPath));
+    destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
+    destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
 
     _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = Models::PathRenameMode::Legacy;
+    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -154,37 +164,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource
-        = "/" + m_pathUrl.GetPath() + Storage::_detail::UrlEncodePath(subdirectoryName);
+    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
     auto result = _detail::DataLakeRestClient::Path::Create(
         destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
-    // At this point, there is not more exception thrown, meaning the rename is successful.
-    // Initialize the directory client.
-    auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.SetPath(destinationDfsUrl.GetPath());
-    auto renamedDirectoryClient
-        = DataLakeDirectoryClient(std::move(destinationDfsUrl), std::move(blobClient), m_pipeline);
+
+    auto renamedBlobClient
+        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedDirectoryClient = DataLakeDirectoryClient(
+        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
     return Azure::Response<DataLakeDirectoryClient>(
-        std::move(renamedDirectoryClient), result.ExtractRawResponse());
+        std::move(renamedDirectoryClient), std::move(result.RawResponse));
   }
 
-  Azure::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::Delete(
+  Azure::Response<Models::DeleteDirectoryResult> DataLakeDirectoryClient::Delete(
       bool recursive,
-      const DeleteDataLakeDirectoryOptions& options,
+      const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    DeleteDataLakePathOptions deleteOptions;
+    DeletePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Recursive = recursive;
     return DataLakePathClient::Delete(deleteOptions, context);
   }
 
-  Azure::Response<Models::DeleteDataLakeDirectoryResult> DataLakeDirectoryClient::DeleteIfExists(
+  Azure::Response<Models::DeleteDirectoryResult> DataLakeDirectoryClient::DeleteIfExists(
       bool recursive,
-      const DeleteDataLakeDirectoryOptions& options,
+      const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
-    DeleteDataLakePathOptions deleteOptions;
+    DeletePathOptions deleteOptions;
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Recursive = recursive;
     return DataLakePathClient::DeleteIfExists(deleteOptions, context);
@@ -196,7 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
-    protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
+    protocolLayerOptions.Resource = _detail::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
@@ -208,10 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (firstSlashPos == 0 || (firstSlashPos == currentPath.size() + 1U))
     {
       return _detail::DataLakeRestClient::FileSystem::ListPaths(
-          m_pathUrl,
-          *m_pipeline,
-          Storage::_detail::WithReplicaStatus(context),
-          protocolLayerOptions);
+          m_pathUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
     }
     else
     {
@@ -219,12 +224,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           = currentPath.substr(firstSlashPos + 1U, currentPath.size() - firstSlashPos - 1U);
       auto fileSystemUrl = m_pathUrl;
       fileSystemUrl.SetPath(currentPath.substr(
-          0U, currentPath.size() - protocolLayerOptions.Directory.GetValue().size() - 1U));
+          0U, currentPath.size() - protocolLayerOptions.Directory.Value().size() - 1U));
       return _detail::DataLakeRestClient::FileSystem::ListPaths(
-          fileSystemUrl,
-          *m_pipeline,
-          Storage::_detail::WithReplicaStatus(context),
-          protocolLayerOptions);
+          fileSystemUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
     }
   }
 

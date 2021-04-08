@@ -31,7 +31,7 @@ SOFTWARE.
 DOCTEST_GCC_SUPPRESS_WARNING("-Wfloat-equal")
 
 #define private public
-#include <azure/core/internal/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
 #undef private
 

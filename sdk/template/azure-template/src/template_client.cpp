@@ -7,5 +7,6 @@
 #include <string>
 
 using namespace Azure::Template;
+using namespace Azure::Template::_detail;
 
-std::string const TemplateClient::ClientVersion() { return PackageVersion::VersionString(); }
+std::string const TemplateClient::ClientVersion() { return PackageVersion::ToString(); }

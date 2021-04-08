@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const BlobRetentionPolicy& lhs, const BlobRetentionPolicy& rhs)
+  bool operator==(const RetentionPolicy& lhs, const RetentionPolicy& rhs)
   {
     if (lhs.IsEnabled != rhs.IsEnabled)
     {
@@ -20,21 +20,21 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     {
       return false;
     }
-    if (lhs.Days.HasValue() && rhs.Days.HasValue() && lhs.Days.GetValue() != rhs.Days.GetValue())
+    if (lhs.Days.HasValue() && rhs.Days.HasValue() && lhs.Days.Value() != rhs.Days.Value())
     {
       return false;
     }
     return true;
   }
 
-  bool operator==(const BlobCorsRule& lhs, const BlobCorsRule& rhs)
+  bool operator==(const CorsRule& lhs, const CorsRule& rhs)
   {
     return lhs.AllowedHeaders == rhs.AllowedHeaders && lhs.AllowedMethods == rhs.AllowedMethods
         && lhs.AllowedOrigins == rhs.AllowedOrigins && lhs.ExposedHeaders == rhs.ExposedHeaders
         && lhs.MaxAgeInSeconds == rhs.MaxAgeInSeconds;
   }
 
-  bool operator==(const BlobStaticWebsite& lhs, const BlobStaticWebsite& rhs)
+  bool operator==(const StaticWebsite& lhs, const StaticWebsite& rhs)
   {
     if (lhs.IsEnabled != rhs.IsEnabled)
     {
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
       return false;
     }
     if (lhs.DefaultIndexDocumentPath.HasValue() && rhs.DefaultIndexDocumentPath.HasValue()
-        && lhs.DefaultIndexDocumentPath.GetValue() != rhs.DefaultIndexDocumentPath.GetValue())
+        && lhs.DefaultIndexDocumentPath.Value() != rhs.DefaultIndexDocumentPath.Value())
     {
       return false;
     }
@@ -54,12 +54,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
       return false;
     }
     if (lhs.ErrorDocument404Path.HasValue() && rhs.ErrorDocument404Path.HasValue()
-        && lhs.ErrorDocument404Path.GetValue() != rhs.ErrorDocument404Path.GetValue())
+        && lhs.ErrorDocument404Path.Value() != rhs.ErrorDocument404Path.Value())
     {
       return false;
     }
     if (lhs.IndexDocument.HasValue() && rhs.IndexDocument.HasValue()
-        && lhs.IndexDocument.GetValue() != rhs.IndexDocument.GetValue())
+        && lhs.IndexDocument.Value() != rhs.IndexDocument.Value())
     {
       return false;
     }
@@ -113,14 +113,13 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res->RequestId.empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res->ServiceEndpoint.empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
 
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& container : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& container : res.Value.Items)
       {
         listContainers.insert(container.Name);
       }
@@ -136,13 +135,13 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(_detail::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res->ServiceEndpoint.empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
 
-      options.ContinuationToken = res->ContinuationToken;
-      for (const auto& container : res->Items)
+      options.ContinuationToken = res.Value.ContinuationToken;
+      for (const auto& container : res.Value.Items)
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_TRUE(container.Details.ETag.HasValue());
@@ -169,8 +168,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, GetProperties)
   {
     auto ret = m_blobServiceClient.GetProperties();
-    EXPECT_FALSE(ret->RequestId.empty());
-    auto properties = *ret;
+    auto properties = ret.Value;
     auto logging = properties.Logging;
     EXPECT_FALSE(logging.Version.empty());
     if (logging.RetentionPolicy.IsEnabled)
@@ -204,7 +202,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, SetProperties)
   {
-    auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
+    auto getServicePropertiesResult = m_blobServiceClient.GetProperties().Value;
     Blobs::Models::BlobServiceProperties properties;
     properties.Logging = getServicePropertiesResult.Logging;
     properties.HourMetrics = getServicePropertiesResult.HourMetrics;
@@ -239,7 +237,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.StaticWebsite.ErrorDocument404Path = "404.html";
     properties.StaticWebsite.DefaultIndexDocumentPath.Reset();
 
-    Blobs::Models::BlobCorsRule corsRule;
+    Blobs::Models::CorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
     corsRule.AllowedMethods = "GET,PUT";
     corsRule.AllowedHeaders = "x-ms-header1,x-ms-header2";
@@ -262,7 +260,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = *m_blobServiceClient.GetProperties();
+    auto downloadedProperties = m_blobServiceClient.GetProperties().Value;
     EXPECT_EQ(downloadedProperties.Logging.Version, properties.Logging.Version);
     EXPECT_EQ(downloadedProperties.Logging.Delete, properties.Logging.Delete);
     EXPECT_EQ(downloadedProperties.Logging.Read, properties.Logging.Read);
@@ -278,8 +276,8 @@ namespace Azure { namespace Storage { namespace Test {
         == properties.HourMetrics.IncludeApis.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.HourMetrics.IncludeApis.GetValue(),
-          properties.HourMetrics.IncludeApis.GetValue());
+          downloadedProperties.HourMetrics.IncludeApis.Value(),
+          properties.HourMetrics.IncludeApis.Value());
     }
     EXPECT_EQ(
         downloadedProperties.HourMetrics.RetentionPolicy, properties.HourMetrics.RetentionPolicy);
@@ -293,8 +291,8 @@ namespace Azure { namespace Storage { namespace Test {
         == properties.MinuteMetrics.IncludeApis.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.MinuteMetrics.IncludeApis.GetValue(),
-          properties.MinuteMetrics.IncludeApis.GetValue());
+          downloadedProperties.MinuteMetrics.IncludeApis.Value(),
+          properties.MinuteMetrics.IncludeApis.Value());
     }
     EXPECT_EQ(
         downloadedProperties.MinuteMetrics.RetentionPolicy,
@@ -306,8 +304,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (downloadedProperties.DefaultServiceVersion.HasValue())
     {
       EXPECT_EQ(
-          downloadedProperties.DefaultServiceVersion.GetValue(),
-          properties.DefaultServiceVersion.GetValue());
+          downloadedProperties.DefaultServiceVersion.Value(),
+          properties.DefaultServiceVersion.Value());
     }
     EXPECT_EQ(downloadedProperties.Cors, properties.Cors);
 
@@ -316,20 +314,18 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadedProperties.DeleteRetentionPolicy, properties.DeleteRetentionPolicy);
 
     auto res = m_blobServiceClient.SetProperties(originalProperties);
-    EXPECT_FALSE(res->RequestId.empty());
   }
 
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
-    auto accountInfo = *m_blobServiceClient.GetAccountInfo();
-    EXPECT_FALSE(accountInfo.RequestId.empty());
+    auto accountInfo = m_blobServiceClient.GetAccountInfo().Value;
     EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
     EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
     EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
 
     auto dataLakeServiceClient
         = Blobs::BlobServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString());
-    accountInfo = *dataLakeServiceClient.GetAccountInfo();
+    accountInfo = dataLakeServiceClient.GetAccountInfo().Value;
     EXPECT_TRUE(accountInfo.IsHierarchicalNamespaceEnabled);
   }
 
@@ -338,15 +334,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageException);
 
     auto keyCredential
-        = _detail::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto secondaryServiceClient
         = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
-    auto serviceStatistics = *secondaryServiceClient.GetStatistics();
-    EXPECT_FALSE(serviceStatistics.RequestId.empty());
+    auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
-      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.GetValue()));
+      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.Value()));
     }
   }
 
@@ -354,10 +349,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string containerName = LowercaseRandomString();
     auto containerClient = m_blobServiceClient.CreateBlobContainer(containerName);
-    EXPECT_NO_THROW(containerClient->GetProperties());
+    EXPECT_NO_THROW(containerClient.Value.GetProperties());
 
     m_blobServiceClient.DeleteBlobContainer(containerName);
-    EXPECT_THROW(containerClient->GetProperties(), StorageException);
+    EXPECT_THROW(containerClient.Value.GetProperties(), StorageException);
   }
 
   TEST_F(BlobServiceClientTest, UndeleteBlobContainer)
@@ -375,8 +370,8 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-        options.ContinuationToken = res->ContinuationToken;
-        for (const auto& container : res->Items)
+        options.ContinuationToken = res.Value.ContinuationToken;
+        for (const auto& container : res.Value.Items)
         {
           if (container.Name == containerName)
           {
@@ -389,11 +384,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(deletedContainerItem.Name, containerName);
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
     EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
-    EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
+    EXPECT_FALSE(deletedContainerItem.VersionId.Value().empty());
     EXPECT_TRUE(deletedContainerItem.Details.DeletedOn.HasValue());
-    EXPECT_TRUE(IsValidTime(deletedContainerItem.Details.DeletedOn.GetValue()));
+    EXPECT_TRUE(IsValidTime(deletedContainerItem.Details.DeletedOn.Value()));
     EXPECT_TRUE(deletedContainerItem.Details.RemainingRetentionDays.HasValue());
-    EXPECT_GE(deletedContainerItem.Details.RemainingRetentionDays.GetValue(), 0);
+    EXPECT_GE(deletedContainerItem.Details.RemainingRetentionDays.Value(), 0);
 
     std::string containerName2 = LowercaseRandomString();
     for (int i = 0; i < 60; ++i)
@@ -403,7 +398,7 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Storage::Blobs::UndeleteBlobContainerOptions options;
         options.DestinationBlobContainerName = containerName2;
         m_blobServiceClient.UndeleteBlobContainer(
-            deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue(), options);
+            deletedContainerItem.Name, deletedContainerItem.VersionId.Value(), options);
         break;
       }
       catch (StorageException& e)
@@ -432,11 +427,8 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
 
-    auto getUserDelegationKeyResult = blobServiceClient1.GetUserDelegationKey(sasExpiresOn);
+    auto userDelegationKey = blobServiceClient1.GetUserDelegationKey(sasExpiresOn).Value;
 
-    EXPECT_FALSE(getUserDelegationKeyResult->RequestId.empty());
-
-    auto userDelegationKey = getUserDelegationKeyResult->Key;
     EXPECT_FALSE(userDelegationKey.SignedObjectId.empty());
     EXPECT_FALSE(userDelegationKey.SignedTenantId.empty());
     EXPECT_TRUE(IsValidTime(userDelegationKey.SignedStartsOn));

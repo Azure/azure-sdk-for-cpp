@@ -43,6 +43,10 @@ namespace Azure { namespace Storage { namespace Test {
     return x * 1024 * 1024 * 1024 * 1024;
   }
 
+  std::string AppendQueryParameters(
+      const Azure::Core::Url& url,
+      const std::string& queryParameters);
+
   const static Azure::ETag DummyETag("0x8D83B58BDF51D75");
   const static Azure::ETag DummyETag2("0x8D812645BFB0CDE");
   constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
@@ -68,7 +72,7 @@ namespace Azure { namespace Storage { namespace Test {
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
   {
     Azure::Core::Context context;
-    return Azure::Core::IO::BodyStream::ReadToEnd(*stream, context);
+    return stream->ReadToEnd(context);
   }
 
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream>&& stream)
@@ -86,7 +90,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   inline std::string Base64EncodeText(const std::string& text)
   {
-    return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
+    return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
   }
 
 }}} // namespace Azure::Storage::Test

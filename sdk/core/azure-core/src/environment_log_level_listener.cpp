@@ -25,8 +25,8 @@
 #include <iostream>
 #include <string>
 
-using namespace Azure::Core;
-using namespace Azure::Core::_detail;
+using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::Diagnostics::_detail;
 
 namespace {
 Logger::Level const* GetEnvironmentLogLevel()
@@ -51,7 +51,7 @@ Logger::Level const* GetEnvironmentLogLevel()
 
     if (envVar)
     {
-      auto const logLevelStr = _internal::StringExtensions::ToLower(envVar);
+      auto const logLevelStr = Azure::Core::_internal::StringExtensions::ToLower(envVar);
 
       // See https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK
       // And

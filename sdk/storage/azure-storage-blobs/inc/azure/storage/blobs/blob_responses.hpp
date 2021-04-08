@@ -24,45 +24,40 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::BlobType BlobType;
       Azure::Core::Http::HttpRange ContentRange;
       int64_t BlobSize = 0;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       DownloadBlobDetails Details;
     };
 
     using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
-    struct AcquireBlobLeaseResult
+    struct AcquireLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       std::string LeaseId;
     };
 
-    struct BreakBlobLeaseResult
+    struct BreakLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
     };
 
-    struct ChangeBlobLeaseResult
+    struct ChangeLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       std::string LeaseId;
     };
 
-    struct ReleaseBlobLeaseResult
+    struct ReleaseLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
     };
 
-    struct RenewBlobLeaseResult
+    struct RenewLeaseResult
     {
-      std::string RequestId;
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       std::string LeaseId;
@@ -70,32 +65,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   } // namespace Models
 
-  class StartCopyBlobOperation : public Azure::Core::Operation<Models::GetBlobPropertiesResult> {
+  class StartBlobCopyOperation : public Azure::Core::Operation<Models::BlobProperties> {
   public:
-    std::string RequestId;
-    Azure::ETag ETag;
-    Azure::DateTime LastModified;
-    std::string CopyId;
-    Models::CopyStatus CopyStatus;
-    Azure::Core::Nullable<std::string> VersionId;
+    Models::BlobProperties Value() const override { return m_pollResult; }
 
-  public:
-    Models::GetBlobPropertiesResult Value() const override { return m_pollResult; }
+    StartBlobCopyOperation() = default;
 
-    /**
-     * @brief Get the raw HTTP response.
-     * @return A pointer to #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse* GetRawResponse() const override { return m_rawResponse.get(); }
+    StartBlobCopyOperation(StartBlobCopyOperation&&) = default;
 
-    StartCopyBlobOperation() = default;
+    StartBlobCopyOperation& operator=(StartBlobCopyOperation&&) = default;
 
-    StartCopyBlobOperation(StartCopyBlobOperation&&) = default;
-
-    StartCopyBlobOperation& operator=(StartCopyBlobOperation&&) = default;
-
-    ~StartCopyBlobOperation() override {}
+    ~StartBlobCopyOperation() override {}
 
   private:
     std::string GetResumeToken() const override
@@ -107,13 +87,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context& context) override;
 
-    Azure::Response<Models::GetBlobPropertiesResult> PollUntilDoneInternal(
+    Azure::Response<Models::BlobProperties> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
-    std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
+    /**
+     * @brief Get the raw HTTP response.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
     std::shared_ptr<BlobClient> m_blobClient;
-    Models::GetBlobPropertiesResult m_pollResult;
+    Models::BlobProperties m_pollResult;
 
     friend class Blobs::BlobClient;
     friend class Blobs::PageBlobClient;

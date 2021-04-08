@@ -3,7 +3,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <gtest/gtest.h>
@@ -14,6 +14,7 @@
 using namespace Azure::Core;
 using namespace Azure::Core::_internal;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
 
 struct FakeTransport : public HttpTransport
 {
@@ -82,15 +83,11 @@ TEST(ClientOptions, copyWithOperator)
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
   result = copyOptions.PerOperationPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(3, result->GetMajorVersion());
-  EXPECT_EQ(3, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
   result = copyOptions.PerRetryPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(6, result->GetMajorVersion());
-  EXPECT_EQ(6, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -117,15 +114,11 @@ TEST(ClientOptions, copyWithConstructor)
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
   result = copyOptions.PerOperationPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(3, result->GetMajorVersion());
-  EXPECT_EQ(3, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
   result = copyOptions.PerRetryPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(6, result->GetMajorVersion());
-  EXPECT_EQ(6, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -159,15 +152,11 @@ TEST(ClientOptions, copyDerivedClassConstructor)
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
   result = copyOptions.PerOperationPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(3, result->GetMajorVersion());
-  EXPECT_EQ(3, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
   result = copyOptions.PerRetryPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(6, result->GetMajorVersion());
-  EXPECT_EQ(6, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -201,15 +190,11 @@ TEST(ClientOptions, copyDerivedClassOperator)
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
   result = copyOptions.PerOperationPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(3, result->GetMajorVersion());
-  EXPECT_EQ(3, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
   result = copyOptions.PerRetryPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(6, result->GetMajorVersion());
-  EXPECT_EQ(6, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -243,14 +228,10 @@ TEST(ClientOptions, moveConstruct)
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
   result = copyOptions.PerOperationPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(3, result->GetMajorVersion());
-  EXPECT_EQ(3, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
   result = copyOptions.PerRetryPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::GetApplicationContext());
-  EXPECT_EQ(6, result->GetMajorVersion());
-  EXPECT_EQ(6, result->GetMinorVersion());
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
