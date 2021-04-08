@@ -14,12 +14,12 @@
 
 #include "curl_connection_private.hpp"
 
+#include <atomic>
 #include <curl/curl.h>
 #include <list>
 #include <map>
 #include <memory>
 #include <mutex>
-#include <atomic>
 
 #if defined(TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members
