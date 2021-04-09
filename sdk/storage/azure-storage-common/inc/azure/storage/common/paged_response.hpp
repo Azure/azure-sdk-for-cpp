@@ -64,12 +64,7 @@ namespace Azure { namespace Storage {
       using reference = value_type&;
 
       explicit Iterator(pointer ptr) : m_ptr(ptr) {}
-      Iterator(const Iterator&) = default;
-      Iterator(Iterator&&) = default;
-      ~Iterator() = default;
 
-      Iterator& operator=(const Iterator& other) = default;
-      Iterator& operator=(Iterator&& other) = default;
       bool operator==(const Iterator& other) const { return m_ptr == other.m_ptr; }
       bool operator!=(const Iterator& other) const { return !(*this == other); }
 
