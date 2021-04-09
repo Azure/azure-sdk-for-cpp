@@ -27,16 +27,16 @@ namespace Azure { namespace Storage {
           // NextPage() should NEVER be called if HasMore() is false
           std::abort(); // or throw std::out_of_range
         }
+
+        static_assert(
+            std::is_base_of<PageResult, Derived>::value,
+            "The template argument \"Derived\" should derive from PageResult<Derived>.");
+
         static_cast<Derived*>(this)->OnNextPage(m_context);
       }
 
     protected:
-      PageResult()
-      {
-        static_assert(
-            std::is_base_of<PageResult, Derived>::value,
-            "The template argument \"Derived\" should derive from PageResult<Derived>.");
-      }
+      PageResult() = default;
       ~PageResult() = default;
       PageResult(PageResult&&) = default;
       PageResult& operator=(PageResult&&) = default;
@@ -48,7 +48,12 @@ namespace Azure { namespace Storage {
 
   template <class T> class Pageable {
   public:
-    explicit Pageable(T value) : m_value(std::move(value)) {}
+    explicit Pageable(T value) : m_value(std::move(value))
+    {
+      static_assert(
+          std::is_base_of<_internal::PageResult<T>, T>::value,
+          "The template argument should derive from PageResult");
+    }
 
     class Iterator {
     public:
