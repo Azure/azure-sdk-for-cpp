@@ -202,6 +202,18 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           {_detail::KeysPath, name}));
 }
 
+Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::ResumeDeleteKey(
+    std::string const& resumeToken,
+    Azure::Core::Context const& context) const
+{
+  Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> deletedKeyResponse(
+      DeletedKey(resumeToken), nullptr);
+  Azure::Security::KeyVault::Keys::DeleteKeyOperation operation(
+      m_pipeline, std::move(deletedKeyResponse));
+  operation.Poll(context);
+  return operation;
+}
+
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const
