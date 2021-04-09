@@ -261,6 +261,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
+  Pageable<ListBlobsPageResult> BlobContainerClient::ListBlobs(
+      const ListBlobsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    ListBlobsPageResult pageResult;
+    pageResult.NextPageToken = options.ContinuationToken.ValueOr(std::string());
+    pageResult.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
+    pageResult.m_operationOptions = options;
+    pageResult.m_context = _internal::WithReplicaStatus(context);
+
+    // Populate the first page
+    pageResult.OnNextPage(pageResult.m_context);
+
+    return Pageable<ListBlobsPageResult>(std::move(pageResult));
+  }
+
   Azure::Response<Models::ListBlobsByHierarchySinglePageResult>
   BlobContainerClient::ListBlobsByHierarchySinglePage(
       const std::string& delimiter,

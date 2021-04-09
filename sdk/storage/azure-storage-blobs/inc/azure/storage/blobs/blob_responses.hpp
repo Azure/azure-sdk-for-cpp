@@ -9,11 +9,14 @@
 #include <vector>
 
 #include <azure/core/operation.hpp>
+#include <azure/storage/common/paged_response.hpp>
 
+#include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  class BlobContainerClient;
   class BlobClient;
   class PageBlobClient;
 
@@ -106,5 +109,22 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class Blobs::BlobClient;
     friend class Blobs::PageBlobClient;
+  };
+
+  class ListBlobsPageResult : public _internal::PageResult<ListBlobsPageResult> {
+  public:
+    std::string ServiceEndpoint;
+    std::string BlobContainerName;
+    std::string Prefix;
+    std::vector<Models::BlobItem> Items;
+
+  private:
+    std::shared_ptr<BlobContainerClient> m_blobContainerClient;
+    ListBlobsOptions m_operationOptions;
+
+    void OnNextPage(const Azure::Core::Context& context);
+
+    friend class Blobs::BlobContainerClient;
+    friend _internal::PageResult<ListBlobsPageResult>;
   };
 }}} // namespace Azure::Storage::Blobs

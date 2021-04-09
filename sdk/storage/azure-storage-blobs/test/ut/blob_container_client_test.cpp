@@ -227,6 +227,66 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
+  TEST_F(BlobContainerClientTest, ListBlobsFlatPageable)
+  {
+    const std::string prefix1 = RandomString();
+    const std::string baseName = "blob";
+
+    std::set<std::string> blobs;
+
+    for (int i = 0; i < 10; ++i)
+    {
+      std::string blobName = prefix1 + baseName + std::to_string(i);
+      auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+      auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
+      blobClient.Upload(emptyContent);
+      blobs.insert(blobName);
+    }
+
+    {
+      // General
+      std::set<std::string> listBlobs;
+      Azure::Storage::Blobs::ListBlobsOptions options;
+      options.PageSizeHint = 3;
+      for (auto& pageResult : m_blobContainerClient->ListBlobs(options))
+      {
+        for (auto& b : pageResult.Items)
+        {
+          listBlobs.emplace(b.Name);
+        }
+      }
+      EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), blobs.begin(), blobs.end()));
+    }
+
+    {
+      // With continuation token
+      std::set<std::string> listBlobs;
+      Azure::Storage::Blobs::ListBlobsOptions options;
+      options.PageSizeHint = 3;
+      for (auto& pageResult : m_blobContainerClient->ListBlobs(options))
+      {
+        for (auto& b : pageResult.Items)
+        {
+          listBlobs.emplace(b.Name);
+        }
+        ASSERT_TRUE(pageResult.HasMore());
+        if (pageResult.HasMore())
+        {
+          options.ContinuationToken = pageResult.NextPageToken;
+          break;
+        }
+      }
+      for (auto& pageResult : m_blobContainerClient->ListBlobs(options))
+      {
+        for (auto& b : pageResult.Items)
+        {
+          listBlobs.emplace(b.Name);
+        }
+      }
+      EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), blobs.begin(), blobs.end()));
+    }
+  }
+
   TEST_F(BlobContainerClientTest, ListBlobsHierarchy)
   {
     const std::string delimiter = "/";

@@ -213,6 +213,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    Pageable<ListBlobsPageResult> ListBlobs(
+        const ListBlobsOptions& options = ListBlobsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
@@ -308,6 +312,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
+    friend class ListBlobsPageResult;
   };
 
 }}} // namespace Azure::Storage::Blobs

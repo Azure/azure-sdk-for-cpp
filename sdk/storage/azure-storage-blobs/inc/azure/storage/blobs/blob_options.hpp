@@ -357,6 +357,39 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobContainerClient::ListBlobs and
+   * BlobContainerClient::ListBlobsByHierarchy.
+   */
+  struct ListBlobsOptions
+  {
+    /**
+     * @brief Specifies a string that filters the results to return only blobs whose
+     * name begins with the specified prefix.
+     */
+    Azure::Nullable<std::string> Prefix;
+
+    /**
+     * @brief A string value that identifies the portion of the list of blobs to be
+     * returned with the next listing operation. The operation returns a non-empty
+     * BlobsFlatSegment.ContinuationToken value if the listing operation did not return all blobs
+     * remaining to be listed with the current segment. The ContinuationToken value can be used as
+     * the value for the ContinuationToken parameter in a subsequent call to request the next
+     * segment of list items.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * @brief Specifies the maximum number of blobs to return.
+     */
+    Azure::Nullable<int32_t> PageSizeHint;
+
+    /**
+     * @brief Specifies one or more datasets to include in the response.
+     */
+    Models::ListBlobsIncludeFlags Include = Models::ListBlobsIncludeFlags::None;
+  };
+
+  /**
    * @brief Optional parameters for BlobContainerClient::GetAccessPolicy.
    */
   struct GetBlobContainerAccessPolicyOptions
