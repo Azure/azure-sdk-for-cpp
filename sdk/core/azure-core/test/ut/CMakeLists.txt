@@ -78,7 +78,7 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  # - C6323: Google comparisons 
+  # - C6326: Google comparisons 
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
@@ -117,7 +117,8 @@ if(BUILD_TRANSPORT_CURL)
 
   if (MSVC)
     # warning C4389: '==': signed/unsigned mismatch
-    target_compile_options(azure-core-libcurl-test PUBLIC /wd4389)
+    # warning C6326: Google comparisons 
+    target_compile_options(azure-core-libcurl-test PUBLIC /wd4389 /wd6326 )
   endif()
   
   # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
