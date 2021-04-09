@@ -1110,7 +1110,7 @@ std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
 uint64_t CurlConnectionPool::g_connectionCounter = 0;
-std::atomic<bool> CurlConnectionPool::g_isCleanConnectionsRunning(false);
+std::thread::id CurlConnectionPool::CleanThreadId;
 
 namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
@@ -1332,9 +1332,8 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   hostPool.push_front(std::move(connection));
   CurlConnectionPool::g_connectionCounter += 1;
   // Check if there's no cleaner running and started
-  if (!CurlConnectionPool::g_isCleanConnectionsRunning)
+  if (CurlConnectionPool::CleanThreadId == std::thread::id())
   {
-    CurlConnectionPool::g_isCleanConnectionsRunning = true;
     CurlConnectionPool::CleanUp();
   }
 }
@@ -1350,14 +1349,6 @@ void CurlConnectionPool::CleanUp()
       std::this_thread::sleep_for(
           std::chrono::milliseconds(_detail::DefaultCleanerIntervalMilliseconds));
 
-      // while sleeping, it is allowed to explicitly prevent the cleaner to run and stop it, for
-      // example, when the application exits, and the cleaner is sleeping, we don't want it to wake
-      // up and try to access de-allocated memory.
-      if (!CurlConnectionPool::g_isCleanConnectionsRunning)
-      {
-        return;
-      }
-
       {
         // take mutex for reading the pool
         std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
@@ -1365,7 +1356,7 @@ void CurlConnectionPool::CleanUp()
         if (CurlConnectionPool::g_connectionCounter == 0)
         {
           // stop the cleaner since there are no connections
-          CurlConnectionPool::g_isCleanConnectionsRunning = false;
+          CurlConnectionPool::CleanThreadId = std::thread::id();
           return;
         }
 
@@ -1413,6 +1404,6 @@ void CurlConnectionPool::CleanUp()
     }
   });
 
-  // let thread run independent. It will be done once ther is not connections in the pool
-  backgroundCleanerThread.detach();
+  //
+  CurlConnectionPool::CleanThreadId = backgroundCleanerThread.get_id();
 }

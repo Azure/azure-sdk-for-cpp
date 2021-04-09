@@ -20,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <thread>
 
 #if defined(TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members
@@ -50,6 +51,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     AZ_CORE_DLLEXPORT static CurlGlobalStateForAzureSdk CurlGlobalState;
 
   public:
+    
+    AZ_CORE_DLLEXPORT static std::thread::id CleanThreadId;
+    
     /**
      * @brief Mutex for accessing connection pool for thread-safe reading and writing.
      */
@@ -97,8 +101,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Class can't have instances.
     CurlConnectionPool() = delete;
 
-    static void StopCleaner() { g_isCleanConnectionsRunning = false; }
-
   private:
     /**
      * Review all connections in the pool and removes old connections that might be already
@@ -107,7 +109,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     static void CleanUp();
 
     AZ_CORE_DLLEXPORT static uint64_t g_connectionCounter;
-    AZ_CORE_DLLEXPORT static std::atomic<bool> g_isCleanConnectionsRunning;
+    
     // Removes all connections and indexes
     static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
 
@@ -132,7 +134,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     ~CurlGlobalStateForAzureSdk()
     {
-      CurlConnectionPool::StopCleaner();
+      
+      if(CurlConnectionPool::CleanThreadId != std::thread::id()) {
+        // stop cleaning thread
+        .j
+      }
       curl_global_cleanup();
     }
   };
