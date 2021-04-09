@@ -48,7 +48,8 @@ add_executable (
 )
 
 if (MSVC)
-  target_compile_options(azure-security-keyvault-keys-test-live PUBLIC /wd6326 /wd26495 /wd26812)
+  # warning C4389: '==': signed/unsigned mismatch
+  target_compile_options(azure-security-keyvault-keys-test-live PUBLIC /wd6326 /wd26495 /wd26812 /wd4389)
 endif()
 
 target_link_libraries(azure-security-keyvault-keys-test-live PRIVATE azure-security-keyvault-keys azure-identity gtest gmock)
