@@ -28,7 +28,8 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Key, payload[_detail::KeyPropertyName]);
 
   // hsm
-  JsonOptional::SetFromNullable(importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
+  JsonOptional::SetFromNullable(
+      importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
 
   // attributes
   JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
