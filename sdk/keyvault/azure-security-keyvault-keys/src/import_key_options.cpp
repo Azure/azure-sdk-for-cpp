@@ -28,36 +28,36 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Key, payload[_detail::KeyPropertyName]);
 
   // hsm
-  SetFromNullable(importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
+  JsonOptional::SetFromNullable(importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
 
   // attributes
-  SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
       importKeyOptions.Properties.CreatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::CreatedPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
-  SetFromNullable(
+  JsonOptional::SetFromNullable(
       importKeyOptions.Properties.Enabled,
       payload[_detail::AttributesPropertyName],
       _detail::EnabledPropertyName);
-  SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
       importKeyOptions.Properties.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
-  SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
       importKeyOptions.Properties.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
-  SetFromNullable(
+  JsonOptional::SetFromNullable(
       importKeyOptions.Properties.RecoverableDays,
       payload[_detail::AttributesPropertyName],
       _detail::RecoverableDaysPropertyName);
 
   payload[_detail::RecoveryLevelPropertyName] = importKeyOptions.Properties.RecoveryLevel;
 
-  SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
       importKeyOptions.Properties.UpdatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::UpdatedPropertyName,

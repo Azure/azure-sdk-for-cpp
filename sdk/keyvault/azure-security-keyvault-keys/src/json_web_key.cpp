@@ -38,21 +38,53 @@ static inline void AssignBytesIfExists(
         return Base64Url::Base64UrlDecode(value);
       });
 }
+
+static inline void WriteJsonIfVectorHasData(
+    std::vector<uint8_t> const& srcVector,
+    Azure::Core::Json::_internal::json& jsonKey,
+    std::string const& keyName)
+{
+  JsonOptional::SetFromIfPredicate<std::vector<uint8_t> const&>(
+      srcVector,
+      [](std::vector<uint8_t> const& value) { return value.size() > 0; },
+      jsonKey,
+      keyName,
+      Base64Url::Base64UrlEncode);
+}
 } // namespace
 
 void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeySerialize(
     JsonWebKey const& jwk,
     Azure::Core::Json::_internal::json& destJson)
 {
+  // kty
   destJson[_detail::KeyTypePropertyName] = KeyType::KeyTypeToString(jwk.KeyType);
-  destJson[_detail::NPropertyName] = Base64Url::Base64UrlEncode(jwk.N);
-  destJson[_detail::EPropertyName] = Base64Url::Base64UrlEncode(jwk.E);
-  destJson[_detail::DPropertyName] = Base64Url::Base64UrlEncode(jwk.D);
-  destJson[_detail::DPPropertyName] = Base64Url::Base64UrlEncode(jwk.DP);
-  destJson[_detail::DQPropertyName] = Base64Url::Base64UrlEncode(jwk.DQ);
-  destJson[_detail::QIPropertyName] = Base64Url::Base64UrlEncode(jwk.QI);
-  destJson[_detail::PPropertyName] = Base64Url::Base64UrlEncode(jwk.P);
-  destJson[_detail::QPropertyName] = Base64Url::Base64UrlEncode(jwk.Q);
+
+  // ops
+  for (KeyOperation op : jwk.KeyOperations())
+  {
+    destJson[_detail::KeyOpsPropertyName].push_back(op.ToString());
+  }
+
+  // curve name
+  JsonOptional::SetFromNullable<KeyCurveName, std::string>(
+      jwk.CurveName, destJson, _detail::CurveNamePropertyName, [](KeyCurveName const& value) {
+        return value.ToString();
+      });
+
+  // fields
+  WriteJsonIfVectorHasData(jwk.N, destJson, _detail::NPropertyName);
+  WriteJsonIfVectorHasData(jwk.E, destJson, _detail::EPropertyName);
+  WriteJsonIfVectorHasData(jwk.D, destJson, _detail::DPropertyName);
+  WriteJsonIfVectorHasData(jwk.DP, destJson, _detail::DPPropertyName);
+  WriteJsonIfVectorHasData(jwk.DQ, destJson, _detail::DQPropertyName);
+  WriteJsonIfVectorHasData(jwk.QI, destJson, _detail::QIPropertyName);
+  WriteJsonIfVectorHasData(jwk.P, destJson, _detail::PPropertyName);
+  WriteJsonIfVectorHasData(jwk.Q, destJson, _detail::QPropertyName);
+  WriteJsonIfVectorHasData(jwk.X, destJson, _detail::XPropertyName);
+  WriteJsonIfVectorHasData(jwk.Y, destJson, _detail::YPropertyName);
+  WriteJsonIfVectorHasData(jwk.K, destJson, _detail::KPropertyName);
+  WriteJsonIfVectorHasData(jwk.T, destJson, _detail::TPropertyName);
 }
 
 void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebDeserialize(
@@ -88,9 +120,9 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebDese
     AssignBytesIfExists(jsonKey, _detail::PPropertyName, srcKey.P);
     AssignBytesIfExists(jsonKey, _detail::QPropertyName, srcKey.Q);
     AssignBytesIfExists(jsonKey, _detail::DPropertyName, srcKey.D);
-    // AssignBytesIfExists(jsonKey, _detail::KPropertyName, srcKey.K);
-    // AssignBytesIfExists(jsonKey, _detail::TPropertyName, srcKey.T);
-    // AssignBytesIfExists(jsonKey, _detail::XPropertyName, srcKey.X);
-    // AssignBytesIfExists(jsonKey, _detail::YPropertyName, srcKey.Y);
+    AssignBytesIfExists(jsonKey, _detail::KPropertyName, srcKey.K);
+    AssignBytesIfExists(jsonKey, _detail::TPropertyName, srcKey.T);
+    AssignBytesIfExists(jsonKey, _detail::XPropertyName, srcKey.X);
+    AssignBytesIfExists(jsonKey, _detail::YPropertyName, srcKey.Y);
   }
 }

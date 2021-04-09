@@ -99,31 +99,44 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         destination = decorator(jsonKey[key].get<T>());
       }
     }
+
+    template <class T>
+    static inline void SetFromIfPredicate(
+        T const& source,
+        std::function<bool(T const&)> predicate,
+        Azure::Core::Json::_internal::json& jsonKey,
+        std::string const& keyName,
+        std::function<std::string(T const&)> decorator)
+    {
+      if (predicate(source))
+      {
+        jsonKey[keyName] = decorator(source);
+      }
+    }
+
+    template <class T, class R>
+    static inline void SetFromNullable(
+        Azure::Nullable<T> const& source,
+        Azure::Core::Json::_internal::json& jsonKey,
+        std::string const& keyName,
+        std::function<R(T const&)> factory)
+    {
+      if (source)
+      {
+        jsonKey[keyName] = factory(source.Value());
+      }
+    }
+
+    template <class T>
+    static inline void SetFromNullable(
+        Azure::Nullable<T> const& source,
+        Azure::Core::Json::_internal::json& jsonKey,
+        std::string const& keyName)
+    {
+      if (source)
+      {
+        jsonKey[keyName] = source.Value();
+      }
+    }
   };
-
-  template <class T, class R>
-  static inline void SetFromNullable(
-      Azure::Nullable<T> const& source,
-      Azure::Core::Json::_internal::json& jsonKey,
-      std::string const& keyName,
-      std::function<R(T const&)> factory)
-  {
-    if (source)
-    {
-      jsonKey[keyName] = factory(source.Value());
-    }
-  }
-
-  template <class T>
-  static inline void SetFromNullable(
-      Azure::Nullable<T> const& source,
-      Azure::Core::Json::_internal::json& jsonKey,
-      std::string const& keyName)
-  {
-    if (source)
-    {
-      jsonKey[keyName] = source.Value();
-    }
-  }
-
 }}}} // namespace Azure::Core::Json::_internal
