@@ -263,19 +263,15 @@ namespace Azure { namespace Storage { namespace Test {
       std::set<std::string> listBlobs;
       Azure::Storage::Blobs::ListBlobsOptions options;
       options.PageSizeHint = 3;
-      for (auto& pageResult : m_blobContainerClient->ListBlobs(options))
+      auto firstPageResult = std::move(*m_blobContainerClient->ListBlobs(options).begin());
+
+      for (auto& b : firstPageResult.Items)
       {
-        for (auto& b : pageResult.Items)
-        {
-          listBlobs.emplace(b.Name);
-        }
-        ASSERT_TRUE(pageResult.HasMore());
-        if (pageResult.HasMore())
-        {
-          options.ContinuationToken = pageResult.NextPageToken;
-          break;
-        }
+        listBlobs.emplace(b.Name);
       }
+      ASSERT_TRUE(firstPageResult.HasMore());
+      options.ContinuationToken = firstPageResult.NextPageToken;
+
       for (auto& pageResult : m_blobContainerClient->ListBlobs(options))
       {
         for (auto& b : pageResult.Items)
