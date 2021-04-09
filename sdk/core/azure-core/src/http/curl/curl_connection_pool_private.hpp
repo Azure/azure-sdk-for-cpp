@@ -15,6 +15,7 @@
 #include "curl_connection_private.hpp"
 
 #include <atomic>
+#include <condition_variable>
 #include <curl/curl.h>
 #include <list>
 #include <map>
@@ -31,9 +32,6 @@ namespace Azure { namespace Core { namespace Test {
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-  // In charge of calling the libcurl global functions for the Azure SDK
-  struct CurlGlobalStateForAzureSdk;
-
   /**
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
    * more than one request. Use this component when connections are not re-used by default.
@@ -46,18 +44,36 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
 #endif
-  private:
-    // The cttor and dttor of this member makes sure of calling the libcurl global init and cleanup
-    AZ_CORE_DLLEXPORT static CurlGlobalStateForAzureSdk CurlGlobalState;
 
   public:
-    
-    AZ_CORE_DLLEXPORT static std::thread::id CleanThreadId;
-    
+    /**
+     * @brief A handler for the clean thread.
+     *
+     */
+    AZ_CORE_DLLEXPORT static std::thread g_cleanThread;
+
     /**
      * @brief Mutex for accessing connection pool for thread-safe reading and writing.
      */
     AZ_CORE_DLLEXPORT static std::mutex ConnectionPoolMutex;
+
+    /**
+     * @brief Sync for main thread and clean thread using a conditional variable.
+     *
+     */
+    AZ_CORE_DLLEXPORT static std::mutex CleanThreadMutex;
+
+    /**
+     * @brief Define if the clean thread is cancelled.
+     *
+     */
+    AZ_CORE_DLLEXPORT static bool CleanThreadCancelled;
+
+    /**
+     * @brief Used to sleep and wake in the clean thread.
+     *
+     */
+    AZ_CORE_DLLEXPORT static std::condition_variable ConditionalVariableForCleanThread;
 
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
@@ -109,7 +125,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     static void CleanUp();
 
     AZ_CORE_DLLEXPORT static uint64_t g_connectionCounter;
-    
+
     // Removes all connections and indexes
     static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
 
@@ -126,21 +142,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     {
       return CurlConnectionPool::ConnectionPoolIndex.size();
     };
-  };
-
-  struct CurlGlobalStateForAzureSdk
-  {
-    CurlGlobalStateForAzureSdk() { curl_global_init(CURL_GLOBAL_ALL); }
-
-    ~CurlGlobalStateForAzureSdk()
-    {
-      
-      if(CurlConnectionPool::CleanThreadId != std::thread::id()) {
-        // stop cleaning thread
-        .j
-      }
-      curl_global_cleanup();
-    }
   };
 
 }}}} // namespace Azure::Core::Http::_detail

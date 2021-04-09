@@ -180,6 +180,33 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 
   return httpRequest;
 }
+
+struct CurlGlobalStateForAzureSdk
+{
+  CurlGlobalStateForAzureSdk() { curl_global_init(CURL_GLOBAL_ALL); }
+
+  ~CurlGlobalStateForAzureSdk()
+  {
+    using namespace Azure::Core::Http::_detail;
+    if (CurlConnectionPool::g_cleanThread.joinable())
+    {
+      // stop cleaning thread
+      {
+        // Get a lock for the cleanThread. If the cleanThread is running, we will wait until it go
+        // to sleep and release the lock. Then we take the lock and update the cancelled flag
+        std::lock_guard<std::mutex> look(CurlConnectionPool::CleanThreadMutex);
+        CurlConnectionPool::CleanThreadCancelled = true;
+      }
+      // Signal clean thread to wake up
+      CurlConnectionPool::ConditionalVariableForCleanThread.notify_one();
+      // join thread
+      CurlConnectionPool::g_cleanThread.join();
+    }
+    curl_global_cleanup();
+  }
+};
+AZ_CORE_DLLEXPORT static CurlGlobalStateForAzureSdk globalState;
+
 } // namespace
 
 using Azure::Core::Context;
@@ -1110,7 +1137,10 @@ std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
 uint64_t CurlConnectionPool::g_connectionCounter = 0;
-std::thread::id CurlConnectionPool::CleanThreadId;
+std::thread CurlConnectionPool::g_cleanThread;
+std::mutex CurlConnectionPool::CleanThreadMutex;
+std::condition_variable CurlConnectionPool::ConditionalVariableForCleanThread;
+bool CurlConnectionPool::CleanThreadCancelled = false;
 
 namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
@@ -1332,9 +1362,9 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   hostPool.push_front(std::move(connection));
   CurlConnectionPool::g_connectionCounter += 1;
   // Check if there's no cleaner running and started
-  if (CurlConnectionPool::CleanThreadId == std::thread::id())
+  if (!CurlConnectionPool::g_cleanThread.joinable())
   {
-    CurlConnectionPool::CleanUp();
+    // CurlConnectionPool::CleanUp();
   }
 }
 
@@ -1342,12 +1372,24 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 // Thread will keep running while there are at least one connection in the pool
 void CurlConnectionPool::CleanUp()
 {
-  std::thread backgroundCleanerThread([]() {
+  CurlConnectionPool::g_cleanThread = std::thread([]() {
     for (;;)
     {
-      // wait before trying to clean
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(_detail::DefaultCleanerIntervalMilliseconds));
+      {
+        // Take a lock for calling wait_until. If wait times out or it is awaken and the cancelled
+        // flag is true, the thread won't continue. The lock is released
+        std::unique_lock<std::mutex> lock(CurlConnectionPool::CleanThreadMutex);
+        // Wait the defined default time OR to the signal from the conditional variable.
+        if (CurlConnectionPool::ConditionalVariableForCleanThread.wait_until(
+                lock,
+                std::chrono::steady_clock::now()
+                    + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
+                []() { return CurlConnectionPool::CleanThreadCancelled; }))
+        {
+          // Cancelled by another thead.
+          return;
+        }
+      }
 
       {
         // take mutex for reading the pool
@@ -1356,7 +1398,6 @@ void CurlConnectionPool::CleanUp()
         if (CurlConnectionPool::g_connectionCounter == 0)
         {
           // stop the cleaner since there are no connections
-          CurlConnectionPool::CleanThreadId = std::thread::id();
           return;
         }
 
@@ -1403,7 +1444,4 @@ void CurlConnectionPool::CleanUp()
       }
     }
   });
-
-  //
-  CurlConnectionPool::CleanThreadId = backgroundCleanerThread.get_id();
 }
