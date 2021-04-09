@@ -117,7 +117,8 @@ if(BUILD_TRANSPORT_CURL)
 
   if (MSVC)
     # warning C4389: '==': signed/unsigned mismatch
-    target_compile_options(azure-core-libcurl-test PUBLIC /wd4389)
+    # # - C6323: Google comparisons 
+    target_compile_options(azure-core-libcurl-test PUBLIC /wd4389 /wd6323)
   endif()
   
   # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
