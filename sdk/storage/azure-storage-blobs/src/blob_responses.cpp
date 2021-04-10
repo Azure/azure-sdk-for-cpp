@@ -61,6 +61,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   void ListBlobsPageResult::OnNextPage(const Azure::Core::Context& context)
   {
+    auto contextRef = std::cref(context);
+    if (&context == &Azure::Core::Context::GetApplicationContext())
+    {
+      // Called via iterator increment, use the same context as the last call.
+      contextRef = std::cref(m_context);
+    }
+
     _detail::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = m_operationOptions.Prefix;
     protocolLayerOptions.ContinuationToken = NextPageToken;
@@ -70,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_blobContainerClient->m_pipeline,
         m_blobContainerClient->m_blobContainerUrl,
         protocolLayerOptions,
-        context);
+        contextRef.get());
     for (auto& i : response.Value.Items)
     {
       if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())

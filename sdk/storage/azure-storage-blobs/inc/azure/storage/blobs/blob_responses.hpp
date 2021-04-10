@@ -121,6 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     std::shared_ptr<BlobContainerClient> m_blobContainerClient;
     ListBlobsOptions m_operationOptions;
+    Azure::Core::Context m_context;
 
     void OnNextPage(const Azure::Core::Context& context);
 

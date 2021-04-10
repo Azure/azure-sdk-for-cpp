@@ -21,7 +21,7 @@ namespace Azure { namespace Storage {
 
       bool HasMore() const { return !NextPageToken.empty(); }
 
-      void NextPage()
+      void NextPage(const Azure::Core::Context& context)
       {
         if (!HasMore())
         {
@@ -34,15 +34,13 @@ namespace Azure { namespace Storage {
             "The template argument \"Derived\" should derive from PageResult<Derived>.");
 
         CurrentPageToken = NextPageToken;
-        static_cast<Derived*>(this)->OnNextPage(m_context);
+        static_cast<Derived*>(this)->OnNextPage(context);
       }
 
     protected:
       PageResult() = default;
       PageResult(PageResult&&) = default;
       PageResult& operator=(PageResult&&) = default;
-
-      Azure::Core::Context m_context;
     };
 
   } // namespace _internal
@@ -73,7 +71,7 @@ namespace Azure { namespace Storage {
       {
         if (m_ptr->HasMore())
         {
-          m_ptr->NextPage();
+          m_ptr->NextPage(Azure::Core::Context::GetApplicationContext());
         }
         else
         {
