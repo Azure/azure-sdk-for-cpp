@@ -17,6 +17,7 @@ namespace Azure { namespace Storage {
     public:
       std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
       std::string NextPageToken;
+      std::string CurrentPageToken;
 
       bool HasMore() const { return !NextPageToken.empty(); }
 
@@ -32,6 +33,7 @@ namespace Azure { namespace Storage {
             std::is_base_of<PageResult, Derived>::value,
             "The template argument \"Derived\" should derive from PageResult<Derived>.");
 
+        CurrentPageToken = NextPageToken;
         static_cast<Derived*>(this)->OnNextPage(m_context);
       }
 
