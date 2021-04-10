@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     _detail::BlobRestClient::Service::GetUserDelegationKeyOptions protocolLayerOptions;
-    protocolLayerOptions.StartsOn = options.startsOn;
+    protocolLayerOptions.StartsOn = options.StartsOn;
     protocolLayerOptions.ExpiresOn = expiresOn;
     return _detail::BlobRestClient::Service::GetUserDelegationKey(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
