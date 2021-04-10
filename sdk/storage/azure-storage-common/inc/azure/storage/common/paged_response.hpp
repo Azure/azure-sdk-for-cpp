@@ -39,7 +39,6 @@ namespace Azure { namespace Storage {
 
     protected:
       PageResult() = default;
-      ~PageResult() = default;
       PageResult(PageResult&&) = default;
       PageResult& operator=(PageResult&&) = default;
 
