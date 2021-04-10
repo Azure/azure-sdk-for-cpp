@@ -45,35 +45,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
 #endif
 
-  public:
-    /**
-     * @brief A handler for the clean thread.
-     *
-     */
-    AZ_CORE_DLLEXPORT static std::thread g_cleanThread;
-
+  private:
     /**
      * @brief Mutex for accessing connection pool for thread-safe reading and writing.
      */
-    AZ_CORE_DLLEXPORT static std::mutex ConnectionPoolMutex;
-
-    /**
-     * @brief Sync for main thread and clean thread using a conditional variable.
-     *
-     */
-    AZ_CORE_DLLEXPORT static std::mutex CleanThreadMutex;
-
-    /**
-     * @brief Define if the clean thread is cancelled.
-     *
-     */
-    AZ_CORE_DLLEXPORT static bool CleanThreadCancelled;
-
-    /**
-     * @brief Used to sleep and wake in the clean thread.
-     *
-     */
-    AZ_CORE_DLLEXPORT static std::condition_variable ConditionalVariableForCleanThread;
+     std::mutex ConnectionPoolMutex;
 
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.

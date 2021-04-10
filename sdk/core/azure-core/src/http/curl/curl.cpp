@@ -181,6 +181,10 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
   return httpRequest;
 }
 
+AZ_CORE_DLLEXPORT static bool CleanThreadCancelled;
+AZ_CORE_DLLEXPORT static std::mutex CleanThreadMutex;
+AZ_CORE_DLLEXPORT static std::thread g_cleanThread;
+AZ_CORE_DLLEXPORT static std::condition_variable ConditionalVariableForCleanThread;
 struct CurlGlobalStateForAzureSdk
 {
   CurlGlobalStateForAzureSdk() { curl_global_init(CURL_GLOBAL_ALL); }
@@ -188,19 +192,20 @@ struct CurlGlobalStateForAzureSdk
   ~CurlGlobalStateForAzureSdk()
   {
     using namespace Azure::Core::Http::_detail;
-    if (CurlConnectionPool::g_cleanThread.joinable())
+    if (g_cleanThread.joinable())
     {
       // stop cleaning thread
       {
         // Get a lock for the cleanThread. If the cleanThread is running, we will wait until it go
         // to sleep and release the lock. Then we take the lock and update the cancelled flag
-        std::lock_guard<std::mutex> look(CurlConnectionPool::CleanThreadMutex);
-        CurlConnectionPool::CleanThreadCancelled = true;
+        std::lock_guard<std::mutex> look(CleanThreadMutex);
+        CleanThreadCancelled = true;
+        CurlConnectionPool::ConnectionPoolIndex.clear();
       }
       // Signal clean thread to wake up
-      CurlConnectionPool::ConditionalVariableForCleanThread.notify_one();
+      ConditionalVariableForCleanThread.notify_one();
       // join thread
-      CurlConnectionPool::g_cleanThread.join();
+      g_cleanThread.join();
     }
     curl_global_cleanup();
   }
@@ -1137,10 +1142,6 @@ std::mutex CurlConnectionPool::ConnectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
     CurlConnectionPool::ConnectionPoolIndex;
 uint64_t CurlConnectionPool::g_connectionCounter = 0;
-std::thread CurlConnectionPool::g_cleanThread;
-std::mutex CurlConnectionPool::CleanThreadMutex;
-std::condition_variable CurlConnectionPool::ConditionalVariableForCleanThread;
-bool CurlConnectionPool::CleanThreadCancelled = false;
 
 namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
@@ -1362,9 +1363,9 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   hostPool.push_front(std::move(connection));
   CurlConnectionPool::g_connectionCounter += 1;
   // Check if there's no cleaner running and started
-  if (!CurlConnectionPool::g_cleanThread.joinable())
+  if (!g_cleanThread.joinable())
   {
-    // CurlConnectionPool::CleanUp();
+    CurlConnectionPool::CleanUp();
   }
 }
 
@@ -1372,72 +1373,72 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 // Thread will keep running while there are at least one connection in the pool
 void CurlConnectionPool::CleanUp()
 {
-  CurlConnectionPool::g_cleanThread = std::thread([]() {
+  g_cleanThread = std::thread([]() {
     for (;;)
     {
       {
         // Take a lock for calling wait_until. If wait times out or it is awaken and the cancelled
         // flag is true, the thread won't continue. The lock is released
-        std::unique_lock<std::mutex> lock(CurlConnectionPool::CleanThreadMutex);
+        std::unique_lock<std::mutex> lock(CleanThreadMutex);
         // Wait the defined default time OR to the signal from the conditional variable.
-        if (CurlConnectionPool::ConditionalVariableForCleanThread.wait_until(
+        if (ConditionalVariableForCleanThread.wait_until(
                 lock,
                 std::chrono::steady_clock::now()
                     + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
-                []() { return CurlConnectionPool::CleanThreadCancelled; }))
+                []() { return CleanThreadCancelled; }))
         {
           // Cancelled by another thead.
           return;
         }
-      }
 
-      {
-        // take mutex for reading the pool
-        std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
-
-        if (CurlConnectionPool::g_connectionCounter == 0)
         {
-          // stop the cleaner since there are no connections
-          return;
-        }
+          // take mutex for reading the pool
+          std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
 
-        // loop the connection pool index
-        for (auto index = CurlConnectionPool::ConnectionPoolIndex.begin();
-             index != CurlConnectionPool::ConnectionPoolIndex.end();
-             index++)
-        {
-          if (index->second.size() == 0)
+          if (CurlConnectionPool::g_connectionCounter == 0)
           {
-            // Move the next pool index
-            continue;
+            // stop the cleaner since there are no connections
+            return;
           }
 
-          // Pool index with waiting connections. Loop the connection pool backwards until
-          // a connection that is not expired is found or until all connections are removed.
-          for (auto connection = index->second.end();;)
+          // loop the connection pool index
+          for (auto index = CurlConnectionPool::ConnectionPoolIndex.begin();
+               index != CurlConnectionPool::ConnectionPoolIndex.end();
+               index++)
           {
-            // loop starts at end(), go back to previous possition. We know the list is
-            // size() > 0 so we are safe to go end() - 1 and find the last element in the
-            // list
-            connection--;
-            if (connection->get()->IsExpired())
+            if (index->second.size() == 0)
             {
-              // remove connection from the pool and update the connection to the next one
-              // which is going to be list.end()
-              connection = index->second.erase(connection);
-              CurlConnectionPool::g_connectionCounter -= 1;
+              // Move the next pool index
+              continue;
+            }
 
-              // Connection removed, break if there are no more connections to check
-              if (index->second.size() == 0)
+            // Pool index with waiting connections. Loop the connection pool backwards until
+            // a connection that is not expired is found or until all connections are removed.
+            for (auto connection = index->second.end();;)
+            {
+              // loop starts at end(), go back to previous possition. We know the list is
+              // size() > 0 so we are safe to go end() - 1 and find the last element in the
+              // list
+              connection--;
+              if (connection->get()->IsExpired())
               {
+                // remove connection from the pool and update the connection to the next one
+                // which is going to be list.end()
+                connection = index->second.erase(connection);
+                CurlConnectionPool::g_connectionCounter -= 1;
+
+                // Connection removed, break if there are no more connections to check
+                if (index->second.size() == 0)
+                {
+                  break;
+                }
+              }
+              else
+              {
+                // Got a non-expired connection, all connections before this one are not
+                // expired. Break the loop and continue looping the Pool index
                 break;
               }
-            }
-            else
-            {
-              // Got a non-expired connection, all connections before this one are not
-              // expired. Break the loop and continue looping the Pool index
-              break;
             }
           }
         }
