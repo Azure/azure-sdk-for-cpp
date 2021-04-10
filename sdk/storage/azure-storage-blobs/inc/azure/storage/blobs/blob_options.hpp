@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Start time for the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      */
-    Azure::DateTime startsOn = std::chrono::system_clock::now();
+    Azure::DateTime StartsOn = std::chrono::system_clock::now();
   };
 
   /**

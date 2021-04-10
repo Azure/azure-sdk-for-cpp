@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Removed `Azure::Storage::Files::DataLake::PackageVersion`.
+- Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 
 ### Bug Fixes
 
