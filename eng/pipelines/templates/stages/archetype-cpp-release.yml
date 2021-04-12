@@ -49,7 +49,8 @@ stages:
                         PackageRepository: CPP
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-cpp
-
+                    - template: eng/common/pipelines/templates/steps/retain-run.yml
+                    
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: Publish Docs to GitHub pages
