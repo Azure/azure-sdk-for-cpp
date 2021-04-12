@@ -17,6 +17,8 @@
 #include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>
 
+#include "transport_adapter_base.hpp"
+
 #include <string>
 #include <vector>
 
@@ -41,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    Azure::Core::Url url("http://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -60,7 +62,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noRevoke)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.EnableCertificateRevocationListCheck = true;
+    curlOptions.SslOptions.EnableCertificateRevocationListCheck = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
@@ -72,7 +74,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    Azure::Core::Url url("https://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -88,7 +90,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
     // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear());
+    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.clear());
   }
 
   /*
@@ -96,7 +98,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, nativeCA)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.NativeCa = true;
+    curlOptions.SslOptions.NativeCa = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
@@ -106,7 +108,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    Azure::Core::Url url("https://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -122,7 +124,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, noPartialChain)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.NoPartialchain = true;
+    curlOptions.SslOptions.NoPartialchain = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
@@ -132,7 +134,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    Azure::Core::Url url("https://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -148,7 +150,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, bestEffort)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.RevokeBestEffort = true;
+    curlOptions.SslOptions.RevokeBestEffort = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     auto transportPolicy =
@@ -158,7 +160,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    Azure::Core::Url url("https://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -175,7 +177,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
     // If ssl verify is not disabled, this test would fail because the caInfo is not OK
-    curlOptions.SSLVerifyPeer = false;
+    curlOptions.SslVerifyPeer = false;
     // This ca info should be ignored by verify disable and test should work
     curlOptions.CAInfo = "/";
 
@@ -190,7 +192,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     // Use https
-    Azure::Core::Url url("https://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -206,7 +208,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
     // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear());
+    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.clear());
   }
 
   TEST(CurlTransportOptions, httpsDefault)
@@ -222,7 +224,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
     // Use https
-    Azure::Core::Url url("https://httpbin.org/get");
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -238,7 +240,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
     // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear());
+    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.clear());
   }
 
   TEST(CurlTransportOptions, disableKeepAlive)
@@ -259,7 +261,7 @@ namespace Azure { namespace Core { namespace Test {
       policies.emplace_back(std::move(transportPolicy));
       Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-      Azure::Core::Url url("http://httpbin.org/get");
+      Azure::Core::Url url(AzureSdkHttpbinServer::Get());
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
       std::unique_ptr<Azure::Core::Http::RawResponse> response;
@@ -274,7 +276,7 @@ namespace Azure { namespace Core { namespace Test {
               responseCode));
     }
     // Make sure there are no connections in the pool
-    EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+    EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
   }
 
 }}} // namespace Azure::Core::Test

@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        PackageVersion::VersionString(),
+        _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -215,10 +215,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.SetHttpHeaders(blobHttpHeaders, blobOptions, context);
     Models::SetPathHttpHeadersResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
     return Azure::Response<Models::SetPathHttpHeadersResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::CreatePathResult> DataLakePathClient::Create(
@@ -244,10 +244,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = _detail::DataLakeRestClient::Path::Create(
         m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     Models::CreatePathResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified.GetValue());
-    ret.FileSize = std::move(result->ContentLength);
-    return Azure::Response<Models::CreatePathResult>(std::move(ret), result.ExtractRawResponse());
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified.Value());
+    ret.FileSize = std::move(result.Value.ContentLength);
+    return Azure::Response<Models::CreatePathResult>(std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::CreatePathResult> DataLakePathClient::CreateIfNotExists(
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_pathUrl, *m_pipeline, context, protocolLayerOptions);
     Models::DeletePathResult ret;
     ret.Deleted = true;
-    return Azure::Response<Models::DeletePathResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::DeletePathResult>(std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::DeletePathResult> DataLakePathClient::DeleteIfExists(
@@ -324,44 +324,45 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.GetProperties(blobOptions, context);
     Models::PathProperties ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
-    ret.CreatedOn = std::move(result->CreatedOn);
-    ret.Metadata = std::move(result->Metadata);
-    if (result->LeaseDuration.HasValue())
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
+    ret.CreatedOn = std::move(result.Value.CreatedOn);
+    ret.Metadata = std::move(result.Value.Metadata);
+    if (result.Value.LeaseDuration.HasValue())
     {
-      ret.LeaseDuration = Models::LeaseDuration(result->LeaseDuration.GetValue().ToString());
+      ret.LeaseDuration = Models::LeaseDuration(result.Value.LeaseDuration.Value().ToString());
     }
-    ret.LeaseState = result->LeaseState.HasValue()
-        ? FromBlobLeaseState(result->LeaseState.GetValue())
+    ret.LeaseState = result.Value.LeaseState.HasValue()
+        ? FromBlobLeaseState(result.Value.LeaseState.Value())
         : ret.LeaseState;
-    ret.LeaseStatus = result->LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
+    ret.LeaseStatus = result.Value.LeaseStatus.HasValue()
+        ? FromBlobLeaseStatus(result.Value.LeaseStatus.Value())
         : ret.LeaseStatus;
-    ret.HttpHeaders.CacheControl = std::move(result->HttpHeaders.CacheControl);
-    ret.HttpHeaders.ContentDisposition = std::move(result->HttpHeaders.ContentDisposition);
-    ret.HttpHeaders.ContentEncoding = std::move(result->HttpHeaders.ContentEncoding);
-    ret.HttpHeaders.ContentLanguage = std::move(result->HttpHeaders.ContentLanguage);
-    ret.HttpHeaders.ContentType = std::move(result->HttpHeaders.ContentType);
-    ret.IsServerEncrypted = result->IsServerEncrypted;
-    ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    ret.CopyId = std::move(result->CopyId);
-    ret.CopySource = std::move(result->CopySource);
-    ret.CopyStatus = std::move(result->CopyStatus);
-    ret.CopyProgress = std::move(result->CopyProgress);
-    ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
-    ret.ExpiresOn = std::move(result->ExpiresOn);
-    ret.LastAccessedOn = std::move(result->LastAccessedOn);
-    ret.FileSize = result->BlobSize;
-    ret.ArchiveStatus = std::move(result->ArchiveStatus);
-    ret.RehydratePriority = std::move(result->RehydratePriority);
-    ret.CopyStatusDescription = std::move(result->CopyStatusDescription);
-    ret.IsIncrementalCopy = std::move(result->IsIncrementalCopy);
-    ret.IncrementalCopyDestinationSnapshot = std::move(result->IncrementalCopyDestinationSnapshot);
-    ret.VersionId = std::move(result->VersionId);
-    ret.IsCurrentVersion = std::move(result->IsCurrentVersion);
+    ret.HttpHeaders.CacheControl = std::move(result.Value.HttpHeaders.CacheControl);
+    ret.HttpHeaders.ContentDisposition = std::move(result.Value.HttpHeaders.ContentDisposition);
+    ret.HttpHeaders.ContentEncoding = std::move(result.Value.HttpHeaders.ContentEncoding);
+    ret.HttpHeaders.ContentLanguage = std::move(result.Value.HttpHeaders.ContentLanguage);
+    ret.HttpHeaders.ContentType = std::move(result.Value.HttpHeaders.ContentType);
+    ret.IsServerEncrypted = result.Value.IsServerEncrypted;
+    ret.EncryptionKeySha256 = std::move(result.Value.EncryptionKeySha256);
+    ret.CopyId = std::move(result.Value.CopyId);
+    ret.CopySource = std::move(result.Value.CopySource);
+    ret.CopyStatus = std::move(result.Value.CopyStatus);
+    ret.CopyProgress = std::move(result.Value.CopyProgress);
+    ret.CopyCompletedOn = std::move(result.Value.CopyCompletedOn);
+    ret.ExpiresOn = std::move(result.Value.ExpiresOn);
+    ret.LastAccessedOn = std::move(result.Value.LastAccessedOn);
+    ret.FileSize = result.Value.BlobSize;
+    ret.ArchiveStatus = std::move(result.Value.ArchiveStatus);
+    ret.RehydratePriority = std::move(result.Value.RehydratePriority);
+    ret.CopyStatusDescription = std::move(result.Value.CopyStatusDescription);
+    ret.IsIncrementalCopy = std::move(result.Value.IsIncrementalCopy);
+    ret.IncrementalCopyDestinationSnapshot
+        = std::move(result.Value.IncrementalCopyDestinationSnapshot);
+    ret.VersionId = std::move(result.Value.VersionId);
+    ret.IsCurrentVersion = std::move(result.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
-    return Azure::Response<Models::PathProperties>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Response<Models::PathProperties>(std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::PathAccessControlList> DataLakePathClient::GetAccessControlList(
@@ -378,9 +379,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = _detail::DataLakeRestClient::Path::GetProperties(
         m_pathUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
     Azure::Nullable<std::vector<Models::Acl>> acl;
-    if (result->Acl.HasValue())
+    if (result.Value.Acl.HasValue())
     {
-      acl = Models::Acl::DeserializeAcls(result->Acl.GetValue());
+      acl = Models::Acl::DeserializeAcls(result.Value.Acl.Value());
     }
     Models::PathAccessControlList ret;
     if (!acl.HasValue())
@@ -388,21 +389,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       throw Azure::Core::RequestFailedException(
           "Got null value returned when getting access control.");
     }
-    ret.Acls = std::move(acl.GetValue());
-    if (result->Owner.HasValue())
+    ret.Acls = std::move(acl.Value());
+    if (result.Value.Owner.HasValue())
     {
-      ret.Owner = result->Owner.GetValue();
+      ret.Owner = result.Value.Owner.Value();
     }
-    if (result->Group.HasValue())
+    if (result.Value.Group.HasValue())
     {
-      ret.Group = result->Group.GetValue();
+      ret.Group = result.Value.Group.Value();
     }
-    if (result->Permissions.HasValue())
+    if (result.Value.Permissions.HasValue())
     {
-      ret.Permissions = result->Permissions.GetValue();
+      ret.Permissions = result.Value.Permissions.Value();
     }
     return Azure::Response<Models::PathAccessControlList>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::SetPathMetadataResult> DataLakePathClient::SetMetadata(
@@ -418,10 +419,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetPathMetadataResult ret;
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result.Value.ETag);
+    ret.LastModified = std::move(result.Value.LastModified);
     return Azure::Response<Models::SetPathMetadataResult>(
-        std::move(ret), result.ExtractRawResponse());
+        std::move(ret), std::move(result.RawResponse));
   }
 
   Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>

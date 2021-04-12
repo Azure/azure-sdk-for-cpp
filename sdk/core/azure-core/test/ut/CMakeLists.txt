@@ -30,6 +30,7 @@ include(GoogleTest)
 add_executable (
   azure-core-test
     base64.cpp
+    bearer_token_authentication_policy.cpp
     bodystream.cpp
     case_insensitive_containers.cpp
     client_options.cpp
@@ -41,6 +42,7 @@ add_executable (
     etag.cpp
     http.cpp
     json.cpp
+    log_policy.cpp
     logging.cpp
     macro_guard.cpp
     main.cpp
@@ -52,7 +54,9 @@ add_executable (
     operation_status.cpp
     pipeline.cpp
     policy.cpp
+    request_id_policy.cpp
     response_t.cpp
+    retry_policy.cpp
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp
@@ -74,7 +78,7 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  # - C6323: Google comparisons 
+  # - C6326: Google comparisons 
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
@@ -101,7 +105,33 @@ gtest_discover_tests(azure-core-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)
 
+if(BUILD_TRANSPORT_CURL)
+  ################## Azure Libcurl Core Test #################################
+  # Creating one exe file alone for this test since it requires the full control over the connection pool.
+  # This test will check that end-user can call `curl_global_cleanup()` with active handlers in the connection pool
+  # without getting errors.
+  add_executable (
+    azure-core-libcurl-test
+    azure_libcurl_core_main.cpp
+  )
+
+  if (MSVC)
+    # warning C4389: '==': signed/unsigned mismatch
+    # warning C6326: Google comparisons 
+    target_compile_options(azure-core-libcurl-test PUBLIC /wd4389 /wd6326 )
+  endif()
+  
+  # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
+  target_include_directories (azure-core-libcurl-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+
+  target_link_libraries(azure-core-libcurl-test PRIVATE azure-core gtest gmock)
+
+  # Use the same prefix to run this test
+  gtest_discover_tests(azure-core-libcurl-test
+        TEST_PREFIX azure-core.)
+
+endif()
 gtest_discover_tests(azure-core-global-context-test
-     TEST_PREFIX azure-core-global-context.
+     TEST_PREFIX azure-core.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)

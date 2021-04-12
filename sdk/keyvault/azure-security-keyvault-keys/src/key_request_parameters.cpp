@@ -13,7 +13,7 @@
 
 using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Core::Json::_internal;
-using namespace Azure::Security::KeyVault::Common::_internal;
+using namespace Azure::Security::KeyVault::_internal;
 
 std::string KeyRequestParameters::Serialize() const
 {
@@ -60,7 +60,7 @@ std::string KeyRequestParameters::Serialize() const
   // crv
   if (Curve.HasValue())
   {
-    payload[_detail::CurveNamePropertyName] = Curve.GetValue().ToString();
+    payload[_detail::CurveNamePropertyName] = Curve.Value().ToString();
   }
 
   // release_policy

@@ -49,13 +49,15 @@ set(
     inc/azure/core/credentials/token_credential_options.hpp
     inc/azure/core/cryptography/hash.hpp
     inc/azure/core/diagnostics/logger.hpp
+    inc/azure/core/http/http_status_code.hpp
     inc/azure/core/http/http.hpp
+    inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/diagnostics/log.hpp
-    inc/azure/core/internal/hkeyholder.hpp
+    inc/azure/core/internal/hkey_holder.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
@@ -104,6 +106,7 @@ set(
     src/datetime.cpp
     src/environment_log_level_listener.cpp
     src/environment_log_level_listener_private.hpp
+    src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp

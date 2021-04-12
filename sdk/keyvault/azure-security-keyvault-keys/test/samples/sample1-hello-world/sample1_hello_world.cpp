@@ -47,13 +47,13 @@ int main()
 
     keyClient.CreateRsaKey(rsaKey);
 
-    KeyVaultKey cloudRsaKey = keyClient.GetKey(rsaKeyName).ExtractValue();
+    KeyVaultKey cloudRsaKey = keyClient.GetKey(rsaKeyName).Value;
     std::cout << "Key is returned with name " << cloudRsaKey.Name() << " and type "
               << KeyType::KeyTypeToString(cloudRsaKey.GetKeyType()) << std::endl;
 
     cloudRsaKey.Properties.ExpiresOn
-        = cloudRsaKey.Properties.ExpiresOn.GetValue() + std::chrono::hours(24 * 365);
-    KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).ExtractValue();
+        = cloudRsaKey.Properties.ExpiresOn.Value() + std::chrono::hours(24 * 365);
+    KeyVaultKey updatedKey = keyClient.UpdateKeyProperties(cloudRsaKey.Properties).Value;
     std::cout << "Key's updated expiry time is " << updatedKey.Properties.ExpiresOn->ToString()
               << std::endl;
 
@@ -75,7 +75,7 @@ int main()
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
     return 1;
   }
-  catch (Azure::Security::KeyVault::Common::KeyVaultException const& e)
+  catch (Azure::Security::KeyVault::KeyVaultException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;

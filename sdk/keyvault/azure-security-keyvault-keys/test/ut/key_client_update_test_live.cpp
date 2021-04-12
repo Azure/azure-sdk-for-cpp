@@ -27,10 +27,10 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
   {
     auto keyResponse = keyClient.CreateKey(keyName, JsonWebKeyType::Ec);
     CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.ExtractValue();
+    auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_TRUE(keyVaultKey.Properties.Enabled);
-    EXPECT_TRUE(keyVaultKey.Properties.Enabled.GetValue());
+    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
 
     // Update Key
     keyVaultKey.Properties.Enabled = false;
@@ -42,8 +42,8 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
     // Get updated key to check values
     auto updatedKey = keyClient.GetKey(keyName);
     CheckValidResponse(updatedKey);
-    auto key = updatedKey.ExtractValue();
+    auto key = updatedKey.Value;
     EXPECT_TRUE(key.Properties.Enabled);
-    EXPECT_FALSE(key.Properties.Enabled.GetValue());
+    EXPECT_FALSE(key.Properties.Enabled.Value());
   }
 }

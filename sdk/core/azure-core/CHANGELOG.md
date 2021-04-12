@@ -1,11 +1,50 @@
 # Release History
 
-## 1.0.0-beta.8 (Unreleased)
+## 1.0.0-beta.9 (Unreleased)
+
+
+## 1.0.0-beta.8 (2021-04-07)
+
+### New Features
+
+- Added `Azure::Core::Url::GetScheme()`.
+- Added `Azure::Core::Context::TryGetValue()`.
+- Added `Azure::Core::Context::GetDeadline()`.
+- Added `Azure::Core::Credentials::TokenCredentialOptions`.
+- Added useful fields to the `Azure::Core::RequestFailedException` class such as `StatusCode`, `ReasonPhrase`, and the `RawResponse`, for better diagnosis of errors.
 
 ### Breaking Changes
 
+- Simplified the `Response<T>` API surface to expose two public fields with direct access: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
+- Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
+- Removed from `Azure::Core::Http::Request`:
+  - `SetUploadChunkSize()`.
+  - `GetHTTPMessagePreBody()`.
+  - `GetUploadChunkSize()`.
+  - `GetHeadersAsString()`.
+- Changes to `Azure::Core::Http::RawResponse`:
+  - Removed `SetHeader(std::string const& header)`
+  - Removed `SetHeader(uint8_t const* const first, uint8_t const* const last)`.
+  - Removed `GetMajorVersion()`.
+  - Removed `GetMinorVersion()`.
+  - Renamed `GetBodyStream()` to `ExtractBodyStream()`.
+- Changes to `Azure::Core::Context`:
+  - Removed `Get()` and `HasKey()` in favor of a new method `TryGetValue()`.
+  - Changed input parameter type of `WithDeadline()` to `Azure::DateTime`.
+- Removed `Azure::Core::PackageVersion`.
 - Removed from `Azure::Core::Http::Policies` namespace: `HttpPolicyOrder`, `TransportPolicy`, `RetryPolicy`, `RequestIdPolicy`, `TelemetryPolicy`, `BearerTokenAuthenticationPolicy`, `LogPolicy`.
-- Renamed `Azure::Core::Http::RawResponse::GetBodyStream()` to `ExtractBodyStream()`.
+- Removed `AppendQueryParameters()`, `GetUrlWithoutQuery()` and `GetUrlAuthorityWithScheme()` from `Azure::Core::Url`.
+- Changed the `Azure::Core::Http::HttpMethod` regular enum into an extensible enum class and removed the `HttpMethodToString()` helper method.
+- Introduced `Azure::Core::Context::Key` class which takes place of `std::string` used for `Azure::Core::Context` keys previously.
+- Changed the casing of `SSL` in API names to `Ssl`:
+  - Renamed type `Azure::Core::Http::CurlTransportSSLOptions` to `CurlTransportSslOptions`.
+  - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `SslOptions`.
+  - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `SslVerifyPeer`.
+
+### Other Changes and Improvements
+
+- Moved `Azure::Core::Http::Request` to its own header file from `http.hpp` to `inc/azure/core/http/raw_response.hpp`.
+- Moved `Azure::Core::Http::HttpStatusCode` to its own header file from `http.hpp` to `inc/azure/core/http/http_status_code.hpp`.
 
 ## 1.0.0-beta.7 (2021-03-11)
 
@@ -148,7 +187,7 @@
 - Initialize class data members to avoid MSVC warning.
 - Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Added support for distributing the C++ SDK as a source package via vcpkg.
 
@@ -188,7 +227,7 @@
 - Avoid re-using a connection when a request to upload data fails while using the `CurlTransport`.
 - Add entropy to `Uuid` generation.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
 - Add code coverage using gcov with gcc.
@@ -211,7 +250,7 @@
 - Switched to a more stable wait on sockets to address connection timeouts.
 - Replace `Nullable(const T&)` with `Nullable(T)` to avoid extra copy when initialized with an rvalue.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Improved performance on windows when using libcurl.
 - Pinned the version of package dependencies.

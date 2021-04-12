@@ -34,7 +34,7 @@ void FileShareGettingStarted()
   Azure::Storage::Metadata fileMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   fileClient.SetMetadata(fileMetadata);
 
-  auto properties = *fileClient.GetProperties();
+  auto properties = fileClient.GetProperties().Value;
   for (auto metadata : properties.Metadata)
   {
     std::cout << metadata.first << ":" << metadata.second << std::endl;

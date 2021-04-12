@@ -15,9 +15,9 @@
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
-#define AZURE_CORE_VERSION_PRERELEASE "beta.8"
+#define AZURE_CORE_VERSION_PRERELEASE "beta.9"
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace _detail {
 
   /**
    * @brief Provides version information.
@@ -40,7 +40,7 @@ namespace Azure { namespace Core {
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static std::string VersionString();
+    static std::string ToString();
 
   private:
     // To avoid leaking out the #define values we smuggle out the value
@@ -48,7 +48,7 @@ namespace Azure { namespace Core {
     static constexpr const char* secret = AZURE_CORE_VERSION_PRERELEASE;
   };
 
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::_detail
 
 #undef AZURE_CORE_VERSION_MAJOR
 #undef AZURE_CORE_VERSION_MINOR

@@ -30,20 +30,21 @@ namespace Azure { namespace Core { namespace Test {
 
     TEST(CurlConnectionPool, connectionPoolTest)
     {
-      Azure::Core::Http::CurlConnectionPool::ClearIndex();
+      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
       // Make sure there are nothing in the pool
-      EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
 
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
-      std::string const expectedConnectionKey = "httpbin.org0011";
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
+      std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "0011";
 
       {
         // Creating a new connection with default options
         Azure::Core::Http::CurlTransportOptions options;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, options);
 
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
 
@@ -54,10 +55,11 @@ namespace Azure { namespace Core { namespace Test {
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
       }
       // Check that after the connection is gone, it is moved back to the pool
-      EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
-      auto connectionFromPool = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin()
-                                    ->second.begin()
-                                    ->get();
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+      auto connectionFromPool
+          = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin()
+                ->second.begin()
+                ->get();
       EXPECT_EQ(connectionFromPool->GetConnectionKey(), expectedConnectionKey);
 
       // Test that asking a connection with same config will re-use the same connection
@@ -65,10 +67,11 @@ namespace Azure { namespace Core { namespace Test {
         // Creating a new connection with default options
         Azure::Core::Http::CurlTransportOptions options;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, options);
 
         // There was just one connection in the pool, it should be empty now
-        EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
         // And the connection key for the connection we got is the expected
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
 
@@ -79,27 +82,26 @@ namespace Azure { namespace Core { namespace Test {
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
       }
       // Check that after the connection is gone, it is moved back to the pool
-      EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
-      auto values = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin();
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+      auto values = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin();
       EXPECT_EQ(values->second.size(), 1);
       EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
       // Now test that using a different connection config won't re-use the same connection
-      std::string const CAinfo = "someFakePath";
-      std::string const secondExpectedKey = "httpbin.org" + CAinfo + "011";
+      std::string const secondExpectedKey = AzureSdkHttpbinServer::Host() + "0010";
       {
-        // Creating a new connection with default options
+        // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
-        options.CAInfo = CAinfo;
+        options.SslVerifyPeer = false;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
-
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, options);
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
         // One connection still in the pool after getting a new connection and with first expected
         // key
-        EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
         EXPECT_EQ(
-            Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin()
+            Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin()
                 ->second.begin()
                 ->get()
                 ->GetConnectionKey(),
@@ -113,32 +115,31 @@ namespace Azure { namespace Core { namespace Test {
       }
 
       // Now there should be 2 index wit one connection each
-      EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
-      values = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin();
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
-      values++;
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      values = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin();
       EXPECT_EQ(values->second.size(), 1);
       EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
+      values++;
+      EXPECT_EQ(values->second.size(), 1);
+      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
       // Test re-using same custom config
       {
         // Creating a new connection with default options
         Azure::Core::Http::CurlTransportOptions options;
-        options.CAInfo = CAinfo;
         auto connection
-            = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
-
-        EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, options);
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
         // One connection still in the pool after getting a new connection and with first expected
         // key
-        EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
         EXPECT_EQ(
-            Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin()
+            Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin()
                 ->second.begin()
                 ->get()
                 ->GetConnectionKey(),
-            expectedConnectionKey);
+            secondExpectedKey);
 
         auto session = std::make_unique<Azure::Core::Http::CurlSession>(
             req, std::move(connection), options.HttpKeepAlive);
@@ -147,13 +148,13 @@ namespace Azure { namespace Core { namespace Test {
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
       }
       // Now there should be 2 index wit one connection each
-      EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
-      values = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin();
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
-      values++;
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      values = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin();
       EXPECT_EQ(values->second.size(), 1);
       EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
+      values++;
+      EXPECT_EQ(values->second.size(), 1);
+      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
 
 #ifdef RUN_LONG_UNIT_TESTS
       {
@@ -171,8 +172,8 @@ namespace Azure { namespace Core { namespace Test {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 100));
 
         // Ensure connections are removed but indexes are still there
-        EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
-        values = Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.begin();
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+        values = Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.begin();
         EXPECT_EQ(values->second.size(), 0);
         values++;
         EXPECT_EQ(values->second.size(), 0);
@@ -183,11 +184,12 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
     {
       Azure::Core::Http::Request req(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://httpbin.org/get"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
 
       Azure::Core::Http::CurlTransportOptions options;
       auto connection
-          = Azure::Core::Http::CurlConnectionPool::ExtractOrCreateCurlConnection(req, options);
+          = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+              req, options);
       // Simulate connection lost (like server disconnection).
       connection->Shutdown();
 

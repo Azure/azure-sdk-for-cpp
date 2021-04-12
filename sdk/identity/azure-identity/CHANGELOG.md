@@ -1,7 +1,17 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 1.0.0-beta.6 (Unreleased)
 
+
+## 1.0.0-beta.5 (2021-04-07)
+
+### New Features
+
+- Add Active Directory Federation Service (ADFS) support to `ClientSecretCredential`.
+
+### Breaking Changes
+
+- Removed `Azure::Identity::PackageVersion`.
 
 ## 1.0.0-beta.4 (2021-03-11)
 
@@ -25,7 +35,7 @@
 
 - Moved `Azure::Identity::Version`, defined in `azure/identity/version.hpp` to the `Azure::Identity::Details` namespace.
 
-### Other changes and Improvements
+### Other Changes and Improvements
 
 - Add high-level and simplified identity.hpp file for simpler include experience for customers.
 

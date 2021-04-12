@@ -80,7 +80,7 @@ void DataLakeGettingStarted()
     // Read
     auto result = fileClient.Download();
     Azure::Core::Context context;
-    std::vector<uint8_t> downloaded = result->Body->ReadToEnd(context);
+    std::vector<uint8_t> downloaded = result.Value.Body->ReadToEnd(context);
     // downloaded contains your downloaded data.
     std::cout << "Downloaded data was:\n" + std::string(downloaded.begin(), downloaded.end())
               << std::endl;
@@ -91,11 +91,12 @@ void DataLakeGettingStarted()
     do
     {
       auto response = serviceClient.ListFileSystemsSinglePage();
-      if (response->ContinuationToken.HasValue())
+      if (response.Value.ContinuationToken.HasValue())
       {
-        continuation = response->ContinuationToken.GetValue();
+        continuation = response.Value.ContinuationToken.Value();
       }
-      fileSystems.insert(fileSystems.end(), response->Items.begin(), response->Items.end());
+      fileSystems.insert(
+          fileSystems.end(), response.Value.Items.begin(), response.Value.Items.end());
     } while (!continuation.empty());
 
     // Delete file system.

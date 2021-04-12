@@ -2,6 +2,11 @@
 
 ## 12.0.0-beta.10 (Unreleased)
 
+### Breaking Changes
+
+- Removed `Azure::Storage::Files::DataLake::PackageVersion`.
+- Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
+
 ### Bug Fixes
 
 - Rename functions always fail because `/` was left out in rename source path.

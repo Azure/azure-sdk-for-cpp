@@ -44,6 +44,6 @@ target_link_libraries(azure-identity-test PRIVATE azure-identity gtest gmock)
 # gtest_discover_tests will scan the test from azure-identity-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-identity-test
-     TEST_PREFIX azure-identity.
+     TEST_PREFIX azure-identity-unittest.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)

@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         n = 0;
       }
-      auto v = n.GetValue();
+      auto v = n.Value();
       if (n)
       {
         n.Reset();

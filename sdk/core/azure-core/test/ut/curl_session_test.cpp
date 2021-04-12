@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+    Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.clear();
   }
 
   TEST_F(CurlSession, chunkBadFormatResponse)
@@ -127,7 +127,7 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+    Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.clear();
   }
 
   TEST_F(CurlSession, chunkSegmentedResponse)
@@ -202,7 +202,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW(bodyS->ReadToEnd(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+    Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.clear();
   }
 
   TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
@@ -231,6 +231,6 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(CURLE_SEND_ERROR, returnCode);
     }
     // Check connection pool is empty (connection was not moved to the pool)
-    EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+    EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
   }
 }}} // namespace Azure::Core::Test

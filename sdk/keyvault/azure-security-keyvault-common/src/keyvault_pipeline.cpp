@@ -1,11 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/http/http.hpp"
+
 #include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "azure/keyvault/common/keyvault_constants.hpp"
 #include "azure/keyvault/common/keyvault_exception.hpp"
 
-using namespace Azure::Security::KeyVault::Common;
+using namespace Azure::Security::KeyVault;
+using namespace Azure::Core::Http::_internal;
 
 namespace {
 inline Azure::Core::Http::Request InitRequest(
@@ -29,8 +32,8 @@ Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
 
   auto request = ::InitRequest(method, content, m_vaultUrl);
 
-  request.SetHeader(_detail::ContentType, _detail::ApplicationJson);
-  request.SetHeader(_detail::Accept, _detail::ApplicationJson);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
 
   request.GetUrl().AppendQueryParameter(_detail::ApiVersion, m_apiVersion);
 
@@ -59,6 +62,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
   auto responseCode = response->GetStatusCode();
   switch (responseCode)
   {
+
     // 200, 2001, 202, 204 are accepted responses
     case Azure::Core::Http::HttpStatusCode::Ok:
     case Azure::Core::Http::HttpStatusCode::Created:
@@ -66,7 +70,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
     case Azure::Core::Http::HttpStatusCode::NoContent:
       break;
     default:
-      throw KeyVaultException::CreateFromResponse(std::move(response));
+      throw KeyVaultException("Key Vault Keys error response received: ", std::move(response));
   }
   return response;
 }

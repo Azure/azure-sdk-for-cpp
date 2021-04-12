@@ -39,13 +39,13 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
       Azure::Core::Context const& ctx) const override
   {
     EXPECT_EQ(
-        retryCounterState,
-        Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryNumber(ctx));
-
+        retryCounterState, Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(ctx));
     retryCounterState += 1;
     return nextHttpPolicy.Send(request, ctx);
   }
 };
+
+Azure::Core::Context::Key const TheKey;
 
 struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
 {
@@ -59,12 +59,9 @@ struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
       Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
       Azure::Core::Context const& ctx) const override
   {
-    EXPECT_TRUE(ctx.HasKey("TheKey"));
-    if (ctx.HasKey("TheKey"))
-    {
-      auto value = ctx.Get<std::string>("TheKey");
-      EXPECT_EQ("TheValue", value);
-    }
+    std::string valueHolder;
+    EXPECT_TRUE(ctx.TryGetValue<std::string>(TheKey, valueHolder));
+    EXPECT_EQ("TheValue", valueHolder);
     return nextHttpPolicy.Send(request, ctx);
   }
 };
@@ -86,7 +83,7 @@ public:
       Azure::Core::Http::Policies::NextHttpPolicy,
       Azure::Core::Context const& context) const override
   {
-    auto retryNumber = Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryNumber(context);
+    auto retryNumber = Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(context);
     if (retryNumber == m_successAfter)
     {
       auto response = std::make_unique<Azure::Core::Http::RawResponse>(
@@ -161,7 +158,7 @@ TEST(Policy, RetryPolicyCounter)
 
   // Check when there's no info about retry on the context
   auto initialContext = Context::GetApplicationContext();
-  EXPECT_EQ(-1, RetryPolicy::GetRetryNumber(initialContext));
+  EXPECT_EQ(-1, RetryPolicy::GetRetryCount(initialContext));
 
   // Pipeline with retry test
   std::vector<std::unique_ptr<HttpPolicy>> policies;
@@ -223,6 +220,6 @@ TEST(Policy, RetryPolicyKeepContext)
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
   auto withValueContext
-      = Context::GetApplicationContext().WithValue("TheKey", std::string("TheValue"));
+      = Context::GetApplicationContext().WithValue(TheKey, std::string("TheValue"));
   pipeline.Send(request, withValueContext);
 }
