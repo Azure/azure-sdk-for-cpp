@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Removed `Azure::Storage::Blobs::PackageVersion`.
+- Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 
