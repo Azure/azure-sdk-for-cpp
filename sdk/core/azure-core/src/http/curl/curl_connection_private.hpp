@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Http {
     // connections would ask the pool to be clean and spawn new connection.
     constexpr static int RequestPoolResetAfterConnectionFailed = 3;
     // 90 sec -> cleaner wait time before next clean routine
-    constexpr static int DefaultCleanerIntervalMilliseconds = 100;
+    constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
     constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
   } // namespace _detail
@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Http {
       // into wire
 #if defined(_MSC_VER)
 #pragma warning(push)
-// C26812: The enum type 'CURLcode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
+// C26812: The enum type 'CURLcode' is un-scoped. Prefer 'enum class' over 'enum' (Enum.3)
 #pragma warning(disable : 26812)
 #endif
         auto result = curl_easy_getinfo(m_handle, CURLINFO_ACTIVESOCKET, &m_curlSocket);
