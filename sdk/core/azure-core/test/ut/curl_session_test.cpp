@@ -210,7 +210,8 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
   {
-
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
     // Can't mock the curlMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
     MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
