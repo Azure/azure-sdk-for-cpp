@@ -9,13 +9,13 @@
 
 #pragma once
 
+#include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
-#include <azure/keyvault/common/keyvault_exception.hpp>
 
 #include "azure/keyvault/keys/key_vault_key.hpp"
 

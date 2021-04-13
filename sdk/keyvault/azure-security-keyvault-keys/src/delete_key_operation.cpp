@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/common/keyvault_exception.hpp"
+#include <azure/core/exception.hpp>
+
+#include <azure/keyvault/common/keyvault_exception.hpp>
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
@@ -33,8 +35,8 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::C
         break;
       }
       default:
-        throw KeyVaultException(
-            "Unexpected operation status from Service response.", std::move(rawResponse));
+        throw Azure::Security::KeyVault::_detail::KeyVaultException::CreateException(
+            std::move(rawResponse));
     }
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)

@@ -100,7 +100,7 @@ int main()
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
     return 1;
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& e)
+  catch (Azure::Core::RequestFailedException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;

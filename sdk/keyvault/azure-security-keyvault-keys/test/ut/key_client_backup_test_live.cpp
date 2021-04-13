@@ -56,7 +56,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
     std::this_thread::sleep_for(std::chrono::minutes(2));
   }
   { // Check key is gone
-    EXPECT_THROW(keyClient.GetKey(keyName), Azure::Security::KeyVault::KeyVaultException);
+    EXPECT_THROW(keyClient.GetKey(keyName), Azure::Core::RequestFailedException);
   }
   {
     // Restore
