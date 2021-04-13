@@ -127,12 +127,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   private:
     std::thread m_cleanThread;
 
-    /**
-     * Review all connections in the pool and removes old connections that might be already
-     * expired and closed its connection on server side.
-     */
-    void Cleanup();
-
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     int64_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };

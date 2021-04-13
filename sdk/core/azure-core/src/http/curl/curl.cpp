@@ -180,6 +180,70 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 
   return httpRequest;
 }
+
+static void CleanupThread()
+{
+  using namespace Azure::Core::Http::_detail;
+  for (;;)
+  {
+    {
+      // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
+      std::unique_lock<std::mutex> lockForPoolCleaning(CurlConnectionPool::ConnectionPoolMutex);
+      // Wait the defined default time OR to the signal from the conditional variable.
+      // wait_until releases the mutex lock until it wakes up again or it's cancelled.
+      if (g_conditionalVariableForCleanThread.wait_until(
+              lockForPoolCleaning,
+              std::chrono::steady_clock::now()
+                  + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
+              []() { return CurlConnectionPool::g_curlConnectionPool.ConnectionCounter == 0; }))
+      {
+        // Cancelled by another thead or no connections on wakeup
+        return;
+      }
+
+      // loop the connection pool index - Note: lock is re-taken for the mutex
+      for (auto index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.begin();
+           index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end();
+           index++)
+      {
+        if (index->second.size() == 0)
+        {
+          // Move the next pool index
+          continue;
+        }
+
+        // Pool index with waiting connections. Loop the connection pool backwards until
+        // a connection that is not expired is found or until all connections are removed.
+        for (auto connection = index->second.end();;)
+        {
+          // loop starts at end(), go back to previous possition. We know the list is
+          // size() > 0 so we are safe to go end() - 1 and find the last element in the
+          // list
+          connection--;
+          if (connection->get()->IsExpired())
+          {
+            // remove connection from the pool and update the connection to the next one
+            // which is going to be list.end()
+            connection = index->second.erase(connection);
+            CurlConnectionPool::g_curlConnectionPool.ConnectionCounter -= 1;
+
+            // Connection removed, break if there are no more connections to check
+            if (index->second.size() == 0)
+            {
+              break;
+            }
+          }
+          else
+          {
+            // Got a non-expired connection, all connections before this one are not
+            // expired. Break the loop and continue looping the Pool index
+            break;
+          }
+        }
+      }
+    }
+  }
+}
 } // namespace
 
 using Azure::Core::Context;
@@ -1332,74 +1396,9 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   g_curlConnectionPool.ConnectionCounter += 1;
   // Cleanup will start a background thread which will close abandoned connections from the pool.
   // This will free-up resources from the app
-  g_curlConnectionPool.Cleanup();
-}
-
-// spawn a thread for cleaning old connections.
-// Thread will keep running while there are at least one connection in the pool
-void CurlConnectionPool::Cleanup()
-{
+  // This is the only call to cleanup.
   if (!m_cleanThread.joinable())
   {
-    m_cleanThread = std::thread([]() {
-      for (;;)
-      {
-        {
-          std::unique_lock<std::mutex> lockForPoolCleaning(CurlConnectionPool::ConnectionPoolMutex);
-          // Wait the defined default time OR to the signal from the conditional variable.
-          // wait_until releases the mutex lock until it wakes up again or it's cancelled.
-          if (g_conditionalVariableForCleanThread.wait_until(
-                  lockForPoolCleaning,
-                  std::chrono::steady_clock::now()
-                      + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
-                  []() { return CurlConnectionPool::g_curlConnectionPool.ConnectionCounter == 0; }))
-          {
-            // Cancelled by another thead or no connections on wakeup
-            return;
-          }
-
-          // loop the connection pool index - Note: lock is re-taken for the mutex
-          for (auto index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.begin();
-               index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end();
-               index++)
-          {
-            if (index->second.size() == 0)
-            {
-              // Move the next pool index
-              continue;
-            }
-
-            // Pool index with waiting connections. Loop the connection pool backwards until
-            // a connection that is not expired is found or until all connections are removed.
-            for (auto connection = index->second.end();;)
-            {
-              // loop starts at end(), go back to previous possition. We know the list is
-              // size() > 0 so we are safe to go end() - 1 and find the last element in the
-              // list
-              connection--;
-              if (connection->get()->IsExpired())
-              {
-                // remove connection from the pool and update the connection to the next one
-                // which is going to be list.end()
-                connection = index->second.erase(connection);
-                CurlConnectionPool::g_curlConnectionPool.ConnectionCounter -= 1;
-
-                // Connection removed, break if there are no more connections to check
-                if (index->second.size() == 0)
-                {
-                  break;
-                }
-              }
-              else
-              {
-                // Got a non-expired connection, all connections before this one are not
-                // expired. Break the loop and continue looping the Pool index
-                break;
-              }
-            }
-          }
-        }
-      }
-    });
+    m_cleanThread = std::thread(CleanupThread);
   }
 }
