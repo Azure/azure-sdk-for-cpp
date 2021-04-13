@@ -50,10 +50,8 @@ namespace Azure { namespace Core { namespace Test {
       session->ReadToEnd(Azure::Core::Context::GetApplicationContext());
     }
     // Check that after the connection is gone, it is moved back to the pool
-    // EXPECT_EQ(
-    //     Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.
-    //         .size(),
-    //     1);
+    EXPECT_EQ(
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionCounter, 1);
   }
 }}} // namespace Azure::Core::Test
 

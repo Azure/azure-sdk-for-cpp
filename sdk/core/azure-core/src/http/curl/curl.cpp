@@ -197,10 +197,6 @@ using Azure::Core::Http::_detail::CurlConnectionPool;
 Azure::Core::Http::_detail::CurlConnectionPool
     Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool;
 
-// bool Azure::Core::Http::_detail::g_cleanThreadCancelled;
-// std::mutex Azure::Core::Http::_detail::g_cleanThreadMutex;
-// std::condition_variable Azure::Core::Http::_detail::g_conditionalVariableForCleanThread;
-
 std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const& context)
 {
   // Create CurlSession to perform request
