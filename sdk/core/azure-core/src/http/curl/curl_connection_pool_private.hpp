@@ -32,7 +32,10 @@ namespace Azure { namespace Core { namespace Test {
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-  AZ_CORE_DLLEXPORT static std::condition_variable g_conditionalVariableForCleanThread;
+  struct WhitConditionalVar
+  {
+    std::condition_variable ConditionalVariableForCleanThread;
+  };
 
   /**
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
@@ -41,7 +44,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * This pool offers static methods and it is allocated statically. There can be only one
    * connection pool per application.
    */
-  class CurlConnectionPool {
+  class CurlConnectionPool : public WhitConditionalVar {
 #if defined(TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
@@ -60,7 +63,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           g_curlConnectionPool.ResetPool();
         }
         // Signal clean thread to wake up
-        g_conditionalVariableForCleanThread.notify_one();
+        ConditionalVariableForCleanThread.notify_one();
         // join thread
         m_cleanThread.join();
       }

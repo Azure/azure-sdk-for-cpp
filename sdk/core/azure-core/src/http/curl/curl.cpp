@@ -191,7 +191,7 @@ static void CleanupThread()
       std::unique_lock<std::mutex> lockForPoolCleaning(CurlConnectionPool::ConnectionPoolMutex);
       // Wait the defined default time OR to the signal from the conditional variable.
       // wait_until releases the mutex lock until it wakes up again or it's cancelled.
-      if (g_conditionalVariableForCleanThread.wait_until(
+      if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_until(
               lockForPoolCleaning,
               std::chrono::steady_clock::now()
                   + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
