@@ -32,8 +32,6 @@ namespace Azure { namespace Core { namespace Test {
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-  AZ_CORE_DLLEXPORT static bool g_cleanThreadCancelled;
-  AZ_CORE_DLLEXPORT static std::mutex g_cleanThreadMutex;
   AZ_CORE_DLLEXPORT static std::condition_variable g_conditionalVariableForCleanThread;
 
   /**
@@ -57,8 +55,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       if (m_cleanThread.joinable())
       {
         {
-          std::unique_lock<std::mutex> lock(g_cleanThreadMutex);
-          g_cleanThreadCancelled = true;
+          std::unique_lock<std::mutex> lock(ConnectionPoolMutex);
+          // Remove all connections
+          g_curlConnectionPool.ResetPool();
         }
         // Signal clean thread to wake up
         g_conditionalVariableForCleanThread.notify_one();
