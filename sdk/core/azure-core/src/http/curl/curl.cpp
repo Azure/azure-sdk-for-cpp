@@ -1345,10 +1345,10 @@ void CurlConnectionPool::Cleanup()
       for (;;)
       {
         {
-          std::unique_lock<std::mutex> lock(g_cleanThreadMutex);
+          std::unique_lock<std::mutex> lockForPoolCleaning(g_cleanThreadMutex);
           // Wait the defined default time OR to the signal from the conditional variable.
           if (g_conditionalVariableForCleanThread.wait_until(
-                  lock,
+                  lockForPoolCleaning,
                   std::chrono::steady_clock::now()
                       + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
                   []() { return _detail::g_cleanThreadCancelled; }))
@@ -1359,7 +1359,7 @@ void CurlConnectionPool::Cleanup()
 
           {
             // take mutex for reading the pool
-            std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
+            std::lock_guard<std::mutex> lockForPoolAcces(CurlConnectionPool::ConnectionPoolMutex);
 
             if (CurlConnectionPool::g_curlConnectionPool.ConnectionCounter == 0)
             {
