@@ -101,6 +101,16 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         HttpStatusCode lastStatusCode);
 
     /**
+     * @brief Remove all connections from the pool and reset the connection counter.
+     *
+     */
+    void ResetPool()
+    {
+      ConnectionPoolIndex.clear();
+      ConnectionCounter = 0;
+    }
+
+    /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
      *
      * @details This way getting a connection for a specific host can be done in O(1) instead of

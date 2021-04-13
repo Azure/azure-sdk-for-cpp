@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       {
         std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
-        CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
+        CurlConnectionPool::g_curlConnectionPool.ResetPool();
       }
       // Make sure there are nothing in the pool
       EXPECT_EQ(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size(), 0);

@@ -90,8 +90,8 @@ namespace Azure { namespace Core { namespace Test {
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
     // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                        .ConnectionPoolIndex.clear());
+    EXPECT_NO_THROW(
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool());
   }
 
   /*
@@ -209,8 +209,8 @@ namespace Azure { namespace Core { namespace Test {
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
     // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                        .ConnectionPoolIndex.clear());
+    EXPECT_NO_THROW(
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool());
   }
 
   TEST(CurlTransportOptions, httpsDefault)
@@ -240,10 +240,10 @@ namespace Azure { namespace Core { namespace Test {
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             responseCode));
 
-    // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
+    // Clean the connection from the pool *Windows fails to clean if we leave to be clean upon
     // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                        .ConnectionPoolIndex.clear());
+    EXPECT_NO_THROW(
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool());
   }
 
   TEST(CurlTransportOptions, disableKeepAlive)
