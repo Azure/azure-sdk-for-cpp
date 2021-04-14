@@ -123,4 +123,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     RawResponse = std::move(response.RawResponse);
   }
 
+  void ListDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ListHandlesOptions();
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
+    protocolLayerOptions.Recursive = m_operationOptions.Recursive;
+    auto response = _detail::ShareRestClient::Directory::ListHandles(
+        m_shareDirectoryClient->m_shareDirectoryUrl,
+        *m_shareDirectoryClient->m_pipeline,
+        context,
+        protocolLayerOptions);
+
+    Handles = std::move(response.Value.HandleList);
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
+  }
+
 }}}} // namespace Azure::Storage::Files::Shares

@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ListDirectoryHandlesSinglePageOptions
+  struct ListDirectoryHandlesOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next

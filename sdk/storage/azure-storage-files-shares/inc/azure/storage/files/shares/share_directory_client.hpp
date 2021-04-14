@@ -191,12 +191,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief List open handles on the directory.
      * @param options Optional parameters to list this directory's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListDirectoryHandlesSinglePageResult> containing
-     * the information of the operation and the open handles of this directory
+     * @return ListDirectoryHandlesPagedResponse containing the information of the operation and the
+     * open handles of this directory
      */
-    Azure::Response<Models::ListDirectoryHandlesSinglePageResult> ListHandlesSinglePage(
-        const ListDirectoryHandlesSinglePageOptions& options
-        = ListDirectoryHandlesSinglePageOptions(),
+    ListDirectoryHandlesPagedResponse ListHandles(
+        const ListDirectoryHandlesOptions& options = ListDirectoryHandlesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -239,5 +238,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareClient;
     friend class ListFilesAndDirectoriesPagedResponse;
+    friend class ListDirectoryHandlesPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::Shares
