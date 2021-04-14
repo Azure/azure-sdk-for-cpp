@@ -22,7 +22,7 @@ std::string KeyRequestParameters::Serialize() const
   // kty
   JsonOptional::SetFromNullable<JsonWebKeyType, std::string>(
       m_keyType, payload, _detail::KeyTypePropertyName, [](JsonWebKeyType type) {
-        return KeyType::KeyTypeToString(type);
+        return type.ToString();
       });
 
   // attributes

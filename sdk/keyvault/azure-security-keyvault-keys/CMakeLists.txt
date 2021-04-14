@@ -57,6 +57,7 @@ set(
     src/key_backup.cpp
     src/key_client.cpp
     src/key_curve_name.cpp
+    src/key_operation.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp

@@ -43,8 +43,8 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
   auto keyName = GetUniqueName();
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
-  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign());
-  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify());
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
   {
     auto keyResponse = keyClient.CreateKey(
         keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec, options);
@@ -52,7 +52,7 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
     auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+    EXPECT_EQ(keyVaultKey.GetKeyType().ToString(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec.ToString());
     auto& keyOperations = keyVaultKey.KeyOperations();
     uint16_t expectedSize = 2;
     EXPECT_EQ(keyOperations.size(), expectedSize);
@@ -67,8 +67,8 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
       }
       return false;
     };
-    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Sign());
-    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Verify());
+    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Sign);
+    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Verify);
   }
 }
 
@@ -127,7 +127,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
-    ecKey.CurveName = Azure::Security::KeyVault::Keys::KeyCurveName::P384();
+    ecKey.CurveName = Azure::Security::KeyVault::Keys::KeyCurveName::P384;
     auto keyResponse = keyClient.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
@@ -143,7 +143,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
     EXPECT_TRUE(keyVaultKey.Key.CurveName.HasValue());
     EXPECT_EQ(
         keyVaultKey.Key.CurveName.Value().ToString(),
-        Azure::Security::KeyVault::Keys::KeyCurveName::P384().ToString());
+        Azure::Security::KeyVault::Keys::KeyCurveName::P384.ToString());
   }
 }
 

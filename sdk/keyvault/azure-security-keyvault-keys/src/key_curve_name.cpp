@@ -4,12 +4,14 @@
 #include "azure/keyvault/keys/key_curve_name.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 
-using namespace Azure::Security::KeyVault::Keys;
+namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-KeyCurveName KeyCurveName::P256() { return KeyCurveName(_detail::P256Value); }
+  const KeyCurveName KeyCurveName::P256(_detail::P256Value);
 
-KeyCurveName KeyCurveName::P256K() { return KeyCurveName(_detail::P256KValue); }
+  const KeyCurveName KeyCurveName::P256K(_detail::P256KValue);
 
-KeyCurveName KeyCurveName::P384() { return KeyCurveName(_detail::P384Value); }
+  const KeyCurveName KeyCurveName::P384(_detail::P384Value);
 
-KeyCurveName KeyCurveName::P521() { return KeyCurveName(_detail::P521Value); }
+  const KeyCurveName KeyCurveName::P521(_detail::P521Value);
+
+}}}} // namespace Azure::Security::KeyVault::Keys

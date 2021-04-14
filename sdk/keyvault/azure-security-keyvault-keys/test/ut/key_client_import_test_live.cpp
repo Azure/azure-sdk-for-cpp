@@ -57,8 +57,8 @@ TEST_F(KeyVaultClientTest, ImportKey)
       "Uyf9s52ywLylhcVE3jfbjOgEozlSwKyhqfXkLpMLWHqOKj9fcfYd4PWKPOgpzWsqjA6fJbBUM"
       "Yo0CU2G9cWCtVodO7sBJVSIZunWrAlBc");
   std::string keyName(GetUniqueName());
-  key.CurveName = KeyCurveName::P521();
-  key.SetKeyOperations({KeyOperation::Sign()});
+  key.CurveName = KeyCurveName::P521;
+  key.SetKeyOperations({KeyOperation::Sign});
 
   auto response = keyClient.ImportKey(keyName, key);
   CheckValidResponse(response);
@@ -67,7 +67,7 @@ TEST_F(KeyVaultClientTest, ImportKey)
   EXPECT_EQ(key.E, returnedkey.Key.E);
   EXPECT_EQ(key.CurveName.Value().ToString(), returnedkey.Key.CurveName.Value().ToString());
   EXPECT_EQ(returnedkey.KeyOperations().size(), 1);
-  EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign().ToString());
+  EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign.ToString());
 
   {
     // delete + purge
