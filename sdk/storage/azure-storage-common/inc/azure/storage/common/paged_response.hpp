@@ -11,7 +11,6 @@
 namespace Azure {
 
 template <class Derived> class PagedResponse {
-
 public:
   std::string NextPageToken;
   std::string CurrentPageToken;
