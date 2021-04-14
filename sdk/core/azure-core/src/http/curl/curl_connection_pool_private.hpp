@@ -71,11 +71,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
 
     /**
-     * @brief Mutex for accessing connection pool for thread-safe reading and writing.
-     */
-    AZ_CORE_DLLEXPORT static std::mutex ConnectionPoolMutex;
-
-    /**
      * @brief Finds a connection to be re-used from the connection pool.
      * @remark If there is not any available connection, a new connection is created.
      *
@@ -121,6 +116,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @remark There might be multiple connections for each host.
      */
     std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
+
+    std::mutex ConnectionPoolMutex;
 
     // Keep the count of the total connections from all indexes
     uint64_t ConnectionCounter;

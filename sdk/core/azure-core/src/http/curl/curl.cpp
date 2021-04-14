@@ -188,7 +188,8 @@ static void CleanupThread()
   {
     {
       // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
-      std::unique_lock<std::mutex> lockForPoolCleaning(CurlConnectionPool::ConnectionPoolMutex);
+      std::unique_lock<std::mutex> lockForPoolCleaning(
+          CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
       // Wait the defined default time OR to the signal from the conditional variable.
       // wait_until releases the mutex lock until it wakes up again or it's cancelled.
       if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_until(
@@ -1172,8 +1173,6 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   // Parsing Headers will make sure to move one position
   return indexOfEndOfStatusLine + 1 - buffer;
 }
-
-std::mutex CurlConnectionPool::ConnectionPoolMutex;
 
 namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
