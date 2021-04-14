@@ -168,9 +168,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief The Filter Blobs operation enables callers to list blobs across all containers
-     * whose tags match a given search expression. Filter blobs searches across all containers
-     * within a storage account but can be scoped within the expression to a single container.
+     * @brief The Filter Blobs operation enables callers to list blobs across all containers whose
+     * tags match a given search expression. Filter blobs searches across all containers within a
+     * storage account but can be scoped within the expression to a single container.
      *
      * @param tagFilterSqlExpression The where parameter enables the caller to query blobs
      * whose tags match a given expression. The given expression must evaluate to true for a blob to
@@ -179,11 +179,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * is supported in the Blob service.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A FindBlobsByTagsSinglePageResult describing the blobs.
+     * @return A FindBlobsByTagsPagedResponse describing the blobs.
      */
-    Azure::Response<Models::FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
+    FindBlobsByTagsPagedResponse FindBlobsByTags(
         const std::string& tagFilterSqlExpression,
-        const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions(),
+        const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -236,5 +236,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<std::string> m_encryptionScope;
 
     friend class ListBlobContainersPagedResponse;
+    friend class FindBlobsByTagsPagedResponse;
   };
 }}} // namespace Azure::Storage::Blobs

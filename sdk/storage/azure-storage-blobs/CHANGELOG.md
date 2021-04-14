@@ -8,6 +8,7 @@
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 - Replaced all SinglePage functions with pageable functions.
   - `BlobServiceClient::ListBlobContainers`
+  - `BlobServiceClient::FindBlobsByTags`
   - `BlobContainerClinet::ListBlobs`
   - `BlobContainerClient::ListBlobsByHierarchy`
 

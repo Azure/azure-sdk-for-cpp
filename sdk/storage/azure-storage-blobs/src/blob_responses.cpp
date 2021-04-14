@@ -158,4 +158,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     RawResponse = std::move(response.RawResponse);
   }
 
+  void FindBlobsByTagsPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
+    protocolLayerOptions.Where = m_tagFilterSqlExpression;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
+    auto response = _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
+        *m_blobServiceClient->m_pipeline,
+        m_blobServiceClient->m_serviceUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+
+    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    Items = std::move(response.Value.Items);
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
+  }
+
 }}} // namespace Azure::Storage::Blobs

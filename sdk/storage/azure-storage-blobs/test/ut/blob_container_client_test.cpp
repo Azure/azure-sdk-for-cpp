@@ -729,26 +729,18 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<Blobs::Models::FilterBlobItem> findResults;
     for (int i = 0; i < 30; ++i)
     {
-      std::string marker;
-      do
+      for (auto pageResult = blobServiceClient.FindBlobsByTags(whereExpression);
+           pageResult.HasMore();
+           pageResult.NextPage(Azure::Core::Context()))
       {
-        Blobs::FindBlobsByTagsSinglePageOptions options;
-        if (!marker.empty())
-        {
-          options.ContinuationToken = marker;
-        }
-        auto findBlobsRet
-            = blobServiceClient.FindBlobsByTagsSinglePage(whereExpression, options).Value;
-        EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
-        options.ContinuationToken = findBlobsRet.ContinuationToken;
-
-        for (auto& item : findBlobsRet.Items)
+        EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+        for (auto& item : pageResult.Items)
         {
           EXPECT_FALSE(item.BlobName.empty());
           EXPECT_FALSE(item.BlobContainerName.empty());
           findResults.emplace_back(std::move(item));
         }
-      } while (!marker.empty());
+      }
 
       if (findResults.empty())
       {

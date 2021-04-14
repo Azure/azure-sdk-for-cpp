@@ -184,18 +184,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::FindBlobsByTagsSinglePageResult>
-  BlobServiceClient::FindBlobsByTagsSinglePage(
+  FindBlobsByTagsPagedResponse BlobServiceClient::FindBlobsByTags(
       const std::string& tagFilterSqlExpression,
-      const FindBlobsByTagsSinglePageOptions& options,
+      const FindBlobsByTagsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Where = tagFilterSqlExpression;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.PageSizeHint;
-    return _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    FindBlobsByTagsPagedResponse response(currentPageToken);
+    response.NextPageToken = currentPageToken;
+    response.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
+    response.m_operationOptions = options;
+    response.m_tagFilterSqlExpression = tagFilterSqlExpression;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   Azure::Response<BlobContainerClient> BlobServiceClient::CreateBlobContainer(

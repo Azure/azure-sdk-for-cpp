@@ -225,9 +225,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::FindBlobsByTagsSinglePage.
+   * @brief Optional parameters for BlobServiceClient::FindBlobsByTags.
    */
-  struct FindBlobsByTagsSinglePageOptions
+  struct FindBlobsByTagsOptions
   {
     /**
      * @brief A string value that identifies the portion of the result set to be returned
