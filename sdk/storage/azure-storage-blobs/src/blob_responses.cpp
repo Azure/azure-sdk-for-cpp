@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions;
     protocolLayerOptions.Prefix = m_operationOptions.Prefix;
     protocolLayerOptions.Delimiter = Delimiter;
-    protocolLayerOptions.ContinuationToken = m_operationOptions.ContinuationToken;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
     protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
     protocolLayerOptions.Include = m_operationOptions.Include;
     auto response = _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    protocolLayerOptions.ContinuationToken = m_operationOptions.ContinuationToken;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
     protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
     protocolLayerOptions.Include = m_operationOptions.Include;
     auto response = _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
