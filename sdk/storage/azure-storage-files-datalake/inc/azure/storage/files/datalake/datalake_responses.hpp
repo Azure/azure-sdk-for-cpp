@@ -266,9 +266,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string Prefix;
     std::vector<Models::FileSystemItem> Items;
 
-  private:
-    Blobs::ListBlobContainersPagedResponse m_listBlobContainersPagedResponse;
-
     explicit ListFileSystemsPagedResponse(
         Blobs::ListBlobContainersPagedResponse&& listBlobContainersPagedResponse)
         : m_listBlobContainersPagedResponse(std::move(listBlobContainersPagedResponse))
@@ -276,11 +273,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       CopyFromListBlobsContainersResult(m_listBlobContainersPagedResponse);
     }
 
+  private:
+    Blobs::ListBlobContainersPagedResponse m_listBlobContainersPagedResponse;
+
     void CopyFromListBlobsContainersResult(Blobs::ListBlobContainersPagedResponse& result);
 
     void OnNextPage(const Azure::Core::Context& context);
 
-    friend class DataLakeServiceClient;
     friend class PagedResponse<ListFileSystemsPagedResponse>;
   };
 
