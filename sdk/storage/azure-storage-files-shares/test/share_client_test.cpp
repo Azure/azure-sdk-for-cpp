@@ -436,12 +436,17 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     // List shares works.
-    Files::Shares::ListSharesSinglePageOptions listOptions;
+    Files::Shares::ListSharesOptions listOptions;
     listOptions.Prefix = prefix;
-    auto shareItems = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-                          StandardStorageConnectionString())
-                          .ListSharesSinglePage(listOptions)
-                          .Value.Items;
+    std::vector<Files::Shares::Models::ShareItem> shareItems;
+    for (auto pageResult = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+                               StandardStorageConnectionString())
+                               .ListShares(listOptions);
+         pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
+    {
+      shareItems.insert(shareItems.end(), pageResult.Items.begin(), pageResult.Items.end());
+    }
     EXPECT_EQ(3U, shareItems.size());
     for (const auto& shareItem : shareItems)
     {
@@ -474,12 +479,17 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
 
-    Files::Shares::ListSharesSinglePageOptions listOptions;
+    Files::Shares::ListSharesOptions listOptions;
     listOptions.Prefix = shareName;
-    auto shareItems = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-                          PremiumFileConnectionString())
-                          .ListSharesSinglePage(listOptions)
-                          .Value.Items;
+    std::vector<Files::Shares::Models::ShareItem> shareItems;
+    for (auto pageResult = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+                               PremiumFileConnectionString())
+                               .ListShares(listOptions);
+         pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
+    {
+      shareItems.insert(shareItems.end(), pageResult.Items.begin(), pageResult.Items.end());
+    }
     EXPECT_EQ(1U, shareItems.size());
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, shareItems[0].Details.AccessTier.Value());
     EXPECT_FALSE(shareItems[0].Details.AccessTierTransitionState.HasValue());

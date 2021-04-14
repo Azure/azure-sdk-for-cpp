@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
-  struct ListSharesSinglePageOptions
+  struct ListSharesOptions
   {
     /**
      * @brief Filters the results to return only entries whose name begins with the specified

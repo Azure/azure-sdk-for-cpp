@@ -67,15 +67,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief List the shares from the service.
+     * @brief Returns a sequence of the shares in the storage account. Enumerating the shares may
+     * make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list the shares.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListSharesSinglePageResult> The results containing the
-     * shares returned and information used for future list operation on valid result not yet
-     * returned.
+     * @return ListSharesPagedResponse describing the shares in this storage account.
      */
-    Azure::Response<Models::ListSharesSinglePageResult> ListSharesSinglePage(
-        const ListSharesSinglePageOptions& options = ListSharesSinglePageOptions(),
+    ListSharesPagedResponse ListShares(
+        const ListSharesOptions& options = ListSharesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -104,5 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+
+    friend class ListSharesPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::Shares

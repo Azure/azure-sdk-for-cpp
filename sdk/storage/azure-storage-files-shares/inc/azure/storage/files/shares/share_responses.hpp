@@ -12,6 +12,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  class ShareServiceClient;
   class ShareFileClient;
   class ShareDirectoryClient;
 
@@ -249,6 +250,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareFileClient;
     friend class PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
+  };
+
+  class ListSharesPagedResponse : public PagedResponse<ListSharesPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    std::vector<Models::ShareItem> Items;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareServiceClient> m_shareServiceClient;
+    ListSharesOptions m_operationOptions;
+
+    friend class ShareServiceClient;
+    friend class PagedResponse<ListSharesPagedResponse>;
   };
 
 }}}} // namespace Azure::Storage::Files::Shares

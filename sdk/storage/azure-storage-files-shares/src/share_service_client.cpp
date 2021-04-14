@@ -82,17 +82,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareClient(builder, m_pipeline);
   }
 
-  Azure::Response<Models::ListSharesSinglePageResult> ShareServiceClient::ListSharesSinglePage(
-      const ListSharesSinglePageOptions& options,
+  ListSharesPagedResponse ShareServiceClient::ListShares(
+      const ListSharesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
-    protocolLayerOptions.IncludeFlags = options.ListSharesIncludeFlags;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.Prefix = options.Prefix;
-    return _detail::ShareRestClient::Service::ListSharesSinglePage(
-        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
+    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ListSharesPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_shareServiceClient = std::make_shared<ShareServiceClient>(*this);
+    response.m_operationOptions = options;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   Azure::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(
