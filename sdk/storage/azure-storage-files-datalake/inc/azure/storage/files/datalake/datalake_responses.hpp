@@ -271,9 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     explicit ListFileSystemsPagedResponse(
         Blobs::ListBlobContainersPagedResponse&& listBlobContainersPagedResponse)
-        : PagedResponse<ListFileSystemsPagedResponse>(
-            listBlobContainersPagedResponse.CurrentPageToken),
-          m_listBlobContainersPagedResponse(std::move(listBlobContainersPagedResponse))
+        : m_listBlobContainersPagedResponse(std::move(listBlobContainersPagedResponse))
     {
       CopyFromListBlobsContainersResult(m_listBlobContainersPagedResponse);
     }

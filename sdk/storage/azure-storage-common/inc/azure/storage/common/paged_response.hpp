@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cstdlib>
 #include <string>
 
 #include <azure/core/context.hpp>
@@ -20,22 +21,21 @@ public:
 
   void NextPage(const Azure::Core::Context& context)
   {
+    static_assert(
+        std::is_base_of<PagedResponse, Derived>::value,
+        "The template argument \"Derived\" should derive from PagedResponse<Derived>.");
+
     if (!HasMore())
     {
-      return;
+      // User should always check HasMore() before calling this function.
+      std::abort();
     }
     CurrentPageToken = NextPageToken;
     static_cast<Derived*>(this)->OnNextPage(context);
   }
 
 protected:
-  explicit PagedResponse(std::string currentPageToken)
-      : CurrentPageToken(std::move(currentPageToken))
-  {
-    static_assert(
-        std::is_base_of<PagedResponse, Derived>::value,
-        "The template argument \"Derived\" should derive from PagedResponse<Derived>.");
-  }
+  PagedResponse() = default;
   PagedResponse(PagedResponse&&) = default;
   PagedResponse& operator=(PagedResponse&&) = default;
 };

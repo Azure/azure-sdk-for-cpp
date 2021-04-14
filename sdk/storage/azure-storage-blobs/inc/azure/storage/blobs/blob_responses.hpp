@@ -126,11 +126,6 @@ namespace Azure { namespace Storage {
       std::vector<Models::BlobItem> Items;
 
     private:
-      explicit ListBlobsPagedResponse(std::string CurrentPageToken)
-          : PagedResponse<ListBlobsPagedResponse>(std::move(CurrentPageToken))
-      {
-      }
-
       void OnNextPage(const Azure::Core::Context& context);
 
       std::shared_ptr<BlobContainerClient> m_blobContainerClient;
@@ -151,11 +146,6 @@ namespace Azure { namespace Storage {
       std::vector<std::string> BlobPrefixes;
 
     private:
-      explicit ListBlobsByHierarchyPagedResponse(std::string CurrentPageToken)
-          : PagedResponse<ListBlobsByHierarchyPagedResponse>(std::move(CurrentPageToken))
-      {
-      }
-
       void OnNextPage(const Azure::Core::Context& context);
 
       std::shared_ptr<BlobContainerClient> m_blobContainerClient;
@@ -172,11 +162,6 @@ namespace Azure { namespace Storage {
       std::vector<Models::BlobContainerItem> Items;
 
     private:
-      explicit ListBlobContainersPagedResponse(std::string CurrentPageToken)
-          : PagedResponse<ListBlobContainersPagedResponse>(std::move(CurrentPageToken))
-      {
-      }
-
       void OnNextPage(const Azure::Core::Context& context);
 
       std::shared_ptr<BlobServiceClient> m_blobServiceClient;
@@ -193,11 +178,6 @@ namespace Azure { namespace Storage {
       std::vector<Models::FilterBlobItem> Items;
 
     private:
-      explicit FindBlobsByTagsPagedResponse(std::string CurrentPageToken)
-          : PagedResponse<FindBlobsByTagsPagedResponse>(std::move(CurrentPageToken))
-      {
-      }
-
       void OnNextPage(const Azure::Core::Context& context);
 
       std::shared_ptr<BlobServiceClient> m_blobServiceClient;

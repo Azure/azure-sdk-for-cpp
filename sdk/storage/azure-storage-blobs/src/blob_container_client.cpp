@@ -233,8 +233,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobsOptions& options,
       const Azure::Core::Context& context) const
   {
-    std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListBlobsPagedResponse response(currentPageToken);
+    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ListBlobsPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
     response.NextPageToken = currentPageToken;
     response.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     response.m_operationOptions = options;
@@ -248,8 +249,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobsOptions& options,
       const Azure::Core::Context& context) const
   {
-    std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListBlobsByHierarchyPagedResponse response(currentPageToken);
+    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ListBlobsByHierarchyPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
     response.NextPageToken = currentPageToken;
     response.Delimiter = delimiter;
     response.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
