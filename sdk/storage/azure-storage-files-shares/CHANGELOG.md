@@ -8,7 +8,11 @@
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 - Removed `ShareClient::ListFilesAndDirectories`.
 - Replaced all SinglePage functions with pageable functions.
+  - `ShareServiceClient::ListShares`
   - `ShareDirectoryClient::ListFilesAndDirectories`
+  - `ShareDirectoryClient::ListHandles`
+  - `ShareDirectoryClient::ForceCloseAllHandles`
+  - `ShareFileClient::ListHandles`
   - `ShareFileClient::ForceCloseAllHandles`
   
 ## 12.0.0-beta.9 (2021-03-23)
