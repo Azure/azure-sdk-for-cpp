@@ -105,4 +105,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
+  /**************** JWK  ************/
+  struct JsonWebKeySerializer
+  {
+    static void JsonWebKeySerialize(
+        JsonWebKey const& jwk,
+        Azure::Core::Json::_internal::json& destJson);
+
+    static void JsonWebDeserialize(
+        JsonWebKey& srcKey,
+        Azure::Core::Json::_internal::json const& jsonParser);
+  };
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail
