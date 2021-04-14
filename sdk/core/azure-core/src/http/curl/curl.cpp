@@ -192,10 +192,9 @@ static void CleanupThread()
           CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
       // Wait the defined default time OR to the signal from the conditional variable.
       // wait_until releases the mutex lock until it wakes up again or it's cancelled.
-      if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_until(
+      if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_for(
               lockForPoolCleaning,
-              std::chrono::steady_clock::now()
-                  + std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
+              std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
               []() { return CurlConnectionPool::g_curlConnectionPool.ConnectionCounter == 0; }))
       {
         // Cancelled by another thead or no connections on wakeup

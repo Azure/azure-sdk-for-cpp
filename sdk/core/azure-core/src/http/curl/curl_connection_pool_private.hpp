@@ -32,11 +32,6 @@ namespace Azure { namespace Core { namespace Test {
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-  struct WhitConditionalVar
-  {
-    std::condition_variable ConditionalVariableForCleanThread;
-  };
-
   /**
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
    * more than one request. Use this component when connections are not re-used by default.
@@ -44,7 +39,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * This pool offers static methods and it is allocated statically. There can be only one
    * connection pool per application.
    */
-  class CurlConnectionPool : public WhitConditionalVar {
+  class CurlConnectionPool {
 #if defined(TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
@@ -118,6 +113,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
 
     std::mutex ConnectionPoolMutex;
+
+    std::condition_variable ConditionalVariableForCleanThread;
 
     // Keep the count of the total connections from all indexes
     uint64_t ConnectionCounter;
