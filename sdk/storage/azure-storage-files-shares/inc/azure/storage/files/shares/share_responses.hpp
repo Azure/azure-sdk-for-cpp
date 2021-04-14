@@ -283,4 +283,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListDirectoryHandlesPagedResponse>;
   };
 
+  class ForceCloseAllDirectoryHandlesPagedResponse
+      : public PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse> {
+  public:
+    int32_t NumberOfHandlesClosed = 0;
+    int32_t NumberOfHandlesFailedToClose = 0;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareDirectoryClient> m_shareDirectoryClient;
+    ForceCloseAllDirectoryHandlesOptions m_operationOptions;
+
+    friend class ShareDirectoryClient;
+    friend class PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
+  };
+
 }}}} // namespace Azure::Storage::Files::Shares

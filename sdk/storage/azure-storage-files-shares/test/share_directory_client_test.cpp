@@ -438,9 +438,14 @@ namespace Azure { namespace Storage { namespace Test {
     auto result = m_fileShareDirectoryClient->ListHandles();
     EXPECT_TRUE(result.Handles.empty());
     EXPECT_TRUE(result.NextPageToken.empty());
-    for (auto pageResult = m_fileShareDirectoryClient->ListHandles(); pageResult.HasMore(); pageResult.NextPage(Azure::Core::Context()))
+    for (auto pageResult = m_fileShareDirectoryClient->ListHandles(); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
     }
-    EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandlesSinglePage());
+    EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
+    for (auto pageResult = m_fileShareDirectoryClient->ForceCloseAllHandles(); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
+    {
+    }
   }
 }}} // namespace Azure::Storage::Test
