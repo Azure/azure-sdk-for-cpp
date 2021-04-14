@@ -188,5 +188,41 @@ namespace Azure { namespace Storage {
       friend PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
+    class GetPageRangesPagedResponse : public PagedResponse<GetPageRangesPagedResponse> {
+    public:
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      int64_t BlobSize = 0;
+      std::vector<Azure::Core::Http::HttpRange> PageRanges;
+
+    private:
+      void OnNextPage(const Azure::Core::Context& context);
+
+      std::shared_ptr<PageBlobClient> m_pageBlobClient;
+      GetPageRangesOptions m_operationOptions;
+
+      friend class PageBlobClient;
+      friend PagedResponse<GetPageRangesPagedResponse>;
+    };
+
+    class GetPageRangesDiffPagedResponse : public PagedResponse<GetPageRangesDiffPagedResponse> {
+    public:
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      int64_t BlobSize = 0;
+      std::vector<Azure::Core::Http::HttpRange> PageRanges;
+      std::vector<Azure::Core::Http::HttpRange> ClearRanges;
+
+    private:
+      void OnNextPage(const Azure::Core::Context& context);
+
+      std::shared_ptr<PageBlobClient> m_pageBlobClient;
+      GetPageRangesOptions m_operationOptions;
+      std::string m_previousSnapshotUri;
+
+      friend class PageBlobClient;
+      friend PagedResponse<GetPageRangesDiffPagedResponse>;
+    };
+
   } // namespace Blobs
 }} // namespace Azure::Storage

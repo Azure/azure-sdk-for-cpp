@@ -8,6 +8,7 @@
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
+#include "azure/storage/blobs/page_blob_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -174,6 +175,52 @@ namespace Azure { namespace Storage { namespace Blobs {
     Items = std::move(response.Value.Items);
     NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
     RawResponse = std::move(response.RawResponse);
+  }
+
+  void GetPageRangesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
+    protocolLayerOptions.Range = m_operationOptions.Range;
+    protocolLayerOptions.LeaseId = m_operationOptions.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = m_operationOptions.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = m_operationOptions.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = m_operationOptions.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = m_operationOptions.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = m_operationOptions.AccessConditions.TagConditions;
+    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
+        *m_pageBlobClient->m_pipeline,
+        m_pageBlobClient->m_blobUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+
+    ETag = std::move(response.Value.ETag);
+    LastModified = std::move(response.Value.LastModified);
+    BlobSize = response.Value.BlobSize;
+    PageRanges = std::move(response.Value.PageRanges);
+  }
+
+  void GetPageRangesDiffPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
+    protocolLayerOptions.PreviousSnapshot = m_previousSnapshotUri;
+    protocolLayerOptions.Range = m_operationOptions.Range;
+    protocolLayerOptions.LeaseId = m_operationOptions.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = m_operationOptions.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = m_operationOptions.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = m_operationOptions.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = m_operationOptions.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = m_operationOptions.AccessConditions.TagConditions;
+    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
+        *m_pageBlobClient->m_pipeline,
+        m_pageBlobClient->m_blobUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+
+    ETag = std::move(response.Value.ETag);
+    LastModified = std::move(response.Value.LastModified);
+    BlobSize = response.Value.BlobSize;
+    PageRanges = std::move(response.Value.PageRanges);
+    ClearRanges = std::move(response.Value.ClearRanges);
   }
 
 }}} // namespace Azure::Storage::Blobs

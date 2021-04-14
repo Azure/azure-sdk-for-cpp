@@ -11,6 +11,9 @@
   - `BlobServiceClient::FindBlobsByTags`
   - `BlobContainerClinet::ListBlobs`
   - `BlobContainerClient::ListBlobsByHierarchy`
+  - `PageBlobClient::GetPageRanges`
+  - `PageBlobClient::GetPageRangesDiff`
+  - `PageBlobClient::GetManagedDiskPageRangesDiff`
 
 ## 12.0.0-beta.9 (2021-03-23)
 

@@ -233,56 +233,53 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetPageRanges(
+  GetPageRangesPagedResponse PageBlobClient::GetPageRanges(
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.Range = options.Range;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    const std::string currentPageToken;
+    GetPageRangesPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
+    response.m_operationOptions = options;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetPageRangesDiff(
+  GetPageRangesDiffPagedResponse PageBlobClient::GetPageRangesDiff(
       const std::string& previousSnapshot,
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshot = previousSnapshot;
-    protocolLayerOptions.Range = options.Range;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    const std::string currentPageToken;
+    GetPageRangesDiffPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
+    response.m_operationOptions = options;
+    response.m_previousSnapshotUri = previousSnapshot;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetManagedDiskPageRangesDiff(
+  GetPageRangesDiffPagedResponse PageBlobClient::GetManagedDiskPageRangesDiff(
       const std::string& previousSnapshotUrl,
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshotUrl = previousSnapshotUrl;
-    protocolLayerOptions.Range = options.Range;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    const std::string currentPageToken;
+    GetPageRangesDiffPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
+    response.m_operationOptions = options;
+    response.m_previousSnapshotUri = previousSnapshotUrl;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   StartBlobCopyOperation PageBlobClient::StartCopyIncremental(
