@@ -197,6 +197,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     LastModified = std::move(response.Value.LastModified);
     BlobSize = response.Value.BlobSize;
     PageRanges = std::move(response.Value.PageRanges);
+    NextPageToken.clear();
+    RawResponse = std::move(response.RawResponse);
   }
 
   void GetPageRangesDiffPagedResponse::OnNextPage(const Azure::Core::Context& context)
@@ -221,6 +223,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobSize = response.Value.BlobSize;
     PageRanges = std::move(response.Value.PageRanges);
     ClearRanges = std::move(response.Value.ClearRanges);
+    NextPageToken.clear();
+    RawResponse = std::move(response.RawResponse);
   }
 
 }}} // namespace Azure::Storage::Blobs
