@@ -23,7 +23,7 @@ TEST_F(KeyVaultClientTest, CreateKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -47,12 +47,12 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
   {
     auto keyResponse = keyClient.CreateKey(
-        keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec, options);
+        keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_EQ(keyVaultKey.GetKeyType().ToString(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec.ToString());
+    EXPECT_EQ(keyVaultKey.GetKeyType().ToString(), Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec.ToString());
     auto& keyOperations = keyVaultKey.KeyOperations();
     uint16_t expectedSize = 2;
     EXPECT_EQ(keyOperations.size(), expectedSize);
@@ -83,12 +83,12 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 
   {
     auto keyResponse = keyClient.CreateKey(
-        keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa, options);
+        keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Rsa, options);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::JsonWebKeyType::Rsa);
+    EXPECT_EQ(keyVaultKey.GetKeyType(), Azure::Security::KeyVault::Keys::KeyVaultKeyType::Rsa);
 
     auto findTag = [keyVaultKey](std::string key, std::string value) {
       // Will throw if key is not found

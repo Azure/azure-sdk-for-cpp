@@ -19,7 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The JsonWebKey types.
    *
    */
-  class JsonWebKeyType {
+  class KeyVaultKeyType {
   private:
     std::string m_value;
 
@@ -29,20 +29,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param jwt The JWT as string.
      */
-    explicit JsonWebKeyType(std::string jwt) : m_value(std::move(jwt)) {}
+    explicit KeyVaultKeyType(std::string jwt) : m_value(std::move(jwt)) {}
 
     /**
      * @brief Construct a default JWT.
      *
      */
-    JsonWebKeyType() = default;
+    KeyVaultKeyType() = default;
 
     /**
      * @brief Enables using the equal operator for JWT.
      *
      * @param other A JWT to be compared.
      */
-    bool operator==(const JsonWebKeyType& other) const noexcept { return m_value == other.m_value; }
+    bool operator==(const KeyVaultKeyType& other) const noexcept { return m_value == other.m_value; }
 
     /**
      * @brief Return the JWK as string.
@@ -55,38 +55,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const JsonWebKeyType Ec;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Ec;
 
     /**
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm backed by a Hardware Security Module
      * (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const JsonWebKeyType EcHsm;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType EcHsm;
 
     /**
      * @brief An RSA cryptographic algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const JsonWebKeyType Rsa;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Rsa;
 
     /**
      * @brief An RSA cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const JsonWebKeyType RsaHsm;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType RsaHsm;
 
     /**
      * @brief An AES cryptographic algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const JsonWebKeyType Oct;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Oct;
 
     /**
      * @brief An AES cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const JsonWebKeyType OctHsm;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OctHsm;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

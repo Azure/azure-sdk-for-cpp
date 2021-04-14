@@ -8,9 +8,9 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 
-const JsonWebKeyType JsonWebKeyType::Ec(_detail::EcValue);
-const JsonWebKeyType JsonWebKeyType::EcHsm(_detail::EcHsmValue);
-const JsonWebKeyType JsonWebKeyType::Rsa(_detail::RsaValue);
-const JsonWebKeyType JsonWebKeyType::RsaHsm(_detail::RsaHsmValue);
-const JsonWebKeyType JsonWebKeyType::Oct(_detail::OctValue);
-const JsonWebKeyType JsonWebKeyType::OctHsm(_detail::OctHsmValue);
+const KeyVaultKeyType KeyVaultKeyType::Ec(_detail::EcValue);
+const KeyVaultKeyType KeyVaultKeyType::EcHsm(_detail::EcHsmValue);
+const KeyVaultKeyType KeyVaultKeyType::Rsa(_detail::RsaValue);
+const KeyVaultKeyType KeyVaultKeyType::RsaHsm(_detail::RsaHsmValue);
+const KeyVaultKeyType KeyVaultKeyType::Oct(_detail::OctValue);
+const KeyVaultKeyType KeyVaultKeyType::OctHsm(_detail::OctHsmValue);

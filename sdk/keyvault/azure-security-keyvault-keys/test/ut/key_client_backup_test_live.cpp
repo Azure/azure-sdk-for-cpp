@@ -33,7 +33,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
 
   {
     std::cout << std::endl << "- Create key";
-    auto response = keyClient.CreateKey(keyName, JsonWebKeyType::Ec);
+    auto response = keyClient.CreateKey(keyName, KeyVaultKeyType::Ec);
     CheckValidResponse(response);
   }
 
