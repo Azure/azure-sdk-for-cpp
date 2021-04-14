@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Returns a sequence of the shares in the storage account. Enumerating the shares may
+     * @brief Returns a paginated collection of the shares in the storage account. Enumerating the shares may
      * make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list the shares.
      * @param context Context for cancelling long running operations.
