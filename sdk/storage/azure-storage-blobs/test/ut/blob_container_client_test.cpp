@@ -159,20 +159,19 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Blobs.insert(blobName);
     }
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobsOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listBlobs;
-    do
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
-      EXPECT_EQ(res.Value.BlobContainerName, m_containerName);
-
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(
+          pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+      EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
+      for (const auto& blob : pageResult.Items)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
@@ -209,25 +208,24 @@ namespace Azure { namespace Storage { namespace Test {
         }
         listBlobs.insert(blob.Name);
       }
-    } while (options.ContinuationToken.HasValue());
+    }
     EXPECT_TRUE(
         std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
     options.Prefix = prefix1;
     listBlobs.clear();
-    do
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResult.Items)
       {
         listBlobs.insert(blob.Name);
       }
-    } while (options.ContinuationToken.HasValue());
+    }
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
-  TEST_F(BlobContainerClientTest, ListBlobsHierarchy)
+  TEST_F(BlobContainerClientTest, ListBlobsByHierarchy)
   {
     const std::string delimiter = "/";
     const std::string prefix = RandomString();
@@ -246,26 +244,19 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = prefix;
     std::set<std::string> items;
-    while (true)
+    for (auto pageResult = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
+         pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
-      EXPECT_EQ(res.Value.Delimiter, delimiter);
-      EXPECT_EQ(res.Value.Prefix, options.Prefix.Value());
-      EXPECT_TRUE(res.Value.Items.empty());
-      for (const auto& p : res.Value.BlobPrefixes)
+      EXPECT_EQ(pageResult.Delimiter, delimiter);
+      EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
+      EXPECT_TRUE(pageResult.Items.empty());
+      for (const auto& p : pageResult.BlobPrefixes)
       {
         items.emplace(p);
-      }
-      if (res.Value.ContinuationToken.HasValue())
-      {
-        options.ContinuationToken = res.Value.ContinuationToken;
-      }
-      else
-      {
-        break;
       }
     }
     EXPECT_EQ(items, (std::set<std::string>{prefix1 + delimiter, prefix2 + delimiter}));
@@ -274,23 +265,16 @@ namespace Azure { namespace Storage { namespace Test {
     for (const auto& p : {prefix1, prefix2})
     {
       options.Prefix = p + delimiter;
-      while (true)
+      for (auto pageResult = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
+           pageResult.HasMore();
+           pageResult.NextPage(Azure::Core::Context()))
       {
-        auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
-        EXPECT_EQ(res.Value.Delimiter, delimiter);
-        EXPECT_EQ(res.Value.Prefix, options.Prefix.Value());
-        EXPECT_TRUE(res.Value.BlobPrefixes.empty());
-        for (const auto& i : res.Value.Items)
+        EXPECT_EQ(pageResult.Delimiter, delimiter);
+        EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
+        EXPECT_TRUE(pageResult.BlobPrefixes.empty());
+        for (const auto& i : pageResult.Items)
         {
           items.emplace(i.Name);
-        }
-        if (res.Value.ContinuationToken.HasValue())
-        {
-          options.ContinuationToken = res.Value.ContinuationToken;
-        }
-        else
-        {
-          break;
         }
       }
     }
@@ -310,7 +294,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto contentStream = Azure::Core::IO::MemoryBodyStream(content.data(), 1);
     blobClient.AppendBlock(contentStream);
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
     options.Include = Blobs::Models::ListBlobsIncludeFlags::Snapshots
         | Blobs::Models::ListBlobsIncludeFlags::Versions
@@ -322,11 +306,11 @@ namespace Azure { namespace Storage { namespace Test {
     bool foundNotCurrentVersion = false;
     bool foundDeleted = false;
     bool foundMetadata = false;
-    do
+
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResult.Items)
       {
         if (!blob.Snapshot.empty())
         {
@@ -357,7 +341,7 @@ namespace Azure { namespace Storage { namespace Test {
           foundMetadata = true;
         }
       }
-    } while (options.ContinuationToken.HasValue());
+    }
     EXPECT_TRUE(foundSnapshot);
     EXPECT_TRUE(foundVersions);
     EXPECT_TRUE(foundCurrentVersion);

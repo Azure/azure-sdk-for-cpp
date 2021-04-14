@@ -324,10 +324,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobsSinglePage and
-   * BlobContainerClient::ListBlobsByHierarchySinglePage.
+   * @brief Optional parameters for BlobContainerClient::ListBlobs and
+   * BlobContainerClient::ListBlobsByHierarchy.
    */
-  struct ListBlobsSinglePageOptions
+  struct ListBlobsOptions
   {
     /**
      * @brief Specifies a string that filters the results to return only blobs whose

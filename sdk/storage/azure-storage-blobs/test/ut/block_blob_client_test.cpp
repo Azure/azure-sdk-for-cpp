@@ -152,13 +152,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Azure::DateTime lastAccessedOn;
 
-      Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+      Azure::Storage::Blobs::ListBlobsOptions options;
       options.Prefix = m_blobName;
-      do
+      for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+           pageResult.NextPage(Azure::Core::Context()))
       {
-        auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-        options.ContinuationToken = res.Value.ContinuationToken;
-        for (const auto& blob : res.Value.Items)
+        for (const auto& blob : pageResult.Items)
         {
           if (blob.Name == m_blobName)
           {
@@ -166,7 +165,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (!options.ContinuationToken.Value().empty());
+      }
 
       EXPECT_TRUE(IsValidTime(lastAccessedOn));
     }
@@ -320,14 +319,13 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(downloadResponse.Value.Details.IsCurrentVersion.Value());
     EXPECT_EQ(version1, downloadResponse.Value.Details.VersionId.Value());
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
     options.Include = Blobs::Models::ListBlobsIncludeFlags::Versions;
-    do
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResult.Items)
       {
         if (blob.Name == blobName)
         {
@@ -343,7 +341,7 @@ namespace Azure { namespace Storage { namespace Test {
           }
         }
       }
-    } while (options.ContinuationToken.HasValue());
+    }
   }
 
   TEST_F(BlockBlobClientTest, Properties)
@@ -976,13 +974,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.IsAccessTierInferred.Value());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
-    do
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResult.Items)
       {
         if (blob.Name == blobName)
         {
@@ -991,7 +988,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_TRUE(blob.Details.IsAccessTierInferred.Value());
         }
       }
-    } while (options.ContinuationToken.HasValue());
+    }
 
     // choose a different tier
     auto targetTier = properties.AccessTier.Value() == Blobs::Models::AccessTier::Hot
@@ -1005,11 +1002,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.IsAccessTierInferred.Value());
     EXPECT_TRUE(properties.AccessTierChangedOn.HasValue());
 
-    do
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResult.Items)
       {
         if (blob.Name == blobName)
         {
@@ -1018,7 +1014,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_FALSE(blob.Details.IsAccessTierInferred.Value());
         }
       }
-    } while (options.ContinuationToken.HasValue());
+    }
   }
 
 }}} // namespace Azure::Storage::Test

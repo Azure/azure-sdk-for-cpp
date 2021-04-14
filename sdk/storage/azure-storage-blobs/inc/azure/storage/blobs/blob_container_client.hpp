@@ -200,37 +200,33 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Returns a single segment of blobs in this container, starting from the
-     * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlatSegment to continue
-     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name.
+     * @brief Returns a sequence of blobs in this container. Enumerating the blobs may make
+     * multiple requests to the service while fetching all the values. Blobs are ordered
+     * lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ListBlobsSinglePageResult describing a segment of the blobs in the container.
+     * @return A ListBlobsPagedResponse describing the blobs in the container.
      */
-    Azure::Response<Models::ListBlobsSinglePageResult> ListBlobsSinglePage(
-        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
+    ListBlobsPagedResponse ListBlobs(
+        const ListBlobsOptions& options = ListBlobsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Returns a single segment of blobs in this container, starting from the
-     * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobsByHierarchySegment to
-     * continue enumerating the blobs segment by segment. Blobs are ordered lexicographically by
-     * name. A Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a
-     * file system.
+     * @brief Returns a collection of blobs in this container. Enumerating the blobs may make
+     * multiple requests to the service while fetching all the values. Blobs are ordered
+     * lexicographically by name. A delimiter can be used to traverse a virtual hierarchy of blobs
+     * as though it were a file system.
      *
      * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
      * were a file system. The delimiter may be a single character or a string.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ListBlobsByHierarchySinglePageResult describing a segment of the blobs in the
-     * container.
+     * @return A ListBlobsByHierarchyPagedResponse describing the blobs in the container.
      */
-    Azure::Response<Models::ListBlobsByHierarchySinglePageResult> ListBlobsByHierarchySinglePage(
+    ListBlobsByHierarchyPagedResponse ListBlobsByHierarchy(
         const std::string& delimiter,
-        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions(),
+        const ListBlobsOptions& options = ListBlobsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -308,6 +304,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
+    friend class ListBlobsPagedResponse;
+    friend class ListBlobsByHierarchyPagedResponse;
   };
 
 }}} // namespace Azure::Storage::Blobs

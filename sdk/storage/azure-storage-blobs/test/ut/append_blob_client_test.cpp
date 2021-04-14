@@ -277,13 +277,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_FALSE(getPropertiesResult.Value.IsSealed.Value());
 
-    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
-    do
+    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMore();
+         pageResponse.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResponse.Items)
       {
         if (blob.Name == blobName)
         {
@@ -291,7 +290,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_FALSE(blob.Details.IsSealed.Value());
         }
       }
-    } while (options.ContinuationToken.HasValue());
+    }
 
     Blobs::SealAppendBlobOptions sealOptions;
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size() + 1;
@@ -311,19 +310,18 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.Value());
 
-    do
+    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMore();
+         pageResponse.NextPage(Azure::Core::Context()))
     {
-      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& blob : res.Value.Items)
+      for (const auto& blob : pageResponse.Items)
       {
         if (blob.Name == blobName)
         {
           EXPECT_TRUE(blob.Details.IsSealed.HasValue());
-          EXPECT_TRUE(blob.Details.IsSealed.Value());
+          EXPECT_FALSE(blob.Details.IsSealed.Value());
         }
       }
-    } while (options.ContinuationToken.HasValue());
+    }
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 

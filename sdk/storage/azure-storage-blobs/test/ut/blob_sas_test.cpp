@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_list = [&](const std::string& sas) {
       auto blobContainerClient = Blobs::BlobContainerClient(containerUrl + sas);
-      EXPECT_NO_THROW(blobContainerClient.ListBlobsSinglePage());
+      EXPECT_NO_THROW(blobContainerClient.ListBlobs());
     };
 
     auto verify_blob_create = [&](const std::string& sas) {

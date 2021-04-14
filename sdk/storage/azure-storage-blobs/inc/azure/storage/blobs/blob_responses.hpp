@@ -9,11 +9,14 @@
 #include <vector>
 
 #include <azure/core/operation.hpp>
+#include <azure/storage/common/paged_response.hpp>
 
+#include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  class BlobContainerClient;
   class BlobClient;
   class PageBlobClient;
 
@@ -106,5 +109,52 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class Blobs::BlobClient;
     friend class Blobs::PageBlobClient;
+  };
+
+  class ListBlobsPagedResponse : public PagedResponse<ListBlobsPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string BlobContainerName;
+    std::string Prefix;
+    std::vector<Models::BlobItem> Items;
+
+    explicit ListBlobsPagedResponse(std::string CurrentPageToken)
+        : PagedResponse<ListBlobsPagedResponse>(std::move(CurrentPageToken))
+    {
+    }
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<BlobContainerClient> m_blobContainerClient;
+    ListBlobsOptions m_operationOptions;
+
+    friend class BlobContainerClient;
+    friend PagedResponse<ListBlobsPagedResponse>;
+  };
+
+  class ListBlobsByHierarchyPagedResponse
+      : public PagedResponse<ListBlobsByHierarchyPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string BlobContainerName;
+    std::string Prefix;
+    std::string Delimiter;
+    std::vector<Models::BlobItem> Items;
+    std::vector<std::string> BlobPrefixes;
+
+    explicit ListBlobsByHierarchyPagedResponse(std::string CurrentPageToken)
+        : PagedResponse<ListBlobsByHierarchyPagedResponse>(std::move(CurrentPageToken))
+    {
+    }
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<BlobContainerClient> m_blobContainerClient;
+    ListBlobsOptions m_operationOptions;
+
+    friend class BlobContainerClient;
+    friend PagedResponse<ListBlobsByHierarchyPagedResponse>;
   };
 }}} // namespace Azure::Storage::Blobs
