@@ -192,6 +192,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareFileClient;
   };
 
+  class ListSharesPagedResponse : public PagedResponse<ListSharesPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    std::vector<Models::ShareItem> Items;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareServiceClient> m_shareServiceClient;
+    ListSharesOptions m_operationOptions;
+
+    friend class ShareServiceClient;
+    friend class PagedResponse<ListSharesPagedResponse>;
+  };
+
   class ListFilesAndDirectoriesPagedResponse
       : public PagedResponse<ListFilesAndDirectoriesPagedResponse> {
   public:
@@ -213,6 +229,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
   };
 
+  class ListFileHandlesPagedResponse : public PagedResponse<ListFileHandlesPagedResponse> {
+  public:
+    std::vector<Models::HandleItem> Handles;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareFileClient> m_shareFileClient;
+    ListFileHandlesOptions m_operationOptions;
+
+    friend class ShareFileClient;
+    friend class PagedResponse<ListFileHandlesPagedResponse>;
+  };
+
   class ForceCloseAllFileHandlesPagedResponse
       : public PagedResponse<ForceCloseAllFileHandlesPagedResponse> {
   public:
@@ -227,22 +257,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareFileClient;
     friend class PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
-  };
-
-  class ListSharesPagedResponse : public PagedResponse<ListSharesPagedResponse> {
-  public:
-    std::string ServiceEndpoint;
-    std::string Prefix;
-    std::vector<Models::ShareItem> Items;
-
-  private:
-    void OnNextPage(const Azure::Core::Context& context);
-
-    std::shared_ptr<ShareServiceClient> m_shareServiceClient;
-    ListSharesOptions m_operationOptions;
-
-    friend class ShareServiceClient;
-    friend class PagedResponse<ListSharesPagedResponse>;
   };
 
   class ListDirectoryHandlesPagedResponse
@@ -276,17 +290,4 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
   };
 
-  class ListFileHandlesPagedResponse : public PagedResponse<ListFileHandlesPagedResponse> {
-  public:
-    std::vector<Models::HandleItem> Handles;
-
-  private:
-    void OnNextPage(const Azure::Core::Context& context);
-
-    std::shared_ptr<ShareFileClient> m_shareFileClient;
-    ListFileHandlesOptions m_operationOptions;
-
-    friend class ShareFileClient;
-    friend class PagedResponse<ListFileHandlesPagedResponse>;
-  };
 }}}} // namespace Azure::Storage::Files::Shares

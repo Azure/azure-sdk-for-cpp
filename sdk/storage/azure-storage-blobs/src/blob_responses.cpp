@@ -63,6 +63,44 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
   }
 
+  void ListBlobContainersPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
+    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
+    protocolLayerOptions.Include = m_operationOptions.Include;
+    auto response = _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
+        *m_blobServiceClient->m_pipeline,
+        m_blobServiceClient->m_serviceUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+
+    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    Prefix = std::move(response.Value.Prefix);
+    Items = std::move(response.Value.Items);
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
+  }
+
+  void FindBlobsByTagsPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
+    protocolLayerOptions.Where = m_tagFilterSqlExpression;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
+    auto response = _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
+        *m_blobServiceClient->m_pipeline,
+        m_blobServiceClient->m_serviceUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+
+    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    Items = std::move(response.Value.Items);
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
+  }
+
   void ListBlobsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     _detail::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
@@ -135,44 +173,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Delimiter = std::move(response.Value.Delimiter);
     Items = std::move(response.Value.Items);
     BlobPrefixes = std::move(response.Value.BlobPrefixes);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
-  }
-
-  void ListBlobContainersPagedResponse::OnNextPage(const Azure::Core::Context& context)
-  {
-    _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    protocolLayerOptions.Include = m_operationOptions.Include;
-    auto response = _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
-        *m_blobServiceClient->m_pipeline,
-        m_blobServiceClient->m_serviceUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    Prefix = std::move(response.Value.Prefix);
-    Items = std::move(response.Value.Items);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
-  }
-
-  void FindBlobsByTagsPagedResponse::OnNextPage(const Azure::Core::Context& context)
-  {
-    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Where = m_tagFilterSqlExpression;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    auto response = _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
-        *m_blobServiceClient->m_pipeline,
-        m_blobServiceClient->m_serviceUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    Items = std::move(response.Value.Items);
     NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
     RawResponse = std::move(response.RawResponse);
   }

@@ -118,6 +118,39 @@ namespace Azure { namespace Storage {
       friend class Blobs::PageBlobClient;
     };
 
+    class ListBlobContainersPagedResponse : public PagedResponse<ListBlobContainersPagedResponse> {
+    public:
+      std::string ServiceEndpoint;
+      std::string Prefix;
+      std::vector<Models::BlobContainerItem> Items;
+
+    private:
+      void OnNextPage(const Azure::Core::Context& context);
+
+      std::shared_ptr<BlobServiceClient> m_blobServiceClient;
+      ListBlobContainersOptions m_operationOptions;
+
+      friend class BlobServiceClient;
+      friend class PagedResponse<ListBlobContainersPagedResponse>;
+      friend class Files::DataLake::ListFileSystemsPagedResponse;
+    };
+
+    class FindBlobsByTagsPagedResponse : public PagedResponse<FindBlobsByTagsPagedResponse> {
+    public:
+      std::string ServiceEndpoint;
+      std::vector<Models::FilterBlobItem> Items;
+
+    private:
+      void OnNextPage(const Azure::Core::Context& context);
+
+      std::shared_ptr<BlobServiceClient> m_blobServiceClient;
+      FindBlobsByTagsOptions m_operationOptions;
+      std::string m_tagFilterSqlExpression;
+
+      friend class BlobServiceClient;
+      friend class PagedResponse<FindBlobsByTagsPagedResponse>;
+    };
+
     class ListBlobsPagedResponse : public PagedResponse<ListBlobsPagedResponse> {
     public:
       std::string ServiceEndpoint;
@@ -153,39 +186,6 @@ namespace Azure { namespace Storage {
 
       friend class BlobContainerClient;
       friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
-    };
-
-    class ListBlobContainersPagedResponse : public PagedResponse<ListBlobContainersPagedResponse> {
-    public:
-      std::string ServiceEndpoint;
-      std::string Prefix;
-      std::vector<Models::BlobContainerItem> Items;
-
-    private:
-      void OnNextPage(const Azure::Core::Context& context);
-
-      std::shared_ptr<BlobServiceClient> m_blobServiceClient;
-      ListBlobContainersOptions m_operationOptions;
-
-      friend class BlobServiceClient;
-      friend class PagedResponse<ListBlobContainersPagedResponse>;
-      friend class Files::DataLake::ListFileSystemsPagedResponse;
-    };
-
-    class FindBlobsByTagsPagedResponse : public PagedResponse<FindBlobsByTagsPagedResponse> {
-    public:
-      std::string ServiceEndpoint;
-      std::vector<Models::FilterBlobItem> Items;
-
-    private:
-      void OnNextPage(const Azure::Core::Context& context);
-
-      std::shared_ptr<BlobServiceClient> m_blobServiceClient;
-      FindBlobsByTagsOptions m_operationOptions;
-      std::string m_tagFilterSqlExpression;
-
-      friend class BlobServiceClient;
-      friend class PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
     class GetPageRangesPagedResponse : public PagedResponse<GetPageRangesPagedResponse> {
