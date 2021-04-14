@@ -66,8 +66,7 @@ int main()
         }
         auto keyWithType = keyClient.GetKey(key.Name).Value;
         std::cout << "Key is returned with name: " << keyWithType.Name()
-                  << " and type: " << keyWithType.GetKeyType().ToString()
-                  << std::endl;
+                  << " and type: " << keyWithType.GetKeyType().ToString() << std::endl;
       }
 
       if (!keysSinglePage.ContinuationToken.HasValue())

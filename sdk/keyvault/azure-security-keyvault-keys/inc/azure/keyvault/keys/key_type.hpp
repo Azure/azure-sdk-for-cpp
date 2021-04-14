@@ -42,7 +42,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param other A JWT to be compared.
      */
-    bool operator==(const KeyVaultKeyType& other) const noexcept { return m_value == other.m_value; }
+    bool operator==(const KeyVaultKeyType& other) const noexcept
+    {
+      return m_value == other.m_value;
+    }
 
     /**
      * @brief Return the JWK as string.

@@ -52,7 +52,9 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
     auto keyVaultKey = keyResponse.Value;
 
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_EQ(keyVaultKey.GetKeyType().ToString(), Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec.ToString());
+    EXPECT_EQ(
+        keyVaultKey.GetKeyType().ToString(),
+        Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec.ToString());
     auto& keyOperations = keyVaultKey.KeyOperations();
     uint16_t expectedSize = 2;
     EXPECT_EQ(keyOperations.size(), expectedSize);
