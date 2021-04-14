@@ -12,8 +12,6 @@
 namespace Azure {
 
 template <class Derived> class PagedResponse {
-  bool m_hasMore = true;
-
 public:
   std::string NextPageToken;
   std::string CurrentPageToken;
@@ -40,6 +38,9 @@ protected:
   PagedResponse() = default;
   PagedResponse(PagedResponse&&) = default;
   PagedResponse& operator=(PagedResponse&&) = default;
+
+private:
+  bool m_hasMore = true;
 };
 
 } // namespace Azure
