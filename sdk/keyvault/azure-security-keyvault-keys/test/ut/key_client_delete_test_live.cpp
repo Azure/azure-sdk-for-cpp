@@ -325,7 +325,7 @@ TEST_F(KeyVaultClientTest, DeleteOperationResumeToken)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -363,7 +363,7 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
