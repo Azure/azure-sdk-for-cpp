@@ -14,8 +14,15 @@
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage {
+  
+  namespace Files { namespace DataLake {
+    class ListFileSystemsPagedResponse;
+  }} // namespace Files::DataLake
 
+  namespace Blobs {
+
+  class BlobServiceClient;
   class BlobContainerClient;
   class BlobClient;
   class PageBlobClient;
@@ -157,4 +164,27 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobContainerClient;
     friend PagedResponse<ListBlobsByHierarchyPagedResponse>;
   };
+
+  class ListBlobContainersPagedResponse : public PagedResponse<ListBlobContainersPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    std::vector<Models::BlobContainerItem> Items;
+
+    explicit ListBlobContainersPagedResponse(std::string CurrentPageToken)
+        : PagedResponse<ListBlobContainersPagedResponse>(std::move(CurrentPageToken))
+    {
+    }
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<BlobServiceClient> m_blobServiceClient;
+    ListBlobContainersOptions m_operationOptions;
+
+    friend class BlobServiceClient;
+    friend PagedResponse<ListBlobContainersPagedResponse>;
+    friend class Files::DataLake::ListFileSystemsPagedResponse;
+  };
+
 }}} // namespace Azure::Storage::Blobs

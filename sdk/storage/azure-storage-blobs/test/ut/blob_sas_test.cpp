@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       auto serviceClient = Blobs::BlobServiceClient(serviceUrl + sasToken);
-      EXPECT_NO_THROW(serviceClient.ListBlobContainersSinglePage());
+      EXPECT_NO_THROW(serviceClient.ListBlobContainers());
     }
 
     for (auto permissions :

@@ -58,21 +58,16 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::DataLake::Models::FileSystemItem> result;
     std::string continuation;
-    Files::DataLake::ListFileSystemsSinglePageOptions options;
+    Files::DataLake::ListFileSystemsOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
-    do
+    for (auto pageResult = m_dataLakeServiceClient->ListFileSystems(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
-      result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
-      if (response.Value.ContinuationToken.HasValue())
-      {
-        continuation = response.Value.ContinuationToken.Value();
-        options.ContinuationToken = continuation;
-      }
-    } while (!continuation.empty());
+      result.insert(result.end(), pageResult.Items.begin(), pageResult.Items.end());
+    }
     return result;
   }
 
@@ -131,10 +126,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::DataLake::ListFileSystemsSinglePageOptions options;
+      Files::DataLake::ListFileSystemsOptions options;
       options.PageSizeHint = 2;
-      auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
-      EXPECT_LE(2U, response.Value.Items.size());
+      auto response = m_dataLakeServiceClient->ListFileSystems(options);
+      EXPECT_LE(2U, response.Items.size());
     }
   }
 
@@ -159,7 +154,7 @@ namespace Azure { namespace Storage { namespace Test {
               .GetUrl();
     auto datalakeServiceClient
         = Azure::Storage::Files::DataLake::DataLakeServiceClient(datalakeServiceUrl + sasToken);
-    EXPECT_NO_THROW(datalakeServiceClient.ListFileSystemsSinglePage());
+    EXPECT_NO_THROW(datalakeServiceClient.ListFileSystems());
   }
 
 }}} // namespace Azure::Storage::Test

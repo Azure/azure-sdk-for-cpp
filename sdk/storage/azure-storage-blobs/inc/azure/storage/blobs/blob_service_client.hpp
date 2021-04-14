@@ -86,19 +86,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Returns a single segment of blob containers in the storage account, starting
-     * from the specified Marker. Use an empty Marker to start enumeration from the beginning and
-     * the NextMarker if it's not empty to make subsequent calls to ListBlobContainersSegment to
-     * continue enumerating the containers segment by segment. Containers are ordered
-     * lexicographically by name.
+     * @brief Returns a collection of blob containers in the storage account. Enumerating the
+     * blob containers may make multiple requests to the service while fetching all the values.
+     * Containers are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ListBlobContainersSinglePageResult describing segment of the blob containers in the
+     * @return A ListBlobContainersPagedResponse describing the blob containers in the
      * storage account.
      */
-    Azure::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
-        const ListBlobContainersSinglePageOptions& options = ListBlobContainersSinglePageOptions(),
+    ListBlobContainersPagedResponse ListBlobContainers(
+        const ListBlobContainersOptions& options = ListBlobContainersOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -236,5 +234,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Nullable<std::string> m_encryptionScope;
+
+    friend class ListBlobContainersPagedResponse;
   };
 }}} // namespace Azure::Storage::Blobs

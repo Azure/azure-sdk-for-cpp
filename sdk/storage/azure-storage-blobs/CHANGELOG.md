@@ -7,6 +7,7 @@
 - Removed `Azure::Storage::Blobs::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 - Replaced all SinglePage functions with pageable functions.
+  - `BlobServiceClient::ListBlobContainers`
   - `BlobContainerClinet::ListBlobs`
   - `BlobContainerClient::ListBlobsByHierarchy`
 

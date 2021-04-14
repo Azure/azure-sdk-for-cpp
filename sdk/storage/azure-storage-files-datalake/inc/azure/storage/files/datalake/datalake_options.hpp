@@ -58,9 +58,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for ServiceClient::ListFileSystemsSinglePageOptions
+   * @brief Optional parameters for ServiceClient::ListFileSystemsOptions.
    */
-  struct ListFileSystemsSinglePageOptions
+  struct ListFileSystemsOptions
   {
     /**
      * @brief Filters results to filesystems within the specified prefix.

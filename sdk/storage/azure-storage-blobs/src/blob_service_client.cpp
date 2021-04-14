@@ -116,18 +116,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blobContainerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
-  Azure::Response<Models::ListBlobContainersSinglePageResult>
-  BlobServiceClient::ListBlobContainersSinglePage(
-      const ListBlobContainersSinglePageOptions& options,
+  ListBlobContainersPagedResponse BlobServiceClient::ListBlobContainers(
+      const ListBlobContainersOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.Include = options.Include;
-    return _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ListBlobContainersPagedResponse response(currentPageToken);
+    response.NextPageToken = currentPageToken;
+    response.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
+    response.m_operationOptions = options;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   Azure::Response<Models::UserDelegationKey> BlobServiceClient::GetUserDelegationKey(

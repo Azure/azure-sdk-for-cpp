@@ -153,9 +153,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::ListBlobContainersSinglePage.
+   * @brief Optional parameters for BlobServiceClient::ListBlobContainers.
    */
-  struct ListBlobContainersSinglePageOptions
+  struct ListBlobContainersOptions
   {
     /**
      * @brief Specifies a string that filters the results to return only containers whose
