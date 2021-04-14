@@ -74,7 +74,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         context,
         protocolLayerOptions);
 
-    Models::ListFilesAndDirectoriesSinglePageResult ret;
     ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     ShareName = std::move(response.Value.ShareName);
     ShareSnapshot = std::move(response.Value.ShareSnapshot);

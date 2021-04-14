@@ -20,7 +20,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     // ServiceClient models:
 
-    using ListSharesSinglePageResult = _detail::ServiceListSharesSinglePageResult;
     using SetServicePropertiesResult = _detail::ServiceSetPropertiesResult;
 
     // ShareClient models:
@@ -69,29 +68,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     using DirectoryProperties = _detail::DirectoryGetPropertiesResult;
     using SetDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
     using SetDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
-    using ForceCloseAllDirectoryHandlesSinglePageResult = _detail::DirectoryForceCloseHandlesResult;
 
     struct ForceCloseDirectoryHandleResult
     {
-    };
-
-    struct ListFilesAndDirectoriesSinglePageResult
-    {
-      std::string ServiceEndpoint;
-      std::string ShareName;
-      std::string ShareSnapshot;
-      std::string DirectoryPath;
-      std::string Prefix;
-      int32_t PageSizeHint = int32_t();
-      Nullable<std::string> ContinuationToken;
-      std::vector<DirectoryItem> DirectoryItems;
-      std::vector<FileItem> FileItems;
-    };
-
-    struct ListDirectoryHandlesSinglePageResult
-    {
-      std::vector<HandleItem> Handles;
-      Nullable<std::string> ContinuationToken;
     };
 
     // FileClient models:
@@ -151,8 +130,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
     using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
     using GetFileRangeListResult = _detail::FileGetRangeListResult;
-    using ListFileHandlesSinglePageResult = ListDirectoryHandlesSinglePageResult;
-    using ForceCloseAllFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
 
     struct DownloadFileToResult
     {
