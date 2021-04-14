@@ -310,11 +310,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief List open handles on the file.
+     * @brief Returns a sequence of the open handles on a directory or a file. Enumerating the
+     * handles may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list this file's open handles.
      * @param context Context for cancelling long running operations.
-     * @return ListFileHandlesPagedResponse containing the information of the operation and the open
-     * handles of this file
+     * @return ListFileHandlesPagedResponse describing the handles of the file.
      */
     ListFileHandlesPagedResponse ListHandles(
         const ListFileHandlesOptions& options = ListFileHandlesOptions(),
