@@ -27,12 +27,7 @@ public:
         std::is_base_of<PagedResponse, Derived>::value,
         "The template argument \"Derived\" should derive from PagedResponse<Derived>.");
 
-    if (!m_hasMore)
-    {
-      // User should check HasMore() before calling NextPage().
-      std::abort();
-    }
-    if (m_hasMore && NextPageToken.empty())
+    if (NextPageToken.empty())
     {
       m_hasMore = false;
       return;
