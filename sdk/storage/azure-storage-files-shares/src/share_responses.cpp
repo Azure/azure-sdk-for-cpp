@@ -5,6 +5,7 @@
 
 #include <thread>
 
+#include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
@@ -58,6 +59,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       std::this_thread::sleep_for(period);
     };
+  }
+
+  void ListFilesAndDirectoriesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    auto protocolLayerOptions
+        = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
+    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
+    auto response = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
+        m_shareDirectoryClient->m_shareDirectoryUrl,
+        *m_shareDirectoryClient->m_pipeline,
+        context,
+        protocolLayerOptions);
+
+    Models::ListFilesAndDirectoriesSinglePageResult ret;
+    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    ShareName = std::move(response.Value.ShareName);
+    ShareSnapshot = std::move(response.Value.ShareSnapshot);
+    DirectoryPath = std::move(response.Value.DirectoryPath);
+    Prefix = std::move(response.Value.Prefix);
+    DirectoryItems = std::move(response.Value.SinglePage.DirectoryItems);
+    FileItems = std::move(response.Value.SinglePage.FileItems);
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

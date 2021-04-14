@@ -180,13 +180,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
-     * information of the operation, directory, share and the listed result.
+     * @return ListFilesAndDirectoriesPagedResponse containing the information of the operation,
+     * directory, share and the listed result.
      */
-    Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
-    ListFilesAndDirectoriesSinglePage(
-        const ListFilesAndDirectoriesSinglePageOptions& options
-        = ListFilesAndDirectoriesSinglePageOptions(),
+    ListFilesAndDirectoriesPagedResponse ListFilesAndDirectories(
+        const ListFilesAndDirectoriesOptions& options = ListFilesAndDirectoriesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -240,5 +238,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     friend class ShareClient;
+    friend class ListFilesAndDirectoriesPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::Shares

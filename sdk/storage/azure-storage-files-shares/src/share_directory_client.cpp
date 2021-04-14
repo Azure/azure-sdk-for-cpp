@@ -286,31 +286,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
-  ShareDirectoryClient::ListFilesAndDirectoriesSinglePage(
-      const ListFilesAndDirectoriesSinglePageOptions& options,
+  ListFilesAndDirectoriesPagedResponse ShareDirectoryClient::ListFilesAndDirectories(
+      const ListFilesAndDirectoriesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions
-        = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
-    protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto result = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
-        m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ListFilesAndDirectoriesSinglePageResult ret;
-    ret.ServiceEndpoint = std::move(result.Value.ServiceEndpoint);
-    ret.ShareName = std::move(result.Value.ShareName);
-    ret.ShareSnapshot = std::move(result.Value.ShareSnapshot);
-    ret.DirectoryPath = std::move(result.Value.DirectoryPath);
-    ret.Prefix = std::move(result.Value.Prefix);
-    ret.PageSizeHint = result.Value.PageSizeHint;
-    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
-    ret.DirectoryItems = std::move(result.Value.SinglePage.DirectoryItems);
-    ret.FileItems = std::move(result.Value.SinglePage.FileItems);
-
-    return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
-        std::move(ret), std::move(result.RawResponse));
+    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ListFilesAndDirectoriesPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    response.m_operationOptions = options;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   Azure::Response<Models::ListDirectoryHandlesSinglePageResult>

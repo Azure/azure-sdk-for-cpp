@@ -3,14 +3,17 @@
 
 #pragma once
 
+#include <azure/core/operation.hpp>
+#include <azure/storage/common/paged_response.hpp>
+
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
-
-#include <azure/core/operation.hpp>
+#include "azure/storage/files/shares/share_options.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class ShareFileClient;
+  class ShareDirectoryClient;
 
   namespace Models {
 
@@ -210,4 +213,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareFileClient;
   };
+
+  class ListFilesAndDirectoriesPagedResponse
+      : public PagedResponse<ListFilesAndDirectoriesPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string ShareName;
+    std::string ShareSnapshot;
+    std::string DirectoryPath;
+    std::string Prefix;
+    std::vector<Models::DirectoryItem> DirectoryItems;
+    std::vector<Models::FileItem> FileItems;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareDirectoryClient> m_shareDirectoryClient;
+    ListFilesAndDirectoriesOptions m_operationOptions;
+
+    friend class ShareDirectoryClient;
+    friend PagedResponse<ListFilesAndDirectoriesPagedResponse>;
+  };
+
 }}}} // namespace Azure::Storage::Files::Shares

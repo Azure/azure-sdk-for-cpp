@@ -12,7 +12,6 @@
 #include <azure/storage/common/access_conditions.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
-#include "azure/storage/files/shares/share_responses.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -227,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
   };
 
-  struct ListFilesAndDirectoriesSinglePageOptions
+  struct ListFilesAndDirectoriesOptions
   {
     /**
      * @brief Filters the results to return only entries whose name begins with the specified

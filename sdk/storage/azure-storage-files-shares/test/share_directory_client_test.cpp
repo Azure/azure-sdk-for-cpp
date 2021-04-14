@@ -50,24 +50,22 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::Shares::Models::DirectoryItem> directoryResult;
     std::vector<Files::Shares::Models::FileItem> fileResult;
-    Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
+    Files::Shares::ListFilesAndDirectoriesOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
     auto directoryClient
         = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryPath);
-    do
+    for (auto pageResult = directoryClient.ListFilesAndDirectories(options); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
     {
-      auto response = directoryClient.ListFilesAndDirectoriesSinglePage(options);
       directoryResult.insert(
           directoryResult.end(),
-          response.Value.DirectoryItems.begin(),
-          response.Value.DirectoryItems.end());
-      fileResult.insert(
-          fileResult.end(), response.Value.FileItems.begin(), response.Value.FileItems.end());
-      options.ContinuationToken = response.Value.ContinuationToken;
-    } while (options.ContinuationToken.HasValue());
+          pageResult.DirectoryItems.begin(),
+          pageResult.DirectoryItems.end());
+      fileResult.insert(fileResult.end(), pageResult.FileItems.begin(), pageResult.FileItems.end());
+    }
     return std::make_pair<
         std::vector<Files::Shares::Models::FileItem>,
         std::vector<Files::Shares::Models::DirectoryItem>>(
@@ -426,12 +424,12 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
+      Files::Shares::ListFilesAndDirectoriesOptions options;
       options.PageSizeHint = 2;
       auto directoryNameAClient
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
-      auto response = directoryNameAClient.ListFilesAndDirectoriesSinglePage(options);
-      EXPECT_LE(2U, response.Value.DirectoryItems.size() + response.Value.FileItems.size());
+      auto response = directoryNameAClient.ListFilesAndDirectories(options);
+      EXPECT_LE(2U, response.DirectoryItems.size() + response.FileItems.size());
     }
   }
 
