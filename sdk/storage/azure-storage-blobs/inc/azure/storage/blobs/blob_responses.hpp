@@ -125,12 +125,12 @@ namespace Azure { namespace Storage {
     std::string Prefix;
     std::vector<Models::BlobItem> Items;
 
+  private:
     explicit ListBlobsPagedResponse(std::string CurrentPageToken)
         : PagedResponse<ListBlobsPagedResponse>(std::move(CurrentPageToken))
     {
     }
 
-  private:
     void OnNextPage(const Azure::Core::Context& context);
 
     std::shared_ptr<BlobContainerClient> m_blobContainerClient;
@@ -150,12 +150,12 @@ namespace Azure { namespace Storage {
     std::vector<Models::BlobItem> Items;
     std::vector<std::string> BlobPrefixes;
 
+  private:
     explicit ListBlobsByHierarchyPagedResponse(std::string CurrentPageToken)
         : PagedResponse<ListBlobsByHierarchyPagedResponse>(std::move(CurrentPageToken))
     {
     }
 
-  private:
     void OnNextPage(const Azure::Core::Context& context);
 
     std::shared_ptr<BlobContainerClient> m_blobContainerClient;
@@ -171,12 +171,12 @@ namespace Azure { namespace Storage {
     std::string Prefix;
     std::vector<Models::BlobContainerItem> Items;
 
+  private:
     explicit ListBlobContainersPagedResponse(std::string CurrentPageToken)
         : PagedResponse<ListBlobContainersPagedResponse>(std::move(CurrentPageToken))
     {
     }
 
-  private:
     void OnNextPage(const Azure::Core::Context& context);
 
     std::shared_ptr<BlobServiceClient> m_blobServiceClient;
