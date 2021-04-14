@@ -9,6 +9,7 @@
 - Removed `ShareClient::ListFilesAndDirectories`.
 - Replaced all SinglePage functions with pageable functions.
   - `ShareDirectoryClient::ListFilesAndDirectories`
+  - `ShareFileClient::ForceCloseAllHandles`
   
 ## 12.0.0-beta.9 (2021-03-23)
 

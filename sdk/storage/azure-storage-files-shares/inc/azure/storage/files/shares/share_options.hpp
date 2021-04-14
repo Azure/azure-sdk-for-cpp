@@ -514,7 +514,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
   };
 
-  struct ForceCloseAllFileHandlesSinglePageOptions
+  struct ForceCloseAllFileHandlesOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next

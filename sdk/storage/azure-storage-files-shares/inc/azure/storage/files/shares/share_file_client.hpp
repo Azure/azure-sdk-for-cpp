@@ -337,14 +337,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Closes all handles opened on a file at the service.
      * @param options Optional parameters to close all this file's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ForceCloseAllFileHandlesSinglePageResult>
-     * containing the information of the closed handles
-     * @remark This operation may return a marker showing that the operation can be continued.
+     * @return ForceCloseAllFileHandlesPagedResponse containing the information of the closed
+     * handles.
      */
-    Azure::Response<Models::ForceCloseAllFileHandlesSinglePageResult>
-    ForceCloseAllHandlesSinglePage(
-        const ForceCloseAllFileHandlesSinglePageOptions& options
-        = ForceCloseAllFileHandlesSinglePageOptions(),
+    ForceCloseAllFileHandlesPagedResponse ForceCloseAllHandles(
+        const ForceCloseAllFileHandlesOptions& options = ForceCloseAllFileHandlesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -378,5 +375,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareClient;
     friend class ShareDirectoryClient;
     friend class ShareLeaseClient;
+    friend class ForceCloseAllFileHandlesPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::Shares

@@ -612,16 +612,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Models::ForceCloseFileHandleResult(), std::move(result.RawResponse));
   }
 
-  Azure::Response<Models::ForceCloseAllFileHandlesSinglePageResult>
-  ShareFileClient::ForceCloseAllHandlesSinglePage(
-      const ForceCloseAllFileHandlesSinglePageOptions& options,
+  ForceCloseAllFileHandlesPagedResponse ShareFileClient::ForceCloseAllHandles(
+      const ForceCloseAllFileHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
-    protocolLayerOptions.HandleId = FileAllHandles;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    return _detail::ShareRestClient::File::ForceCloseHandles(
-        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ForceCloseAllFileHandlesPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
+    response.m_operationOptions = options;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   Azure::Response<Models::DownloadFileToResult> ShareFileClient::DownloadTo(

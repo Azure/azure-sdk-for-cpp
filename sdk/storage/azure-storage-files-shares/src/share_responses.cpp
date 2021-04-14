@@ -86,4 +86,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     RawResponse = std::move(response.RawResponse);
   }
 
+  void ForceCloseAllFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
+    protocolLayerOptions.HandleId = FileAllHandles;
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    auto response = _detail::ShareRestClient::File::ForceCloseHandles(
+        m_shareFileClient->m_shareFileUrl,
+        *m_shareFileClient->m_pipeline,
+        context,
+        protocolLayerOptions);
+
+    NumberOfHandlesClosed = response.Value.NumberOfHandlesClosed;
+    NumberOfHandlesFailedToClose = response.Value.NumberOfHandlesFailedToClose;
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
+  }
+
 }}}} // namespace Azure::Storage::Files::Shares
