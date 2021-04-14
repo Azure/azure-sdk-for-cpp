@@ -132,7 +132,7 @@ namespace Azure { namespace Storage {
       ListBlobsOptions m_operationOptions;
 
       friend class BlobContainerClient;
-      friend PagedResponse<ListBlobsPagedResponse>;
+      friend class PagedResponse<ListBlobsPagedResponse>;
     };
 
     class ListBlobsByHierarchyPagedResponse
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage {
       ListBlobsOptions m_operationOptions;
 
       friend class BlobContainerClient;
-      friend PagedResponse<ListBlobsByHierarchyPagedResponse>;
+      friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
     };
 
     class ListBlobContainersPagedResponse : public PagedResponse<ListBlobContainersPagedResponse> {
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage {
       ListBlobContainersOptions m_operationOptions;
 
       friend class BlobServiceClient;
-      friend PagedResponse<ListBlobContainersPagedResponse>;
+      friend class PagedResponse<ListBlobContainersPagedResponse>;
       friend class Files::DataLake::ListFileSystemsPagedResponse;
     };
 
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage {
       std::string m_tagFilterSqlExpression;
 
       friend class BlobServiceClient;
-      friend PagedResponse<FindBlobsByTagsPagedResponse>;
+      friend class PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
     class GetPageRangesPagedResponse : public PagedResponse<GetPageRangesPagedResponse> {
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage {
       GetPageRangesOptions m_operationOptions;
 
       friend class PageBlobClient;
-      friend PagedResponse<GetPageRangesPagedResponse>;
+      friend class PagedResponse<GetPageRangesPagedResponse>;
     };
 
     class GetPageRangesDiffPagedResponse : public PagedResponse<GetPageRangesDiffPagedResponse> {
@@ -221,7 +221,7 @@ namespace Azure { namespace Storage {
       std::string m_previousSnapshotUri;
 
       friend class PageBlobClient;
-      friend PagedResponse<GetPageRangesDiffPagedResponse>;
+      friend class PagedResponse<GetPageRangesDiffPagedResponse>;
     };
 
   } // namespace Blobs
