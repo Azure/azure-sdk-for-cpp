@@ -2,6 +2,14 @@
 
 ## 4.0.0-beta.2 (Unreleased)
 
+### New Features
+
+- Added support for importing and deserializing EC and OCT keys.
+
+### Breaking Changes
+
+- Removed `Azure::Security::KeyVault::Keys::JsonWebKey::to_json`.
+
 ### Bug Fixes
 
 - Fix getting a resume token from delete and recover key operations.
