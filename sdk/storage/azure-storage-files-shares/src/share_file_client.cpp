@@ -581,21 +581,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::ListFileHandlesSinglePageResult> ShareFileClient::ListHandlesSinglePage(
-      const ListFileHandlesSinglePageOptions& options,
+  ListFileHandlesPagedResponse ShareFileClient::ListHandles(
+      const ListFileHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::File::ListHandlesOptions();
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto result = _detail::ShareRestClient::File::ListHandles(
-        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ListFileHandlesSinglePageResult ret;
-    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
-    ret.Handles = std::move(result.Value.HandleList);
-
-    return Azure::Response<Models::ListFileHandlesSinglePageResult>(
-        std::move(ret), std::move(result.RawResponse));
+    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
+    ListFileHandlesPagedResponse response;
+    response.CurrentPageToken = currentPageToken;
+    response.NextPageToken = currentPageToken;
+    response.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
+    response.m_operationOptions = options;
+    // Populate the first page
+    response.OnNextPage(context);
+    return response;
   }
 
   Azure::Response<Models::ForceCloseFileHandleResult> ShareFileClient::ForceCloseHandle(

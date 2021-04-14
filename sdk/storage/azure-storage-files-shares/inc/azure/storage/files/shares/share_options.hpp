@@ -492,7 +492,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ListFileHandlesSinglePageOptions
+  struct ListFileHandlesOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next

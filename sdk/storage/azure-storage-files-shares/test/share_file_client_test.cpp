@@ -260,9 +260,15 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, HandlesFunctionalityWorks)
   {
-    auto result = m_fileClient->ListHandlesSinglePage();
-    EXPECT_TRUE(result.Value.Handles.empty());
-    EXPECT_FALSE(result.Value.ContinuationToken.HasValue());
+    auto result = m_fileClient->ListHandles();
+    EXPECT_TRUE(result.Handles.empty());
+    EXPECT_TRUE(result.NextPageToken.empty());
+
+    for (auto pageResult = m_fileClient->ListHandles(); pageResult.HasMore();
+         pageResult.NextPage(Azure::Core::Context()))
+    {
+    }
+
     EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
 
     for (auto pageResult = m_fileClient->ForceCloseAllHandles(); pageResult.HasMore();

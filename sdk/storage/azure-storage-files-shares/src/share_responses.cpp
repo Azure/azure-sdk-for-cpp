@@ -157,4 +157,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
     RawResponse = std::move(response.RawResponse);
   }
+
+  void ListFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ListHandlesOptions();
+    protocolLayerOptions.ContinuationToken = NextPageToken;
+    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
+    auto response = _detail::ShareRestClient::File::ListHandles(
+        m_shareFileClient->m_shareFileUrl,
+        *m_shareFileClient->m_pipeline,
+        context,
+        protocolLayerOptions);
+    Handles = std::move(response.Value.HandleList);
+    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    RawResponse = std::move(response.RawResponse);
+  }
+
 }}}} // namespace Azure::Storage::Files::Shares
