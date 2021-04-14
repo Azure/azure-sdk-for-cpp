@@ -25,7 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
     /**
      * @brief Parsed the http payload into an #Azure::Core::RequestFailedException
      *
-     * @param rawResponse
+     * @param rawResponse The Http raw response.
      * @return Azure::Core::RequestFailedException
      */
     static Azure::Core::RequestFailedException CreateException(
