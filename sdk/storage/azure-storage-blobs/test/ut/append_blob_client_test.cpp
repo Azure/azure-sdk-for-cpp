@@ -318,7 +318,7 @@ namespace Azure { namespace Storage { namespace Test {
         if (blob.Name == blobName)
         {
           EXPECT_TRUE(blob.Details.IsSealed.HasValue());
-          EXPECT_FALSE(blob.Details.IsSealed.Value());
+          EXPECT_TRUE(blob.Details.IsSealed.Value());
         }
       }
     }
