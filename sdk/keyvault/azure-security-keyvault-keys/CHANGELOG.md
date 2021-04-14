@@ -13,6 +13,10 @@
 - Replaced the enum `JsonWebKeyType` for a class with static const members as ext enum.
 - Renamed `MaxResults` to `MaxPageResults` for `GetSinglePageOptions`.
 
+### Bug Fixes
+
+- Fix getting a resume token from delete and recover key operations.
+
 ## 4.0.0-beta.1 (2021-04-07)
 
 ### New Features

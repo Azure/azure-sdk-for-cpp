@@ -62,11 +62,8 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
   m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
 
-  // Build the full url for continuation token. It is only used in case customers wants to use
-  // it on their own. The Operation uses the KeyVaultPipeline from the client which knows how to
-  // build this url.
-  m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(_detail::DeletedKeysPath)
-      + "/" + m_value.Name();
+  // The key name is enough to be used as continuation token.
+  m_continuationToken = m_value.Name();
 
   // The recoveryId is only returned if soft-delete is enabled.
   // The LRO is considered completed for non soft-delete (key will be eventually removed).

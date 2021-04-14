@@ -62,9 +62,6 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOp
   m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
 
-  // Build the full url for continuation token. It is only used in case customers wants to use
-  // it on their own. The Operation uses the KeyVaultPipeline from the client which knows how to
-  // build this url.
-  m_continuationToken = m_pipeline->GetVaultUrl() + "/" + std::string(_detail::DeletedKeysPath)
-      + "/" + m_value.Name();
+  // The key name is enough to resume the operation
+  m_continuationToken = m_value.Name();
 }
