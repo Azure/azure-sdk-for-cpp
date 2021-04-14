@@ -5,6 +5,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <azure/keyvault/common/internal/single_page.hpp>
+
 #include "azure/keyvault/keys/details/key_backup.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
@@ -28,7 +30,7 @@ struct RequestWithContinuationToken
 };
 
 static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    GetSinglePageOptions const& options,
+    Azure::Security::KeyVault::_internal::GetSinglePageOptions const& options,
     std::vector<std::string>&& defaultPath)
 {
   RequestWithContinuationToken request;
