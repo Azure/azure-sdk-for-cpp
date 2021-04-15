@@ -12,10 +12,14 @@
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
-#include "azure/storage/files/datalake/datalake_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+
+  namespace Models {
+    using ListFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
+    using SignedIdentifier = Blobs::Models::SignedIdentifier;
+  } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;

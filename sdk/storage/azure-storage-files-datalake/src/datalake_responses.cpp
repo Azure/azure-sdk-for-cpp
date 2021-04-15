@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 
+#include "azure/storage/files/datalake/datalake_service_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
@@ -79,56 +80,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   } // namespace Models
 
-  void ListFileSystemsPagedResponse::CopyFromListBlobsContainersResult(
-      Blobs::ListBlobContainersPagedResponse& result)
-  {
-    ServiceEndpoint = result.ServiceEndpoint;
-    Prefix = result.Prefix;
-    for (auto& item : result.Items)
-    {
-      Models::FileSystemItem fileSystem;
-      fileSystem.Name = std::move(item.Name);
-      fileSystem.Details.ETag = std::move(item.Details.ETag);
-      fileSystem.Details.LastModified = std::move(item.Details.LastModified);
-      fileSystem.Details.Metadata = std::move(item.Details.Metadata);
-      if (item.Details.AccessType == Blobs::Models::PublicAccessType::BlobContainer)
-      {
-        fileSystem.Details.AccessType = Models::PublicAccessType::FileSystem;
-      }
-      else if (item.Details.AccessType == Blobs::Models::PublicAccessType::Blob)
-      {
-        fileSystem.Details.AccessType = Models::PublicAccessType::Path;
-      }
-      else if (item.Details.AccessType == Blobs::Models::PublicAccessType::None)
-      {
-        fileSystem.Details.AccessType = Models::PublicAccessType::None;
-      }
-      else
-      {
-        fileSystem.Details.AccessType
-            = Models::PublicAccessType(item.Details.AccessType.ToString());
-      }
-      fileSystem.Details.HasImmutabilityPolicy = item.Details.HasImmutabilityPolicy;
-      fileSystem.Details.HasLegalHold = item.Details.HasLegalHold;
-      if (item.Details.LeaseDuration.HasValue())
-      {
-        fileSystem.Details.LeaseDuration
-            = Models::LeaseDuration((item.Details.LeaseDuration.Value().ToString()));
-      }
-      fileSystem.Details.LeaseState = Models::LeaseState(item.Details.LeaseState.ToString());
-      fileSystem.Details.LeaseStatus = Models::LeaseStatus(item.Details.LeaseStatus.ToString());
-
-      Items.emplace_back(std::move(fileSystem));
-    }
-    CurrentPageToken = result.CurrentPageToken;
-    NextPageToken = result.NextPageToken;
-    RawResponse = std::move(result.RawResponse);
-  }
-
   void ListFileSystemsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_listBlobContainersPagedResponse.NextPage(context);
-    CopyFromListBlobsContainersResult(m_listBlobContainersPagedResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_dataLakeServiceClient->ListFileSystems(m_operationOptions, context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

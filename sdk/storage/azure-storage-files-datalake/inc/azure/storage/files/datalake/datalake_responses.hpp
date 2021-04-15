@@ -9,6 +9,7 @@
 
 #include <azure/storage/blobs/blob_responses.hpp>
 
+#include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
@@ -43,8 +44,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // FileSystemClient models:
 
     using ListPathsSinglePageResult = _detail::FileSystemListPathsResult;
-    using SignedIdentifier = Blobs::Models::SignedIdentifier;
-    using ListFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
 
     struct FileSystemAccessPolicy
     {
@@ -266,20 +265,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string Prefix;
     std::vector<Models::FileSystemItem> Items;
 
-    explicit ListFileSystemsPagedResponse(
-        Blobs::ListBlobContainersPagedResponse&& listBlobContainersPagedResponse)
-        : m_listBlobContainersPagedResponse(std::move(listBlobContainersPagedResponse))
-    {
-      CopyFromListBlobsContainersResult(m_listBlobContainersPagedResponse);
-    }
-
   private:
-    Blobs::ListBlobContainersPagedResponse m_listBlobContainersPagedResponse;
-
-    void CopyFromListBlobsContainersResult(Blobs::ListBlobContainersPagedResponse& result);
-
     void OnNextPage(const Azure::Core::Context& context);
 
+    std::shared_ptr<DataLakeServiceClient> m_dataLakeServiceClient;
+    ListFileSystemsOptions m_operationOptions;
+
+    friend class DataLakeServiceClient;
     friend class PagedResponse<ListFileSystemsPagedResponse>;
   };
 
