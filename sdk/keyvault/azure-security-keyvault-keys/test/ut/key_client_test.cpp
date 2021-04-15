@@ -34,24 +34,24 @@ TEST(KeyClient, ServiceVersion)
     // 7.0
     EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion::V7_0);
                     KeyClient keyClient("vaultUrl", credential, options);
-                    EXPECT_EQ(options.ToString(), "7.0"););
+                    EXPECT_EQ(options.Version.ToString(), "7.0"););
   }
   {
     // 7.1
     EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion::V7_1);
                     KeyClient keyClient("vaultUrl", credential, options);
-                    EXPECT_EQ(options.ToString(), "7.1"););
+                    EXPECT_EQ(options.Version.ToString(), "7.1"););
   }
   {
     // 7.2
     EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion::V7_2);
                     KeyClient keyClient("vaultUrl", credential, options);
-                    EXPECT_EQ(options.ToString(), "7.2"););
+                    EXPECT_EQ(options.Version.ToString(), "7.2"););
   }
   {
     // arbitrary version
     EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion("1.0"));
                     KeyClient keyClient("vaultUrl", credential, options);
-                    EXPECT_EQ(options.ToString(), "1.0"););
+                    EXPECT_EQ(options.Version.ToString(), "1.0"););
   }
 }

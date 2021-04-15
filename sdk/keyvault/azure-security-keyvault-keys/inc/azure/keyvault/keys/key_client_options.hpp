@@ -77,7 +77,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         : Azure::Core::_internal::ClientOptions(), Version(version)
     {
     }
-
-    std::string ToString() const { return Version.ToString(); }
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
