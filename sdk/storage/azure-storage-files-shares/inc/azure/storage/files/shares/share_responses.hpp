@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class ListFileHandlesPagedResponse : public PagedResponse<ListFileHandlesPagedResponse> {
   public:
-    std::vector<Models::HandleItem> Handles;
+    std::vector<Models::HandleItem> FileHandles;
 
   private:
     void OnNextPage(const Azure::Core::Context& context);
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   class ListDirectoryHandlesPagedResponse
       : public PagedResponse<ListDirectoryHandlesPagedResponse> {
   public:
-    std::vector<Models::HandleItem> Handles;
+    std::vector<Models::HandleItem> DirectoryHandles;
 
   private:
     void OnNextPage(const Azure::Core::Context& context);

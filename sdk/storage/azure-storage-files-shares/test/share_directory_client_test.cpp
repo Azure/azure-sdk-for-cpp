@@ -435,7 +435,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
   {
     auto result = m_fileShareDirectoryClient->ListHandles();
-    EXPECT_TRUE(result.Handles.empty());
+    EXPECT_TRUE(result.DirectoryHandles.empty());
     EXPECT_TRUE(result.NextPageToken.empty());
     for (auto pageResult = m_fileShareDirectoryClient->ListHandles(); pageResult.HasMore();
          pageResult.NextPage())

@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     ListDirectoryHandlesPagedResponse pagedResponse;
 
-    pagedResponse.Handles = std::move(response.Value.HandleList);
+    pagedResponse.DirectoryHandles = std::move(response.Value.HandleList);
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
