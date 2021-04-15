@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief They type of the key.
      *
      */
-    JsonWebKeyType KeyType;
+    KeyVaultKeyType KeyType;
 
     /**
      * @brief Construct a new Json Web Key object.

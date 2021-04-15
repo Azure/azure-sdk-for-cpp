@@ -5,6 +5,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <azure/keyvault/common/internal/single_page.hpp>
+
 #include "azure/keyvault/keys/details/key_backup.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
@@ -28,7 +30,7 @@ struct RequestWithContinuationToken
 };
 
 static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    GetSinglePageOptions const& options,
+    Azure::Security::KeyVault::_internal::GetSinglePageOptions const& options,
     std::vector<std::string>&& defaultPath)
 {
   RequestWithContinuationToken request;
@@ -43,13 +45,13 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxResults)
+  if (options.MaxPageResults)
   {
     if (request.Query == nullptr)
     {
       request.Query = std::make_unique<std::map<std::string, std::string>>();
     }
-    request.Query->emplace("maxResults", std::to_string(options.MaxResults.Value()));
+    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
   }
   return request;
 }
@@ -94,7 +96,7 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
 
 Azure::Response<KeyVaultKey> KeyClient::CreateKey(
     std::string const& name,
-    JsonWebKeyType keyType,
+    KeyVaultKeyType keyType,
     CreateKeyOptions const& options,
     Azure::Core::Context const& context) const
 {

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "azure/keyvault/keys/dll_import_export.hpp"
+
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
@@ -17,45 +19,77 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The JsonWebKey types.
    *
    */
-  enum class JsonWebKeyType
-  {
+  class KeyVaultKeyType {
+  private:
+    std::string m_value;
+
+  public:
+    /**
+     * @brief Construct a new JWT Type object
+     *
+     * @param jwt The JWT as string.
+     */
+    explicit KeyVaultKeyType(std::string jwt) : m_value(std::move(jwt)) {}
+
+    /**
+     * @brief Construct a default JWT.
+     *
+     */
+    KeyVaultKeyType() = default;
+
+    /**
+     * @brief Enables using the equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator==(const KeyVaultKeyType& other) const noexcept
+    {
+      return m_value == other.m_value;
+    }
+
+    /**
+     * @brief Return the JWK as string.
+     *
+     * @return The JWK represented as string.
+     */
+    std::string const& ToString() const { return m_value; }
+
     /**
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm.
      *
      */
-    Ec,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Ec;
+
     /**
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm backed by a Hardware Security Module
      * (HSM).
      *
      */
-    EcHsm,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType EcHsm;
+
     /**
      * @brief An RSA cryptographic algorithm.
      *
      */
-    Rsa,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Rsa;
+
     /**
      * @brief An RSA cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    RsaHsm,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType RsaHsm;
+
     /**
      * @brief An AES cryptographic algorithm.
      *
      */
-    Oct,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Oct;
+
     /**
      * @brief An AES cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    OctHsm,
-  };
-
-  struct KeyType
-  {
-    static JsonWebKeyType KeyTypeFromString(std::string const& name);
-    static std::string KeyTypeToString(JsonWebKeyType kty);
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OctHsm;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys
