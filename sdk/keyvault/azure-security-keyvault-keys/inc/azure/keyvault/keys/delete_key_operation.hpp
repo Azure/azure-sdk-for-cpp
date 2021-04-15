@@ -75,6 +75,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
         Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
+    DeleteKeyOperation(
+        std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
+        std::string resumeToken)
+        : m_pipeline(keyvaultPipeline), m_value(DeletedKey(resumeToken)),
+          m_continuationToken(std::move(resumeToken))
+    {
+    }
+
     /**
      * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
      * @return A reference to an #Azure::Core::Http::RawResponse.

@@ -20,13 +20,13 @@ std::string KeyRequestParameters::Serialize() const
 
   Azure::Core::Json::_internal::json payload;
   // kty
-  SetFromNullable<JsonWebKeyType, std::string>(
+  JsonOptional::SetFromNullable<JsonWebKeyType, std::string>(
       m_keyType, payload, _detail::KeyTypePropertyName, [](JsonWebKeyType type) {
         return KeyType::KeyTypeToString(type);
       });
 
   // attributes
-  SetFromNullable(
+  JsonOptional::SetFromNullable(
       m_options.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
 
   /* Optional */
@@ -39,13 +39,13 @@ std::string KeyRequestParameters::Serialize() const
   }
 
   // attributes
-  SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
       m_options.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
 
-  SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
       m_options.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,
