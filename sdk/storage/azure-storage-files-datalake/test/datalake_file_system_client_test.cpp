@@ -74,7 +74,8 @@ namespace Azure { namespace Storage { namespace Test {
     else
     {
       auto directoryClient = m_fileSystemClient->GetDirectoryClient(directory);
-      for (auto pageResult = directoryClient.ListPaths(recursive, options); pageResult.HasMorePages();
+      for (auto pageResult = directoryClient.ListPaths(recursive, options);
+           pageResult.HasMorePages();
            pageResult.MoveToNextPage())
       {
         result.insert(result.end(), pageResult.Paths.begin(), pageResult.Paths.end());

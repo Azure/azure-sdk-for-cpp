@@ -57,7 +57,8 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto directoryClient
         = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryPath);
-    for (auto pageResult = directoryClient.ListFilesAndDirectories(options); pageResult.HasMorePages();
+    for (auto pageResult = directoryClient.ListFilesAndDirectories(options);
+         pageResult.HasMorePages();
          pageResult.MoveToNextPage())
     {
       directoryResult.insert(
@@ -441,7 +442,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
     }
     EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
-    for (auto pageResult = m_fileShareDirectoryClient->ForceCloseAllHandles(); pageResult.HasMorePages();
+    for (auto pageResult = m_fileShareDirectoryClient->ForceCloseAllHandles();
+         pageResult.HasMorePages();
          pageResult.MoveToNextPage())
     {
     }
