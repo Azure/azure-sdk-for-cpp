@@ -233,15 +233,47 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobsOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListBlobsPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
-    response.m_operationOptions = options;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    _detail::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
+    protocolLayerOptions.Prefix = options.Prefix;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Include = options.Include;
+    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsSinglePage(
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+    for (auto& i : response.Value.Items)
+    {
+      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
+      {
+        i.Details.IsAccessTierInferred = false;
+      }
+      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
+      {
+        i.IsCurrentVersion = false;
+      }
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
+      {
+        i.Details.IsSealed = false;
+      }
+    }
+
+    ListBlobsPagedResponse pagedResponse;
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
+    pagedResponse.Prefix = std::move(response.Value.Prefix);
+    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   ListBlobsByHierarchyPagedResponse BlobContainerClient::ListBlobsByHierarchy(
@@ -249,16 +281,53 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobsOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListBlobsByHierarchyPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.Delimiter = delimiter;
-    response.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
-    response.m_operationOptions = options;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePageOptions
+        protocolLayerOptions;
+    protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.Delimiter = delimiter;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Include = options.Include;
+    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+    for (auto& i : response.Value.Items)
+    {
+      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
+      {
+        i.Details.IsAccessTierInferred = false;
+      }
+      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
+      {
+        i.IsCurrentVersion = false;
+      }
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
+      {
+        i.Details.IsSealed = false;
+      }
+    }
+
+    ListBlobsByHierarchyPagedResponse pagedResponse;
+
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
+    pagedResponse.Prefix = std::move(response.Value.Prefix);
+    pagedResponse.Delimiter = std::move(response.Value.Delimiter);
+    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.BlobPrefixes = std::move(response.Value.BlobPrefixes);
+    pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_delimiter = delimiter;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<Models::BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(

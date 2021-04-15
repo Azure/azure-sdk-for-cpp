@@ -120,15 +120,28 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobContainersOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListBlobContainersPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
-    response.m_operationOptions = options;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
+    protocolLayerOptions.Prefix = options.Prefix;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Include = options.Include;
+    auto response = _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
+        *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    ListBlobContainersPagedResponse pagedResponse;
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.Prefix = std::move(response.Value.Prefix);
+    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<Models::UserDelegationKey> BlobServiceClient::GetUserDelegationKey(
@@ -190,16 +203,27 @@ namespace Azure { namespace Storage { namespace Blobs {
       const FindBlobsByTagsOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    FindBlobsByTagsPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
-    response.m_operationOptions = options;
-    response.m_tagFilterSqlExpression = tagFilterSqlExpression;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
+    protocolLayerOptions.Where = tagFilterSqlExpression;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    auto response = _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
+        *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    FindBlobsByTagsPagedResponse pagedResponse;
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_tagFilterSqlExpression = tagFilterSqlExpression;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<BlobContainerClient> BlobServiceClient::CreateBlobContainer(

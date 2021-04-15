@@ -304,8 +304,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
-    friend class ListBlobsPagedResponse;
-    friend class ListBlobsByHierarchyPagedResponse;
   };
 
 }}} // namespace Azure::Storage::Blobs

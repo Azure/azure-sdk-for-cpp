@@ -65,166 +65,47 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   void ListBlobContainersPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    protocolLayerOptions.Include = m_operationOptions.Include;
-    auto response = _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
-        *m_blobServiceClient->m_pipeline,
-        m_blobServiceClient->m_serviceUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    Prefix = std::move(response.Value.Prefix);
-    Items = std::move(response.Value.Items);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_blobServiceClient->ListBlobContainers(m_operationOptions, context);
   }
 
   void FindBlobsByTagsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Where = m_tagFilterSqlExpression;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    auto response = _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
-        *m_blobServiceClient->m_pipeline,
-        m_blobServiceClient->m_serviceUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    Items = std::move(response.Value.Items);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_blobServiceClient->FindBlobsByTags(
+        m_tagFilterSqlExpression, m_operationOptions, context);
   }
 
   void ListBlobsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    _detail::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
-    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    protocolLayerOptions.Include = m_operationOptions.Include;
-    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsSinglePage(
-        *m_blobContainerClient->m_pipeline,
-        m_blobContainerClient->m_blobContainerUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-    for (auto& i : response.Value.Items)
-    {
-      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
-      {
-        i.Details.IsAccessTierInferred = false;
-      }
-      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
-      {
-        i.IsCurrentVersion = false;
-      }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
-      {
-        i.Details.IsSealed = false;
-      }
-    }
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    BlobContainerName = std::move(response.Value.BlobContainerName);
-    Prefix = std::move(response.Value.Prefix);
-    Items = std::move(response.Value.Items);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_blobContainerClient->ListBlobs(m_operationOptions, context);
   }
 
   void ListBlobsByHierarchyPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePageOptions
-        protocolLayerOptions;
-    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    protocolLayerOptions.Delimiter = Delimiter;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    protocolLayerOptions.Include = m_operationOptions.Include;
-    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
-        *m_blobContainerClient->m_pipeline,
-        m_blobContainerClient->m_blobContainerUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-    for (auto& i : response.Value.Items)
-    {
-      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
-      {
-        i.Details.IsAccessTierInferred = false;
-      }
-      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
-      {
-        i.IsCurrentVersion = false;
-      }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
-      {
-        i.Details.IsSealed = false;
-      }
-    }
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    BlobContainerName = std::move(response.Value.BlobContainerName);
-    Prefix = std::move(response.Value.Prefix);
-    Delimiter = std::move(response.Value.Delimiter);
-    Items = std::move(response.Value.Items);
-    BlobPrefixes = std::move(response.Value.BlobPrefixes);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_blobContainerClient->ListBlobsByHierarchy(m_delimiter, m_operationOptions, context);
   }
 
   void GetPageRangesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.Range = m_operationOptions.Range;
-    protocolLayerOptions.LeaseId = m_operationOptions.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = m_operationOptions.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = m_operationOptions.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = m_operationOptions.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = m_operationOptions.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = m_operationOptions.AccessConditions.TagConditions;
-    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pageBlobClient->m_pipeline,
-        m_pageBlobClient->m_blobUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-
-    ETag = std::move(response.Value.ETag);
-    LastModified = std::move(response.Value.LastModified);
-    BlobSize = response.Value.BlobSize;
-    PageRanges = std::move(response.Value.PageRanges);
-    NextPageToken.clear();
-    RawResponse = std::move(response.RawResponse);
+    *this = m_pageBlobClient->GetPageRanges(m_operationOptions, context);
   }
 
   void GetPageRangesDiffPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    _detail::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshot = m_previousSnapshotUri;
-    protocolLayerOptions.Range = m_operationOptions.Range;
-    protocolLayerOptions.LeaseId = m_operationOptions.AccessConditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = m_operationOptions.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = m_operationOptions.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = m_operationOptions.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = m_operationOptions.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = m_operationOptions.AccessConditions.TagConditions;
-    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
-        *m_pageBlobClient->m_pipeline,
-        m_pageBlobClient->m_blobUrl,
-        protocolLayerOptions,
-        _internal::WithReplicaStatus(context));
-
-    ETag = std::move(response.Value.ETag);
-    LastModified = std::move(response.Value.LastModified);
-    BlobSize = response.Value.BlobSize;
-    PageRanges = std::move(response.Value.PageRanges);
-    ClearRanges = std::move(response.Value.ClearRanges);
-    NextPageToken.clear();
-    RawResponse = std::move(response.RawResponse);
+    if (m_previousSnapshot.HasValue())
+    {
+      *this = m_pageBlobClient->GetPageRangesDiff(
+          m_previousSnapshot.Value(), m_operationOptions, context);
+    }
+    else if (m_previousSnapshotUrl.HasValue())
+    {
+      *this = m_pageBlobClient->GetManagedDiskPageRangesDiff(
+          m_previousSnapshotUrl.Value(), m_operationOptions, context);
+    }
+    std::abort();
   }
 
 }}} // namespace Azure::Storage::Blobs

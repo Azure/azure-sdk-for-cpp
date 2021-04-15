@@ -276,8 +276,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit PageBlobClient(BlobClient blobClient);
 
     friend class BlobClient;
-    friend class GetPageRangesPagedResponse;
-    friend class GetPageRangesDiffPagedResponse;
   };
 
 }}} // namespace Azure::Storage::Blobs

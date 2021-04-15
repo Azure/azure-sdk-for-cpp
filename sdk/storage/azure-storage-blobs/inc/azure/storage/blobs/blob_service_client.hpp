@@ -234,8 +234,5 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Nullable<std::string> m_encryptionScope;
-
-    friend class ListBlobContainersPagedResponse;
-    friend class FindBlobsByTagsPagedResponse;
   };
 }}} // namespace Azure::Storage::Blobs

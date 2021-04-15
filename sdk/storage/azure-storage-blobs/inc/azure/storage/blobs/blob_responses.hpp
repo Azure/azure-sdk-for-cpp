@@ -183,6 +183,7 @@ namespace Azure { namespace Storage {
 
       std::shared_ptr<BlobContainerClient> m_blobContainerClient;
       ListBlobsOptions m_operationOptions;
+      std::string m_delimiter;
 
       friend class BlobContainerClient;
       friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
@@ -218,7 +219,8 @@ namespace Azure { namespace Storage {
 
       std::shared_ptr<PageBlobClient> m_pageBlobClient;
       GetPageRangesOptions m_operationOptions;
-      std::string m_previousSnapshotUri;
+      Azure::Nullable<std::string> m_previousSnapshot;
+      Azure::Nullable<std::string> m_previousSnapshotUrl;
 
       friend class PageBlobClient;
       friend class PagedResponse<GetPageRangesDiffPagedResponse>;
