@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMore();
          pageResponse.NextPage())
     {
-      for (const auto& blob : pageResponse.Items)
+      for (const auto& blob : pageResponse.Blobs)
       {
         if (blob.Name == blobName)
         {
@@ -313,7 +313,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMore();
          pageResponse.NextPage())
     {
-      for (const auto& blob : pageResponse.Items)
+      for (const auto& blob : pageResponse.Blobs)
       {
         if (blob.Name == blobName)
         {

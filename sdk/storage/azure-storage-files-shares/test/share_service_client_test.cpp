@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_fileShareServiceClient->ListShares(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      result.insert(result.end(), pageResult.Items.begin(), pageResult.Items.end());
+      result.insert(result.end(), pageResult.Shares.begin(), pageResult.Shares.end());
     }
     return result;
   }
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ListSharesOptions options;
       options.PageSizeHint = 2;
       auto response = m_fileShareServiceClient->ListShares(options);
-      EXPECT_LE(2U, response.Items.size());
+      EXPECT_LE(2U, response.Shares.size());
     }
   }
 

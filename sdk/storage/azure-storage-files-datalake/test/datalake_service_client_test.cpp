@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_dataLakeServiceClient->ListFileSystems(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      result.insert(result.end(), pageResult.Items.begin(), pageResult.Items.end());
+      result.insert(result.end(), pageResult.FileSystems.begin(), pageResult.FileSystems.end());
     }
     return result;
   }
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListFileSystemsOptions options;
       options.PageSizeHint = 2;
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
-      EXPECT_LE(2U, response.Items.size());
+      EXPECT_LE(2U, response.FileSystems.size());
     }
   }
 

@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
-    std::vector<Models::FileSystemItem> Items;
+    std::vector<Models::FileSystemItem> FileSystems;
 
   private:
     void OnNextPage(const Azure::Core::Context& context);

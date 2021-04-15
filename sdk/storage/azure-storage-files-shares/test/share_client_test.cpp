@@ -445,7 +445,7 @@ namespace Azure { namespace Storage { namespace Test {
          pageResult.HasMore();
          pageResult.NextPage())
     {
-      shareItems.insert(shareItems.end(), pageResult.Items.begin(), pageResult.Items.end());
+      shareItems.insert(shareItems.end(), pageResult.Shares.begin(), pageResult.Shares.end());
     }
     EXPECT_EQ(3U, shareItems.size());
     for (const auto& shareItem : shareItems)
@@ -488,7 +488,7 @@ namespace Azure { namespace Storage { namespace Test {
          pageResult.HasMore();
          pageResult.NextPage())
     {
-      shareItems.insert(shareItems.end(), pageResult.Items.begin(), pageResult.Items.end());
+      shareItems.insert(shareItems.end(), pageResult.Shares.begin(), pageResult.Shares.end());
     }
     EXPECT_EQ(1U, shareItems.size());
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, shareItems[0].Details.AccessTier.Value());

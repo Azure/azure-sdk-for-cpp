@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Test {
           pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
       EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
-      for (const auto& blob : pageResult.Items)
+      for (const auto& blob : pageResult.Blobs)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      for (const auto& blob : pageResult.Items)
+      for (const auto& blob : pageResult.Blobs)
       {
         listBlobs.insert(blob.Name);
       }
@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_EQ(pageResult.Delimiter, delimiter);
       EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
-      EXPECT_TRUE(pageResult.Items.empty());
+      EXPECT_TRUE(pageResult.Blobs.empty());
       for (const auto& p : pageResult.BlobPrefixes)
       {
         items.emplace(p);
@@ -272,7 +272,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(pageResult.Delimiter, delimiter);
         EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
         EXPECT_TRUE(pageResult.BlobPrefixes.empty());
-        for (const auto& i : pageResult.Items)
+        for (const auto& i : pageResult.Blobs)
         {
           items.emplace(i.Name);
         }
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      for (const auto& blob : pageResult.Items)
+      for (const auto& blob : pageResult.Blobs)
       {
         if (!blob.Snapshot.empty())
         {
@@ -734,7 +734,7 @@ namespace Azure { namespace Storage { namespace Test {
            pageResult.NextPage())
       {
         EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-        for (auto& item : pageResult.Items)
+        for (auto& item : pageResult.Blobs)
         {
           EXPECT_FALSE(item.BlobName.empty());
           EXPECT_FALSE(item.BlobContainerName.empty());

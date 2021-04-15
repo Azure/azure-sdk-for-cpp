@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     pagedResponse.ServiceEndpoint = std::move(blobPagedResponse.ServiceEndpoint);
     pagedResponse.Prefix = std::move(blobPagedResponse.Prefix);
-    for (auto& item : blobPagedResponse.Items)
+    for (auto& item : blobPagedResponse.BlobContainers)
     {
       Models::FileSystemItem fileSystem;
       fileSystem.Name = std::move(item.Name);
@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       fileSystem.Details.LeaseState = Models::LeaseState(item.Details.LeaseState.ToString());
       fileSystem.Details.LeaseStatus = Models::LeaseStatus(item.Details.LeaseStatus.ToString());
 
-      pagedResponse.Items.emplace_back(std::move(fileSystem));
+      pagedResponse.FileSystems.emplace_back(std::move(fileSystem));
     }
     pagedResponse.m_dataLakeServiceClient = std::make_shared<DataLakeServiceClient>(*this);
     pagedResponse.m_operationOptions = options;

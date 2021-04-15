@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListSharesPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.Shares = std::move(response.Value.Items);
     pagedResponse.m_shareServiceClient = std::make_shared<ShareServiceClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());

@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.Blobs = std::move(response.Value.Items);
     pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
@@ -318,7 +318,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
     pagedResponse.Delimiter = std::move(response.Value.Delimiter);
-    pagedResponse.Items = std::move(response.Value.Items);
+    pagedResponse.Blobs = std::move(response.Value.Items);
     pagedResponse.BlobPrefixes = std::move(response.Value.BlobPrefixes);
     pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     pagedResponse.m_operationOptions = options;

@@ -196,7 +196,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
-    std::vector<Models::ShareItem> Items;
+    std::vector<Models::ShareItem> Shares;
 
   private:
     void OnNextPage(const Azure::Core::Context& context);
@@ -216,8 +216,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ShareSnapshot;
     std::string DirectoryPath;
     std::string Prefix;
-    std::vector<Models::DirectoryItem> DirectoryItems;
-    std::vector<Models::FileItem> FileItems;
+    std::vector<Models::DirectoryItem> Directories;
+    std::vector<Models::FileItem> Files;
 
   private:
     void OnNextPage(const Azure::Core::Context& context);

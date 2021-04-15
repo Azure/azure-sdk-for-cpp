@@ -122,7 +122,7 @@ namespace Azure { namespace Storage {
     public:
       std::string ServiceEndpoint;
       std::string Prefix;
-      std::vector<Models::BlobContainerItem> Items;
+      std::vector<Models::BlobContainerItem> BlobContainers;
 
     private:
       void OnNextPage(const Azure::Core::Context& context);
@@ -138,7 +138,7 @@ namespace Azure { namespace Storage {
     class FindBlobsByTagsPagedResponse : public PagedResponse<FindBlobsByTagsPagedResponse> {
     public:
       std::string ServiceEndpoint;
-      std::vector<Models::FilterBlobItem> Items;
+      std::vector<Models::FilterBlobItem> Blobs;
 
     private:
       void OnNextPage(const Azure::Core::Context& context);
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
       std::string Prefix;
-      std::vector<Models::BlobItem> Items;
+      std::vector<Models::BlobItem> Blobs;
 
     private:
       void OnNextPage(const Azure::Core::Context& context);
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage {
       std::string BlobContainerName;
       std::string Prefix;
       std::string Delimiter;
-      std::vector<Models::BlobItem> Items;
+      std::vector<Models::BlobItem> Blobs;
       std::vector<std::string> BlobPrefixes;
 
     private:

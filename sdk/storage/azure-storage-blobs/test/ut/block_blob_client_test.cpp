@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
            pageResult.NextPage())
       {
-        for (const auto& blob : pageResult.Items)
+        for (const auto& blob : pageResult.Blobs)
         {
           if (blob.Name == m_blobName)
           {
@@ -325,7 +325,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      for (const auto& blob : pageResult.Items)
+      for (const auto& blob : pageResult.Blobs)
       {
         if (blob.Name == blobName)
         {
@@ -979,7 +979,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      for (const auto& blob : pageResult.Items)
+      for (const auto& blob : pageResult.Blobs)
       {
         if (blob.Name == blobName)
         {
@@ -1005,7 +1005,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
          pageResult.NextPage())
     {
-      for (const auto& blob : pageResult.Items)
+      for (const auto& blob : pageResult.Blobs)
       {
         if (blob.Name == blobName)
         {

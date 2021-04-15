@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(
           pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-      for (const auto& container : pageResult.Items)
+      for (const auto& container : pageResult.BlobContainers)
       {
         listContainers.insert(container.Name);
       }
@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(
           pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-      for (const auto& container : pageResult.Items)
+      for (const auto& container : pageResult.BlobContainers)
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_TRUE(container.Details.ETag.HasValue());
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
            pageResult.NextPage())
       {
-        for (const auto& container : pageResult.Items)
+        for (const auto& container : pageResult.BlobContainers)
         {
           if (container.Name == containerName)
           {

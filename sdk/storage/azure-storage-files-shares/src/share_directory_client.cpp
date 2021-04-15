@@ -308,8 +308,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.ShareSnapshot = std::move(response.Value.ShareSnapshot);
     pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.DirectoryItems = std::move(response.Value.SinglePage.DirectoryItems);
-    pagedResponse.FileItems = std::move(response.Value.SinglePage.FileItems);
+    pagedResponse.Directories = std::move(response.Value.SinglePage.DirectoryItems);
+    pagedResponse.Files = std::move(response.Value.SinglePage.FileItems);
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());

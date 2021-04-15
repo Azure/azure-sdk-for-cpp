@@ -62,9 +62,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       directoryResult.insert(
           directoryResult.end(),
-          pageResult.DirectoryItems.begin(),
-          pageResult.DirectoryItems.end());
-      fileResult.insert(fileResult.end(), pageResult.FileItems.begin(), pageResult.FileItems.end());
+          pageResult.Directories.begin(), pageResult.Directories.end());
+      fileResult.insert(fileResult.end(), pageResult.Files.begin(), pageResult.Files.end());
     }
     return std::make_pair<
         std::vector<Files::Shares::Models::FileItem>,
@@ -429,7 +428,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryNameAClient
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
       auto response = directoryNameAClient.ListFilesAndDirectories(options);
-      EXPECT_LE(2U, response.DirectoryItems.size() + response.FileItems.size());
+      EXPECT_LE(2U, response.Directories.size() + response.Files.size());
     }
   }
 
