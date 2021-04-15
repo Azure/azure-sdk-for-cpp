@@ -25,14 +25,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   public:
     /**
-     * @brief Construct a new JWT Type object
+     * @brief Construct a new JWT type object.
      *
      * @param jwt The JWT as string.
      */
     explicit KeyVaultKeyType(std::string jwt) : m_value(std::move(jwt)) {}
 
     /**
-     * @brief Construct a default JWT.
+     * @brief Construct a default KeyVaultKeyType with an empty string.
      *
      */
     KeyVaultKeyType() = default;
@@ -48,9 +48,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     }
 
     /**
-     * @brief Return the JWK as string.
+     * @brief Return the JWT as string.
      *
-     * @return The JWK represented as string.
+     * @return The JWT represented as string.
      */
     std::string const& ToString() const { return m_value; }
 

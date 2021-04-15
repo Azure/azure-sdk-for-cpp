@@ -62,7 +62,7 @@ KeyClient::KeyClient(
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     KeyClientOptions options)
 {
-  auto apiVersion = options.GetVersionString();
+  auto apiVersion = options.ToString();
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {

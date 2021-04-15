@@ -78,6 +78,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
     }
 
-    std::string GetVersionString() const { return Version.ToString(); }
+    std::string ToString() const { return Version.ToString(); }
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

@@ -61,7 +61,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         KeyClientOptions const& options = KeyClientOptions())
         : KeyClient(vaultUrl, nullptr, options)
     {
-      auto apiVersion = options.GetVersionString();
+      auto apiVersion = options.ToString();
 
       m_pipeline = std::make_unique<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
           Azure::Core::Url(vaultUrl),
