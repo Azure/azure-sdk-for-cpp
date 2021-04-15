@@ -28,6 +28,10 @@ endif()
 
 set(
   AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
+    inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
+    inc/azure/keyvault/keys/cryptography/cryptography_provider.hpp
+    inc/azure/keyvault/keys/cryptography/remote_cryptography_client.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/details/key_backup.hpp
@@ -50,6 +54,9 @@ set(
 
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
+    src/cryptography/cryptography_client.cpp
+    src/cryptography/cryptography_client_options.cpp
+    src/cryptography/remote_cryptography_client.cpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
     src/import_key_options.cpp
