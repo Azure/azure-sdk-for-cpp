@@ -55,6 +55,7 @@ set(
     src/import_key_options.cpp
     src/json_web_key.cpp
     src/key_backup.cpp
+    src/key_client_options.cpp
     src/key_client.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp

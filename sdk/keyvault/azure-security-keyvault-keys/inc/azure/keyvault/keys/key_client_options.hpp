@@ -11,27 +11,53 @@
 
 #include <azure/core/internal/client_options.hpp>
 
+#include "azure/keyvault/keys/dll_import_export.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  enum class ServiceVersion
-  {
+  class ServiceVersion {
+  private:
+    std::string m_version;
+
+  public:
+    /**
+     * @brief Construct a new Service Version object
+     *
+     * @param version The string version for the Key Vault keys service.
+     */
+    ServiceVersion(std::string version) : m_version(std::move(version)) {}
+
+    /**
+     * @brief Enable comparing the ext enum.
+     *
+     * @param other Another #ServiceVersion to be compared.
+     */
+    bool operator==(ServiceVersion const& other) const { return m_version == other.m_version; }
+
+    /**
+     * @brief Return the #ServiceVersion string representation.
+     *
+     */
+    std::string const& ToString() const { return m_version; }
+
     /**
      * @brief Use to send request to the 7.0 version of Key Vault service.
      *
      */
-    V7_0,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_0;
+
     /**
      * @brief Use to send request to the 7.1 version of Key Vault service.
      *
      */
-    V7_1,
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_1;
+
     /**
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */
-    V7_2
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_2;
   };
 
   /**
@@ -52,20 +78,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
     }
 
-    std::string GetVersionString() const
-    {
-      switch (Version)
-      {
-        case ServiceVersion::V7_0:
-          return "7.0";
-        case ServiceVersion::V7_1:
-          return "7.1";
-        case ServiceVersion::V7_2:
-          return "7.2";
-        default:
-          throw std::runtime_error("Version not found");
-      }
-    }
+    std::string GetVersionString() const { return Version.ToString(); }
   };
-
 }}}} // namespace Azure::Security::KeyVault::Keys
