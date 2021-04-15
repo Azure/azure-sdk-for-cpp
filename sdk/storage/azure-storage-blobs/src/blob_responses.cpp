@@ -3,8 +3,6 @@
 
 #include "azure/storage/blobs/blob_responses.hpp"
 
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
-
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
