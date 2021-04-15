@@ -61,41 +61,24 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::DataLake::Models::PathItem> result;
     std::string continuation;
-    Files::DataLake::ListPathsSinglePageOptions options;
+    Files::DataLake::ListPathsOptions options;
     if (directory.empty())
     {
-      do
+      for (auto pageResult = m_fileSystemClient->ListPaths(recursive, options);
+           pageResult.HasMore();
+           pageResult.NextPage())
       {
-        auto response = m_fileSystemClient->ListPathsSinglePage(recursive, options);
-        result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
-        if (response.Value.ContinuationToken.HasValue())
-        {
-          continuation = response.Value.ContinuationToken.Value();
-          options.ContinuationToken = continuation;
-        }
-        else
-        {
-          continuation.clear();
-        }
-      } while (!continuation.empty());
+        result.insert(result.end(), pageResult.Paths.begin(), pageResult.Paths.end());
+      }
     }
     else
     {
       auto directoryClient = m_fileSystemClient->GetDirectoryClient(directory);
-      do
+      for (auto pageResult = directoryClient.ListPaths(recursive, options); pageResult.HasMore();
+           pageResult.NextPage())
       {
-        auto response = directoryClient.ListPathsSinglePage(recursive, options);
-        result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
-        if (response.Value.ContinuationToken.HasValue())
-        {
-          continuation = response.Value.ContinuationToken.Value();
-          options.ContinuationToken = continuation;
-        }
-        else
-        {
-          continuation.clear();
-        }
-      } while (!continuation.empty());
+        result.insert(result.end(), pageResult.Paths.begin(), pageResult.Paths.end());
+      }
     }
 
     return result;
@@ -304,10 +287,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::DataLake::ListPathsSinglePageOptions options;
+      Files::DataLake::ListPathsOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileSystemClient->ListPathsSinglePage(true, options);
-      EXPECT_LE(2U, response.Value.Items.size());
+      auto response = m_fileSystemClient->ListPaths(true, options);
+      EXPECT_LE(2U, response.Paths.size());
     }
   }
 

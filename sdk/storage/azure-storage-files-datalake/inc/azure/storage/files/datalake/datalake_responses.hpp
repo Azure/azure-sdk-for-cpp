@@ -43,8 +43,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     // FileSystemClient models:
 
-    using ListPathsSinglePageResult = _detail::FileSystemListPathsResult;
-
     struct FileSystemAccessPolicy
     {
       PublicAccessType AccessType = PublicAccessType::None;
@@ -273,6 +271,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     friend class DataLakeServiceClient;
     friend class PagedResponse<ListFileSystemsPagedResponse>;
+  };
+
+  class ListPathsPagedResponse : public PagedResponse<ListPathsPagedResponse> {
+  public:
+    std::vector<Models::PathItem> Paths;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context)
+    {
+      *this = m_onNextPageFunc(std::move(NextPageToken), context);
+    }
+
+    std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)>
+        m_onNextPageFunc;
+
+    friend class DataLakeFileSystemClient;
+    friend class DataLakeDirectoryClient;
+    friend class PagedResponse<ListPathsPagedResponse>;
   };
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -146,9 +146,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::ListPathsSinglePage
+   * @brief Optional parameters for FileSystemClient::ListPaths
    */
-  struct ListPathsSinglePageOptions
+  struct ListPathsOptions
   {
     /**
      * @brief Valid only when Hierarchical Namespace is enabled for the account.

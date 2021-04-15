@@ -8,6 +8,8 @@
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 - Replaced all paginated collection functions that have the SinglePage suffix with pageable functions.
   - `DataLakeServiceClient::ListFileSystems`.
+  - `DataLakeFileSystemClient::ListPaths`.
+  - `DataLakeDirectoryClient::ListPaths`.
 
 ### Bug Fixes
 
