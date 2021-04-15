@@ -66,8 +66,7 @@ int main()
         }
         auto keyWithType = keyClient.GetKey(key.Name).Value;
         std::cout << "Key is returned with name: " << keyWithType.Name()
-                  << " and type: " << KeyType::KeyTypeToString(keyWithType.GetKeyType())
-                  << std::endl;
+                  << " and type: " << keyWithType.GetKeyType().ToString() << std::endl;
       }
 
       if (!keysSinglePage.ContinuationToken.HasValue())
@@ -155,7 +154,7 @@ int main()
     std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
     return 1;
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& e)
+  catch (Azure::Core::RequestFailedException const& e)
   {
     std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;

@@ -48,7 +48,7 @@ TEST_F(KeyVaultClientTest, DeleteKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -91,7 +91,7 @@ TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -118,7 +118,7 @@ TEST_F(KeyVaultClientTest, DeleteInvalidKey)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& error)
+  catch (Azure::Core::RequestFailedException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -142,7 +142,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
@@ -156,7 +156,7 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& error)
+  catch (Azure::Core::RequestFailedException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -180,7 +180,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -191,7 +191,7 @@ TEST_F(KeyVaultClientTest, DoubleDeleteBeforePollComplete)
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& error)
+  catch (Azure::Core::RequestFailedException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -216,7 +216,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
   {
     auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
@@ -229,9 +229,9 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
   try
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& error)
+  catch (Azure::Core::RequestFailedException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -256,7 +256,7 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
   {
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -266,9 +266,9 @@ TEST_F(KeyVaultClientTest, CreateDeletedKeyBeforePollComplete)
   try
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
-  catch (Azure::Security::KeyVault::KeyVaultException const& error)
+  catch (Azure::Core::RequestFailedException const& error)
   {
     EXPECT_EQ(
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -293,7 +293,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -313,10 +313,8 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
     auto deletedKey = keyClient.GetDeletedKey(keyName).Value;
     EXPECT_FALSE(deletedKey.RecoveryId.empty());
     EXPECT_EQ(deletedKey.Name(), keyName);
-    auto expectedType = Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec;
-    EXPECT_EQ(
-        Azure::Security::KeyVault::Keys::KeyType::KeyTypeToString(expectedType),
-        Azure::Security::KeyVault::Keys::KeyType::KeyTypeToString(deletedKey.Key.KeyType));
+    auto expectedType = Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec;
+    EXPECT_EQ(expectedType, deletedKey.Key.KeyType);
   }
 }
 
@@ -327,7 +325,7 @@ TEST_F(KeyVaultClientTest, DeleteOperationResumeToken)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -365,7 +363,7 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
 
   {
     auto keyResponse
-        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::JsonWebKeyType::Ec);
+        = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);

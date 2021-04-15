@@ -30,7 +30,7 @@ TEST_F(KeyVaultClientTest, GetSingleKey)
   auto key = keyResponse.Value;
 
   EXPECT_EQ(key.Name(), keyName);
-  EXPECT_EQ(key.GetKeyType(), JsonWebKeyType::Ec);
+  EXPECT_EQ(key.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
 TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)

@@ -69,7 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @return The type of the key.
      */
-    JsonWebKeyType const& GetKeyType() const { return Key.KeyType; }
+    KeyVaultKeyType const& GetKeyType() const { return Key.KeyType; }
 
     /**
      * @brief Gets the operations you can perform using the key.
