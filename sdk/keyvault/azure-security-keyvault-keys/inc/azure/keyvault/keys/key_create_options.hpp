@@ -68,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   private:
     std::string m_name;
     bool m_hardwareProtected;
-    JsonWebKeyType m_keyType;
+    KeyVaultKeyType m_keyType;
 
   public:
     /**
@@ -98,11 +98,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       m_name = name;
       if (hardwareProtected)
       {
-        m_keyType = JsonWebKeyType::EcHsm;
+        m_keyType = KeyVaultKeyType::EcHsm;
       }
       else
       {
-        m_keyType = JsonWebKeyType::Ec;
+        m_keyType = KeyVaultKeyType::Ec;
       }
     }
 
@@ -116,7 +116,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the key type to create, including Ec and EcHsm.
      *
      */
-    JsonWebKeyType GetKeyType() const { return m_keyType; }
+    KeyVaultKeyType GetKeyType() const { return m_keyType; }
 
     /**
      * @brief Gets a value indicating whether to create a hardware-protected key in a hardware
@@ -134,7 +134,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   private:
     std::string m_name;
     bool m_hardwareProtected;
-    JsonWebKeyType m_keyType;
+    KeyVaultKeyType m_keyType;
 
   public:
     /**
@@ -170,11 +170,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       m_name = name;
       if (hardwareProtected)
       {
-        m_keyType = JsonWebKeyType::RsaHsm;
+        m_keyType = KeyVaultKeyType::RsaHsm;
       }
       else
       {
-        m_keyType = JsonWebKeyType::Rsa;
+        m_keyType = KeyVaultKeyType::Rsa;
       }
     }
 
@@ -188,7 +188,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the key type to create, including Rsa and RsaHsm.
      *
      */
-    JsonWebKeyType GetKeyType() const { return m_keyType; }
+    KeyVaultKeyType GetKeyType() const { return m_keyType; }
 
     /**
      * @brief Gets a value indicating whether to create a hardware-protected key in a hardware
@@ -206,7 +206,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   private:
     std::string m_name;
     bool m_hardwareProtected;
-    JsonWebKeyType m_keyType;
+    KeyVaultKeyType m_keyType;
 
   public:
     /**
@@ -234,11 +234,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       m_name = name;
       if (hardwareProtected)
       {
-        m_keyType = JsonWebKeyType::OctHsm;
+        m_keyType = KeyVaultKeyType::OctHsm;
       }
       else
       {
-        m_keyType = JsonWebKeyType::Oct;
+        m_keyType = KeyVaultKeyType::Oct;
       }
     }
 
@@ -252,7 +252,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the key type to create, including Oct and OctHsm.
      *
      */
-    JsonWebKeyType GetKeyType() const { return m_keyType; }
+    KeyVaultKeyType GetKeyType() const { return m_keyType; }
 
     /**
      * @brief Gets a value indicating whether to create a hardware-protected key in a hardware

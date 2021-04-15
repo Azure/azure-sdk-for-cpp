@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/http.hpp"
+#include <azure/core/http/http.hpp>
 
 #include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "azure/keyvault/common/keyvault_constants.hpp"
@@ -70,7 +70,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
     case Azure::Core::Http::HttpStatusCode::NoContent:
       break;
     default:
-      throw KeyVaultException("Key Vault Keys error response received: ", std::move(response));
+      throw Azure::Security::KeyVault::_detail::KeyVaultException::CreateException(
+          std::move(response));
   }
   return response;
 }

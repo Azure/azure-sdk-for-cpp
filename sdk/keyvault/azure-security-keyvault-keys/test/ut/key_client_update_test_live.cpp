@@ -25,7 +25,7 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
   auto keyName = GetUniqueName();
   auto updateTo = DateTime::Parse("20301031T00:00:00Z", DateTime::DateFormat::Rfc3339);
   {
-    auto keyResponse = keyClient.CreateKey(keyName, JsonWebKeyType::Ec);
+    auto keyResponse = keyClient.CreateKey(keyName, KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);

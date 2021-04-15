@@ -12,24 +12,27 @@
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
-KeyVaultException::KeyVaultException(
-    const std::string& message,
+Azure::Core::RequestFailedException _detail::KeyVaultException::CreateException(
     std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
-    : RequestFailedException(message, std::move(rawResponse))
 {
-  std::vector<uint8_t> bodyBuffer = std::move(RawResponse->GetBody());
-  auto& headers = RawResponse->GetHeaders();
+  std::vector<uint8_t> bodyBuffer = std::move(rawResponse->GetBody());
+  auto& headers = rawResponse->GetHeaders();
   std::string contentType = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::ContentType);
+  std::string message;
+  std::string errorCode;
 
   if (contentType.find("json") != std::string::npos)
   {
     auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
     auto& error = jsonParser["error"];
-    ErrorCode = error["code"].get<std::string>();
-    Message = error["message"].get<std::string>();
+    errorCode = error["code"].get<std::string>();
+    message = error["message"].get<std::string>();
   }
   else
   {
-    Message = std::string(bodyBuffer.begin(), bodyBuffer.end());
+    message = std::string(bodyBuffer.begin(), bodyBuffer.end());
   }
+  Azure::Core::RequestFailedException exception(message, std::move(rawResponse));
+  exception.ErrorCode = std::move(errorCode);
+  return exception;
 }

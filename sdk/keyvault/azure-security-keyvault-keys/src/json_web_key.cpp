@@ -58,7 +58,7 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeyS
     Azure::Core::Json::_internal::json& destJson)
 {
   // kty
-  destJson[_detail::KeyTypePropertyName] = KeyType::KeyTypeToString(jwk.KeyType);
+  destJson[_detail::KeyTypePropertyName] = jwk.KeyType.ToString();
 
   // ops
   for (KeyOperation op : jwk.KeyOperations())
@@ -104,8 +104,7 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebDese
       srcKey.SetKeyOperations(keyOperations);
     }
     srcKey.Id = jsonKey[_detail::KeyIdPropertyName].get<std::string>();
-    srcKey.KeyType
-        = KeyType::KeyTypeFromString(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
+    srcKey.KeyType = KeyVaultKeyType(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
 
     JsonOptional::SetIfExists<std::string, KeyCurveName>(
         srcKey.CurveName, jsonKey, _detail::CurveNamePropertyName, [](std::string const& keyName) {
