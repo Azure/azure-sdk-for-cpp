@@ -103,7 +103,5 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-
-    friend class ListSharesPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::Shares

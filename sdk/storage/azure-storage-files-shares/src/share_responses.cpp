@@ -63,113 +63,38 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   void ListSharesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
-    protocolLayerOptions.IncludeFlags = m_operationOptions.ListSharesIncludeFlags;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    auto response = _detail::ShareRestClient::Service::ListSharesSinglePage(
-        m_shareServiceClient->m_serviceUrl,
-        *m_shareServiceClient->m_pipeline,
-        context,
-        protocolLayerOptions);
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    Prefix = std::move(response.Value.Prefix);
-    Items = std::move(response.Value.Items);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_shareServiceClient->ListShares(m_operationOptions, context);
   }
 
   void ListFilesAndDirectoriesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    auto protocolLayerOptions
-        = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
-    protocolLayerOptions.Prefix = m_operationOptions.Prefix;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    auto response = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
-        m_shareDirectoryClient->m_shareDirectoryUrl,
-        *m_shareDirectoryClient->m_pipeline,
-        context,
-        protocolLayerOptions);
-
-    ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    ShareName = std::move(response.Value.ShareName);
-    ShareSnapshot = std::move(response.Value.ShareSnapshot);
-    DirectoryPath = std::move(response.Value.DirectoryPath);
-    Prefix = std::move(response.Value.Prefix);
-    DirectoryItems = std::move(response.Value.SinglePage.DirectoryItems);
-    FileItems = std::move(response.Value.SinglePage.FileItems);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_shareDirectoryClient->ListFilesAndDirectories(m_operationOptions, context);
   }
 
   void ListFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::File::ListHandlesOptions();
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    auto response = _detail::ShareRestClient::File::ListHandles(
-        m_shareFileClient->m_shareFileUrl,
-        *m_shareFileClient->m_pipeline,
-        context,
-        protocolLayerOptions);
-    Handles = std::move(response.Value.HandleList);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_shareFileClient->ListHandles(m_operationOptions, context);
   }
 
   void ForceCloseAllFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
-    protocolLayerOptions.HandleId = FileAllHandles;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    auto response = _detail::ShareRestClient::File::ForceCloseHandles(
-        m_shareFileClient->m_shareFileUrl,
-        *m_shareFileClient->m_pipeline,
-        context,
-        protocolLayerOptions);
-
-    NumberOfHandlesClosed = response.Value.NumberOfHandlesClosed;
-    NumberOfHandlesFailedToClose = response.Value.NumberOfHandlesFailedToClose;
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_shareFileClient->ForceCloseAllHandles(m_operationOptions, context);
   }
 
   void ListDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ListHandlesOptions();
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.MaxResults = m_operationOptions.PageSizeHint;
-    protocolLayerOptions.Recursive = m_operationOptions.Recursive;
-    auto response = _detail::ShareRestClient::Directory::ListHandles(
-        m_shareDirectoryClient->m_shareDirectoryUrl,
-        *m_shareDirectoryClient->m_pipeline,
-        context,
-        protocolLayerOptions);
-
-    Handles = std::move(response.Value.HandleList);
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_shareDirectoryClient->ListHandles(m_operationOptions, context);
   }
 
   void ForceCloseAllDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ForceCloseHandlesOptions();
-    protocolLayerOptions.HandleId = FileAllHandles;
-    protocolLayerOptions.ContinuationToken = NextPageToken;
-    protocolLayerOptions.Recursive = m_operationOptions.Recursive;
-    auto response = _detail::ShareRestClient::Directory::ForceCloseHandles(
-        m_shareDirectoryClient->m_shareDirectoryUrl,
-        *m_shareDirectoryClient->m_pipeline,
-        context,
-        protocolLayerOptions);
-
-    NumberOfHandlesClosed = response.Value.NumberOfHandlesClosed;
-    NumberOfHandlesFailedToClose = response.Value.NumberOfHandlesFailedToClose;
-    NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
-    RawResponse = std::move(response.RawResponse);
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    *this = m_shareDirectoryClient->ForceCloseAllHandles(m_operationOptions, context);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

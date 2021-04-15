@@ -290,30 +290,59 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListFilesAndDirectoriesOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListFilesAndDirectoriesPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
-    response.m_operationOptions = options;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    auto protocolLayerOptions
+        = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
+    protocolLayerOptions.Prefix = options.Prefix;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    auto response = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
+        m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
+
+    ListFilesAndDirectoriesPagedResponse pagedResponse;
+
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.ShareName = std::move(response.Value.ShareName);
+    pagedResponse.ShareSnapshot = std::move(response.Value.ShareSnapshot);
+    pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
+    pagedResponse.Prefix = std::move(response.Value.Prefix);
+    pagedResponse.DirectoryItems = std::move(response.Value.SinglePage.DirectoryItems);
+    pagedResponse.FileItems = std::move(response.Value.SinglePage.FileItems);
+    pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   ListDirectoryHandlesPagedResponse ShareDirectoryClient::ListHandles(
       const ListDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ListDirectoryHandlesPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
-    response.m_operationOptions = options;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ListHandlesOptions();
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Recursive = options.Recursive;
+    auto response = _detail::ShareRestClient::Directory::ListHandles(
+        m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
+
+    ListDirectoryHandlesPagedResponse pagedResponse;
+
+    pagedResponse.Handles = std::move(response.Value.HandleList);
+    pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<Models::ForceCloseDirectoryHandleResult> ShareDirectoryClient::ForceCloseHandle(
@@ -335,15 +364,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseAllDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
-    const std::string currentPageToken = options.ContinuationToken.ValueOr(std::string());
-    ForceCloseAllDirectoryHandlesPagedResponse response;
-    response.CurrentPageToken = currentPageToken;
-    response.NextPageToken = currentPageToken;
-    response.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
-    response.m_operationOptions = options;
-    // Populate the first page
-    response.OnNextPage(context);
-    return response;
+    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ForceCloseHandlesOptions();
+    protocolLayerOptions.HandleId = FileAllHandles;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.Recursive = options.Recursive;
+    auto response = _detail::ShareRestClient::Directory::ForceCloseHandles(
+        m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
+
+    ForceCloseAllDirectoryHandlesPagedResponse pagedResponse;
+
+    pagedResponse.NumberOfHandlesClosed = response.Value.NumberOfHandlesClosed;
+    pagedResponse.NumberOfHandlesFailedToClose = response.Value.NumberOfHandlesFailedToClose;
+    pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

@@ -375,7 +375,5 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareClient;
     friend class ShareDirectoryClient;
     friend class ShareLeaseClient;
-    friend class ListFileHandlesPagedResponse;
-    friend class ForceCloseAllFileHandlesPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::Shares
