@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
+    _detail::BlobRestClient::BlobContainer::ListBlobsOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
     {
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsSinglePage(
+    auto response = _detail::BlobRestClient::BlobContainer::ListBlobs(
         *m_pipeline,
         m_blobContainerUrl,
         protocolLayerOptions,
@@ -281,8 +281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePageOptions
-        protocolLayerOptions;
+    _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchyOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Delimiter = delimiter;
     if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
@@ -291,7 +290,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
+    auto response = _detail::BlobRestClient::BlobContainer::ListBlobsByHierarchy(
         *m_pipeline,
         m_blobContainerUrl,
         protocolLayerOptions,

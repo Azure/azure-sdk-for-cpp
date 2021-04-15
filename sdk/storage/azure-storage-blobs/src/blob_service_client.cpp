@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobContainersOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
+    _detail::BlobRestClient::Service::ListBlobContainersOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
     {
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = _detail::BlobRestClient::Service::ListBlobContainersSinglePage(
+    auto response = _detail::BlobRestClient::Service::ListBlobContainers(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     ListBlobContainersPagedResponse pagedResponse;
@@ -203,14 +203,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       const FindBlobsByTagsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
+    _detail::BlobRestClient::Service::FindBlobsByTagsOptions protocolLayerOptions;
     protocolLayerOptions.Where = tagFilterSqlExpression;
     if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
     {
       protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto response = _detail::BlobRestClient::Service::FindBlobsByTagsSinglePage(
+    auto response = _detail::BlobRestClient::Service::FindBlobsByTags(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     FindBlobsByTagsPagedResponse pagedResponse;
