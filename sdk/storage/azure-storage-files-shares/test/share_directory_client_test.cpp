@@ -61,8 +61,7 @@ namespace Azure { namespace Storage { namespace Test {
          pageResult.NextPage())
     {
       directoryResult.insert(
-          directoryResult.end(),
-          pageResult.Directories.begin(), pageResult.Directories.end());
+          directoryResult.end(), pageResult.Directories.begin(), pageResult.Directories.end());
       fileResult.insert(fileResult.end(), pageResult.Files.begin(), pageResult.Files.end());
     }
     return std::make_pair<
