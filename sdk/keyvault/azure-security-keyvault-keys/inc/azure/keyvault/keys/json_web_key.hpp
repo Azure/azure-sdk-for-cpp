@@ -92,11 +92,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /// The RSA private exponent or EC private key.
     std::vector<uint8_t> D;
 
+    /// Gets the symmetric key.
+    std::vector<uint8_t> K;
+    /// Gets the protected key used with "Bring Your Own Key".
+    std::vector<uint8_t> T;
+    /// Gets the X coordinate of the elliptic curve point.
+    std::vector<uint8_t> X;
+    /// Gets the Y coordinate for the elliptic curve point.
+    std::vector<uint8_t> Y;
+
   private:
     std::vector<KeyOperation> m_keyOps;
   };
-
-  // Define the serialization of a JsonWebKey
-  void to_json(Azure::Core::Json::_internal::json& j, JsonWebKey const& p);
 
 }}}} // namespace Azure::Security::KeyVault::Keys

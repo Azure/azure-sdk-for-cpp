@@ -10,24 +10,11 @@
 
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
-#include "azure/keyvault/keys/key_curve_name.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 using Azure::Security::KeyVault::_internal::UnixTimeConverter;
-
-namespace {
-void ParseStringOperationsToKeyOperations(
-    std::vector<KeyOperation>& keyOperations,
-    std::vector<std::string> const& stringOperations)
-{
-  for (std::string const& operation : stringOperations)
-  {
-    keyOperations.emplace_back(KeyOperation(operation));
-  }
-}
-} // namespace
 
 KeyVaultKey _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     std::string const& name,
@@ -59,27 +46,8 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Json::_internal::json const& jsonParser)
 {
-  // "Key"
-  if (jsonParser.contains(_detail::KeyPropertyName))
-  {
-    auto const& jsonKey = jsonParser[_detail::KeyPropertyName];
-    {
-      // key_ops
-      auto keyOperationVector
-          = jsonKey[_detail::KeyOpsPropertyName].get<std::vector<std::string>>();
-      std::vector<KeyOperation> keyOperations;
-      ParseStringOperationsToKeyOperations(keyOperations, keyOperationVector);
-      key.Key.SetKeyOperations(keyOperations);
-    }
-    key.Key.Id = jsonKey[_detail::KeyIdPropertyName].get<std::string>();
-    key.Key.KeyType
-        = KeyType::KeyTypeFromString(jsonKey[_detail::KeyTypePropertyName].get<std::string>());
-
-    JsonOptional::SetIfExists<std::string, KeyCurveName>(
-        key.Key.CurveName, jsonKey, _detail::CurveNamePropertyName, [](std::string const& keyName) {
-          return KeyCurveName(keyName);
-        });
-  }
+  // Deserialize jwk
+  _detail::JsonWebKeySerializer::JsonWebDeserialize(key.Key, jsonParser);
 
   // Parse URL for the vaultUri, keyVersion
   _detail::KeyVaultKeySerializer::ParseKeyUrl(key.Properties, key.Key.Id);
