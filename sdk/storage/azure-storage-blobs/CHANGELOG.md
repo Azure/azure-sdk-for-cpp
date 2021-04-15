@@ -7,13 +7,13 @@
 - Removed `Azure::Storage::Blobs::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
 - Replaced all SinglePage functions with pageable functions.
-  - `BlobServiceClient::ListBlobContainers`
-  - `BlobServiceClient::FindBlobsByTags`
-  - `BlobContainerClinet::ListBlobs`
-  - `BlobContainerClient::ListBlobsByHierarchy`
-  - `PageBlobClient::GetPageRanges`
-  - `PageBlobClient::GetPageRangesDiff`
-  - `PageBlobClient::GetManagedDiskPageRangesDiff`
+  - `BlobServiceClient::ListBlobContainers`.
+  - `BlobServiceClient::FindBlobsByTags`.
+  - `BlobContainerClinet::ListBlobs`.
+  - `BlobContainerClient::ListBlobsByHierarchy`.
+  - `PageBlobClient::GetPageRanges`.
+  - `PageBlobClient::GetPageRangesDiff`.
+  - `PageBlobClient::GetManagedDiskPageRangesDiff`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 
