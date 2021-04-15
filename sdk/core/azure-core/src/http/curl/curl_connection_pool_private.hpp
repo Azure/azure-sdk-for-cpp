@@ -46,7 +46,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 #endif
 
   public:
-    CurlConnectionPool() { curl_global_init(CURL_GLOBAL_ALL); }
     ~CurlConnectionPool()
     {
       using namespace Azure::Core::Http::_detail;
@@ -122,6 +121,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     AZ_CORE_DLLEXPORT static Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
 
   private:
+    // private constructor to keep this as singleton.
+    CurlConnectionPool() { curl_global_init(CURL_GLOBAL_ALL); }
+
     std::thread m_cleanThread;
 
     // Makes possible to know the number of current connections in the connection pool for an
