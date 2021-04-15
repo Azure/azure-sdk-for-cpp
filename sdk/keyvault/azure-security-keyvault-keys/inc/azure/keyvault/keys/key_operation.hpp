@@ -57,56 +57,42 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief The key can be used to encrypt with the #Encrypt(EncryptionAlgorithm, Byte[],
      * CancellationToken) method.
-     *
-     * @return Encrypt KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Encrypt;
 
     /**
      * @brief The key can be used to decrypt with the #Decrypt(EncryptionAlgorithm, Byte[],
      * CancellationToken) method.
-     *
-     * @return Decrypt KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Decrypt;
 
     /**
      * @brief The key can be used to sign with the Sign(SignatureAlgorithm, Byte[],
      * CancellationToken) method.
-     *
-     * @return Sign KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Sign;
 
     /**
      * @brief The key can be used to verify with the Verify(SignatureAlgorithm, Byte[], Byte[],
      * CancellationToken) method.
-     *
-     * @return Verify KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Verify;
 
     /**
      * @brief The key can be used to wrap another key with the WrapKey(KeyWrapAlgorithm, Byte[],
      * CancellationToken) method.
-     *
-     * @return WrapKey KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation WrapKey;
 
     /**
      * @brief The key can be used to unwrap another key with the UnwrapKey(KeyWrapAlgorithm, Byte[],
      * CancellationToken) method.
-     *
-     * @return UnwrapKey KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation UnwrapKey;
 
     /**
      * @brief The key can be imported during creation using the ImportKey(ImportKeyOptions,
      * CancellationToken) method.
-     *
-     * @return Import KeyOperation.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
   };
