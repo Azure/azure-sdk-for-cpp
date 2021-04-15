@@ -181,6 +181,97 @@ namespace Azure { namespace Core { namespace Test {
 #endif
     }
 
+    TEST(CurlConnectionPool, uniquePort)
+    {
+      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
+      // Make sure there are nothing in the pool
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+      {
+        // Request with no port
+        std::string const authority(AzureSdkHttpbinServer::Get());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "0011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      // Test connection was moved to the pool
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+
+      {
+        // Request with port
+        std::string const authority(AzureSdkHttpbinServer::WithPort());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "4430011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // Check connection in pool is not re-used because the port is different
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      // Check 2 connections in the pool
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+
+      // Re-use connections
+      {
+        // Request with no port
+        std::string const authority(AzureSdkHttpbinServer::Get());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "0011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      {
+        // Request with port
+        std::string const authority(AzureSdkHttpbinServer::WithPort());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "4430011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // Check connection in pool is not re-used because the port is different
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
+    }
+
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
     {
       Azure::Core::Http::Request req(

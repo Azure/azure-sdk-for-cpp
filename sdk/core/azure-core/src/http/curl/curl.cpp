@@ -1157,7 +1157,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     CurlTransportOptions const& options,
     bool resetPool)
 {
-  std::string const& host = request.GetUrl().GetHost();
+  uint16_t port = request.GetUrl().GetPort();
+  std::string const& host = request.GetUrl().GetHost() + (port > 0 ? std::to_string(port) : "");
   std::string const connectionKey = GetConnectionKey(host, options);
 
   {
@@ -1219,7 +1220,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(result)));
   }
 
-  uint16_t port = request.GetUrl().GetPort();
   if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
   {
     throw Azure::Core::Http::TransportException(

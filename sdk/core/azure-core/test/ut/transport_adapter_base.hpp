@@ -31,6 +31,11 @@ namespace Azure { namespace Core { namespace Test {
       return std::string(_detail::AzureSdkHttpbinServerSchema)
           + std::string(_detail::AzureSdkHttpbinServer) + "/get";
     }
+    inline static std::string WithPort()
+    {
+      return std::string(_detail::AzureSdkHttpbinServerSchema)
+          + std::string(_detail::AzureSdkHttpbinServer) + ":443/get";
+    }
     inline static std::string Put()
     {
       return std::string(_detail::AzureSdkHttpbinServerSchema)
