@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 
+#include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
@@ -84,6 +85,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     m_operationOptions.ContinuationToken = std::move(NextPageToken);
     *this = m_dataLakeServiceClient->ListFileSystems(m_operationOptions, context);
+  }
+
+  void SetPathAccessControlListRecursivePagedResponse::OnNextPage(
+      const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    if (m_mode == _detail::PathSetAccessControlRecursiveMode::Set)
+    {
+      *this = m_dataLakePathClient->SetAccessControlListRecursive(
+          m_acls, m_operationOptions, context);
+    }
+    else if (m_mode == _detail::PathSetAccessControlRecursiveMode::Modify)
+    {
+      *this = m_dataLakePathClient->UpdateAccessControlListRecursive(
+          m_acls, m_operationOptions, context);
+    }
+    else if (m_mode == _detail::PathSetAccessControlRecursiveMode::Remove)
+    {
+      *this = m_dataLakePathClient->RemoveAccessControlListRecursive(
+          m_acls, m_operationOptions, context);
+    }
+    std::abort();
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

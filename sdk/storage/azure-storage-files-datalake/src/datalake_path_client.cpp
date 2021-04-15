@@ -425,11 +425,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), std::move(result.RawResponse));
   }
 
-  Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
-  DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
+  SetPathAccessControlListRecursivePagedResponse
+  DataLakePathClient::SetAccessControlListRecursiveInternal(
       _detail::PathSetAccessControlRecursiveMode mode,
       const std::vector<Models::Acl>& acls,
-      const SetPathAccessControlListRecursiveSinglePageOptions& options,
+      const SetPathAccessControlListRecursiveOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
@@ -438,8 +438,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxRecords = options.PageSizeHint;
     protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
     protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
-    return _detail::DataLakeRestClient::Path::SetAccessControlRecursive(
+    auto response = _detail::DataLakeRestClient::Path::SetAccessControlRecursive(
         m_pathUrl, *m_pipeline, context, protocolLayerOptions);
+
+    SetPathAccessControlListRecursivePagedResponse pagedResponse;
+    pagedResponse.NumberOfSuccessfulFiles = response.Value.NumberOfSuccessfulDirectories;
+    pagedResponse.NumberOfSuccessfulFiles = response.Value.NumberOfSuccessfulFiles;
+    pagedResponse.NumberOfFailures = response.Value.NumberOfFailures;
+    pagedResponse.FailedEntries = std::move(response.Value.FailedEntries);
+    pagedResponse.m_dataLakePathClient = std::make_shared<DataLakePathClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_acls = acls;
+    pagedResponse.m_mode = mode;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

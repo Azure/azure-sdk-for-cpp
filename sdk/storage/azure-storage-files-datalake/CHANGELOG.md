@@ -10,6 +10,9 @@
   - `DataLakeServiceClient::ListFileSystems`.
   - `DataLakeFileSystemClient::ListPaths`.
   - `DataLakeDirectoryClient::ListPaths`.
+  - `DataLakePathClient::SetAccessControlListRecursive`.
+  - `DataLakePathClient::UpdateAccessControlListRecursive`.
+  - `DataLakePathClient::RemoveAccessControlListRecursive`.
 
 ### Bug Fixes
 

@@ -533,9 +533,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DirectoryClient::SetAccessControlListRecursiveSinglePage
+   * @brief Optional parameters for DirectoryClient::SetAccessControlListRecursive.
    */
-  struct SetPathAccessControlListRecursiveSinglePageOptions
+  struct SetPathAccessControlListRecursiveOptions
   {
     /**
      * @brief When performing setAccessControlRecursive on a directory, the number of paths that
@@ -564,11 +564,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Nullable<bool> ContinueOnFailure;
   };
 
-  using UpdatePathAccessControlListRecursiveSinglePageOptions
-      = SetPathAccessControlListRecursiveSinglePageOptions;
+  using UpdatePathAccessControlListRecursiveOptions = SetPathAccessControlListRecursiveOptions;
 
-  using RemovePathAccessControlListRecursiveSinglePageOptions
-      = SetPathAccessControlListRecursiveSinglePageOptions;
+  using RemovePathAccessControlListRecursiveOptions = SetPathAccessControlListRecursiveOptions;
 
   using CreateFileOptions = CreatePathOptions;
   using CreateDirectoryOptions = CreatePathOptions;
