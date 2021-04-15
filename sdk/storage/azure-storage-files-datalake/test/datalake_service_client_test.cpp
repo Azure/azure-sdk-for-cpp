@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.Prefix = prefix;
     }
     for (auto pageResult = m_dataLakeServiceClient->ListFileSystems(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       result.insert(result.end(), pageResult.Items.begin(), pageResult.Items.end());
     }

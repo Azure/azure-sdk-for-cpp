@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::vector<Core::Http::HttpRange> pageRanges;
     for (auto pageResult = pageBlobClient.GetPageRanges(); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       pageRanges.insert(
           pageRanges.end(), pageResult.PageRanges.begin(), pageResult.PageRanges.end());
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Range.Value().Length = 1_KB;
     pageRanges.clear();
     for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       pageRanges.insert(
           pageRanges.end(), pageResult.PageRanges.begin(), pageResult.PageRanges.end());
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Test {
     pageRanges.clear();
     std::vector<Core::Http::HttpRange> clearRanges;
     for (auto pageResult = pageBlobClient.GetPageRangesDiff(snapshot); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       pageRanges.insert(
           pageRanges.end(), pageResult.PageRanges.begin(), pageResult.PageRanges.end());

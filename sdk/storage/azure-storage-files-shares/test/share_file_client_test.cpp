@@ -264,15 +264,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(result.Handles.empty());
     EXPECT_TRUE(result.NextPageToken.empty());
 
-    for (auto pageResult = m_fileClient->ListHandles(); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+    for (auto pageResult = m_fileClient->ListHandles(); pageResult.HasMore(); pageResult.NextPage())
     {
     }
 
     EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
 
     for (auto pageResult = m_fileClient->ForceCloseAllHandles(); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
     }
   }

@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.PageSizeHint = 4;
     std::set<std::string> listContainers;
     for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Prefix = prefix1;
     listContainers.clear();
     for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
@@ -366,7 +366,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.Prefix = containerName;
       options.Include = Blobs::Models::ListBlobContainersIncludeFlags::Deleted;
       for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
-           pageResult.NextPage(Azure::Core::Context()))
+           pageResult.NextPage())
       {
         for (const auto& container : pageResult.Items)
         {

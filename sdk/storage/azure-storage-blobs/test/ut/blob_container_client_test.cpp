@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.PageSizeHint = 4;
     std::set<std::string> listBlobs;
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Prefix = prefix1;
     listBlobs.clear();
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       for (const auto& blob : pageResult.Items)
       {
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> items;
     for (auto pageResult = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
          pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       EXPECT_EQ(pageResult.Delimiter, delimiter);
       EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.Prefix = p + delimiter;
       for (auto pageResult = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
            pageResult.HasMore();
-           pageResult.NextPage(Azure::Core::Context()))
+           pageResult.NextPage())
       {
         EXPECT_EQ(pageResult.Delimiter, delimiter);
         EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
     bool foundMetadata = false;
 
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       for (const auto& blob : pageResult.Items)
       {
@@ -731,7 +731,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       for (auto pageResult = blobServiceClient.FindBlobsByTags(whereExpression);
            pageResult.HasMore();
-           pageResult.NextPage(Azure::Core::Context()))
+           pageResult.NextPage())
       {
         EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
         for (auto& item : pageResult.Items)

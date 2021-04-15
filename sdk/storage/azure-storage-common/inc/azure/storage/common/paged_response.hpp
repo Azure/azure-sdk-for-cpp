@@ -19,7 +19,7 @@ public:
 
   bool HasMore() const { return m_hasMore; }
 
-  void NextPage(const Azure::Core::Context& context)
+  void NextPage(const Azure::Core::Context& context = Azure::Core::Context())
   {
     static_assert(
         std::is_base_of<PagedResponse, Derived>::value,

@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Test {
       Azure::Storage::Blobs::ListBlobsOptions options;
       options.Prefix = m_blobName;
       for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-           pageResult.NextPage(Azure::Core::Context()))
+           pageResult.NextPage())
       {
         for (const auto& blob : pageResult.Items)
         {
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Prefix = blobName;
     options.Include = Blobs::Models::ListBlobsIncludeFlags::Versions;
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       for (const auto& blob : pageResult.Items)
       {
@@ -977,7 +977,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       for (const auto& blob : pageResult.Items)
       {
@@ -1003,7 +1003,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.AccessTierChangedOn.HasValue());
 
     for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       for (const auto& blob : pageResult.Items)
       {

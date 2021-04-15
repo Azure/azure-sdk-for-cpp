@@ -443,7 +443,7 @@ namespace Azure { namespace Storage { namespace Test {
                                StandardStorageConnectionString())
                                .ListShares(listOptions);
          pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       shareItems.insert(shareItems.end(), pageResult.Items.begin(), pageResult.Items.end());
     }
@@ -486,7 +486,7 @@ namespace Azure { namespace Storage { namespace Test {
                                PremiumFileConnectionString())
                                .ListShares(listOptions);
          pageResult.HasMore();
-         pageResult.NextPage(Azure::Core::Context()))
+         pageResult.NextPage())
     {
       shareItems.insert(shareItems.end(), pageResult.Items.begin(), pageResult.Items.end());
     }
