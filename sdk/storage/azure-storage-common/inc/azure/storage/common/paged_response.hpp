@@ -17,9 +17,9 @@ public:
   std::string CurrentPageToken;
   std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
-  bool HasMore() const { return m_hasMore; }
+  bool HasMorePages() const { return m_hasMorePages; }
 
-  void NextPage(const Azure::Core::Context& context = Azure::Core::Context())
+  void MoveToNextPage(const Azure::Core::Context& context = Azure::Core::Context())
   {
     static_assert(
         std::is_base_of<PagedResponse, Derived>::value,
@@ -27,7 +27,7 @@ public:
 
     if (NextPageToken.empty())
     {
-      m_hasMore = false;
+      m_hasMorePages = false;
       return;
     }
     CurrentPageToken = NextPageToken;
@@ -40,7 +40,7 @@ protected:
   PagedResponse& operator=(PagedResponse&&) = default;
 
 private:
-  bool m_hasMore = true;
+  bool m_hasMorePages = true;
 };
 
 } // namespace Azure

@@ -110,8 +110,8 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::ListBlobContainersOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listContainers;
-    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
-         pageResult.NextPage())
+    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
@@ -131,8 +131,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     options.Prefix = prefix1;
     listContainers.clear();
-    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
-         pageResult.NextPage())
+    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
@@ -365,8 +365,8 @@ namespace Azure { namespace Storage { namespace Test {
       Azure::Storage::Blobs::ListBlobContainersOptions options;
       options.Prefix = containerName;
       options.Include = Blobs::Models::ListBlobContainersIncludeFlags::Deleted;
-      for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMore();
-           pageResult.NextPage())
+      for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasMorePages();
+           pageResult.MoveToNextPage())
       {
         for (const auto& container : pageResult.BlobContainers)
         {

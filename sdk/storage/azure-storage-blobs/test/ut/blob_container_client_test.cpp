@@ -162,8 +162,8 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::ListBlobsOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listBlobs;
-    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage())
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
@@ -214,8 +214,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     options.Prefix = prefix1;
     listBlobs.clear();
-    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage())
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
       for (const auto& blob : pageResult.Blobs)
       {
@@ -248,8 +248,8 @@ namespace Azure { namespace Storage { namespace Test {
     options.Prefix = prefix;
     std::set<std::string> items;
     for (auto pageResult = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
-         pageResult.HasMore();
-         pageResult.NextPage())
+         pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
       EXPECT_EQ(pageResult.Delimiter, delimiter);
       EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
@@ -266,8 +266,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       options.Prefix = p + delimiter;
       for (auto pageResult = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
-           pageResult.HasMore();
-           pageResult.NextPage())
+           pageResult.HasMorePages();
+           pageResult.MoveToNextPage())
       {
         EXPECT_EQ(pageResult.Delimiter, delimiter);
         EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
@@ -307,8 +307,8 @@ namespace Azure { namespace Storage { namespace Test {
     bool foundDeleted = false;
     bool foundMetadata = false;
 
-    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMore();
-         pageResult.NextPage())
+    for (auto pageResult = m_blobContainerClient->ListBlobs(options); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
       for (const auto& blob : pageResult.Blobs)
       {
@@ -730,8 +730,8 @@ namespace Azure { namespace Storage { namespace Test {
     for (int i = 0; i < 30; ++i)
     {
       for (auto pageResult = blobServiceClient.FindBlobsByTags(whereExpression);
-           pageResult.HasMore();
-           pageResult.NextPage())
+           pageResult.HasMorePages();
+           pageResult.MoveToNextPage())
       {
         EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
         for (auto& item : pageResult.Blobs)

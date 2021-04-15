@@ -279,8 +279,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Azure::Storage::Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
-    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMore();
-         pageResponse.NextPage())
+    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMorePages();
+         pageResponse.MoveToNextPage())
     {
       for (const auto& blob : pageResponse.Blobs)
       {
@@ -310,8 +310,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.Value());
 
-    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMore();
-         pageResponse.NextPage())
+    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasMorePages();
+         pageResponse.MoveToNextPage())
     {
       for (const auto& blob : pageResponse.Blobs)
       {

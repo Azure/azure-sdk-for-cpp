@@ -65,8 +65,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (directory.empty())
     {
       for (auto pageResult = m_fileSystemClient->ListPaths(recursive, options);
-           pageResult.HasMore();
-           pageResult.NextPage())
+           pageResult.HasMorePages();
+           pageResult.MoveToNextPage())
       {
         result.insert(result.end(), pageResult.Paths.begin(), pageResult.Paths.end());
       }
@@ -74,8 +74,8 @@ namespace Azure { namespace Storage { namespace Test {
     else
     {
       auto directoryClient = m_fileSystemClient->GetDirectoryClient(directory);
-      for (auto pageResult = directoryClient.ListPaths(recursive, options); pageResult.HasMore();
-           pageResult.NextPage())
+      for (auto pageResult = directoryClient.ListPaths(recursive, options); pageResult.HasMorePages();
+           pageResult.MoveToNextPage())
       {
         result.insert(result.end(), pageResult.Paths.begin(), pageResult.Paths.end());
       }
