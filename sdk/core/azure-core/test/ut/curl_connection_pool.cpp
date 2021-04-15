@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, uniquePort)
     {
       Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
-      // Make sure there are nothing in the pool
+      // Make sure there is nothing in the pool
       EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
       {
         // Request with no port
