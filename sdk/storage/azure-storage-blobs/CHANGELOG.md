@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0-beta.11 (Unreleased)
+
+
 ## 12.0.0-beta.10 (2021-04-16)
 
 ### Breaking Changes
@@ -9,7 +12,7 @@
 - Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type. The options are also renamed accordingly.
   - `BlobServiceClient::ListBlobContainers()`.
   - `BlobServiceClient::FindBlobsByTags()`.
-  - `BlobContainerClinet::ListBlobs()`.
+  - `BlobContainerClient::ListBlobs()`.
   - `BlobContainerClient::ListBlobsByHierarchy()`.
   - `PageBlobClient::GetPageRanges()`.
   - `PageBlobClient::GetPageRangesDiff()`.

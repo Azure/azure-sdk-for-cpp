@@ -1,11 +1,14 @@
 # Release History
 
+## 12.0.0-beta.11 (Unreleased)
+
+
 ## 12.0.0-beta.10 (2021-04-16)
 
 ### New Features
 
 - Added server timeout support.
-- Added `PagedResponse<T>` for returning paginated collections.
+- Added `Azure::PagedResponse<T>` for returning paginated collections.
 
 ### Breaking Changes
 
