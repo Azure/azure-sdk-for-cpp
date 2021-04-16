@@ -198,36 +198,61 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakePathClient::DeleteIfExists(deleteOptions, context);
   }
 
-  Azure::Response<Models::ListPathsSinglePageResult> DataLakeDirectoryClient::ListPathsSinglePage(
+  ListPathsPagedResponse DataLakeDirectoryClient::ListPaths(
       bool recursive,
-      const ListPathsSinglePageOptions& options,
+      const ListPathsOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = _detail::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
-    auto currentPath = m_pathUrl.GetPath();
-    // Remove the filesystem name and get directory name.
-    auto firstSlashPos = currentPath.find_first_of("/");
 
-    if (firstSlashPos == 0 || (firstSlashPos == currentPath.size() + 1U))
+    const std::string currentPath = m_pathUrl.GetPath();
+    auto firstSlashPos = std::find(currentPath.begin(), currentPath.end(), '/');
+    const std::string fileSystemName(currentPath.begin(), firstSlashPos);
+    if (firstSlashPos != currentPath.end())
     {
-      return _detail::DataLakeRestClient::FileSystem::ListPaths(
-          m_pathUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
+      ++firstSlashPos;
     }
-    else
+    const std::string directoryPath(firstSlashPos, currentPath.end());
+    if (!directoryPath.empty())
     {
-      protocolLayerOptions.Directory
-          = currentPath.substr(firstSlashPos + 1U, currentPath.size() - firstSlashPos - 1U);
-      auto fileSystemUrl = m_pathUrl;
-      fileSystemUrl.SetPath(currentPath.substr(
-          0U, currentPath.size() - protocolLayerOptions.Directory.Value().size() - 1U));
-      return _detail::DataLakeRestClient::FileSystem::ListPaths(
-          fileSystemUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
+      protocolLayerOptions.Directory = directoryPath;
     }
+
+    auto fileSystemUrl = m_pathUrl;
+    fileSystemUrl.SetPath(fileSystemName);
+
+    auto clientCopy = *this;
+    std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)> func;
+    func = [func, clientCopy, protocolLayerOptions, fileSystemUrl](
+               std::string continuationToken, const Azure::Core::Context& context) {
+      auto protocolLayerOptionsCopy = protocolLayerOptions;
+      if (!continuationToken.empty())
+      {
+        protocolLayerOptionsCopy.ContinuationToken = continuationToken;
+      }
+      auto response = _detail::DataLakeRestClient::FileSystem::ListPaths(
+          fileSystemUrl,
+          *clientCopy.m_pipeline,
+          _internal::WithReplicaStatus(context),
+          protocolLayerOptionsCopy);
+
+      ListPathsPagedResponse pagedResponse;
+
+      pagedResponse.Paths = std::move(response.Value.Items);
+      pagedResponse.m_onNextPageFunc = func;
+      pagedResponse.CurrentPageToken = continuationToken;
+      pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+      pagedResponse.RawResponse = std::move(response.RawResponse);
+
+      return pagedResponse;
+    };
+
+    return func(options.ContinuationToken.ValueOr(std::string()), context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

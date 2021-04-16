@@ -425,21 +425,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), std::move(result.RawResponse));
   }
 
-  Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
-  DataLakePathClient::SetAccessControlListRecursiveSinglePageInternal(
-      _detail::PathSetAccessControlRecursiveMode mode,
-      const std::vector<Models::Acl>& acls,
-      const SetPathAccessControlListRecursiveSinglePageOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    _detail::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = mode;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxRecords = options.PageSizeHint;
-    protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
-    protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
-    return _detail::DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
-  }
-
 }}}} // namespace Azure::Storage::Files::DataLake

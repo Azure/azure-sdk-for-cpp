@@ -220,75 +220,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const SetPathMetadataOptions& options = SetPathMetadataOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
-    /**
-     * @brief Sets POSIX access control rights on files and directories under given directory
-     * recursively.
-     * @param acls Sets POSIX access control rights on files and directories. Each access control
-     * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     * directory points to.
-     * @param context Context for cancelling long running operations.
-     * @return
-     * Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
-     * @remark This request is sent to dfs endpoint.
-     */
-    Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
-    SetAccessControlListRecursiveSinglePage(
-        const std::vector<Models::Acl>& acls,
-        const SetPathAccessControlListRecursiveSinglePageOptions& options
-        = SetPathAccessControlListRecursiveSinglePageOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
-    {
-      return SetAccessControlListRecursiveSinglePageInternal(
-          _detail::PathSetAccessControlRecursiveMode::Set, acls, options, context);
-    }
-
-    /**
-     * @brief Updates POSIX access control rights on files and directories under given directory
-     * recursively.
-     * @param acls Updates POSIX access control rights on files and directories. Each access control
-     * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     * directory points to.
-     * @param context Context for cancelling long running operations.
-     * @return
-     * Azure::Response<Models::UpdatePathAccessControlListRecursiveSinglePageResult>
-     * @remark This request is sent to dfs endpoint.
-     */
-    Azure::Response<Models::UpdatePathAccessControlListRecursiveSinglePageResult>
-    UpdateAccessControlListRecursiveSinglePage(
-        const std::vector<Models::Acl>& acls,
-        const UpdatePathAccessControlListRecursiveSinglePageOptions& options
-        = UpdatePathAccessControlListRecursiveSinglePageOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
-    {
-      return SetAccessControlListRecursiveSinglePageInternal(
-          _detail::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
-    }
-
-    /**
-     * @brief Removes POSIX access control rights on files and directories under given directory
-     * recursively.
-     * @param acls Removes POSIX access control rights on files and directories. Each access control
-     * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     * directory points to.
-     * @param context Context for cancelling long running operations.
-     * @return
-     * Azure::Response<Models::RemovePathAccessControlListRecursiveSinglePageResult>
-     * @remark This request is sent to dfs endpoint.
-     */
-    Azure::Response<Models::RemovePathAccessControlListRecursiveSinglePageResult>
-    RemoveAccessControlListRecursiveSinglePage(
-        const std::vector<Models::Acl>& acls,
-        const RemovePathAccessControlListRecursiveSinglePageOptions& options
-        = RemovePathAccessControlListRecursiveSinglePageOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
-    {
-      return SetAccessControlListRecursiveSinglePageInternal(
-          _detail::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
-    }
-
   protected:
     Azure::Core::Url m_pathUrl;
     Blobs::BlobClient m_blobClient;
@@ -303,14 +234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
     }
 
-    Azure::Response<Models::SetPathAccessControlListRecursiveSinglePageResult>
-    SetAccessControlListRecursiveSinglePageInternal(
-        _detail::PathSetAccessControlRecursiveMode mode,
-        const std::vector<Models::Acl>& acls,
-        const SetPathAccessControlListRecursiveSinglePageOptions& options
-        = SetPathAccessControlListRecursiveSinglePageOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
+  private:
     friend class DataLakeFileSystemClient;
     friend class DataLakeLeaseClient;
   };

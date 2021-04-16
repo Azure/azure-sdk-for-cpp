@@ -177,28 +177,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief List files and directories under the directory.
+     * @brief Returns a sequence of files and subdirectories in this directory. Enumerating the
+     * files and directories may make multiple requests to the service while fetching all the
+     * values.
      * @param options Optional parameters to list the files and directories under this directory.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
-     * information of the operation, directory, share and the listed result.
+     * @return ListFilesAndDirectoriesPagedResponse describing the items in the directory.
      */
-    Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
-    ListFilesAndDirectoriesSinglePage(
-        const ListFilesAndDirectoriesSinglePageOptions& options
-        = ListFilesAndDirectoriesSinglePageOptions(),
+    ListFilesAndDirectoriesPagedResponse ListFilesAndDirectories(
+        const ListFilesAndDirectoriesOptions& options = ListFilesAndDirectoriesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief List open handles on the directory.
+     * @brief Returns a sequence of the open handles on a directory or a file. Enumerating the
+     * handles may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list this directory's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListDirectoryHandlesSinglePageResult> containing
-     * the information of the operation and the open handles of this directory
+     * @return ListDirectoryHandlesPagedResponse describing the handles in the directory.
      */
-    Azure::Response<Models::ListDirectoryHandlesSinglePageResult> ListHandlesSinglePage(
-        const ListDirectoryHandlesSinglePageOptions& options
-        = ListDirectoryHandlesSinglePageOptions(),
+    ListDirectoryHandlesPagedResponse ListHandles(
+        const ListDirectoryHandlesOptions& options = ListDirectoryHandlesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -212,20 +210,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Response<Models::ForceCloseDirectoryHandleResult> ForceCloseHandle(
         const std::string& handleId,
         const ForceCloseDirectoryHandleOptions& options = ForceCloseDirectoryHandleOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Closes all handles opened on a directory at the service.
-     * @param options Optional parameters to close all this directory's open handles.
-     * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ForceCloseAllDirectoryHandlesSinglePageResult>
-     * containing the information of the closed handles
-     * @remark This operation may return a marker showing that the operation can be continued.
-     */
-    Azure::Response<Models::ForceCloseAllDirectoryHandlesSinglePageResult>
-    ForceCloseAllHandlesSinglePage(
-        const ForceCloseAllDirectoryHandlesSinglePageOptions& options
-        = ForceCloseAllDirectoryHandlesSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:

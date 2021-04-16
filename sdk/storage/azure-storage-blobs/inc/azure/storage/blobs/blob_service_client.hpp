@@ -86,19 +86,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Returns a single segment of blob containers in the storage account, starting
-     * from the specified Marker. Use an empty Marker to start enumeration from the beginning and
-     * the NextMarker if it's not empty to make subsequent calls to ListBlobContainersSegment to
-     * continue enumerating the containers segment by segment. Containers are ordered
-     * lexicographically by name.
+     * @brief Returns a collection of blob containers in the storage account. Enumerating the
+     * blob containers may make multiple requests to the service while fetching all the values.
+     * Containers are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ListBlobContainersSinglePageResult describing segment of the blob containers in the
+     * @return A ListBlobContainersPagedResponse describing the blob containers in the
      * storage account.
      */
-    Azure::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
-        const ListBlobContainersSinglePageOptions& options = ListBlobContainersSinglePageOptions(),
+    ListBlobContainersPagedResponse ListBlobContainers(
+        const ListBlobContainersOptions& options = ListBlobContainersOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -170,9 +168,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief The Filter Blobs operation enables callers to list blobs across all containers
-     * whose tags match a given search expression. Filter blobs searches across all containers
-     * within a storage account but can be scoped within the expression to a single container.
+     * @brief The Filter Blobs operation enables callers to list blobs across all containers whose
+     * tags match a given search expression. Filter blobs searches across all containers within a
+     * storage account but can be scoped within the expression to a single container.
      *
      * @param tagFilterSqlExpression The where parameter enables the caller to query blobs
      * whose tags match a given expression. The given expression must evaluate to true for a blob to
@@ -181,11 +179,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * is supported in the Blob service.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A FindBlobsByTagsSinglePageResult describing the blobs.
+     * @return A FindBlobsByTagsPagedResponse describing the blobs.
      */
-    Azure::Response<Models::FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
+    FindBlobsByTagsPagedResponse FindBlobsByTags(
         const std::string& tagFilterSqlExpression,
-        const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions(),
+        const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
