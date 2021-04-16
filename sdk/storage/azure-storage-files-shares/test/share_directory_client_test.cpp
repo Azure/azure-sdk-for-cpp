@@ -50,24 +50,21 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::Shares::Models::DirectoryItem> directoryResult;
     std::vector<Files::Shares::Models::FileItem> fileResult;
-    Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
+    Files::Shares::ListFilesAndDirectoriesOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
     auto directoryClient
         = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryPath);
-    do
+    for (auto pageResult = directoryClient.ListFilesAndDirectories(options);
+         pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
-      auto response = directoryClient.ListFilesAndDirectoriesSinglePage(options);
       directoryResult.insert(
-          directoryResult.end(),
-          response.Value.DirectoryItems.begin(),
-          response.Value.DirectoryItems.end());
-      fileResult.insert(
-          fileResult.end(), response.Value.FileItems.begin(), response.Value.FileItems.end());
-      options.ContinuationToken = response.Value.ContinuationToken;
-    } while (options.ContinuationToken.HasValue());
+          directoryResult.end(), pageResult.Directories.begin(), pageResult.Directories.end());
+      fileResult.insert(fileResult.end(), pageResult.Files.begin(), pageResult.Files.end());
+    }
     return std::make_pair<
         std::vector<Files::Shares::Models::FileItem>,
         std::vector<Files::Shares::Models::DirectoryItem>>(
@@ -426,20 +423,23 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
+      Files::Shares::ListFilesAndDirectoriesOptions options;
       options.PageSizeHint = 2;
       auto directoryNameAClient
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
-      auto response = directoryNameAClient.ListFilesAndDirectoriesSinglePage(options);
-      EXPECT_LE(2U, response.Value.DirectoryItems.size() + response.Value.FileItems.size());
+      auto response = directoryNameAClient.ListFilesAndDirectories(options);
+      EXPECT_LE(2U, response.Directories.size() + response.Files.size());
     }
   }
 
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
   {
-    auto result = m_fileShareDirectoryClient->ListHandlesSinglePage();
-    EXPECT_TRUE(result.Value.Handles.empty());
-    EXPECT_FALSE(result.Value.ContinuationToken.HasValue());
-    EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandlesSinglePage());
+    auto result = m_fileShareDirectoryClient->ListHandles();
+    EXPECT_TRUE(result.DirectoryHandles.empty());
+    EXPECT_TRUE(result.NextPageToken.empty());
+    for (auto pageResult = m_fileShareDirectoryClient->ListHandles(); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
+    {
+    }
   }
 }}} // namespace Azure::Storage::Test

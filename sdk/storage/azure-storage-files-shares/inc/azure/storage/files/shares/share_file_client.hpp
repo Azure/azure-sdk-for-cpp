@@ -310,14 +310,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief List open handles on the file.
+     * @brief Returns a sequence of the open handles on a directory or a file. Enumerating the
+     * handles may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list this file's open handles.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListFileHandlesSinglePageResult> containing the
-     * information of the operation and the open handles of this file
+     * @return ListFileHandlesPagedResponse describing the handles of the file.
      */
-    Azure::Response<Models::ListFileHandlesSinglePageResult> ListHandlesSinglePage(
-        const ListFileHandlesSinglePageOptions& options = ListFileHandlesSinglePageOptions(),
+    ListFileHandlesPagedResponse ListHandles(
+        const ListFileHandlesOptions& options = ListFileHandlesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -331,20 +331,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Response<Models::ForceCloseFileHandleResult> ForceCloseHandle(
         const std::string& handleId,
         const ForceCloseFileHandleOptions& options = ForceCloseFileHandleOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Closes all handles opened on a file at the service.
-     * @param options Optional parameters to close all this file's open handles.
-     * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ForceCloseAllFileHandlesSinglePageResult>
-     * containing the information of the closed handles
-     * @remark This operation may return a marker showing that the operation can be continued.
-     */
-    Azure::Response<Models::ForceCloseAllFileHandlesSinglePageResult>
-    ForceCloseAllHandlesSinglePage(
-        const ForceCloseAllFileHandlesSinglePageOptions& options
-        = ForceCloseAllFileHandlesSinglePageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

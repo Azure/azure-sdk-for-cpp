@@ -12,10 +12,14 @@
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
-#include "azure/storage/files/datalake/datalake_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+
+  namespace Models {
+    using ListFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
+    using SignedIdentifier = Blobs::Models::SignedIdentifier;
+  } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
@@ -58,9 +62,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for ServiceClient::ListFileSystemsSinglePageOptions
+   * @brief Optional parameters for ServiceClient::ListFileSystemsOptions.
    */
-  struct ListFileSystemsSinglePageOptions
+  struct ListFileSystemsOptions
   {
     /**
      * @brief Filters results to filesystems within the specified prefix.
@@ -142,9 +146,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::ListPathsSinglePage
+   * @brief Optional parameters for FileSystemClient::ListPaths
    */
-  struct ListPathsSinglePageOptions
+  struct ListPathsOptions
   {
     /**
      * @brief Valid only when Hierarchical Namespace is enabled for the account.
@@ -527,44 +531,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     PathAccessConditions AccessConditions;
   };
-
-  /**
-   * @brief Optional parameters for DirectoryClient::SetAccessControlListRecursiveSinglePage
-   */
-  struct SetPathAccessControlListRecursiveSinglePageOptions
-  {
-    /**
-     * @brief When performing setAccessControlRecursive on a directory, the number of paths that
-     *        are processed with each invocation is limited.  If the number of paths to be processed
-     *        exceeds this limit, a continuation token is returned in this response header.  When a
-     *        continuation token is returned in the response, it must be specified in a subsequent
-     *        invocation of the setAccessControlRecursive operation to continue the
-     *        setAccessControlRecursive operation on the directory.
-     */
-    Azure::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief It specifies the maximum number of files or directories on which the acl change will
-     *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
-     *        items.
-     */
-    Azure::Nullable<int32_t> PageSizeHint;
-
-    /**
-     * @brief  Optional. If set to false, the operation will terminate quickly on encountering user
-     * errors (4XX). If true, the operation will ignore user errors and proceed with the operation
-     * on other sub-entities of the directory. Continuation token will only be returned when
-     * ContinueOnFailure is true in case of user errors. If not set the default value is false for
-     * this.
-     */
-    Azure::Nullable<bool> ContinueOnFailure;
-  };
-
-  using UpdatePathAccessControlListRecursiveSinglePageOptions
-      = SetPathAccessControlListRecursiveSinglePageOptions;
-
-  using RemovePathAccessControlListRecursiveSinglePageOptions
-      = SetPathAccessControlListRecursiveSinglePageOptions;
 
   using CreateFileOptions = CreatePathOptions;
   using CreateDirectoryOptions = CreatePathOptions;

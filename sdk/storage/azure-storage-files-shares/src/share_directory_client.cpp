@@ -286,50 +286,63 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
-  Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
-  ShareDirectoryClient::ListFilesAndDirectoriesSinglePage(
-      const ListFilesAndDirectoriesSinglePageOptions& options,
+  ListFilesAndDirectoriesPagedResponse ShareDirectoryClient::ListFilesAndDirectories(
+      const ListFilesAndDirectoriesOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions
         = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto result = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
+    auto response = _detail::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ListFilesAndDirectoriesSinglePageResult ret;
-    ret.ServiceEndpoint = std::move(result.Value.ServiceEndpoint);
-    ret.ShareName = std::move(result.Value.ShareName);
-    ret.ShareSnapshot = std::move(result.Value.ShareSnapshot);
-    ret.DirectoryPath = std::move(result.Value.DirectoryPath);
-    ret.Prefix = std::move(result.Value.Prefix);
-    ret.PageSizeHint = result.Value.PageSizeHint;
-    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
-    ret.DirectoryItems = std::move(result.Value.SinglePage.DirectoryItems);
-    ret.FileItems = std::move(result.Value.SinglePage.FileItems);
 
-    return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
-        std::move(ret), std::move(result.RawResponse));
+    ListFilesAndDirectoriesPagedResponse pagedResponse;
+
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.ShareName = std::move(response.Value.ShareName);
+    pagedResponse.ShareSnapshot = std::move(response.Value.ShareSnapshot);
+    pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
+    pagedResponse.Prefix = std::move(response.Value.Prefix);
+    pagedResponse.Directories = std::move(response.Value.SinglePage.DirectoryItems);
+    pagedResponse.Files = std::move(response.Value.SinglePage.FileItems);
+    pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
-  Azure::Response<Models::ListDirectoryHandlesSinglePageResult>
-  ShareDirectoryClient::ListHandlesSinglePage(
-      const ListDirectoryHandlesSinglePageOptions& options,
+  ListDirectoryHandlesPagedResponse ShareDirectoryClient::ListHandles(
+      const ListDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::ListHandlesOptions();
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = options.Recursive;
-    auto result = _detail::ShareRestClient::Directory::ListHandles(
+    auto response = _detail::ShareRestClient::Directory::ListHandles(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
-    Models::ListDirectoryHandlesSinglePageResult ret;
-    ret.ContinuationToken = std::move(result.Value.ContinuationToken);
-    ret.Handles = std::move(result.Value.HandleList);
 
-    return Azure::Response<Models::ListDirectoryHandlesSinglePageResult>(
-        std::move(ret), std::move(result.RawResponse));
+    ListDirectoryHandlesPagedResponse pagedResponse;
+
+    pagedResponse.DirectoryHandles = std::move(response.Value.HandleList);
+    pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<Models::ForceCloseDirectoryHandleResult> ShareDirectoryClient::ForceCloseHandle(
@@ -345,19 +358,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::ForceCloseDirectoryHandleResult ret;
     return Azure::Response<Models::ForceCloseDirectoryHandleResult>(
         std::move(ret), std::move(result.RawResponse));
-  }
-
-  Azure::Response<Models::ForceCloseAllDirectoryHandlesSinglePageResult>
-  ShareDirectoryClient::ForceCloseAllHandlesSinglePage(
-      const ForceCloseAllDirectoryHandlesSinglePageOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ForceCloseHandlesOptions();
-    protocolLayerOptions.HandleId = FileAllHandles;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.Recursive = options.Recursive;
-    return _detail::ShareRestClient::Directory::ForceCloseHandles(
-        m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetPageRanges(
+  GetPageRangesPagedResponse PageBlobClient::GetPageRanges(
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -245,11 +245,25 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
+    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    GetPageRangesPagedResponse pagedResponse;
+
+    pagedResponse.ETag = std::move(response.Value.ETag);
+    pagedResponse.LastModified = std::move(response.Value.LastModified);
+    pagedResponse.BlobSize = response.Value.BlobSize;
+    pagedResponse.PageRanges = std::move(response.Value.PageRanges);
+    pagedResponse.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = std::string();
+    pagedResponse.NextPageToken = std::string();
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetPageRangesDiff(
+  GetPageRangesDiffPagedResponse PageBlobClient::GetPageRangesDiff(
       const std::string& previousSnapshot,
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
@@ -263,11 +277,27 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
+    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    GetPageRangesDiffPagedResponse pagedResponse;
+
+    pagedResponse.ETag = std::move(response.Value.ETag);
+    pagedResponse.LastModified = std::move(response.Value.LastModified);
+    pagedResponse.BlobSize = response.Value.BlobSize;
+    pagedResponse.PageRanges = std::move(response.Value.PageRanges);
+    pagedResponse.ClearRanges = std::move(response.Value.ClearRanges);
+    pagedResponse.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_previousSnapshot = previousSnapshot;
+    pagedResponse.CurrentPageToken = std::string();
+    pagedResponse.NextPageToken = std::string();
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
-  Azure::Response<Models::GetPageRangesResult> PageBlobClient::GetManagedDiskPageRangesDiff(
+  GetPageRangesDiffPagedResponse PageBlobClient::GetManagedDiskPageRangesDiff(
       const std::string& previousSnapshotUrl,
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
@@ -281,8 +311,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::PageBlob::GetPageRanges(
+    auto response = _detail::BlobRestClient::PageBlob::GetPageRanges(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    GetPageRangesDiffPagedResponse pagedResponse;
+
+    pagedResponse.ETag = std::move(response.Value.ETag);
+    pagedResponse.LastModified = std::move(response.Value.LastModified);
+    pagedResponse.BlobSize = response.Value.BlobSize;
+    pagedResponse.PageRanges = std::move(response.Value.PageRanges);
+    pagedResponse.ClearRanges = std::move(response.Value.ClearRanges);
+    pagedResponse.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_previousSnapshotUrl = previousSnapshotUrl;
+    pagedResponse.CurrentPageToken = std::string();
+    pagedResponse.NextPageToken = std::string();
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   StartBlobCopyOperation PageBlobClient::StartCopyIncremental(

@@ -85,20 +85,6 @@ void DataLakeGettingStarted()
     std::cout << "Downloaded data was:\n" + std::string(downloaded.begin(), downloaded.end())
               << std::endl;
 
-    // List all file systems.
-    std::string continuation;
-    std::vector<Models::FileSystemItem> fileSystems;
-    do
-    {
-      auto response = serviceClient.ListFileSystemsSinglePage();
-      if (response.Value.ContinuationToken.HasValue())
-      {
-        continuation = response.Value.ContinuationToken.Value();
-      }
-      fileSystems.insert(
-          fileSystems.end(), response.Value.Items.begin(), response.Value.Items.end());
-    } while (!continuation.empty());
-
     // Delete file system.
     fileSystemClient.Delete();
 
