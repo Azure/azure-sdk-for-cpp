@@ -1,0 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
+{
+  "name": "azure-storage-blobs-cpp",
+  "version-string": "@AZ_LIBRARY_VERSION@",
+  "description": [
+    "Microsoft Azure Storage Blobs SDK for C++",
+    "This library provides Azure Storage Blobs SDK."
+  ],
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-blobs",
+  "dependencies": [
+    "azure-storage-common-cpp"
+  ]
+}
