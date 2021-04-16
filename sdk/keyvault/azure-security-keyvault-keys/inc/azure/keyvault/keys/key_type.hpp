@@ -48,7 +48,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     }
 
     /**
-     * @brief Return the JWT as string.
+     * @brief Return the JSON Web Token (JWT) as a string.
      *
      * @return The JWT represented as string.
      */
