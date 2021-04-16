@@ -6,7 +6,7 @@
 
 - Removed `Azure::Storage::Files::DataLake::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
-- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type.
+- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type. The options are also renamed accordingly.
   - `DataLakeServiceClient::ListFileSystems()`.
   - `DataLakeFileSystemClient::ListPaths()`.
   - `DataLakeDirectoryClient::ListPaths()`.
