@@ -15,7 +15,7 @@
   - `PageBlobClient::GetPageRangesDiff()`.
   - `PageBlobClient::GetManagedDiskPageRangesDiff()`.
 - Renamed `FilterBlobItem` to `TaggedBlobItem`.
-  - FindBlobsByTagsSinglePageResult::Items renamed to FindBlobsByTagsPagedResponse::TaggedBlobs
+  - `FindBlobsByTags()` now returns `FindBlobsByTagsPagedResponse` and the field `FindBlobsByTagsSinglePageResult::Items` was renamed to `FindBlobsByTagsPagedResponse::TaggedBlobs`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 
