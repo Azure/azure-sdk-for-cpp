@@ -9,8 +9,8 @@
 ### Breaking Changes
 
 - Removed `Azure::Security::KeyVault::Keys::JsonWebKey::to_json`.
-- Replaced static functions from `KeyOperation` and `KeyCurveName` for static const members.
-- Replaced the enum `JsonWebKeyType` for a class with static const members as ext enum.
+- Replaced static functions from `KeyOperation` and `KeyCurveName` with static const members.
+- Replaced the enum `JsonWebKeyType` for a class with static const members as an extensible enum called `KeyVaultKeyType`.
 - Renamed `MaxResults` to `MaxPageResults` for `GetSinglePageOptions`.
 
 ### Bug Fixes
