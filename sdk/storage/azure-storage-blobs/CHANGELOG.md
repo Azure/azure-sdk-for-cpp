@@ -6,7 +6,7 @@
 
 - Removed `Azure::Storage::Blobs::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
-- Replaced all SinglePage functions with pageable functions.
+- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type.
   - `BlobServiceClient::ListBlobContainers`.
   - `BlobServiceClient::FindBlobsByTags`.
   - `BlobContainerClinet::ListBlobs`.
