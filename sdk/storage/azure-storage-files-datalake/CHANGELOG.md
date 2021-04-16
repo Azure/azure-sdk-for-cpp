@@ -5,14 +5,14 @@
 ### Breaking Changes
 
 - Removed `Azure::Storage::Files::DataLake::PackageVersion`.
-- Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
-- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions.
-  - `DataLakeServiceClient::ListFileSystems`.
-  - `DataLakeFileSystemClient::ListPaths`.
-  - `DataLakeDirectoryClient::ListPaths`.
-  - `DataLakePathClient::SetAccessControlListRecursive`.
-  - `DataLakePathClient::UpdateAccessControlListRecursive`.
-  - `DataLakePathClient::RemoveAccessControlListRecursive`.
+- Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
+- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type.
+  - `DataLakeServiceClient::ListFileSystems()`.
+  - `DataLakeFileSystemClient::ListPaths()`.
+  - `DataLakeDirectoryClient::ListPaths()`.
+  - `DataLakePathClient::SetAccessControlListRecursive()`.
+  - `DataLakePathClient::UpdateAccessControlListRecursive()`.
+  - `DataLakePathClient::RemoveAccessControlListRecursive()`.
 
 ### Bug Fixes
 

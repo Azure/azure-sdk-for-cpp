@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
           clearRanges.end(), pageResult.ClearRanges.begin(), pageResult.ClearRanges.end());
     }
     ASSERT_FALSE(pageRanges.empty());
-    ASSERT_FALSE(pageRanges.empty());
+    ASSERT_FALSE(clearRanges.empty());
     EXPECT_EQ(pageRanges[0].Offset, 0);
     EXPECT_EQ(static_cast<uint64_t>(pageRanges[0].Length.Value()), 1_KB);
     EXPECT_EQ(static_cast<uint64_t>(clearRanges[0].Offset), 3_KB);

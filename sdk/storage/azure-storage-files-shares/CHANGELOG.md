@@ -5,15 +5,15 @@
 ### Breaking Changes
 
 - Removed `Azure::Storage::Files::Shares::PackageVersion`.
-- Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
-- Removed `ShareClient::ListFilesAndDirectories`.
-- Replaced all SinglePage functions with pageable functions.
-  - `ShareServiceClient::ListShares`.
-  - `ShareDirectoryClient::ListFilesAndDirectories`.
-  - `ShareDirectoryClient::ListHandles`.
-  - `ShareDirectoryClient::ForceCloseAllHandles`.
-  - `ShareFileClient::ListHandles`.
-  - `ShareFileClient::ForceCloseAllHandles`.
+- Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
+- Removed `ShareClient::ListFilesAndDirectories()`.
+- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type.
+  - `ShareServiceClient::ListShares()`.
+  - `ShareDirectoryClient::ListFilesAndDirectories()`.
+  - `ShareDirectoryClient::ListHandles()`.
+  - `ShareDirectoryClient::ForceCloseAllHandles()`.
+  - `ShareFileClient::ListHandles()`.
+  - `ShareFileClient::ForceCloseAllHandles()`.
   
 ## 12.0.0-beta.9 (2021-03-23)
 

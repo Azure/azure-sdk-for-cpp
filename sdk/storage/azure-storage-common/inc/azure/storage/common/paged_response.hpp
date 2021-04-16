@@ -13,8 +13,8 @@ namespace Azure {
 
 template <class Derived> class PagedResponse {
 public:
-  std::string NextPageToken;
   std::string CurrentPageToken;
+  std::string NextPageToken;
   std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
   bool HasMorePages() const { return m_hasMorePages; }
