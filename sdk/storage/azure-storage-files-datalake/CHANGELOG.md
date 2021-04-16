@@ -10,7 +10,7 @@
   - `DataLakeServiceClient::ListFileSystems()`.
   - `DataLakeFileSystemClient::ListPaths()`.
   - `DataLakeDirectoryClient::ListPaths()`.
-- Removed `DataLakePathClient::SetAccessControlListRecursiveSinglePage()`, `DataLakePathClient::UpdateAccessControlListRecursiveSinglePage()` and `DataLakePathClient::RemoveAccessControlListRecursiveSinglePage()`.
+- Removed `DataLakePathClient::SetAccessControlListRecursiveSinglePage()`, `UpdateAccessControlListRecursiveSinglePage()` and `RemoveAccessControlListRecursiveSinglePage()`.
 
 ### Bug Fixes
 
