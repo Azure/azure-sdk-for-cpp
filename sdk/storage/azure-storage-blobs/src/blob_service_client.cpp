@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     FindBlobsByTagsPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    pagedResponse.Blobs = std::move(response.Value.Items);
+    pagedResponse.TaggedBlobs = std::move(response.Value.Items);
     pagedResponse.m_blobServiceClient = std::make_shared<BlobServiceClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_tagFilterSqlExpression = tagFilterSqlExpression;

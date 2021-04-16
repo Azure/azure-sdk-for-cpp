@@ -726,7 +726,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString());
     std::string whereExpression
         = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
-    std::vector<Blobs::Models::FilterBlobItem> findResults;
+    std::vector<Blobs::Models::TaggedBlobItem> findResults;
     for (int i = 0; i < 30; ++i)
     {
       for (auto pageResult = blobServiceClient.FindBlobsByTags(whereExpression);
@@ -734,7 +734,7 @@ namespace Azure { namespace Storage { namespace Test {
            pageResult.MoveToNextPage())
       {
         EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-        for (auto& item : pageResult.Blobs)
+        for (auto& item : pageResult.TaggedBlobs)
         {
           EXPECT_FALSE(item.BlobName.empty());
           EXPECT_FALSE(item.BlobContainerName.empty());

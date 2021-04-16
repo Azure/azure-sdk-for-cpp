@@ -315,12 +315,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum EncryptionAlgorithmType
 
-    struct FilterBlobItem
-    {
-      std::string BlobName;
-      std::string BlobContainerName;
-    }; // struct FilterBlobItem
-
     class GeoReplicationStatus {
     public:
       GeoReplicationStatus() = default;
@@ -678,6 +672,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SubmitBlobBatchResult
     } // namespace _detail
 
+    struct TaggedBlobItem
+    {
+      std::string BlobName;
+      std::string BlobContainerName;
+    }; // struct TaggedBlobItem
+
     namespace _detail {
       struct UndeleteBlobContainerResult
       {
@@ -758,7 +758,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string ServiceEndpoint;
         Azure::Nullable<std::string> ContinuationToken;
-        std::vector<FilterBlobItem> Items;
+        std::vector<TaggedBlobItem> Items;
       }; // struct FindBlobsByTagsResult
     } // namespace _detail
 
@@ -1689,7 +1689,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
               {
-                ret.Items.emplace_back(FilterBlobItemFromXml(reader));
+                ret.Items.emplace_back(TaggedBlobItemFromXml(reader));
                 path.pop_back();
               }
             }
@@ -2370,64 +2370,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static FilterBlobItem FilterBlobItemFromXml(_internal::XmlReader& reader)
-        {
-          FilterBlobItem ret;
-          enum class XmlTagName
-          {
-            k_Name,
-            k_ContainerName,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == _internal::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == _internal::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
-            {
-              if (std::strcmp(node.Name, "Name") == 0)
-              {
-                path.emplace_back(XmlTagName::k_Name);
-              }
-              else if (std::strcmp(node.Name, "ContainerName") == 0)
-              {
-                path.emplace_back(XmlTagName::k_ContainerName);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::k_Name)
-              {
-                ret.BlobName = node.Value;
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_ContainerName)
-              {
-                ret.BlobContainerName = node.Value;
-              }
-            }
-          }
-          return ret;
-        }
-
         static GeoReplication GeoReplicationFromXml(_internal::XmlReader& reader)
         {
           GeoReplication ret;
@@ -2692,6 +2634,64 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (path.size() == 1 && path[0] == XmlTagName::k_ErrorDocument404Path)
               {
                 ret.ErrorDocument404Path = node.Value;
+              }
+            }
+          }
+          return ret;
+        }
+
+        static TaggedBlobItem TaggedBlobItemFromXml(_internal::XmlReader& reader)
+        {
+          TaggedBlobItem ret;
+          enum class XmlTagName
+          {
+            k_Name,
+            k_ContainerName,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (std::strcmp(node.Name, "Name") == 0)
+              {
+                path.emplace_back(XmlTagName::k_Name);
+              }
+              else if (std::strcmp(node.Name, "ContainerName") == 0)
+              {
+                path.emplace_back(XmlTagName::k_ContainerName);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+              if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+              {
+                ret.BlobName = node.Value;
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::k_ContainerName)
+              {
+                ret.BlobContainerName = node.Value;
               }
             }
           }

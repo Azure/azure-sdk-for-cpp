@@ -138,7 +138,7 @@ namespace Azure { namespace Storage {
     class FindBlobsByTagsPagedResponse : public PagedResponse<FindBlobsByTagsPagedResponse> {
     public:
       std::string ServiceEndpoint;
-      std::vector<Models::FilterBlobItem> Blobs;
+      std::vector<Models::TaggedBlobItem> TaggedBlobs;
 
     private:
       void OnNextPage(const Azure::Core::Context& context);
