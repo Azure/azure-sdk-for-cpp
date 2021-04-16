@@ -1376,9 +1376,9 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 
   if (hostPool.size() >= g_curlConnectionPool.m_maxConnectionsPerIndex)
   {
-    // Ignore and let the connection be destroyed if the pool for the host-index has reached the
-    // limit.
-    return;
+    // Remove the last connection from the pool to insert this one.
+    auto lastConnection = --hostPool.end();
+    hostPool.erase(lastConnection);
   }
 
   // update the time when connection was moved back to pool

@@ -228,12 +228,13 @@ namespace Azure { namespace Core { namespace Test {
         }
 
         std::string hostKey("key");
-        for (int count = 0; count < 2000; count++)
+        for (uint64_t count = 0; count < 2000; count++)
         {
           MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
           EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(hostKey));
           EXPECT_CALL(*curlMock, UpdateLastUsageTime()).WillRepeatedly(Return());
           EXPECT_CALL(*curlMock, IsExpired()).WillRepeatedly(Return(false));
+          EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _)).WillRepeatedly(Return(count));
           EXPECT_CALL(*curlMock, DestructObj());
 
           CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
@@ -250,6 +251,19 @@ namespace Azure { namespace Core { namespace Test {
                 .size(),
             Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                 .m_maxConnectionsPerIndex);
+        // Test the first and last connection. Each connection should remove the last and oldest
+        auto connectionIt = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                                .ConnectionPoolIndex[hostKey]
+                                .begin();
+        EXPECT_EQ(
+            connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
+            2000 - 1); // starting from zero
+        connectionIt = --(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                              .ConnectionPoolIndex[hostKey]
+                              .end());
+        EXPECT_EQ(
+            connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
+            2000 - 1024);
 
         // Check the pool will take other host-key
         {
