@@ -268,13 +268,6 @@ namespace Azure { namespace Storage { namespace Test {
          pageResult.MoveToNextPage())
     {
     }
-
-    EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
-
-    for (auto pageResult = m_fileClient->ForceCloseAllHandles(); pageResult.HasMorePages();
-         pageResult.MoveToNextPage())
-    {
-    }
   }
 
   TEST_F(FileShareFileClientTest, LeaseRelated)

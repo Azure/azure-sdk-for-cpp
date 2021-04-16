@@ -11,9 +11,8 @@
   - `ShareServiceClient::ListShares()`.
   - `ShareDirectoryClient::ListFilesAndDirectories()`.
   - `ShareDirectoryClient::ListHandles()`.
-  - `ShareDirectoryClient::ForceCloseAllHandles()`.
   - `ShareFileClient::ListHandles()`.
-  - `ShareFileClient::ForceCloseAllHandles()`.
+- Removed `ShareDirectoryClient::ForceCloseAllHandlesSinglePage()` and `ShareFileClient::ForceCloseAllHandlesSinglePage()`.
   
 ## 12.0.0-beta.9 (2021-03-23)
 
