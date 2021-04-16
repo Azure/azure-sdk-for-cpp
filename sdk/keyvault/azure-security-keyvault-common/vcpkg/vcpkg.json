@@ -1,0 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
+{
+  "name": "azure-security-keyvault-common-cpp",
+  "version-string": "@AZ_LIBRARY_VERSION@",
+  "description": [
+    "Microsoft Azure Common Key Vault SDK for C++",
+    "This library provides common Azure KeyVault-related abstractions for Azure SDK."
+  ],
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/keyvault/azure-security-keyvault-common",
+  "dependencies": [
+    "azure-core-cpp"
+  ]
+}
