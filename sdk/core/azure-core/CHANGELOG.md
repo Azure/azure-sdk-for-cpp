@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.9 (Unreleased)
 
+### Bug Fixes
+
+- Do not re-use a libcurl connection to same host but different port.
 
 ## 1.0.0-beta.8 (2021-04-07)
 
