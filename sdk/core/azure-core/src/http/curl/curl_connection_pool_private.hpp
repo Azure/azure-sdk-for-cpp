@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
 
     /**
-     * @brief Keeps an unique key for each host and creates a connection pool for each key.
+     * @brief Keeps a unique key for each host and creates a connection pool for each key.
      *
      * @details This way getting a connection for a specific host can be done in O(1) instead of
      * looping a single connection list to find the first connection for the required host.
@@ -113,6 +113,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     std::mutex ConnectionPoolMutex;
 
+    // This is used to put the cleaning pool thread to sleep and yet to be able to wake it if the
+    // application finishes.
     std::condition_variable ConditionalVariableForCleanThread;
 
     // Keep the count of the total connections from all indexes
