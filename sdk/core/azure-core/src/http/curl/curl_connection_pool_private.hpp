@@ -124,10 +124,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     int64_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };
-
-    // Define the maximun allowed connections per host-index in the pool. If this number is reached
-    // for the host-index, next connections trying to be added to the pool will be ignored.
-    uint64_t m_maxConnectionsPerIndex = 1024;
   };
 
 }}}} // namespace Azure::Core::Http::_detail

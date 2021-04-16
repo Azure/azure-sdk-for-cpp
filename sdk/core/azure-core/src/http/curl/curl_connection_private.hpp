@@ -33,6 +33,9 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
     constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
+    // Define the maximun allowed connections per host-index in the pool. If this number is reached
+    // for the host-index, next connections trying to be added to the pool will be ignored.
+    constexpr static size_t MaxConnectionsPerIndex = 1024;
   } // namespace _detail
 
   /**

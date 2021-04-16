@@ -1374,7 +1374,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   auto& poolId = connection->GetConnectionKey();
   auto& hostPool = g_curlConnectionPool.ConnectionPoolIndex[poolId];
 
-  if (hostPool.size() >= g_curlConnectionPool.m_maxConnectionsPerIndex)
+  if (hostPool.size() >= _detail::MaxConnectionsPerIndex)
   {
     // Remove the last connection from the pool to insert this one.
     auto lastConnection = --hostPool.end();

@@ -249,8 +249,7 @@ namespace Azure { namespace Core { namespace Test {
             Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                 .ConnectionPoolIndex[hostKey]
                 .size(),
-            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                .m_maxConnectionsPerIndex);
+            Azure::Core::Http::_detail::MaxConnectionsPerIndex);
         // Test the first and last connection. Each connection should remove the last and oldest
         auto connectionIt = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                                 .ConnectionPoolIndex[hostKey]
@@ -292,8 +291,7 @@ namespace Azure { namespace Core { namespace Test {
               Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                   .ConnectionPoolIndex[hostKey]
                   .size(),
-              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                  .m_maxConnectionsPerIndex);
+              Azure::Core::Http::_detail::MaxConnectionsPerIndex);
         }
         {
           std::lock_guard<std::mutex> lock(
