@@ -12,7 +12,7 @@
 - Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type. The options are also renamed accordingly.
   - `BlobServiceClient::ListBlobContainers()`.
   - `BlobServiceClient::FindBlobsByTags()`.
-  - `BlobContainerClinet::ListBlobs()`.
+  - `BlobContainerClient::ListBlobs()`.
   - `BlobContainerClient::ListBlobsByHierarchy()`.
   - `PageBlobClient::GetPageRanges()`.
   - `PageBlobClient::GetPageRangesDiff()`.
