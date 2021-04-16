@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0-beta.10 (Unreleased)
+## 12.0.0-beta.10 (2021-04-16)
 
 ### Breaking Changes
 
@@ -14,7 +14,7 @@
 
 ### Bug Fixes
 
-- Rename functions always fail because `/` was left out in rename source path.
+- Rename functions always fail because `/` was left out in the renamed source path.
 
 ## 12.0.0-beta.9 (2021-03-23)
 
