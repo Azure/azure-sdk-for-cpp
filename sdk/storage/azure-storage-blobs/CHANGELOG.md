@@ -1,11 +1,24 @@
 # Release History
 
-## 12.0.0-beta.10 (Unreleased)
+## 12.0.0-beta.11 (Unreleased)
+
+
+## 12.0.0-beta.10 (2021-04-16)
 
 ### Breaking Changes
 
 - Removed `Azure::Storage::Blobs::PackageVersion`.
-- Renamed `GetUserDelegationKeyOptions::startsOn` to `GetUserDelegationKeyOptions::StartsOn`.
+- Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
+- Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a `PagedResponse<T>`-derived type. The options are also renamed accordingly.
+  - `BlobServiceClient::ListBlobContainers()`.
+  - `BlobServiceClient::FindBlobsByTags()`.
+  - `BlobContainerClient::ListBlobs()`.
+  - `BlobContainerClient::ListBlobsByHierarchy()`.
+  - `PageBlobClient::GetPageRanges()`.
+  - `PageBlobClient::GetPageRangesDiff()`.
+  - `PageBlobClient::GetManagedDiskPageRangesDiff()`.
+- Renamed `FilterBlobItem` to `TaggedBlobItem`.
+  - `FindBlobsByTags()` now returns `FindBlobsByTagsPagedResponse` and the field `FindBlobsByTagsSinglePageResult::Items` was renamed to `FindBlobsByTagsPagedResponse::TaggedBlobs`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 

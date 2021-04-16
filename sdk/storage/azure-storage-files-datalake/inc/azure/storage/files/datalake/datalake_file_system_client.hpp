@@ -167,18 +167,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief List the paths in this file system.
+     * @brief Returns a sequence of paths in this file system. Enumerating the paths may make
+     * multiple requests to the service while fetching all the values.
      * @param recursive If "true", all paths are listed; otherwise, only paths at the root of the
      *                  filesystem are listed.
      * @param options Optional parameters to list the paths in file system.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListPathsSinglePageResult> containing the
-     * results when listing the paths under a file system.
+     * @return ListPathsPagedResponse describing the paths in this filesystem.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Response<Models::ListPathsSinglePageResult> ListPathsSinglePage(
+    ListPathsPagedResponse ListPaths(
         bool recursive,
-        const ListPathsSinglePageOptions& options = ListPathsSinglePageOptions(),
+        const ListPathsOptions& options = ListPathsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

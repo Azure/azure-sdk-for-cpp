@@ -262,19 +262,43 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), std::move(result.RawResponse));
   }
 
-  Azure::Response<Models::ListPathsSinglePageResult> DataLakeFileSystemClient::ListPathsSinglePage(
+  ListPathsPagedResponse DataLakeFileSystemClient::ListPaths(
       bool recursive,
-      const ListPathsSinglePageOptions& options,
+      const ListPathsOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Resource = _detail::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.RecursiveRequired = recursive;
-    return _detail::DataLakeRestClient::FileSystem::ListPaths(
-        m_fileSystemUrl, *m_pipeline, _internal::WithReplicaStatus(context), protocolLayerOptions);
+
+    auto clientCopy = *this;
+    std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)> func;
+    func = [func, clientCopy, protocolLayerOptions](
+               std::string continuationToken, const Azure::Core::Context& context) {
+      auto protocolLayerOptionsCopy = protocolLayerOptions;
+      if (!continuationToken.empty())
+      {
+        protocolLayerOptionsCopy.ContinuationToken = continuationToken;
+      }
+      auto response = _detail::DataLakeRestClient::FileSystem::ListPaths(
+          clientCopy.m_fileSystemUrl,
+          *clientCopy.m_pipeline,
+          _internal::WithReplicaStatus(context),
+          protocolLayerOptionsCopy);
+
+      ListPathsPagedResponse pagedResponse;
+      pagedResponse.Paths = std::move(response.Value.Items);
+      pagedResponse.m_onNextPageFunc = func;
+      pagedResponse.CurrentPageToken = continuationToken;
+      pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+      pagedResponse.RawResponse = std::move(response.RawResponse);
+
+      return pagedResponse;
+    };
+
+    return func(options.ContinuationToken.ValueOr(std::string()), context);
   }
 
   Azure::Response<Models::FileSystemAccessPolicy> DataLakeFileSystemClient::GetAccessPolicy(

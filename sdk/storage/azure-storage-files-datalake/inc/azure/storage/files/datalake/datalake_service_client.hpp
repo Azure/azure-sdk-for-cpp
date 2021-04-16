@@ -79,15 +79,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string GetUrl() const { return m_blobServiceClient.GetUrl(); }
 
     /**
-     * @brief List the file systems from the service.
+     * @brief Returns a sequence of file systems in the storage account. Enumerating the file
+     * systems may make multiple requests to the service while fetching all the values. File systems
+     * are ordered lexicographically by name.
      * @param options Optional parameters to list the file systems.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListFileSystemsSinglePageResult> containing the
-     * listed result of file systems and continuation token for unfinished list result.
+     * @return ListFileSystemsPagedResponse describing the file systems in the storage account.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Response<Models::ListFileSystemsSinglePageResult> ListFileSystemsSinglePage(
-        const ListFileSystemsSinglePageOptions& options = ListFileSystemsSinglePageOptions(),
+    ListFileSystemsPagedResponse ListFileSystems(
+        const ListFileSystemsOptions& options = ListFileSystemsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

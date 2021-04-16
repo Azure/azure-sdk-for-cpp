@@ -107,23 +107,23 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Containers.insert(containerName);
     }
 
-    Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
+    Azure::Storage::Blobs::ListBlobContainersOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listContainers;
-    do
+    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options);
+         pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
-      auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
-
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& container : res.Value.Items)
+      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(
+          pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+      for (const auto& container : pageResult.BlobContainers)
       {
         listContainers.insert(container.Name);
       }
-    } while (options.ContinuationToken.HasValue());
+    }
     EXPECT_TRUE(std::includes(
         listContainers.begin(),
         listContainers.end(),
@@ -132,16 +132,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     options.Prefix = prefix1;
     listContainers.clear();
-    do
+    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options);
+         pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
-      auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(res.Value.ServiceEndpoint.empty());
-
-      options.ContinuationToken = res.Value.ContinuationToken;
-      for (const auto& container : res.Value.Items)
+      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+      EXPECT_FALSE(
+          pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+      for (const auto& container : pageResult.BlobContainers)
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_TRUE(container.Details.ETag.HasValue());
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.Details.PreventEncryptionScopeOverride);
         listContainers.insert(container.Name);
       }
-    } while (options.ContinuationToken.HasValue());
+    }
     EXPECT_TRUE(std::includes(
         listContainers.begin(), listContainers.end(), p1Containers.begin(), p1Containers.end()));
 
@@ -364,14 +364,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::Models::BlobContainerItem deletedContainerItem;
     {
-      Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
+      Azure::Storage::Blobs::ListBlobContainersOptions options;
       options.Prefix = containerName;
       options.Include = Blobs::Models::ListBlobContainersIncludeFlags::Deleted;
-      do
+      for (auto pageResult = m_blobServiceClient.ListBlobContainers(options);
+           pageResult.HasMorePages();
+           pageResult.MoveToNextPage())
       {
-        auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
-        options.ContinuationToken = res.Value.ContinuationToken;
-        for (const auto& container : res.Value.Items)
+        for (const auto& container : pageResult.BlobContainers)
         {
           if (container.Name == containerName)
           {
@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (options.ContinuationToken.HasValue());
+      }
     }
     EXPECT_EQ(deletedContainerItem.Name, containerName);
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
