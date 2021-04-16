@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Construct a new JSON Web Token (JWT) type object.
      *
-     * @param jwt The JWT as string.
+     * @param jwt The JWT as a string.
      */
     explicit KeyVaultKeyType(std::string jwt) : m_value(std::move(jwt)) {}
 
