@@ -7,6 +7,8 @@
 
 #include "gtest/gtest.h"
 
+#include <azure/core/exception.hpp>
+
 #include <azure/keyvault/common/internal/base64url.hpp>
 #include <azure/keyvault/common/keyvault_exception.hpp>
 #include <azure/keyvault/key_vault.hpp>
@@ -24,7 +26,7 @@ TEST_F(KeyVaultClientTest, ImportKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   JsonWebKey key;
-  key.KeyType = JsonWebKeyType::Rsa;
+  key.KeyType = KeyVaultKeyType::Rsa;
   // Values from https://docs.microsoft.com/en-us/rest/api/keyvault/importkey/importkey
   key.N = Base64Url::Base64UrlDecode(
       "nKAwarTrOpzd1hhH4cQNdVTgRF-b0ubPD8ZNVf0UXjb62QuAk3Dn68ESThcF7SoDYRx2QVcfoMC9WCcuQUQDieJF-"
@@ -56,8 +58,8 @@ TEST_F(KeyVaultClientTest, ImportKey)
       "Uyf9s52ywLylhcVE3jfbjOgEozlSwKyhqfXkLpMLWHqOKj9fcfYd4PWKPOgpzWsqjA6fJbBUM"
       "Yo0CU2G9cWCtVodO7sBJVSIZunWrAlBc");
   std::string keyName(GetUniqueName());
-  key.CurveName = KeyCurveName::P521();
-  key.SetKeyOperations({KeyOperation::Sign()});
+  key.CurveName = KeyCurveName::P521;
+  key.SetKeyOperations({KeyOperation::Sign});
 
   auto response = keyClient.ImportKey(keyName, key);
   CheckValidResponse(response);
@@ -66,7 +68,7 @@ TEST_F(KeyVaultClientTest, ImportKey)
   EXPECT_EQ(key.E, returnedkey.Key.E);
   EXPECT_EQ(key.CurveName.Value().ToString(), returnedkey.Key.CurveName.Value().ToString());
   EXPECT_EQ(returnedkey.KeyOperations().size(), 1);
-  EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign().ToString());
+  EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign.ToString());
 
   {
     // delete + purge

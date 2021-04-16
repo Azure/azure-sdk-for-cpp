@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "azure/keyvault/keys/dll_import_export.hpp"
+
 #include <stdexcept>
 #include <string>
 
@@ -28,14 +30,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param value The string value of the instance.
      */
-    KeyCurveName(std::string const& value)
+    explicit KeyCurveName(std::string value)
     {
       if (value.empty())
       {
         throw std::invalid_argument("The value for the curve name can not be empty");
       }
-      m_value = value;
+      m_value = std::move(value);
     }
+
+    /**
+     * @brief Construct a default key curve.
+     *
+     */
+    KeyCurveName() = default;
+
+    /**
+     * @brief Enables using the equal operator for key curve.
+     *
+     * @param other A key curve to be compared.
+     */
+    bool operator==(const KeyCurveName& other) const noexcept { return m_value == other.m_value; }
 
     /**
      * @brief Get the string value of the key curve.
@@ -51,7 +66,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    static KeyCurveName P256();
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P256;
 
     /**
      * @brief Gets the SECG SECP256K1 elliptic curve.
@@ -61,7 +76,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    static KeyCurveName P256K();
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P256K;
 
     /**
      * @brief Gets the NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
@@ -71,7 +86,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    static KeyCurveName P384();
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P384;
 
     /**
      * @brief Gets the NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
@@ -81,7 +96,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    static KeyCurveName P521();
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P521;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

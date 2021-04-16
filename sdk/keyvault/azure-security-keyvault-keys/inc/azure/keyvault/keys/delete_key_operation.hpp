@@ -15,7 +15,6 @@
 #include <azure/core/response.hpp>
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
-#include <azure/keyvault/common/keyvault_exception.hpp>
 
 #include "azure/keyvault/keys/deleted_key.hpp"
 

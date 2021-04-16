@@ -20,9 +20,9 @@ std::string KeyRequestParameters::Serialize() const
 
   Azure::Core::Json::_internal::json payload;
   // kty
-  JsonOptional::SetFromNullable<JsonWebKeyType, std::string>(
-      m_keyType, payload, _detail::KeyTypePropertyName, [](JsonWebKeyType type) {
-        return KeyType::KeyTypeToString(type);
+  JsonOptional::SetFromNullable<KeyVaultKeyType, std::string>(
+      m_keyType, payload, _detail::KeyTypePropertyName, [](KeyVaultKeyType type) {
+        return type.ToString();
       });
 
   // attributes
