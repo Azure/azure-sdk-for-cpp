@@ -51,7 +51,9 @@ namespace Azure { namespace Core { namespace Test {
     }
     // Check that after the connection is gone, it is moved back to the pool
     EXPECT_EQ(
-        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionCounter, 1);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+            .size(),
+        1);
   }
 }}} // namespace Azure::Core::Test
 

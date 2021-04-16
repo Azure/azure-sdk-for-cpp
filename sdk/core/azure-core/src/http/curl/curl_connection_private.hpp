@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Update last usage time for the connection.
      */
-    virtual void updateLastUsageTime() = 0;
+    virtual void UpdateLastUsageTime() = 0;
 
     /**
      * @brief Checks whether this CURL connection is expired.
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief Update last usage time for the connection.
        */
-      void updateLastUsageTime() override
+      void UpdateLastUsageTime() override
       {
         this->m_lastUseTime = std::chrono::steady_clock::now();
       }

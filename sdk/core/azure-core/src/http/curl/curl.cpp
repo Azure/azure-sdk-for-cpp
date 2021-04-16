@@ -190,58 +190,42 @@ static void CleanupThread()
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
     std::unique_lock<std::mutex> lockForPoolCleaning(
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+
     // Wait the defined default time OR to the signal from the conditional variable.
     // wait_for releases the mutex lock until it wakes up again or it's cancelled.
     if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_for(
             lockForPoolCleaning,
             std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
-            []() { return CurlConnectionPool::g_curlConnectionPool.ConnectionCounter == 0; }))
+            []() {
+              return CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0;
+            }))
     {
       // Cancelled by another thead or no connections on wakeup
       return;
     }
 
     // loop the connection pool index - Note: lock is re-taken for the mutex
+    // Notes:
+    // - If all connections are removed from a host-index, the index is not removed from the pool to
+    // reduce the time of the entire routine.
+    // - A host-index with size 0 (no connections) is ignored.
     for (auto index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.begin();
-         index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end();
+         index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end()
+         && index->second.size() > 0;
          index++)
     {
-      if (index->second.size() == 0)
-      {
-        // Move the next pool index
-        continue;
-      }
-
       // Pool index with waiting connections. Each pool index behaves as a Last-in-First-out list,
       // the last connection moved to the pool will be the first to be re-used. Because of this, the
       // oldest connection in the pool can be found at the end of the list. Looping the connection
       // pool backwards until a connection that is not expired is found or until all connections are
       // removed.
-      for (auto connection = index->second.end();;)
+      for (auto connection = --(index->second.end());
+           index->second.size() > 0 && connection->get()->IsExpired();
+           connection--)
       {
-        // loop starts at end(), go back to previous possition. We know the list is
-        // size() > 0 so we are safe to go end() - 1 and find the last element in the
-        // list
-        connection--;
-        if (connection->get()->IsExpired())
-        {
-          // remove connection from the pool and update the connection to the next one
-          // which is going to be list.end()
-          connection = index->second.erase(connection);
-          CurlConnectionPool::g_curlConnectionPool.ConnectionCounter -= 1;
-
-          // Connection removed, break if there are no more connections to check
-          if (index->second.size() == 0)
-          {
-            break;
-          }
-        }
-        else
-        {
-          // Got a non-expired connection, all connections before this one are not
-          // expired. Break the loop and continue looping the Pool index
-          break;
-        }
+        // remove connection from the pool and update the connection to the next one
+        // which is going to be list.end()
+        connection = index->second.erase(connection);
       }
     }
   }
@@ -1236,8 +1220,9 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       if (resetPool)
       {
-        // Remove all connections for the connection Key and move to spawn new connection below
-        g_curlConnectionPool.ConnectionCounter -= hostPoolIndex->second.size();
+        // clean the pool-index as requested in the call. Tipically to force a new connection to be
+        // created and to discard all current connections in the pool for the host-index. A caller
+        // might request this after getting broken/closed connections multiple-times.
         hostPoolIndex->second.clear();
       }
       else
@@ -1248,8 +1233,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         auto connection = std::move(*fistConnectionIterator);
         // Remove the connection ref from list
         hostPoolIndex->second.erase(fistConnectionIterator);
-        // reduce number of connections on the pool
-        g_curlConnectionPool.ConnectionCounter -= 1;
 
         // Remove index if there are no more connections
         if (hostPoolIndex->second.size() == 0)
@@ -1390,10 +1373,18 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
   auto& poolId = connection->GetConnectionKey();
   auto& hostPool = g_curlConnectionPool.ConnectionPoolIndex[poolId];
+
+  if (hostPool.size() >= g_curlConnectionPool.m_maxConnectionsPerIndex)
+  {
+    // Ignore and let the connection be destroyed if the pool for the host-index has reached the
+    // limit.
+    return;
+  }
+
   // update the time when connection was moved back to pool
-  connection->updateLastUsageTime();
+  connection->UpdateLastUsageTime();
   hostPool.push_front(std::move(connection));
-  g_curlConnectionPool.ConnectionCounter += 1;
+
   // Cleanup will start a background thread which will close abandoned connections from the pool.
   // This will free-up resources from the app
   // This is the only call to cleanup.

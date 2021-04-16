@@ -92,14 +92,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         HttpStatusCode lastStatusCode);
 
     /**
-     * @brief Remove all connections from the pool and reset the connection counter.
+     * @brief Remove all connections from the pool.
      *
      */
-    void ResetPool()
-    {
-      ConnectionPoolIndex.clear();
-      ConnectionCounter = 0;
-    }
+    void ResetPool() { ConnectionPoolIndex.clear(); }
 
     /**
      * @brief Keeps a unique key for each host and creates a connection pool for each key.
@@ -117,9 +113,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // application finishes.
     std::condition_variable ConditionalVariableForCleanThread;
 
-    // Keep the count of the total connections from all indexes
-    uint64_t ConnectionCounter;
-
     AZ_CORE_DLLEXPORT static Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
 
   private:
@@ -131,6 +124,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     int64_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };
+
+    // Define the maximun allowed connections per host-index in the pool. If this number is reached
+    // for the host-index, next connections trying to be added to the pool will be ignored.
+    uint64_t m_maxConnectionsPerIndex = 1024;
   };
 
 }}}} // namespace Azure::Core::Http::_detail

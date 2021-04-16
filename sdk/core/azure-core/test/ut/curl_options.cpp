@@ -280,7 +280,9 @@ namespace Azure { namespace Core { namespace Test {
     }
     // Make sure there are no connections in the pool
     EXPECT_EQ(
-        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionCounter, 0);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+            .size(),
+        0);
   }
 
 }}} // namespace Azure::Core::Test
