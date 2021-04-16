@@ -221,7 +221,7 @@ static void CleanupThread()
       // removed.
       for (auto connection = --(index->second.end());
            index->second.size() > 0 && connection->get()->IsExpired();
-           connection--)
+           connection = index->second.size() > 0 ? --connection : connection)
       {
         // remove connection from the pool and update the connection to the next one
         // which is going to be list.end()
