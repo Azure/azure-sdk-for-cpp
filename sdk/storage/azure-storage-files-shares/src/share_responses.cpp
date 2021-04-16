@@ -5,6 +5,7 @@
 
 #include <thread>
 
+#include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
@@ -58,6 +59,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       std::this_thread::sleep_for(period);
     };
+  }
+
+  void ListSharesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_shareServiceClient->ListShares(m_operationOptions, context);
+  }
+
+  void ListFilesAndDirectoriesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_shareDirectoryClient->ListFilesAndDirectories(m_operationOptions, context);
+  }
+
+  void ListFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_shareFileClient->ListHandles(m_operationOptions, context);
+  }
+
+  void ListDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_shareDirectoryClient->ListHandles(m_operationOptions, context);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

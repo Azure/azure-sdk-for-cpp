@@ -12,7 +12,6 @@
 #include <azure/storage/common/access_conditions.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
-#include "azure/storage/files/shares/share_responses.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -28,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ApiVersion = _detail::DefaultServiceApiVersion;
   };
 
-  struct ListSharesSinglePageOptions
+  struct ListSharesOptions
   {
     /**
      * @brief Filters the results to return only entries whose name begins with the specified
@@ -227,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
   };
 
-  struct ListFilesAndDirectoriesSinglePageOptions
+  struct ListFilesAndDirectoriesOptions
   {
     /**
      * @brief Filters the results to return only entries whose name begins with the specified
@@ -251,7 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ListDirectoryHandlesSinglePageOptions
+  struct ListDirectoryHandlesOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -277,23 +276,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ForceCloseDirectoryHandleOptions
   {
-  };
-
-  struct ForceCloseAllDirectoryHandlesSinglePageOptions
-  {
-    /**
-     * @brief A string value that identifies the portion of the list to be returned with the next
-     * close operation. The operation returns a marker value within the response body if the force
-     * close was not complete. The marker value may then be used in a subsequent call to
-     * close the next handle. The marker value is opaque to the client.
-     */
-    Azure::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief Specifies operation should apply to the directory specified in the URI, its files, its
-     * subdirectories and their files.
-     */
-    Azure::Nullable<bool> Recursive;
   };
 
   struct CreateFileOptions
@@ -493,7 +475,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ListFileHandlesSinglePageOptions
+  struct ListFileHandlesOptions
   {
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -513,17 +495,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ForceCloseFileHandleOptions
   {
-  };
-
-  struct ForceCloseAllFileHandlesSinglePageOptions
-  {
-    /**
-     * @brief A string value that identifies the portion of the list to be returned with the next
-     * close operation. The operation returns a marker value within the response body if the force
-     * close was not complete. The marker value may then be used in a subsequent call to
-     * close the next handle. The marker value is opaque to the client.
-     */
-    Azure::Nullable<std::string> ContinuationToken;
   };
 
   /**

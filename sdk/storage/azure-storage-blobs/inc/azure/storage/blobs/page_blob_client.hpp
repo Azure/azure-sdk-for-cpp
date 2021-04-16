@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Response<Models::GetPageRangesResult> GetPageRanges(
+    GetPageRangesPagedResponse GetPageRanges(
         const GetPageRangesOptions& options = GetPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Response<Models::GetPageRangesResult> GetPageRangesDiff(
+    GetPageRangesDiffPagedResponse GetPageRangesDiff(
         const std::string& previousSnapshot,
         const GetPageRangesOptions& options = GetPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param context Context for cancelling long running operations.
      * @return A GetPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Response<Models::GetPageRangesResult> GetManagedDiskPageRangesDiff(
+    GetPageRangesDiffPagedResponse GetManagedDiskPageRangesDiff(
         const std::string& previousSnapshotUrl,
         const GetPageRangesOptions& options = GetPageRangesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
@@ -274,6 +274,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     explicit PageBlobClient(BlobClient blobClient);
+
     friend class BlobClient;
   };
 
