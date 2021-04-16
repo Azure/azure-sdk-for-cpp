@@ -273,10 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<Models::PathItem> Paths;
 
   private:
-    void OnNextPage(const Azure::Core::Context& context)
-    {
-      *this = m_onNextPageFunc(std::move(NextPageToken), context);
-    }
+    void OnNextPage(const Azure::Core::Context& context);
 
     std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)>
         m_onNextPageFunc;

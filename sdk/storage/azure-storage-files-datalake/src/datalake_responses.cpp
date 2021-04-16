@@ -87,4 +87,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     *this = m_dataLakeServiceClient->ListFileSystems(m_operationOptions, context);
   }
 
+  void ListPathsPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    *this = m_onNextPageFunc(std::move(NextPageToken), context);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake
