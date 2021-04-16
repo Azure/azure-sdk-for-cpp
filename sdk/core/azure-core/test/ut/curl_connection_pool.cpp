@@ -204,7 +204,7 @@ namespace Azure { namespace Core { namespace Test {
         // Wait for 100 secs to make sure connections are removed.
         // Connection need to be in the pool for more than 60 sec to consider it expired.
         // Clean routine runs every 90 secs.
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 120));
 
         // Ensure connections and index is removed
         EXPECT_EQ(
