@@ -5,7 +5,7 @@
 ### New Features
 
 - Added server timeout support.
-- Added PagedResponse<T> for returning paginated collections.
+- Added `PagedResponse<T>` for returning paginated collections.
 
 ### Breaking Changes
 
