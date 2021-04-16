@@ -30,7 +30,8 @@ public:
       m_hasMorePages = false;
       return;
     }
-    CurrentPageToken = NextPageToken;
+    // Developer of Derived class should make sure current page is kept unchanged if OnNextPage()
+    // throws exception.
     static_cast<Derived*>(this)->OnNextPage(context);
   }
 

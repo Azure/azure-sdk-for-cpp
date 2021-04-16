@@ -63,26 +63,26 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   void ListBlobContainersPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_blobServiceClient->ListBlobContainers(m_operationOptions, context);
   }
 
   void FindBlobsByTagsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_blobServiceClient->FindBlobsByTags(
         m_tagFilterSqlExpression, m_operationOptions, context);
   }
 
   void ListBlobsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_blobContainerClient->ListBlobs(m_operationOptions, context);
   }
 
   void ListBlobsByHierarchyPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_blobContainerClient->ListBlobsByHierarchy(m_delimiter, m_operationOptions, context);
   }
 

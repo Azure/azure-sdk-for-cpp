@@ -63,25 +63,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   void ListSharesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_shareServiceClient->ListShares(m_operationOptions, context);
   }
 
   void ListFilesAndDirectoriesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_shareDirectoryClient->ListFilesAndDirectories(m_operationOptions, context);
   }
 
   void ListFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_shareFileClient->ListHandles(m_operationOptions, context);
   }
 
   void ListDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    m_operationOptions.ContinuationToken = std::move(NextPageToken);
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_shareDirectoryClient->ListHandles(m_operationOptions, context);
   }
 
