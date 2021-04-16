@@ -25,7 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   public:
     /**
-     * @brief Construct a new JWT type object.
+     * @brief Construct a new JSON Web Token (JWT) type object.
      *
      * @param jwt The JWT as string.
      */
