@@ -103,6 +103,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       *this = m_pageBlobClient->GetManagedDiskPageRangesDiff(
           m_previousSnapshotUrl.Value(), m_operationOptions, context);
     }
+    // Execution is never expected to reach here
     std::abort();
   }
 
