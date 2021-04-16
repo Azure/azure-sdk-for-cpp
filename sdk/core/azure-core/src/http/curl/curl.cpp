@@ -1220,7 +1220,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       if (resetPool)
       {
-        // clean the pool-index as requested in the call. Tipically to force a new connection to be
+        // clean the pool-index as requested in the call. Typically to force a new connection to be
         // created and to discard all current connections in the pool for the host-index. A caller
         // might request this after getting broken/closed connections multiple-times.
         hostPoolIndex->second.clear();
