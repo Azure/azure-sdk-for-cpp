@@ -14,6 +14,7 @@
   - `PageBlobClient::GetPageRanges()`.
   - `PageBlobClient::GetPageRangesDiff()`.
   - `PageBlobClient::GetManagedDiskPageRangesDiff()`.
+- Renamed `FilterBlobItem` to `TaggedBlobItem`.
 
 ## 12.0.0-beta.9 (2021-03-23)
 
