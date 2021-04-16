@@ -286,29 +286,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class PagedResponse<ListPathsPagedResponse>;
   };
 
-  class SetPathAccessControlListRecursivePagedResponse
-      : public PagedResponse<SetPathAccessControlListRecursivePagedResponse> {
-  public:
-    int32_t NumberOfSuccessfulDirectories = 0;
-    int32_t NumberOfSuccessfulFiles = 0;
-    int32_t NumberOfFailures = 0;
-    std::vector<Models::AclFailedEntry> FailedEntries;
-
-  private:
-    void OnNextPage(const Azure::Core::Context& context);
-
-    std::shared_ptr<DataLakePathClient> m_dataLakePathClient;
-    SetPathAccessControlListRecursiveOptions m_operationOptions;
-    std::vector<Models::Acl> m_acls;
-    _detail::PathSetAccessControlRecursiveMode m_mode;
-
-    friend class DataLakePathClient;
-    friend class PagedResponse<ListPathsPagedResponse>;
-  };
-
-  using UpdatePathAccessControlListRecursivePagedResponse
-      = SetPathAccessControlListRecursivePagedResponse;
-  using RemovePathAccessControlListRecursivePagedResponse
-      = SetPathAccessControlListRecursivePagedResponse;
-
 }}}} // namespace Azure::Storage::Files::DataLake
