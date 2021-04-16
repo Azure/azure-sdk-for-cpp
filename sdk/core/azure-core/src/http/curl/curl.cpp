@@ -191,8 +191,9 @@ static void CleanupThread()
     std::unique_lock<std::mutex> lockForPoolCleaning(
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
 
-    // Wait the defined default time OR to the signal from the conditional variable.
-    // wait_for releases the mutex lock until it wakes up again or it's cancelled.
+    // Wait for the default time OR to the signal from the conditional variable.
+    // wait_for releases the mutex lock when it goes to sleep and it take the lock again when it
+    // wakes up (or it's cancelled).
     if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_for(
             lockForPoolCleaning,
             std::chrono::milliseconds(DefaultCleanerIntervalMilliseconds),
@@ -205,20 +206,19 @@ static void CleanupThread()
     }
 
     // loop the connection pool index - Note: lock is re-taken for the mutex
-    // Notes:
-    // - If all connections are removed from a host-index, the index is not removed from the pool to
-    // reduce the time of the entire routine.
-    // - A host-index with size 0 (no connections) is ignored.
+    // Notes: The size of each host-index is always expected to be greater than 0 because the
+    // host-index is removed anytime it becomes empty.
     for (auto index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.begin();
-         index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end()
-         && index->second.size() > 0;
-         index++)
+         index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end();
+         index = index->second.size() == 0
+             ? CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index)
+             : ++index)
     {
-      // Pool index with waiting connections. Each pool index behaves as a Last-in-First-out list,
-      // the last connection moved to the pool will be the first to be re-used. Because of this, the
-      // oldest connection in the pool can be found at the end of the list. Looping the connection
-      // pool backwards until a connection that is not expired is found or until all connections are
-      // removed.
+      // Each pool index behaves as a Last-in-First-out (connections are added to the pool with
+      // push_front). The last connection moved to the pool will be the first to be re-used. Because
+      // of this, the oldest connection in the pool can be found at the end of the list. Looping the
+      // connection pool backwards until a connection that is not expired is found or until all
+      // connections are removed.
       for (auto connection = --(index->second.end());
            index->second.size() > 0 && connection->get()->IsExpired();
            connection = index->second.size() > 0 ? --connection : connection)

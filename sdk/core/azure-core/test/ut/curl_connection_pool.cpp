@@ -188,7 +188,12 @@ namespace Azure { namespace Core { namespace Test {
 
 #ifdef RUN_LONG_UNIT_TESTS
       {
-        // Test pool clean routine
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            2);
+
+        // Test pool clean routine.
         std::cout << "Running Connection Pool Cleaner Test. This test can take up to 2 minutes to "
                      "complete."
                   << std::endl
@@ -201,16 +206,11 @@ namespace Azure { namespace Core { namespace Test {
         // Clean routine runs every 90 secs.
         std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 100));
 
-        // Ensure connections are removed but indexes are still there
+        // Ensure connections and index is removed
         EXPECT_EQ(
             Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
                 .size(),
-            2);
-        values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                     .ConnectionPoolIndex.begin();
-        EXPECT_EQ(values->second.size(), 0);
-        values++;
-        EXPECT_EQ(values->second.size(), 0);
+            0);
       }
 #endif
       // Test max connections in pool. Try to add 2k connections to the pool.
