@@ -192,7 +192,7 @@ static void CleanupThread()
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
 
     // Wait for the default time OR to the signal from the conditional variable.
-    // wait_for releases the mutex lock when it goes to sleep and it take the lock again when it
+    // wait_for releases the mutex lock when it goes to sleep and it takes the lock again when it
     // wakes up (or it's cancelled).
     if (CurlConnectionPool::g_curlConnectionPool.ConditionalVariableForCleanThread.wait_for(
             lockForPoolCleaning,

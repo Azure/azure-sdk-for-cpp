@@ -37,9 +37,9 @@ namespace Azure { namespace Core { namespace Test {
         std::lock_guard<std::mutex> lock(
             CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
         CurlConnectionPool::g_curlConnectionPool.ResetPool();
+        // Make sure there are nothing in the pool
+        EXPECT_EQ(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size(), 0);
       }
-      // Make sure there are nothing in the pool
-      EXPECT_EQ(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size(), 0);
 
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
@@ -61,16 +61,20 @@ namespace Azure { namespace Core { namespace Test {
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
       }
       // Check that after the connection is gone, it is moved back to the pool
-      EXPECT_EQ(
-          Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
-              .size(),
-          1);
-      auto connectionFromPool
-          = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
-                .begin()
-                ->second.begin()
-                ->get();
-      EXPECT_EQ(connectionFromPool->GetConnectionKey(), expectedConnectionKey);
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            1);
+        auto connectionFromPool
+            = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                  .ConnectionPoolIndex.begin()
+                  ->second.begin()
+                  ->get();
+        EXPECT_EQ(connectionFromPool->GetConnectionKey(), expectedConnectionKey);
+      }
 
       // Test that asking a connection with same config will re-use the same connection
       {
@@ -93,15 +97,19 @@ namespace Azure { namespace Core { namespace Test {
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
       }
-      // Check that after the connection is gone, it is moved back to the pool
-      EXPECT_EQ(
-          Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
-              .size(),
-          1);
-      auto values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                        .ConnectionPoolIndex.begin();
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        // Check that after the connection is gone, it is moved back to the pool
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            1);
+        auto values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                          .ConnectionPoolIndex.begin();
+        EXPECT_EQ(values->second.size(), 1);
+        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      }
 
       // Now test that using a different connection config won't re-use the same connection
       std::string const secondExpectedKey = AzureSdkHttpbinServer::Host() + "0010";
@@ -138,13 +146,17 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
               .size(),
           2);
-      values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                   .ConnectionPoolIndex.begin();
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
-      values++;
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        auto values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                          .ConnectionPoolIndex.begin();
+        EXPECT_EQ(values->second.size(), 1);
+        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
+        values++;
+        EXPECT_EQ(values->second.size(), 1);
+        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      }
 
       // Test re-using same custom config
       {
@@ -178,13 +190,17 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
               .size(),
           2);
-      values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                   .ConnectionPoolIndex.begin();
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
-      values++;
-      EXPECT_EQ(values->second.size(), 1);
-      EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        auto values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                          .ConnectionPoolIndex.begin();
+        EXPECT_EQ(values->second.size(), 1);
+        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
+        values++;
+        EXPECT_EQ(values->second.size(), 1);
+        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+      }
 
 #ifdef RUN_LONG_UNIT_TESTS
       {
@@ -204,13 +220,19 @@ namespace Azure { namespace Core { namespace Test {
         // Wait for 100 secs to make sure connections are removed.
         // Connection need to be in the pool for more than 60 sec to consider it expired.
         // Clean routine runs every 90 secs.
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 120));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 100));
 
-        // Ensure connections and index is removed
-        EXPECT_EQ(
-            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
-                .size(),
-            0);
+        {
+          // If test wakes while clean pool is running, it will wait until lock is released by the
+          // clean pool thread.
+          std::lock_guard<std::mutex> lock(
+              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+          // Ensure connections and index is removed
+          EXPECT_EQ(
+              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                  .ConnectionPoolIndex.size(),
+              0);
+        }
       }
 #endif
       // Test max connections in pool. Try to add 2k connections to the pool.
@@ -241,6 +263,7 @@ namespace Azure { namespace Core { namespace Test {
               std::unique_ptr<MockCurlNetworkConnection>(curlMock),
               Azure::Core::Http::HttpStatusCode::Ok);
         }
+        // No need to take look here because connections are mocked to never be expired.
         EXPECT_EQ(
             Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
                 .size(),
