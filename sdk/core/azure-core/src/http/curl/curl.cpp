@@ -209,10 +209,7 @@ static void CleanupThread()
     // Notes: The size of each host-index is always expected to be greater than 0 because the
     // host-index is removed anytime it becomes empty.
     for (auto index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.begin();
-         index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end();
-         index = index->second.size() == 0
-             ? CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index)
-             : ++index)
+         index != CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.end();)
     {
       // Each pool index behaves as a Last-in-First-out (connections are added to the pool with
       // push_front). The last connection moved to the pool will be the first to be re-used. Because
@@ -227,6 +224,15 @@ static void CleanupThread()
         // which is going to be list.end()
         connection = index->second.erase(connection);
       }
+
+      index = index->second.size() == 0
+          ? CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index)
+          : ++index;
+    }
+
+    if (CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0)
+    {
+      return;
     }
   }
 }

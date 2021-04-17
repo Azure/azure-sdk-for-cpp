@@ -25,6 +25,7 @@
 
 using testing::ValuesIn;
 using namespace Azure::Core::Http::_detail;
+using namespace std::chrono_literals;
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -259,17 +260,18 @@ namespace Azure { namespace Core { namespace Test {
       }
 
       // Wait for 60 secs (default time to expire a connection)
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 60));
+      std::this_thread::sleep_for(60ms);
 
       {
         // Now check the pool until the clean thread until finishes removing the connections or
         // fail after 5 minutes (indicates a problem with the clean routine)
-        using namespace std::chrono_literals;
+
         auto timeOut = Context::GetApplicationContext().WithDeadline(
             std::chrono::system_clock::now() + 5min);
         bool poolIsEmpty = false;
         while (!poolIsEmpty && !timeOut.IsCancelled())
         {
+          std::this_thread::sleep_for(10ms);
           // If test wakes while clean pool is running, it will wait until lock is released by
           // the clean pool thread.
           std::lock_guard<std::mutex> lock(
