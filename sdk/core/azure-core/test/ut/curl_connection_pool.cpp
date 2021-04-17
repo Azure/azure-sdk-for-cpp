@@ -219,10 +219,10 @@ namespace Azure { namespace Core { namespace Test {
                      "skip this test."
                   << std::endl;
 
-        // Wait for 100 secs to make sure connections are removed.
+        // Wait for 200 secs to make sure connections are removed.
         // Connection need to be in the pool for more than 60 sec to consider it expired.
-        // Clean routine runs every 90 secs.
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 100));
+        // Clean routine runs every 90 secs. Let's wait for at least 2 cycles.
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 200));
 
         {
           // If test wakes while clean pool is running, it will wait until lock is released by the
