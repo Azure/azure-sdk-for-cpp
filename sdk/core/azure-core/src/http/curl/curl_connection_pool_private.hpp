@@ -25,6 +25,7 @@
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
+  class CurlConnectionPool_uniquePort_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -44,6 +45,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 #if defined(TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
+    friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;
 #endif
   private:
     // The cttor and dttor of this member makes sure of calling the libcurl global init and cleanup
