@@ -44,7 +44,8 @@ namespace Azure { namespace Core { namespace Test {
       // Use the same request for all connections.
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
-      std::string const expectedConnectionKey = AzureSdkHttpbinServer::Host() + "0011";
+      std::string const expectedConnectionKey
+          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
 
       {
         // Creating a new connection with default options
@@ -112,7 +113,8 @@ namespace Azure { namespace Core { namespace Test {
       }
 
       // Now test that using a different connection config won't re-use the same connection
-      std::string const secondExpectedKey = AzureSdkHttpbinServer::Host() + "0010";
+      std::string const secondExpectedKey
+          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0010";
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
@@ -323,6 +325,101 @@ namespace Azure { namespace Core { namespace Test {
           CurlConnectionPool::g_curlConnectionPool.ResetPool();
         }
       }
+    }
+
+    TEST(CurlConnectionPool, uniquePort)
+    {
+      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
+      // Make sure there is nothing in the pool
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+      {
+        // Request with no port
+        std::string const authority(AzureSdkHttpbinServer::Get());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      // Test connection was moved to the pool
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+
+      {
+        // Request with port
+        std::string const authority(AzureSdkHttpbinServer::WithPort());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "4430011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // Check connection in pool is not re-used because the port is different
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      // Check 2 connections in the pool
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+
+      // Re-use connections
+      {
+        // Request with no port
+        std::string const authority(AzureSdkHttpbinServer::Get());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      {
+        // Request with port
+        std::string const authority(AzureSdkHttpbinServer::WithPort());
+        Azure::Core::Http::Request req(
+            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
+        std::string const expectedConnectionKey
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "4430011";
+
+        // Creating a new connection with default options
+        auto connection
+            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
+                req, {});
+
+        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        // Check connection in pool is not re-used because the port is different
+        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        // move connection back to the pool
+        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
     }
 
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
