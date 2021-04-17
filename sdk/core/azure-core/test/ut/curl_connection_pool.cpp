@@ -219,10 +219,10 @@ namespace Azure { namespace Core { namespace Test {
                      "skip this test."
                   << std::endl;
 
-        // Wait for 200 secs to make sure connections are removed.
+        // Wait for 100 secs to make sure connections are removed.
         // Connection need to be in the pool for more than 60 sec to consider it expired.
-        // Clean routine runs every 90 secs. Let's wait for at least 2 cycles.
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 200));
+        // Clean routine runs every 90 secs.
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 100));
 
         {
           // If test wakes while clean pool is running, it will wait until lock is released by the
@@ -230,10 +230,22 @@ namespace Azure { namespace Core { namespace Test {
           std::lock_guard<std::mutex> lock(
               CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
           // Ensure connections and index is removed
-          EXPECT_EQ(
-              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                  .ConnectionPoolIndex.size(),
-              0);
+          auto const counter = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                                   .ConnectionPoolIndex.size();
+          EXPECT_EQ(counter, 0);
+          if (counter > 0)
+          {
+            std::cout << std::endl << "-Count:" << counter;
+            for (auto i = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                              .ConnectionPoolIndex.begin();
+                 i
+                 != Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                        .ConnectionPoolIndex.end();
+                 i++)
+            {
+              std::cout << std::endl << "-index:" << i->first << " with :" << i->second.size();
+            }
+          }
         }
       }
 #endif
