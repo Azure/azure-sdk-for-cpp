@@ -329,9 +329,18 @@ namespace Azure { namespace Core { namespace Test {
 
     TEST(CurlConnectionPool, uniquePort)
     {
-      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
-      // Make sure there is nothing in the pool
-      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+            .clear();
+        // Make sure there is nothing in the pool
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            0);
+      }
+
       {
         // Request with no port
         std::string const authority(AzureSdkHttpbinServer::Get());
@@ -341,18 +350,32 @@ namespace Azure { namespace Core { namespace Test {
             = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
 
         // Creating a new connection with default options
-        auto connection
-            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
-                req, {});
+        auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                              .ExtractOrCreateCurlConnection(req, {});
 
-        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
-        EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        {
+          std::lock_guard<std::mutex> lock(
+              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+          EXPECT_EQ(
+              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                  .ConnectionPoolIndex.size(),
+              0);
+          EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
+        }
         // move connection back to the pool
-        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
-            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
       }
-      // Test connection was moved to the pool
-      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        // Test connection was moved to the pool
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            1);
+      }
 
       {
         // Request with port
@@ -363,19 +386,32 @@ namespace Azure { namespace Core { namespace Test {
             = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "4430011";
 
         // Creating a new connection with default options
-        auto connection
-            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
-                req, {});
+        auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                              .ExtractOrCreateCurlConnection(req, {});
 
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
-        // Check connection in pool is not re-used because the port is different
-        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        {
+          std::lock_guard<std::mutex> lock(
+              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+          // Check connection in pool is not re-used because the port is different
+          EXPECT_EQ(
+              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                  .ConnectionPoolIndex.size(),
+              1);
+        }
         // move connection back to the pool
-        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
-            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
       }
-      // Check 2 connections in the pool
-      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        // Check 2 connections in the pool
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            2);
+      }
 
       // Re-use connections
       {
@@ -387,17 +423,32 @@ namespace Azure { namespace Core { namespace Test {
             = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
 
         // Creating a new connection with default options
-        auto connection
-            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
-                req, {});
+        auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                              .ExtractOrCreateCurlConnection(req, {});
 
-        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        {
+          std::lock_guard<std::mutex> lock(
+              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+          EXPECT_EQ(
+              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                  .ConnectionPoolIndex.size(),
+              1);
+        }
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
         // move connection back to the pool
-        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
-            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
       }
-      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
+
+      {
+        // Make sure there is nothing in the pool
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            2);
+      }
       {
         // Request with port
         std::string const authority(AzureSdkHttpbinServer::WithPort());
@@ -407,19 +458,33 @@ namespace Azure { namespace Core { namespace Test {
             = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "4430011";
 
         // Creating a new connection with default options
-        auto connection
-            = Azure::Core::Http::_detail::CurlConnectionPool::ExtractOrCreateCurlConnection(
-                req, {});
+        auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                              .ExtractOrCreateCurlConnection(req, {});
 
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
-        // Check connection in pool is not re-used because the port is different
-        EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 1);
+        {
+          std::lock_guard<std::mutex> lock(
+              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+          // Check connection in pool is not re-used because the port is different
+          EXPECT_EQ(
+              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                  .ConnectionPoolIndex.size(),
+              1);
+        }
         // move connection back to the pool
-        Azure::Core::Http::_detail::CurlConnectionPool::MoveConnectionBackToPool(
-            std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
       }
-      EXPECT_EQ(Azure::Core::Http::_detail::CurlConnectionPool::ConnectionPoolIndex.size(), 2);
-      Azure::Core::Http::_detail::CurlConnectionPool::ClearIndex();
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            2);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+            .clear();
+      }
     }
 
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
