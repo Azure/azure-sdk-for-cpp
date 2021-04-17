@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         {
           std::unique_lock<std::mutex> lock(ConnectionPoolMutex);
           // Remove all connections
-          g_curlConnectionPool.ResetPool();
+          g_curlConnectionPool.ConnectionPoolIndex.clear();
         }
         // Signal clean thread to wake up
         ConditionalVariableForCleanThread.notify_one();
@@ -92,12 +92,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     void MoveConnectionBackToPool(
         std::unique_ptr<CurlNetworkConnection> connection,
         HttpStatusCode lastStatusCode);
-
-    /**
-     * @brief Remove all connections from the pool.
-     *
-     */
-    void ResetPool() { ConnectionPoolIndex.clear(); }
 
     /**
      * @brief Keeps a unique key for each host and creates a connection pool for each key.

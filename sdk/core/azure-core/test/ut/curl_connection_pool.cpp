@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         std::lock_guard<std::mutex> lock(
             CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-        CurlConnectionPool::g_curlConnectionPool.ResetPool();
+        CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
         // Make sure there are nothing in the pool
         EXPECT_EQ(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size(), 0);
       }
@@ -203,49 +203,84 @@ namespace Azure { namespace Core { namespace Test {
         EXPECT_EQ(values->second.size(), 1);
         EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
       }
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        // clean the pool
+        CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
+      }
 
 #ifdef RUN_LONG_UNIT_TESTS
       {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        // clean the pool
+        CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
         EXPECT_EQ(
             Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
                 .size(),
-            2);
+            0);
+      }
 
-        // Test pool clean routine.
-        std::cout << "Running Connection Pool Cleaner Test. This test can take up to 2 minutes to "
-                     "complete."
-                  << std::endl
-                  << "Add compiler option -DRUN_LONG_UNIT_TESTS=OFF when building if you want to "
-                     "skip this test."
-                  << std::endl;
-
-        // Wait for 60 secs (default time to expire a connection)
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 60));
-
+      // Test pool clean routine.
+      std::cout << "Running Connection Pool Cleaner Test. This test can take up to 2 minutes to "
+                   "complete."
+                << std::endl
+                << "Add compiler option -DRUN_LONG_UNIT_TESTS=OFF when building if you want to "
+                   "skip this test."
+                << std::endl;
+      {
+        // Make sure the clean pool thread is started by adding 5 connections to the pool
+        std::vector<std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>> connections;
+        for (int count = 0; count < 5; count++)
         {
-          // Now check the pool until the clean thread until finishes removing the connections or
-          // fail after 5 minutes (indicates a problem with the clean routine)
-          using namespace std::chrono_literals;
-          auto timeOut = Context::GetApplicationContext().WithDeadline(
-              std::chrono::system_clock::now() + 5min);
-          bool poolIsEmpty = false;
-          while (!poolIsEmpty && !timeOut.IsCancelled())
-          {
-            {
-              // If test wakes while clean pool is running, it will wait until lock is released by
-              // the
-              // clean pool thread.
-              std::lock_guard<std::mutex> lock(
-                  CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-              poolIsEmpty = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                                .ConnectionPoolIndex.size()
-                  == 0;
-            }
-            std::this_thread::sleep_for(1min);
-          }
-          EXPECT_TRUE(poolIsEmpty);
+          connections.emplace_back(
+              CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(req, {}));
+        }
+        for (int count = 0; count < 5; count++)
+        {
+          CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
+              std::move(connections[count]), Http::HttpStatusCode::Ok);
         }
       }
+
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            1);
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                .ConnectionPoolIndex[expectedConnectionKey]
+                .size(),
+            5);
+      }
+
+      // Wait for 60 secs (default time to expire a connection)
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 60));
+
+      {
+        // Now check the pool until the clean thread until finishes removing the connections or
+        // fail after 5 minutes (indicates a problem with the clean routine)
+        using namespace std::chrono_literals;
+        auto timeOut = Context::GetApplicationContext().WithDeadline(
+            std::chrono::system_clock::now() + 5min);
+        bool poolIsEmpty = false;
+        while (!poolIsEmpty && !timeOut.IsCancelled())
+        {
+          // If test wakes while clean pool is running, it will wait until lock is released by
+          // the clean pool thread.
+          std::lock_guard<std::mutex> lock(
+              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+          poolIsEmpty = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                            .ConnectionPoolIndex.size()
+              == 0;
+        }
+        EXPECT_TRUE(poolIsEmpty);
+      }
+
 #endif
       // Test max connections in pool. Try to add 2k connections to the pool.
       // Using fake connections to avoid opening real http connections :)
@@ -258,7 +293,7 @@ namespace Azure { namespace Core { namespace Test {
           std::lock_guard<std::mutex> lock(
               CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
           // clean the pool
-          CurlConnectionPool::g_curlConnectionPool.ResetPool();
+          CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
         }
 
         std::string hostKey("key");
@@ -332,7 +367,7 @@ namespace Azure { namespace Core { namespace Test {
           std::lock_guard<std::mutex> lock(
               CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
           // clean the pool
-          CurlConnectionPool::g_curlConnectionPool.ResetPool();
+          CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
         }
       }
     }

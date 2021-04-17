@@ -79,7 +79,8 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
   }
 
   TEST_F(CurlSession, chunkBadFormatResponse)
@@ -127,7 +128,8 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
   }
 
   TEST_F(CurlSession, chunkSegmentedResponse)
@@ -202,12 +204,14 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW(bodyS->ReadToEnd(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
   }
 
   TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
   {
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
     // Can't mock the curlMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
     MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
