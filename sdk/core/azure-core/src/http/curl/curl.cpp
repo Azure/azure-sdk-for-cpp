@@ -186,11 +186,11 @@ static void CleanupThread()
   using namespace Azure::Core::Http::_detail;
   for (;;)
   {
-
+    Log::Write(Logger::Level::Verbose, "Clean pool check now...");
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
     std::unique_lock<std::mutex> lockForPoolCleaning(
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-
+    Log::Write(Logger::Level::Verbose, "Clean pool sleep");
     // Wait for the default time OR to the signal from the conditional variable.
     // wait_for releases the mutex lock when it goes to sleep and it takes the lock again when it
     // wakes up (or it's cancelled).
@@ -202,9 +202,14 @@ static void CleanupThread()
             }))
     {
       // Cancelled by another thead or no connections on wakeup
+      Log::Write(
+          Logger::Level::Verbose,
+          "Clean pool - no connections on wake - return *************************");
+      CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
       return;
     }
 
+    Log::Write(Logger::Level::Verbose, "Clean pool - inspect pool");
     // loop the connection pool index - Note: lock is re-taken for the mutex
     // Notes: The size of each host-index is always expected to be greater than 0 because the
     // host-index is removed anytime it becomes empty.
@@ -222,16 +227,27 @@ static void CleanupThread()
       {
         // remove connection from the pool and update the connection to the next one
         // which is going to be list.end()
+        Log::Write(Logger::Level::Verbose, "Clean pool - remove connection");
         connection = index->second.erase(connection);
       }
 
-      index = index->second.size() == 0
-          ? CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index)
-          : ++index;
+      if (index->second.size() == 0)
+      {
+        Log::Write(Logger::Level::Verbose, "Clean pool - remove index " + index->first);
+        index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index);
+      }
+      else
+      {
+        index = ++index;
+      }
     }
 
     if (CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0)
     {
+      Log::Write(
+          Logger::Level::Verbose,
+          "Clean pool - all connections removed. Return**********************");
+      CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
       return;
     }
   }
@@ -1376,6 +1392,8 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return;
   }
 
+  Log::Write(Logger::Level::Verbose, "Moving connection to pool...");
+
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
   auto& poolId = connection->GetConnectionKey();
@@ -1392,11 +1410,23 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   connection->UpdateLastUsageTime();
   hostPool.push_front(std::move(connection));
 
+  if (m_cleanThread.joinable() && !IsCleanThreadRunning)
+  {
+    // Clean thread was running before but it's finished, join it to finalize
+    m_cleanThread.join();
+  }
+
   // Cleanup will start a background thread which will close abandoned connections from the pool.
   // This will free-up resources from the app
   // This is the only call to cleanup.
   if (!m_cleanThread.joinable())
   {
+    Log::Write(Logger::Level::Verbose, "Start clean thread");
+    IsCleanThreadRunning = true;
     m_cleanThread = std::thread(CleanupThread);
+  }
+  else
+  {
+    Log::Write(Logger::Level::Verbose, "Clean thread running. Won't start a new one.");
   }
 }

@@ -111,15 +111,17 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     AZ_CORE_DLLEXPORT static Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
 
+    bool IsCleanThreadRunning = false;
+
   private:
     // private constructor to keep this as singleton.
     CurlConnectionPool() { curl_global_init(CURL_GLOBAL_ALL); }
 
-    std::thread m_cleanThread;
-
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     int64_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };
+
+    std::thread m_cleanThread;
   };
 
 }}}} // namespace Azure::Core::Http::_detail

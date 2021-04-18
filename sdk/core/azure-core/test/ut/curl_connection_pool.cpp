@@ -286,92 +286,93 @@ namespace Azure { namespace Core { namespace Test {
 #endif
       // Test max connections in pool. Try to add 2k connections to the pool.
       // Using fake connections to avoid opening real http connections :)
-      {
-        using ::testing::_;
-        using ::testing::Return;
-        using ::testing::ReturnRef;
+      //   {
+      //     using ::testing::_;
+      //     using ::testing::Return;
+      //     using ::testing::ReturnRef;
 
-        {
-          std::lock_guard<std::mutex> lock(
-              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-          // clean the pool
-          CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
-        }
+      //     {
+      //       std::lock_guard<std::mutex> lock(
+      //           CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+      //       // clean the pool
+      //       CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
+      //     }
 
-        std::string hostKey("key");
-        for (uint64_t count = 0; count < 2000; count++)
-        {
-          MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
-          EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(hostKey));
-          EXPECT_CALL(*curlMock, UpdateLastUsageTime()).WillRepeatedly(Return());
-          EXPECT_CALL(*curlMock, IsExpired()).WillRepeatedly(Return(false));
-          EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _)).WillRepeatedly(Return(count));
-          EXPECT_CALL(*curlMock, DestructObj());
+      //     std::string hostKey("key");
+      //     for (uint64_t count = 0; count < 2000; count++)
+      //     {
+      //       MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+      //       EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(hostKey));
+      //       EXPECT_CALL(*curlMock, UpdateLastUsageTime()).WillRepeatedly(Return());
+      //       EXPECT_CALL(*curlMock, IsExpired()).WillRepeatedly(Return(false));
+      //       EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _)).WillRepeatedly(Return(count));
+      //       EXPECT_CALL(*curlMock, DestructObj());
 
-          CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
-              std::unique_ptr<MockCurlNetworkConnection>(curlMock),
-              Azure::Core::Http::HttpStatusCode::Ok);
-        }
-        // No need to take look here because connections are mocked to never be expired.
-        EXPECT_EQ(
-            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
-                .size(),
-            1);
-        EXPECT_EQ(
-            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                .ConnectionPoolIndex[hostKey]
-                .size(),
-            Azure::Core::Http::_detail::MaxConnectionsPerIndex);
-        // Test the first and last connection. Each connection should remove the last and oldest
-        auto connectionIt = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                                .ConnectionPoolIndex[hostKey]
-                                .begin();
-        EXPECT_EQ(
-            connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
-            2000 - 1); // starting from zero
-        connectionIt = --(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                              .ConnectionPoolIndex[hostKey]
-                              .end());
-        EXPECT_EQ(
-            connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
-            2000 - 1024);
+      //       CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
+      //           std::unique_ptr<MockCurlNetworkConnection>(curlMock),
+      //           Azure::Core::Http::HttpStatusCode::Ok);
+      //     }
+      //     // No need to take look here because connections are mocked to never be expired.
+      //     EXPECT_EQ(
+      //         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+      //             .size(),
+      //         1);
+      //     EXPECT_EQ(
+      //         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+      //             .ConnectionPoolIndex[hostKey]
+      //             .size(),
+      //         Azure::Core::Http::_detail::MaxConnectionsPerIndex);
+      //     // Test the first and last connection. Each connection should remove the last and
+      //     oldest auto connectionIt =
+      //     Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+      //                             .ConnectionPoolIndex[hostKey]
+      //                             .begin();
+      //     EXPECT_EQ(
+      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
+      //         2000 - 1); // starting from zero
+      //     connectionIt = --(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+      //                           .ConnectionPoolIndex[hostKey]
+      //                           .end());
+      //     EXPECT_EQ(
+      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
+      //         2000 - 1024);
 
-        // Check the pool will take other host-key
-        {
-          std::string otherKey("otherHostKey");
-          MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
-          EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(otherKey));
-          EXPECT_CALL(*curlMock, UpdateLastUsageTime()).WillRepeatedly(Return());
-          EXPECT_CALL(*curlMock, IsExpired()).WillRepeatedly(Return(false));
-          EXPECT_CALL(*curlMock, DestructObj());
+      //     // Check the pool will take other host-key
+      //     {
+      //       std::string otherKey("otherHostKey");
+      //       MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+      //       EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(otherKey));
+      //       EXPECT_CALL(*curlMock, UpdateLastUsageTime()).WillRepeatedly(Return());
+      //       EXPECT_CALL(*curlMock, IsExpired()).WillRepeatedly(Return(false));
+      //       EXPECT_CALL(*curlMock, DestructObj());
 
-          CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
-              std::unique_ptr<MockCurlNetworkConnection>(curlMock),
-              Azure::Core::Http::HttpStatusCode::Ok);
+      //       CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
+      //           std::unique_ptr<MockCurlNetworkConnection>(curlMock),
+      //           Azure::Core::Http::HttpStatusCode::Ok);
 
-          EXPECT_EQ(
-              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                  .ConnectionPoolIndex.size(),
-              2);
-          EXPECT_EQ(
-              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                  .ConnectionPoolIndex[otherKey]
-                  .size(),
-              1);
-          // No changes to the full pool
-          EXPECT_EQ(
-              Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                  .ConnectionPoolIndex[hostKey]
-                  .size(),
-              Azure::Core::Http::_detail::MaxConnectionsPerIndex);
-        }
-        {
-          std::lock_guard<std::mutex> lock(
-              CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-          // clean the pool
-          CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
-        }
-      }
+      //       EXPECT_EQ(
+      //           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+      //               .ConnectionPoolIndex.size(),
+      //           2);
+      //       EXPECT_EQ(
+      //           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+      //               .ConnectionPoolIndex[otherKey]
+      //               .size(),
+      //           1);
+      //       // No changes to the full pool
+      //       EXPECT_EQ(
+      //           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+      //               .ConnectionPoolIndex[hostKey]
+      //               .size(),
+      //           Azure::Core::Http::_detail::MaxConnectionsPerIndex);
+      //     }
+      //     {
+      //       std::lock_guard<std::mutex> lock(
+      //           CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+      //       // clean the pool
+      //       CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
+      //     }
+      //   }
     }
 
     TEST(CurlConnectionPool, uniquePort)
