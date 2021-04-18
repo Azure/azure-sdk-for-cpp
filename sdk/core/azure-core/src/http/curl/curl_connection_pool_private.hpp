@@ -15,11 +15,13 @@
 #include "curl_connection_private.hpp"
 
 #include <atomic>
+#include <condition_variable>
 #include <curl/curl.h>
 #include <list>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <thread>
 
 #if defined(TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members
@@ -30,9 +32,6 @@ namespace Azure { namespace Core { namespace Test {
 #endif
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
-
-  // In charge of calling the libcurl global functions for the Azure SDK
-  struct CurlGlobalStateForAzureSdk;
 
   /**
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
@@ -47,27 +46,25 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
     friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;
 #endif
-  private:
-    // The cttor and dttor of this member makes sure of calling the libcurl global init and cleanup
-    AZ_CORE_DLLEXPORT static CurlGlobalStateForAzureSdk CurlGlobalState;
 
   public:
-    /**
-     * @brief Mutex for accessing connection pool for thread-safe reading and writing.
-     */
-    AZ_CORE_DLLEXPORT static std::mutex ConnectionPoolMutex;
-
-    /**
-     * @brief Keeps an unique key for each host and creates a connection pool for each key.
-     *
-     * @details This way getting a connection for a specific host can be done in O(1) instead of
-     * looping a single connection list to find the first connection for the required host.
-     *
-     * @remark There might be multiple connections for each host.
-     */
-    AZ_CORE_DLLEXPORT static std::
-        map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
-            ConnectionPoolIndex;
+    ~CurlConnectionPool()
+    {
+      using namespace Azure::Core::Http::_detail;
+      if (m_cleanThread.joinable())
+      {
+        {
+          std::unique_lock<std::mutex> lock(ConnectionPoolMutex);
+          // Remove all connections
+          g_curlConnectionPool.ConnectionPoolIndex.clear();
+        }
+        // Signal clean thread to wake up
+        ConditionalVariableForCleanThread.notify_one();
+        // join thread
+        m_cleanThread.join();
+      }
+      curl_global_cleanup();
+    }
 
     /**
      * @brief Finds a connection to be re-used from the connection pool.
@@ -81,7 +78,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      *
      * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
-    static std::unique_ptr<CurlNetworkConnection> ExtractOrCreateCurlConnection(
+    std::unique_ptr<CurlNetworkConnection> ExtractOrCreateCurlConnection(
         Request& request,
         CurlTransportOptions const& options,
         bool resetPool = false);
@@ -92,51 +89,39 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @param connection CURL HTTP connection to add to the pool.
      * @param lastStatusCode The most recent HTTP status code received from the \p connection.
      */
-    static void MoveConnectionBackToPool(
+    void MoveConnectionBackToPool(
         std::unique_ptr<CurlNetworkConnection> connection,
         HttpStatusCode lastStatusCode);
 
-    // Class can't have instances.
-    CurlConnectionPool() = delete;
+    /**
+     * @brief Keeps a unique key for each host and creates a connection pool for each key.
+     *
+     * @details This way getting a connection for a specific host can be done in O(1) instead of
+     * looping a single connection list to find the first connection for the required host.
+     *
+     * @remark There might be multiple connections for each host.
+     */
+    std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
 
-    static void StopCleaner() { g_isCleanConnectionsRunning = false; }
+    std::mutex ConnectionPoolMutex;
+
+    // This is used to put the cleaning pool thread to sleep and yet to be able to wake it if the
+    // application finishes.
+    std::condition_variable ConditionalVariableForCleanThread;
+
+    AZ_CORE_DLLEXPORT static Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
+
+    bool IsCleanThreadRunning = false;
 
   private:
-    /**
-     * Review all connections in the pool and removes old connections that might be already
-     * expired and closed its connection on server side.
-     */
-    static void CleanUp();
-
-    AZ_CORE_DLLEXPORT static uint64_t g_connectionCounter;
-    AZ_CORE_DLLEXPORT static std::atomic<bool> g_isCleanConnectionsRunning;
-    // Removes all connections and indexes
-    static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
+    // private constructor to keep this as singleton.
+    CurlConnectionPool() { curl_global_init(CURL_GLOBAL_ALL); }
 
     // Makes possible to know the number of current connections in the connection pool for an
     // index
-    static int64_t ConnectionsOnPool(std::string const& host)
-    {
-      auto& pool = CurlConnectionPool::ConnectionPoolIndex[host];
-      return pool.size();
-    };
+    int64_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };
 
-    // Makes possible to know the number indexes in the pool
-    static int64_t ConnectionsIndexOnPool()
-    {
-      return CurlConnectionPool::ConnectionPoolIndex.size();
-    };
-  };
-
-  struct CurlGlobalStateForAzureSdk
-  {
-    CurlGlobalStateForAzureSdk() { curl_global_init(CURL_GLOBAL_ALL); }
-
-    ~CurlGlobalStateForAzureSdk()
-    {
-      CurlConnectionPool::StopCleaner();
-      curl_global_cleanup();
-    }
+    std::thread m_cleanThread;
   };
 
 }}}} // namespace Azure::Core::Http::_detail
