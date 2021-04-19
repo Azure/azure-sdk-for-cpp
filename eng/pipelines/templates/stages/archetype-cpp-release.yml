@@ -201,15 +201,16 @@ stages:
             - download: current
               artifact: packages
 
-            - pwsh: git config --global core.eol=lf
-              displayName: Set lf line endings for commits
-
             - template: /eng/pipelines/templates/steps/generate-daily-branch-name.yml
 
             - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
               parameters:
                 RepoOwner: azure-sdk
                 PRBranchName: $(DailyBranchName)
+
+            - pwsh: git config --local core.eol lf
+              workingDirectory: $(Pipeline.Workspace)/vcpkg
+              displayName: Set lf line endings for commits
 
             # Placing artifacts in the same branch in sequence reduces the
             # potential for race conditions. If this job does fail to push
