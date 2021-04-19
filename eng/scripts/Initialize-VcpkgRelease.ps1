@@ -37,7 +37,7 @@ param (
 # If there's nothing in the "port" folder to upload set SkipVcpkgUpdate to true
 # and exit. Other steps will check SkipVcpkgUpdate to decide whether to move
 # forward.
-if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
+if (!(Get-ChildItem -Path "$SourceDirectory/port/vcpkg.json")) {
     Write-Host "###vso[task.setvariable variable=SkipVcpkgUpdate]true"
     exit
 }

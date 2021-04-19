@@ -1,0 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
+{
+  "name": "azure-storage-files-datalake-cpp",
+  "version-string": "@AZ_LIBRARY_VERSION@",
+  "description": [
+    "Microsoft Azure Storage Files Data Lake SDK for C++",
+    "This library provides Azure Storage Files Data Lake SDK."
+  ],
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-files-datalake",
+  "dependencies": [
+    "azure-storage-blobs-cpp"
+  ]
+}
