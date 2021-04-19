@@ -9,6 +9,12 @@
 
 #pragma once
 
+#include <azure/core/context.hpp>
+
+#include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
+#include "azure/keyvault/keys/key_operation.hpp"
+
 #include <memory>
 #include <string>
 
@@ -17,12 +23,18 @@ namespace Azure {
     namespace KeyVault {
       namespace Keys {
         namespace Cryptography {
-  namespace _internal {
+  namespace _detail {
 
     struct CryptographyProvider
     {
       virtual ~CryptographyProvider() = default;
 
       virtual bool CanRemote() const = 0;
+
+      virtual bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation operation) = 0;
+
+      virtual EncryptResult Encrypt(
+          EncryptParameters const& parameters,
+          Azure::Core::Context const& context) const = 0;
     };
-}}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_internal
+}}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

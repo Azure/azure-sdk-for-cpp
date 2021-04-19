@@ -31,27 +31,39 @@ namespace Azure {
     std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
     std::string m_keyId;
     std::shared_ptr<
-        Azure::Security::KeyVault::Keys::Cryptography::_internal::RemoteCryptographyClient>
+        Azure::Security::KeyVault::Keys::Cryptography::_detail::RemoteCryptographyClient>
         m_remoteProvider;
-    std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_internal::CryptographyProvider>
+    std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider>
         m_provider;
 
     explicit CryptographyClient(
-        std::string const& vaultUrl,
+        std::string const& keyId,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         CryptographyClientOptions const& options,
         bool forceRemote);
 
+    void Initialize(std::string const& operation, Azure::Core::Context const& context);
+
   public:
+    /**
+     * @brief Initializes a new instance of the #CryptographyClient class.
+     *
+     * @param keyId The key identifier of the #KeyVaultKey which will be used for cryptographic
+     * operations.
+     * @param credential A #TokenCredential used to authenticate requests to the vault, like
+     * DefaultAzureCredential.
+     * @param options #CryptographyClientOptions for the #CryptographyClient for local or remote
+     * operations on Key Vault.
+     */
     explicit CryptographyClient(
-        std::string const& vaultUrl,
+        std::string const& keyId,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         CryptographyClientOptions options = CryptographyClientOptions())
-        : CryptographyClient(vaultUrl, credential, options, false)
+        : CryptographyClient(keyId, credential, options, false)
     {
     }
 
-    std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_internal::CryptographyProvider>
+    std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider>
     RemoteClient() const
     {
       return m_remoteProvider;
@@ -69,11 +81,8 @@ namespace Azure {
      * needed to decrypt it. This information should be stored with the encrypted data.
      */
     EncryptResult Encrypt(
-        EncryptParameters parameters,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      
-    }
+        EncryptParameters const& parameters,
+        Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
      * @brief Encrypts the specified plaintext.
@@ -87,7 +96,7 @@ namespace Azure {
     EncryptResult Encrypt(
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> const& plaintext,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
+        Azure::Core::Context const& context = Azure::Core::Context())
     {
       return Encrypt(EncryptParameters(algorithm, plaintext), context);
     }

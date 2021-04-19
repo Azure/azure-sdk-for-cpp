@@ -42,7 +42,7 @@ namespace Azure {
     {
     }
 
-    EncryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> plaintext)
+    EncryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> const plaintext)
         : Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext))
     {
     }
