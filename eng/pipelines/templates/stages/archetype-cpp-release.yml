@@ -201,7 +201,7 @@ stages:
             - download: current
               artifact: packages
 
-            - pwsh: git config core.eol="lf"
+            - pwsh: git config --global core.eol=lf
               displayName: Set lf line endings for commits
 
             - template: /eng/pipelines/templates/steps/generate-daily-branch-name.yml
