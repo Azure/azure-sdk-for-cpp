@@ -25,6 +25,10 @@ if(BUILD_TRANSPORT_CURL)
   SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool.cpp)
 endif()
 
+if(RUN_LONG_UNIT_TESTS)
+  add_compile_definitions(RUN_LONG_UNIT_TESTS)
+endif()
+
 include(GoogleTest)
 
 add_executable (
