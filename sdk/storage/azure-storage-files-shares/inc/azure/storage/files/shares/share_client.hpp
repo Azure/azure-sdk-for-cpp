@@ -228,19 +228,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const GetSharePermissionOptions& options = GetSharePermissionOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
-    /**
-     * @brief List files and directories under the directory.
-     * @param options Optional parameters to list the files and directories under this directory.
-     * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
-     * information of the operation, directory, share and the listed result.
-     */
-    Azure::Response<Models::ListFilesAndDirectoriesSinglePageResult>
-    ListFilesAndDirectoriesSinglePage(
-        const ListFilesAndDirectoriesSinglePageOptions& options
-        = ListFilesAndDirectoriesSinglePageOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
   private:
     Azure::Core::Url m_shareUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;

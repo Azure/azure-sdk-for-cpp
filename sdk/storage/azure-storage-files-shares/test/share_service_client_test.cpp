@@ -65,17 +65,16 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& prefix)
   {
     std::vector<Files::Shares::Models::ShareItem> result;
-    Files::Shares::ListSharesSinglePageOptions options;
+    Files::Shares::ListSharesOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
-    do
+    for (auto pageResult = m_fileShareServiceClient->ListShares(options); pageResult.HasMorePages();
+         pageResult.MoveToNextPage())
     {
-      auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      result.insert(result.end(), response.Value.Items.begin(), response.Value.Items.end());
-      options.ContinuationToken = response.Value.ContinuationToken;
-    } while (options.ContinuationToken.HasValue());
+      result.insert(result.end(), pageResult.Shares.begin(), pageResult.Shares.end());
+    }
     return result;
   }
 
@@ -126,10 +125,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::Shares::ListSharesSinglePageOptions options;
+      Files::Shares::ListSharesOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileShareServiceClient->ListSharesSinglePage(options);
-      EXPECT_LE(2U, response.Value.Items.size());
+      auto response = m_fileShareServiceClient->ListShares(options);
+      EXPECT_LE(2U, response.Shares.size());
     }
   }
 

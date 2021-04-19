@@ -27,6 +27,7 @@
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
+  class CurlConnectionPool_uniquePort_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -43,6 +44,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 #if defined(TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
+    friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;
 #endif
 
   public:
@@ -54,7 +56,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         {
           std::unique_lock<std::mutex> lock(ConnectionPoolMutex);
           // Remove all connections
-          g_curlConnectionPool.ResetPool();
+          g_curlConnectionPool.ConnectionPoolIndex.clear();
         }
         // Signal clean thread to wake up
         ConditionalVariableForCleanThread.notify_one();
@@ -92,17 +94,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         HttpStatusCode lastStatusCode);
 
     /**
-     * @brief Remove all connections from the pool and reset the connection counter.
-     *
-     */
-    void ResetPool()
-    {
-      ConnectionPoolIndex.clear();
-      ConnectionCounter = 0;
-    }
-
-    /**
-     * @brief Keeps an unique key for each host and creates a connection pool for each key.
+     * @brief Keeps a unique key for each host and creates a connection pool for each key.
      *
      * @details This way getting a connection for a specific host can be done in O(1) instead of
      * looping a single connection list to find the first connection for the required host.
@@ -113,22 +105,23 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     std::mutex ConnectionPoolMutex;
 
+    // This is used to put the cleaning pool thread to sleep and yet to be able to wake it if the
+    // application finishes.
     std::condition_variable ConditionalVariableForCleanThread;
 
-    // Keep the count of the total connections from all indexes
-    uint64_t ConnectionCounter;
-
     AZ_CORE_DLLEXPORT static Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
+
+    bool IsCleanThreadRunning = false;
 
   private:
     // private constructor to keep this as singleton.
     CurlConnectionPool() { curl_global_init(CURL_GLOBAL_ALL); }
 
-    std::thread m_cleanThread;
-
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     int64_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };
+
+    std::thread m_cleanThread;
   };
 
 }}}} // namespace Azure::Core::Http::_detail

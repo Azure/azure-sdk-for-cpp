@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<0>(response.data(), response.data() + response.size()),
             Return(response.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
-    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
     // Create the unique ptr to take care about memory free at the end
@@ -79,7 +79,8 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
   }
 
   TEST_F(CurlSession, chunkBadFormatResponse)
@@ -101,7 +102,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<0>(response2.data(), response2.data() + response2.size()),
             Return(response2.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
-    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
     // Create the unique ptr to take care about memory free at the end
@@ -127,7 +128,8 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::TransportException);
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
   }
 
   TEST_F(CurlSession, chunkSegmentedResponse)
@@ -178,7 +180,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<0>(response8.data(), response8.data() + response8.size()),
             Return(response8.size())));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
-    EXPECT_CALL(*curlMock, updateLastUsageTime());
+    EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
     // Create the unique ptr to take care about memory free at the end
@@ -202,12 +204,14 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW(bodyS->ReadToEnd(Azure::Core::Context::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
   }
 
   TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
   {
-    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ResetPool();
+    Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+        .clear();
     // Can't mock the curlMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
     MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
@@ -232,6 +236,8 @@ namespace Azure { namespace Core { namespace Test {
     }
     // Check connection pool is empty (connection was not moved to the pool)
     EXPECT_EQ(
-        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionCounter, 0);
+        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+            .size(),
+        0);
   }
 }}} // namespace Azure::Core::Test

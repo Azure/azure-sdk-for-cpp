@@ -82,17 +82,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareClient(builder, m_pipeline);
   }
 
-  Azure::Response<Models::ListSharesSinglePageResult> ShareServiceClient::ListSharesSinglePage(
-      const ListSharesSinglePageOptions& options,
+  ListSharesPagedResponse ShareServiceClient::ListShares(
+      const ListSharesOptions& options,
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
     protocolLayerOptions.IncludeFlags = options.ListSharesIncludeFlags;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
-    return _detail::ShareRestClient::Service::ListSharesSinglePage(
+    auto response = _detail::ShareRestClient::Service::ListSharesSinglePage(
         m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
+
+    ListSharesPagedResponse pagedResponse;
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.Prefix = std::move(response.Value.Prefix);
+    pagedResponse.Shares = std::move(response.Value.Items);
+    pagedResponse.m_shareServiceClient = std::make_shared<ShareServiceClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(

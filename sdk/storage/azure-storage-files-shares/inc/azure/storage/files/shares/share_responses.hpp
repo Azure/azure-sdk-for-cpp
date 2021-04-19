@@ -3,20 +3,23 @@
 
 #pragma once
 
+#include <azure/core/operation.hpp>
+#include <azure/storage/common/paged_response.hpp>
+
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
-
-#include <azure/core/operation.hpp>
+#include "azure/storage/files/shares/share_options.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  class ShareServiceClient;
   class ShareFileClient;
+  class ShareDirectoryClient;
 
   namespace Models {
 
     // ServiceClient models:
 
-    using ListSharesSinglePageResult = _detail::ServiceListSharesSinglePageResult;
     using SetServicePropertiesResult = _detail::ServiceSetPropertiesResult;
 
     // ShareClient models:
@@ -65,29 +68,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     using DirectoryProperties = _detail::DirectoryGetPropertiesResult;
     using SetDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
     using SetDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
-    using ForceCloseAllDirectoryHandlesSinglePageResult = _detail::DirectoryForceCloseHandlesResult;
 
     struct ForceCloseDirectoryHandleResult
     {
-    };
-
-    struct ListFilesAndDirectoriesSinglePageResult
-    {
-      std::string ServiceEndpoint;
-      std::string ShareName;
-      std::string ShareSnapshot;
-      std::string DirectoryPath;
-      std::string Prefix;
-      int32_t PageSizeHint = int32_t();
-      Nullable<std::string> ContinuationToken;
-      std::vector<DirectoryItem> DirectoryItems;
-      std::vector<FileItem> FileItems;
-    };
-
-    struct ListDirectoryHandlesSinglePageResult
-    {
-      std::vector<HandleItem> Handles;
-      Nullable<std::string> ContinuationToken;
     };
 
     // FileClient models:
@@ -147,8 +130,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
     using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
     using GetFileRangeListResult = _detail::FileGetRangeListResult;
-    using ListFileHandlesSinglePageResult = ListDirectoryHandlesSinglePageResult;
-    using ForceCloseAllFileHandlesSinglePageResult = _detail::FileForceCloseHandlesResult;
 
     struct DownloadFileToResult
     {
@@ -210,4 +191,71 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareFileClient;
   };
+
+  class ListSharesPagedResponse : public PagedResponse<ListSharesPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    std::vector<Models::ShareItem> Shares;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareServiceClient> m_shareServiceClient;
+    ListSharesOptions m_operationOptions;
+
+    friend class ShareServiceClient;
+    friend class PagedResponse<ListSharesPagedResponse>;
+  };
+
+  class ListFilesAndDirectoriesPagedResponse
+      : public PagedResponse<ListFilesAndDirectoriesPagedResponse> {
+  public:
+    std::string ServiceEndpoint;
+    std::string ShareName;
+    std::string ShareSnapshot;
+    std::string DirectoryPath;
+    std::string Prefix;
+    std::vector<Models::DirectoryItem> Directories;
+    std::vector<Models::FileItem> Files;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareDirectoryClient> m_shareDirectoryClient;
+    ListFilesAndDirectoriesOptions m_operationOptions;
+
+    friend class ShareDirectoryClient;
+    friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
+  };
+
+  class ListFileHandlesPagedResponse : public PagedResponse<ListFileHandlesPagedResponse> {
+  public:
+    std::vector<Models::HandleItem> FileHandles;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareFileClient> m_shareFileClient;
+    ListFileHandlesOptions m_operationOptions;
+
+    friend class ShareFileClient;
+    friend class PagedResponse<ListFileHandlesPagedResponse>;
+  };
+
+  class ListDirectoryHandlesPagedResponse
+      : public PagedResponse<ListDirectoryHandlesPagedResponse> {
+  public:
+    std::vector<Models::HandleItem> DirectoryHandles;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareDirectoryClient> m_shareDirectoryClient;
+    ListDirectoryHandlesOptions m_operationOptions;
+
+    friend class ShareDirectoryClient;
+    friend class PagedResponse<ListDirectoryHandlesPagedResponse>;
+  };
+
 }}}} // namespace Azure::Storage::Files::Shares

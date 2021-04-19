@@ -153,9 +153,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::ListBlobContainersSinglePage.
+   * @brief Optional parameters for BlobServiceClient::ListBlobContainers.
    */
-  struct ListBlobContainersSinglePageOptions
+  struct ListBlobContainersOptions
   {
     /**
      * @brief Specifies a string that filters the results to return only containers whose
@@ -225,9 +225,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::FindBlobsByTagsSinglePage.
+   * @brief Optional parameters for BlobServiceClient::FindBlobsByTags.
    */
-  struct FindBlobsByTagsSinglePageOptions
+  struct FindBlobsByTagsOptions
   {
     /**
      * @brief A string value that identifies the portion of the result set to be returned
@@ -324,10 +324,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobsSinglePage and
-   * BlobContainerClient::ListBlobsByHierarchySinglePage.
+   * @brief Optional parameters for BlobContainerClient::ListBlobs and
+   * BlobContainerClient::ListBlobsByHierarchy.
    */
-  struct ListBlobsSinglePageOptions
+  struct ListBlobsOptions
   {
     /**
      * @brief Specifies a string that filters the results to return only blobs whose
