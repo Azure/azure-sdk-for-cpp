@@ -90,7 +90,25 @@ EncryptResult CryptographyClient::Encrypt(
   // m_provider can be local or remote, depending on how it was init.
   if (m_provider->SupportsOperation(KeyOperation::Encrypt))
   {
-    result = m_provider->Encrypt(parameters, context);
+    try
+    {
+      result = m_provider->Encrypt(parameters, context);
+    }
+    catch (std::exception const& e)
+    {
+      // If provider supports remote, otherwise re-throw
+      if (!m_provider->CanRemote())
+      {
+        throw;
+      }
+    }
+
+    if (result.Ciphertext.empty())
+    {
+      ThrowIfLocalOnly(KeyOperation::Encrypt.ToString());
+
+      result = m_remoteProvider->Encrypt(parameters, context);
+    }
   }
 
   return result;

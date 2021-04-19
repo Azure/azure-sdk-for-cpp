@@ -15,10 +15,10 @@ namespace Azure {
 
     EncryptResult RsaCryptographyProvider::Encrypt(
         EncryptParameters const& parameters,
-        Azure::Core::Context const& context) const
+        Azure::Core::Context const&) const
     {
-      (void)parameters;
-      (void)context;
-      return EncryptResult();
+      EncryptResult result;
+      result.Algorithm = parameters.Algorithm;
+      return result;
     }
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

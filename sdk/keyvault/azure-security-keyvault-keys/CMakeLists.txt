@@ -64,6 +64,7 @@ set(
     src/cryptography/cryptography_client.cpp
     src/cryptography/encrypt_result.cpp
     src/cryptography/encryption_algorithm.cpp
+    src/cryptography/encryption_parameters.cpp
     src/cryptography/remote_cryptography_client.cpp
     src/cryptography/rsa_cryptography_provider.cpp
     src/delete_key_operation.cpp

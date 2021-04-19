@@ -71,9 +71,11 @@ EncryptResult RemoteCryptographyClient::Encrypt(
           [&parameters]() {
             return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
           },
-          [](Azure::Core::Http::RawResponse const& rawResponse) {
-            return EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
+          [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
+            result.Algorithm = parameters.Algorithm;
+            return std::move(result);
           },
-          {})
+          {"encrypt"})
       .Value;
 }
