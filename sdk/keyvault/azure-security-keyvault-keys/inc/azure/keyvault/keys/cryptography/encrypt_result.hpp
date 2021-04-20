@@ -21,7 +21,7 @@ namespace Azure {
 
   /**
    * @brief Represents information about an encryption operation.
-   * 
+   *
    */
   struct EncryptResult
   {
