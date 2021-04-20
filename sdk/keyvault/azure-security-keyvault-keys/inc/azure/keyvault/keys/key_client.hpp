@@ -74,6 +74,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         KeyClientOptions options = KeyClientOptions());
 
     /**
+     * @brief Construct a new Key Client object from another key client.
+     *
+     * @param keyClient An existing key vault key client.
+     */
+    explicit KeyClient(KeyClient const* keyClient) : m_pipeline(keyClient->m_pipeline) {}
+
+    /**
      * @brief Gets the public part of a stored key.
      *
      * @remark The get key operation is applicable to all key types. If the requested key is
@@ -270,7 +277,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Azure::Response<DeletedKeySinglePage>
      */
-    Azure::Response<DeletedKeySinglePage> GetDeletedKeysSinglePage(
+    DeletedKeySinglePage GetDeletedKeysSinglePage(
         GetDeletedKeysSinglePageOptions const& options = GetDeletedKeysSinglePageOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

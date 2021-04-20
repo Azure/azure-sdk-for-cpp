@@ -4,6 +4,7 @@
 #include "azure/keyvault/keys/list_keys_single_page_result.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
+#include "azure/keyvault/keys/key_client.hpp"
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
@@ -24,6 +25,11 @@ _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
+  // std::string const nextLinkKey("nextLink");
+  // if (jsonParser.contains(nextLinkKey) && !jsonParser[nextLinkKey].is_null())
+  // {
+  //   result.NextPageToken = jsonParser[nextLinkKey].get<std::string>();
+  // }
   JsonOptional::SetIfExists(result.ContinuationToken, jsonParser, "nextLink");
 
   // Key properties
@@ -90,7 +96,11 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
   DeletedKeySinglePage deletedKeySinglePage;
-  JsonOptional::SetIfExists(deletedKeySinglePage.ContinuationToken, jsonParser, "nextLink");
+  std::string const nextLinkKey("nextLink");
+  if (jsonParser.contains(nextLinkKey) && !jsonParser[nextLinkKey].is_null())
+  {
+    deletedKeySinglePage.NextPageToken = jsonParser[nextLinkKey].get<std::string>();
+  }
 
   auto deletedKeys = jsonParser["value"];
   for (auto const& key : deletedKeys)
@@ -124,4 +134,15 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
   }
 
   return deletedKeySinglePage;
+}
+
+void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
+{
+  if (HasMorePages())
+  {
+    GetDeletedKeysSinglePageOptions options;
+    options.ContinuationToken = NextPageToken;
+    *this = keyClient->GetDeletedKeysSinglePage(options, context);
+    CurrentPageToken = NextPageToken;
+  }
 }

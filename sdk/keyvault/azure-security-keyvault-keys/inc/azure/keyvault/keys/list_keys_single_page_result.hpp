@@ -9,25 +9,36 @@
 
 #pragma once
 
+#include <azure/core/http/http.hpp>
+#include <azure/core/paged_response.hpp>
+
+#include <azure/keyvault/common/internal/single_page.hpp>
+
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/json_web_key.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
-#include <azure/keyvault/common/internal/single_page.hpp>
-
-#include <azure/core/http/http.hpp>
-
+#include <memory>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
+  class KeyClient;
 
-  struct KeyPropertiesSinglePage : public Azure::Security::KeyVault::_internal::SinglePage
-  {
+  class KeyPropertiesSinglePage : public Azure::Security::KeyVault::_internal::SinglePage {
+    // private:
+    //   void OnNextPage(const Azure::Core::Context&) override {}
+
+  public:
     std::vector<KeyProperties> Items;
   };
 
-  struct DeletedKeySinglePage : public Azure::Security::KeyVault::_internal::SinglePage
-  {
+  class DeletedKeySinglePage : public Azure::Core::PagedResponse {
+  private:
+    friend class KeyClient;
+    std::shared_ptr<KeyClient> keyClient;
+    void OnNextPage(const Azure::Core::Context& context) override;
+
+  public:
     std::vector<DeletedKey> Items;
   };
 

@@ -254,12 +254,12 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
-Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
+DeletedKeySinglePage KeyClient::GetDeletedKeysSinglePage(
     GetDeletedKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
-  return m_pipeline->SendRequest<DeletedKeySinglePage>(
+  auto response = m_pipeline->SendRequest<DeletedKeySinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -268,6 +268,11 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
       },
       request.Path,
       request.Query);
+  DeletedKeySinglePage responsePage = std::move(response.Value);
+responsePage.RawResponse = std::move(response.RawResponse);
+  responsePage.keyClient = std::make_shared<KeyClient>(this);
+
+  return responsePage;
 }
 
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(

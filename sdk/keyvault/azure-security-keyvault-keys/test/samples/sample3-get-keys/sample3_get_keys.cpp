@@ -123,7 +123,9 @@ int main()
     std::cout << "\t-List Deleted Keys" << std::endl;
 
     // Start getting the first page.
-    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().Value;;)
+    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage();
+         !keysDeletedPage.IsEndOfResponse();
+         keysDeletedPage.MoveToNextPage())
     {
       for (auto const& key : keysDeletedPage.Items)
       {
@@ -131,17 +133,6 @@ int main()
                   << ", recovery level: " << key.Properties.RecoveryLevel
                   << " and recovery Id: " << key.RecoveryId << std::endl;
       }
-
-      if (!keysDeletedPage.ContinuationToken.HasValue())
-      {
-        // No more pages for the response, break the loop
-        break;
-      }
-
-      // Get the next page
-      GetDeletedKeysSinglePageOptions options;
-      options.ContinuationToken = keysDeletedPage.ContinuationToken.Value();
-      keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).Value;
     }
 
     // If the keyvault is soft-delete enabled, then for permanent deletion, deleted keys needs to be
