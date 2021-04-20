@@ -94,7 +94,7 @@ EncryptResult CryptographyClient::Encrypt(
     {
       result = m_provider->Encrypt(parameters, context);
     }
-    catch (std::exception const& e)
+    catch (std::exception const&)
     {
       // If provider supports remote, otherwise re-throw
       if (!m_provider->CanRemote())
@@ -135,7 +135,7 @@ DecryptResult CryptographyClient::Decrypt(
     {
       result = m_provider->Decrypt(parameters, context);
     }
-    catch (std::exception const& e)
+    catch (std::exception const&)
     {
       // If provider supports remote, otherwise re-throw
       if (!m_provider->CanRemote())
