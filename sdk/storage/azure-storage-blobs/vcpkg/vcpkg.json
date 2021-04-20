@@ -3,7 +3,7 @@
 
 {
   "name": "azure-storage-blobs-cpp",
-  "version-string": "@AZ_LIBRARY_VERSION@",
+  "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
     "Microsoft Azure Storage Blobs SDK for C++",
     "This library provides Azure Storage Blobs SDK."

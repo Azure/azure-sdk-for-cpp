@@ -3,7 +3,7 @@
 
 {
   "name": "azure-identity-cpp",
-  "version-string": "@AZ_LIBRARY_VERSION@",
+  "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
     "Microsoft Azure Identity SDK for C++",
     "This library provides common authentication-related abstractions for Azure SDK."
