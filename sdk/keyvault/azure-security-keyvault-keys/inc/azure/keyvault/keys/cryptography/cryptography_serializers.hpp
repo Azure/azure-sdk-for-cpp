@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Centralize the serialize and de-serialize methods for the key vault keys models.
+ * @brief Centralize the serialize and de-serialize methods for the key vault keys Cryptography models.
  *
  */
 

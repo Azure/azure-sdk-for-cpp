@@ -60,42 +60,52 @@ Azure::Response<KeyVaultKey> RemoteCryptographyClient::GetKey(
       {});
 }
 
+Azure::Response<EncryptResult> RemoteCryptographyClient::EncryptWithResponse(
+    EncryptParameters const& parameters,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline->SendRequest<EncryptResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&parameters]() {
+        return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
+      },
+      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
+        result.Algorithm = parameters.Algorithm;
+        return std::move(result);
+      },
+      {"encrypt"});
+}
+
 EncryptResult RemoteCryptographyClient::Encrypt(
     EncryptParameters const& parameters,
     Azure::Core::Context const& context) const
 {
-  return Pipeline
-      ->SendRequest<EncryptResult>(
-          context,
-          Azure::Core::Http::HttpMethod::Post,
-          [&parameters]() {
-            return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
-          },
-          [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-            auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
-            result.Algorithm = parameters.Algorithm;
-            return std::move(result);
-          },
-          {"encrypt"})
-      .Value;
+  return EncryptWithResponse(parameters, context).Value;
+}
+
+Azure::Response<DecryptResult> RemoteCryptographyClient::DecryptWithResponse(
+    DecryptParameters const& parameters,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline->SendRequest<DecryptResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&parameters]() {
+        return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
+      },
+      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
+        result.Algorithm = parameters.Algorithm;
+        return std::move(result);
+      },
+      {"decrypt"});
 }
 
 DecryptResult RemoteCryptographyClient::Decrypt(
     DecryptParameters const& parameters,
     Azure::Core::Context const& context) const
 {
-  return Pipeline
-      ->SendRequest<DecryptResult>(
-          context,
-          Azure::Core::Http::HttpMethod::Post,
-          [&parameters]() {
-            return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
-          },
-          [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-            auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
-            result.Algorithm = parameters.Algorithm;
-            return std::move(result);
-          },
-          {"decrypt"})
-      .Value;
+  return DecryptWithResponse(parameters, context).Value;
 }

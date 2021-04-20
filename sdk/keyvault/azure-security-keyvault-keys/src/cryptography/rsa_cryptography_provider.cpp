@@ -21,7 +21,6 @@ namespace Azure {
     {
       EncryptResult result;
       result.Algorithm = parameters.Algorithm;
-
       return result;
     }
 
@@ -31,7 +30,6 @@ namespace Azure {
     {
       DecryptResult result;
       result.Algorithm = parameters.Algorithm;
-
       return result;
     }
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

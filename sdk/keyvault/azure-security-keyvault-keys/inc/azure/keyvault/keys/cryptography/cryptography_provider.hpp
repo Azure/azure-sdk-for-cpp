@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief A client used to perform cryptographic operations with Azure Key Vault keys.
+ * @brief Defines the operations supported by a Cryptography provider.
  *
  */
 

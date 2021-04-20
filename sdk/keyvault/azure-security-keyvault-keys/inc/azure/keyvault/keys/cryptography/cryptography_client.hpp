@@ -26,6 +26,10 @@ namespace Azure {
       namespace Keys {
         namespace Cryptography {
 
+  /**
+   * @brief A client used to perform cryptographic operations with Azure Key Vault keys.
+   *
+   */
   class CryptographyClient {
   private:
     std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
@@ -71,12 +75,22 @@ namespace Azure {
     {
     }
 
+    /**
+     * @brief Provides a #CryptographyProvider that performs operations in the Key Vault Keys
+     * Server.
+     *
+     * @return A cryptographic client to perform operations on the server.
+     */
     std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider>
     RemoteClient() const
     {
       return m_remoteProvider;
     }
 
+    /**
+     * @brief Gets whether this #CryptographyClient runs only local operations.
+     *
+     */
     bool LocalOnly() const { return m_remoteProvider == nullptr; }
 
     /**
@@ -95,7 +109,7 @@ namespace Azure {
     /**
      * @brief Encrypts the specified plaintext.
      *
-     * @param algorithm The <see cref="EncryptionAlgorithm"/> to use.</param>
+     * @param algorithm The #EncryptionAlgorithm to use.
      * @param plaintext The data to encrypt.
      * @param context A #Azure::Core::Context to cancel the operation.
      * @return An #EncryptResult containing the encrypted data along with all other information
@@ -112,10 +126,10 @@ namespace Azure {
     /**
      * @brief Decrypts ciphertext.
      *
-     * @param parameters An #DecryptParameters containing the data to Decrypt and other parameters
+     * @param parameters A #DecryptParameters containing the data to decrypt and other parameters
      * for algorithm-dependent Decryption.
      * @param context A #Azure::Core::Context to cancel the operation.
-     * @return An #DecryptResult containing the Decrypted data along with all other information
+     * @return An #DecryptResult containing the decrypted data along with all other information
      * needed to decrypt it. This information should be stored with the Decrypted data.
      */
     DecryptResult Decrypt(
@@ -125,8 +139,8 @@ namespace Azure {
     /**
      * @brief Decrypts the specified ciphertext.
      *
-     * @param algorithm The <see cref="DecryptionAlgorithm"/> to use.</param>
-     * @param ciphertext The data to Decrypt.
+     * @param algorithm The #EncryptionAlgorithm to use.
+     * @param ciphertext The encrypted data to decrypt..
      * @param context A #Azure::Core::Context to cancel the operation.
      * @return An #DecryptResult containing the Decrypted data along with all other information
      * needed to decrypt it. This information should be stored with the Decrypted data.

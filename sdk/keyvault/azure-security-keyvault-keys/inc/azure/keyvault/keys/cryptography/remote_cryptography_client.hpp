@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief A client used to perform cryptographic operations with Azure Key Vault keys.
+ * @brief A remote client used to perform cryptographic operations with Azure Key Vault keys.
  *
  */
 
@@ -53,8 +53,16 @@ namespace Azure {
           EncryptParameters const& parameters,
           Azure::Core::Context const& context) const override;
 
+      Azure::Response<EncryptResult> EncryptWithResponse(
+          EncryptParameters const& parameters,
+          Azure::Core::Context const& context) const;
+
       DecryptResult Decrypt(
           DecryptParameters const& parameters,
           Azure::Core::Context const& context) const override;
+
+      Azure::Response<DecryptResult> DecryptWithResponse(
+          DecryptParameters const& parameters,
+          Azure::Core::Context const& context) const;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

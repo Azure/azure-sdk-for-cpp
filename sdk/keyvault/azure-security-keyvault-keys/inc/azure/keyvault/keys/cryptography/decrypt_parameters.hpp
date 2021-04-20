@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Parameters for encrypting ciphertext.
+ * @brief Parameters for decrypting ciphertext.
  *
  */
 
@@ -21,18 +21,11 @@ namespace Azure {
         namespace Cryptography {
 
   /**
-   * @brief Parameters for encrypting ciphertext.
+   * @brief Parameters for decrypting ciphertext.
    *
    */
   class DecryptParameters {
-  public:
-    EncryptionAlgorithm Algorithm;
-    std::vector<uint8_t> Ciphertext;
-    std::vector<uint8_t> Iv;
-    std::vector<uint8_t> AdditionalAuthenticatedData;
-    std::vector<uint8_t> AuthenticationTag;
-
-  public:
+  private:
     DecryptParameters(
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> ciphertext,
@@ -57,6 +50,43 @@ namespace Azure {
         : Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext)), Iv(std::move(iv))
     {
     }
+
+  public:
+    /**
+     * @brief A default DecryptParameters can't be created.
+     *
+     */
+    DecryptParameters() = delete;
+
+    /**
+     * @brief Gets or sets the #EncryptionAlgorithm.
+     *
+     */
+    EncryptionAlgorithm Algorithm;
+
+    /**
+     * @brief Gets the ciphertext to decrypt.
+     *
+     */
+    std::vector<uint8_t> Ciphertext;
+
+    /**
+     * @brief Gets the initialization vector for decryption.
+     *
+     */
+    std::vector<uint8_t> Iv;
+
+    /**
+     * @brief Gets additional data that is authenticated during decryption but not encrypted.
+     *
+     */
+    std::vector<uint8_t> AdditionalAuthenticatedData;
+
+    /**
+     * @brief Gets the authenticated tag resulting from encryption with a symmetric key using AES.
+     *
+     */
+    std::vector<uint8_t> AuthenticationTag;
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the

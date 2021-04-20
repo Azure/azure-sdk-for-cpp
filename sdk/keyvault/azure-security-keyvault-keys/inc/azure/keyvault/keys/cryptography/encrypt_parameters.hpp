@@ -25,13 +25,7 @@ namespace Azure {
    *
    */
   class EncryptParameters {
-  public:
-    EncryptionAlgorithm Algorithm;
-    std::vector<uint8_t> Plaintext;
-    std::vector<uint8_t> Iv;
-    std::vector<uint8_t> AdditionalAuthenticatedData;
-
-  public:
+  private:
     EncryptParameters(
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> plaintext,
@@ -46,6 +40,37 @@ namespace Azure {
         : Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext))
     {
     }
+
+  public:
+    /**
+     * @brief Encrypt Parameters can't be default constructed.
+     *
+     */
+    EncryptParameters() = delete;
+
+    /**
+     * @brief Gets the #EncryptionAlgorithm.
+     *
+     */
+    EncryptionAlgorithm Algorithm;
+
+    /**
+     * @brief Gets the plaintext to encrypt.
+     *
+     */
+    std::vector<uint8_t> Plaintext;
+
+    /**
+     * @brief Gets the initialization vector for encryption.
+     *
+     */
+    std::vector<uint8_t> Iv;
+
+    /**
+     * @brief Gets additional data that is authenticated during decryption but not encrypted.
+     *
+     */
+    std::vector<uint8_t> AdditionalAuthenticatedData;
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the

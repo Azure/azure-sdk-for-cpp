@@ -19,6 +19,10 @@ namespace Azure {
       namespace Keys {
         namespace Cryptography {
 
+  /**
+   * @brief Represents information about an encryption operation.
+   *
+   */
   struct DecryptResult
   {
     /**
