@@ -175,15 +175,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark Use \p options to control which page to get. If
      * #GetPropertiesOfKeysSinglePageOptions.NextLink is not set, the operation will get the first
-     * page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the next
+     * page and it will set the `NextPageToken` from the #KeyPropertiesSinglePage as the next
      * page of the response if there is a next page.
      *
      * @param options The #GetPropertiesOfKeysSinglePageOptions object to for setting the operation
      * up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return Azure::Response<KeyPropertiesSinglePage>
      */
-    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeysSinglePage(
+    KeyPropertiesSinglePage GetPropertiesOfKeysSinglePage(
         GetPropertiesOfKeysSinglePageOptions const& options
         = GetPropertiesOfKeysSinglePageOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -198,16 +197,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark Use \p options to control which page to get. If
      * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the
-     * first page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the
+     * first page and it will set the `NextPageToken` from the #KeyPropertiesSinglePage as the
      * next page of the response if there is a next page.
      *
      * @param name The name of the key.
      * @param options The #GetPropertiesOfKeyVersionsSinglePageOptions object to for setting the
      * operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return Azure::Response<KeyPropertiesSinglePage>
      */
-    Azure::Response<KeyPropertiesSinglePage> GetPropertiesOfKeyVersionsSinglePage(
+    KeyPropertiesSinglePage GetPropertiesOfKeyVersionsSinglePage(
         std::string const& name,
         GetPropertiesOfKeyVersionsSinglePageOptions const& options
         = GetPropertiesOfKeyVersionsSinglePageOptions(),
@@ -269,8 +267,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the
-     * first page and it will set the `ContinuationToken` from the #KeyPropertiesSinglePage as the
+     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextPageToken is not set, the operation will get
+     * the first page and it will set the `NextPageToken` from the #KeyPropertiesSinglePage as the
      * next page of the response if there is a next page.
      *
      * @param options The #GetDeletedKeysSinglePageOptions object to for setting the operation up.

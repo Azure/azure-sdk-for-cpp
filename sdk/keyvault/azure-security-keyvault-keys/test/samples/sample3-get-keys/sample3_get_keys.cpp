@@ -56,7 +56,9 @@ int main()
     keyClient.CreateEcKey(ecKey);
 
     std::cout << "\t-List Keys" << std::endl;
-    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().Value;;)
+    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage();
+         !keysSinglePage.IsEndOfResponse();
+         keysSinglePage.MoveToNextPage())
     {
       for (auto const& key : keysSinglePage.Items)
       {
@@ -68,17 +70,6 @@ int main()
         std::cout << "Key is returned with name: " << keyWithType.Name()
                   << " and type: " << keyWithType.GetKeyType().ToString() << std::endl;
       }
-
-      if (!keysSinglePage.ContinuationToken.HasValue())
-      {
-        // No more pages for the response, break the loop
-        break;
-      }
-
-      // Get the next page
-      GetPropertiesOfKeysSinglePageOptions options;
-      options.ContinuationToken = keysSinglePage.ContinuationToken.Value();
-      keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).Value;
     }
 
     // update key
@@ -90,26 +81,14 @@ int main()
 
     // List key versions
     std::cout << "\t-List Key versions" << std::endl;
-    for (auto keyVersionsSinglePage
-         = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).Value;
-         ;)
+    for (auto keyVersionsSinglePage = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName);
+         !keyVersionsSinglePage.IsEndOfResponse();
+         keyVersionsSinglePage.MoveToNextPage())
     {
       for (auto const& key : keyVersionsSinglePage.Items)
       {
         std::cout << "Key's version: " << key.Version << " with name: " << key.Name << std::endl;
       }
-
-      if (!keyVersionsSinglePage.ContinuationToken.HasValue())
-      {
-        // No more pages for the response, break the loop
-        break;
-      }
-
-      // Get the next page
-      GetPropertiesOfKeyVersionsSinglePageOptions options;
-      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.Value();
-      keyVersionsSinglePage
-          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).Value;
     }
 
     std::cout << "\t-Delete Keys" << std::endl;

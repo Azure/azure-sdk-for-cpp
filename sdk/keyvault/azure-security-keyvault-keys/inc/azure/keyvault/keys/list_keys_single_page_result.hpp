@@ -24,9 +24,19 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient;
 
-  class KeyPropertiesSinglePage : public Azure::Security::KeyVault::_internal::SinglePage {
-    // private:
-    //   void OnNextPage(const Azure::Core::Context&) override {}
+  class KeyPropertiesSinglePage : public Azure::Core::PagedResponse {
+  private:
+    friend class KeyClient;
+
+    enum class KeyPropertiesType
+    {
+      Keys,
+      Versions
+    };
+    KeyPropertiesType m_type;
+    std::string m_keyName;
+    std::shared_ptr<KeyClient> m_keyClient;
+    void OnNextPage(const Azure::Core::Context&) override;
 
   public:
     std::vector<KeyProperties> Items;

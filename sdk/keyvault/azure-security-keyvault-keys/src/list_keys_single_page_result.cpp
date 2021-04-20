@@ -25,12 +25,11 @@ _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
-  // std::string const nextLinkKey("nextLink");
-  // if (jsonParser.contains(nextLinkKey) && !jsonParser[nextLinkKey].is_null())
-  // {
-  //   result.NextPageToken = jsonParser[nextLinkKey].get<std::string>();
-  // }
-  JsonOptional::SetIfExists(result.ContinuationToken, jsonParser, "nextLink");
+  std::string const nextLinkKey("nextLink");
+  if (jsonParser.contains(nextLinkKey) && !jsonParser[nextLinkKey].is_null())
+  {
+    result.NextPageToken = jsonParser[nextLinkKey].get<std::string>();
+  }
 
   // Key properties
   auto keyPropertiesJson = jsonParser["value"];
@@ -141,8 +140,28 @@ void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
   if (HasMorePages())
   {
     GetDeletedKeysSinglePageOptions options;
-    options.ContinuationToken = NextPageToken;
+    options.NextPageToken = NextPageToken;
     *this = keyClient->GetDeletedKeysSinglePage(options, context);
+    CurrentPageToken = NextPageToken;
+  }
+}
+
+void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
+{
+  if (HasMorePages())
+  {
+    if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Keys)
+    {
+      GetPropertiesOfKeysSinglePageOptions options;
+      options.NextPageToken = NextPageToken;
+      *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
+    }
+    else if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Versions)
+    {
+      GetPropertiesOfKeyVersionsSinglePageOptions options;
+      options.NextPageToken = NextPageToken;
+      *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
+    }
     CurrentPageToken = NextPageToken;
   }
 }

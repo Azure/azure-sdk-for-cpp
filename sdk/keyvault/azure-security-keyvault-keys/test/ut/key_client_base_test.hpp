@@ -93,18 +93,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       std::vector<DeleteKeyOperation> deletedKeys;
       GetPropertiesOfKeysSinglePageOptions options;
-      while (true)
+      for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage();
+           !keyResponse.IsEndOfResponse();
+           keyResponse.MoveToNextPage())
       {
-        auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-        for (auto& key : keyResponse.Value.Items)
+        for (auto& key : keyResponse.Items)
         {
           deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
         }
-        if (!keyResponse.Value.ContinuationToken)
-        {
-          break;
-        }
-        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {

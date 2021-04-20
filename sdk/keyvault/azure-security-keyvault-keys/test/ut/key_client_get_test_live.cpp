@@ -53,18 +53,14 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
   // Get Key properties
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeysSinglePageOptions options;
-  while (true)
+  for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
+       !keyResponse.IsEndOfResponse();
+       keyResponse.MoveToNextPage())
   {
-    auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-    for (auto& key : keyResponse.Value.Items)
+    for (auto& key : keyResponse.Items)
     {
       keyPropertiesList.emplace_back(key);
     }
-    if (!keyResponse.Value.ContinuationToken)
-    {
-      break;
-    }
-    options.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(keyNames.size(), keyPropertiesList.size());
@@ -95,18 +91,14 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   // Get Key versions
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeyVersionsSinglePageOptions getKeyOptions;
-  while (true)
+  for (auto keyResponse = keyClient.GetPropertiesOfKeyVersionsSinglePage(keyName);
+       !keyResponse.IsEndOfResponse();
+       keyResponse.MoveToNextPage())
   {
-    auto keyResponse = keyClient.GetPropertiesOfKeyVersionsSinglePage(keyName, getKeyOptions);
-    for (auto& key : keyResponse.Value.Items)
+    for (auto& key : keyResponse.Items)
     {
       keyPropertiesList.emplace_back(key);
     }
-    if (!keyResponse.Value.ContinuationToken)
-    {
-      break;
-    }
-    getKeyOptions.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(expectedVersions, keyPropertiesList.size());
