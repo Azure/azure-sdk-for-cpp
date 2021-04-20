@@ -44,7 +44,10 @@ namespace Azure {
 
       bool CanRemote() const override { return true; }
 
-      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation) { return true; };
+      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation) override
+      {
+        return true;
+      };
 
       Azure::Response<KeyVaultKey> GetKey(
           Azure::Core::Context const& context = Azure::Core::Context()) const;

@@ -24,8 +24,17 @@ namespace Azure {
    * @brief Parameters for encrypting plaintext.
    *
    */
-  class EncryptParameters {
-  private:
+  struct EncryptParameters
+  {
+    /**
+     * @brief Construct a new Encrypt Parameters object.
+     *
+     * @param algorithm The #EncryptionAlgorithm to use for encrypt operation.
+     * @param plaintext The content to encrypt.
+     * @param iv The initialization vector for encryption.
+     * @param additionalAuthenticatedData The additional data that is authenticated during
+     * decryption but not encrypted.
+     */
     EncryptParameters(
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> plaintext,
@@ -36,12 +45,17 @@ namespace Azure {
     {
     }
 
+    /**
+     * @brief Construct a new Encrypt Parameters object
+     *
+     * @param algorithm The #EncryptionAlgorithm to use for encrypt operation.
+     * @param plaintext The content to encrypt.
+     */
     EncryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> const plaintext)
         : Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext))
     {
     }
 
-  public:
     /**
      * @brief Encrypt Parameters can't be default constructed.
      *

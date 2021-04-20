@@ -24,8 +24,19 @@ namespace Azure {
    * @brief Parameters for decrypting ciphertext.
    *
    */
-  class DecryptParameters {
-  private:
+  struct DecryptParameters
+  {
+    /**
+     * @brief Construct a new Decrypt Parameters object.
+     *
+     * @param algorithm The #EncryptionAlgorithm to use for decrypt operation.
+     * @param ciphertext The content to decrypt.
+     * @param iv The initialization vector for decryption.
+     * @param additionalAuthenticatedData The additional data that is authenticated during
+     * decryption but not encrypted.
+     * @param authenticationTag The authenticated tag resulting from encryption with a symmetric key
+     * using AES.
+     */
     DecryptParameters(
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> ciphertext,
@@ -51,7 +62,6 @@ namespace Azure {
     {
     }
 
-  public:
     /**
      * @brief A default DecryptParameters can't be created.
      *
