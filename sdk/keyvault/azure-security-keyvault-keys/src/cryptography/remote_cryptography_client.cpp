@@ -79,3 +79,23 @@ EncryptResult RemoteCryptographyClient::Encrypt(
           {"encrypt"})
       .Value;
 }
+
+DecryptResult RemoteCryptographyClient::Decrypt(
+    DecryptParameters const& parameters,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline
+      ->SendRequest<DecryptResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&parameters]() {
+            return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
+          },
+          [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
+            result.Algorithm = parameters.Algorithm;
+            return std::move(result);
+          },
+          {"decrypt"})
+      .Value;
+}

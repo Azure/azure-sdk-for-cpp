@@ -108,5 +108,35 @@ namespace Azure {
     {
       return Encrypt(EncryptParameters(algorithm, plaintext), context);
     }
+
+    /**
+     * @brief Decrypts ciphertext.
+     *
+     * @param parameters An #DecryptParameters containing the data to Decrypt and other parameters
+     * for algorithm-dependent Decryption.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return An #DecryptResult containing the Decrypted data along with all other information
+     * needed to decrypt it. This information should be stored with the Decrypted data.
+     */
+    DecryptResult Decrypt(
+        DecryptParameters const& parameters,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Decrypts the specified ciphertext.
+     *
+     * @param algorithm The <see cref="DecryptionAlgorithm"/> to use.</param>
+     * @param ciphertext The data to Decrypt.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return An #DecryptResult containing the Decrypted data along with all other information
+     * needed to decrypt it. This information should be stored with the Decrypted data.
+     */
+    DecryptResult Decrypt(
+        EncryptionAlgorithm algorithm,
+        std::vector<uint8_t> const& ciphertext,
+        Azure::Core::Context const& context = Azure::Core::Context())
+    {
+      return Decrypt(DecryptParameters(algorithm, ciphertext), context);
+    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

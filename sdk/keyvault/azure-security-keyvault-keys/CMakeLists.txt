@@ -32,7 +32,10 @@ set(
     inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_provider.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_serializers.hpp
+    inc/azure/keyvault/keys/cryptography/decrypt_parameters.hpp
+    inc/azure/keyvault/keys/cryptography/decrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
+    inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
     inc/azure/keyvault/keys/cryptography/local_cryptography_provider_factory.hpp
     inc/azure/keyvault/keys/cryptography/local_cryptography_provider.hpp
@@ -62,9 +65,11 @@ set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/cryptography/cryptography_client_options.cpp
     src/cryptography/cryptography_client.cpp
+    src/cryptography/decrypt_parameters.cpp
+    src/cryptography/decrypt_result.cpp
+    src/cryptography/encrypt_parameters.cpp
     src/cryptography/encrypt_result.cpp
     src/cryptography/encryption_algorithm.cpp
-    src/cryptography/encryption_parameters.cpp
     src/cryptography/remote_cryptography_client.cpp
     src/cryptography/rsa_cryptography_provider.cpp
     src/delete_key_operation.cpp

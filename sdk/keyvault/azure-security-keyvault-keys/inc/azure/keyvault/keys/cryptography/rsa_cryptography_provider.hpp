@@ -48,5 +48,9 @@ namespace Azure {
       EncryptResult Encrypt(
           EncryptParameters const& parameters,
           Azure::Core::Context const& context) const override;
+
+      DecryptResult Decrypt(
+          DecryptParameters const& parameters,
+          Azure::Core::Context const& context) const override;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

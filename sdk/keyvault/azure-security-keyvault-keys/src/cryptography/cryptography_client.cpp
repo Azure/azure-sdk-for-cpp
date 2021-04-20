@@ -113,3 +113,44 @@ EncryptResult CryptographyClient::Encrypt(
 
   return result;
 }
+
+DecryptResult CryptographyClient::Decrypt(
+    DecryptParameters const& parameters,
+    Azure::Core::Context const& context)
+{
+  if (m_provider == nullptr)
+  {
+    // Try to init a local crypto provider after getting the key from the server.
+    // If the local provider can't be created, the remote client is used as provider.
+    Initialize(KeyOperation::Decrypt.ToString(), context);
+  }
+
+  // Default result has empty values.
+  DecryptResult result;
+
+  // m_provider can be local or remote, depending on how it was init.
+  if (m_provider->SupportsOperation(KeyOperation::Decrypt))
+  {
+    try
+    {
+      result = m_provider->Decrypt(parameters, context);
+    }
+    catch (std::exception const& e)
+    {
+      // If provider supports remote, otherwise re-throw
+      if (!m_provider->CanRemote())
+      {
+        throw;
+      }
+    }
+
+    if (result.Plaintext.empty())
+    {
+      ThrowIfLocalOnly(KeyOperation::Decrypt.ToString());
+
+      result = m_remoteProvider->Decrypt(parameters, context);
+    }
+  }
+
+  return result;
+}

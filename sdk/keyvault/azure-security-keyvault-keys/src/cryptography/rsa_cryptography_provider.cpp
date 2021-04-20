@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <openssl/evp.h>
+
 #include "azure/keyvault/keys/cryptography/rsa_cryptography_provider.hpp"
 
 #include <memory>
@@ -19,6 +21,17 @@ namespace Azure {
     {
       EncryptResult result;
       result.Algorithm = parameters.Algorithm;
+
+      return result;
+    }
+
+    DecryptResult RsaCryptographyProvider::Decrypt(
+        DecryptParameters const& parameters,
+        Azure::Core::Context const&) const
+    {
+      DecryptResult result;
+      result.Algorithm = parameters.Algorithm;
+
       return result;
     }
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

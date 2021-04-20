@@ -11,6 +11,8 @@
 
 #include <azure/core/context.hpp>
 
+#include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
@@ -35,6 +37,10 @@ namespace Azure {
 
       virtual EncryptResult Encrypt(
           EncryptParameters const& parameters,
+          Azure::Core::Context const& context) const = 0;
+
+      virtual DecryptResult Decrypt(
+          DecryptParameters const& parameters,
           Azure::Core::Context const& context) const = 0;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail
