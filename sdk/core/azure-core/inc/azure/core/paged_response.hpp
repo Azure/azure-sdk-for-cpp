@@ -21,11 +21,11 @@ namespace Azure { namespace Core {
    *
    * @remark The template is using for making static-inheritance.
    *
-   * @remark Derived classes must implement the way to get and move to the next page.
+   * @remark T classes must implement the way to get and move to the next page.
    *
-   * @tparam Derived A class type for static-inheritance.
+   * @tparam T A class type for static-inheritance.
    */
-  template <class Derived> class PagedResponse {
+  template <class T> class PagedResponse {
   private:
     // The field used to check when the end of the response is reached. All responses from a service
     // will always come with a payload that represents a page. The page might or might not contain
@@ -78,8 +78,8 @@ namespace Azure { namespace Core {
     void MoveToNextPage(const Azure::Core::Context& context = Azure::Core::Context())
     {
       static_assert(
-          std::is_base_of<PagedResponse, Derived>::value,
-          "The template argument \"Derived\" should derive from PagedResponse<Derived>.");
+          std::is_base_of<PagedResponse, T>::value,
+          "The template argument \"T\" should derive from PagedResponse<T>.");
 
       if (NextPageToken.empty())
       {
@@ -89,7 +89,7 @@ namespace Azure { namespace Core {
 
       // Developer must make sure current page is kept unchanged if OnNextPage()
       // throws exception.
-      static_cast<Derived*>(this)->OnNextPage(context);
+      static_cast<T*>(this)->OnNextPage(context);
     }
   };
 
