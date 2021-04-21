@@ -94,6 +94,9 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "git reset HEAD^"
 git reset HEAD^
 
+# Format the manifest file
+./vcpkg.exe format-manifes $PortDestinationDirectory/vcpkg.json
+
 # Only perform the final commit if this is not a test release
 if (!$DailyRelease) { 
     # Grab content needed for commit message and place in a temporary file

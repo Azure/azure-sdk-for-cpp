@@ -208,10 +208,6 @@ stages:
                 RepoOwner: azure-sdk
                 PRBranchName: $(DailyBranchName)
 
-            - pwsh: git config --local core.eol lf
-              workingDirectory: $(Pipeline.Workspace)/vcpkg
-              displayName: Set lf line endings for commits
-
             # Placing artifacts in the same branch in sequence reduces the
             # potential for race conditions. If this job does fail to push
             # because another job has already pushed to the same branch it
