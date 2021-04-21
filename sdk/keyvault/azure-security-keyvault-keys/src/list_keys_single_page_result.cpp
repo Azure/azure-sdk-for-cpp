@@ -135,7 +135,7 @@ void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
   GetDeletedKeysSinglePageOptions options;
   options.NextPageToken = NextPageToken;
   *this = keyClient->GetDeletedKeysSinglePage(options, context);
-  CurrentPageToken = NextPageToken.Value();
+  CurrentPageToken = options.NextPageToken.Value();
 }
 
 void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
@@ -147,12 +147,13 @@ void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
     GetPropertiesOfKeysSinglePageOptions options;
     options.NextPageToken = NextPageToken;
     *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
+    CurrentPageToken = options.NextPageToken.Value();
   }
   else if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Versions)
   {
     GetPropertiesOfKeyVersionsSinglePageOptions options;
     options.NextPageToken = NextPageToken;
     *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
+    CurrentPageToken = options.NextPageToken.Value();
   }
-  CurrentPageToken = NextPageToken.Value();
 }

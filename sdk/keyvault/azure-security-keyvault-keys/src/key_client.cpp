@@ -171,7 +171,7 @@ KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeysSinglePage(
       request.Query);
   KeyPropertiesSinglePage responsePage = std::move(response.Value);
   responsePage.RawResponse = std::move(response.RawResponse);
-  responsePage.m_keyClient = std::make_shared<KeyClient>(this);
+  responsePage.m_keyClient = std::make_shared<KeyClient>(*this);
   responsePage.m_type = KeyPropertiesSinglePage::KeyPropertiesType::Keys;
   return responsePage;
 }
@@ -194,7 +194,7 @@ KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeyVersionsSinglePage(
       request.Query);
   KeyPropertiesSinglePage responsePage = std::move(response.Value);
   responsePage.RawResponse = std::move(response.RawResponse);
-  responsePage.m_keyClient = std::make_shared<KeyClient>(this);
+  responsePage.m_keyClient = std::make_shared<KeyClient>(*this);
   responsePage.m_type = KeyPropertiesSinglePage::KeyPropertiesType::Versions;
   responsePage.m_keyName = name;
   return responsePage;
@@ -281,7 +281,7 @@ DeletedKeySinglePage KeyClient::GetDeletedKeysSinglePage(
       request.Query);
   DeletedKeySinglePage responsePage = std::move(response.Value);
   responsePage.RawResponse = std::move(response.RawResponse);
-  responsePage.keyClient = std::make_shared<KeyClient>(this);
+  responsePage.keyClient = std::make_shared<KeyClient>(*this);
   return responsePage;
 }
 
