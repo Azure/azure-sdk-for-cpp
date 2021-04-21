@@ -13,6 +13,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/raw_response.hpp"
+#include "azure/core/nullable.hpp"
 
 namespace Azure { namespace Core {
 
@@ -54,7 +55,7 @@ namespace Azure { namespace Core {
      * for last page or a value for getting the next page.
      *
      */
-    std::string NextPageToken;
+    Azure::Nullable<std::string> NextPageToken;
 
     /**
      * @brief The HTTP response returned by the service.
@@ -81,7 +82,7 @@ namespace Azure { namespace Core {
           std::is_base_of<PagedResponse, T>::value,
           "The template argument \"T\" should derive from PagedResponse<T>.");
 
-      if (NextPageToken.empty())
+      if (!NextPageToken.HasValue() || NextPageToken.Value().empty())
       {
         m_hasPage = false;
         return;

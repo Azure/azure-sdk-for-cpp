@@ -25,11 +25,7 @@ _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
-  std::string const nextLinkKey("nextLink");
-  if (jsonParser.contains(nextLinkKey) && !jsonParser[nextLinkKey].is_null())
-  {
-    result.NextPageToken = jsonParser[nextLinkKey].get<std::string>();
-  }
+  JsonOptional::SetIfExists(result.NextPageToken, jsonParser, "nextLink");
 
   // Key properties
   auto keyPropertiesJson = jsonParser["value"];
@@ -95,11 +91,8 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
   DeletedKeySinglePage deletedKeySinglePage;
-  std::string const nextLinkKey("nextLink");
-  if (jsonParser.contains(nextLinkKey) && !jsonParser[nextLinkKey].is_null())
-  {
-    deletedKeySinglePage.NextPageToken = jsonParser[nextLinkKey].get<std::string>();
-  }
+
+  JsonOptional::SetIfExists(deletedKeySinglePage.NextPageToken, jsonParser, "nextLink");
 
   auto deletedKeys = jsonParser["value"];
   for (auto const& key : deletedKeys)
@@ -137,14 +130,18 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
 
 void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
 {
+  // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
+  // NextPageToken is valid.
   GetDeletedKeysSinglePageOptions options;
   options.NextPageToken = NextPageToken;
   *this = keyClient->GetDeletedKeysSinglePage(options, context);
-  CurrentPageToken = NextPageToken;
+  CurrentPageToken = NextPageToken.Value();
 }
 
 void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
 {
+  // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
+  // NextPageToken is valid.
   if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Keys)
   {
     GetPropertiesOfKeysSinglePageOptions options;
@@ -157,5 +154,5 @@ void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
     options.NextPageToken = NextPageToken;
     *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
   }
-  CurrentPageToken = NextPageToken;
+  CurrentPageToken = NextPageToken.Value();
 }
