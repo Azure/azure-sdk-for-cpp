@@ -145,7 +145,6 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 * `azure-core-cpp`
 * `azure-identity-cpp`
 * `azure-storage-blobs-cpp`
-* `azure-storage-common-cpp`
 * `azure-storage-files-datalake-cpp`
 * `azure-storage-files-shares-cpp`
 
