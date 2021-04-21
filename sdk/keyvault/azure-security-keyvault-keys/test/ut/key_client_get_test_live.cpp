@@ -53,8 +53,7 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
   // Get Key properties
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeysSinglePageOptions options;
-  for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-       !keyResponse.HasPage();
+  for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
@@ -92,7 +91,7 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeyVersionsSinglePageOptions getKeyOptions;
   for (auto keyResponse = keyClient.GetPropertiesOfKeyVersionsSinglePage(keyName);
-       !keyResponse.HasPage();
+       keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
@@ -142,7 +141,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 
   // Get all deleted Keys
   std::vector<DeletedKey> deletedKeys;
-  for (auto keyResponse = keyClient.GetDeletedKeysSinglePage(); !keyResponse.HasPage();
+  for (auto keyResponse = keyClient.GetDeletedKeysSinglePage(); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)

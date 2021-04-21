@@ -93,8 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       std::vector<DeleteKeyOperation> deletedKeys;
       GetPropertiesOfKeysSinglePageOptions options;
-      for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage();
-           keyResponse.HasPage();
+      for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(); keyResponse.HasPage();
            keyResponse.MoveToNextPage())
       {
         for (auto& key : keyResponse.Items)

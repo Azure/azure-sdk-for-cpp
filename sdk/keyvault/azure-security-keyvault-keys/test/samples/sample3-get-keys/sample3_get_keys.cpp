@@ -56,8 +56,7 @@ int main()
     keyClient.CreateEcKey(ecKey);
 
     std::cout << "\t-List Keys" << std::endl;
-    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage();
-         keysSinglePage.HasPage();
+    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(); keysSinglePage.HasPage();
          keysSinglePage.MoveToNextPage())
     {
       for (auto const& key : keysSinglePage.Items)
@@ -102,8 +101,7 @@ int main()
     std::cout << "\t-List Deleted Keys" << std::endl;
 
     // Start getting the first page.
-    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage();
-         keysDeletedPage.HasPage();
+    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage(); keysDeletedPage.HasPage();
          keysDeletedPage.MoveToNextPage())
     {
       for (auto const& key : keysDeletedPage.Items)
