@@ -24,6 +24,10 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient;
 
+  /**
+   * @brief Define a single page to list the keys from the Key Vault.
+   *
+   */
   class KeyPropertiesSinglePage : public Azure::Core::PagedResponse<KeyPropertiesSinglePage> {
   private:
     friend class KeyClient;
@@ -40,9 +44,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     void OnNextPage(const Azure::Core::Context&);
 
   public:
+    /**
+     * @brief Each #KeyProperties represent a Key in the Key Vault.
+     *
+     */
     std::vector<KeyProperties> Items;
   };
 
+  /**
+   * @brief Define a single page containing the deleted keys from the Key Vault.
+   *
+   */
   class DeletedKeySinglePage : public Azure::Core::PagedResponse<DeletedKeySinglePage> {
   private:
     friend class KeyClient;
@@ -52,19 +64,35 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     void OnNextPage(const Azure::Core::Context& context);
 
   public:
+    /**
+     * @brief Each #DeletedKey represent a deleted key in the Key Vault.
+     *
+     */
     std::vector<DeletedKey> Items;
   };
 
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfKeysSinglePage.
+   *
+   */
   struct GetPropertiesOfKeysSinglePageOptions
       : public Azure::Security::KeyVault::_internal::GetSinglePageOptions
   {
   };
 
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfKeyVersionsSinglePage.
+   *
+   */
   struct GetPropertiesOfKeyVersionsSinglePageOptions
       : public Azure::Security::KeyVault::_internal::GetSinglePageOptions
   {
   };
 
+  /**
+   * @brief The options for calling an operation #GetDeletedKeysSinglePage.
+   *
+   */
   struct GetDeletedKeysSinglePageOptions
       : public Azure::Security::KeyVault::_internal::GetSinglePageOptions
   {
