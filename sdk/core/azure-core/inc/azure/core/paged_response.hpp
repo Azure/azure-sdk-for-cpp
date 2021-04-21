@@ -19,12 +19,19 @@ namespace Azure { namespace Core {
   /**
    * @brief Defines the base type and behavior for a paged response.
    *
+   * @remark The template is using for making static-inheritance.
+   *
+   * @remark Derived classes must implement the way to get and move to the next page.
+   *
+   * @tparam Derived A class type for static-inheritance.
    */
-  class PagedResponse {
+  template <class Derived> class PagedResponse {
   private:
-    // Derived classes must implement the way to get and move to the next page.
-    virtual void OnNextPage(const Azure::Core::Context& context) = 0;
-    bool m_endOfResponse = false;
+    // The field used to check when the end of the response is reached. All responses from a service
+    // will always come with a payload that represents a page. The page might or might not contain
+    // elements in the page. `m_hasPage` is then turned to `false` once `MoveToNextPage` is called
+    // on the last page.
+    bool m_hasPage = true;
 
   protected:
     PagedResponse() = default;
@@ -59,30 +66,30 @@ namespace Azure { namespace Core {
      * @brief Check if the page has gone after the last page to the end sentinel.
      *
      */
-    bool IsEndOfResponse() const { return m_endOfResponse; }
-
-    /**
-     * @brief If the page is not at the end of the response and it contains a next
-     * page token.
-     *
-     */
-    bool HasMorePages() const { return !m_endOfResponse && !NextPageToken.empty(); }
+    bool HasPage() const { return m_hasPage; }
 
     /**
      * @brief Get the next page.
+     *
+     * @remark Calling this method on the last page will turned #HasPage() to false.
      *
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
     void MoveToNextPage(const Azure::Core::Context& context = Azure::Core::Context())
     {
-      if (!HasMorePages())
+      static_assert(
+          std::is_base_of<PagedResponse, Derived>::value,
+          "The template argument \"Derived\" should derive from PagedResponse<Derived>.");
+
+      if (NextPageToken.empty())
       {
-        m_endOfResponse = true;
+        m_hasPage = false;
         return;
       }
-      // Developer should make sure current page is kept unchanged if OnNextPage()
+
+      // Developer must make sure current page is kept unchanged if OnNextPage()
       // throws exception.
-      OnNextPage(context);
+      static_cast<Derived*>(this)->OnNextPage(context);
     }
   };
 

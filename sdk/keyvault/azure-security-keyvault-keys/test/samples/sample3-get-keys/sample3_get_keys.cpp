@@ -57,7 +57,7 @@ int main()
 
     std::cout << "\t-List Keys" << std::endl;
     for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage();
-         !keysSinglePage.IsEndOfResponse();
+         keysSinglePage.HasPage();
          keysSinglePage.MoveToNextPage())
     {
       for (auto const& key : keysSinglePage.Items)
@@ -82,7 +82,7 @@ int main()
     // List key versions
     std::cout << "\t-List Key versions" << std::endl;
     for (auto keyVersionsSinglePage = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName);
-         !keyVersionsSinglePage.IsEndOfResponse();
+         keyVersionsSinglePage.HasPage();
          keyVersionsSinglePage.MoveToNextPage())
     {
       for (auto const& key : keyVersionsSinglePage.Items)
@@ -103,7 +103,7 @@ int main()
 
     // Start getting the first page.
     for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage();
-         !keysDeletedPage.IsEndOfResponse();
+         keysDeletedPage.HasPage();
          keysDeletedPage.MoveToNextPage())
     {
       for (auto const& key : keysDeletedPage.Items)

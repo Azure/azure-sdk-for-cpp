@@ -70,7 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     static inline void CleanUpKeyVault(KeyClient const& keyClient)
     {
       std::vector<DeletedKey> deletedKeys;
-      for (auto keyResponse = keyClient.GetDeletedKeysSinglePage(); !keyResponse.IsEndOfResponse();
+      for (auto keyResponse = keyClient.GetDeletedKeysSinglePage(); keyResponse.HasPage();
            keyResponse.MoveToNextPage())
       {
         for (auto& key : keyResponse.Items)
@@ -94,7 +94,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       std::vector<DeleteKeyOperation> deletedKeys;
       GetPropertiesOfKeysSinglePageOptions options;
       for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage();
-           !keyResponse.IsEndOfResponse();
+           keyResponse.HasPage();
            keyResponse.MoveToNextPage())
       {
         for (auto& key : keyResponse.Items)

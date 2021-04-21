@@ -24,9 +24,10 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient;
 
-  class KeyPropertiesSinglePage : public Azure::Core::PagedResponse {
+  class KeyPropertiesSinglePage : public Azure::Core::PagedResponse<KeyPropertiesSinglePage> {
   private:
     friend class KeyClient;
+    friend class Azure::Core::PagedResponse<KeyPropertiesSinglePage>;
 
     enum class KeyPropertiesType
     {
@@ -36,17 +37,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     KeyPropertiesType m_type;
     std::string m_keyName;
     std::shared_ptr<KeyClient> m_keyClient;
-    void OnNextPage(const Azure::Core::Context&) override;
+    void OnNextPage(const Azure::Core::Context&);
 
   public:
     std::vector<KeyProperties> Items;
   };
 
-  class DeletedKeySinglePage : public Azure::Core::PagedResponse {
+  class DeletedKeySinglePage : public Azure::Core::PagedResponse<DeletedKeySinglePage> {
   private:
     friend class KeyClient;
+    friend class Azure::Core::PagedResponse<DeletedKeySinglePage>;
+
     std::shared_ptr<KeyClient> keyClient;
-    void OnNextPage(const Azure::Core::Context& context) override;
+    void OnNextPage(const Azure::Core::Context& context);
 
   public:
     std::vector<DeletedKey> Items;

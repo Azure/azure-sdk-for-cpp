@@ -137,31 +137,25 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
 
 void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
 {
-  if (HasMorePages())
-  {
-    GetDeletedKeysSinglePageOptions options;
-    options.NextPageToken = NextPageToken;
-    *this = keyClient->GetDeletedKeysSinglePage(options, context);
-    CurrentPageToken = NextPageToken;
-  }
+  GetDeletedKeysSinglePageOptions options;
+  options.NextPageToken = NextPageToken;
+  *this = keyClient->GetDeletedKeysSinglePage(options, context);
+  CurrentPageToken = NextPageToken;
 }
 
 void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
 {
-  if (HasMorePages())
+  if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Keys)
   {
-    if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Keys)
-    {
-      GetPropertiesOfKeysSinglePageOptions options;
-      options.NextPageToken = NextPageToken;
-      *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
-    }
-    else if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Versions)
-    {
-      GetPropertiesOfKeyVersionsSinglePageOptions options;
-      options.NextPageToken = NextPageToken;
-      *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
-    }
-    CurrentPageToken = NextPageToken;
+    GetPropertiesOfKeysSinglePageOptions options;
+    options.NextPageToken = NextPageToken;
+    *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
   }
+  else if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Versions)
+  {
+    GetPropertiesOfKeyVersionsSinglePageOptions options;
+    options.NextPageToken = NextPageToken;
+    *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
+  }
+  CurrentPageToken = NextPageToken;
 }
