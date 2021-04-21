@@ -95,7 +95,7 @@ Write-Host "git reset HEAD^"
 git reset HEAD^
 
 # Format the manifest file
-./vcpkg.exe format-manifes $PortDestinationDirectory/vcpkg.json
+./vcpkg.exe format-manifest $PortDestinationDirectory/vcpkg.json
 
 # Only perform the final commit if this is not a test release
 if (!$DailyRelease) { 
