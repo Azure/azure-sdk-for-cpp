@@ -6,6 +6,8 @@
 #include <azure/core/http/policies/policy.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
+#include "azure/keyvault/keys/cryptography/key_sign_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/key_verify_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
@@ -165,4 +167,62 @@ UnwrapResult RemoteCryptographyClient::UnwrapKey(
     Azure::Core::Context const& context) const
 {
   return UnwrapKeyWithResponse(algorithm, key, context).Value;
+}
+
+Azure::Response<SignResult> RemoteCryptographyClient::SignWithResponse(
+    SignatureAlgorithm const& algorithm,
+    std::vector<uint8_t> const& digest,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline->SendRequest<SignResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &digest]() {
+        return KeySignParametersSerializer::KeySignParametersSerialize(
+            KeySignParameters(algorithm.ToString(), digest));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = SignResultSerializer::SignResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"sign"});
+}
+
+SignResult RemoteCryptographyClient::Sign(
+    SignatureAlgorithm const& algorithm,
+    std::vector<uint8_t> const& digest,
+    Azure::Core::Context const& context) const
+{
+  return SignWithResponse(algorithm, digest, context).Value;
+}
+
+Azure::Response<VerifyResult> RemoteCryptographyClient::VerifyWithResponse(
+    SignatureAlgorithm const& algorithm,
+    std::vector<uint8_t> const& digest,
+    std::vector<uint8_t> const& signature,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline->SendRequest<VerifyResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &digest, &signature]() {
+        return KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
+            KeyVerifyParameters(algorithm.ToString(), digest, signature));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = VerifyResultSerializer::VerifyResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"sign"});
+}
+
+VerifyResult RemoteCryptographyClient::Verify(
+    SignatureAlgorithm const& algorithm,
+    std::vector<uint8_t> const& digest,
+    std::vector<uint8_t> const& signature,
+    Azure::Core::Context const& context) const
+{
+  return VerifyWithResponse(algorithm, digest, signature, context).Value;
 }

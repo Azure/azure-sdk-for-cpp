@@ -16,7 +16,10 @@
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp"
+#include "azure/keyvault/keys/cryptography/sign_result.hpp"
+#include "azure/keyvault/keys/cryptography/signature_algorithm.hpp"
 #include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
+#include "azure/keyvault/keys/cryptography/verify_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 
@@ -55,6 +58,17 @@ namespace Azure {
       virtual UnwrapResult UnwrapKey(
           KeyWrapAlgorithm const& algorithm,
           std::vector<uint8_t> const& encryptedKey,
+          Azure::Core::Context const& context) const = 0;
+
+      virtual SignResult Sign(
+          SignatureAlgorithm const& algorithm,
+          std::vector<uint8_t> const& digest,
+          Azure::Core::Context const& context) const = 0;
+
+      virtual VerifyResult Verify(
+          SignatureAlgorithm const& algorithm,
+          std::vector<uint8_t> const& digest,
+          std::vector<uint8_t> const& signature,
           Azure::Core::Context const& context) const = 0;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

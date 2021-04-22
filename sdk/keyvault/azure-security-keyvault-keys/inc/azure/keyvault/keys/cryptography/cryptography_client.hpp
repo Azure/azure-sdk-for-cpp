@@ -16,6 +16,7 @@
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
+#include "azure/keyvault/keys/cryptography/sign_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 
 #include <memory>
@@ -181,6 +182,40 @@ namespace Azure {
     UnwrapResult UnwrapKey(
         KeyWrapAlgorithm algorithm,
         std::vector<uint8_t> const& encryptedKey,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Signs the specified digest.
+     *
+     * @param algorithm The #SignatureAlgorithm to use.
+     * @param digest The pre-hashed digest to sign. The hash algorithm used to compute the digest
+     * must be compatable with the specified algorithm.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the sign operation. The returned #SignResult contains the signature
+     * along with all other information needed to verify it. This information should be stored with
+     * the signature.
+     */
+    SignResult Sign(
+        SignatureAlgorithm algorithm,
+        std::vector<uint8_t> const& digest,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Verifies the specified signature.
+     *
+     * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to sign
+     * the digest.
+     * @param digest The pre-hashed digest corresponding to the signature. The hash algorithm used
+     * to compute the digest must be compatable with the specified algorithm.
+     * @param signature The signature to verify.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the verify operation. If the signature is valid the
+     * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
+     */
+    VerifyResult Verify(
+        SignatureAlgorithm algorithm,
+        std::vector<uint8_t> const& digest,
+        std::vector<uint8_t> const& signature,
         Azure::Core::Context const& context = Azure::Core::Context());
   };
 

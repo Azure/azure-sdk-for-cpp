@@ -238,3 +238,88 @@ UnwrapResult CryptographyClient::UnwrapKey(
 
   return result;
 }
+
+SignResult CryptographyClient::Sign(
+    SignatureAlgorithm algorithm,
+    std::vector<uint8_t> const& digest,
+    Azure::Core::Context const& context)
+{
+  if (m_provider == nullptr)
+  {
+    // Try to init a local crypto provider after getting the encryptedKey from the server.
+    // If the local provider can't be created, the remote client is used as provider.
+    Initialize(KeyOperation::Sign.ToString(), context);
+  }
+
+  // Default result has empty values.
+  SignResult result;
+
+  // m_provider can be local or remote, depending on how it was init.
+  if (m_provider->SupportsOperation(KeyOperation::Sign))
+  {
+    try
+    {
+      result = m_provider->Sign(algorithm, digest, context);
+    }
+    catch (std::exception const&)
+    {
+      // If provider supports remote, otherwise re-throw
+      if (!m_provider->CanRemote())
+      {
+        throw;
+      }
+    }
+
+    if (result.Signature.size() == 0)
+    {
+      ThrowIfLocalOnly(KeyOperation::Sign.ToString());
+
+      result = m_remoteProvider->Sign(algorithm, digest, context);
+    }
+  }
+
+  return result;
+}
+
+VerifyResult CryptographyClient::Verify(
+    SignatureAlgorithm algorithm,
+    std::vector<uint8_t> const& digest,
+    std::vector<uint8_t> const& signature,
+    Azure::Core::Context const& context)
+{
+  if (m_provider == nullptr)
+  {
+    // Try to init a local crypto provider after getting the encryptedKey from the server.
+    // If the local provider can't be created, the remote client is used as provider.
+    Initialize(KeyOperation::Verify.ToString(), context);
+  }
+
+  // Default result has empty values.
+  VerifyResult result;
+
+  // m_provider can be local or remote, depending on how it was init.
+  if (m_provider->SupportsOperation(KeyOperation::Verify))
+  {
+    try
+    {
+      result = m_provider->Verify(algorithm, digest, signature, context);
+    }
+    catch (std::exception const&)
+    {
+      // If provider supports remote, otherwise re-throw
+      if (!m_provider->CanRemote())
+      {
+        throw;
+      }
+    }
+
+    if (result.KeyId.empty())
+    {
+      ThrowIfLocalOnly(KeyOperation::Verify.ToString());
+
+      result = m_remoteProvider->Verify(algorithm, digest, signature, context);
+    }
+  }
+
+  return result;
+}

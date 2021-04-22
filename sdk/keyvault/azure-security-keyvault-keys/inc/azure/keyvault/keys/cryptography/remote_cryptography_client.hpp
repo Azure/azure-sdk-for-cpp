@@ -87,5 +87,27 @@ namespace Azure {
           KeyWrapAlgorithm const& algorithm,
           std::vector<uint8_t> const& encryptedKey,
           Azure::Core::Context const& context) const override;
+
+      Azure::Response<SignResult> SignWithResponse(
+          SignatureAlgorithm const& algorithm,
+          std::vector<uint8_t> const& digest,
+          Azure::Core::Context const& context) const;
+
+      SignResult Sign(
+          SignatureAlgorithm const& algorithm,
+          std::vector<uint8_t> const& digest,
+          Azure::Core::Context const& context) const override;
+
+      Azure::Response<VerifyResult> VerifyWithResponse(
+          SignatureAlgorithm const& algorithm,
+          std::vector<uint8_t> const& digest,
+          std::vector<uint8_t> const& signature,
+          Azure::Core::Context const& context) const;
+
+      VerifyResult Verify(
+          SignatureAlgorithm const& algorithm,
+          std::vector<uint8_t> const& digest,
+          std::vector<uint8_t> const& signature,
+          Azure::Core::Context const& context) const override;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

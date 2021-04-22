@@ -75,3 +75,33 @@ TEST_F(KeyVaultClientTest, RemoteWrap)
     EXPECT_EQ(unwrapResult.KeyId, wrapResult.KeyId);
   }
 }
+
+// Pending for SHA hash support.
+// TEST_F(KeyVaultClientTest, RemoteSign)
+// {
+//   KeyClient keyClient(m_keyVaultUrl, m_credential);
+//   std::string keyName(GetUniqueName());
+
+//   CreateRsaKeyOptions rsaKeyOptions(keyName);
+//   rsaKeyOptions.KeySize = 2048;
+//   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+
+//   // init crypto client from key id. The remote client will get the key and try to create a local
+//   // crypto client.
+//   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
+
+//   {
+//     uint8_t digestSource[] = "A single block of plaintext";
+//     std::vector<uint8_t> digest(std::begin(digestSource), std::end(digestSource));
+
+//     auto signResult = cryptoClient.Sign(SignatureAlgorithm::RS256, digest);
+//     EXPECT_EQ(signResult.Algorithm.ToString(), SignatureAlgorithm::RS256.ToString());
+//     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+//     EXPECT_TRUE(signResult.Signature.size() > 0);
+
+//     auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+//     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+//     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+//     EXPECT_TRUE(verifyResult.IsValid);
+//   }
+// }

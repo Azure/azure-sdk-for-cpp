@@ -44,15 +44,15 @@ namespace Azure {
     }
 
     /**
-     * @brief Construct a default key curve.
+     * @brief Construct a default encryption algorithm.
      *
      */
     EncryptionAlgorithm() = default;
 
     /**
-     * @brief Enables using the equal operator for key curve.
+     * @brief Enables using the equal operator for encryption algorithm.
      *
-     * @param other A key curve to be compared.
+     * @param other A encryption algorithm to be compared.
      */
     bool operator==(const EncryptionAlgorithm& other) const noexcept
     {
@@ -60,7 +60,7 @@ namespace Azure {
     }
 
     /**
-     * @brief Get the string value of the key curve.
+     * @brief Get the string value of the encryption algorithm.
      *
      */
     std::string const& ToString() const { return m_value; }

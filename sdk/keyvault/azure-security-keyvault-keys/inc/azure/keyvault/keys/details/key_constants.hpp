@@ -96,6 +96,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char A192KWValueValue[] = "A192KW";
   constexpr static const char A256KWValueValue[] = "A256KW";
 
+  /***************** Sign / Verify *********/
+  constexpr static const char RS256Value[] = "RS256";
+  constexpr static const char RS384Value[] = "RS384";
+  constexpr static const char RS512Value[] = "RS512";
+  constexpr static const char PS256Value[] = "PS256";
+  constexpr static const char PS384Value[] = "PS384";
+  constexpr static const char PS512Value[] = "PS512";
+  constexpr static const char ES256Value[] = "ES256";
+  constexpr static const char ES384Value[] = "ES384";
+  constexpr static const char ES512Value[] = "ES512";
+  constexpr static const char ES256KValue[] = "ES256K";
+  constexpr static const char DigestValue[] = "digest";
+
   /***************** Encrypt *********/
   constexpr static const char AlgorithmValue[] = "alg";
   constexpr static const char ValueParameterValue[] = "value";

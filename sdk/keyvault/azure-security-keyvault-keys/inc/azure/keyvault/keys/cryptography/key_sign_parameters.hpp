@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Parameters for wrap a key.
+ * @brief Parameters for sign a key.
  *
  */
 
@@ -20,18 +20,18 @@ namespace Azure {
   namespace _detail {
 
     /**
-     * @brief Parameters for wrap a key.
+     * @brief Parameters for sign a key.
      *
      */
-    struct KeyWrapParameters
+    struct KeySignParameters
     {
       std::string Algorithm;
-      std::vector<uint8_t> Key;
+      std::vector<uint8_t> Digest;
 
-      KeyWrapParameters() = delete;
+      KeySignParameters() = delete;
 
-      KeyWrapParameters(std::string algorithm, std::vector<uint8_t> key)
-          : Algorithm(std::move(algorithm)), Key(std::move(key))
+      KeySignParameters(std::string algorithm, std::vector<uint8_t> digest)
+          : Algorithm(std::move(algorithm)), Digest(std::move(digest))
       {
       }
     };

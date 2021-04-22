@@ -17,8 +17,12 @@
 #include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/key_sign_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/key_verify_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/sign_result.hpp"
 #include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
+#include "azure/keyvault/keys/cryptography/verify_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 
 #include <string>
@@ -35,7 +39,7 @@ namespace Azure {
     {
       static EncryptResult EncryptResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
-    }; // namespace EncryptResultSerializer
+    };
 
     /***************** Encrypt Parameters *****************/
     struct EncryptParametersSerializer
@@ -49,7 +53,7 @@ namespace Azure {
     {
       static DecryptResult DecryptResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
-    }; // namespace DecryptResultSerializer
+    };
 
     /***************** Encrypt Parameters *****************/
     struct DecryptParametersSerializer
@@ -62,7 +66,7 @@ namespace Azure {
     struct WrapResultSerializer
     {
       static WrapResult WrapResultDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
-    }; // namespace WrapResultSerializer
+    };
 
     /***************** WrapKey Parameters *****************/
     struct KeyWrapParametersSerializer
@@ -77,6 +81,35 @@ namespace Azure {
     {
       static UnwrapResult UnwrapResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
-    }; // namespace UnwrapResultSerializer
+    };
+
+    /***************** Sign Result *****************/
+    struct SignResultSerializer
+    {
+      static SignResult SignResultDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    /***************** Key sign Parameters *****************/
+    struct KeySignParametersSerializer
+    {
+      static std::string KeySignParametersSerialize(
+          Azure::Security::KeyVault::Keys::Cryptography::_detail::KeySignParameters const&
+              parameters);
+    };
+
+    /***************** Verify Result *****************/
+    struct VerifyResultSerializer
+    {
+      static VerifyResult VerifyResultDeserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    /***************** Key Verify Parameters *****************/
+    struct KeyVerifyParametersSerializer
+    {
+      static std::string KeyVerifyParametersSerialize(
+          Azure::Security::KeyVault::Keys::Cryptography::_detail::KeyVerifyParameters const&
+              parameters);
+    };
 
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

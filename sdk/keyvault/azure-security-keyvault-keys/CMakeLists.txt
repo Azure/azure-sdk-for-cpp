@@ -37,14 +37,19 @@ set(
     inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
     inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
+    inc/azure/keyvault/keys/cryptography/key_sign_parameters.hpp
+    inc/azure/keyvault/keys/cryptography/key_verify_parameters.hpp
     inc/azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp
     inc/azure/keyvault/keys/cryptography/key_wrap_parameters.hpp
     inc/azure/keyvault/keys/cryptography/local_cryptography_provider_factory.hpp
     inc/azure/keyvault/keys/cryptography/local_cryptography_provider.hpp
     inc/azure/keyvault/keys/cryptography/remote_cryptography_client.hpp
     inc/azure/keyvault/keys/cryptography/rsa_cryptography_provider.hpp
+    inc/azure/keyvault/keys/cryptography/sign_result.hpp
+    inc/azure/keyvault/keys/cryptography/signature_algorithm.hpp
     inc/azure/keyvault/keys/cryptography/wrap_result.hpp
     inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
+    inc/azure/keyvault/keys/cryptography/verify_result.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/details/key_backup.hpp
@@ -74,12 +79,17 @@ set(
     src/cryptography/encrypt_parameters.cpp
     src/cryptography/encrypt_result.cpp
     src/cryptography/encryption_algorithm.cpp
+    src/cryptography/key_sign_parameters.cpp
+    src/cryptography/key_verify_parameters.cpp
     src/cryptography/key_wrap_algorithm.cpp
     src/cryptography/key_wrap_parameters.cpp
     src/cryptography/remote_cryptography_client.cpp
     src/cryptography/rsa_cryptography_provider.cpp
+    src/cryptography/sign_result.cpp
+    src/cryptography/signature_algorithm.cpp
     src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
+    src/cryptography/verify_result.cpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
     src/import_key_options.cpp
