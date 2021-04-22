@@ -30,4 +30,27 @@ namespace Azure {
       result.Algorithm = parameters.Algorithm;
       return result;
     }
+
+    WrapResult RsaCryptographyProvider::WrapKey(
+        KeyWrapAlgorithm const& algorithm,
+        std::vector<uint8_t> const& key,
+        Azure::Core::Context const&) const
+    {
+      WrapResult result;
+      (void)key;
+      result.Algorithm = algorithm;
+      return result;
+    }
+
+    UnwrapResult RsaCryptographyProvider::UnwrapKey(
+        KeyWrapAlgorithm const& algorithm,
+        std::vector<uint8_t> const& key,
+        Azure::Core::Context const&) const
+    {
+      UnwrapResult result;
+      (void)key;
+      result.Algorithm = algorithm;
+      return result;
+    }
+
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

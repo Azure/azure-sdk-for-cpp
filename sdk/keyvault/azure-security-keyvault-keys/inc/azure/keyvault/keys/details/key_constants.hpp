@@ -92,10 +92,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char A128CbcPadValue[] = "A128CBCPAD";
   constexpr static const char A192CbcPadValue[] = "A192CBCPAD";
   constexpr static const char A256CbcPadValue[] = "A256CBCPAD";
+  constexpr static const char A128KWValueValue[] = "A128KW";
+  constexpr static const char A192KWValueValue[] = "A192KW";
+  constexpr static const char A256KWValueValue[] = "A256KW";
 
   /***************** Encrypt *********/
   constexpr static const char AlgorithmValue[] = "alg";
-  constexpr static const char EncryptParameterValue[] = "value";
+  constexpr static const char ValueParameterValue[] = "value";
   constexpr static const char IvValue[] = "iv";
   constexpr static const char AdditionalAuthenticatedValue[] = "aad";
   constexpr static const char AuthenticationTagValue[] = "tag";

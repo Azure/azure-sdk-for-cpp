@@ -16,6 +16,7 @@
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
+#include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 
 #include <memory>
 #include <string>
@@ -152,5 +153,35 @@ namespace Azure {
     {
       return Decrypt(DecryptParameters(algorithm, ciphertext), context);
     }
+
+    /**
+     * @brief Encrypts the specified key.
+     *
+     * @param algorithm The #KeyWrapAlgorithm to use.
+     * @param key The key to encrypt.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the wrap operation. The returned #WrapResult contains the wrapped key
+     * along with all other information needed to unwrap it. This information should be stored with
+     * the wrapped key.
+     */
+    WrapResult WrapKey(
+        KeyWrapAlgorithm algorithm,
+        std::vector<uint8_t> const& key,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Decrypts the specified encrypted key.
+     *
+     * @param algorithm The #KeyWrapAlgorithm to use.
+     * @param encryptedKey The encrypted key.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the unwrap operation. The returned #UnwrapResult contains the key along
+     * with information regarding the algorithm and key used to unwrap it.
+     */
+    UnwrapResult UnwrapKey(
+        KeyWrapAlgorithm algorithm,
+        std::vector<uint8_t> const& encryptedKey,
+        Azure::Core::Context const& context = Azure::Core::Context());
   };
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

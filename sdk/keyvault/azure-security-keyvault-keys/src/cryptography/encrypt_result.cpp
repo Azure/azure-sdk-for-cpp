@@ -31,7 +31,7 @@ namespace Azure {
     EncryptResult result;
     result.KeyId = jsonParser[KeyIdPropertyName].get<std::string>();
     result.Ciphertext
-        = Base64Url::Base64UrlDecode(jsonParser[EncryptParameterValue].get<std::string>());
+        = Base64Url::Base64UrlDecode(jsonParser[ValueParameterValue].get<std::string>());
 
     if (jsonParser.contains(IvValue) && !jsonParser[IvValue].is_null())
     {

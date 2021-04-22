@@ -17,6 +17,9 @@
 #include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
+#include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 
 #include <string>
 
@@ -54,5 +57,26 @@ namespace Azure {
       static std::string DecryptParametersSerialize(
           Azure::Security::KeyVault::Keys::Cryptography::DecryptParameters const& parameters);
     };
+
+    /***************** WrapKey Result *****************/
+    struct WrapResultSerializer
+    {
+      static WrapResult WrapResultDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
+    }; // namespace WrapResultSerializer
+
+    /***************** WrapKey Parameters *****************/
+    struct KeyWrapParametersSerializer
+    {
+      static std::string KeyWrapParametersSerialize(
+          Azure::Security::KeyVault::Keys::Cryptography::_detail::KeyWrapParameters const&
+              parameters);
+    };
+
+    /***************** UnwrapKey Result *****************/
+    struct UnwrapResultSerializer
+    {
+      static UnwrapResult UnwrapResultDeserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    }; // namespace UnwrapResultSerializer
 
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

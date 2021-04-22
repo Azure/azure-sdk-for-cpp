@@ -4,7 +4,7 @@
 #include <azure/core/internal/json/json.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
-#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 
 #include <azure/keyvault/common/internal/base64url.hpp>
@@ -22,17 +22,22 @@ namespace Azure {
       namespace Keys {
         namespace Cryptography {
 
-  DecryptResult _detail::DecryptResultSerializer::DecryptResultDeserialize(
+  WrapResult _detail::WrapResultSerializer::WrapResultDeserialize(
       Azure::Core::Http::RawResponse const& rawResponse)
   {
     auto const& body = rawResponse.GetBody();
     auto jsonParser = json::parse(body);
 
-    DecryptResult result;
+    WrapResult result;
     result.KeyId = jsonParser[KeyIdPropertyName].get<std::string>();
-    result.Plaintext
-        = Base64Url::Base64UrlDecode(jsonParser[ValueParameterValue].get<std::string>());
+
+    if (jsonParser.contains(ValueParameterValue) && !jsonParser[ValueParameterValue].is_null())
+    {
+      result.EncryptedKey
+          = Base64Url::Base64UrlDecode(jsonParser[ValueParameterValue].get<std::string>());
+    }
 
     return result;
   }
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

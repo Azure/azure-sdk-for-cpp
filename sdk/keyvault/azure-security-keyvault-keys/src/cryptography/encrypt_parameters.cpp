@@ -24,7 +24,7 @@ namespace Azure {
     using namespace Azure::Security::KeyVault::Keys::_detail;
     using namespace Azure::Security::KeyVault::_internal;
     payload[AlgorithmValue] = parameters.Algorithm.ToString();
-    payload[EncryptParameterValue] = Base64Url::Base64UrlEncode(parameters.Plaintext);
+    payload[ValueParameterValue] = Base64Url::Base64UrlEncode(parameters.Plaintext);
 
     if (parameters.Iv.size() > 0)
     {

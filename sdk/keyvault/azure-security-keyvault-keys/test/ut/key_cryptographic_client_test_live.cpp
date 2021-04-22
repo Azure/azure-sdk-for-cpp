@@ -46,3 +46,32 @@ TEST_F(KeyVaultClientTest, RemoteEncrypt)
     EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
   }
 }
+
+TEST_F(KeyVaultClientTest, RemoteWrap)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
+
+  CreateRsaKeyOptions rsaKeyOptions(keyName);
+  rsaKeyOptions.KeySize = 2048;
+  auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+
+  // init crypto client from key id. The remote client will get the key and try to create a local
+  // crypto client.
+  CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
+
+  {
+    uint8_t plaintextSource[] = "A single block of plaintext";
+    std::vector<uint8_t> plaintext(std::begin(plaintextSource), std::end(plaintextSource));
+
+    auto wrapResult = cryptoClient.WrapKey(KeyWrapAlgorithm::RsaOaep256, plaintext);
+    EXPECT_EQ(wrapResult.Algorithm.ToString(), KeyWrapAlgorithm::RsaOaep256.ToString());
+    EXPECT_EQ(wrapResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(wrapResult.EncryptedKey.size() > 0);
+
+    auto unwrapResult = cryptoClient.UnwrapKey(wrapResult.Algorithm, wrapResult.EncryptedKey);
+    EXPECT_EQ(unwrapResult.Algorithm.ToString(), wrapResult.Algorithm.ToString());
+    EXPECT_EQ(unwrapResult.Key, plaintext);
+    EXPECT_EQ(unwrapResult.KeyId, wrapResult.KeyId);
+  }
+}

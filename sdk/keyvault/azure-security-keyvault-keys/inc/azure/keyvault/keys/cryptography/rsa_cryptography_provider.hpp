@@ -52,5 +52,15 @@ namespace Azure {
       DecryptResult Decrypt(
           DecryptParameters const& parameters,
           Azure::Core::Context const& context) const override;
+
+      WrapResult WrapKey(
+          KeyWrapAlgorithm const& algorithm,
+          std::vector<uint8_t> const& key,
+          Azure::Core::Context const& context) const override;
+
+      UnwrapResult UnwrapKey(
+          KeyWrapAlgorithm const& algorithm,
+          std::vector<uint8_t> const& encryptedKey,
+          Azure::Core::Context const& context) const override;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

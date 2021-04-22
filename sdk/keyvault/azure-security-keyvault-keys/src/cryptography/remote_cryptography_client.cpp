@@ -6,6 +6,7 @@
 #include <azure/core/http/policies/policy.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
+#include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
@@ -108,4 +109,60 @@ DecryptResult RemoteCryptographyClient::Decrypt(
     Azure::Core::Context const& context) const
 {
   return DecryptWithResponse(parameters, context).Value;
+}
+
+Azure::Response<WrapResult> RemoteCryptographyClient::WrapKeyWithResponse(
+    KeyWrapAlgorithm const& algorithm,
+    std::vector<uint8_t> const& key,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline->SendRequest<WrapResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &key]() {
+        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+            KeyWrapParameters(algorithm.ToString(), key));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = WrapResultSerializer::WrapResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"wrapKey"});
+}
+
+WrapResult RemoteCryptographyClient::WrapKey(
+    KeyWrapAlgorithm const& algorithm,
+    std::vector<uint8_t> const& key,
+    Azure::Core::Context const& context) const
+{
+  return WrapKeyWithResponse(algorithm, key, context).Value;
+}
+
+Azure::Response<UnwrapResult> RemoteCryptographyClient::UnwrapKeyWithResponse(
+    KeyWrapAlgorithm const& algorithm,
+    std::vector<uint8_t> const& key,
+    Azure::Core::Context const& context) const
+{
+  return Pipeline->SendRequest<UnwrapResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &key]() {
+        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+            KeyWrapParameters(algorithm.ToString(), key));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = UnwrapResultSerializer::UnwrapResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"unwrapKey"});
+}
+
+UnwrapResult RemoteCryptographyClient::UnwrapKey(
+    KeyWrapAlgorithm const& algorithm,
+    std::vector<uint8_t> const& key,
+    Azure::Core::Context const& context) const
+{
+  return UnwrapKeyWithResponse(algorithm, key, context).Value;
 }

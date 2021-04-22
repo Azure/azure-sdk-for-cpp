@@ -211,7 +211,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark The delete key operation cannot be used to remove individual versions of a key. This
      * operation removes the cryptographic material associated with the key, which means the key is
-     * not usable for Sign/Verify, Wrap/Unwrap or Encrypt/Decrypt operations. This operation
+     * not usable for Sign/Verify, WrapKey/Unwrap or Encrypt/Decrypt operations. This operation
      * requires the keys/delete permission.
      *
      * @param name The name of the key.

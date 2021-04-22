@@ -154,3 +154,87 @@ DecryptResult CryptographyClient::Decrypt(
 
   return result;
 }
+
+WrapResult CryptographyClient::WrapKey(
+    KeyWrapAlgorithm algorithm,
+    std::vector<uint8_t> const& key,
+    Azure::Core::Context const& context)
+{
+  if (m_provider == nullptr)
+  {
+    // Try to init a local crypto provider after getting the key from the server.
+    // If the local provider can't be created, the remote client is used as provider.
+    Initialize(KeyOperation::WrapKey.ToString(), context);
+  }
+
+  // Default result has empty values.
+  WrapResult result;
+
+  // m_provider can be local or remote, depending on how it was init.
+  if (m_provider->SupportsOperation(KeyOperation::WrapKey))
+  {
+    try
+    {
+      result = m_provider->WrapKey(algorithm, key, context);
+    }
+    catch (std::exception const&)
+    {
+      // If provider supports remote, otherwise re-throw
+      if (!m_provider->CanRemote())
+      {
+        throw;
+      }
+    }
+
+    if (result.EncryptedKey.size() == 0)
+    {
+      ThrowIfLocalOnly(KeyOperation::WrapKey.ToString());
+
+      result = m_remoteProvider->WrapKey(algorithm, key, context);
+    }
+  }
+
+  return result;
+}
+
+UnwrapResult CryptographyClient::UnwrapKey(
+    KeyWrapAlgorithm algorithm,
+    std::vector<uint8_t> const& encryptedKey,
+    Azure::Core::Context const& context)
+{
+  if (m_provider == nullptr)
+  {
+    // Try to init a local crypto provider after getting the encryptedKey from the server.
+    // If the local provider can't be created, the remote client is used as provider.
+    Initialize(KeyOperation::UnwrapKey.ToString(), context);
+  }
+
+  // Default result has empty values.
+  UnwrapResult result;
+
+  // m_provider can be local or remote, depending on how it was init.
+  if (m_provider->SupportsOperation(KeyOperation::UnwrapKey))
+  {
+    try
+    {
+      result = m_provider->UnwrapKey(algorithm, encryptedKey, context);
+    }
+    catch (std::exception const&)
+    {
+      // If provider supports remote, otherwise re-throw
+      if (!m_provider->CanRemote())
+      {
+        throw;
+      }
+    }
+
+    if (result.Key.size() == 0)
+    {
+      ThrowIfLocalOnly(KeyOperation::UnwrapKey.ToString());
+
+      result = m_remoteProvider->UnwrapKey(algorithm, encryptedKey, context);
+    }
+  }
+
+  return result;
+}

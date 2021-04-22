@@ -67,5 +67,25 @@ namespace Azure {
       Azure::Response<DecryptResult> DecryptWithResponse(
           DecryptParameters const& parameters,
           Azure::Core::Context const& context) const;
+
+      Azure::Response<WrapResult> WrapKeyWithResponse(
+          KeyWrapAlgorithm const& algorithm,
+          std::vector<uint8_t> const& key,
+          Azure::Core::Context const& context) const;
+
+      WrapResult WrapKey(
+          KeyWrapAlgorithm const& algorithm,
+          std::vector<uint8_t> const& key,
+          Azure::Core::Context const& context) const override;
+
+      Azure::Response<UnwrapResult> UnwrapKeyWithResponse(
+          KeyWrapAlgorithm const& algorithm,
+          std::vector<uint8_t> const& encryptedKey,
+          Azure::Core::Context const& context) const;
+
+      UnwrapResult UnwrapKey(
+          KeyWrapAlgorithm const& algorithm,
+          std::vector<uint8_t> const& encryptedKey,
+          Azure::Core::Context const& context) const override;
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

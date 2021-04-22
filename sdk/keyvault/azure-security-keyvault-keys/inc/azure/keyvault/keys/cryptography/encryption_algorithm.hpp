@@ -30,7 +30,7 @@ namespace Azure {
 
   public:
     /**
-     * @brief Construct a new Key Curve Name object.
+     * @brief Construct a new #EncryptionAlgorithm object.
      *
      * @param value The string value of the instance.
      */
@@ -38,7 +38,7 @@ namespace Azure {
     {
       if (value.empty())
       {
-        throw std::invalid_argument("The value for the curve name can not be empty");
+        throw std::invalid_argument("The value for the encryption algorithm can not be empty");
       }
       m_value = std::move(value);
     }
