@@ -10,7 +10,11 @@
     "It is not meant to be published to vcpkg."
   ],
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/template/azure-template",
+  "license": "MIT",
   "dependencies": [
-    "azure-core-cpp"
+    {
+      "name": "azure-core-cpp",
+      "default-features": false
+    }
   ]
 }
