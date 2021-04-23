@@ -4,7 +4,7 @@
 
 ### New Features
 
-- Added `PagedResponse<T>`.
+- Added `Azure::PagedResponse<T>`.
 
 ### Bug Fixes
 
