@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/cryptography/hash.hpp>
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -19,6 +20,33 @@ using namespace Azure::Security::KeyVault::Keys::Cryptography::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+
+namespace {
+// 1Mb at a time
+const int64_t DefaultStreamDigestReadSize = 1024 * 1024;
+
+inline std::vector<uint8_t> CreateDigest(
+    SignatureAlgorithm algorithm,
+    Azure::Core::IO::BodyStream& data)
+{
+  uint8_t buffer[DefaultStreamDigestReadSize];
+  auto hasAlgo = algorithm.GetHashAlgorithm();
+  for (uint64_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
+       read = data.Read(buffer, DefaultStreamDigestReadSize))
+  {
+    hasAlgo->Append(buffer, read);
+  }
+  return hasAlgo->Final();
+}
+
+inline std::vector<uint8_t> CreateDigest(
+    SignatureAlgorithm algorithm,
+    std::vector<uint8_t> const& data)
+{
+  auto hasAlgo = algorithm.GetHashAlgorithm();
+  return hasAlgo->Final(data.data(), data.size());
+}
+} // namespace
 
 void CryptographyClient::Initialize(std::string const&, Azure::Core::Context const& context)
 {
@@ -281,6 +309,22 @@ SignResult CryptographyClient::Sign(
   return result;
 }
 
+SignResult CryptographyClient::SignData(
+    SignatureAlgorithm algorithm,
+    Azure::Core::IO::BodyStream& data,
+    Azure::Core::Context const& context)
+{
+  return Sign(algorithm, CreateDigest(algorithm, data), context);
+}
+
+SignResult CryptographyClient::SignData(
+    SignatureAlgorithm algorithm,
+    std::vector<uint8_t> const& data,
+    Azure::Core::Context const& context)
+{
+  return Sign(algorithm, CreateDigest(algorithm, data), context);
+}
+
 VerifyResult CryptographyClient::Verify(
     SignatureAlgorithm algorithm,
     std::vector<uint8_t> const& digest,
@@ -322,4 +366,22 @@ VerifyResult CryptographyClient::Verify(
   }
 
   return result;
+}
+
+VerifyResult CryptographyClient::VerifyData(
+    SignatureAlgorithm algorithm,
+    Azure::Core::IO::BodyStream& data,
+    std::vector<uint8_t> const& signature,
+    Azure::Core::Context const& context)
+{
+  return Verify(algorithm, CreateDigest(algorithm, data), signature, context);
+}
+
+VerifyResult CryptographyClient::VerifyData(
+    SignatureAlgorithm algorithm,
+    std::vector<uint8_t> const& data,
+    std::vector<uint8_t> const& signature,
+    Azure::Core::Context const& context)
+{
+  return Verify(algorithm, CreateDigest(algorithm, data), signature, context);
 }

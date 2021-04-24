@@ -11,6 +11,8 @@
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
+#include <azure/core/io/body_stream.hpp>
+
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_provider.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
@@ -201,6 +203,36 @@ namespace Azure {
         Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
+     * @brief Signs the specified data.
+     *
+     * @param algorithm The #SignatureAlgorithm to use.
+     * @param data The data to sign.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the sign operation. The returned #SignResult contains the signature
+     * along with all other information needed to verify it. This information should be stored with
+     * the signature.
+     */
+    SignResult SignData(
+        SignatureAlgorithm algorithm,
+        Azure::Core::IO::BodyStream& data,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Signs the specified data.
+     *
+     * @param algorithm The #SignatureAlgorithm to use.
+     * @param data The data to sign.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the sign operation. The returned #SignResult contains the signature
+     * along with all other information needed to verify it. This information should be stored with
+     * the signature.
+     */
+    SignResult SignData(
+        SignatureAlgorithm algorithm,
+        std::vector<uint8_t> const& data,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
      * @brief Verifies the specified signature.
      *
      * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to sign
@@ -215,6 +247,40 @@ namespace Azure {
     VerifyResult Verify(
         SignatureAlgorithm algorithm,
         std::vector<uint8_t> const& digest,
+        std::vector<uint8_t> const& signature,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Verifies the specified signature.
+     *
+     * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to sign
+     * the data.
+     * @param data The data corresponding to the signature.
+     * @param signature The signature to verify.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the verify operation. If the signature is valid the
+     * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
+     */
+    VerifyResult VerifyData(
+        SignatureAlgorithm algorithm,
+        Azure::Core::IO::BodyStream& data,
+        std::vector<uint8_t> const& signature,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Verifies the specified signature.
+     *
+     * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to sign
+     * the data.
+     * @param data The data corresponding to the signature.
+     * @param signature The signature to verify.
+     * @param context A #Azure::Core::Context to cancel the operation.
+     * @return The result of the verify operation. If the signature is valid the
+     * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
+     */
+    VerifyResult VerifyData(
+        SignatureAlgorithm algorithm,
+        std::vector<uint8_t> const& data,
         std::vector<uint8_t> const& signature,
         Azure::Core::Context const& context = Azure::Core::Context());
   };

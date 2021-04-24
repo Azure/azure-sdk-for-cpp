@@ -7,6 +7,8 @@
 
 #include "gtest/gtest.h"
 
+#include <azure/keyvault/common/sha.hpp>
+
 #include "key_client_base_test.hpp"
 
 #include <azure/keyvault/key_vault_keys.hpp>
@@ -76,32 +78,201 @@ TEST_F(KeyVaultClientTest, RemoteWrap)
   }
 }
 
-// Pending for SHA hash support.
-// TEST_F(KeyVaultClientTest, RemoteSign)
-// {
-//   KeyClient keyClient(m_keyVaultUrl, m_credential);
-//   std::string keyName(GetUniqueName());
+TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA256)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
 
-//   CreateRsaKeyOptions rsaKeyOptions(keyName);
-//   rsaKeyOptions.KeySize = 2048;
-//   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+  CreateRsaKeyOptions rsaKeyOptions(keyName);
+  rsaKeyOptions.KeySize = 2048;
+  auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
-//   // init crypto client from key id. The remote client will get the key and try to create a local
-//   // crypto client.
-//   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
+  // init crypto client from key id. The remote client will get the key and try to create a local
+  // crypto client.
+  CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
+  std::string digestSource("A single block of plaintext");
 
-//   {
-//     uint8_t digestSource[] = "A single block of plaintext";
-//     std::vector<uint8_t> digest(std::begin(digestSource), std::end(digestSource));
+  // RS256
+  {
+    Azure::Security::KeyVault::SHA256 sha256;
+    auto signatureAlgorithm = SignatureAlgorithm::RS256;
+    std::vector<uint8_t> digest
+        = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-//     auto signResult = cryptoClient.Sign(SignatureAlgorithm::RS256, digest);
-//     EXPECT_EQ(signResult.Algorithm.ToString(), SignatureAlgorithm::RS256.ToString());
-//     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
-//     EXPECT_TRUE(signResult.Signature.size() > 0);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
 
-//     auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
-//     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
-//     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
-//     EXPECT_TRUE(verifyResult.IsValid);
-//   }
-// }
+    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+
+  // PS256
+  {
+    Azure::Security::KeyVault::SHA256 sha256;
+    auto signatureAlgorithm = SignatureAlgorithm::PS256;
+    std::vector<uint8_t> digest
+        = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
+
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+}
+
+TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
+  std::string digestSource("A single block of plaintext");
+
+  // ES256
+  {
+    CreateEcKeyOptions ecKeyOptions(keyName);
+    ecKeyOptions.CurveName = KeyCurveName::P256;
+    auto ecKey = keyClient.CreateEcKey(ecKeyOptions).Value;
+    CryptographyClient cryptoClient(ecKey.Id(), m_credential);
+
+    Azure::Security::KeyVault::SHA256 sha256;
+    auto signatureAlgorithm = SignatureAlgorithm::ES256;
+    std::vector<uint8_t> digest
+        = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
+
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, ecKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, ecKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+
+  // ES256K
+  {
+    CreateEcKeyOptions ecKeyOptions(keyName);
+    ecKeyOptions.CurveName = KeyCurveName::P256K;
+    auto ecKey = keyClient.CreateEcKey(ecKeyOptions).Value;
+    CryptographyClient cryptoClient(ecKey.Id(), m_credential);
+
+    Azure::Security::KeyVault::SHA256 sha256;
+    auto signatureAlgorithm = SignatureAlgorithm::ES256K;
+    std::vector<uint8_t> digest
+        = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
+
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, ecKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, ecKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+}
+
+TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA384)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
+
+  CreateRsaKeyOptions rsaKeyOptions(keyName);
+  rsaKeyOptions.KeySize = 2048;
+  auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+
+  // init crypto client from key id. The remote client will get the key and try to create a local
+  // crypto client.
+  CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
+  std::string digestSource("A single block of plaintext");
+
+  // RS384
+  {
+    Azure::Security::KeyVault::SHA384 sha384;
+    auto signatureAlgorithm = SignatureAlgorithm::RS384;
+    std::vector<uint8_t> digest
+        = sha384.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
+
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+
+  // PS384
+  {
+    Azure::Security::KeyVault::SHA384 sha384;
+    auto signatureAlgorithm = SignatureAlgorithm::PS384;
+    std::vector<uint8_t> digest
+        = sha384.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
+
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+}
+
+TEST_F(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
+
+  CreateRsaKeyOptions rsaKeyOptions(keyName);
+  rsaKeyOptions.KeySize = 2048;
+  auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+
+  // init crypto client from key id. The remote client will get the key and try to create a local
+  // crypto client.
+  CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
+  uint8_t dataSource[] = "A single block of plaintext";
+  std::vector<uint8_t> data(std::begin(dataSource), std::end(dataSource));
+
+  // RS256
+  {
+    auto signatureAlgorithm = SignatureAlgorithm::RS256;
+    auto signResult = cryptoClient.SignData(signatureAlgorithm, data);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.VerifyData(signResult.Algorithm, data, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+
+  // PS256
+  {
+    auto signatureAlgorithm = SignatureAlgorithm::PS256;
+    auto signResult = cryptoClient.SignData(signatureAlgorithm, data);
+    EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
+    EXPECT_EQ(signResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(signResult.Signature.size() > 0);
+
+    auto verifyResult = cryptoClient.VerifyData(signResult.Algorithm, data, signResult.Signature);
+    EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
+    EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(verifyResult.IsValid);
+  }
+}

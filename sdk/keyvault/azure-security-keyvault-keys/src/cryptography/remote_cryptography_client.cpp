@@ -210,12 +210,15 @@ Azure::Response<VerifyResult> RemoteCryptographyClient::VerifyWithResponse(
         return KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
             KeyVerifyParameters(algorithm.ToString(), digest, signature));
       },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+      [&algorithm, this](Azure::Core::Http::RawResponse const& rawResponse) {
         auto result = VerifyResultSerializer::VerifyResultDeserialize(rawResponse);
         result.Algorithm = algorithm;
+        // Verify result won't return the KeyId, the client SDK will add it based on the client
+        // KeyId.
+        result.KeyId = this->KeyId.GetAbsoluteUrl();
         return result;
       },
-      {"sign"});
+      {"verify"});
 }
 
 VerifyResult RemoteCryptographyClient::Verify(

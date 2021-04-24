@@ -29,7 +29,6 @@ namespace Azure {
     auto jsonParser = json::parse(body);
 
     VerifyResult result;
-    result.KeyId = jsonParser[KeyIdPropertyName].get<std::string>();
     result.IsValid = jsonParser[ValueParameterValue].get<bool>();
 
     return result;

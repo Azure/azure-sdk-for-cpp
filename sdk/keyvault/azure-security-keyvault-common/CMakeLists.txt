@@ -35,12 +35,14 @@ set(
     inc/azure/keyvault/common/keyvault_constants.hpp
     inc/azure/keyvault/common/keyvault_exception.hpp
     inc/azure/keyvault/common/version.hpp
+    inc/azure/keyvault/common/sha.hpp
 )
 
 set(
   AZURE_KEYVAULT_COMMON_SOURCE
     src/keyvault_exception.cpp
     src/keyvault_pipeline.cpp
+    src/sha.cpp
 )
 
 add_library(
@@ -57,6 +59,13 @@ target_include_directories(
 )
 
 target_link_libraries(azure-security-keyvault-common PUBLIC Azure::azure-core)
+
+if(WIN32)
+    target_link_libraries(azure-security-keyvault-common PRIVATE bcrypt crypt32)
+else()
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-security-keyvault-common PRIVATE OpenSSL::SSL)
+endif()
 
 if(MSVC)
     # C28020 and C28204 are introduced by nlohmann/json

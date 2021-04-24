@@ -9,8 +9,11 @@
 
 #pragma once
 
+#include <azure/core/cryptography/hash.hpp>
+
 #include "azure/keyvault/keys/dll_import_export.hpp"
 
+#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -64,6 +67,12 @@ namespace Azure {
      *
      */
     std::string const& ToString() const { return m_value; }
+
+    /**
+     * @brief Get the Hash Algorithm associated with the #SignatureAlgorithm.
+     *
+     */
+    std::unique_ptr<Azure::Core::Cryptography::Hash> GetHashAlgorithm() const;
 
     /**
      * @brief An RSA SHA-256 #SignatureAlgorithm
