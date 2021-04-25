@@ -170,14 +170,11 @@ private:
   std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override
   {
     OnAppend(data, length);
-    
+
     std::vector<uint8_t> hash;
     hash.resize(m_hashLength);
     NTSTATUS status = BCryptFinishHash(
-        m_hashHandle,
-        reinterpret_cast<PUCHAR>(&hash[0]),
-        static_cast<ULONG>(hash.size()),
-        0);
+        m_hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
     if (!BCRYPT_SUCCESS(status))
     {
       throw std::runtime_error("BCryptFinishHash failed");
