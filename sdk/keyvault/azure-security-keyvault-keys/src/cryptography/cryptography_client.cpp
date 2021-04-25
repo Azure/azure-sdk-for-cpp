@@ -34,7 +34,7 @@ inline std::vector<uint8_t> CreateDigest(
   for (uint64_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
        read = data.Read(buffer, DefaultStreamDigestReadSize))
   {
-    hasAlgo->Append(buffer, read);
+    hasAlgo->Append(buffer, static_cast<size_t>(read));
   }
   return hasAlgo->Final();
 }
