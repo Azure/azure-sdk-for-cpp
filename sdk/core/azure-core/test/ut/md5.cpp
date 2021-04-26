@@ -98,7 +98,7 @@ TEST(Md5Hash, Basic)
 TEST(Md5Hash, ExpectThrow)
 {
   std::string data = "";
-  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
+  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.c_str());
   Md5Hash instance;
 
   EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);

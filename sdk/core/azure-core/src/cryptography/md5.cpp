@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/cryptography/hash.hpp"
+#include "azure/core/cryptography/md5.hpp"
 #include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -16,100 +16,68 @@
 #include <stdexcept>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Cryptography {
+namespace {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-  namespace _detail {
-    struct AlgorithmProviderInstance
-    {
-      BCRYPT_ALG_HANDLE Handle;
-      std::size_t ContextSize;
-      std::size_t HashLength;
+struct AlgorithmProviderInstance
+{
+  BCRYPT_ALG_HANDLE Handle;
+  std::size_t ContextSize;
+  std::size_t HashLength;
 
-      AlgorithmProviderInstance()
-      {
-        NTSTATUS status = BCryptOpenAlgorithmProvider(&Handle, BCRYPT_MD5_ALGORITHM, nullptr, 0);
-        if (!BCRYPT_SUCCESS(status))
-        {
-          throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
-        }
-        DWORD objectLength = 0;
-        DWORD dataLength = 0;
-        status = BCryptGetProperty(
-            Handle,
-            BCRYPT_OBJECT_LENGTH,
-            reinterpret_cast<PBYTE>(&objectLength),
-            sizeof(objectLength),
-            &dataLength,
-            0);
-        if (!BCRYPT_SUCCESS(status))
-        {
-          throw std::runtime_error("BCryptGetProperty failed");
-        }
-        ContextSize = objectLength;
-        DWORD hashLength = 0;
-        status = BCryptGetProperty(
-            Handle,
-            BCRYPT_HASH_LENGTH,
-            reinterpret_cast<PBYTE>(&hashLength),
-            sizeof(hashLength),
-            &dataLength,
-            0);
-        if (!BCRYPT_SUCCESS(status))
-        {
-          throw std::runtime_error("BCryptGetProperty failed");
-        }
-        HashLength = hashLength;
-      }
-
-      ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
-    };
-
-    struct Md5HashContext
-    {
-      std::string buffer;
-      BCRYPT_HASH_HANDLE hashHandle = nullptr;
-      std::size_t hashLength = 0;
-    };
-  } // namespace _detail
-
-  Md5Hash::Md5Hash()
+  AlgorithmProviderInstance()
   {
-    static _detail::AlgorithmProviderInstance AlgorithmProvider{};
-
-    _detail::Md5HashContext* md5Context = new _detail::Md5HashContext;
-    m_md5Context = md5Context;
-    md5Context->buffer.resize(AlgorithmProvider.ContextSize);
-    md5Context->hashLength = AlgorithmProvider.HashLength;
-
-    NTSTATUS status = BCryptCreateHash(
-        AlgorithmProvider.Handle,
-        &md5Context->hashHandle,
-        reinterpret_cast<PUCHAR>(&md5Context->buffer[0]),
-        static_cast<ULONG>(md5Context->buffer.size()),
-        nullptr,
-        0,
+    NTSTATUS status = BCryptOpenAlgorithmProvider(&Handle, BCRYPT_MD5_ALGORITHM, nullptr, 0);
+    if (!BCRYPT_SUCCESS(status))
+    {
+      throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
+    }
+    DWORD objectLength = 0;
+    DWORD dataLength = 0;
+    status = BCryptGetProperty(
+        Handle,
+        BCRYPT_OBJECT_LENGTH,
+        reinterpret_cast<PBYTE>(&objectLength),
+        sizeof(objectLength),
+        &dataLength,
         0);
     if (!BCRYPT_SUCCESS(status))
     {
-      throw std::runtime_error("BCryptCreateHash failed");
+      throw std::runtime_error("BCryptGetProperty failed");
     }
+    ContextSize = objectLength;
+    DWORD hashLength = 0;
+    status = BCryptGetProperty(
+        Handle,
+        BCRYPT_HASH_LENGTH,
+        reinterpret_cast<PBYTE>(&hashLength),
+        sizeof(hashLength),
+        &dataLength,
+        0);
+    if (!BCRYPT_SUCCESS(status))
+    {
+      throw std::runtime_error("BCryptGetProperty failed");
+    }
+    HashLength = hashLength;
   }
 
-  Md5Hash::~Md5Hash()
-  {
-    _detail::Md5HashContext* md5Context = static_cast<_detail::Md5HashContext*>(m_md5Context);
-    BCryptDestroyHash(md5Context->hashHandle);
-    delete md5Context;
-  }
+  ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
+};
 
-  void Md5Hash::OnAppend(const uint8_t* data, std::size_t length)
-  {
-    _detail::Md5HashContext* md5Context = static_cast<_detail::Md5HashContext*>(m_md5Context);
+class Md5BCrypt {
+private:
+  std::string m_buffer;
+  BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
+  std::size_t m_hashLength = 0;
+  AlgorithmProviderInstance m_algorithmProviderInstance;
 
+  ~Md5BCrypt() {}
+
+  void OnAppend(const uint8_t* data, std::size_t length)
+  {
     NTSTATUS status = BCryptHashData(
-        md5Context->hashHandle,
+        m_hashHandle,
         reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data)),
         static_cast<ULONG>(length),
         0);
@@ -119,17 +87,14 @@ namespace Azure { namespace Core { namespace Cryptography {
     }
   }
 
-  std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, std::size_t length)
+  std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length)
   {
     OnAppend(data, length);
-    _detail::Md5HashContext* md5Context = static_cast<_detail::Md5HashContext*>(m_md5Context);
+
     std::vector<uint8_t> hash;
-    hash.resize(md5Context->hashLength);
+    hash.resize(m_hashLength);
     NTSTATUS status = BCryptFinishHash(
-        md5Context->hashHandle,
-        reinterpret_cast<PUCHAR>(&hash[0]),
-        static_cast<ULONG>(hash.size()),
-        0);
+        m_hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
     if (!BCRYPT_SUCCESS(status))
     {
       throw std::runtime_error("BCryptFinishHash failed");
@@ -137,35 +102,72 @@ namespace Azure { namespace Core { namespace Cryptography {
     return hash;
   }
 
+public:
+  Md5BCrypt()
+  {
+    m_buffer.resize(m_algorithmProvider.ContextSize);
+    m_hashLength = m_algorithmProvider.HashLength;
+
+    NTSTATUS status = BCryptCreateHash(
+        m_algorithmProvider.Handle,
+        &m_hashHandle,
+        reinterpret_cast<PUCHAR>(&m_buffer[0]),
+        static_cast<ULONG>(m_buffer.size()),
+        nullptr,
+        0,
+        0);
+    if (!BCRYPT_SUCCESS(status))
+    {
+      throw std::runtime_error("BCryptCreateHash failed");
+    }
+  }
+};
+
+} // namespace
+Md5Hash::Md5Hash() : m_implementation(std::make_unique<Md5BCrypt>()) {}
+
 #elif defined(AZ_PLATFORM_POSIX)
 
-  Md5Hash::Md5Hash()
+class Md5OpenSSL : public Azure::Core::Cryptography::Hash {
+private:
+  std::unique_ptr<MD5_CTX> m_context;
+
+  void OnAppend(const uint8_t* data, std::size_t length)
   {
-    MD5_CTX* md5Context = new MD5_CTX;
-    m_md5Context = md5Context;
-    MD5_Init(md5Context);
+    MD5_Update(m_context.get(), data, length);
   }
 
-  Md5Hash::~Md5Hash()
+  std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length)
   {
-    MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
-    delete md5Context;
+    OnAppend(data, length);
+    unsigned char hash[MD5_DIGEST_LENGTH];
+    MD5_Final(hash, m_context.get());
+    return std::vector<uint8_t>(std::begin(hash), std::end(hash));
   }
+
+public:
+  Md5OpenSSL()
+  {
+    m_context = std::make_unique<MD5_CTX>();
+    MD5_Init(m_context.get());
+  }
+};
+
+} // namespace
+Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_unique<Md5OpenSSL>()) {}
+#endif
+
+namespace Azure { namespace Core { namespace Cryptography {
+  Md5Hash::~Md5Hash() {}
 
   void Md5Hash::OnAppend(const uint8_t* data, std::size_t length)
   {
-    MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
-    MD5_Update(md5Context, data, length);
+    m_implementation->Append(data, length);
   }
 
   std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, std::size_t length)
   {
-    OnAppend(data, length);
-    MD5_CTX* md5Context = static_cast<MD5_CTX*>(m_md5Context);
-    unsigned char hash[MD5_DIGEST_LENGTH];
-    MD5_Final(hash, md5Context);
-    return std::vector<uint8_t>(std::begin(hash), std::end(hash));
+    return m_implementation->Final(data, length);
   }
 
-#endif
 }}} // namespace Azure::Core::Cryptography
