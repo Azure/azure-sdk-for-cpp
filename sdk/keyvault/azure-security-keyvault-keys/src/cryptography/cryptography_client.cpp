@@ -23,13 +23,15 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 // 1Mb at a time
-const int64_t DefaultStreamDigestReadSize = 1024 * 1024;
+const size_t DefaultStreamDigestReadSize = 1024 * 1024;
 
 inline std::vector<uint8_t> CreateDigest(
     SignatureAlgorithm algorithm,
     Azure::Core::IO::BodyStream& data)
 {
-  uint8_t buffer[DefaultStreamDigestReadSize];
+  // Use heap for the reading buffer.
+  auto heapBuffer = std::make_unique<std::vector<uint8_t>>(DefaultStreamDigestReadSize);
+  auto* buffer = heapBuffer.get()->data();
   auto hasAlgo = algorithm.GetHashAlgorithm();
   for (uint64_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
        read = data.Read(buffer, DefaultStreamDigestReadSize))
