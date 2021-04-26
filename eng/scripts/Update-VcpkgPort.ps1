@@ -58,6 +58,13 @@ Copy-Item `
 Write-Host "Files in destination directory:" 
 Get-ChildItem -Recurse $PortDestinationDirectory | Out-String | Write-Host
 
+Write-Host "./bootstrap-vcpkg.bat"
+./bootstrap-vcpkg.bat
+
+# Format the manifest file
+Write-Host "./vcpkg.exe format-manifest $PortDestinationDirectory/vcpkg.json"
+./vcpkg.exe format-manifest $PortDestinationDirectory/vcpkg.json
+
 Write-Host "git status"
 git status
 
@@ -68,10 +75,6 @@ git add -A
 Write-Host "git $GitCommitParameters commit -m 'Temporary commit to reset after x-add-version'"
 "git $GitCommitParameters commit -m 'Temporary commit to reset after x-add-version'" | Invoke-Expression -Verbose | Write-Host
 
-
-Write-Host "./bootstrap-vcpkg.bat"
-./bootstrap-vcpkg.bat
-
 if ($LASTEXITCODE -ne 0) { 
     Write-Error "Failed to run bootstrap-vcpkg.bat"
     exit 1
@@ -81,6 +84,7 @@ $addVersionAdditionalParameters = ''
 if ($DailyRelease) { 
     $addVersionAdditionalParameters = '--overwrite-version'
 }
+
 
 Write-Host "./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters"
 ./vcpkg.exe x-add-version $VcpkgPortName $addVersionAdditionalParameters
