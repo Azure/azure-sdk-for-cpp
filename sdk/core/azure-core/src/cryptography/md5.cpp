@@ -65,14 +65,12 @@ struct AlgorithmProviderInstance
   ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
 };
 
-class Md5BCrypt {
+class Md5BCrypt : public Azure::Core::Cryptography::Hash {
 private:
   std::string m_buffer;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
   std::size_t m_hashLength = 0;
   AlgorithmProviderInstance m_algorithmProviderInstance;
-
-  ~Md5BCrypt() {}
 
   void OnAppend(const uint8_t* data, std::size_t length)
   {
@@ -105,11 +103,11 @@ private:
 public:
   Md5BCrypt()
   {
-    m_buffer.resize(m_algorithmProvider.ContextSize);
-    m_hashLength = m_algorithmProvider.HashLength;
+    m_buffer.resize(m_algorithmProviderInstance.ContextSize);
+    m_hashLength = m_algorithmProviderInstance.HashLength;
 
     NTSTATUS status = BCryptCreateHash(
-        m_algorithmProvider.Handle,
+        m_algorithmProviderInstance.Handle,
         &m_hashHandle,
         reinterpret_cast<PUCHAR>(&m_buffer[0]),
         static_cast<ULONG>(m_buffer.size()),
@@ -121,10 +119,11 @@ public:
       throw std::runtime_error("BCryptCreateHash failed");
     }
   }
+  ~Md5BCrypt() {}
 };
 
 } // namespace
-Md5Hash::Md5Hash() : m_implementation(std::make_unique<Md5BCrypt>()) {}
+Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_unique<Md5BCrypt>()) {}
 
 #elif defined(AZ_PLATFORM_POSIX)
 
