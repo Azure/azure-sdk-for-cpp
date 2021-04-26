@@ -169,11 +169,11 @@ KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeysSinglePage(
       },
       request.Path,
       request.Query);
-  KeyPropertiesSinglePage responsePage = std::move(response.Value);
-  responsePage.RawResponse = std::move(response.RawResponse);
-  responsePage.m_keyClient = std::make_shared<KeyClient>(*this);
-  responsePage.m_type = KeyPropertiesSinglePage::KeyPropertiesType::Keys;
-  return responsePage;
+
+  return KeyPropertiesSinglePage(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<KeyClient>(*this));
 }
 
 KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeyVersionsSinglePage(
@@ -192,12 +192,12 @@ KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeyVersionsSinglePage(
       },
       request.Path,
       request.Query);
-  KeyPropertiesSinglePage responsePage = std::move(response.Value);
-  responsePage.RawResponse = std::move(response.RawResponse);
-  responsePage.m_keyClient = std::make_shared<KeyClient>(*this);
-  responsePage.m_type = KeyPropertiesSinglePage::KeyPropertiesType::Versions;
-  responsePage.m_keyName = name;
-  return responsePage;
+
+  return KeyPropertiesSinglePage(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<KeyClient>(*this),
+      name);
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -279,10 +279,11 @@ DeletedKeySinglePage KeyClient::GetDeletedKeysSinglePage(
       },
       request.Path,
       request.Query);
-  DeletedKeySinglePage responsePage = std::move(response.Value);
-  responsePage.RawResponse = std::move(response.RawResponse);
-  responsePage.keyClient = std::make_shared<KeyClient>(*this);
-  return responsePage;
+
+  return DeletedKeySinglePage(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<KeyClient>(*this));
 }
 
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(

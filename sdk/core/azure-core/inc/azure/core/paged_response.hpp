@@ -28,10 +28,10 @@ namespace Azure { namespace Core {
    */
   template <class T> class PagedResponse {
   private:
-    // The field used to check when the end of the response is reached. We default it true as the starting point because all responses from a service
-    // will always come with a payload that represents at least one page. The page might or might not contain
-    // elements in the page. `m_hasPage` is then turned to `false` once `MoveToNextPage` is called
-    // on the last page.
+    // The field used to check when the end of the response is reached. We default it true as the
+    // starting point because all responses from a service will always come with a payload that
+    // represents at least one page. The page might or might not contain elements in the page.
+    // `m_hasPage` is then turned to `false` once `MoveToNextPage` is called on the last page.
     bool m_hasPage = true;
 
   protected:
@@ -51,8 +51,8 @@ namespace Azure { namespace Core {
      *
      * @remark If there are no more pages, this field becomes an empty string.
      *
-     * @remark Assumes all services will include NextPageToken in the payload, it is set to either null or empty
-     * for the last page or to a value used for getting the next page.
+     * @remark Assumes all services will include NextPageToken in the payload, it is set to either
+     * null or empty for the last page or to a value used for getting the next page.
      *
      */
     Azure::Nullable<std::string> NextPageToken;

@@ -134,7 +134,7 @@ void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
   // NextPageToken is valid.
   GetDeletedKeysSinglePageOptions options;
   options.NextPageToken = NextPageToken;
-  *this = keyClient->GetDeletedKeysSinglePage(options, context);
+  *this = m_keyClient->GetDeletedKeysSinglePage(options, context);
   CurrentPageToken = options.NextPageToken.Value();
 }
 
@@ -142,14 +142,14 @@ void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
-  if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Keys)
+  if (m_keyName.empty())
   {
     GetPropertiesOfKeysSinglePageOptions options;
     options.NextPageToken = NextPageToken;
     *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
     CurrentPageToken = options.NextPageToken.Value();
   }
-  else if (m_type == KeyPropertiesSinglePage::KeyPropertiesType::Versions)
+  else
   {
     GetPropertiesOfKeyVersionsSinglePageOptions options;
     options.NextPageToken = NextPageToken;
