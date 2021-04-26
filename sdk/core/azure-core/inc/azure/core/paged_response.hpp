@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Provides support for paged responses.
+ * @brief Provides support for responses of paginated collections from the service.
  */
 
 #pragma once
@@ -20,7 +20,7 @@ namespace Azure { namespace Core {
   /**
    * @brief Defines the base type and behavior for a paged response.
    *
-   * @remark The template is using for making static-inheritance.
+   * @remark The template is used for static-inheritance.
    *
    * @remark T classes must implement the way to get and move to the next page.
    *
@@ -28,8 +28,8 @@ namespace Azure { namespace Core {
    */
   template <class T> class PagedResponse {
   private:
-    // The field used to check when the end of the response is reached. All responses from a service
-    // will always come with a payload that represents a page. The page might or might not contain
+    // The field used to check when the end of the response is reached. We default it true as the starting point because all responses from a service
+    // will always come with a payload that represents at least one page. The page might or might not contain
     // elements in the page. `m_hasPage` is then turned to `false` once `MoveToNextPage` is called
     // on the last page.
     bool m_hasPage = true;
@@ -47,12 +47,12 @@ namespace Azure { namespace Core {
     std::string CurrentPageToken;
 
     /**
-     * @brief Defines the token for getting a next page.
+     * @brief Defines the token for getting the next page.
      *
-     * @remark If there is not a next page, this field becomes an empty string.
+     * @remark If there are no more pages, this field becomes an empty string.
      *
-     * @remark Assumes all services will include NextPageToken in the payload, either null or empty
-     * for last page or a value for getting the next page.
+     * @remark Assumes all services will include NextPageToken in the payload, it is set to either null or empty
+     * for the last page or to a value used for getting the next page.
      *
      */
     Azure::Nullable<std::string> NextPageToken;
@@ -64,17 +64,17 @@ namespace Azure { namespace Core {
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     /**
-     * @brief Check if the page has gone after the last page to the end sentinel.
+     * @brief Check if a page exists. It returns false after the last page.
      *
      */
     bool HasPage() const { return m_hasPage; }
 
     /**
-     * @brief Get the next page.
+     * @brief Move to the next page of the response.
      *
-     * @remark Calling this method on the last page will turned #HasPage() to false.
+     * @remark Calling this method on the last page will set #HasPage() to false.
      *
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context An #Azure::Core::Context controlling the request lifetime.
      */
     void MoveToNextPage(const Azure::Core::Context& context = Azure::Core::Context())
     {
