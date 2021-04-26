@@ -118,3 +118,33 @@ TEST(Md5Hash, CtorDtor)
     Md5Hash instance;
   }
 }
+
+#include <thread>
+TEST(Md5Hash, multiThread)
+{
+  auto hashThreadRoutine = [](int sleepFor) {
+    Md5Hash instance;
+    std::string data = "";
+    const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.c_str());
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleepFor));
+
+    EXPECT_EQ(
+        Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())),
+        "1B2M2Y8AsgTpgAmY7PhCfg==");
+  };
+
+  constexpr static int size = 100;
+  std::vector<std::thread> pool;
+
+  // Make 100 threads run after a little sleep
+  // Each created thread will wait from 0 to 3 milliseconds to start to make threads overlap
+  for (int counter = 0; counter < size; counter++)
+  {
+    pool.emplace_back(std::thread(hashThreadRoutine, counter % 4));
+  }
+  for (int counter = 0; counter < size; counter++)
+  {
+    pool[counter].join();
+  }
+}
