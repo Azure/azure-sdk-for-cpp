@@ -13,6 +13,9 @@
 - Replaced static functions from `KeyOperation` and `KeyCurveName` with static const members.
 - Replaced the enum `JsonWebKeyType` for a class with static const members as an extensible enum called `KeyVaultKeyType`.
 - Renamed `MaxResults` to `MaxPageResults` for `GetSinglePageOptions`.
+- Changed the returned type for list keys, key versions, and deleted keys from `Response<T>` to `PagedResponse<T>` affecting:
+  - `GetPropertiesOfKeysSinglePage()` and `GetPropertiesOfKeyVersionsSinglePage()` now returns `KeyPropertiesSinglePage`.
+  - `GetDeletedKeysSinglePage()` now returns `DeletedKeySinglePage`.
 
 ### Bug Fixes
 

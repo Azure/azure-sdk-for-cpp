@@ -113,7 +113,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
       // Saving the value in a local is required before passing it in to Response<T> to avoid
       // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
       T value = factoryFn(*response);
-      return Azure::Response<T>(value, std::move(response));
+      return Azure::Response<T>(std::move(value), std::move(response));
     }
 
     /**

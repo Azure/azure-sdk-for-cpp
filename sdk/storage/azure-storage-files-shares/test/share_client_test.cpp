@@ -442,7 +442,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = Files::Shares::ShareServiceClient::CreateFromConnectionString(
                                StandardStorageConnectionString())
                                .ListShares(listOptions);
-         pageResult.HasMorePages();
+         pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       shareItems.insert(shareItems.end(), pageResult.Shares.begin(), pageResult.Shares.end());
@@ -485,7 +485,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = Files::Shares::ShareServiceClient::CreateFromConnectionString(
                                PremiumFileConnectionString())
                                .ListShares(listOptions);
-         pageResult.HasMorePages();
+         pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       shareItems.insert(shareItems.end(), pageResult.Shares.begin(), pageResult.Shares.end());

@@ -38,7 +38,6 @@ set(
     inc/azure/storage/common/crypt.hpp
     inc/azure/storage/common/dll_import_export.hpp
     inc/azure/storage/common/file_io.hpp
-    inc/azure/storage/common/paged_response.hpp
     inc/azure/storage/common/reliable_stream.hpp
     inc/azure/storage/common/shared_key_policy.hpp
     inc/azure/storage/common/storage_common.hpp

@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(downloadContent.Value.BodyStream), blobContent);
 
     std::vector<Core::Http::HttpRange> pageRanges;
-    for (auto pageResult = pageBlobClient.GetPageRanges(); pageResult.HasMorePages();
+    for (auto pageResult = pageBlobClient.GetPageRanges(); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       pageRanges.insert(
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Range.Value().Offset = 4_KB;
     options.Range.Value().Length = 1_KB;
     pageRanges.clear();
-    for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasMorePages();
+    for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       pageRanges.insert(
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     pageRanges.clear();
     std::vector<Core::Http::HttpRange> clearRanges;
-    for (auto pageResult = pageBlobClient.GetPageRangesDiff(snapshot); pageResult.HasMorePages();
+    for (auto pageResult = pageBlobClient.GetPageRangesDiff(snapshot); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       pageRanges.insert(

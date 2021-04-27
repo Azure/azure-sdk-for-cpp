@@ -70,19 +70,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     static inline void CleanUpKeyVault(KeyClient const& keyClient)
     {
       std::vector<DeletedKey> deletedKeys;
-      GetDeletedKeysSinglePageOptions options;
-      while (true)
+      for (auto keyResponse = keyClient.GetDeletedKeysSinglePage(); keyResponse.HasPage();
+           keyResponse.MoveToNextPage())
       {
-        auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
-        for (auto& key : keyResponse.Value.Items)
+        for (auto& key : keyResponse.Items)
         {
           deletedKeys.emplace_back(key);
         }
-        if (!keyResponse.Value.ContinuationToken)
-        {
-          break;
-        }
-        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {
@@ -99,18 +93,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       std::vector<DeleteKeyOperation> deletedKeys;
       GetPropertiesOfKeysSinglePageOptions options;
-      while (true)
+      for (auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(); keyResponse.HasPage();
+           keyResponse.MoveToNextPage())
       {
-        auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-        for (auto& key : keyResponse.Value.Items)
+        for (auto& key : keyResponse.Items)
         {
           deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
         }
-        if (!keyResponse.Value.ContinuationToken)
-        {
-          break;
-        }
-        options.ContinuationToken = keyResponse.Value.ContinuationToken;
       }
       if (deletedKeys.size() > 0)
       {

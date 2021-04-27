@@ -2,6 +2,7 @@
 
 ## 12.0.0-beta.11 (Unreleased)
 
+- Removed `Azure::PagedResponse<T>`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
