@@ -20,13 +20,13 @@ namespace {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-struct AlgorithmProviderInstance
+struct Md5AlgorithmProvider
 {
   BCRYPT_ALG_HANDLE Handle;
   std::size_t ContextSize;
   std::size_t HashLength;
 
-  AlgorithmProviderInstance()
+  Md5AlgorithmProvider()
   {
     NTSTATUS status = BCryptOpenAlgorithmProvider(&Handle, BCRYPT_MD5_ALGORITHM, nullptr, 0);
     if (!BCRYPT_SUCCESS(status))
@@ -62,15 +62,20 @@ struct AlgorithmProviderInstance
     HashLength = hashLength;
   }
 
-  ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
+  ~Md5AlgorithmProvider() { BCryptCloseAlgorithmProvider(Handle, 0); }
 };
+
+Md5AlgorithmProvider const& GetMD5AlgorithmProvider()
+{
+  static Md5AlgorithmProvider instance;
+  return instance;
+}
 
 class Md5BCrypt : public Azure::Core::Cryptography::Hash {
 private:
   std::string m_buffer;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
   std::size_t m_hashLength = 0;
-  AlgorithmProviderInstance m_algorithmProviderInstance;
 
   void OnAppend(const uint8_t* data, std::size_t length)
   {
@@ -103,11 +108,11 @@ private:
 public:
   Md5BCrypt()
   {
-    m_buffer.resize(m_algorithmProviderInstance.ContextSize);
-    m_hashLength = m_algorithmProviderInstance.HashLength;
+    m_buffer.resize(GetMD5AlgorithmProvider().ContextSize);
+    m_hashLength = GetMD5AlgorithmProvider().HashLength;
 
     NTSTATUS status = BCryptCreateHash(
-        m_algorithmProviderInstance.Handle,
+        GetMD5AlgorithmProvider().Handle,
         &m_hashHandle,
         reinterpret_cast<PUCHAR>(&m_buffer[0]),
         static_cast<ULONG>(m_buffer.size()),
