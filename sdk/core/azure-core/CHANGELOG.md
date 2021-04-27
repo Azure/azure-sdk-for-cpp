@@ -2,6 +2,10 @@
 
 ## 1.0.0-beta.9 (Unreleased)
 
+### New Features
+
+- Added `Azure::PagedResponse<T>`.
+
 ### Bug Fixes
 
 - Do not re-use a libcurl connection to same host but different port.

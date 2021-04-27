@@ -4,6 +4,7 @@
 #include "azure/keyvault/keys/list_keys_single_page_result.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
+#include "azure/keyvault/keys/key_client.hpp"
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
@@ -24,7 +25,7 @@ _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
-  JsonOptional::SetIfExists(result.ContinuationToken, jsonParser, "nextLink");
+  JsonOptional::SetIfExists(result.NextPageToken, jsonParser, "nextLink");
 
   // Key properties
   auto keyPropertiesJson = jsonParser["value"];
@@ -90,7 +91,8 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
   DeletedKeySinglePage deletedKeySinglePage;
-  JsonOptional::SetIfExists(deletedKeySinglePage.ContinuationToken, jsonParser, "nextLink");
+
+  JsonOptional::SetIfExists(deletedKeySinglePage.NextPageToken, jsonParser, "nextLink");
 
   auto deletedKeys = jsonParser["value"];
   for (auto const& key : deletedKeys)
@@ -124,4 +126,40 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
   }
 
   return deletedKeySinglePage;
+}
+
+void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
+{
+  // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
+  // NextPageToken is valid.
+  GetDeletedKeysSinglePageOptions options;
+  options.NextPageToken = NextPageToken;
+  *this = m_keyClient->GetDeletedKeysSinglePage(options, context);
+  CurrentPageToken = options.NextPageToken.Value();
+}
+
+void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
+{
+  // Notes
+  // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
+  // NextPageToken is valid.
+  // - KeyPropertiesSinglePage is used to list keys from a Key Vault and also to list the key
+  // versions from a specific key. When KeyPropertiesSinglePage is listing keys, the `m_keyName`
+  // fields will be empty, but for listing the key versions, the KeyPropertiesSinglePage needs to
+  // keep the name of the key in `m_keyName` because it is required to get more pages.
+  //
+  if (m_keyName.empty())
+  {
+    GetPropertiesOfKeysSinglePageOptions options;
+    options.NextPageToken = NextPageToken;
+    *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
+    CurrentPageToken = options.NextPageToken.Value();
+  }
+  else
+  {
+    GetPropertiesOfKeyVersionsSinglePageOptions options;
+    options.NextPageToken = NextPageToken;
+    *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
+    CurrentPageToken = options.NextPageToken.Value();
+  }
 }
