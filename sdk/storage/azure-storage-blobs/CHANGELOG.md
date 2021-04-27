@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.11 (Unreleased)
 
+### Breaking Changes
+
+- Renamed `HasMorePages()` in paged response to `HasPage()`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 

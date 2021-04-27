@@ -600,7 +600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;

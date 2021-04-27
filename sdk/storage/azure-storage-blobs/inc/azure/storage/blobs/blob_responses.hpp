@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <azure/core/operation.hpp>
-#include <azure/storage/common/paged_response.hpp>
+#include <azure/core/paged_response.hpp>
 
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
@@ -118,7 +118,8 @@ namespace Azure { namespace Storage {
       friend class Blobs::PageBlobClient;
     };
 
-    class ListBlobContainersPagedResponse : public PagedResponse<ListBlobContainersPagedResponse> {
+    class ListBlobContainersPagedResponse
+        : public Azure::Core::PagedResponse<ListBlobContainersPagedResponse> {
     public:
       std::string ServiceEndpoint;
       std::string Prefix;
@@ -135,7 +136,8 @@ namespace Azure { namespace Storage {
       friend class Files::DataLake::ListFileSystemsPagedResponse;
     };
 
-    class FindBlobsByTagsPagedResponse : public PagedResponse<FindBlobsByTagsPagedResponse> {
+    class FindBlobsByTagsPagedResponse
+        : public Azure::Core::PagedResponse<FindBlobsByTagsPagedResponse> {
     public:
       std::string ServiceEndpoint;
       std::vector<Models::TaggedBlobItem> TaggedBlobs;
@@ -151,7 +153,7 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
-    class ListBlobsPagedResponse : public PagedResponse<ListBlobsPagedResponse> {
+    class ListBlobsPagedResponse : public Azure::Core::PagedResponse<ListBlobsPagedResponse> {
     public:
       std::string ServiceEndpoint;
       std::string BlobContainerName;
@@ -169,7 +171,7 @@ namespace Azure { namespace Storage {
     };
 
     class ListBlobsByHierarchyPagedResponse
-        : public PagedResponse<ListBlobsByHierarchyPagedResponse> {
+        : public Azure::Core::PagedResponse<ListBlobsByHierarchyPagedResponse> {
     public:
       std::string ServiceEndpoint;
       std::string BlobContainerName;
@@ -189,7 +191,8 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
     };
 
-    class GetPageRangesPagedResponse : public PagedResponse<GetPageRangesPagedResponse> {
+    class GetPageRangesPagedResponse
+        : public Azure::Core::PagedResponse<GetPageRangesPagedResponse> {
     public:
       Azure::ETag ETag;
       Azure::DateTime LastModified;
@@ -206,7 +209,8 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<GetPageRangesPagedResponse>;
     };
 
-    class GetPageRangesDiffPagedResponse : public PagedResponse<GetPageRangesDiffPagedResponse> {
+    class GetPageRangesDiffPagedResponse
+        : public Azure::Core::PagedResponse<GetPageRangesDiffPagedResponse> {
     public:
       Azure::ETag ETag;
       Azure::DateTime LastModified;
