@@ -77,6 +77,7 @@ set(
     inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
+    inc/azure/core/paged_response.hpp
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
