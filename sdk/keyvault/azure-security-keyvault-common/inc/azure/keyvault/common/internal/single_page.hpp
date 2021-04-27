@@ -13,14 +13,9 @@
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
-  struct SinglePage
-  {
-    Azure::Nullable<std::string> ContinuationToken;
-  };
-
   struct GetSinglePageOptions
   {
-    Azure::Nullable<std::string> ContinuationToken;
+    Azure::Nullable<std::string> NextPageToken;
     Azure::Nullable<uint32_t> MaxPageResults;
   };
 }}}} // namespace Azure::Security::KeyVault::_internal

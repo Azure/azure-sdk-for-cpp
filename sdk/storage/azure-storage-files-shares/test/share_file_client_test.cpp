@@ -262,9 +262,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto result = m_fileClient->ListHandles();
     EXPECT_TRUE(result.FileHandles.empty());
-    EXPECT_TRUE(result.NextPageToken.empty());
+    EXPECT_FALSE(result.NextPageToken.HasValue());
 
-    for (auto pageResult = m_fileClient->ListHandles(); pageResult.HasMorePages();
+    for (auto pageResult = m_fileClient->ListHandles(); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
     }

@@ -56,7 +56,8 @@ int main()
     keyClient.CreateEcKey(ecKey);
 
     std::cout << "\t-List Keys" << std::endl;
-    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().Value;;)
+    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(); keysSinglePage.HasPage();
+         keysSinglePage.MoveToNextPage())
     {
       for (auto const& key : keysSinglePage.Items)
       {
@@ -68,17 +69,6 @@ int main()
         std::cout << "Key is returned with name: " << keyWithType.Name()
                   << " and type: " << keyWithType.GetKeyType().ToString() << std::endl;
       }
-
-      if (!keysSinglePage.ContinuationToken.HasValue())
-      {
-        // No more pages for the response, break the loop
-        break;
-      }
-
-      // Get the next page
-      GetPropertiesOfKeysSinglePageOptions options;
-      options.ContinuationToken = keysSinglePage.ContinuationToken.Value();
-      keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).Value;
     }
 
     // update key
@@ -90,26 +80,14 @@ int main()
 
     // List key versions
     std::cout << "\t-List Key versions" << std::endl;
-    for (auto keyVersionsSinglePage
-         = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).Value;
-         ;)
+    for (auto keyVersionsSinglePage = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName);
+         keyVersionsSinglePage.HasPage();
+         keyVersionsSinglePage.MoveToNextPage())
     {
       for (auto const& key : keyVersionsSinglePage.Items)
       {
         std::cout << "Key's version: " << key.Version << " with name: " << key.Name << std::endl;
       }
-
-      if (!keyVersionsSinglePage.ContinuationToken.HasValue())
-      {
-        // No more pages for the response, break the loop
-        break;
-      }
-
-      // Get the next page
-      GetPropertiesOfKeyVersionsSinglePageOptions options;
-      options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.Value();
-      keyVersionsSinglePage
-          = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).Value;
     }
 
     std::cout << "\t-Delete Keys" << std::endl;
@@ -123,7 +101,8 @@ int main()
     std::cout << "\t-List Deleted Keys" << std::endl;
 
     // Start getting the first page.
-    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().Value;;)
+    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage(); keysDeletedPage.HasPage();
+         keysDeletedPage.MoveToNextPage())
     {
       for (auto const& key : keysDeletedPage.Items)
       {
@@ -131,17 +110,6 @@ int main()
                   << ", recovery level: " << key.Properties.RecoveryLevel
                   << " and recovery Id: " << key.RecoveryId << std::endl;
       }
-
-      if (!keysDeletedPage.ContinuationToken.HasValue())
-      {
-        // No more pages for the response, break the loop
-        break;
-      }
-
-      // Get the next page
-      GetDeletedKeysSinglePageOptions options;
-      options.ContinuationToken = keysDeletedPage.ContinuationToken.Value();
-      keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).Value;
     }
 
     // If the keyvault is soft-delete enabled, then for permanent deletion, deleted keys needs to be
