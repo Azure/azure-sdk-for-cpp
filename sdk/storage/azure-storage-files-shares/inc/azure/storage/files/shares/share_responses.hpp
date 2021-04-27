@@ -4,7 +4,7 @@
 #pragma once
 
 #include <azure/core/operation.hpp>
-#include <azure/storage/common/paged_response.hpp>
+#include <azure/core/paged_response.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareFileClient;
   };
 
-  class ListSharesPagedResponse : public PagedResponse<ListSharesPagedResponse> {
+  class ListSharesPagedResponse : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   class ListFilesAndDirectoriesPagedResponse
-      : public PagedResponse<ListFilesAndDirectoriesPagedResponse> {
+      : public Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string ShareName;
@@ -229,7 +229,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
   };
 
-  class ListFileHandlesPagedResponse : public PagedResponse<ListFileHandlesPagedResponse> {
+  class ListFileHandlesPagedResponse
+      : public Azure::Core::PagedResponse<ListFileHandlesPagedResponse> {
   public:
     std::vector<Models::HandleItem> FileHandles;
 
@@ -244,7 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   class ListDirectoryHandlesPagedResponse
-      : public PagedResponse<ListDirectoryHandlesPagedResponse> {
+      : public Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse> {
   public:
     std::vector<Models::HandleItem> DirectoryHandles;
 
