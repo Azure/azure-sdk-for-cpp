@@ -56,10 +56,10 @@ int main()
     keyClient.CreateEcKey(ecKey);
 
     std::cout << "\t-List Keys" << std::endl;
-    for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(); keysSinglePage.HasPage();
-         keysSinglePage.MoveToNextPage())
+    for (auto keys = keyClient.GetPropertiesOfKeys(); keys.HasPage();
+         keys.MoveToNextPage())
     {
-      for (auto const& key : keysSinglePage.Items)
+      for (auto const& key : keys.Items)
       {
         if (key.Managed)
         {
@@ -80,11 +80,11 @@ int main()
 
     // List key versions
     std::cout << "\t-List Key versions" << std::endl;
-    for (auto keyVersionsSinglePage = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName);
-         keyVersionsSinglePage.HasPage();
-         keyVersionsSinglePage.MoveToNextPage())
+    for (auto keyVersions = keyClient.GetPropertiesOfKeyVersions(rsaKeyName);
+         keyVersions.HasPage();
+         keyVersions.MoveToNextPage())
     {
-      for (auto const& key : keyVersionsSinglePage.Items)
+      for (auto const& key : keyVersions.Items)
       {
         std::cout << "Key's version: " << key.Version << " with name: " << key.Name << std::endl;
       }
@@ -101,7 +101,7 @@ int main()
     std::cout << "\t-List Deleted Keys" << std::endl;
 
     // Start getting the first page.
-    for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage(); keysDeletedPage.HasPage();
+    for (auto keysDeletedPage = keyClient.GetDeletedKeys(); keysDeletedPage.HasPage();
          keysDeletedPage.MoveToNextPage())
     {
       for (auto const& key : keysDeletedPage.Items)

@@ -17,11 +17,11 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 using Azure::Security::KeyVault::_internal::UnixTimeConverter;
 
-KeyPropertiesSinglePage
-_detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+KeyPropertiesPageResult
+_detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyPropertiesSinglePage result;
+  KeyPropertiesPageResult result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
@@ -84,15 +84,15 @@ _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
   return result;
 }
 
-DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
+DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
-  DeletedKeySinglePage deletedKeySinglePage;
+  DeletedKeyPageResult deletedKeyPageResult;
 
-  JsonOptional::SetIfExists(deletedKeySinglePage.NextPageToken, jsonParser, "nextLink");
+  JsonOptional::SetIfExists(deletedKeyPageResult.NextPageToken, jsonParser, "nextLink");
 
   auto deletedKeys = jsonParser["value"];
   for (auto const& key : deletedKeys)
@@ -122,44 +122,44 @@ DeletedKeySinglePage _detail::KeyPropertiesSinglePageSerializer::DeletedKeySingl
         _detail::ScheduledPurgeDatePropertyName,
         UnixTimeConverter::UnixTimeToDatetime);
 
-    deletedKeySinglePage.Items.emplace_back(deletedKey);
+    deletedKeyPageResult.Items.emplace_back(deletedKey);
   }
 
-  return deletedKeySinglePage;
+  return deletedKeyPageResult;
 }
 
-void DeletedKeySinglePage::OnNextPage(const Azure::Core::Context& context)
+void DeletedKeyPageResult::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
-  GetDeletedKeysSinglePageOptions options;
+  GetDeletedKeysOptions options;
   options.NextPageToken = NextPageToken;
-  *this = m_keyClient->GetDeletedKeysSinglePage(options, context);
+  *this = m_keyClient->GetDeletedKeys(options, context);
   CurrentPageToken = options.NextPageToken.Value();
 }
 
-void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
+void KeyPropertiesPageResult::OnNextPage(const Azure::Core::Context& context)
 {
   // Notes
   // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
-  // - KeyPropertiesSinglePage is used to list keys from a Key Vault and also to list the key
-  // versions from a specific key. When KeyPropertiesSinglePage is listing keys, the `m_keyName`
-  // fields will be empty, but for listing the key versions, the KeyPropertiesSinglePage needs to
+  // - KeyPropertiesPageResult is used to list keys from a Key Vault and also to list the key
+  // versions from a specific key. When KeyPropertiesPageResult is listing keys, the `m_keyName`
+  // fields will be empty, but for listing the key versions, the KeyPropertiesPageResult needs to
   // keep the name of the key in `m_keyName` because it is required to get more pages.
   //
   if (m_keyName.empty())
   {
-    GetPropertiesOfKeysSinglePageOptions options;
+    GetPropertiesOfKeysOptions options;
     options.NextPageToken = NextPageToken;
-    *this = m_keyClient->GetPropertiesOfKeysSinglePage(options, context);
+    *this = m_keyClient->GetPropertiesOfKeys(options, context);
     CurrentPageToken = options.NextPageToken.Value();
   }
   else
   {
-    GetPropertiesOfKeyVersionsSinglePageOptions options;
+    GetPropertiesOfKeyVersionsOptions options;
     options.NextPageToken = NextPageToken;
-    *this = m_keyClient->GetPropertiesOfKeyVersionsSinglePage(m_keyName, options, context);
+    *this = m_keyClient->GetPropertiesOfKeyVersions(m_keyName, options, context);
     CurrentPageToken = options.NextPageToken.Value();
   }
 }
