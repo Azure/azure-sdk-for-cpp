@@ -521,6 +521,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Nullable<Core::Http::HttpRange> Range;
 
+    /**
+     * @brief Options for parallel transfer.
+     */
     struct
     {
       /**
@@ -725,6 +728,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Nullable<Models::AccessTier> AccessTier;
 
+    /**
+     * @brief Options for parallel transfer.
+     */
     struct
     {
       /**

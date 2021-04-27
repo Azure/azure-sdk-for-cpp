@@ -556,6 +556,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Storage::Metadata Metadata;
 
+    /**
+     * @brief Options for parallel transfer.
+     */
     struct
     {
       /**

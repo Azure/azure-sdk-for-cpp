@@ -581,6 +581,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Nullable<Core::Http::HttpRange> Range;
 
+    /**
+     * @brief Options for parallel transfer.
+     */
     struct
     {
       /**
@@ -630,6 +633,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Nullable<std::string> FilePermission;
 
+    /**
+     * @brief Options for parallel transfer.
+     */
     struct
     {
       /**
