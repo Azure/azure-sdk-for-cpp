@@ -35,11 +35,11 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
 {
   RequestWithContinuationToken request;
   request.Path = defaultPath;
-  if (options.ContinuationToken)
+  if (options.NextPageToken)
   {
     // Using a continuation token requires to send the request to the continuation token url instead
     // of the default url which is used only for the first page.
-    Azure::Core::Url nextPageUrl(options.ContinuationToken.Value());
+    Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
     request.Query
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
     request.Path.clear();
@@ -155,12 +155,12 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
       {_detail::KeysPath, keyName, "create"});
 }
 
-Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePage(
+KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeysSinglePage(
     GetPropertiesOfKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::KeysPath});
-  return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -169,16 +169,21 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeysSinglePag
       },
       request.Path,
       request.Query);
+
+  return KeyPropertiesSinglePage(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<KeyClient>(*this));
 }
 
-Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSinglePage(
+KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeyVersionsSinglePage(
     std::string const& name,
     GetPropertiesOfKeyVersionsSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request
       = BuildRequestFromContinuationToken(options, {_detail::KeysPath, name, "versions"});
-  return m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesSinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -187,6 +192,12 @@ Azure::Response<KeyPropertiesSinglePage> KeyClient::GetPropertiesOfKeyVersionsSi
       },
       request.Path,
       request.Query);
+
+  return KeyPropertiesSinglePage(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<KeyClient>(*this),
+      name);
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
@@ -254,12 +265,12 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
-Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
+DeletedKeySinglePage KeyClient::GetDeletedKeysSinglePage(
     GetDeletedKeysSinglePageOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
-  return m_pipeline->SendRequest<DeletedKeySinglePage>(
+  auto response = m_pipeline->SendRequest<DeletedKeySinglePage>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -268,6 +279,11 @@ Azure::Response<DeletedKeySinglePage> KeyClient::GetDeletedKeysSinglePage(
       },
       request.Path,
       request.Query);
+
+  return DeletedKeySinglePage(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<KeyClient>(*this));
 }
 
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(
