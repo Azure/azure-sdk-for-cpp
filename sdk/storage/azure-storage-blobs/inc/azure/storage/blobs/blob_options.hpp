@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::ListBlobContainers.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::ListBlobContainers.
    */
   struct ListBlobContainersOptions
   {
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::GetUserDelegationKey.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetUserDelegationKey.
    */
   struct GetUserDelegationKeyOptions
   {
@@ -197,35 +197,35 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::SetProperties.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.
    */
   struct SetServicePropertiesOptions
   {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::GetProperties.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetProperties.
    */
   struct GetServicePropertiesOptions
   {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::GetAccountInfo.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.
    */
   struct GetAccountInfoOptions
   {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::GetStatistics.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetStatistics.
    */
   struct GetBlobServiceStatisticsOptions
   {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::FindBlobsByTags.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags.
    */
   struct FindBlobsByTagsOptions
   {
@@ -244,7 +244,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::Create.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Create.
    */
   struct CreateBlobContainerOptions
   {
@@ -272,7 +272,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::Delete.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Delete.
    */
   struct DeleteBlobContainerOptions
   {
@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::Undelete.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Undelete.
    */
   struct UndeleteBlobContainerOptions
   {
@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::GetProperties.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::GetProperties.
    */
   struct GetBlobContainerPropertiesOptions
   {
@@ -306,7 +306,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::SetMetadata.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::SetMetadata.
    */
   struct SetBlobContainerMetadataOptions
   {
@@ -324,8 +324,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobs and
-   * BlobContainerClient::ListBlobsByHierarchy.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::ListBlobs and
+   * #Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy.
    */
   struct ListBlobsOptions
   {
@@ -357,7 +357,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::GetAccessPolicy.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::GetAccessPolicy.
    */
   struct GetBlobContainerAccessPolicyOptions
   {
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::SetAccessPolicy.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy.
    */
   struct SetBlobContainerAccessPolicyOptions
   {
@@ -391,7 +391,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::GetProperties.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::GetProperties.
    */
   struct GetBlobPropertiesOptions
   {
@@ -402,7 +402,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::SetHttpHeaders.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetHttpHeaders.
    */
   struct SetBlobHttpHeadersOptions
   {
@@ -413,7 +413,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::SetMetadata.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetMetadata.
    */
   struct SetBlobMetadataOptions
   {
@@ -424,7 +424,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::SetAccessTier.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetAccessTier.
    */
   struct SetBlobAccessTierOptions
   {
@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::StartCopyFromUri.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::StartCopyFromUri.
    */
   struct StartBlobCopyFromUriOptions
   {
@@ -479,7 +479,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::AbortCopyFromUri.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::AbortCopyFromUri.
    */
   struct AbortBlobCopyFromUriOptions
   {
@@ -490,7 +490,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::Download.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::Download.
    */
   struct DownloadBlobOptions
   {
@@ -512,7 +512,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::DownloadTo.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::DownloadTo.
    */
   struct DownloadBlobToOptions
   {
@@ -543,7 +543,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::CreateSnapshot.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::CreateSnapshot.
    */
   struct CreateBlobSnapshotOptions
   {
@@ -562,7 +562,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::Delete.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::Delete.
    */
   struct DeleteBlobOptions
   {
@@ -580,14 +580,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::Undelete.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::Undelete.
    */
   struct UndeleteBlobOptions
   {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::Acquire.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Acquire.
    */
   struct AcquireLeaseOptions
   {
@@ -598,7 +598,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::Renew.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Renew.
    */
   struct RenewLeaseOptions
   {
@@ -609,7 +609,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::Change.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Change.
    */
   struct ChangeLeaseOptions
   {
@@ -620,7 +620,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::Release.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Release.
    */
   struct ReleaseLeaseOptions
   {
@@ -631,7 +631,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobLeaseClient::Break.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Break.
    */
   struct BreakLeaseOptions
   {
@@ -651,7 +651,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::SetTags.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetTags.
    */
   struct SetBlobTagsOptions
   {
@@ -662,7 +662,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::GetTags.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::GetTags.
    */
   struct GetBlobTagsOptions
   {
@@ -673,7 +673,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::Upload.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::Upload.
    */
   struct UploadBlockBlobOptions
   {
@@ -706,7 +706,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::UploadFrom.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::UploadFrom.
    */
   struct UploadBlockBlobFromOptions
   {
@@ -747,7 +747,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::StageBlock.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::StageBlock.
    */
   struct StageBlockOptions
   {
@@ -765,7 +765,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::StageBlockFromUri.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri.
    */
   struct StageBlockFromUriOptions
   {
@@ -795,7 +795,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::CommitBlockList.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::CommitBlockList.
    */
   struct CommitBlockListOptions
   {
@@ -821,7 +821,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::GetBlockList.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::GetBlockList.
    */
   struct GetBlockListOptions
   {
@@ -840,7 +840,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for AppendBlobClient::Create.
+   * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::Create.
    */
   struct CreateAppendBlobOptions
   {
@@ -861,7 +861,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for AppendBlobClient::AppendBlock.
+   * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::AppendBlock.
    */
   struct AppendBlockOptions
   {
@@ -879,7 +879,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for AppendBlobClient::AppendBlockFromUri.
+   * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri.
    */
   struct AppendBlockFromUriOptions
   {
@@ -902,7 +902,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for AppendBlobClient::Seal.
+   * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::Seal.
    */
   struct SealAppendBlobOptions
   {
@@ -913,7 +913,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::Create.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::Create.
    */
   struct CreatePageBlobOptions
   {
@@ -945,7 +945,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::UploadPages.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::UploadPages.
    */
   struct UploadPagesOptions
   {
@@ -963,7 +963,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::UploadPagesFromUri.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri.
    */
   struct UploadPagesFromUriOptions
   {
@@ -981,7 +981,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::ClearPages.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::ClearPages.
    */
   struct ClearPagesOptions
   {
@@ -992,7 +992,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::Resize.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::Resize.
    */
   struct ResizePageBlobOptions
   {
@@ -1003,7 +1003,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::GetPageRanges.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::GetPageRanges.
    */
   struct GetPageRangesOptions
   {
@@ -1020,7 +1020,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for PageBlobClient::StartCopyIncremental.
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::StartCopyIncremental.
    */
   struct StartBlobCopyIncrementalOptions
   {
