@@ -61,7 +61,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   public:
     /**
-     * @brief Construct a new Key Properties Single Page object
+     * @brief Construct a new key properties object.
      *
      */
     KeyPropertiesSinglePage() = default;
