@@ -144,9 +144,9 @@ void KeyPropertiesSinglePage::OnNextPage(const Azure::Core::Context& context)
   // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
   // - KeyPropertiesSinglePage is used to list keys from a Key Vault and also to list the key
-  // versions from an specific key. When KeyPropertiesSinglePage is listing keys, the `m_keyName`
+  // versions from a specific key. When KeyPropertiesSinglePage is listing keys, the `m_keyName`
   // fields will be empty, but for listing the key versions, the KeyPropertiesSinglePage needs to
-  // keep the name of the key in `m_kayName` because it is required to get more pages
+  // keep the name of the key in `m_keyName` because it is required to get more pages.
   //
   if (m_keyName.empty())
   {
