@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   void ListPathsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    *this = m_onNextPageFunc(NextPageToken, context);
+    *this = m_onNextPageFunc(NextPageToken.Value(), context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_delimiter = delimiter;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;

@@ -252,7 +252,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   } // namespace Models
 
-  class ListFileSystemsPagedResponse : public PagedResponse<ListFileSystemsPagedResponse> {
+  class ListFileSystemsPagedResponse
+      : public Azure::Core::PagedResponse<ListFileSystemsPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
@@ -268,7 +269,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class PagedResponse<ListFileSystemsPagedResponse>;
   };
 
-  class ListPathsPagedResponse : public PagedResponse<ListPathsPagedResponse> {
+  class ListPathsPagedResponse : public Azure::Core::PagedResponse<ListPathsPagedResponse> {
   public:
     std::vector<Models::PathItem> Paths;
 
