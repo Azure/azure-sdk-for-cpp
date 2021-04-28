@@ -51,9 +51,9 @@ Let's list the keys and print their types. List operations don't return the actu
 So, for each returned key we call GetKey to get the actual key.
 
 ```cpp Snippet:KeysSample3ListKeys
-for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValue();;)
+for (auto keys = keyClient.GetPropertiesOfKeys().ExtractValue();;)
 {
-    for (auto const& key : keysSinglePage.Items)
+    for (auto const& key : keys.Items)
     {
     if (key.Managed)
     {
@@ -65,16 +65,16 @@ for (auto keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage().ExtractValu
                 << std::endl;
     }
 
-    if (!keysSinglePage.ContinuationToken.HasValue())
+    if (!keys.ContinuationToken.HasValue())
     {
     // No more pages for the response, break the loop
     break;
     }
 
     // Get the next page
-    GetPropertiesOfKeysSinglePageOptions options;
-    options.ContinuationToken = keysSinglePage.ContinuationToken.GetValue();
-    keysSinglePage = keyClient.GetPropertiesOfKeysSinglePage(options).ExtractValue();
+    GetPropertiesOfKeysOptions options;
+    options.ContinuationToken = keys.ContinuationToken.GetValue();
+    keys = keyClient.GetPropertiesOfKeys(options).ExtractValue();
 }
 ```
 
@@ -97,26 +97,26 @@ You need to check all the different versions cloud RSA key had previously.
 Lets print all the versions of this key.
 
 ```cpp Snippet:KeysSample3ListKeyVersions
-for (auto keyVersionsSinglePage
-        = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName).ExtractValue();
+for (auto keyVersions
+        = keyClient.GetPropertiesOfKeyVersions(rsaKeyName).ExtractValue();
         ;)
 {
-    for (auto const& key : keyVersionsSinglePage.Items)
+    for (auto const& key : keyVersions.Items)
     {
     std::cout << "Key's version: " << key.Version << " with name: " << key.Name << std::endl;
     }
 
-    if (!keyVersionsSinglePage.ContinuationToken.HasValue())
+    if (!keyVersions.ContinuationToken.HasValue())
     {
     // No more pages for the response, break the loop
     break;
     }
 
     // Get the next page
-    GetPropertiesOfKeyVersionsSinglePageOptions options;
-    options.ContinuationToken = keyVersionsSinglePage.ContinuationToken.GetValue();
-    keyVersionsSinglePage
-        = keyClient.GetPropertiesOfKeyVersionsSinglePage(rsaKeyName, options).ExtractValue();
+    GetPropertiesOfKeyVersionsOptions options;
+    options.ContinuationToken = keyVersions.ContinuationToken.GetValue();
+    keyVersions
+        = keyClient.GetPropertiesOfKeyVersions(rsaKeyName, options).ExtractValue();
 }
 ```
 
@@ -140,7 +140,7 @@ You can list all the deleted and non-purged keys, assuming Azure Key Vault is so
 
 ```cpp Snippet:KeysSample3ListDeletedKeys
 nextPage = true;
-for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().ExtractValue();;)
+for (auto keysDeletedPage = keyClient.GetDeletedKeys().ExtractValue();;)
 {
     for (auto const& key : keysDeletedPage.Items)
     {
@@ -156,9 +156,9 @@ for (auto keysDeletedPage = keyClient.GetDeletedKeysSinglePage().ExtractValue();
     }
 
     // Get the next page
-    GetDeletedKeysSinglePageOptions options;
+    GetDeletedKeysOptions options;
     options.ContinuationToken = keysDeletedPage.ContinuationToken.GetValue();
-    keysDeletedPage = keyClient.GetDeletedKeysSinglePage(options).ExtractValue();
+    keysDeletedPage = keyClient.GetDeletedKeys(options).ExtractValue();
 }
 ```
 
