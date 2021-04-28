@@ -115,6 +115,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
+    if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
+    {
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer, bufferSize);
+      UploadBlockBlobOptions uploadBlockBlobOptions;
+      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
+      uploadBlockBlobOptions.Metadata = options.Metadata;
+      uploadBlockBlobOptions.AccessTier = options.AccessTier;
+      return Upload(contentStream, uploadBlockBlobOptions, context);
+    }
+
     int64_t chunkSize;
     if (options.TransferOptions.ChunkSize.HasValue())
     {
@@ -129,16 +139,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (chunkSize > MaxStageBlockSize)
     {
       throw Azure::Core::RequestFailedException("Block size is too big");
-    }
-
-    if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
-    {
-      Azure::Core::IO::MemoryBodyStream contentStream(buffer, bufferSize);
-      UploadBlockBlobOptions uploadBlockBlobOptions;
-      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
-      uploadBlockBlobOptions.Metadata = options.Metadata;
-      uploadBlockBlobOptions.AccessTier = options.AccessTier;
-      return Upload(contentStream, uploadBlockBlobOptions, context);
     }
 
     std::vector<std::string> blockIds;
