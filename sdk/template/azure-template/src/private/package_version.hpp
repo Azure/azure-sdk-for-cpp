@@ -45,10 +45,10 @@ namespace Azure { namespace Template { namespace _detail {
         : AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_MAJOR) "." AZURE_TEMPLATE_VERSION_ITOA(
             AZURE_TEMPLATE_VERSION_MINOR) "." AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_PATCH);
   };
-
-  constexpr const char* PackageVersion::PreRelease;
-  constexpr const char* PackageVersion::VersionString;
 }}} // namespace Azure::Template::_detail
+
+constexpr const char* Azure::Template::_detail::PackageVersion::PreRelease;
+constexpr const char* Azure::Template::_detail::PackageVersion::VersionString;
 
 #undef AZURE_TEMPLATE_VERSION_ITOA_HELPER
 #undef AZURE_TEMPLATE_VERSION_ITOA

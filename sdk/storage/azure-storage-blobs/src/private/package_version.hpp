@@ -45,10 +45,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         : AZURE_STORAGE_BLOBS_VERSION_ITOA(AZURE_STORAGE_BLOBS_VERSION_MAJOR) "." AZURE_STORAGE_BLOBS_VERSION_ITOA(
             AZURE_STORAGE_BLOBS_VERSION_MINOR) "." AZURE_STORAGE_BLOBS_VERSION_ITOA(AZURE_STORAGE_BLOBS_VERSION_PATCH);
   };
-
-  constexpr const char* PackageVersion::PreRelease;
-  constexpr const char* PackageVersion::VersionString;
 }}}} // namespace Azure::Storage::Blobs::_detail
+
+constexpr const char* Azure::Storage::Blobs::_detail::PackageVersion::PreRelease;
+constexpr const char* Azure::Storage::Blobs::_detail::PackageVersion::VersionString;
 
 #undef AZURE_STORAGE_BLOBS_VERSION_ITOA_HELPER
 #undef AZURE_STORAGE_BLOBS_VERSION_ITOA

@@ -45,10 +45,10 @@ namespace Azure { namespace Identity { namespace _detail {
         : AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_MAJOR) "." AZURE_IDENTITY_VERSION_ITOA(
             AZURE_IDENTITY_VERSION_MINOR) "." AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_PATCH);
   };
-
-  constexpr const char* PackageVersion::PreRelease;
-  constexpr const char* PackageVersion::VersionString;
 }}} // namespace Azure::Identity::_detail
+
+constexpr const char* Azure::Identity::_detail::PackageVersion::PreRelease;
+constexpr const char* Azure::Identity::_detail::PackageVersion::VersionString;
 
 #undef AZURE_IDENTITY_VERSION_ITOA_HELPER
 #undef AZURE_IDENTITY_VERSION_ITOA

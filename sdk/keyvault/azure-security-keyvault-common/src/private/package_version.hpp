@@ -46,10 +46,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
         : AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
             AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH);
   };
-
-  constexpr const char* PackageVersion::PreRelease;
-  constexpr const char* PackageVersion::VersionString;
 }}}}} // namespace Azure::Security::KeyVault::Common::_detail
+
+constexpr const char* Azure::Security::KeyVault::Common::_detail::PackageVersion::PreRelease;
+constexpr const char* Azure::Security::KeyVault::Common::_detail::PackageVersion::VersionString;
 
 #undef AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA_HELPER
 #undef AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA

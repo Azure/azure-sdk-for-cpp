@@ -44,10 +44,10 @@ namespace Azure { namespace Core { namespace _detail {
         : AZURE_CORE_VERSION_ITOA(AZURE_CORE_VERSION_MAJOR) "." AZURE_CORE_VERSION_ITOA(
             AZURE_CORE_VERSION_MINOR) "." AZURE_CORE_VERSION_ITOA(AZURE_CORE_VERSION_PATCH);
   };
-
-  constexpr const char* PackageVersion::PreRelease;
-  constexpr const char* PackageVersion::VersionString;
 }}} // namespace Azure::Core::_detail
+
+constexpr const char* namespace Azure::Core::_detail::PackageVersion::PreRelease;
+constexpr const char* namespace Azure::Core::_detail::PackageVersion::VersionString;
 
 #undef AZURE_CORE_VERSION_ITOA_HELPER
 #undef AZURE_CORE_VERSION_ITOA

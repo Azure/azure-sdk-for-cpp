@@ -46,10 +46,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
         : AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA(AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR) "." AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA(
             AZURE_STORAGE_FILES_DATALAKE_VERSION_MINOR) "." AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA(AZURE_STORAGE_FILES_DATALAKE_VERSION_PATCH);
   };
+}}}}} // namespace 
 
-  constexpr const char* PackageVersion::PreRelease;
-  constexpr const char* PackageVersion::VersionString;
-}}}}} // namespace Azure::Storage::Files::DataLake::_detail
+constexpr const char* Azure::Storage::Files::DataLake::_detail::PackageVersion::PreRelease;
+constexpr const char* Azure::Storage::Files::DataLake::_detail::PackageVersion::VersionString;
 
 #undef AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA_HELPER
 #undef AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA
