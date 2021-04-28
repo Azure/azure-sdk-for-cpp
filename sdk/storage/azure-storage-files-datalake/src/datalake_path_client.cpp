@@ -14,7 +14,8 @@
 
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
-#include "azure/storage/files/datalake/version.hpp"
+
+#include "package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -103,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::DatalakeServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -134,7 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -155,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DatalakeServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }

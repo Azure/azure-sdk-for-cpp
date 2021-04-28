@@ -81,7 +81,6 @@ set(
     inc/azure/core/response.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    inc/azure/core/version.hpp
     inc/azure/core.hpp
 )
 
@@ -110,8 +109,8 @@ set(
     src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
+    src/package_version.hpp
     src/strings.cpp
-    src/version.cpp
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
@@ -145,7 +144,7 @@ if(BUILD_TRANSPORT_WINHTTP)
   target_link_libraries(azure-core PRIVATE winhttp)
 endif()
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

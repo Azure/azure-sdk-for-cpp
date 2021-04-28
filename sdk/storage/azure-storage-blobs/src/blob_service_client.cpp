@@ -11,7 +11,7 @@
 #include <azure/storage/common/storage_service_version_policy.hpp>
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
-#include "azure/storage/blobs/version.hpp"
+#include "package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }

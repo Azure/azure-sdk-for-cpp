@@ -9,7 +9,7 @@ namespace Azure { namespace Template {
 
   class TemplateClient {
   public:
-    std::string const ClientVersion();
+    std::string ClientVersion() const;
   };
 
 }} // namespace Azure::Template

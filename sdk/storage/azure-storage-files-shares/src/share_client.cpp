@@ -14,7 +14,8 @@
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
-#include "azure/storage/files/shares/version.hpp"
+
+#include "package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -55,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -71,7 +72,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
+        _detail::PackageVersion::VersionString,
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
