@@ -96,7 +96,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
   };
 
-  /**************** Key Properties Single Page  ************/
+  /**************** Key Properties ************/
   struct KeyPropertiesPageResultSerializer
   {
     static KeyPropertiesPageResult KeyPropertiesPageResultDeserialize(
