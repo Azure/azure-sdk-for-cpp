@@ -18,7 +18,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_LAYOUT_FILE ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/DoxygenLayout.xml)
         set(DOXYGEN_RECURSIVE YES)
         set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ./README.md)
-        set(DOXYGEN_INLINE_SOURCES YES)
+        set(DOXYGEN_INLINE_SOURCES NO)
         # Skip generating docs for json, test and private files.
         set(DOXYGEN_EXCLUDE_PATTERNS
             json.hpp
