@@ -174,17 +174,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * are not listed in the response. This operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeysSinglePageOptions.NextLink is not set, the operation will get the first
-     * page and it will set the `NextPageToken` from the #KeyPropertiesSinglePage as the next
+     * #GetPropertiesOfKeysOptions.NextLink is not set, the operation will get the first
+     * page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the next
      * page of the response if there is a next page.
      *
-     * @param options The #GetPropertiesOfKeysSinglePageOptions object to for setting the operation
+     * @param options The #GetPropertiesOfKeysOptions object to for setting the operation
      * up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    KeyPropertiesSinglePage GetPropertiesOfKeysSinglePage(
-        GetPropertiesOfKeysSinglePageOptions const& options
-        = GetPropertiesOfKeysSinglePageOptions(),
+    KeyPropertiesPageResult GetPropertiesOfKeys(
+        GetPropertiesOfKeysOptions const& options = GetPropertiesOfKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -196,19 +195,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextLink is not set, the operation will get the
-     * first page and it will set the `NextPageToken` from the #KeyPropertiesSinglePage as the
+     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the
+     * first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the
      * next page of the response if there is a next page.
      *
      * @param name The name of the key.
-     * @param options The #GetPropertiesOfKeyVersionsSinglePageOptions object to for setting the
+     * @param options The #GetPropertiesOfKeyVersionsOptions object to for setting the
      * operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    KeyPropertiesSinglePage GetPropertiesOfKeyVersionsSinglePage(
+    KeyPropertiesPageResult GetPropertiesOfKeyVersions(
         std::string const& name,
-        GetPropertiesOfKeyVersionsSinglePageOptions const& options
-        = GetPropertiesOfKeyVersionsSinglePageOptions(),
+        GetPropertiesOfKeyVersionsOptions const& options = GetPropertiesOfKeyVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -258,25 +256,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Get on page listing the deleted keys in the specified vault.
+     * @brief Get a page listing the deleted keys in the specified vault.
      *
-     * @remark Retrieves a list of the keys in the Key Vault that contains the public part od the
+     * @remark Retrieves the list of the keys in the Key Vault that contains the public part of the
      * deleted key. This operation includes deletion-specific information. This operation is
-     * applicable for vaults enabled fr soft-delete. While the operation can be invoked on any
+     * applicable for vaults enabled for soft-delete. While the operation can be invoked on any
      * vault, it will return error if invoked on a non soft-delete enabled vault. This operation
      * requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsSinglePageOptions.NextPageToken is not set, the operation will get
-     * the first page and it will set the `NextPageToken` from the #KeyPropertiesSinglePage as the
+     * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get
+     * the first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the
      * next page of the response if there is a next page.
      *
-     * @param options The #GetDeletedKeysSinglePageOptions object to for setting the operation up.
+     * @param options The #GetDeletedKeysOptions object to for setting the operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return Azure::Response<DeletedKeySinglePage>
+     * @return Azure::Response<DeletedKeyPageResult>
      */
-    DeletedKeySinglePage GetDeletedKeysSinglePage(
-        GetDeletedKeysSinglePageOptions const& options = GetDeletedKeysSinglePageOptions(),
+    DeletedKeyPageResult GetDeletedKeys(
+        GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
