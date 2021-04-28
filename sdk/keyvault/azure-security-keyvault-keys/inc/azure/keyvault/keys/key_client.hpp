@@ -183,8 +183,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
     KeyPropertiesPageResult GetPropertiesOfKeys(
-        GetPropertiesOfKeysOptions const& options
-        = GetPropertiesOfKeysOptions(),
+        GetPropertiesOfKeysOptions const& options = GetPropertiesOfKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -207,8 +206,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     KeyPropertiesPageResult GetPropertiesOfKeyVersions(
         std::string const& name,
-        GetPropertiesOfKeyVersionsOptions const& options
-        = GetPropertiesOfKeyVersionsOptions(),
+        GetPropertiesOfKeyVersionsOptions const& options = GetPropertiesOfKeyVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

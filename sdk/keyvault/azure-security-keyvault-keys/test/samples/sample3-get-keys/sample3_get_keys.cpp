@@ -56,8 +56,7 @@ int main()
     keyClient.CreateEcKey(ecKey);
 
     std::cout << "\t-List Keys" << std::endl;
-    for (auto keys = keyClient.GetPropertiesOfKeys(); keys.HasPage();
-         keys.MoveToNextPage())
+    for (auto keys = keyClient.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPage())
     {
       for (auto const& key : keys.Items)
       {
@@ -80,8 +79,7 @@ int main()
 
     // List key versions
     std::cout << "\t-List Key versions" << std::endl;
-    for (auto keyVersions = keyClient.GetPropertiesOfKeyVersions(rsaKeyName);
-         keyVersions.HasPage();
+    for (auto keyVersions = keyClient.GetPropertiesOfKeyVersions(rsaKeyName); keyVersions.HasPage();
          keyVersions.MoveToNextPage())
     {
       for (auto const& key : keyVersions.Items)

@@ -90,8 +90,7 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   // Get Key versions
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeyVersionsOptions getKeyOptions;
-  for (auto keyResponse = keyClient.GetPropertiesOfKeyVersions(keyName);
-       keyResponse.HasPage();
+  for (auto keyResponse = keyClient.GetPropertiesOfKeyVersions(keyName); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
