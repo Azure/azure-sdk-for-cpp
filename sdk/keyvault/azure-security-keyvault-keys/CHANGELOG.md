@@ -8,13 +8,21 @@
 
 ### Breaking Changes
 
+- Renamed `GetPropertiesOfKeysSinglePage()` to `GetPropertiesOfKeys()`.
+- Renamed `GetPropertiesOfKeyVersionsSinglePage()` to `GetPropertiesOfKeyVersions()`.
+- Renamed `GetDeletedKeysSinglePage()` to `GetDeletedKeys()`.
+- Renamed `KeyPropertiesSinglePage` to `KeyPropertiesPageResult`.
+- Renamed `DeletedKeySinglePage` to `DeletedKeyPageResult`.
+- Renamed `GetPropertiesOfKeysSinglePageOptions` to `GetPropertiesOfKeysOptions`.
+- Renamed `GetPropertiesOfKeyVersionsSinglePageOptions` to `GetPropertiesOfKeyVersionsOptions`.
+- Renamed `GetDeletedKeysSinglePageOptions` to `GetDeletedKeysOptions`.
 - Removed `Azure::Security::KeyVault::Keys::JsonWebKey::to_json`.
 - Replaced static functions from `KeyOperation` and `KeyCurveName` with static const members.
 - Replaced the enum `JsonWebKeyType` for a class with static const members as an extensible enum called `KeyVaultKeyType`.
 - Renamed `MaxResults` to `MaxPageResults` for `GetSinglePageOptions`.
 - Changed the returned type for list keys, key versions, and deleted keys from `Response<T>` to `PagedResponse<T>` affecting:
-  - `GetPropertiesOfKeysSinglePage()` and `GetPropertiesOfKeyVersionsSinglePage()` now returns `KeyPropertiesSinglePage`.
-  - `GetDeletedKeysSinglePage()` now returns `DeletedKeySinglePage`.
+  - `GetPropertiesOfKeysSinglePage()` and `GetPropertiesOfKeyVersionsSinglePage()` now returns `KeyProperties`.
+  - `GetDeletedKeysSinglePage()` now returns `DeletedKey`.
 
 ### Bug Fixes
 
