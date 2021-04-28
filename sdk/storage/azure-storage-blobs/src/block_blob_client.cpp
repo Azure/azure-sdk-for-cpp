@@ -110,9 +110,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobFromOptions& options,
       const Azure::Core::Context& context) const
   {
+    constexpr int64_t DefaultStageBlockSize = 4 * 1024 * 1024ULL;
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
-
-    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
+    constexpr int64_t MaxBlockNumber = 50000;
+    constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
     if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
     {
@@ -122,6 +123,22 @@ namespace Azure { namespace Storage { namespace Blobs {
       uploadBlockBlobOptions.Metadata = options.Metadata;
       uploadBlockBlobOptions.AccessTier = options.AccessTier;
       return Upload(contentStream, uploadBlockBlobOptions, context);
+    }
+
+    int64_t chunkSize;
+    if (options.TransferOptions.ChunkSize.HasValue())
+    {
+      chunkSize = options.TransferOptions.ChunkSize.Value();
+    }
+    else
+    {
+      int64_t minChunkSize = (bufferSize + MaxBlockNumber - 1) / MaxBlockNumber;
+      minChunkSize = (minChunkSize + BlockGrainSize - 1) / BlockGrainSize * BlockGrainSize;
+      chunkSize = std::max(DefaultStageBlockSize, minChunkSize);
+    }
+    if (chunkSize > MaxStageBlockSize)
+    {
+      throw Azure::Core::RequestFailedException("Block size is too big");
     }
 
     std::vector<std::string> blockIds;
@@ -172,7 +189,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobFromOptions& options,
       const Azure::Core::Context& context) const
   {
+    constexpr int64_t DefaultStageBlockSize = 4 * 1024 * 1024ULL;
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
+    constexpr int64_t MaxBlockNumber = 50000;
+    constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
     {
       Azure::Core::IO::FileBodyStream contentStream(fileName);
@@ -209,7 +229,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     };
 
-    int64_t chunkSize = std::min(MaxStageBlockSize, options.TransferOptions.ChunkSize);
+    int64_t chunkSize;
+    if (options.TransferOptions.ChunkSize.HasValue())
+    {
+      chunkSize = options.TransferOptions.ChunkSize.Value();
+    }
+    else
+    {
+      int64_t minChunkSize = (fileReader.GetFileSize() + MaxBlockNumber - 1) / MaxBlockNumber;
+      minChunkSize = (minChunkSize + BlockGrainSize - 1) / BlockGrainSize * BlockGrainSize;
+      chunkSize = std::max(DefaultStageBlockSize, minChunkSize);
+    }
+    if (chunkSize > MaxStageBlockSize)
+    {
+      throw Azure::Core::RequestFailedException("Block size is too big");
+    }
 
     _internal::ConcurrentTransfer(
         0,

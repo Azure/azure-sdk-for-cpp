@@ -743,7 +743,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief The maximum number of bytes in a single request. This value cannot be larger than
        * 4000 MiB.
        */
-      int64_t ChunkSize = 4 * 1024 * 1024;
+      Azure::Nullable<int64_t> ChunkSize;
 
       /**
        * @brief The maximum number of threads that may be used in a parallel transfer.
