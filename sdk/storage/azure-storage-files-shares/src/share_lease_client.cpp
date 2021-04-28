@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/shares/share_lease_client.hpp"
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/uuid.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
@@ -16,10 +17,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Response<Models::AcquireLeaseResult> ShareLeaseClient::Acquire(
       std::chrono::seconds duration,
-      const AcquireLeaseOptions& options,
+      const AcquireLeaseOptions&,
       const Azure::Core::Context& context) const
   {
-    (void)options;
+
+    AZURE_ASSERT(m_fileClient.HasValue() || m_shareClient.HasValue());
+
     if (m_fileClient.HasValue())
     {
       _detail::ShareRestClient::File::AcquireLeaseOptions protocolLayerOptions;
@@ -62,50 +65,41 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
   Azure::Response<Models::RenewLeaseResult> ShareLeaseClient::Renew(
-      const RenewLeaseOptions& options,
+      const RenewLeaseOptions&,
       const Azure::Core::Context& context) const
   {
-    (void)options;
-    if (m_fileClient.HasValue())
-    {
-      // Renew only support share level lease.
-      std::abort();
-    }
-    else if (m_shareClient.HasValue())
-    {
-      _detail::ShareRestClient::Share::RenewLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseIdRequired = m_leaseId;
+    AZURE_ASSERT(!m_fileClient.HasValue());
+    AZURE_ASSERT(m_shareClient.HasValue());
 
-      auto response = _detail::ShareRestClient::Share::RenewLease(
-          m_shareClient.Value().m_shareUrl,
-          *(m_shareClient.Value().m_pipeline),
-          context,
-          protocolLayerOptions);
+    _detail::ShareRestClient::Share::RenewLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseIdRequired = m_leaseId;
 
-      Models::RenewLeaseResult ret;
-      ret.ETag = std::move(response.Value.ETag);
-      ret.LastModified = std::move(response.Value.LastModified);
-      ret.LeaseId = std::move(response.Value.LeaseId);
+    auto response = _detail::ShareRestClient::Share::RenewLease(
+        m_shareClient.Value().m_shareUrl,
+        *(m_shareClient.Value().m_pipeline),
+        context,
+        protocolLayerOptions);
 
-      return Azure::Response<Models::RenewLeaseResult>(
-          std::move(ret), std::move(response.RawResponse));
-    }
-    else
-    {
-      std::abort();
-    }
+    Models::RenewLeaseResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.LeaseId = std::move(response.Value.LeaseId);
+
+    return Azure::Response<Models::RenewLeaseResult>(
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::ReleaseLeaseResult> ShareLeaseClient::Release(
-      const ReleaseLeaseOptions& options,
+      const ReleaseLeaseOptions&,
       const Azure::Core::Context& context) const
   {
-    (void)options;
+    AZURE_ASSERT(m_fileClient.HasValue() || m_shareClient.HasValue());
+
     if (m_fileClient.HasValue())
     {
       _detail::ShareRestClient::File::ReleaseLeaseOptions protocolLayerOptions;
@@ -144,16 +138,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
   Azure::Response<Models::ChangeLeaseResult> ShareLeaseClient::Change(
       const std::string& proposedLeaseId,
-      const ChangeLeaseOptions& options,
+      const ChangeLeaseOptions&,
       const Azure::Core::Context& context) const
   {
-    (void)options;
+    AZURE_ASSERT(m_fileClient.HasValue() || m_shareClient.HasValue());
+
     if (m_fileClient.HasValue())
     {
       _detail::ShareRestClient::File::ChangeLeaseOptions protocolLayerOptions;
@@ -196,15 +191,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
   Azure::Response<Models::BreakLeaseResult> ShareLeaseClient::Break(
-      const BreakLeaseOptions& options,
+      const BreakLeaseOptions&,
       const Azure::Core::Context& context) const
   {
-    (void)options;
+    AZURE_ASSERT(m_fileClient.HasValue() || m_shareClient.HasValue());
+
     if (m_fileClient.HasValue())
     {
       _detail::ShareRestClient::File::BreakLeaseOptions protocolLayerOptions;
@@ -241,7 +237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 }}}} // namespace Azure::Storage::Files::Shares

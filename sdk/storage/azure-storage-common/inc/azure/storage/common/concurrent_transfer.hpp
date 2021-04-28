@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <azure/core/azure_assert.hpp>
+
 #include <algorithm>
 #include <atomic>
 #include <cstdlib>
@@ -64,10 +66,7 @@ namespace Azure { namespace Storage { namespace _internal {
       handle.get();
     }
 
-    if (numWorkingThreads != 0)
-    {
-      std::abort();
-    }
+    AZURE_ASSERT(numWorkingThreads == 0);
   }
 
 }}} // namespace Azure::Storage::_internal

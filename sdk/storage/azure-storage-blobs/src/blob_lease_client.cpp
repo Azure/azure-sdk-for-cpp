@@ -3,6 +3,7 @@
 
 #include "azure/storage/blobs/blob_lease_client.hpp"
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/uuid.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -52,12 +53,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      if (options.AccessConditions.IfMatch.HasValue()
-          || options.AccessConditions.IfNoneMatch.HasValue()
-          || options.AccessConditions.TagConditions.HasValue())
-      {
-        std::abort();
-      }
+      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
+
       auto response = _detail::BlobRestClient::BlobContainer::AcquireLease(
           *(m_blobContainerClient.Value().m_pipeline),
           m_blobContainerClient.Value().m_blobContainerUrl,
@@ -74,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
@@ -113,12 +112,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      if (options.AccessConditions.IfMatch.HasValue()
-          || options.AccessConditions.IfNoneMatch.HasValue()
-          || options.AccessConditions.TagConditions.HasValue())
-      {
-        std::abort();
-      }
+      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::RenewLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -136,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
@@ -174,12 +170,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      if (options.AccessConditions.IfMatch.HasValue()
-          || options.AccessConditions.IfNoneMatch.HasValue()
-          || options.AccessConditions.TagConditions.HasValue())
-      {
-        std::abort();
-      }
+      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::ReleaseLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -196,7 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
@@ -238,12 +231,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      if (options.AccessConditions.IfMatch.HasValue()
-          || options.AccessConditions.IfNoneMatch.HasValue()
-          || options.AccessConditions.TagConditions.HasValue())
-      {
-        std::abort();
-      }
+      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::ChangeLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -261,7 +251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 
@@ -299,12 +289,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      if (options.AccessConditions.IfMatch.HasValue()
-          || options.AccessConditions.IfNoneMatch.HasValue()
-          || options.AccessConditions.TagConditions.HasValue())
-      {
-        std::abort();
-      }
+      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::BreakLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -321,7 +308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      std::abort();
+      AZURE_UNREACHABLE_CODE;
     }
   }
 }}} // namespace Azure::Storage::Blobs

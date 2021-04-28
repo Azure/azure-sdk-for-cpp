@@ -3,7 +3,9 @@
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
+
 #include <azure/storage/blobs/protocol/blob_rest_client.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -250,10 +252,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    if (options.AccessConditions.IfUnmodifiedSince.HasValue())
-    {
-      std::abort();
-    }
+
+    AZURE_ASSERT(!options.AccessConditions.IfUnmodifiedSince.HasValue());
+
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetFileSystemMetadataResult ret;
     ret.ETag = std::move(result.Value.ETag);

@@ -15,7 +15,7 @@
 // #define NDEBUG
 #include <cassert>
 
-#define AZURE_ASSERT assert(exp)
+#define AZURE_ASSERT(exp) assert(exp)
 #define AZURE_ASSERT_MSG(exp, msg) assert(((void)msg, exp))
 #define AZURE_UNREACHABLE_CODE AZURE_ASSERT_MSG(false, "Unreachable code was access")
 #define AZURE_NOT_IMPLEMENTED AZURE_ASSERT_MSG(false, "Not Implemented")

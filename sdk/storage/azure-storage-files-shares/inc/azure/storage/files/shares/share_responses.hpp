@@ -5,6 +5,7 @@
 
 #include <azure/core/operation.hpp>
 #include <azure/core/paged_response.hpp>
+#include <azure/core/azure_assert.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
@@ -165,8 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   private:
     std::string GetResumeToken() const override
     {
-      // Not supported
-      std::abort();
+      AZURE_NOT_IMPLEMENTED;
     }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
