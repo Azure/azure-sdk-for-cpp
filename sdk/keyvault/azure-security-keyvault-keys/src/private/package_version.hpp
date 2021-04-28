@@ -22,6 +22,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
    * @brief Provides version information.
    */
   class PackageVersion {
+  private:
+    template <typename = void> struct Strings
+    {
+      static constexpr const char* PreRelease = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE;
+
+      static constexpr const char* VersionString
+          = sizeof(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE) != sizeof("")
+          ? AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(
+              AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH) "-" AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE
+          : AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(
+              AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH);
+    };
+
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR;
@@ -33,18 +46,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     static constexpr int Patch = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static constexpr const char* PreRelease = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE;
+    static constexpr const char* PreRelease = Strings<>::PreRelease;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* VersionString
-        = sizeof(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE) != sizeof("")
-        ? AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(
-            AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH) "-" AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE
-        : AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(
-            AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_KEYS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH);
+    static constexpr const char* VersionString = Strings<>::VersionString;
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

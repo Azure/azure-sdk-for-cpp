@@ -21,6 +21,19 @@ namespace Azure { namespace Template { namespace _detail {
    * @brief Provides version information.
    */
   class PackageVersion {
+  private:
+    template <typename = void> struct Strings
+    {
+      static constexpr const char* PreRelease = AZURE_TEMPLATE_VERSION_PRERELEASE;
+
+      static constexpr const char* VersionString
+          = sizeof(AZURE_TEMPLATE_VERSION_PRERELEASE) != sizeof("")
+          ? AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_MAJOR) "." AZURE_TEMPLATE_VERSION_ITOA(
+              AZURE_TEMPLATE_VERSION_MINOR) "." AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_PATCH) "-" AZURE_TEMPLATE_VERSION_PRERELEASE
+          : AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_MAJOR) "." AZURE_TEMPLATE_VERSION_ITOA(
+              AZURE_TEMPLATE_VERSION_MINOR) "." AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_PATCH);
+    };
+
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_TEMPLATE_VERSION_MAJOR;
@@ -32,18 +45,13 @@ namespace Azure { namespace Template { namespace _detail {
     static constexpr int Patch = AZURE_TEMPLATE_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static constexpr const char* PreRelease = AZURE_TEMPLATE_VERSION_PRERELEASE;
+    static constexpr const char* PreRelease = Strings<>::PreRelease;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* VersionString
-        = sizeof(AZURE_TEMPLATE_VERSION_PRERELEASE) != sizeof("")
-        ? AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_MAJOR) "." AZURE_TEMPLATE_VERSION_ITOA(
-            AZURE_TEMPLATE_VERSION_MINOR) "." AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_PATCH) "-" AZURE_TEMPLATE_VERSION_PRERELEASE
-        : AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_MAJOR) "." AZURE_TEMPLATE_VERSION_ITOA(
-            AZURE_TEMPLATE_VERSION_MINOR) "." AZURE_TEMPLATE_VERSION_ITOA(AZURE_TEMPLATE_VERSION_PATCH);
+    static constexpr const char* VersionString = Strings<>::VersionString;
   };
 
 }}} // namespace Azure::Template::_detail

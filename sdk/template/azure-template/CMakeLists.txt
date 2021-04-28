@@ -35,7 +35,7 @@ set(
 
 set(
   AZURE_TEMPLATE_SOURCE
-    src/package_version.hpp
+    src/private/package_version.hpp
     src/template_client.cpp
 )
 
@@ -59,7 +59,7 @@ add_library(Azure::azure-template ALIAS azure-template)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(template azure-template azure-template-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private//package_version.hpp")
 generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

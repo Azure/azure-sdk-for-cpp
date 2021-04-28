@@ -51,10 +51,10 @@ set(
 
 set(
   AZURE_STORAGE_COMMON_SOURCE
+    src/private/package_version.hpp
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
-    src/package_version.hpp
     src/reliable_stream.cpp
     src/shared_key_policy.cpp
     src/storage_common.cpp
@@ -90,7 +90,7 @@ else()
     target_link_libraries(azure-storage-common PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

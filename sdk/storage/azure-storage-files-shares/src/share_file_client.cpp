@@ -19,7 +19,7 @@
 
 #include "azure/storage/files/shares/share_constants.hpp"
 
-#include "package_version.hpp"
+#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

@@ -11,7 +11,7 @@
 #include <azure/storage/common/storage_service_version_policy.hpp>
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
-#include "package_version.hpp"
+#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

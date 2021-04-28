@@ -38,9 +38,9 @@ set(
 
 set(
   AZURE_KEYVAULT_COMMON_SOURCE
+    src/private/package_version.hpp
     src/keyvault_exception.cpp
     src/keyvault_pipeline.cpp
-    src/package_version.hpp
 )
 
 add_library(
@@ -66,7 +66,7 @@ endif()
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)

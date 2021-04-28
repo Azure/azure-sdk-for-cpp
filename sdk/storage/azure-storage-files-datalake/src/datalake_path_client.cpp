@@ -15,7 +15,7 @@
 #include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
-#include "package_version.hpp"
+#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

@@ -46,6 +46,7 @@ set(
 
 set(
   AZURE_STORAGE_FILES_DATALAKE_SOURCE
+    src/private/package_version.hpp
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
@@ -56,7 +57,6 @@ set(
     src/datalake_sas_builder.cpp
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
-    src/package_version.hpp
 )
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})
@@ -73,7 +73,7 @@ target_include_directories(
 
 target_link_libraries(azure-storage-files-datalake PUBLIC Azure::azure-storage-blobs)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

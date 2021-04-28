@@ -45,7 +45,7 @@ set(
 
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
-    src/package_version.hpp
+    src/private/package_version.hpp
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_attributes.cpp
@@ -71,7 +71,7 @@ target_include_directories(
 
 target_link_libraries(azure-storage-files-shares PUBLIC Azure::azure-storage-common)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

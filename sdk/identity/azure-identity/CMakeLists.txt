@@ -41,9 +41,9 @@ set(
 
 set(
   AZURE_IDENTITY_SOURCE
+    src/private/package_version.hpp
     src/client_secret_credential.cpp
     src/environment_credential.cpp
-    src/package_version.hpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
@@ -64,7 +64,7 @@ target_include_directories(
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

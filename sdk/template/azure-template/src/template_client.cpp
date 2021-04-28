@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/template/template_client.hpp"
-#include "package_version.hpp"
+
+#include "private/package_version.hpp"
 
 #include <string>
 
