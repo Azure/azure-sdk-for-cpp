@@ -22,19 +22,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
    * @brief Provides version information.
    */
   class PackageVersion {
-  private:
-    template <typename = void> struct Strings
-    {
-      static constexpr const char* PreRelease = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE;
-
-      static constexpr const char* VersionString
-          = sizeof(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE) != sizeof("")
-          ? AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
-              AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH) "-" AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE
-          : AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
-              AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH);
-    };
-
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR;
@@ -46,15 +33,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     static constexpr int Patch = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static constexpr const char* PreRelease = Strings<>::PreRelease;
+    static constexpr const char* PreRelease = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* VersionString = Strings<>::VersionString;
+    static constexpr const char* VersionString
+        = sizeof(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE) != sizeof("")
+        ? AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
+            AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH) "-" AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE
+        : AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
+            AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH);
   };
 
+  constexpr const char* PackageVersion::PreRelease;
+  constexpr const char* PackageVersion::VersionString;
 }}}}} // namespace Azure::Security::KeyVault::Common::_detail
 
 #undef AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA_HELPER

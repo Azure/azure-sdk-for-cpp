@@ -21,19 +21,6 @@ namespace Azure { namespace Identity { namespace _detail {
    * @brief Provides version information.
    */
   class PackageVersion {
-  private:
-    template <typename = void> struct Strings
-    {
-      static constexpr const char* PreRelease = AZURE_IDENTITY_VERSION_PRERELEASE;
-
-      static constexpr const char* VersionString
-          = sizeof(AZURE_IDENTITY_VERSION_PRERELEASE) != sizeof("")
-          ? AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_MAJOR) "." AZURE_IDENTITY_VERSION_ITOA(
-              AZURE_IDENTITY_VERSION_MINOR) "." AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_PATCH) "-" AZURE_IDENTITY_VERSION_PRERELEASE
-          : AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_MAJOR) "." AZURE_IDENTITY_VERSION_ITOA(
-              AZURE_IDENTITY_VERSION_MINOR) "." AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_PATCH);
-    };
-
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_IDENTITY_VERSION_MAJOR;
@@ -45,15 +32,22 @@ namespace Azure { namespace Identity { namespace _detail {
     static constexpr int Patch = AZURE_IDENTITY_VERSION_PATCH;
 
     /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static constexpr const char* PreRelease = Strings<>::PreRelease;
+    static constexpr const char* PreRelease = AZURE_IDENTITY_VERSION_PRERELEASE;
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* VersionString = Strings<>::VersionString;
+    static constexpr const char* VersionString
+        = sizeof(AZURE_IDENTITY_VERSION_PRERELEASE) != sizeof("")
+        ? AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_MAJOR) "." AZURE_IDENTITY_VERSION_ITOA(
+            AZURE_IDENTITY_VERSION_MINOR) "." AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_PATCH) "-" AZURE_IDENTITY_VERSION_PRERELEASE
+        : AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_MAJOR) "." AZURE_IDENTITY_VERSION_ITOA(
+            AZURE_IDENTITY_VERSION_MINOR) "." AZURE_IDENTITY_VERSION_ITOA(AZURE_IDENTITY_VERSION_PATCH);
   };
 
+  constexpr const char* PackageVersion::PreRelease;
+  constexpr const char* PackageVersion::VersionString;
 }}} // namespace Azure::Identity::_detail
 
 #undef AZURE_IDENTITY_VERSION_ITOA_HELPER
