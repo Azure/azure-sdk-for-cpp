@@ -171,3 +171,26 @@ TEST(Nullable, ValueOr)
   // Ensure val2 is still disengaged after call to ValueOr
   EXPECT_FALSE(val2);
 }
+
+#if !defined(NDEBUG)
+// Next tests require Debug mode ON
+
+void Foo(int&& rValue) { (void)rValue; }
+
+TEST(Nullable, PreCondition)
+{
+  Nullable<int> emptyNullable;
+
+  ASSERT_DEATH(auto a = emptyNullable.Value(); (void)a;, "Empty Nullable");
+}
+
+TEST(Nullable, PreCondition2)
+{
+  Nullable<int> emptyNullable;
+
+  ASSERT_DEATH(auto& a = emptyNullable.Value(); (void)a;, "Empty Nullable");
+}
+
+TEST(Nullable, PreCondition3) { ASSERT_DEATH(Foo(Nullable<int>().Value());, "Empty Nullable"); }
+
+#endif

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/core/azure_assert.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <string>
@@ -111,7 +112,7 @@ public:
         break;
     }
     // Unknown comparison
-    abort();
+    AZURE_UNREACHABLE_CODE;
   }
 
   /**
@@ -137,10 +138,8 @@ public:
    */
   const std::string& ToString() const
   {
-    if (!m_value.HasValue())
-    {
-      abort();
-    }
+    AZURE_ASSERT_MSG(m_value.HasValue(), "empty eTag");
+
     return m_value.Value();
   }
 

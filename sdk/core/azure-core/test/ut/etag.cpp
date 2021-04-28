@@ -232,3 +232,15 @@ TEST(ETag, EqualsWeak)
   EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTagtwo, ETag::ETagComparison::Weak));
   EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagTwo, ETag::ETagComparison::Weak));
 }
+
+#if !defined(NDEBUG)
+// Next tests require Debug mode ON
+
+TEST(ETag, PreCondition)
+{
+  ETag emptyTag;
+
+  ASSERT_DEATH(emptyTag.ToString(), "empty eTag");
+}
+
+#endif
