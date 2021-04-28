@@ -166,6 +166,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           context,
           protocolLayerOptions);
 
+      {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_leaseId = response.Value.LeaseId;
+      }
+
       Models::ChangeLeaseResult ret;
       ret.ETag = std::move(response.Value.ETag);
       ret.LastModified = std::move(response.Value.LastModified);
@@ -185,6 +190,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           *(m_shareClient.Value().m_pipeline),
           context,
           protocolLayerOptions);
+
+      {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_leaseId = response.Value.LeaseId;
+      }
 
       Models::ChangeLeaseResult ret;
       ret.ETag = std::move(response.Value.ETag);
