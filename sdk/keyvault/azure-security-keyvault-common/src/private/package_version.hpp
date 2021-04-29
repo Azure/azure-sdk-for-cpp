@@ -32,24 +32,24 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
     /// Patch numeric identifier.
     static constexpr int Patch = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH;
 
-    /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static constexpr const char* PreRelease = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE;
+    /// Indicates whether the SDK is in a pre-release state.
+    static constexpr bool IsPreRelease
+        = sizeof(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE) != sizeof("");
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* VersionString
-        = sizeof(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE) != sizeof("")
-        ? AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
-            AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH) "-" AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE
-        : AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
-            AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH);
+    static constexpr const char* ToString()
+    {
+      return IsPreRelease
+          ? AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
+              AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH) "-" AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PRERELEASE
+          : AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(
+              AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_COMMON_VERSION_PATCH);
+    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Common::_detail
-
-constexpr const char* Azure::Security::KeyVault::Common::_detail::PackageVersion::PreRelease;
-constexpr const char* Azure::Security::KeyVault::Common::_detail::PackageVersion::VersionString;
 
 #undef AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA_HELPER
 #undef AZURE_SECURITY_KEYVAULT_COMMON_VERSION_ITOA

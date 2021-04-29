@@ -31,24 +31,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     /// Patch numeric identifier.
     static constexpr int Patch = AZURE_STORAGE_FILES_SHARES_VERSION_PATCH;
 
-    /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    static constexpr const char* PreRelease = AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE;
+    /// Indicates whether the SDK is in a pre-release state.
+    static constexpr bool IsPreRelease
+        = sizeof(AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE) != sizeof("");
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* VersionString
-        = sizeof(AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE) != sizeof("")
-        ? AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(
-            AZURE_STORAGE_FILES_SHARES_VERSION_MINOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_PATCH) "-" AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE
-        : AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(
-            AZURE_STORAGE_FILES_SHARES_VERSION_MINOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_PATCH);
+    static constexpr const char* ToString()
+    {
+      return IsPreRelease
+          ? AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(
+              AZURE_STORAGE_FILES_SHARES_VERSION_MINOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_PATCH) "-" AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE
+          : AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(
+              AZURE_STORAGE_FILES_SHARES_VERSION_MINOR) "." AZURE_STORAGE_FILES_SHARES_VERSION_ITOA(AZURE_STORAGE_FILES_SHARES_VERSION_PATCH);
+    }
   };
 }}}}} // namespace Azure::Storage::Files::Shares::_detail
-
-constexpr const char* Azure::Storage::Files::Shares::_detail::PackageVersion::PreRelease;
-constexpr const char* Azure::Storage::Files::Shares::_detail::PackageVersion::VersionString;
 
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_ITOA_HELPER
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_ITOA
