@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
+- `ShareLeaseClient::Change()` updates internal lease id.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
