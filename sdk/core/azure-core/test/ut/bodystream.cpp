@@ -69,7 +69,7 @@ TEST(FileBodyStream, Length)
   Azure::Core::IO::FileBodyStream stream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 
-  auto readResult = stream.ReadToEnd(Azure::Core::Context::GetApplicationContext());
+  auto readResult = stream.ReadToEnd(Azure::Core::Context::ApplicationContext);
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
@@ -89,7 +89,7 @@ TEST(FileBodyStream, Read)
 
   stream.Rewind();
 
-  readResult = stream.ReadToEnd(Azure::Core::Context::GetApplicationContext());
+  readResult = stream.ReadToEnd(Azure::Core::Context::ApplicationContext);
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
@@ -103,7 +103,7 @@ TEST(FileBodyStream, Read)
 
   stream.Rewind();
 
-  readSize = stream.ReadToCount(buffer.data(), 10, Azure::Core::Context::GetApplicationContext());
+  readSize = stream.ReadToCount(buffer.data(), 10, Azure::Core::Context::ApplicationContext);
   EXPECT_EQ(readSize, 10);
   EXPECT_EQ(buffer[10], 0);
 
@@ -116,8 +116,7 @@ TEST(FileBodyStream, Read)
 
   stream.Rewind();
 
-  readSize
-      = stream.Read(buffer.data(), buffer.size(), Azure::Core::Context::GetApplicationContext());
+  readSize = stream.Read(buffer.data(), buffer.size(), Azure::Core::Context::ApplicationContext);
   EXPECT_EQ(readSize, FileSize);
   EXPECT_EQ(buffer[FileSize], 0);
 }

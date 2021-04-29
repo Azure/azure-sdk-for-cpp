@@ -194,7 +194,7 @@ namespace Azure { namespace Storage {
       }
 
       std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
-          Azure::Core::Context& context) override;
+          Azure::Core::Context const& context) override;
 
       Azure::Response<Models::BlobProperties> PollUntilDoneInternal(
           std::chrono::milliseconds period,
