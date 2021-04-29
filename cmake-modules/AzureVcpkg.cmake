@@ -124,7 +124,7 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
   # Produce version file.
   write_basic_package_version_file(
     "${targetName}-cppConfigVersion.cmake"
-      VERSION ${AZ_LIBRARY_VERSION} # the version that we extracted from version.hpp
+      VERSION ${AZ_LIBRARY_VERSION} # the version that we extracted from package_version.hpp
       COMPATIBILITY SameMajorVersion
     )
 
