@@ -229,7 +229,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::ResumeRec
     Azure::Core::Context const& context) const
 {
   Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation operation(m_pipeline, resumeToken);
-  operation.Poll(const_cast<Core::Context&>(context));
+  operation.Poll(context);
   return operation;
 }
 
