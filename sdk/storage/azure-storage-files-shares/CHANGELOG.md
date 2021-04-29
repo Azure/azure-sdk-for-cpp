@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.11 (Unreleased)
 
+### New Features
+
+- Added `ShareDirectoryClient::ForceCloseAllHandles()` and `ShareFileClient::ForceCloseAllHandles()`.
+
 ### Breaking Changes
 
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
