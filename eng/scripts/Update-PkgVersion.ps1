@@ -6,11 +6,11 @@ Bumps up package versions after release
 The root of the repo (defaults to ${PSScriptRoot}/..)
 
 .PARAMETER ServiceDirectory
-The service directory under <repo-root>/sdk/ used to find version.hpp
+The service directory under <repo-root>/sdk/ used to find package_version.hpp
 
 .PARAMETER PackageName
 The package name under <repo-root>/sdk/<service-directory> used to find
-version.hpp
+package_version.hpp
 
 .PARAMETER NewVersionString
 New version string to use. Must follow SemVer conventions.
@@ -48,7 +48,7 @@ function Update-Version(
         exit 1
     }
 
-    Write-Verbose "Saving version.hpp file..."
+    Write-Verbose "Saving package_version.hpp file..."
     $versionHppContent = Get-Content $VersionHppLocation -Raw
 
     if ($SemVer.IsPrerelease) {
