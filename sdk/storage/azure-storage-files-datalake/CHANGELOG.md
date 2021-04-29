@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.11 (Unreleased)
 
+### New Features
+
+- Added `DataLakePathClient::SetAccessControlListRecursive()`, `UpdateAccessControlListRecursive()` and `RemoveAccessControlListRecursive()`.
+
 ### Breaking Changes
 
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
