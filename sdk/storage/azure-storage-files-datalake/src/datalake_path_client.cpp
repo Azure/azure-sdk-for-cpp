@@ -426,4 +426,36 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), std::move(result.RawResponse));
   }
 
+  SetPathAccessControlListRecursivePagedResponse
+  DataLakePathClient::SetAccessControlListRecursiveInternal(
+      _detail::PathSetAccessControlRecursiveMode mode,
+      const std::vector<Models::Acl>& acls,
+      const SetPathAccessControlListRecursiveOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = mode;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    protocolLayerOptions.MaxRecords = options.PageSizeHint;
+    protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
+    protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
+    auto response = _detail::DataLakeRestClient::Path::SetAccessControlRecursive(
+        m_pathUrl, *m_pipeline, context, protocolLayerOptions);
+
+    SetPathAccessControlListRecursivePagedResponse pagedResponse;
+    pagedResponse.NumberOfSuccessfulFiles = response.Value.NumberOfSuccessfulDirectories;
+    pagedResponse.NumberOfSuccessfulFiles = response.Value.NumberOfSuccessfulFiles;
+    pagedResponse.NumberOfFailures = response.Value.NumberOfFailures;
+    pagedResponse.FailedEntries = std::move(response.Value.FailedEntries);
+    pagedResponse.m_dataLakePathClient = std::make_shared<DataLakePathClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_acls = acls;
+    pagedResponse.m_mode = mode;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

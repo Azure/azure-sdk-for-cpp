@@ -45,6 +45,7 @@ add_executable (
     datetime.cpp
     etag.cpp
     http.cpp
+    http_method.cpp
     json.cpp
     log_policy.cpp
     logging.cpp

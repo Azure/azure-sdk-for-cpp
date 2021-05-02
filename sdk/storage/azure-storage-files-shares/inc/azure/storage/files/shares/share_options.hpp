@@ -27,7 +27,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareServiceClient::ListShares.
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareServiceClient::ListShares.
    */
   struct ListSharesOptions
   {
@@ -40,8 +41,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
-     * returned was not complete. The marker value may then be used in a subsequent call to request
-     * the next set of list items. The marker value is opaque to the client.
+     * returned was not complete. The marker value may then be used in a subsequent call to
+     * request the next set of list items. The marker value is opaque to the client.
      */
     Azure::Nullable<std::string> ContinuationToken;
 
@@ -259,8 +260,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
-     * returned was not complete. The marker value may then be used in a subsequent call to request
-     * the next set of list items. The marker value is opaque to the client.
+     * returned was not complete. The marker value may then be used in a subsequent call to
+     * request the next set of list items. The marker value is opaque to the client.
      */
     Azure::Nullable<std::string> ContinuationToken;
 
@@ -281,8 +282,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
-     * returned was not complete. The marker value may then be used in a subsequent call to request
-     * the next set of list items. The marker value is opaque to the client.
+     * returned was not complete. The marker value may then be used in a subsequent call to
+     * request the next set of list items. The marker value is opaque to the client.
      */
     Azure::Nullable<std::string> ContinuationToken;
 
@@ -306,6 +307,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct ForceCloseDirectoryHandleOptions
   {
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareDirectoryClient::ForceCloseAllHandles.
+   */
+  struct ForceCloseAllDirectoryHandlesOptions
+  {
+    /**
+     * A string value that identifies the portion of the list to be returned with the next
+     * close operation. The operation returns a marker value within the response body if the force
+     * close was not complete. The marker value may then be used in a subsequent call to
+     * close the next handle. The marker value is opaque to the client.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * @brief Specifies operation should apply to the directory specified in the URI, its files, its
+     * subdirectories and their files.
+     */
+    Azure::Nullable<bool> Recursive;
   };
 
   /**
@@ -569,6 +591,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct ForceCloseFileHandleOptions
   {
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareFileClient::ForceCloseAllHandles.
+   */
+  struct ForceCloseAllFileHandlesOptions
+  {
+    /**
+     * A string value that identifies the portion of the list to be returned with the next
+     * close operation. The operation returns a marker value within the response body if the force
+     * close was not complete. The marker value may then be used in a subsequent call to
+     * close the next handle. The marker value is opaque to the client.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
   };
 
   /**
