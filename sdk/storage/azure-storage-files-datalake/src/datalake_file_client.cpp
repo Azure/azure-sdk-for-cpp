@@ -160,8 +160,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ContentLength = 0;
 
     AZURE_ASSERT(
-        options.ContentHash.HasValue()
-        && options.ContentHash.Value().Algorithm == HashAlgorithm::Md5);
+        !(options.ContentHash.HasValue()
+          && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5));
 
     protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;

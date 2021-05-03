@@ -442,7 +442,7 @@ TEST(Context, Deadline)
 
 TEST(Context, PreCondition)
 {
-  // Get a missmatch type from the context
+  // Get a mismatch type from the context
   std::string s("Test String");
 
   Context context;
@@ -451,7 +451,7 @@ TEST(Context, PreCondition)
   // New context from previous
   auto c2 = context.WithValue(key, s);
   int value;
-  ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type missmatch for Context::TryGetValue");
+  ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
 }
 
 #endif

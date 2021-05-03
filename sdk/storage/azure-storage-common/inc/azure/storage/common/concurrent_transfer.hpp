@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <azure/core/azure_assert.hpp>
-
 #include <algorithm>
 #include <atomic>
 #include <cstdlib>
@@ -12,6 +10,8 @@
 #include <future>
 #include <stdexcept>
 #include <vector>
+
+#include <azure/core/azure_assert.hpp>
 
 namespace Azure { namespace Storage { namespace _internal {
 

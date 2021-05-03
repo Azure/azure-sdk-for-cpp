@@ -5,7 +5,6 @@
 
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
-
 #include <azure/storage/blobs/protocol/blob_rest_client.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>

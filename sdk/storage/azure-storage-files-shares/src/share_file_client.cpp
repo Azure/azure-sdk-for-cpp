@@ -8,7 +8,6 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
 #include <azure/core/io/body_stream.hpp>
-
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -487,8 +486,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::string("-") + std::to_string(offset + content.Length() - 1);
 
     AZURE_ASSERT(
-        options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5);
+        !(options.TransactionalContentHash.HasValue()
+          && options.TransactionalContentHash.Value().Algorithm != HashAlgorithm::Md5));
 
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -1082,25 +1081,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
 
     // SourceContentHash now only supports Crc64 hash algorithm.
-    AZURE_ASSERT(
+    AZURE_ASSERT_FALSE(
         options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64);
+        && options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5);
 
     protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
 
     // IfMatchContentHash now only supports Crc64 hash algorithm.
-    AZURE_ASSERT(
+    AZURE_ASSERT_FALSE(
         options.SourceAccessCondition.IfMatchContentHash.HasValue()
         && options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm
-            == HashAlgorithm::Crc64);
+            == HashAlgorithm::Md5);
 
     protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
 
     // IfNoneMatchContentHash now only supports Crc64 hash algorithm.
-    AZURE_ASSERT(
+    AZURE_ASSERT_FALSE(
         options.SourceAccessCondition.IfNoneMatchContentHash.HasValue()
         && options.SourceAccessCondition.IfNoneMatchContentHash.Value().Algorithm
-            == HashAlgorithm::Crc64);
+            == HashAlgorithm::Md5);
 
     protocolLayerOptions.SourceIfNoneMatchCrc64
         = options.SourceAccessCondition.IfNoneMatchContentHash;
