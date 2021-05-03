@@ -43,7 +43,7 @@ public:
     if (!NT_SUCCESS(
             m_status = BCryptOpenAlgorithmProvider(&Handle, BCRYPT_MD5_ALGORITHM, nullptr, 0)))
     {
-      throw std::runtime_error("BCryptOpenAlgorithmProvider failed with code" + m_status);
+      throw std::runtime_error("BCryptOpenAlgorithmProvider failed with code: " + m_status);
     }
 
     // calculate the size of the buffer to hold the hash object
@@ -58,7 +58,7 @@ public:
                 &dataLength,
                 0)))
     {
-      throw std::runtime_error("BCryptGetProperty failed with code" + m_status);
+      throw std::runtime_error("BCryptGetProperty failed with code: " + m_status);
     }
 
     // calculate the length of the hash
@@ -73,7 +73,7 @@ public:
                 &dataLength,
                 0)))
     {
-      throw std::runtime_error("BCryptGetProperty failed with code" + m_status);
+      throw std::runtime_error("BCryptGetProperty failed with code: " + m_status);
     }
     HashLength = hashLength;
   }
@@ -109,7 +109,7 @@ private:
                 static_cast<ULONG>(length),
                 0)))
     {
-      throw std::runtime_error("BCryptHashData failed with code" + m_status);
+      throw std::runtime_error("BCryptHashData failed with code: " + m_status);
     }
   }
 
@@ -126,7 +126,7 @@ private:
                 static_cast<ULONG>(hash.size()),
                 0)))
     {
-      throw std::runtime_error("BCryptFinishHash failed with code" + m_status);
+      throw std::runtime_error("BCryptFinishHash failed with code: " + m_status);
     }
     return hash;
   }
@@ -147,7 +147,7 @@ public:
                 0,
                 0)))
     {
-      throw std::runtime_error("BCryptCreateHash failed with code" + m_status);
+      throw std::runtime_error("BCryptCreateHash failed with code: " + m_status);
     }
   }
 
