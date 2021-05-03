@@ -20,17 +20,9 @@ namespace {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-void ThrowIfFails(NTSTATUS status)
-{
-  if (!NT_SUCCESS(status))
-  {
-    throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
-  }
-}
-
 class Md5AlgorithmProvider {
 private:
-  NT_STATUS m_status = STATUS_UNSUCCESSFUL;
+  NTSTATUS m_status = 0;
 
 public:
   BCRYPT_ALG_HANDLE Handle;
@@ -40,7 +32,7 @@ public:
   Md5AlgorithmProvider()
   {
     // open an algorithm handle
-    if (!NT_SUCCESS(
+    if (!BCRYPT_SUCCESS(
             m_status = BCryptOpenAlgorithmProvider(&Handle, BCRYPT_MD5_ALGORITHM, nullptr, 0)))
     {
       throw std::runtime_error("BCryptOpenAlgorithmProvider failed with code: " + m_status);
@@ -49,7 +41,7 @@ public:
     // calculate the size of the buffer to hold the hash object
     DWORD objectLength = 0;
     DWORD dataLength = 0;
-    if (!NT_SUCCESS(
+    if (!BCRYPT_SUCCESS(
             m_status = BCryptGetProperty(
                 Handle,
                 BCRYPT_OBJECT_LENGTH,
@@ -64,7 +56,7 @@ public:
     // calculate the length of the hash
     ContextSize = objectLength;
     DWORD hashLength = 0;
-    if (!NT_SUCCESS(
+    if (!BCRYPT_SUCCESS(
             m_status = BCryptGetProperty(
                 Handle,
                 BCRYPT_HASH_LENGTH,
@@ -95,14 +87,14 @@ Md5AlgorithmProvider const& GetMD5AlgorithmProvider()
 
 class Md5BCrypt : public Azure::Core::Cryptography::Hash {
 private:
-  NT_STATUS m_status = STATUS_UNSUCCESSFUL;
+  NTSTATUS m_status = 0;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
   std::size_t m_hashLength = 0;
   std::string m_buffer;
 
   void OnAppend(const uint8_t* data, std::size_t length)
   {
-    if (!NT_SUCCESS(
+    if (!BCRYPT_SUCCESS(
             m_status = BCryptHashData(
                 m_hashHandle,
                 reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data)),
@@ -119,7 +111,7 @@ private:
 
     std::vector<uint8_t> hash;
     hash.resize(m_hashLength);
-    if (!NT_SUCCESS(
+    if (!BCRYPT_SUCCESS(
             m_status = BCryptFinishHash(
                 m_hashHandle,
                 reinterpret_cast<PUCHAR>(&hash[0]),
@@ -137,7 +129,7 @@ public:
     m_buffer.resize(GetMD5AlgorithmProvider().ContextSize);
     m_hashLength = GetMD5AlgorithmProvider().HashLength;
 
-    if (!NT_SUCCESS(
+    if (!BCRYPT_SUCCESS(
             m_status = BCryptCreateHash(
                 GetMD5AlgorithmProvider().Handle,
                 &m_hashHandle,
