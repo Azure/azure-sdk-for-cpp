@@ -14,8 +14,8 @@
 #include "azure/core/http/curl_transport.hpp"
 #endif
 
-#include <http/curl/curl_connection_private.hpp>
-#include <http/curl/curl_session_private.hpp>
+#include <private/curl_connection.hpp>
+#include <private/curl_session.hpp>
 
 #include "transport_adapter_base.hpp"
 

@@ -8,17 +8,15 @@
 
 #pragma once
 
-#include "azure/core/dll_import_export.hpp"
-
-#include <string>
-
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
 #define AZURE_CORE_VERSION_PRERELEASE "beta.9"
 
-namespace Azure { namespace Core { namespace _detail {
+#define AZURE_CORE_VERSION_ITOA_HELPER(i) #i
+#define AZURE_CORE_VERSION_ITOA(i) AZURE_CORE_VERSION_ITOA_HELPER(i)
 
+namespace Azure { namespace Core { namespace _detail {
   /**
    * @brief Provides version information.
    */
@@ -33,22 +31,26 @@ namespace Azure { namespace Core { namespace _detail {
     /// Patch numeric identifier.
     static constexpr int Patch = AZURE_CORE_VERSION_PATCH;
 
-    /// Optional pre-release identifier. SDK is in a pre-release state when not empty.
-    AZ_CORE_DLLEXPORT static std::string const PreRelease;
+    /// Indicates whether the SDK is in a pre-release state.
+    static constexpr bool IsPreRelease = sizeof(AZURE_CORE_VERSION_PRERELEASE) != sizeof("");
 
     /**
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static std::string ToString();
-
-  private:
-    // To avoid leaking out the #define values we smuggle out the value
-    // which will later be used to initialize the PreRelease std::string
-    static constexpr const char* secret = AZURE_CORE_VERSION_PRERELEASE;
+    static constexpr const char* ToString()
+    {
+      return IsPreRelease
+          ? AZURE_CORE_VERSION_ITOA(AZURE_CORE_VERSION_MAJOR) "." AZURE_CORE_VERSION_ITOA(
+              AZURE_CORE_VERSION_MINOR) "." AZURE_CORE_VERSION_ITOA(AZURE_CORE_VERSION_PATCH) "-" AZURE_CORE_VERSION_PRERELEASE
+          : AZURE_CORE_VERSION_ITOA(AZURE_CORE_VERSION_MAJOR) "." AZURE_CORE_VERSION_ITOA(
+              AZURE_CORE_VERSION_MINOR) "." AZURE_CORE_VERSION_ITOA(AZURE_CORE_VERSION_PATCH);
+    }
   };
-
 }}} // namespace Azure::Core::_detail
+
+#undef AZURE_CORE_VERSION_ITOA_HELPER
+#undef AZURE_CORE_VERSION_ITOA
 
 #undef AZURE_CORE_VERSION_MAJOR
 #undef AZURE_CORE_VERSION_MINOR

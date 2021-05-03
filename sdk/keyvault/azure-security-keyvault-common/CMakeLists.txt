@@ -34,11 +34,11 @@ set(
     inc/azure/keyvault/common/internal/unix_time_helper.hpp
     inc/azure/keyvault/common/keyvault_constants.hpp
     inc/azure/keyvault/common/keyvault_exception.hpp
-    inc/azure/keyvault/common/version.hpp
 )
 
 set(
   AZURE_KEYVAULT_COMMON_SOURCE
+    src/private/package_version.hpp
     src/keyvault_exception.cpp
     src/keyvault_pipeline.cpp
 )
@@ -66,7 +66,7 @@ endif()
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/common/version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
