@@ -22,6 +22,7 @@ namespace {
 
 class Md5AlgorithmProvider {
 private:
+  // Make sure the initial state of status is non-successful
   NTSTATUS m_status = 0;
 
 public:
@@ -87,6 +88,7 @@ Md5AlgorithmProvider const& GetMD5AlgorithmProvider()
 
 class Md5BCrypt : public Azure::Core::Cryptography::Hash {
 private:
+  // Make sure the initial state of status is non-successful
   NTSTATUS m_status = 0;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
   std::size_t m_hashLength = 0;
