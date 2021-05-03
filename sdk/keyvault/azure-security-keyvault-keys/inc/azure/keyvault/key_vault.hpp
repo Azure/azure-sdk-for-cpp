@@ -23,4 +23,3 @@
 #include "azure/keyvault/keys/key_vault_key.hpp"
 #include "azure/keyvault/keys/list_keys_single_page_result.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
-#include "azure/keyvault/keys/version.hpp"

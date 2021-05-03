@@ -24,7 +24,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include <http/curl/curl_connection_pool_private.hpp>
+#include <private/curl_connection_pool.hpp>
 
 namespace Azure { namespace Core { namespace Test {
 
