@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
 
-    AZURE_ASSERT(!options.AccessConditions.IfUnmodifiedSince.HasValue());
+    AZURE_ASSERT_FALSE(options.AccessConditions.IfUnmodifiedSince.HasValue());
 
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetFileSystemMetadataResult ret;

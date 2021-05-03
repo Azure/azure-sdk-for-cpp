@@ -53,9 +53,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::AcquireLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -112,9 +112,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::RenewLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -170,9 +170,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::ReleaseLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -236,9 +236,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::ChangeLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -299,9 +299,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      AZURE_ASSERT(!options.AccessConditions.IfMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.IfNoneMatch.HasValue());
-      AZURE_ASSERT(!options.AccessConditions.TagConditions.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.IfNoneMatch.HasValue());
+      AZURE_ASSERT_FALSE(options.AccessConditions.TagConditions.HasValue());
 
       auto response = _detail::BlobRestClient::BlobContainer::BreakLease(
           *(m_blobContainerClient.Value().m_pipeline),

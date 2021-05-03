@@ -485,9 +485,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content.Length() - 1);
 
-    AZURE_ASSERT(
-        !(options.TransactionalContentHash.HasValue()
-          && options.TransactionalContentHash.Value().Algorithm != HashAlgorithm::Md5));
+    AZURE_ASSERT_FALSE(
+        options.TransactionalContentHash.HasValue()
+        && options.TransactionalContentHash.Value().Algorithm != HashAlgorithm::Md5);
 
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;

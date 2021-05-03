@@ -159,9 +159,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
 
-    AZURE_ASSERT(
-        !(options.ContentHash.HasValue()
-          && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5));
+    AZURE_ASSERT_FALSE(
+        options.ContentHash.HasValue()
+        && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5);
 
     protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
 
     // ExpiresOn and TimeToExpire should be mutually exclusive.
-    AZURE_ASSERT(!(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue()));
+    AZURE_ASSERT_FALSE(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue());
 
     if (options.ExpiresOn.HasValue())
     {
