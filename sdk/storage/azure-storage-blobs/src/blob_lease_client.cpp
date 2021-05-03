@@ -18,12 +18,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   Azure::Response<Models::AcquireLeaseResult> BlobLeaseClient::Acquire(
       std::chrono::seconds duration,
       const AcquireLeaseOptions& options,
-      const Azure::Core::Context& context) const
+      const Azure::Core::Context& context)
   {
     if (m_blobClient.HasValue())
     {
       _detail::BlobRestClient::Blob::AcquireBlobLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.ProposedLeaseId = m_leaseId;
+      protocolLayerOptions.ProposedLeaseId = GetLeaseId();
       protocolLayerOptions.LeaseDuration = duration;
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else if (m_blobContainerClient.HasValue())
     {
       _detail::BlobRestClient::BlobContainer::AcquireBlobContainerLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.ProposedLeaseId = m_leaseId;
+      protocolLayerOptions.ProposedLeaseId = GetLeaseId();
       protocolLayerOptions.LeaseDuration = duration;
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -79,12 +79,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::RenewLeaseResult> BlobLeaseClient::Renew(
       const RenewLeaseOptions& options,
-      const Azure::Core::Context& context) const
+      const Azure::Core::Context& context)
   {
     if (m_blobClient.HasValue())
     {
       _detail::BlobRestClient::Blob::RenewBlobLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseId = m_leaseId;
+      protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
       protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -108,7 +108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else if (m_blobContainerClient.HasValue())
     {
       _detail::BlobRestClient::BlobContainer::RenewBlobContainerLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseId = m_leaseId;
+      protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
@@ -138,12 +138,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::ReleaseLeaseResult> BlobLeaseClient::Release(
       const ReleaseLeaseOptions& options,
-      const Azure::Core::Context& context) const
+      const Azure::Core::Context& context)
   {
     if (m_blobClient.HasValue())
     {
       _detail::BlobRestClient::Blob::ReleaseBlobLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseId = m_leaseId;
+      protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
       protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else if (m_blobContainerClient.HasValue())
     {
       _detail::BlobRestClient::BlobContainer::ReleaseBlobContainerLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseId = m_leaseId;
+      protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
@@ -196,12 +196,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   Azure::Response<Models::ChangeLeaseResult> BlobLeaseClient::Change(
       const std::string& proposedLeaseId,
       const ChangeLeaseOptions& options,
-      const Azure::Core::Context& context) const
+      const Azure::Core::Context& context)
   {
     if (m_blobClient.HasValue())
     {
       _detail::BlobRestClient::Blob::ChangeBlobLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseId = m_leaseId;
+      protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -215,6 +215,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           protocolLayerOptions,
           context);
 
+      {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_leaseId = response.Value.LeaseId;
+      }
+
       Models::ChangeLeaseResult ret;
       ret.ETag = std::move(response.Value.ETag);
       ret.LastModified = std::move(response.Value.LastModified);
@@ -226,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else if (m_blobContainerClient.HasValue())
     {
       _detail::BlobRestClient::BlobContainer::ChangeBlobContainerLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.LeaseId = m_leaseId;
+      protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -240,6 +245,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
           context);
+
+      {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_leaseId = response.Value.LeaseId;
+      }
 
       Models::ChangeLeaseResult ret;
       ret.ETag = std::move(response.Value.ETag);
@@ -257,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::BreakLeaseResult> BlobLeaseClient::Break(
       const BreakLeaseOptions& options,
-      const Azure::Core::Context& context) const
+      const Azure::Core::Context& context)
   {
     if (m_blobClient.HasValue())
     {

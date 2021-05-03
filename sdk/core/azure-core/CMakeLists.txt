@@ -82,7 +82,6 @@ set(
     inc/azure/core/response.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    inc/azure/core/version.hpp
     inc/azure/core.hpp
 )
 
@@ -103,16 +102,19 @@ set(
     src/http/url.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
+    src/private/curl_connection.hpp
+    src/private/curl_connection_pool.hpp
+    src/private/curl_session.hpp
+    src/private/environment_log_level_listener.hpp
+    src/private/package_version.hpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
     src/environment_log_level_listener.cpp
-    src/environment_log_level_listener_private.hpp
     src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
-    src/version.cpp
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
@@ -146,7 +148,7 @@ if(BUILD_TRANSPORT_WINHTTP)
   target_link_libraries(azure-core PRIVATE winhttp)
 endif()
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return Lease id of this lease client.
      */
-    const std::string& GetLeaseId() const { return m_blobLeaseClient.GetLeaseId(); }
+    std::string GetLeaseId() { return m_blobLeaseClient.GetLeaseId(); }
 
     /**
      * @brief Acquires a lease on the datalake path or datalake path container.
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Response<Models::AcquireLeaseResult> Acquire(
         std::chrono::seconds duration,
         const AcquireLeaseOptions& options = AcquireLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
+        const Azure::Core::Context& context = Azure::Core::Context())
     {
       return m_blobLeaseClient.Acquire(duration, options, context);
     }
@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::RenewLeaseResult> Renew(
         const RenewLeaseOptions& options = RenewLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
+        const Azure::Core::Context& context = Azure::Core::Context())
     {
       return m_blobLeaseClient.Renew(options, context);
     }
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::ReleaseLeaseResult> Release(
         const ReleaseLeaseOptions& options = ReleaseLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
+        const Azure::Core::Context& context = Azure::Core::Context())
     {
       return m_blobLeaseClient.Release(options, context);
     }
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Response<Models::ChangeLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeLeaseOptions& options = ChangeLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
+        const Azure::Core::Context& context = Azure::Core::Context())
     {
       return m_blobLeaseClient.Change(proposedLeaseId, options, context);
     }
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::BreakLeaseResult> Break(
         const BreakLeaseOptions& options = BreakLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const
+        const Azure::Core::Context& context = Azure::Core::Context())
     {
       return m_blobLeaseClient.Break(options, context);
     }

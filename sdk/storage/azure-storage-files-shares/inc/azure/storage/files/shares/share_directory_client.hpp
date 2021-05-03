@@ -212,6 +212,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ForceCloseDirectoryHandleOptions& options = ForceCloseDirectoryHandleOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Closes all handles opened on a directory at the service. Optionally supports
+     * recursively closing handles on subresources.
+     * @param options Optional parameters to close all this directory's open handles.
+     * @param context Context for cancelling long running operations.
+     * @return ForceCloseAllDirectoryHandlesPagedResponse containing the information of the closed
+     * handles.
+     */
+    ForceCloseAllDirectoryHandlesPagedResponse ForceCloseAllHandles(
+        const ForceCloseAllDirectoryHandlesOptions& options
+        = ForceCloseAllDirectoryHandlesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_shareDirectoryUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;

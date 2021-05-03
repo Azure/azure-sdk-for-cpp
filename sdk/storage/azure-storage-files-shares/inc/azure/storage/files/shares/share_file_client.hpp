@@ -334,6 +334,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Closes all handles opened on a file at the service.
+     * @param options Optional parameters to close all this file's open handles.
+     * @param context Context for cancelling long running operations.
+     * @return ForceCloseAllFileHandlesPagedResponse containing the information of the closed
+     * handles.
+     */
+    ForceCloseAllFileHandlesPagedResponse ForceCloseAllHandles(
+        const ForceCloseAllFileHandlesOptions& options = ForceCloseAllFileHandlesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Upload a range from the source URI to this file's specific range.
      * @param destinationOffset Specifies the starting offset for the content to be written.
      * @param sourceUri The source URI of the content to be uploaded.

@@ -440,5 +440,10 @@ namespace Azure { namespace Storage { namespace Test {
          pageResult.MoveToNextPage())
     {
     }
+    EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
+    for (auto pageResult = m_fileShareDirectoryClient->ForceCloseAllHandles(); pageResult.HasPage();
+         pageResult.MoveToNextPage())
+    {
+    }
   }
 }}} // namespace Azure::Storage::Test

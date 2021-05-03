@@ -45,11 +45,11 @@ set(
     inc/azure/keyvault/keys/key_vault_key.hpp
     inc/azure/keyvault/keys/list_keys_single_page_result.hpp
     inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
-    inc/azure/keyvault/keys/version.hpp
 )
 
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
+    src/private/package_version.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
     src/import_key_options.cpp
@@ -83,7 +83,7 @@ target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-security-
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/keys/version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
