@@ -2,31 +2,22 @@
   "version": "0.1",
   "language": "en",
   "languageId": "cpp",
-  "dictionaries": [
-    "powershell"
-  ],
-  "ignorePaths": [
-    "vcpkg/**/*",
-    "*.exe",
-    "*.a",
-    "*.lib"
-  ],
+  "dictionaries": ["powershell"],
+  "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib"],
   "words": [
-    "cmake",
     "azsdk",
-    "ctest",
+    "cmake",
+    "CMOCKA",
     "Cobertura",
-    "vcpkg", 
+    "ctest",
+    "moxygen",
     "pwsh",
-    "moxygen", 
-    "CMOCKA"
+    "vcpkg"
   ],
   "overrides": [
     {
-        "filename": "**/eng/pipelines/templates/jobs/archetype-sdk-client.yml",
-        "words": [
-            "DRUN", "DCMAKE", "gcovr", "lcov", "iname", "gtest"
-        ]
+      "filename": "**/eng/pipelines/templates/jobs/archetype-sdk-client.yml",
+      "words": ["DRUN", "DCMAKE", "gcovr", "lcov", "iname", "gtest"]
     }
   ],
   "allowCompoundWords": true
