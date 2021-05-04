@@ -33,14 +33,6 @@ public:
     Weak
   };
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-// C4715: not all control paths return a value.
-// Comparing is based on switching an enum which abort the app when there's
-// no case for the enum.
-#pragma warning(disable : 4715)
-#endif
-
   /*
   2.3.2.  Comparison
 
@@ -122,10 +114,6 @@ public:
     // Unknown comparison
     AZURE_UNREACHABLE_CODE;
   }
-
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 
   /**
    * @brief Construct an empty (null) #Azure::Core::ETag.
