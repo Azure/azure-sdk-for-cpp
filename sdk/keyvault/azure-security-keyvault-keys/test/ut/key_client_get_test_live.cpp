@@ -52,19 +52,14 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
   }
   // Get Key properties
   std::vector<KeyProperties> keyPropertiesList;
-  GetPropertiesOfKeysSinglePageOptions options;
-  while (true)
+  GetPropertiesOfKeysOptions options;
+  for (auto keyResponse = keyClient.GetPropertiesOfKeys(options); keyResponse.HasPage();
+       keyResponse.MoveToNextPage())
   {
-    auto keyResponse = keyClient.GetPropertiesOfKeysSinglePage(options);
-    for (auto& key : keyResponse.Value.Items)
+    for (auto& key : keyResponse.Items)
     {
       keyPropertiesList.emplace_back(key);
     }
-    if (!keyResponse.Value.ContinuationToken)
-    {
-      break;
-    }
-    options.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(keyNames.size(), keyPropertiesList.size());
@@ -94,19 +89,14 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   }
   // Get Key versions
   std::vector<KeyProperties> keyPropertiesList;
-  GetPropertiesOfKeyVersionsSinglePageOptions getKeyOptions;
-  while (true)
+  GetPropertiesOfKeyVersionsOptions getKeyOptions;
+  for (auto keyResponse = keyClient.GetPropertiesOfKeyVersions(keyName); keyResponse.HasPage();
+       keyResponse.MoveToNextPage())
   {
-    auto keyResponse = keyClient.GetPropertiesOfKeyVersionsSinglePage(keyName, getKeyOptions);
-    for (auto& key : keyResponse.Value.Items)
+    for (auto& key : keyResponse.Items)
     {
       keyPropertiesList.emplace_back(key);
     }
-    if (!keyResponse.Value.ContinuationToken)
-    {
-      break;
-    }
-    getKeyOptions.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(expectedVersions, keyPropertiesList.size());
@@ -150,19 +140,13 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 
   // Get all deleted Keys
   std::vector<DeletedKey> deletedKeys;
-  GetDeletedKeysSinglePageOptions options;
-  while (true)
+  for (auto keyResponse = keyClient.GetDeletedKeys(); keyResponse.HasPage();
+       keyResponse.MoveToNextPage())
   {
-    auto keyResponse = keyClient.GetDeletedKeysSinglePage(options);
-    for (auto& key : keyResponse.Value.Items)
+    for (auto& key : keyResponse.Items)
     {
       deletedKeys.emplace_back(key);
     }
-    if (!keyResponse.Value.ContinuationToken)
-    {
-      break;
-    }
-    options.ContinuationToken = keyResponse.Value.ContinuationToken;
   }
 
   EXPECT_EQ(keyNames.size(), deletedKeys.size());

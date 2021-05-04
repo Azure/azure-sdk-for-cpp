@@ -4,6 +4,7 @@
 #pragma once
 
 #include <chrono>
+#include <mutex>
 #include <string>
 
 #include "azure/storage/files/shares/share_client.hpp"
@@ -44,7 +45,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @return Lease id of this lease client.
      */
-    const std::string& GetLeaseId() const { return m_leaseId; }
+    const std::string& GetLeaseId()
+    {
+      std::lock_guard<std::mutex> guard(m_mutex);
+      return m_leaseId;
+    }
 
     /**
      * @brief Acquires a lease on the file or share.
@@ -59,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Response<Models::AcquireLeaseResult> Acquire(
         std::chrono::seconds duration,
         const AcquireLeaseOptions& options = AcquireLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
+        const Azure::Core::Context& context = Azure::Core::Context());
 
     /**
      * @brief Releases the file or share's previously-acquired lease.
@@ -70,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::ReleaseLeaseResult> Release(
         const ReleaseLeaseOptions& options = ReleaseLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
+        const Azure::Core::Context& context = Azure::Core::Context());
 
     /**
      * @brief Changes the lease of an active lease.
@@ -84,7 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Response<Models::ChangeLeaseResult> Change(
         const std::string& proposedLeaseId,
         const ChangeLeaseOptions& options = ChangeLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
+        const Azure::Core::Context& context = Azure::Core::Context());
 
     /**
      * @brief Breaks the previously-acquired lease.
@@ -95,7 +100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::BreakLeaseResult> Break(
         const BreakLeaseOptions& options = BreakLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
+        const Azure::Core::Context& context = Azure::Core::Context());
 
   private:
     /**
@@ -118,10 +123,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::RenewLeaseResult> Renew(
         const RenewLeaseOptions& options = RenewLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
+        const Azure::Core::Context& context = Azure::Core::Context());
 
     Azure::Nullable<ShareFileClient> m_fileClient;
     Azure::Nullable<ShareClient> m_shareClient;
+    std::mutex m_mutex;
     std::string m_leaseId;
   };
 

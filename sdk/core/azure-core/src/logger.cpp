@@ -7,7 +7,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "environment_log_level_listener_private.hpp"
+#include "private/environment_log_level_listener.hpp"
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;

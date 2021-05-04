@@ -12,7 +12,6 @@
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
-#include "azure/storage/files/datalake/version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -246,7 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       pagedResponse.Paths = std::move(response.Value.Items);
       pagedResponse.m_onNextPageFunc = func;
       pagedResponse.CurrentPageToken = continuationToken;
-      pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+      pagedResponse.NextPageToken = response.Value.ContinuationToken;
       pagedResponse.RawResponse = std::move(response.RawResponse);
 
       return pagedResponse;

@@ -38,7 +38,6 @@ set(
     inc/azure/storage/common/crypt.hpp
     inc/azure/storage/common/dll_import_export.hpp
     inc/azure/storage/common/file_io.hpp
-    inc/azure/storage/common/paged_response.hpp
     inc/azure/storage/common/reliable_stream.hpp
     inc/azure/storage/common/shared_key_policy.hpp
     inc/azure/storage/common/storage_common.hpp
@@ -47,12 +46,12 @@ set(
     inc/azure/storage/common/storage_per_retry_policy.hpp
     inc/azure/storage/common/storage_service_version_policy.hpp
     inc/azure/storage/common/storage_switch_to_secondary_policy.hpp
-    inc/azure/storage/common/version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
 )
 
 set(
   AZURE_STORAGE_COMMON_SOURCE
+    src/private/package_version.hpp
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
@@ -91,7 +90,7 @@ else()
     target_link_libraries(azure-storage-common PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

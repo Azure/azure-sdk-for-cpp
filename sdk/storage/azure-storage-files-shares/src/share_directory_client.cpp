@@ -13,7 +13,8 @@
 #include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_file_client.hpp"
-#include "azure/storage/files/shares/version.hpp"
+
+#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -313,7 +314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -339,7 +340,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -358,6 +359,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::ForceCloseDirectoryHandleResult ret;
     return Azure::Response<Models::ForceCloseDirectoryHandleResult>(
         std::move(ret), std::move(result.RawResponse));
+  }
+
+  ForceCloseAllDirectoryHandlesPagedResponse ShareDirectoryClient::ForceCloseAllHandles(
+      const ForceCloseAllDirectoryHandlesOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::Directory::ForceCloseHandlesOptions();
+    protocolLayerOptions.HandleId = FileAllHandles;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    protocolLayerOptions.Recursive = options.Recursive;
+    auto response = _detail::ShareRestClient::Directory::ForceCloseHandles(
+        m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);
+
+    ForceCloseAllDirectoryHandlesPagedResponse pagedResponse;
+
+    pagedResponse.NumberOfHandlesClosed = response.Value.NumberOfHandlesClosed;
+    pagedResponse.NumberOfHandlesFailedToClose = response.Value.NumberOfHandlesFailedToClose;
+    pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

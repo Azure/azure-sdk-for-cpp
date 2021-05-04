@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(downloadContent.Value.BodyStream), blobContent);
 
     std::vector<Core::Http::HttpRange> pageRanges;
-    for (auto pageResult = pageBlobClient.GetPageRanges(); pageResult.HasMorePages();
+    for (auto pageResult = pageBlobClient.GetPageRanges(); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       pageRanges.insert(
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Range.Value().Offset = 4_KB;
     options.Range.Value().Length = 1_KB;
     pageRanges.clear();
-    for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasMorePages();
+    for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       pageRanges.insert(
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     pageRanges.clear();
     std::vector<Core::Http::HttpRange> clearRanges;
-    for (auto pageResult = pageBlobClient.GetPageRangesDiff(snapshot); pageResult.HasMorePages();
+    for (auto pageResult = pageBlobClient.GetPageRangesDiff(snapshot); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       pageRanges.insert(
@@ -188,61 +188,67 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(PageBlobClientTest, Lease)
   {
-    std::string leaseId1 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-    auto leaseDuration = std::chrono::seconds(20);
-    auto leaseClient = Blobs::BlobLeaseClient(*m_pageBlobClient, leaseId1);
-    auto aLease = leaseClient.Acquire(leaseDuration).Value;
-    EXPECT_TRUE(aLease.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(aLease.LastModified));
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
-    EXPECT_EQ(leaseClient.GetLeaseId(), leaseId1);
-    aLease = leaseClient.Acquire(leaseDuration).Value;
-    EXPECT_TRUE(aLease.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(aLease.LastModified));
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
+    {
+      std::string leaseId1 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+      auto leaseDuration = std::chrono::seconds(20);
+      Blobs::BlobLeaseClient leaseClient(*m_pageBlobClient, leaseId1);
+      auto aLease = leaseClient.Acquire(leaseDuration).Value;
+      EXPECT_TRUE(aLease.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(aLease.LastModified));
+      EXPECT_EQ(aLease.LeaseId, leaseId1);
+      EXPECT_EQ(leaseClient.GetLeaseId(), leaseId1);
+      aLease = leaseClient.Acquire(leaseDuration).Value;
+      EXPECT_TRUE(aLease.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(aLease.LastModified));
+      EXPECT_EQ(aLease.LeaseId, leaseId1);
 
-    auto properties = m_pageBlobClient->GetProperties().Value;
-    EXPECT_EQ(properties.LeaseState.Value(), Blobs::Models::LeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus.Value(), Blobs::Models::LeaseStatus::Locked);
-    EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Fixed);
+      auto properties = m_pageBlobClient->GetProperties().Value;
+      EXPECT_EQ(properties.LeaseState.Value(), Blobs::Models::LeaseState::Leased);
+      EXPECT_EQ(properties.LeaseStatus.Value(), Blobs::Models::LeaseStatus::Locked);
+      EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Fixed);
 
-    auto rLease = leaseClient.Renew().Value;
-    EXPECT_TRUE(rLease.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(rLease.LastModified));
-    EXPECT_EQ(rLease.LeaseId, leaseId1);
+      auto rLease = leaseClient.Renew().Value;
+      EXPECT_TRUE(rLease.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(rLease.LastModified));
+      EXPECT_EQ(rLease.LeaseId, leaseId1);
 
-    std::string leaseId2 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-    EXPECT_NE(leaseId1, leaseId2);
-    auto cLease = leaseClient.Change(leaseId2).Value;
-    EXPECT_TRUE(cLease.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(cLease.LastModified));
-    EXPECT_EQ(cLease.LeaseId, leaseId2);
-    leaseClient = Blobs::BlobLeaseClient(*m_pageBlobClient, cLease.LeaseId);
-    EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
+      std::string leaseId2 = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+      EXPECT_NE(leaseId1, leaseId2);
+      auto cLease = leaseClient.Change(leaseId2).Value;
+      EXPECT_TRUE(cLease.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(cLease.LastModified));
+      EXPECT_EQ(cLease.LeaseId, leaseId2);
+      EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
-    auto blobInfo = leaseClient.Release().Value;
-    EXPECT_TRUE(blobInfo.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(blobInfo.LastModified));
+      auto blobInfo = leaseClient.Release().Value;
+      EXPECT_TRUE(blobInfo.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(blobInfo.LastModified));
+    }
 
-    leaseClient
-        = Blobs::BlobLeaseClient(*m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
-    aLease = leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration).Value;
-    properties = m_pageBlobClient->GetProperties().Value;
-    EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Infinite);
-    auto brokenLease = leaseClient.Break().Value;
-    EXPECT_TRUE(brokenLease.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
+    {
+      Blobs::BlobLeaseClient leaseClient(
+          *m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+      auto aLease = leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration).Value;
+      auto properties = m_pageBlobClient->GetProperties().Value;
+      EXPECT_EQ(properties.LeaseDuration.Value(), Blobs::Models::LeaseDurationType::Infinite);
+      auto brokenLease = leaseClient.Break().Value;
+      EXPECT_TRUE(brokenLease.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
+    }
 
-    leaseClient
-        = Blobs::BlobLeaseClient(*m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
-    aLease = leaseClient.Acquire(leaseDuration).Value;
-    brokenLease = leaseClient.Break().Value;
-    EXPECT_TRUE(brokenLease.ETag.HasValue());
-    EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
+    {
+      Blobs::BlobLeaseClient leaseClient(
+          *m_pageBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+      auto leaseDuration = std::chrono::seconds(20);
+      auto aLease = leaseClient.Acquire(leaseDuration).Value;
+      auto brokenLease = leaseClient.Break().Value;
+      EXPECT_TRUE(brokenLease.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
 
-    Blobs::BreakLeaseOptions options;
-    options.BreakPeriod = std::chrono::seconds(0);
-    leaseClient.Break(options);
+      Blobs::BreakLeaseOptions options;
+      options.BreakPeriod = std::chrono::seconds(0);
+      leaseClient.Break(options);
+    }
   }
 
   TEST_F(PageBlobClientTest, ContentMd5)

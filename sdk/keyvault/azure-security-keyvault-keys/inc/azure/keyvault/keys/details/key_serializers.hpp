@@ -96,12 +96,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
   };
 
-  /**************** Key Properties Single Page  ************/
-  struct KeyPropertiesSinglePageSerializer
+  /**************** Key Properties ************/
+  struct KeyPropertiesPageResultSerializer
   {
-    static KeyPropertiesSinglePage KeyPropertiesSinglePageDeserialize(
+    static KeyPropertiesPageResult KeyPropertiesPageResultDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
-    static DeletedKeySinglePage DeletedKeySinglePageDeserialize(
+    static DeletedKeyPageResult DeletedKeyPageResultDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 

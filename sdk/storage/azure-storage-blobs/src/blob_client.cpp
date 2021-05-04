@@ -17,7 +17,10 @@
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
-#include "azure/storage/blobs/version.hpp"
+
+#include "private/package_version.hpp"
+
+#include <algorithm>
 
 namespace Azure { namespace Storage { namespace Blobs {
 

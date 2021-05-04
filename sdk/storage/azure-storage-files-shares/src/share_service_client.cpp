@@ -13,7 +13,8 @@
 #include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_client.hpp"
-#include "azure/storage/files/shares/version.hpp"
+
+#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareServiceClient ShareServiceClient::CreateFromConnectionString(
@@ -104,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.m_shareServiceClient = std::make_shared<ShareServiceClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;

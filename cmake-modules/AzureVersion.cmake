@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 #
 # Sets ${AZ_LIBRARY_VERSION} in the parent context with the version value
-# constructed from version.hpp. The version.hpp must follow the example in
-# templates for version information to parse correctly.
+# constructed from package_version.hpp. The package_version.hpp must follow
+# the example in templates for version information to parse correctly.
 
 function(get_az_version VERSION_HPP_FILE)
     if(NOT EXISTS ${VERSION_HPP_FILE})

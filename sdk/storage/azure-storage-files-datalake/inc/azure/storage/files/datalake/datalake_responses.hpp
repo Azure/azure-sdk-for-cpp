@@ -252,7 +252,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   } // namespace Models
 
-  class ListFileSystemsPagedResponse : public PagedResponse<ListFileSystemsPagedResponse> {
+  class ListFileSystemsPagedResponse
+      : public Azure::Core::PagedResponse<ListFileSystemsPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
@@ -268,7 +269,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class PagedResponse<ListFileSystemsPagedResponse>;
   };
 
-  class ListPathsPagedResponse : public PagedResponse<ListPathsPagedResponse> {
+  class ListPathsPagedResponse : public Azure::Core::PagedResponse<ListPathsPagedResponse> {
   public:
     std::vector<Models::PathItem> Paths;
 
@@ -282,5 +283,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class DataLakeDirectoryClient;
     friend class PagedResponse<ListPathsPagedResponse>;
   };
+
+  class SetPathAccessControlListRecursivePagedResponse
+      : public Azure::Core::PagedResponse<SetPathAccessControlListRecursivePagedResponse> {
+  public:
+    int32_t NumberOfSuccessfulDirectories = 0;
+    int32_t NumberOfSuccessfulFiles = 0;
+    int32_t NumberOfFailures = 0;
+    std::vector<Models::AclFailedEntry> FailedEntries;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<DataLakePathClient> m_dataLakePathClient;
+    SetPathAccessControlListRecursiveOptions m_operationOptions;
+    std::vector<Models::Acl> m_acls;
+    _detail::PathSetAccessControlRecursiveMode m_mode;
+
+    friend class DataLakePathClient;
+    friend class PagedResponse<SetPathAccessControlListRecursivePagedResponse>;
+  };
+
+  using UpdatePathAccessControlListRecursivePagedResponse
+      = SetPathAccessControlListRecursivePagedResponse;
+  using RemovePathAccessControlListRecursivePagedResponse
+      = SetPathAccessControlListRecursivePagedResponse;
 
 }}}} // namespace Azure::Storage::Files::DataLake

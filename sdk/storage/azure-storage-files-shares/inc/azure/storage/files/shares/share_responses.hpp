@@ -4,7 +4,7 @@
 #pragma once
 
 #include <azure/core/operation.hpp>
-#include <azure/storage/common/paged_response.hpp>
+#include <azure/core/paged_response.hpp>
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareFileClient;
   };
 
-  class ListSharesPagedResponse : public PagedResponse<ListSharesPagedResponse> {
+  class ListSharesPagedResponse : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   class ListFilesAndDirectoriesPagedResponse
-      : public PagedResponse<ListFilesAndDirectoriesPagedResponse> {
+      : public Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string ShareName;
@@ -229,7 +229,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
   };
 
-  class ListFileHandlesPagedResponse : public PagedResponse<ListFileHandlesPagedResponse> {
+  class ListFileHandlesPagedResponse
+      : public Azure::Core::PagedResponse<ListFileHandlesPagedResponse> {
   public:
     std::vector<Models::HandleItem> FileHandles;
 
@@ -243,8 +244,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListFileHandlesPagedResponse>;
   };
 
+  class ForceCloseAllFileHandlesPagedResponse
+      : public Azure::Core::PagedResponse<ForceCloseAllFileHandlesPagedResponse> {
+  public:
+    int32_t NumberOfHandlesClosed = 0;
+    int32_t NumberOfHandlesFailedToClose = 0;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareFileClient> m_shareFileClient;
+    ForceCloseAllFileHandlesOptions m_operationOptions;
+
+    friend class ShareFileClient;
+    friend class PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
+  };
+
   class ListDirectoryHandlesPagedResponse
-      : public PagedResponse<ListDirectoryHandlesPagedResponse> {
+      : public Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse> {
   public:
     std::vector<Models::HandleItem> DirectoryHandles;
 
@@ -256,6 +273,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareDirectoryClient;
     friend class PagedResponse<ListDirectoryHandlesPagedResponse>;
+  };
+
+  class ForceCloseAllDirectoryHandlesPagedResponse
+      : public Azure::Core::PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse> {
+  public:
+    int32_t NumberOfHandlesClosed = 0;
+    int32_t NumberOfHandlesFailedToClose = 0;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareDirectoryClient> m_shareDirectoryClient;
+    ForceCloseAllDirectoryHandlesOptions m_operationOptions;
+
+    friend class ShareDirectoryClient;
+    friend class PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
   };
 
 }}}} // namespace Azure::Storage::Files::Shares

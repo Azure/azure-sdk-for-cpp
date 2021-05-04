@@ -25,8 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
-   * @brief Client options used to initalize DataLakeServiceClient, FileSystemClient, PathClient,
-   * FileClient and DirectoryClient.
+   * @brief Client options used to initalize all DataLake clients.
    */
   struct DataLakeClientOptions : Azure::Core::_internal::ClientOptions
   {
@@ -62,7 +61,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for ServiceClient::ListFileSystemsOptions.
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::ServiceClient::ListFileSystems.
    */
   struct ListFileSystemsOptions
   {
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::Create
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileSystemClient::Create.
    */
   struct CreateFileSystemOptions
   {
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::Delete
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileSystemClient::Delete.
    */
   struct DeleteFileSystemOptions
   {
@@ -124,7 +124,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::GetProperties
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::FileSystemClient::GetProperties.
    */
   struct GetFileSystemPropertiesOptions
   {
@@ -135,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::SetMetadata
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileSystemClient::SetMetadata.
    */
   struct SetFileSystemMetadataOptions
   {
@@ -146,7 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::ListPaths
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileSystemClient::ListPaths.
    */
   struct ListPathsOptions
   {
@@ -180,7 +181,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::GetAccessPolicy.
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::FileSystemClient::GetAccessPolicy.
    */
   struct GetFileSystemAccessPolicyOptions
   {
@@ -191,7 +193,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileSystemClient::SetAccessPolicy.
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::FileSystemClient::SetAccessPolicy.
    */
   struct SetFileSystemAccessPolicyOptions
   {
@@ -214,7 +217,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DataLakeFileSystemClient::RenameDirectory
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::RenameDirectory.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
@@ -239,7 +243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::Append
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Append.
    */
   struct AppendFileOptions
   {
@@ -255,7 +259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::Flush
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Flush.
    */
   struct FlushFileOptions
   {
@@ -303,7 +307,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControlList
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::PathClient::SetAccessControlList.
    */
   struct SetPathAccessControlListOptions
   {
@@ -324,7 +329,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetPermissions
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::SetPermissions.
    */
   struct SetPathPermissionsOptions
   {
@@ -345,7 +350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetHttpHeaders
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::SetHttpHeaders.
    */
   struct SetPathHttpHeadersOptions
   {
@@ -356,7 +361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetMetadata
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::SetMetadata.
    */
   struct SetPathMetadataOptions
   {
@@ -367,7 +372,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::Create
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Create.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
@@ -417,7 +422,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DirectoryClient::Delete
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::DirectoryClient::Delete.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
@@ -438,7 +443,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::GetProperties
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::GetProperties.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/getproperties
@@ -452,7 +457,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::GetAccessControlList
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::PathClient::GetAccessControlList.
    */
   struct GetPathAccessControlListOptions
   {
@@ -463,7 +469,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::Read
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Read.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
@@ -487,7 +493,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileClient::Create
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::Create.
    */
   struct RenameFileOptions
   {
@@ -509,7 +515,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for FileClient::Delete
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::Delete.
    */
   struct DeleteFileOptions
   {
@@ -522,7 +528,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using RenameSubdirectoryOptions = RenameDirectoryOptions;
 
   /**
-   * @brief Optional parameters for DirectoryClient::Delete
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::DirectoryClient::Delete.
    */
   struct DeleteDirectoryOptions
   {
@@ -532,11 +538,47 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
+  /**
+   * @brief Optional parameters for DirectoryClient::SetAccessControlListRecursive.
+   */
+  struct SetPathAccessControlListRecursiveOptions
+  {
+    /**
+     * @brief When performing setAccessControlRecursive on a directory, the number of paths that
+     *        are processed with each invocation is limited.  If the number of paths to be processed
+     *        exceeds this limit, a continuation token is returned in this response header.  When a
+     *        continuation token is returned in the response, it must be specified in a subsequent
+     *        invocation of the setAccessControlRecursive operation to continue the
+     *        setAccessControlRecursive operation on the directory.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * @brief It specifies the maximum number of files or directories on which the acl change will
+     *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
+     *        items.
+     */
+    Azure::Nullable<int32_t> PageSizeHint;
+
+    /**
+     * @brief  Optional. If set to false, the operation will terminate quickly on encountering user
+     * errors (4XX). If true, the operation will ignore user errors and proceed with the operation
+     * on other sub-entities of the directory. Continuation token will only be returned when
+     * ContinueOnFailure is true in case of user errors. If not set the default value is false for
+     * this.
+     */
+    Azure::Nullable<bool> ContinueOnFailure;
+  };
+
+  using UpdatePathAccessControlListRecursiveOptions = SetPathAccessControlListRecursiveOptions;
+
+  using RemovePathAccessControlListRecursiveOptions = SetPathAccessControlListRecursiveOptions;
+
   using CreateFileOptions = CreatePathOptions;
   using CreateDirectoryOptions = CreatePathOptions;
 
   /**
-   * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::UploadFrom.
    */
   struct UploadFileFromOptions
   {
@@ -550,6 +592,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Storage::Metadata Metadata;
 
+    /**
+     * @brief Options for parallel transfer.
+     */
     struct
     {
       /**
@@ -562,7 +607,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * @brief The maximum number of bytes in a single request. This value cannot be larger than
        * 4000 MiB.
        */
-      int64_t ChunkSize = 4 * 1024 * 1024;
+      Azure::Nullable<int64_t> ChunkSize;
 
       /**
        * @brief The maximum number of threads that may be used in a parallel transfer.
@@ -574,7 +619,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
 
   /**
-   * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::UploadFrom.
    */
   struct ScheduleFileDeletionOptions
   {
