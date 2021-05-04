@@ -33,9 +33,11 @@
 using Azure::Core::Context;
 using namespace Azure::Core::IO;
 
+#if defined(AZ_PLATFORM_WINDOWS)
 // For an abundance of caution, adding this as a compile time check since we are using static_cast
 // between windows HANDLE and void* to avoid having windows.h headers exposed in public headers.
-static_assert(sizeof(void*) >= sizeof(HANDLE));
+static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE to void* and back.");
+#endif
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
 int64_t BodyStream::ReadToCount(uint8_t* buffer, int64_t count, Context const& context)
