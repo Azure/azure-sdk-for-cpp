@@ -11,12 +11,6 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
-//#include <azure/core/platform.hpp>
-//
-//#if defined(AZ_PLATFORM_WINDOWS)
-//#include <windows.h>
-//#endif
-
 namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient BlockBlobClient::CreateFromConnectionString(
