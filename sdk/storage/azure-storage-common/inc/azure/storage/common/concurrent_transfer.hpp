@@ -11,8 +11,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include <azure/core/azure_assert.hpp>
-
 namespace Azure { namespace Storage { namespace _internal {
 
   inline void ConcurrentTransfer(
