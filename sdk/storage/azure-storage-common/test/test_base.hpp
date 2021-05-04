@@ -16,6 +16,12 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <gtest/gtest.h>
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <windows.h>
+#endif
+
 namespace Azure { namespace Storage { namespace Test {
 
   const std::string& StandardStorageConnectionString();

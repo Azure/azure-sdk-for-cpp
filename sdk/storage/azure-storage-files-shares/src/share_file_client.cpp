@@ -17,6 +17,12 @@
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 #include <azure/storage/common/storage_service_version_policy.hpp>
 
+//#include <azure/core/platform.hpp>
+//
+//#if defined(AZ_PLATFORM_WINDOWS)
+//#include <windows.h>
+//#endif
+
 #include "azure/storage/files/shares/share_constants.hpp"
 
 #include "private/package_version.hpp"
