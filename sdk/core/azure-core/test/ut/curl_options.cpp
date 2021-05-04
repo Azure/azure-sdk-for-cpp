@@ -47,8 +47,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(
-        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
+    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -78,8 +77,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(
-        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
+    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -113,7 +111,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::GetApplicationContext(),
+    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::ApplicationContext,
   request)); auto responseCode = response->GetStatusCode(); int expectedCode = 200; EXPECT_PRED2(
         [](int expected, int code) { return expected == code; },
         expectedCode,
@@ -139,7 +137,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::GetApplicationContext(),
+    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::ApplicationContext,
   request)); auto responseCode = response->GetStatusCode(); int expectedCode = 200; EXPECT_PRED2(
         [](int expected, int code) { return expected == code; },
         expectedCode,
@@ -165,7 +163,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::GetApplicationContext(),
+    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::Context::ApplicationContext,
   request)); auto responseCode = response->GetStatusCode(); int expectedCode = 200; EXPECT_PRED2(
         [](int expected, int code) { return expected == code; },
         expectedCode,
@@ -197,8 +195,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(
-        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
+    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -230,8 +227,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(
-        response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
+    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -268,8 +264,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
       std::unique_ptr<Azure::Core::Http::RawResponse> response;
-      EXPECT_NO_THROW(
-          response = pipeline.Send(request, Azure::Core::Context::GetApplicationContext()));
+      EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
       auto responseCode = response->GetStatusCode();
       int expectedCode = 200;
       EXPECT_PRED2(
