@@ -4,9 +4,11 @@
 #include <algorithm>
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
+#include <chrono>
 #include <gtest/gtest.h>
 #include <random>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace Azure::Core::Cryptography;
@@ -98,7 +100,7 @@ TEST(Md5Hash, Basic)
 TEST(Md5Hash, ExpectThrow)
 {
   std::string data = "";
-  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
+  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.c_str());
   Md5Hash instance;
 
   EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
@@ -119,7 +121,6 @@ TEST(Md5Hash, CtorDtor)
   }
 }
 
-#include <thread>
 TEST(Md5Hash, multiThread)
 {
   auto hashThreadRoutine = [](int sleepFor) {
