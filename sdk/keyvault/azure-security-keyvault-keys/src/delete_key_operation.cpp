@@ -14,7 +14,8 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
-Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(Azure::Core::Context& context)
+Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(
+    Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())

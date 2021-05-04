@@ -12,7 +12,7 @@ using namespace Azure::Security::KeyVault;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
-    Azure::Core::Context& context)
+    Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())
