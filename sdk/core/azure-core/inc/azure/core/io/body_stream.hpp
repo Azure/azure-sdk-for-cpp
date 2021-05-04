@@ -89,6 +89,13 @@ namespace Azure { namespace Core { namespace IO {
         int64_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
+      if (!buffer || count < 0)
+      {
+        throw std::invalid_argument(
+            "Count cannot be negative: " + std::to_string(count)
+            + ", and the buffer pointer cannot be null.");
+      }
+
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
     };
@@ -153,6 +160,12 @@ namespace Azure { namespace Core { namespace IO {
      */
     explicit MemoryBodyStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length)
     {
+      if (!data || length < 0)
+      {
+        throw std::invalid_argument(
+            "Length cannot be negative: " + std::to_string(length)
+            + ", and the data pointer cannot be null.");
+      }
     }
 
     int64_t Length() const override { return this->m_length; }
@@ -199,6 +212,12 @@ namespace Azure { namespace Core { namespace IO {
       RandomAccessFileBodyStream(int fileDescriptor, int64_t offset, int64_t length)
           : m_fileDescriptor(fileDescriptor), m_baseOffset(offset), m_length(length), m_offset(0)
       {
+        if (fileDescriptor < 1 || offset < 0 || length < 0)
+        {
+          throw std::invalid_argument(
+              "Offset and length cannot be negative. Offset: " + std::to_string(offset)
+              + ", Length: " + std::to_string(length) + ", and the file handle must be valid.");
+        }
       }
 
       RandomAccessFileBodyStream() : m_fileDescriptor(0), m_baseOffset(0), m_length(0), m_offset(0)
@@ -223,6 +242,12 @@ namespace Azure { namespace Core { namespace IO {
       RandomAccessFileBodyStream(HANDLE fileHandle, int64_t offset, int64_t length)
           : m_filehandle(fileHandle), m_baseOffset(offset), m_length(length), m_offset(0)
       {
+        if (fileHandle == INVALID_HANDLE_VALUE || offset < 0 || length < 0)
+        {
+          throw std::invalid_argument(
+              "Offset and length cannot be negative. Offset: " + std::to_string(offset)
+              + ", Length: " + std::to_string(length) + ", and the file handle must be valid.");
+        }
       }
 
       RandomAccessFileBodyStream() : m_filehandle(NULL), m_baseOffset(0), m_length(0), m_offset(0)
