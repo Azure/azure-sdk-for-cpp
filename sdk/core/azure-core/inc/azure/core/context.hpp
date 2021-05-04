@@ -165,7 +165,8 @@ namespace Azure { namespace Core {
      * within the context tree.
      *
      * @return If found, returns `true`, with \p outputValue set to the value associated with the
-     * key found; otherwise returns `false`.
+     * key found; otherwise returns `false`, including when the key found is not of the expected
+     * type.
      *
      * @remark The \p outputValue is left unmodified it the \p key is not found.
      */
@@ -178,7 +179,7 @@ namespace Azure { namespace Core {
           if (typeid(T) != ptr->ValueType)
           {
             // type mismatch
-            std::abort();
+            return false;
           }
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
