@@ -1047,7 +1047,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       (void)chunkId;
       (void)numChunks;
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
-          fileReader.GetHandle(), offset, length);
+          static_cast<void*>(fileReader.GetHandle()), offset, length);
       UploadFileRangeOptions uploadRangeOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
