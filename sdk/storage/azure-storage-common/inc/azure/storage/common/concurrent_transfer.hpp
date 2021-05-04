@@ -66,7 +66,10 @@ namespace Azure { namespace Storage { namespace _internal {
       handle.get();
     }
 
-    AZURE_ASSERT(numWorkingThreads == 0);
+    if (numWorkingThreads != 0)
+    {
+      std::abort();
+    }
   }
 
 }}} // namespace Azure::Storage::_internal

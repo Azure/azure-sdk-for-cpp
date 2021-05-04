@@ -8,7 +8,6 @@
 #include <thread>
 #include <vector>
 
-#include <azure/core/azure_assert.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/paged_response.hpp>
 
@@ -188,7 +187,11 @@ namespace Azure { namespace Storage {
       ~StartBlobCopyOperation() override {}
 
     private:
-      std::string GetResumeToken() const override { AZURE_NOT_IMPLEMENTED; }
+      std::string GetResumeToken() const override
+      {
+        // Not supported
+        std::abort();
+      }
 
       std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
           Azure::Core::Context& context) override;

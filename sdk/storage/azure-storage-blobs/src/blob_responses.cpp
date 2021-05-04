@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/azure_assert.hpp>
-
 #include "azure/storage/blobs/blob_responses.hpp"
 
 #include "azure/storage/blobs/blob_client.hpp"
@@ -106,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           m_previousSnapshotUrl.Value(), m_operationOptions, context);
     }
     // Execution is never expected to reach here
-    AZURE_UNREACHABLE_CODE;
+    std::abort();
   }
 
 }}} // namespace Azure::Storage::Blobs

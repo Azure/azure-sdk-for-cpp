@@ -3,7 +3,6 @@
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 
-#include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -158,11 +157,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
-
-    AZURE_ASSERT_FALSE(
-        options.ContentHash.HasValue()
-        && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5);
-
+    if (options.ContentHash.HasValue()
+        && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5)
+    {
+      std::abort();
+    }
     protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
@@ -377,10 +376,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::_detail::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-
-    // ExpiresOn and TimeToExpire should be mutually exclusive.
-    AZURE_ASSERT_FALSE(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue());
-
+    if (options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue())
+    {
+      // ExpiresOn and TimeToExpire should be mutually exlusive.
+      std::abort();
+    }
     if (options.ExpiresOn.HasValue())
     {
       protocolLayerOptions.ExpiryTime
