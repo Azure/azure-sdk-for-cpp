@@ -337,7 +337,9 @@ TEST_F(KeyVaultClientTest, DeleteOperationResumeToken)
   }
   // Resume operation from token
   {
-    auto resumeOperation = keyClient.ResumeDeleteKey(resumeToken);
+    auto resumeOperation
+        = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
+            keyClient, resumeToken);
     resumeOperation.PollUntilDone(std::chrono::milliseconds(500));
   }
   {
@@ -375,7 +377,9 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
   }
   // Resume operation from token
   {
-    auto resumeOperation = keyClient.ResumeDeleteKey(resumeToken);
+    auto resumeOperation
+        = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
+            keyClient, resumeToken);
     resumeOperation.PollUntilDone(std::chrono::milliseconds(500));
   }
   {

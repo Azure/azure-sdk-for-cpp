@@ -205,7 +205,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
     Azure::Core::Context const& context) const
 {
   return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
-      m_pipeline,
+      std::make_shared<KeyClient>(*this),
       m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::DeletedKey>(
           context,
           Azure::Core::Http::HttpMethod::Delete,
@@ -213,17 +213,6 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
             return _detail::DeletedKeySerializer::DeletedKeyDeserialize(name, rawResponse);
           },
           {_detail::KeysPath, name}));
-}
-
-Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::ResumeDeleteKey(
-    std::string const& resumeToken,
-    Azure::Core::Context const& context) const
-{
-  Azure::Security::KeyVault::Keys::DeleteKeyOperation operation(m_pipeline, resumeToken);
-  // Need to fix this to use context directly. See:
-  // https://github.com/Azure/azure-sdk-for-cpp/issues/2091
-  operation.Poll(context.GetApplicationContext());
-  return operation;
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::ResumeRecoverDeletedKey(
