@@ -12,6 +12,8 @@
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
+
+#include <windows.h>
 #endif
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
