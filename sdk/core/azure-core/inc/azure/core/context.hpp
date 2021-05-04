@@ -174,13 +174,10 @@ namespace Azure { namespace Core {
     {
       for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
-        if (ptr->Key == key)
+        // Only return true if we find a key-type pair that matches.
+        // Otherwise, keep looping through the context graph.
+        if (ptr->Key == key && typeid(T) != ptr->ValueType)
         {
-          if (typeid(T) != ptr->ValueType)
-          {
-            // type mismatch
-            return false;
-          }
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
         }
