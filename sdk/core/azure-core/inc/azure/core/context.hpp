@@ -176,7 +176,7 @@ namespace Azure { namespace Core {
       {
         // Only return true if we find a key-type pair that matches.
         // Otherwise, keep looping through the context graph.
-        if (ptr->Key == key && typeid(T) != ptr->ValueType)
+        if (ptr->Key == key && typeid(T) == ptr->ValueType)
         {
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
