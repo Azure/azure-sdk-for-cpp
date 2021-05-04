@@ -130,7 +130,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
       DeleteKeyOperation operation(
           std::make_shared<Azure::Security::KeyVault::Keys::KeyClient>(client), resumeToken);
-      operation.Poll(context.GetApplicationContext());
+      operation.Poll(context.());
       return operation;
     }
   };
