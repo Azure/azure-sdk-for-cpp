@@ -194,6 +194,8 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
 
 void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
+  handleManager->m_context.ThrowIfCancelled();
+
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
   handleManager->m_sessionHandle = WinHttpOpen(
@@ -218,6 +220,8 @@ void WinHttpTransport::CreateConnectionHandle(
 {
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
   uint16_t port = handleManager->m_request.GetUrl().GetPort();
+
+  handleManager->m_context.ThrowIfCancelled();
 
   // Specify an HTTP server.
   // This function always operates synchronously.
@@ -245,6 +249,8 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
 {
   const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = handleManager->m_request.GetMethod();
+
+  handleManager->m_context.ThrowIfCancelled();
 
   // Create an HTTP request handle.
   handleManager->m_requestHandle = WinHttpOpenRequest(
@@ -296,6 +302,8 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
 
     DWORD dwBytesWritten = 0;
 
+    handleManager->m_context.ThrowIfCancelled();
+
     // Write data to the server.
     if (!WinHttpWriteData(
             handleManager->m_requestHandle,
@@ -325,6 +333,8 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
   }
 
   int64_t streamLength = handleManager->m_request.GetBodyStream()->Length();
+
+  handleManager->m_context.ThrowIfCancelled();
 
   // Send a request.
   if (!WinHttpSendRequest(
@@ -373,6 +383,8 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
 
 void WinHttpTransport::ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
+  handleManager->m_context.ThrowIfCancelled();
+
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
   // been received.
@@ -407,6 +419,8 @@ int64_t WinHttpTransport::GetContentLength(
   // Get the content length as a number.
   if (requestMethod != HttpMethod::Head && responseStatusCode != HttpStatusCode::NoContent)
   {
+    handleManager->m_context.ThrowIfCancelled();
+
     if (!WinHttpQueryHeaders(
             handleManager->m_requestHandle,
             WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
@@ -430,6 +444,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
     std::unique_ptr<_detail::HandleManager> handleManager,
     HttpMethod requestMethod)
 {
+  handleManager->m_context.ThrowIfCancelled();
+
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
   // The call is expected to fail since no destination buffer is provided.
   DWORD sizeOfHeaders = 0;
@@ -457,6 +473,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   // Allocate memory for the buffer.
   std::vector<WCHAR> outputBuffer(sizeOfHeaders / sizeof(WCHAR), 0);
 
+  handleManager->m_context.ThrowIfCancelled();
+
   // Now, use WinHttpQueryHeaders to retrieve all the headers.
   // Each header is terminated by "\0". An additional "\0" terminates the list of headers.
   if (!WinHttpQueryHeaders(
@@ -475,6 +493,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   auto statusLineEnd = std::find(start, last, '\0');
   start = statusLineEnd + 1; // start of headers
   std::string responseHeaders = WideStringToString(std::wstring(start, last));
+
+  handleManager->m_context.ThrowIfCancelled();
 
   DWORD sizeOfHttp = sizeOfHeaders;
 
@@ -498,6 +518,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   uint16_t minorVersion = 0;
   ParseHttpVersion(httpVersion, &majorVersion, &minorVersion);
 
+  handleManager->m_context.ThrowIfCancelled();
+
   DWORD statusCode = 0;
   DWORD dwSize = sizeof(statusCode);
 
@@ -514,6 +536,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   }
 
   HttpStatusCode httpStatusCode = static_cast<HttpStatusCode>(statusCode);
+
+  handleManager->m_context.ThrowIfCancelled();
 
   // Get the optional reason phrase.
   std::string reasonPhrase;
@@ -571,6 +595,9 @@ int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context c
   }
 
   DWORD numberOfBytesRead = 0;
+
+  // No need to check for context cancellation before the first I/O because the base class
+  // BodyStream::Read already does that.
 
   // Check for available data.
   DWORD numberOfBytesAvailable = 0;
