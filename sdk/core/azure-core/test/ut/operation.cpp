@@ -88,3 +88,22 @@ TEST(Operation, Status)
   EXPECT_THROW(operation.Value(), std::runtime_error);
   EXPECT_EQ(operation.Status(), OperationStatus::Cancelled);
 }
+
+TEST(Operation, ResumeToken)
+{
+  StringClient client;
+  std::string token;
+  {
+    auto operation = client.StartStringUpdate();
+    token = operation.GetResumeToken();
+  }
+  {
+    for (auto resumedOperation = StringOperation::CreateFromResumeToken(client, token);
+         !resumedOperation.IsDone();
+         resumedOperation.Poll())
+    {
+      EXPECT_FALSE(resumedOperation.HasValue());
+      EXPECT_THROW(resumedOperation.Value(), std::runtime_error);
+    }
+  }
+}
