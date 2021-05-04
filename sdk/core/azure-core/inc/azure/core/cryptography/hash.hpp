@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <memory>
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
@@ -135,7 +136,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     ~Md5Hash() override;
 
   private:
-    void* m_md5Context;
+    std::unique_ptr<Hash> m_implementation;
 
     /**
      * @brief Computes the hash value of the specified binary input data, including any previously
