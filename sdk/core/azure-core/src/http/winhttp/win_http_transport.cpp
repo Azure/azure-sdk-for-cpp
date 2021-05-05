@@ -465,8 +465,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   // Allocate memory for the buffer.
   std::vector<WCHAR> outputBuffer(sizeOfHeaders / sizeof(WCHAR), 0);
 
-  handleManager->m_context.ThrowIfCancelled();
-
   // Now, use WinHttpQueryHeaders to retrieve all the headers.
   // Each header is terminated by "\0". An additional "\0" terminates the list of headers.
   if (!WinHttpQueryHeaders(
@@ -485,8 +483,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   auto statusLineEnd = std::find(start, last, '\0');
   start = statusLineEnd + 1; // start of headers
   std::string responseHeaders = WideStringToString(std::wstring(start, last));
-
-  handleManager->m_context.ThrowIfCancelled();
 
   DWORD sizeOfHttp = sizeOfHeaders;
 
@@ -510,8 +506,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   uint16_t minorVersion = 0;
   ParseHttpVersion(httpVersion, &majorVersion, &minorVersion);
 
-  handleManager->m_context.ThrowIfCancelled();
-
   DWORD statusCode = 0;
   DWORD dwSize = sizeof(statusCode);
 
@@ -528,8 +522,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   }
 
   HttpStatusCode httpStatusCode = static_cast<HttpStatusCode>(statusCode);
-
-  handleManager->m_context.ThrowIfCancelled();
 
   // Get the optional reason phrase.
   std::string reasonPhrase;
