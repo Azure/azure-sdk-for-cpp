@@ -389,7 +389,9 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
   }
   {
     // resume from token
-    auto resumeRecoveryOp = keyClient.ResumeRecoverDeletedKey(resumeToken);
+    auto resumeRecoveryOp
+        = Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
+            keyClient, resumeToken);
     auto keyResponse = resumeRecoveryOp.PollUntilDone(std::chrono::milliseconds(500));
     auto key = keyResponse.Value;
     // Delete again for purging

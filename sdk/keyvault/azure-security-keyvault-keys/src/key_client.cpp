@@ -215,21 +215,12 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           {_detail::KeysPath, name}));
 }
 
-Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::ResumeRecoverDeletedKey(
-    std::string const& resumeToken,
-    Azure::Core::Context const& context) const
-{
-  Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation operation(m_pipeline, resumeToken);
-  operation.Poll(context);
-  return operation;
-}
-
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
   return Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation(
-      m_pipeline,
+      std::make_shared<KeyClient>(*this),
       m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::KeyVaultKey>(
           context,
           Azure::Core::Http::HttpMethod::Post,
