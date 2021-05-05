@@ -8,11 +8,17 @@
 
 #pragma once
 
+#include "azure/core/platform.hpp"
+
 #include <cstring>
 #include <new> // for placement new
 #include <random>
 #include <string>
 #include <utility> // for swap and move
+
+#if defined(AZ_PLATFORM_POSIX)
+#include <openssl/rand.h> //for RAND_bytes
+#endif
 
 namespace Azure { namespace Core {
   /**
@@ -73,15 +79,25 @@ namespace Azure { namespace Core {
      */
     static Uuid CreateUuid()
     {
-      std::random_device rd;
-
       uint8_t uuid[UuidSize] = {};
+
+#if defined(AZ_PLATFORM_WINDOWS)
+      std::random_device rd;
 
       for (int i = 0; i < UuidSize; i += 4)
       {
         const uint32_t x = rd();
         std::memcpy(uuid + i, &x, 4);
       }
+#elif defined(AZ_PLATFORM_POSIX)
+      int ret = RAND_bytes(uuid, UuidSize);
+      if (ret <= 0)
+      {
+        abort();
+      }
+#else
+      abort();
+#endif
 
       // SetVariant to ReservedRFC4122
       uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
