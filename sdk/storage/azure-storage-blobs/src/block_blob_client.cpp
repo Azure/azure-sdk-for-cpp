@@ -11,6 +11,12 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <windows.h>
+#endif
+
 namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient BlockBlobClient::CreateFromConnectionString(
@@ -219,8 +225,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     _internal::FileReader fileReader(fileName);
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
+#if defined(AZ_PLATFORM_WINDOWS)
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           reinterpret_cast<void*>(fileReader.GetHandle()), offset, length);
+#elif
+      Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
+          fileReader.GetHandle(), offset, length);
+#endif
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)

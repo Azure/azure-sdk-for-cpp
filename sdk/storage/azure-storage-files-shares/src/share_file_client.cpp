@@ -17,6 +17,12 @@
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 #include <azure/storage/common/storage_service_version_policy.hpp>
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <windows.h>
+#endif
+
 #include "azure/storage/files/shares/share_constants.hpp"
 
 #include "private/package_version.hpp"
@@ -1046,8 +1052,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
+#if defined(AZ_PLATFORM_WINDOWS)
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           reinterpret_cast<void*>(fileReader.GetHandle()), offset, length);
+#elif
+      Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
+          fileReader.GetHandle(), offset, length);
+#endif
       UploadFileRangeOptions uploadRangeOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
