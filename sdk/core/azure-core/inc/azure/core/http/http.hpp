@@ -224,7 +224,7 @@ namespace Azure { namespace Core { namespace Http {
     Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
-     * @brief A value indicating whether download will fill a memory buffer or if it will provide a
+     * @brief A value indicating whether download will return the raw response within a memory buffer or if it will provide a
      * body stream instead.
      */
     bool IsBufferedDownload() { return this->m_isBufferedDownload; }

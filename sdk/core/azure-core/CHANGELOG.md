@@ -9,7 +9,7 @@
 ### Breaking Changes
 
 - Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
-- Rename `IsDownloadViaStream()` to `IsBufferedDownload()`.
+- Renamed `Request::IsDownloadViaStream()` to `IsBufferedDownload()`.
 
 ### Bug Fixes
 
