@@ -200,7 +200,7 @@ namespace Azure { namespace Core {
      * @brief Check if the context is cancelled.
      * @return `true` if this context is cancelled, `false` otherwise.
      */
-    bool IsCancelled() const { return GetDeadline() < std::chrono::system_clock::now(); }
+    bool IsCancelled() const noexcept { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
      * @brief Throw an exception if the context was cancelled.
