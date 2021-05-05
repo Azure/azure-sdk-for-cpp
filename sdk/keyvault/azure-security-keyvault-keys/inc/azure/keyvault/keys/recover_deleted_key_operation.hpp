@@ -110,8 +110,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Create a #RecoverDeletedKeyOperation from the \p resumeToken fetched from another
      * `Operation<T>`, updated to the the latest operation status.
      *
-     * @remark After the operation is initialized, it is used to poll the last update from the server using
-     * the \p context.
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
      *
      * @param resumeToken A previously generated token used to resume the polling of the operation.
      * @param client A #KeyClient that is used for getting status updates.
