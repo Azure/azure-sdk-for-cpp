@@ -3,18 +3,6 @@
 
 #include "azure/storage/files/shares/share_file_client.hpp"
 
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <windows.h>
-#endif
-
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
