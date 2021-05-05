@@ -21,7 +21,7 @@
 namespace Azure { namespace Storage { namespace _internal {
 
 #if defined(AZ_PLATFORM_WINDOWS)
-  using FileHandle = HANDLE;
+  using FileHandle = void*;
 #elif defined(AZ_PLATFORM_POSIX)
   using FileHandle = int;
 #endif
