@@ -12,6 +12,16 @@
 #include <unistd.h>
 #endif
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 #include <codecvt>
 #include <limits>
 #include <locale>
@@ -22,9 +32,11 @@ namespace Azure { namespace Storage { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
+    HANDLE fileHandle;
+
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-    m_handle = CreateFile(
+    fileHandle = CreateFile(
         filename.data(),
         GENERIC_READ,
         FILE_SHARE_READ,
@@ -33,35 +45,38 @@ namespace Azure { namespace Storage { namespace _internal {
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 #else
-    m_handle = CreateFile2(
+    fileHandle = CreateFile2(
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
         GENERIC_READ,
         FILE_SHARE_READ,
         OPEN_EXISTING,
         NULL);
 #endif
-    if (m_handle == INVALID_HANDLE_VALUE)
+    if (fileHandle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("failed to open file");
     }
 
     LARGE_INTEGER fileSize;
-    BOOL ret = GetFileSizeEx(m_handle, &fileSize);
+    BOOL ret = GetFileSizeEx(fileHandle, &fileSize);
     if (!ret)
     {
-      CloseHandle(m_handle);
+      CloseHandle(fileHandle);
       throw std::runtime_error("failed to get size of file");
     }
+    m_handle = static_cast<void*>(fileHandle);
     m_fileSize = fileSize.QuadPart;
   }
 
-  FileReader::~FileReader() { CloseHandle(m_handle); }
+  FileReader::~FileReader() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
   FileWriter::FileWriter(const std::string& filename)
   {
+    HANDLE fileHandle;
+
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-    m_handle = CreateFile(
+    fileHandle = CreateFile(
         filename.data(),
         GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -70,20 +85,21 @@ namespace Azure { namespace Storage { namespace _internal {
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 #else
-    m_handle = CreateFile2(
+    fileHandle = CreateFile2(
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
         GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         CREATE_ALWAYS,
         NULL);
 #endif
-    if (m_handle == INVALID_HANDLE_VALUE)
+    if (fileHandle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("failed to open file");
     }
+    m_handle = static_cast<void*>(fileHandle);
   }
 
-  FileWriter::~FileWriter() { CloseHandle(m_handle); }
+  FileWriter::~FileWriter() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
   void FileWriter::Write(const uint8_t* buffer, int64_t length, int64_t offset)
   {
@@ -98,7 +114,12 @@ namespace Azure { namespace Storage { namespace _internal {
     overlapped.OffsetHigh = static_cast<DWORD>(static_cast<uint64_t>(offset) >> 32);
 
     DWORD bytesWritten;
-    BOOL ret = WriteFile(m_handle, buffer, static_cast<DWORD>(length), &bytesWritten, &overlapped);
+    BOOL ret = WriteFile(
+        static_cast<HANDLE>(m_handle),
+        buffer,
+        static_cast<DWORD>(length),
+        &bytesWritten,
+        &overlapped);
     if (!ret)
     {
       throw std::runtime_error("failed to write file");

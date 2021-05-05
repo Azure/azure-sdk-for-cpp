@@ -13,6 +13,7 @@
 #define NOMINMAX
 #endif
 
+// This use of windows.h within the header is OK because the header is private and in source only.
 #include <windows.h>
 #endif
 
