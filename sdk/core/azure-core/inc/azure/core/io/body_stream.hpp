@@ -12,14 +12,6 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <unistd.h>
-#elif defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <windows.h>
 #endif
 
 #include "azure/core/context.hpp"
@@ -171,7 +163,7 @@ namespace Azure { namespace Core { namespace IO {
 #if defined(AZ_PLATFORM_POSIX)
       int m_fileDescriptor;
 #elif defined(AZ_PLATFORM_WINDOWS)
-      HANDLE m_filehandle;
+      void* m_filehandle;
 #endif
       int64_t m_baseOffset;
       int64_t m_length;
@@ -220,7 +212,7 @@ namespace Azure { namespace Core { namespace IO {
        * for the necessary duration. The caller is also responsible for closing it once they are
        * done.
        */
-      RandomAccessFileBodyStream(HANDLE fileHandle, int64_t offset, int64_t length)
+      RandomAccessFileBodyStream(void* fileHandle, int64_t offset, int64_t length)
           : m_filehandle(fileHandle), m_baseOffset(offset), m_length(length), m_offset(0)
       {
       }
@@ -246,7 +238,7 @@ namespace Azure { namespace Core { namespace IO {
   private:
     // immutable
 #if defined(AZ_PLATFORM_WINDOWS)
-    HANDLE m_filehandle;
+    void* m_filehandle;
 #elif defined(AZ_PLATFORM_POSIX)
     int m_fileDescriptor;
 #endif
