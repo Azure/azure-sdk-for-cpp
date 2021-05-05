@@ -1052,13 +1052,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-#if defined(AZ_PLATFORM_WINDOWS)
-      Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
-          reinterpret_cast<void*>(fileReader.GetHandle()), offset, length);
-#elif
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           fileReader.GetHandle(), offset, length);
-#endif
       UploadFileRangeOptions uploadRangeOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
