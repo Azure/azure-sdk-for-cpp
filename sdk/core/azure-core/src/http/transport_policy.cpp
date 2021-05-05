@@ -48,7 +48,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
       response->GetStatusCode());
 
-  if (request.IsDownloadViaStream() && statusCode < 300)
+  if (request.IsNotBufferDownload() && statusCode < 300)
   { // special case to return a response with BodyStream to read directly from socket
     // Return only if response is valid (less than 300)
     return response;
@@ -56,8 +56,8 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
 
   // default behavior for all request is to download body content to Response
   // If ReadToEnd fail, retry policy will eventually call this again
-  // Using DownloadViaStream and getting an error code would also get to here to download error from
-  // body
+  // Using `noBufferDownload` and getting an error code would also download error to the
+  // body buffer
   auto bodyStream = response->ExtractBodyStream();
   response->SetBody(bodyStream->ReadToEnd(ctx));
   // BodyStream is moved out of response. This makes transport implementation to clean any active

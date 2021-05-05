@@ -176,8 +176,8 @@ void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
   headers[headerName] = headerValue;
 }
 
-Request::Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
-    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), downloadViaStream)
+Request::Request(HttpMethod httpMethod, Url url, bool noBufferDownload)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), noBufferDownload)
 {
 }
 
