@@ -88,6 +88,36 @@ TEST(Context, BasicChar)
   EXPECT_TRUE(value == str);
 }
 
+TEST(Context, KeyTypePair)
+{
+  Context context;
+  Context::Key const key;
+  Context::Key const keyNotFound;
+
+  std::string s("Test String");
+
+  // New context from previous
+  auto c2 = context.WithValue(key, 123);
+  auto c3 = c2.WithValue(key, s);
+
+  int intValue = -1;
+  std::string strValue = "previous value";
+
+  EXPECT_FALSE(c2.TryGetValue<std::string>(keyNotFound, strValue));
+  EXPECT_FALSE(c2.TryGetValue<int>(keyNotFound, intValue));
+
+  EXPECT_FALSE(c2.TryGetValue<std::string>(key, strValue));
+  EXPECT_TRUE(strValue == "previous value");
+  EXPECT_TRUE(c2.TryGetValue<int>(key, intValue));
+  EXPECT_TRUE(intValue == 123);
+
+  EXPECT_TRUE(c3.TryGetValue<int>(key, intValue));
+  EXPECT_TRUE(intValue == 123);
+
+  EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
+  EXPECT_TRUE(strValue == s);
+}
+
 TEST(Context, IsCancelled)
 {
   auto duration = std::chrono::milliseconds(250);
