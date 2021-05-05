@@ -14,6 +14,10 @@
 #include <string>
 #include <utility> // for swap and move
 
+#if defined(AZ_PLATFORM_POSIX)
+#include <openssl/rand.h>  //for RAND_bytes
+#endif
+
 namespace Azure { namespace Core {
   /**
    * @brief Universally unique identifier.
@@ -73,15 +77,23 @@ namespace Azure { namespace Core {
      */
     static Uuid CreateUuid()
     {
-      std::random_device rd;
-
       uint8_t uuid[UuidSize] = {};
+
+#if (WIN32)
+      std::random_device rd;
 
       for (int i = 0; i < UuidSize; i += 4)
       {
         const uint32_t x = rd();
         std::memcpy(uuid + i, &x, 4);
       }
+#else
+      int ret = RAND_bytes(uuid, UuidSize);
+      if (ret <= 0)
+      {
+        abort();
+      }
+#endif
 
       // SetVariant to ReservedRFC4122
       uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
