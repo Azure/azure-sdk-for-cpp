@@ -11,7 +11,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StartFileCopyOperation::PollInternal(
-      Azure::Core::Context&)
+      const Azure::Core::Context&)
   {
 
     auto response = m_fileClient->GetProperties();

@@ -266,8 +266,8 @@ namespace Azure { namespace Core { namespace Test {
         // Now check the pool until the clean thread until finishes removing the connections or
         // fail after 5 minutes (indicates a problem with the clean routine)
 
-        auto timeOut = Context::GetApplicationContext().WithDeadline(
-            std::chrono::system_clock::now() + 5min);
+        auto timeOut
+            = Context::ApplicationContext.WithDeadline(std::chrono::system_clock::now() + 5min);
         bool poolIsEmpty = false;
         while (!poolIsEmpty && !timeOut.IsCancelled())
         {
@@ -328,13 +328,13 @@ namespace Azure { namespace Core { namespace Test {
       //                             .ConnectionPoolIndex[hostKey]
       //                             .begin();
       //     EXPECT_EQ(
-      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
+      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::ApplicationContext),
       //         2000 - 1); // starting from zero
       //     connectionIt = --(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
       //                           .ConnectionPoolIndex[hostKey]
       //                           .end());
       //     EXPECT_EQ(
-      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::GetApplicationContext()),
+      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::ApplicationContext),
       //         2000 - 1024);
 
       //     // Check the pool will take other host-key
@@ -550,7 +550,7 @@ namespace Azure { namespace Core { namespace Test {
         // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
         auto session = std::make_unique<Azure::Core::Http::CurlSession>(
             req, std::move(connection), options.HttpKeepAlive);
-        auto r = session->Perform(Azure::Core::Context::GetApplicationContext());
+        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
         EXPECT_EQ(CURLE_SEND_ERROR, r);
       }
     }
