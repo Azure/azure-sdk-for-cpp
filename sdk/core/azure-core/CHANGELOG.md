@@ -9,7 +9,6 @@
 ### Breaking Changes
 
 - Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
-- Adding `noexcept` to `Context::IsCancelled()`.
 
 ### Bug Fixes
 
