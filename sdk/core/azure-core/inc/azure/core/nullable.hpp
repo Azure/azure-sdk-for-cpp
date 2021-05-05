@@ -221,7 +221,7 @@ public:
    */
   const T& Value() const& noexcept
   {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable");
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -231,7 +231,7 @@ public:
    */
   T& Value() & noexcept
   {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable");
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -241,7 +241,7 @@ public:
    */
   T&& Value() && noexcept
   {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable");
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return std::move(m_value);
   }

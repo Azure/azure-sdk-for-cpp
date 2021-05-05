@@ -176,7 +176,7 @@ namespace Azure { namespace Core {
       {
         if (ptr->Key == key)
         {
-          AZURE_ASSERT_MSG(typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue");
+          AZURE_ASSERT_MSG(typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
 
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
