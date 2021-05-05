@@ -9,12 +9,11 @@
 
 #pragma once
 
+#include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
-
-#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include "azure/keyvault/keys/deleted_key.hpp"
 
@@ -23,6 +22,8 @@
 #include <thread>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
+
+  class KeyClient;
 
   /**
    * @brief A long running operation to delete a key.
@@ -35,7 +36,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * constructor is private and requires internal components.*/
     friend class KeyClient;
 
-    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_keyClient;
     Azure::Security::KeyVault::Keys::DeletedKey m_value;
     std::string m_continuationToken;
 
@@ -71,13 +72,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     DeleteKeyOperation(
-        std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient,
         Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
 
     DeleteKeyOperation(
-        std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
-        std::string resumeToken)
-        : m_pipeline(keyvaultPipeline), m_value(DeletedKey(resumeToken)),
+        std::string resumeToken,
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient)
+        : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
           m_continuationToken(std::move(resumeToken))
     {
     }
@@ -108,6 +109,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return std::string
      */
     std::string GetResumeToken() const override { return m_continuationToken; }
+
+    /**
+     * @brief Create a #DeleteKeyOperation from the \p resumeToken fetched from another
+     * `Operation<T>`, updated to the the latest operation status.
+     *
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
+     *
+     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param client A #KeyClient that is used for getting status updates.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return DeleteKeyOperation
+     */
+    static DeleteKeyOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        Azure::Security::KeyVault::Keys::KeyClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context())
+    {
+
+      DeleteKeyOperation operation(
+          resumeToken, std::make_shared<Azure::Security::KeyVault::Keys::KeyClient>(client));
+      operation.Poll(context);
+      return operation;
+    }
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys
