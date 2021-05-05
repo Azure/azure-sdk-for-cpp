@@ -45,9 +45,9 @@ namespace Azure { namespace Core { namespace Test {
 
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
           req, std::move(connection), options.HttpKeepAlive);
-      session->Perform(Azure::Core::Context::GetApplicationContext());
+      session->Perform(Azure::Core::Context::ApplicationContext);
       // Reading all the response
-      session->ReadToEnd(Azure::Core::Context::GetApplicationContext());
+      session->ReadToEnd(Azure::Core::Context::ApplicationContext);
     }
     // Check that after the connection is gone, it is moved back to the pool
     EXPECT_EQ(

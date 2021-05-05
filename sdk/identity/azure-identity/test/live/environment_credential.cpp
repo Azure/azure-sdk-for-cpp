@@ -20,7 +20,7 @@ TEST(EnvironmentCredential, ClientSecret)
   Azure::Identity::EnvironmentCredential const credential;
 
   auto const token = credential.GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::GetApplicationContext());
+      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
 
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
