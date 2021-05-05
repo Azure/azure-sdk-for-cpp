@@ -48,7 +48,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
       response->GetStatusCode());
 
-  if (request.IsNotBufferDownload() && statusCode < 300)
+  if (request.IsBufferedDownload() && statusCode < 300)
   { // special case to return a response with BodyStream to read directly from socket
     // Return only if response is valid (less than 300)
     return response;

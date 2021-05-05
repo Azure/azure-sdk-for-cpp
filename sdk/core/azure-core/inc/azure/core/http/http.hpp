@@ -227,7 +227,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief A value indicating whether download will fill a memory buffer or if it will provide a
      * body stream instead.
      */
-    bool IsNotBufferDownload() { return this->m_isBufferedDownload; }
+    bool IsBufferedDownload() { return this->m_isBufferedDownload; }
 
     /**
      * @brief Get URL.
