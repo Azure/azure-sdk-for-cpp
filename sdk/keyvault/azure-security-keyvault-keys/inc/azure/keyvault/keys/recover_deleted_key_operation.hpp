@@ -72,8 +72,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response);
 
     RecoverDeletedKeyOperation(
-        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient,
-        std::string resumeToken)
+        std::string resumeToken,
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient)
         : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
           m_continuationToken(std::move(resumeToken))
     {
@@ -125,7 +125,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
 
       RecoverDeletedKeyOperation operation(
-          std::make_shared<Azure::Security::KeyVault::Keys::KeyClient>(client), resumeToken);
+          resumeToken, std::make_shared<Azure::Security::KeyVault::Keys::KeyClient>(client));
       operation.Poll(context);
       return operation;
     }

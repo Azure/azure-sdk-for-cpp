@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
       return Response<std::string>(m_value, std::make_unique<Http::RawResponse>(*m_rawResponse));
     }
 
-    StringOperation(StringClient const&, std::string const& resumeToken)
+    StringOperation(std::string const& resumeToken, StringClient const&)
         : m_operationToken(resumeToken)
     {
     }
@@ -91,7 +91,7 @@ namespace Azure { namespace Core { namespace Test {
         std::string const& resumeToken,
         StringClient const& client)
     {
-      StringOperation operation(client, resumeToken);
+      StringOperation operation(resumeToken, client);
       operation.Poll();
       return operation;
     }
