@@ -5,7 +5,8 @@
  * @file
  * @brief Provide assert macros to use with pre-conditions.
  *
- * @remark Asserts are turned ON even if `NDEBUG` is defined.
+ * @remark Asserts are turned ON when `NDEBUG` is NOT defined (for Debug build). For Release build,
+ * `std::abort()` is directly called if the condition is false, whitout calling assert().
  *
  */
 
