@@ -98,7 +98,7 @@ TEST(Operation, ResumeToken)
     token = operation.GetResumeToken();
   }
   {
-    for (auto resumedOperation = StringOperation::CreateFromResumeToken(client, token);
+    for (auto resumedOperation = StringOperation::CreateFromResumeToken(token, client);
          !resumedOperation.IsDone();
          resumedOperation.Poll())
     {

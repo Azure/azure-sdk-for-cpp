@@ -339,7 +339,7 @@ TEST_F(KeyVaultClientTest, DeleteOperationResumeToken)
   {
     auto resumeOperation
         = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
-            keyClient, resumeToken);
+            resumeToken, keyClient);
     resumeOperation.PollUntilDone(std::chrono::milliseconds(500));
   }
   {
@@ -379,7 +379,7 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
   {
     auto resumeOperation
         = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
-            keyClient, resumeToken);
+            resumeToken, keyClient);
     resumeOperation.PollUntilDone(std::chrono::milliseconds(500));
   }
   {
@@ -391,7 +391,7 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
     // resume from token
     auto resumeRecoveryOp
         = Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
-            keyClient, resumeToken);
+            resumeToken, keyClient);
     auto keyResponse = resumeRecoveryOp.PollUntilDone(std::chrono::milliseconds(500));
     auto key = keyResponse.Value;
     // Delete again for purging

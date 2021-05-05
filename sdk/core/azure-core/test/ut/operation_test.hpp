@@ -88,8 +88,8 @@ namespace Azure { namespace Core { namespace Test {
     void SetOperationStatus(OperationStatus status) { m_status = status; }
 
     static StringOperation CreateFromResumeToken(
-        StringClient const& client,
-        std::string const& resumeToken)
+        std::string const& resumeToken,
+        StringClient const& client)
     {
       StringOperation operation(client, resumeToken);
       operation.Poll();

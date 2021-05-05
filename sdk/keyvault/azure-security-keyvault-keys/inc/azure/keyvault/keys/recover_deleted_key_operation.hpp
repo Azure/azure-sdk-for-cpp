@@ -113,14 +113,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark After the operation is init, it is used to poll the last update from the server using
      * the \p context.
      *
-     * @param client A #KeyClient that is used for getting status updates.
      * @param resumeToken A previously generated token.
+     * @param client A #KeyClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
      */
     static RecoverDeletedKeyOperation CreateFromResumeToken(
-        Azure::Security::KeyVault::Keys::KeyClient const& client,
         std::string const& resumeToken,
+        Azure::Security::KeyVault::Keys::KeyClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
 

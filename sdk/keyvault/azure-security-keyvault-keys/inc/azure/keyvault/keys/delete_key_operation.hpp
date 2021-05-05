@@ -111,20 +111,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string GetResumeToken() const override { return m_continuationToken; }
 
     /**
-     * @brief Create a #DeleteKeyOperation from the \p resumeToken fetched from another `Operation<T>`, updated to the
-     * the latest operation status.
+     * @brief Create a #DeleteKeyOperation from the \p resumeToken fetched from another
+     * `Operation<T>`, updated to the the latest operation status.
      *
-     * @remark After the operation is initialized, it is used to poll the last update from the server using
-     * the \p context.
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
      *
-     * @param client A #KeyClient that is used for getting status updates.
      * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param client A #KeyClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
      */
     static DeleteKeyOperation CreateFromResumeToken(
-        Azure::Security::KeyVault::Keys::KeyClient const& client,
         std::string const& resumeToken,
+        Azure::Security::KeyVault::Keys::KeyClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
 
