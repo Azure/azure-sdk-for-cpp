@@ -6,6 +6,10 @@
 
 - Added `Azure::PagedResponse<T>`.
 
+### Breaking Changes
+
+- Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
+
 ### Bug Fixes
 
 - Do not re-use a libcurl connection to same host but different port.
