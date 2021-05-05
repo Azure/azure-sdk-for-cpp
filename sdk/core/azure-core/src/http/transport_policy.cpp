@@ -56,7 +56,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
 
   // default behavior for all request is to download body content to Response
   // If ReadToEnd fail, retry policy will eventually call this again
-  // Using `noBufferDownload` and getting an error code would also download error to the
+  // Using `bufferedDownload=false` and getting an error code would also download error to the
   // body buffer
   auto bodyStream = response->ExtractBodyStream();
   response->SetBody(bodyStream->ReadToEnd(ctx));
