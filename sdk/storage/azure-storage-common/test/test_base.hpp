@@ -3,6 +3,18 @@
 
 #pragma once
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 #include <chrono>
 #include <cstdint>
 #include <limits>
@@ -15,12 +27,6 @@
 #include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <gtest/gtest.h>
-
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#include <windows.h>
-#endif
 
 namespace Azure { namespace Storage { namespace Test {
 

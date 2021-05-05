@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
-    HANDLE fileHandle = NULL;
+    HANDLE fileHandle;
 
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-    HANDLE fileHandle = NULL;
+    HANDLE fileHandle;
 
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.

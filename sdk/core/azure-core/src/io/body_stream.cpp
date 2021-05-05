@@ -90,7 +90,7 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
 FileBodyStream::FileBodyStream(const std::string& filename)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
-  HANDLE fileHandle = NULL;
+  HANDLE fileHandle;
   try
   {
 #if !defined(WINAPI_PARTITION_DESKTOP) \
