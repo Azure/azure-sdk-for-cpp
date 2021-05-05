@@ -194,8 +194,6 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
 
 void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
-  handleManager->m_context.ThrowIfCancelled();
-
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
   handleManager->m_sessionHandle = WinHttpOpen(
@@ -249,8 +247,6 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
 {
   const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = handleManager->m_request.GetMethod();
-
-  handleManager->m_context.ThrowIfCancelled();
 
   // Create an HTTP request handle.
   handleManager->m_requestHandle = WinHttpOpenRequest(
@@ -419,8 +415,6 @@ int64_t WinHttpTransport::GetContentLength(
   // Get the content length as a number.
   if (requestMethod != HttpMethod::Head && responseStatusCode != HttpStatusCode::NoContent)
   {
-    handleManager->m_context.ThrowIfCancelled();
-
     if (!WinHttpQueryHeaders(
             handleManager->m_requestHandle,
             WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
@@ -444,8 +438,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
     std::unique_ptr<_detail::HandleManager> handleManager,
     HttpMethod requestMethod)
 {
-  handleManager->m_context.ThrowIfCancelled();
-
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
   // The call is expected to fail since no destination buffer is provided.
   DWORD sizeOfHeaders = 0;
