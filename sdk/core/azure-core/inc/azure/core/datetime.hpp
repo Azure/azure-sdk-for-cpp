@@ -85,7 +85,7 @@ private:
 
 public:
   /**
-   * @brief Construct a default instance of #Azure::DateTime (00:00:00.0000000 on Janualy
+   * @brief Construct a default instance of #Azure::DateTime (00:00:00.0000000 on January
    * 1st, 0001).
    */
   constexpr DateTime() : time_point() {}
