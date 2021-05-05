@@ -3,6 +3,12 @@
 
 #include "azure/storage/blobs/block_blob_client.hpp"
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <windows.h>
+#endif
+
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/concurrent_transfer.hpp>
 #include <azure/storage/common/constants.hpp>
@@ -10,12 +16,6 @@
 #include <azure/storage/common/file_io.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
-
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#include <windows.h>
-#endif
 
 namespace Azure { namespace Storage { namespace Blobs {
 

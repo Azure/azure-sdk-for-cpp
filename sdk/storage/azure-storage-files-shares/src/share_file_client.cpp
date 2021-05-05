@@ -3,6 +3,12 @@
 
 #include "azure/storage/files/shares/share_file_client.hpp"
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <windows.h>
+#endif
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
@@ -16,12 +22,6 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 #include <azure/storage/common/storage_service_version_policy.hpp>
-
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#include <windows.h>
-#endif
 
 #include "azure/storage/files/shares/share_constants.hpp"
 
