@@ -21,8 +21,6 @@ namespace Azure { namespace Core { namespace Test {
   private:
     std::string m_operationToken;
     std::string m_value;
-
-  private:
     int m_count = 0;
 
   private:
@@ -60,7 +58,14 @@ namespace Azure { namespace Core { namespace Test {
       return Response<std::string>(m_value, std::make_unique<Http::RawResponse>(*m_rawResponse));
     }
 
+    StringOperation(std::string const& resumeToken, StringClient const&)
+        : m_operationToken(resumeToken)
+    {
+    }
+
   public:
+    StringOperation() = default;
+
     Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
     {
       return *m_rawResponse;
@@ -81,6 +86,15 @@ namespace Azure { namespace Core { namespace Test {
     // This is a helper method to allow testing of the underlying operation<T> behaviors
     //  ClientOperations would not expose a way to control status
     void SetOperationStatus(OperationStatus status) { m_status = status; }
+
+    static StringOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        StringClient const& client)
+    {
+      StringOperation operation(resumeToken, client);
+      operation.Poll();
+      return operation;
+    }
   };
 
   class StringClient {
