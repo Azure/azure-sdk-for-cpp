@@ -415,7 +415,7 @@ namespace Azure { namespace Core { namespace Test {
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
     {
@@ -423,7 +423,7 @@ namespace Azure { namespace Core { namespace Test {
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
     {
@@ -431,7 +431,7 @@ namespace Azure { namespace Core { namespace Test {
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
     {
@@ -439,7 +439,7 @@ namespace Azure { namespace Core { namespace Test {
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
   }
@@ -451,7 +451,7 @@ namespace Azure { namespace Core { namespace Test {
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
     {
@@ -459,15 +459,15 @@ namespace Azure { namespace Core { namespace Test {
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
     {
-      Azure::Core::Url host(u8"http://\xD800\x0100/get");
+      Azure::Core::Url host("http://\xD8\x00\x01\x00/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       EXPECT_THROW(
-          m_pipeline->Send(request, Azure::Core::Context::GetApplicationContext()),
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
           Azure::Core::Http::TransportException);
     }
   }
