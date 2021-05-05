@@ -233,14 +233,14 @@ TEST(ETag, EqualsWeak)
   EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagTwo, ETag::ETagComparison::Weak));
 }
 
-#if !defined(NDEBUG)
-// Next tests require Debug mode ON
-
 TEST(ETag, PreCondition)
 {
   ETag emptyTag;
 
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(emptyTag.ToString(), "");
+#else
   ASSERT_DEATH(emptyTag.ToString(), "empty eTag");
-}
-
 #endif
+}

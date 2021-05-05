@@ -18,6 +18,8 @@
  * Define AZURE_ASSERT to call abort directly on exp == false
  */
 
+#include <cstdlib>
+
 #define AZURE_ASSERT(exp) \
   if (!(exp)) \
   { \
