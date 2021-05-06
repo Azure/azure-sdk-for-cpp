@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// An SPDX-License-Identifier: MIT
 
 /**
  * @brief General purpose header for Key Vault keys functionaly.

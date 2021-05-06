@@ -1,6 +1,6 @@
 
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// An SPDX-License-Identifier: MIT
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 

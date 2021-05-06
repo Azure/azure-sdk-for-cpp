@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// An SPDX-License-Identifier: MIT
 
 #include "azure/perf/argagg.hpp"
 #include "azure/perf/program.hpp"

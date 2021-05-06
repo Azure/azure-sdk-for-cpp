@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// An SPDX-License-Identifier: MIT
 
 // Define `min` and `max` as function-like macros before including all public
 // headers to ensure that uses of those identifiers are defended against

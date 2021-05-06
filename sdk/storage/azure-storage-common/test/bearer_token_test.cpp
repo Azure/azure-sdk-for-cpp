@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// An SPDX-License-Identifier: MIT
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs.hpp>

@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// An SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"
