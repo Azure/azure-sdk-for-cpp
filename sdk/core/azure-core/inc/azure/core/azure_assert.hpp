@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "platform.hpp"
+
 #include <cstdlib>
 #include <string>
 
@@ -44,7 +46,11 @@
 
 #endif
 
+#if defined(AZ_PLATFORM_WINDOWS)
+__declspec(noreturn) void AzureNoReturnPath(std::string msg);
+#else
 __attribute__((__noreturn__)) void AzureNoReturnPath(std::string msg);
+#endif
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
 #define AZURE_UNREACHABLE_CODE AzureNoReturnPath("unreachable code!")
