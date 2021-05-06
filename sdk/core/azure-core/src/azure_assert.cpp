@@ -3,7 +3,7 @@
 
 #include "azure/core/azure_assert.hpp"
 
-void AzureAssertNoReturn(std::string msg)
+void AzureNoReturnPath(std::string msg)
 {
   AZURE_ASSERT_MSG(false, msg);
   std::abort();
