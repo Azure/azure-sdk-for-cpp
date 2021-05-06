@@ -6,7 +6,7 @@
  * @brief Provide assert macros to use with pre-conditions.
  *
  * @remark Asserts are turned ON when `NDEBUG` is NOT defined (for Debug build). For Release build,
- * `std::abort()` is directly called if the condition is false, whitout calling assert().
+ * `std::abort()` is directly called if the condition is false, without calling assert().
  *
  */
 
@@ -25,10 +25,12 @@
  */
 
 #define AZURE_ASSERT(exp) \
-  if (!(exp)) \
-  { \
-    std::abort(); \
-  }
+  do { \
+    if (!(exp)) \
+    { \
+      std::abort(); \
+    } \
+  while(0)
 
 #define AZURE_ASSERT_MSG(exp, msg) AZURE_ASSERT(exp)
 
@@ -46,11 +48,7 @@
 
 #endif
 
-#if defined(AZ_PLATFORM_WINDOWS)
-__declspec(noreturn) void AzureNoReturnPath(std::string msg);
-#else
-__attribute__((__noreturn__)) void AzureNoReturnPath(std::string msg);
-#endif
+[[noreturn]] void AzureNoReturnPath(std::string msg);
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
 #define AZURE_UNREACHABLE_CODE AzureNoReturnPath("unreachable code!")
