@@ -52,9 +52,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum AccountKind
 
+    /**
+     * @brief Describes a sinlge block in block blob.
+     */
     struct BlobBlock
     {
+      /**
+       * Base64 encoded block id.
+       */
       std::string Name;
+      /**
+       * Block size in bytes.
+       */
       int64_t Size = 0;
     }; // struct BlobBlock
 
@@ -164,17 +173,42 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum PublicAccessType
 
+    /**
+     * @brief Determines how long the associated data should persist.
+     */
     struct RetentionPolicy
     {
+      /**
+       * Indicates whether this retention policy is enabled.
+       */
       bool IsEnabled = false;
+      /**
+       * Indicates the number of days that metrics or logging or soft-deleted data should be
+       * retained.
+       */
       Azure::Nullable<int32_t> Days;
     }; // struct RetentionPolicy
 
+    /**
+     * @brief Describes how you reference an ACL in a blob container.
+     */
     struct SignedIdentifier
     {
+      /**
+       * A unique ID for this signed identifier.
+       */
       std::string Id;
+      /**
+       * Date and time since when this policy is active.
+       */
       Azure::DateTime StartsOn;
+      /**
+       * Date and time the policy expires.
+       */
       Azure::DateTime ExpiresOn;
+      /**
+       * The permissions for this ACL policy.
+       */
       std::string Permissions;
     }; // struct SignedIdentifier
 
@@ -198,21 +232,52 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum SkuName
 
+    /**
+     * @brief Blob information from the result of
+     * #Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags.
+     */
     struct TaggedBlobItem
     {
+      /**
+       * Blob name.
+       */
       std::string BlobName;
+      /**
+       * Blob container name.
+       */
       std::string BlobContainerName;
     }; // struct TaggedBlobItem
 
+    /**
+     * @brief Azure analytics logging settings.
+     */
     struct AnalyticsLogging
     {
+      /**
+       * The version of storage analytics to configure.
+       */
       std::string Version;
+      /**
+       * Whether all delete requests should be logged.
+       */
       bool Delete = false;
+      /**
+       * Whether all read requests should be logged.
+       */
       bool Read = false;
+      /**
+       * Whether all write requests should be logged.
+       */
       bool Write = false;
+      /**
+       * Determines how long the data should be persist.
+       */
       Models::RetentionPolicy RetentionPolicy;
     }; // struct AnalyticsLogging
 
+    /**
+     * @brief Detailed information of a blob container.
+     */
     struct BlobContainerItemDetails
     {
       /**
@@ -262,44 +327,122 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates whether the container's default encryption scope can be overridden.
        */
       bool PreventEncryptionScopeOverride = false;
+      /**
+       * Remaining days before this container will be permanantely deleted. Only valid when this
+       * container was deleted.
+       */
       Azure::Nullable<int32_t> RemainingRetentionDays;
+      /**
+       * Data and time at which this container was deleted. Only valid when this container was
+       * deleted.
+       */
       Azure::Nullable<Azure::DateTime> DeletedOn;
     }; // struct BlobContainerItemDetails
 
+    /**
+     * @brief Settings for a CORS rule.
+     */
     struct CorsRule
     {
+      /**
+       * A comma-separated list of origin domains that are allowed via CORS, or "*" if all domains
+       * are allowed.
+       */
       std::string AllowedOrigins;
+      /**
+       * A comma-separated list of HTTP methods that are allowed to be executed by the origin. For
+       * Azure Storage, permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
+       */
       std::string AllowedMethods;
+      /**
+       * A comma-separated list of headers allowed to be part of the cross-origin request.
+       */
       std::string AllowedHeaders;
+      /**
+       * A comma-separated list of response headers to expose to CORS clients.
+       */
       std::string ExposedHeaders;
+      /**
+       * The number of seconds that the client/browser should cache a preflight response.
+       */
       int32_t MaxAgeInSeconds = 0;
     }; // struct CorsRule
 
+    /**
+     * @brief Geo-replication information for the secondary storage endpoint.
+     */
     struct GeoReplication
     {
+      /**
+       * Status of the secondary storage endpoint.
+       */
       GeoReplicationStatus Status;
+      /**
+       * All primary writes preceding this value are guaranteed to be available for read operations
+       * at the secondary. Primary writes after this point in time may or may not be available for
+       * reads. This value may be null if replication status is bootstrap or unavailable.
+       */
       Azure::Nullable<Azure::DateTime> LastSyncedOn;
     }; // struct GeoReplication
 
+    /**
+     * @brief Summary of request statistics grouped by API in hour or minute aggregates for blobs.
+     */
     struct Metrics
     {
+      /**
+       * The version of storage analytics to configure.
+       */
       std::string Version;
+      /**
+       * Indicates whether metrics are enabled for blob service.
+       */
       bool IsEnabled = false;
+      /**
+       * Determines how long the metrics data should persist.
+       */
       Models::RetentionPolicy RetentionPolicy;
+      /**
+       * Indicates whether metrics should generate summary statistics for called API operations.
+       */
       Azure::Nullable<bool> IncludeApis;
     }; // struct Metrics
 
+    /**
+     * @brief Contains the object replication rule ID and replication status of a blob.
+     */
     struct ObjectReplicationRule
     {
+      /**
+       * Rule ID.
+       */
       std::string RuleId;
+      /**
+       * Replication status.
+       */
       ObjectReplicationStatus ReplicationStatus;
     }; // struct ObjectReplicationRule
 
+    /**
+     * @brief The properties that enable a storage account to host a static website.
+     */
     struct StaticWebsite
     {
+      /**
+       * Indicates whether this storage account is hosting a static website.
+       */
       bool IsEnabled = false;
+      /**
+       * The default name of the index page under each directory.
+       */
       Azure::Nullable<std::string> IndexDocument;
+      /**
+       * Absolute path of the default index page.
+       */
       Azure::Nullable<std::string> DefaultIndexDocumentPath;
+      /**
+       * The absolute path of the custom 404 page.
+       */
       Azure::Nullable<std::string> ErrorDocument404Path;
     }; // struct StaticWebsite
 
@@ -346,25 +489,59 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum ArchiveStatus
 
+    /**
+     * @brief A container item from the result of
+     * #Azure::Storage::Blobs::BlobServiceClient::ListBlobContainers.
+     */
     struct BlobContainerItem
     {
+      /**
+       * Blob container name.
+       */
       std::string Name;
+      /**
+       * Indicates whether this container was deleted.
+       */
       bool IsDeleted = false;
       /**
-       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
-       * not enabled.
+       * Version ID of a deleted container. This is null if a container is not deleted.
        */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * Detailed information of this container item.
+       */
       BlobContainerItemDetails Details;
     }; // struct BlobContainerItem
 
+    /**
+     * @brief Standard HTTP properties supported by containers and blobs.
+     */
     struct BlobHttpHeaders
     {
+      /**
+       * MIME content type of the blob.
+       */
       std::string ContentType;
+      /**
+       * Specifies which content encodings have been applied to the blob.
+       */
       std::string ContentEncoding;
+      /**
+       * Specifies the natural languages used by this blob.
+       */
       std::string ContentLanguage;
+      /**
+       * A hash of the blob content.
+       */
       Storage::ContentHash ContentHash;
+      /**
+       * Specifies directives for caching mechanisms.
+       */
       std::string CacheControl;
+      /**
+       * Conveys additional information about how to process the resource payload, and also can be
+       * used to attach additional metadata.
+       */
       std::string ContentDisposition;
     }; // struct BlobHttpHeaders
 
@@ -383,9 +560,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlobType
 
+    /**
+     * @brief Contains object replication policy ID and the respective list of
+     * #ObjectReplicationRule s. This is used when retrieving the object replication properties on
+     * the source blob. The policy id for the destination blob is set in
+     * ObjectReplicationDestinationPolicyId of the respective method responses.
+     */
     struct ObjectReplicationPolicy
     {
+      /**
+       * The policy ID.
+       */
       std::string PolicyId;
+      /**
+       * The Rule IDs and respective replication status that are under the policy ID.
+       */
       std::vector<ObjectReplicationRule> Rules;
     }; // struct ObjectReplicationPolicy
 
@@ -403,6 +592,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum RehydratePriority
 
+    /**
+     * @brief Detailed information of a blob.
+     */
     struct BlobItemDetails
     {
       /**
@@ -417,6 +609,9 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The date and time at which the blob was created.
        */
       Azure::DateTime CreatedOn;
+      /**
+       * The time this blob will expire.
+       */
       Azure::Nullable<Azure::DateTime> ExpiresOn;
       /**
        * The date and time at which the blob was last read or written to.
@@ -482,6 +677,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
     }; // struct BlobItemDetails
 
+    /**
+     * @brief Detailed information of a downloaded blob.
+     */
     struct DownloadBlobDetails
     {
       /**
@@ -498,6 +696,9 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The date and time at which the blob was created.
        */
       Azure::DateTime CreatedOn;
+      /**
+       * The time this blob will expire.
+       */
       Azure::Nullable<Azure::DateTime> ExpiresOn;
       /**
        * The date and time at which the blob was last read or written to.
@@ -611,6 +812,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<bool> IsCurrentVersion;
     }; // struct DownloadBlobDetails
 
+    /**
+     * @brief A blob item from the result of #Azure::Storage::Blobs::BlobContainerClient::ListBlobs.
+     */
     struct BlobItem
     {
       std::string Name;
@@ -622,7 +826,13 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The blob's type.
        */
       Models::BlobType BlobType;
+      /**
+       * Indicates whether this blob was deleted.
+       */
       bool IsDeleted = false;
+      /**
+       * A string value that uniquely identifies a blob snapshot.
+       */
       std::string Snapshot;
       /**
        * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
@@ -634,6 +844,9 @@ namespace Azure { namespace Storage { namespace Blobs {
        * is not enabled.
        */
       Azure::Nullable<bool> IsCurrentVersion;
+      /**
+       * Detailed information of the downloaded blob.
+       */
       BlobItemDetails Details;
     }; // struct BlobItem
 
@@ -842,7 +1055,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::DateTime CreatedOn;
       /**
-       * The time the blob will expire.
+       * The time this blob will expire.
        */
       Azure::Nullable<Azure::DateTime> ExpiresOn;
       /**
@@ -1326,7 +1539,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<ContentHash> TransactionalContentHash;
       /**
-       * Details information of the downloaded blob.
+       * Detailed information of the downloaded blob.
        */
       DownloadBlobDetails Details;
     }; // struct DownloadBlobResult
@@ -1541,7 +1754,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ServiceStatistics
     {
       /**
-       * Geo-replication information for the secondary storage service.
+       * Geo-replication information for the secondary storage endpoint.
        */
       Models::GeoReplication GeoReplication;
     }; // struct ServiceStatistics
