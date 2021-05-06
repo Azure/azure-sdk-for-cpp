@@ -573,7 +573,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief The serialized return result for operation: ShareProperties
+     * @brief The serialized return result for operation: GetShareProperties
      */
     struct ShareProperties
     {
@@ -867,7 +867,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief The serialized return result for operation: ShareAccessPolicy
+     * @brief The serialized return result for operation: GetShareAccessPolicy
      */
     struct ShareAccessPolicy
     {
@@ -895,7 +895,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief The serialized return result for operation: ShareStatistics
+     * @brief The serialized return result for operation: GetShareStatistics
      */
     struct ShareStatistics
     {
@@ -950,7 +950,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief The serialized return result for operation: DirectoryProperties
+     * @brief The serialized return result for operation: GetDirectoryProperties
      */
     struct DirectoryProperties
     {
@@ -1077,7 +1077,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief The serialized return result for operation: FileProperties
+     * @brief The serialized return result for operation: GetFileProperties
      */
     struct FileProperties
     {
