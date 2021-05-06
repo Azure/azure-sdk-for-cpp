@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// An SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 /**
  * @brief Defines a general exception for Key Vault service clients.
