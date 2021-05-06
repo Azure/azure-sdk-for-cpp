@@ -31,7 +31,7 @@
     { \
       std::abort(); \
     } \
-    while (0)
+  } while (0)
 
 #define AZURE_ASSERT_MSG(exp, msg) AZURE_ASSERT(exp)
 
