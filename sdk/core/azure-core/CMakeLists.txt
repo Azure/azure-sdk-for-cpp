@@ -88,6 +88,7 @@ set(
   AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
+    src/azure_assert.cpp
     src/cryptography/md5.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/http.cpp
