@@ -25,11 +25,11 @@ namespace Azure { namespace Core {
         std::string queryStr;
         if (!encodedQueryParameters.empty())
         {
-          auto separ = '?';
+          auto separator = '?';
           for (const auto& q : encodedQueryParameters)
           {
-            queryStr += separ + q.first + '=' + q.second;
-            separ = '&';
+            queryStr += separator + q.first + '=' + q.second;
+            separator = '&';
           }
         }
 

@@ -6,15 +6,20 @@
   "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib", ".vscode/cspell.json"],
   "words": [
     "azsdk",
+    "azuresdkforcpp",
     "cmake",
     "CMOCKA",
     "Cobertura",
     "ctest",
+    "itfactor",
     "moxygen",
+    "NOLINT",
+    "NOMINMAX",
     "pwsh",
     "SPDX",
     "stoi",
-    "vcpkg"
+    "vcpkg",
+    "Wgnu"
   ],
   "overrides": [
     {
