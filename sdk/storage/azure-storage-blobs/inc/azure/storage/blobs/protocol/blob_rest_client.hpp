@@ -4667,7 +4667,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context)
         {
           (void)options;
-          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, true);
+          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, false);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
           {

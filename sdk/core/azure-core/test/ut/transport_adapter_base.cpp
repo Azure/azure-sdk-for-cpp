@@ -177,13 +177,13 @@ namespace Azure { namespace Core { namespace Test {
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyFromStream(*response, expectedResponseBodySize);
 
-    request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
+    request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
     // Add a header and send again. Response should return that header in the body
     request.SetHeader("123", "456");
     response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -196,7 +196,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
 
     // loop sending request
     for (auto i = 0; i < 50; i++)
@@ -213,7 +213,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host, true);
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
     CheckBodyFromStream(*response, expectedResponseBodySize);
@@ -231,7 +231,7 @@ namespace Azure { namespace Core { namespace Test {
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
     auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
+        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Test {
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, true);
+        Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
 
@@ -263,7 +263,7 @@ namespace Azure { namespace Core { namespace Test {
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, true);
+        Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
 
@@ -282,7 +282,7 @@ namespace Azure { namespace Core { namespace Test {
         "response after 1 second. The server should not close the stream before all chunks are "
         "sent to a client.</h5></body></html>");
 
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
 
     checkResponseCode(response->GetStatusCode());
@@ -294,7 +294,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     std::string expectedType("This is the Response Type");
 
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
 
     Azure::Response<std::string> responseT(expectedType, std::move(response));
@@ -341,7 +341,7 @@ namespace Azure { namespace Core { namespace Test {
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
     auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
+        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(
         response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::MethodNotAllowed);
@@ -506,7 +506,7 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       checkResponseCode(response->GetStatusCode());
@@ -531,7 +531,7 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
     // Make transport adapter to read default chunk size
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -557,7 +557,7 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       checkResponseCode(response->GetStatusCode());
