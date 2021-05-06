@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// An SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/http/policies/policy.hpp>

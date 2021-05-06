@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// An SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 /**
  * @brief This sample provides the code implementation to use the Key Vault SDK client for C++
