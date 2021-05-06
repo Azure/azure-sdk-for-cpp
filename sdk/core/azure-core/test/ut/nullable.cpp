@@ -171,3 +171,39 @@ TEST(Nullable, ValueOr)
   // Ensure val2 is still disengaged after call to ValueOr
   EXPECT_FALSE(val2);
 }
+
+void Foo(int&& rValue) { (void)rValue; }
+
+TEST(Nullable, PreCondition)
+{
+  Nullable<int> emptyNullable;
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(auto a = emptyNullable.Value(); (void)a;, "");
+#else
+  ASSERT_DEATH(auto a = emptyNullable.Value(); (void)a;, "Empty Nullable");
+#endif
+}
+
+TEST(Nullable, PreCondition2)
+{
+  Nullable<int> emptyNullable;
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(auto& a = emptyNullable.Value(); (void)a;, "");
+#else
+  ASSERT_DEATH(auto& a = emptyNullable.Value(); (void)a;, "Empty Nullable");
+#endif
+}
+
+TEST(Nullable, PreCondition3)
+{
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(Foo(Nullable<int>().Value());, "");
+#else
+  ASSERT_DEATH(Foo(Nullable<int>().Value());, "Empty Nullable");
+#endif
+}
