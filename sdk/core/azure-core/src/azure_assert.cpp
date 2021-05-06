@@ -3,4 +3,8 @@
 
 #include "azure/core/azure_assert.hpp"
 
-void AzureAssertNoReturn(bool exp, std::string msg) { AZURE_ASSERT_MSG(exp, msg); }
+void AzureAssertNoReturn(std::string msg)
+{
+  AZURE_ASSERT_MSG(false, msg);
+  std::abort();
+}

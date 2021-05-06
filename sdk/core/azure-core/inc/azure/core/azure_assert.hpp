@@ -44,8 +44,8 @@
 
 #endif
 
-__declspec(noreturn) void AzureAssertNoReturn(bool exp, std::string msg);
+__attribute__((__noreturn__)) void AzureNoReturnPath(std::string msg);
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
-#define AZURE_UNREACHABLE_CODE AzureAssertNoReturn(false, "unreachable code!")
-#define AZURE_NOT_IMPLEMENTED AzureAssertNoReturn(false, "not implemented code!")
+#define AZURE_UNREACHABLE_CODE AzureNoReturnPath("unreachable code!")
+#define AZURE_NOT_IMPLEMENTED AzureNoReturnPath("not implemented code!")
