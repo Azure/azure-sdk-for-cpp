@@ -223,54 +223,6 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_TRUE(contentLengthHeader > 0);
   }
 
-  TEST_P(TransportAdapter, putWithStream)
-  {
-    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
-
-    // PUT 1k
-    auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, false);
-    auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-    checkResponseCode(response->GetStatusCode());
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-
-    CheckBodyFromStream(*response, expectedResponseBodySize);
-  }
-
-  TEST_P(TransportAdapter, deleteRequestWithStream)
-  {
-    Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
-
-    // Delete with 1k payload
-    auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
-    auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, false);
-    auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-    checkResponseCode(response->GetStatusCode());
-
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-    CheckBodyFromStream(*response, expectedResponseBodySize);
-  }
-
-  TEST_P(TransportAdapter, patchWithStream)
-  {
-    Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
-
-    // Patch with 1kb payload
-    auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
-    auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, false);
-    auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-    checkResponseCode(response->GetStatusCode());
-
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-    CheckBodyFromStream(*response, expectedResponseBodySize);
-  }
-
   TEST_P(TransportAdapter, getChunkWithStream)
   {
     Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
@@ -330,24 +282,6 @@ namespace Azure { namespace Core { namespace Test {
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
-  }
-
-  TEST_P(TransportAdapter, putWithStreamOnFail)
-  {
-    // point to bad address pah to generate server MethodNotAllowed error
-    Azure::Core::Url host(AzureSdkHttpbinServer::Get());
-
-    // PUT 1k
-    auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
-    auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, false);
-    auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-    checkResponseCode(
-        response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::MethodNotAllowed);
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-
-    CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
   TEST_P(TransportAdapter, cancelTransferUpload)
@@ -488,82 +422,6 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_NO_THROW((void)dynamic_cast<Azure::Core::Http::TransportException&>(err));
       EXPECT_NO_THROW((void)dynamic_cast<std::runtime_error&>(err));
       EXPECT_THROW((void)dynamic_cast<std::range_error&>(err), std::bad_cast);
-    }
-  }
-
-  TEST_P(TransportAdapter, SizePutFromFile)
-  {
-    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
-    std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
-    testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
-    testDataPath.append("\\fileData");
-#else
-#error "Unknown platform"
-#endif
-
-    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
-    auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
-    {
-      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      checkResponseCode(response->GetStatusCode());
-      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-
-      CheckBodyFromStream(*response, expectedResponseBodySize);
-    }
-  }
-
-  TEST_P(TransportAdapter, SizePutFromFileDefault)
-  {
-    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
-    std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
-    testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
-    testDataPath.append("\\fileData");
-#else
-#error "Unknown platform"
-#endif
-
-    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
-    auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
-    // Make transport adapter to read default chunk size
-    {
-      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      checkResponseCode(response->GetStatusCode());
-      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-
-      CheckBodyFromStream(*response, expectedResponseBodySize);
-    }
-  }
-
-  TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
-  {
-    Azure::Core::Url host(AzureSdkHttpbinServer::Put());
-    std::string testDataPath(AZURE_TEST_DATA_PATH);
-
-#if defined(AZ_PLATFORM_POSIX)
-    testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
-    testDataPath.append("\\fileData");
-#else
-#error "Unknown platform"
-#endif
-
-    Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
-    auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
-    {
-      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      checkResponseCode(response->GetStatusCode());
-      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-
-      CheckBodyFromStream(*response, expectedResponseBodySize);
     }
   }
 

@@ -137,7 +137,6 @@ namespace Azure { namespace Core { namespace Http {
     // previously called
     void StartTry();
 
-  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
@@ -157,6 +156,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
