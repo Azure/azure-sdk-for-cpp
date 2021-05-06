@@ -14,6 +14,7 @@
 ### Bug Fixes
 
 - Do not re-use a libcurl connection to same host but different port.
+- Ensure uniqueness of Uuid on posix platforms.
 
 ## 1.0.0-beta.8 (2021-04-07)
 

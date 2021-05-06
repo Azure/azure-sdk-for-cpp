@@ -12,6 +12,8 @@
     "ctest",
     "moxygen",
     "pwsh",
+    "SPDX",
+    "stoi",
     "vcpkg"
   ],
   "overrides": [

@@ -35,9 +35,12 @@ inline std::wstring HttpMethodToWideString(HttpMethod method)
 // This assumes the input string is always null-terminated.
 std::wstring StringToWideString(const std::string& str)
 {
+  // Since the strings being converted to wstring can be provided by the end user, and can contain
+  // invalid characters, use the MB_ERR_INVALID_CHARS to validate and fail.
+
   // Passing in -1 so that the function processes the entire input string, including the terminating
   // null character.
-  int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, 0, 0);
+  int sizeNeeded = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), -1, 0, 0);
   if (sizeNeeded == 0)
   {
     // Errors include:
@@ -52,7 +55,8 @@ std::wstring StringToWideString(const std::string& str)
   }
 
   std::wstring wideStr(sizeNeeded, L'\0');
-  if (MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wideStr[0], sizeNeeded) == 0)
+  if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), -1, &wideStr[0], sizeNeeded)
+      == 0)
   {
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
@@ -73,6 +77,11 @@ std::string WideStringToString(const std::wstring& wideString)
     throw Azure::Core::Http::TransportException(
         "Input wide string is too large to fit within a 32-bit int.");
   }
+
+  // Note, we are not using the flag WC_ERR_INVALID_CHARS here, because it is assumed the service
+  // returns correctly encoded response headers and reason phrase strings.
+  // The transport layer shouldn't do additional validation, and if WideCharToMultiByte replaces
+  // invalid characters with the replacement character, that is fine.
 
   int wideStrLength = static_cast<int>(wideStrSize);
   int sizeNeeded
@@ -219,6 +228,8 @@ void WinHttpTransport::CreateConnectionHandle(
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
   uint16_t port = handleManager->m_request.GetUrl().GetPort();
 
+  handleManager->m_context.ThrowIfCancelled();
+
   // Specify an HTTP server.
   // This function always operates synchronously.
   handleManager->m_connectionHandle = WinHttpConnect(
@@ -296,6 +307,8 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
 
     DWORD dwBytesWritten = 0;
 
+    handleManager->m_context.ThrowIfCancelled();
+
     // Write data to the server.
     if (!WinHttpWriteData(
             handleManager->m_requestHandle,
@@ -325,6 +338,8 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
   }
 
   int64_t streamLength = handleManager->m_request.GetBodyStream()->Length();
+
+  handleManager->m_context.ThrowIfCancelled();
 
   // Send a request.
   if (!WinHttpSendRequest(
@@ -373,6 +388,8 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
 
 void WinHttpTransport::ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
+  handleManager->m_context.ThrowIfCancelled();
+
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
   // been received.
@@ -571,6 +588,9 @@ int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context c
   }
 
   DWORD numberOfBytesRead = 0;
+
+  // No need to check for context cancellation before the first I/O because the base class
+  // BodyStream::Read already does that.
 
   // Check for available data.
   DWORD numberOfBytesAvailable = 0;
