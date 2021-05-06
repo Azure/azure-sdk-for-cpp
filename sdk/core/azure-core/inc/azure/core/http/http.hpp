@@ -131,7 +131,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // flag to know where to insert header
     bool m_retryModeEnabled{false};
-    bool m_isDownloadViaStream;
+    bool m_isBufferedDownload{true};
 
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
@@ -144,16 +144,16 @@ namespace Azure { namespace Core { namespace Http {
      * @param httpMethod HTTP method.
      * @param url URL.
      * @param bodyStream #Azure::Core::IO::BodyStream.
-     * @param downloadViaStream A boolean value indicating whether download should happen via
-     * stream.
+     * @param bufferedDownload A boolean value indicating whether download should use a buffer
+     * for the response or return a body stream instead.
      */
     explicit Request(
         HttpMethod httpMethod,
         Url url,
         Azure::Core::IO::BodyStream* bodyStream,
-        bool downloadViaStream)
+        bool bufferedDownload)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
-          m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
+          m_retryModeEnabled(false), m_isBufferedDownload(bufferedDownload)
     {
     }
 
@@ -165,7 +165,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bodyStream #Azure::Core::IO::BodyStream.
      */
     explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
-        : Request(httpMethod, std::move(url), bodyStream, false)
+        : Request(httpMethod, std::move(url), bodyStream, true)
     {
     }
 
@@ -174,10 +174,10 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param downloadViaStream A boolean value indicating whether download should happen via
-     * stream.
+     * @param bufferedDownload A boolean value indicating whether download should use a buffer
+     * for the response or return a body stream instead.
      */
-    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream);
+    explicit Request(HttpMethod httpMethod, Url url, bool bufferedDownload);
 
     /**
      * @brief Construct an #Azure::Core::Http::Request.
@@ -224,9 +224,10 @@ namespace Azure { namespace Core { namespace Http {
     Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
-     * @brief A value indicating whether download is happening via stream.
+     * @brief A value indicating whether download will return the raw response within a memory
+     * buffer or if it will provide a body stream instead.
      */
-    bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
+    bool IsBufferedDownload() { return this->m_isBufferedDownload; }
 
     /**
      * @brief Get URL.

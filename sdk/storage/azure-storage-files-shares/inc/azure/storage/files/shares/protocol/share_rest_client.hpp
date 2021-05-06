@@ -5170,7 +5170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Azure::Core::Context context,
             const DownloadOptions& downloadOptions)
         {
-          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url, true);
+          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url, false);
           if (downloadOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
