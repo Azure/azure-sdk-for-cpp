@@ -215,16 +215,52 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct BlobContainerItemDetails
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A set of name-value pairs associated with this blob as user-defined metadata.
+       */
       Storage::Metadata Metadata;
+      /**
+       * Indicates whether data in the container may be accessed publicly and the level of access.
+       */
       PublicAccessType AccessType = PublicAccessType::None;
+      /**
+       * Indicates whether the container has an immutability policy set on it.
+       */
       bool HasImmutabilityPolicy = false;
+      /**
+       * Indicates whether the container has a legal hold.
+       */
       bool HasLegalHold = false;
+      /**
+       * Indicates whether the lease is of infinite or fixed duration when the blob or container is
+       * leased. This value is null if the blob or container is not leased.
+       */
       Azure::Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the blob.
+       */
       Models::LeaseState LeaseState = Models::LeaseState::Available;
+      /**
+       * The current lease status of the blob.
+       */
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+      /**
+       * The default encryption scope for the container.
+       */
       std::string DefaultEncryptionScope;
+      /**
+       * Indicates whether the container's default encryption scope can be overridden.
+       */
       bool PreventEncryptionScopeOverride = false;
       Azure::Nullable<int32_t> RemainingRetentionDays;
       Azure::Nullable<Azure::DateTime> DeletedOn;
@@ -314,6 +350,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string Name;
       bool IsDeleted = false;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
       BlobContainerItemDetails Details;
     }; // struct BlobContainerItem
@@ -365,178 +405,627 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct BlobItemDetails
     {
+      /**
+       * System properties of the blob.
+       */
       BlobHttpHeaders HttpHeaders;
+      /**
+       * A set of name-value pairs associated with this blob as user-defined metadata.
+       */
       Storage::Metadata Metadata;
+      /**
+       * The date and time at which the blob was created.
+       */
       Azure::DateTime CreatedOn;
       Azure::Nullable<Azure::DateTime> ExpiresOn;
+      /**
+       * The date and time at which the blob was last read or written to.
+       */
       Azure::Nullable<Azure::DateTime> LastAccessedOn;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The tier of page blob or block blob.
+       */
       Azure::Nullable<Models::AccessTier> AccessTier;
+      /**
+       * True if the access tier is not explicitly set on the blob.
+       */
       Azure::Nullable<bool> IsAccessTierInferred;
+      /**
+       * The current lease status of the blob.
+       */
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+      /**
+       * Lease state of the blob.
+       */
       Models::LeaseState LeaseState = Models::LeaseState::Available;
+      /**
+       * Indicates whether the lease is of infinite or fixed duration when the blob or container is
+       * leased. This value is null if the blob or container is not leased.
+       */
       Azure::Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blobd
-      Azure::Nullable<bool> IsSealed; // only for append blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
+      Azure::Nullable<int64_t> SequenceNumber;
+      /**
+       * If the blob has been sealed. This value is null for block blobs or page blobs.
+       */
+      Azure::Nullable<bool> IsSealed;
+      /**
+       * Only valid when Object Replication is enabled and current blob is the source.
+       */
+      std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
     }; // struct BlobItemDetails
 
     struct DownloadBlobDetails
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The date and time at which the blob was created.
+       */
       Azure::DateTime CreatedOn;
       Azure::Nullable<Azure::DateTime> ExpiresOn;
+      /**
+       * The date and time at which the blob was last read or written to.
+       */
       Azure::Nullable<Azure::DateTime> LastAccessedOn;
+      /**
+       * System properties of the blob.
+       */
       BlobHttpHeaders HttpHeaders;
+      /**
+       * A set of name-value pairs associated with this blob as user-defined metadata.
+       */
       Storage::Metadata Metadata;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Nullable<int64_t> CommittedBlockCount; // only for append blob
-      Azure::Nullable<bool> IsSealed; // only for append blob
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
+      Azure::Nullable<int64_t> SequenceNumber;
+      /**
+       * The number of committed blocks present in the blob. This value is null for block blobs or
+       * page blobs.
+       */
+      Azure::Nullable<int64_t> CommittedBlockCount;
+      /**
+       * If the blob has been sealed. This value is null for block blobs or page blobs.
+       */
+      Azure::Nullable<bool> IsSealed;
+      /**
+       * Indicates whether the lease is of infinite or fixed duration when the blob or container is
+       * leased. This value is null if the blob or container is not leased.
+       */
       Azure::Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the blob.
+       */
       Azure::Nullable<Models::LeaseState> LeaseState;
+      /**
+       * The current lease status of the blob.
+       */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<std::string>
-          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
+      /**
+       * Only valid when Object Replication is enabled and current blob is the destination.
+       */
+      Azure::Nullable<std::string> ObjectReplicationDestinationPolicyId;
+      /**
+       * Only valid when Object Replication is enabled and current blob is the source.
+       */
+      std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
+      /**
+       * the number of tags stored on the blob.
+       */
       Azure::Nullable<int32_t> TagCount;
+      /**
+       * String identifier for the last attempted Copy Blob operation where this blob was the
+       * destination. This value is null if this blob has never been the destination of a copy
+       * operation, or if this blob has been modified after a concluded copy operation.
+       */
       Azure::Nullable<std::string> CopyId;
+      /**
+       * URL that specifies the source blob or file used in the last attempted copy operation where
+       * this blob was the destination blob. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
       Azure::Nullable<std::string> CopySource;
+      /**
+       * State of the copy operation identified by the copy id. Possible values include success,
+       * pending, aborted, failed etc. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
       Azure::Nullable<Models::CopyStatus> CopyStatus;
+      /**
+       * Describes the cause of the last fatal or non-fatal copy operation failure. This is not null
+       * only when copy status is failed or pending.
+       */
       Azure::Nullable<std::string> CopyStatusDescription;
+      /**
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * copy operation where this blob was the destination blob.
+       */
       Azure::Nullable<std::string> CopyProgress;
+      /**
+       * Conclusion time of the last attempted copy operation where this blob was the destination
+       * blob.
+       */
       Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * Indicates if this is the current version of the blob. This value is null if Blob Versioning
+       * is not enabled.
+       */
       Azure::Nullable<bool> IsCurrentVersion;
     }; // struct DownloadBlobDetails
 
     struct BlobItem
     {
       std::string Name;
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
+      /**
+       * The blob's type.
+       */
       Models::BlobType BlobType;
       bool IsDeleted = false;
       std::string Snapshot;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * Indicates if this is the current version of the blob. This value is null if Blob Versioning
+       * is not enabled.
+       */
       Azure::Nullable<bool> IsCurrentVersion;
       BlobItemDetails Details;
     }; // struct BlobItem
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::AbortCopy.
+     */
     struct AbortBlobCopyFromUriResult
     {
     }; // struct AbortBlobCopyFromUriResult
 
+    /**
+     * @brief Storage account information.
+     */
     struct AccountInfo
     {
+      /**
+       * The SKU name of the storage account. See
+       * https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types for more information.
+       */
       Models::SkuName SkuName;
+      /**
+       * The account kind of the storage account. See
+       * https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types for more information.
+       */
       Models::AccountKind AccountKind;
+      /**
+       * Indicates if the account has a hierarchical namespace enabled.
+       */
       bool IsHierarchicalNamespaceEnabled = false;
     }; // struct AccountInfo
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri.
+     */
     struct AppendBlockFromUriResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * The offset at which the block was committed.
+       */
       int64_t AppendOffset = 0;
+      /**
+       * The number of committed blocks present in the blob. This value is null for block blobs or
+       * page blobs.
+       */
       int64_t CommittedBlockCount = 0;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct AppendBlockFromUriResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::AppendBlock.
+     */
     struct AppendBlockResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * The offset at which the block was committed.
+       */
       int64_t AppendOffset = 0;
+      /**
+       * The number of committed blocks present in the blob. This value is null for block blobs or
+       * page blobs.
+       */
       int64_t CommittedBlockCount = 0;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct AppendBlockResult
 
+    /**
+     * @brief Access policy for a blob container.
+     */
     struct BlobContainerAccessPolicy
     {
+      /**
+       * Indicates whether data in the container may be accessed publicly and the level of access.
+       */
       PublicAccessType AccessType = PublicAccessType::None;
+      /**
+       * A collection of signed identifiers.
+       */
       std::vector<SignedIdentifier> SignedIdentifiers;
     }; // struct BlobContainerAccessPolicy
 
+    /**
+     * @brief Properties of a blob container.
+     */
     struct BlobContainerProperties
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A set of name-value pairs associated with this blob as user-defined metadata.
+       */
       Storage::Metadata Metadata;
+      /**
+       * Indicates whether data in the container may be accessed publicly and the level of access.
+       */
       PublicAccessType AccessType = PublicAccessType::None;
+      /**
+       * Indicates whether the container has an immutability policy set on it.
+       */
       bool HasImmutabilityPolicy = false;
+      /**
+       * Indicates whether the container has a legal hold.
+       */
       bool HasLegalHold = false;
+      /**
+       * Indicates whether the lease is of infinite or fixed duration when the blob or container is
+       * leased. This value is null if the blob or container is not leased.
+       */
       Azure::Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the blob.
+       */
       Models::LeaseState LeaseState = Models::LeaseState::Available;
+      /**
+       * The current lease status of the blob.
+       */
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+      /**
+       * The default encryption scope for the container.
+       */
       std::string DefaultEncryptionScope;
+      /**
+       * Indicates whether the container's default encryption scope can be overridden.
+       */
       bool PreventEncryptionScopeOverride = false;
     }; // struct BlobContainerProperties
 
+    /**
+     * @brief Properties of a blob.
+     */
     struct BlobProperties
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The date and time at which the blob was created.
+       */
       Azure::DateTime CreatedOn;
+      /**
+       * The time the blob will expire.
+       */
       Azure::Nullable<Azure::DateTime> ExpiresOn;
+      /**
+       * The date and time at which the blob was last read or written to.
+       */
       Azure::Nullable<Azure::DateTime> LastAccessedOn;
+      /**
+       * A set of name-value pairs associated with this blob as user-defined metadata.
+       */
       Storage::Metadata Metadata;
+      /**
+       * The blob's type.
+       */
       Models::BlobType BlobType;
+      /**
+       * Indicates whether the lease is of infinite or fixed duration when the blob or container is
+       * leased. This value is null if the blob or container is not leased.
+       */
       Azure::Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the blob.
+       */
       Azure::Nullable<Models::LeaseState> LeaseState;
+      /**
+       * The current lease status of the blob.
+       */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
+      /**
+       * System properties of the blob.
+       */
       BlobHttpHeaders HttpHeaders;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Nullable<int32_t> CommittedBlockCount; // only for append blob
-      Azure::Nullable<bool> IsSealed; // only for append blob
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
+      Azure::Nullable<int64_t> SequenceNumber;
+      /**
+       * The number of committed blocks present in the blob. This value is null for block blobs or
+       * page blobs.
+       */
+      Azure::Nullable<int32_t> CommittedBlockCount;
+      /**
+       * If the blob has been sealed. This value is null for block blobs or page blobs.
+       */
+      Azure::Nullable<bool> IsSealed;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
+      /**
+       * The tier of page blob or block blob.
+       */
       Azure::Nullable<Models::AccessTier> AccessTier;
+      /**
+       * True if the access tier is not explicitly set on the blob.
+       */
       Azure::Nullable<bool> IsAccessTierInferred;
+      /**
+       * Indicates if the blob is being rehydrated.
+       */
       Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
+      /**
+       * Priority of rehydrate if the blob is being rehydrated.
+       */
       Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+      /**
+       * The date and time the tier was changed on the object.
+       */
       Azure::Nullable<Azure::DateTime> AccessTierChangedOn;
+      /**
+       * String identifier for the last attempted Copy Blob operation where this blob was the
+       * destination. This value is null if this blob has never been the destination of a copy
+       * operation, or if this blob has been modified after a concluded copy operation.
+       */
       Azure::Nullable<std::string> CopyId;
+      /**
+       * URL that specifies the source blob or file used in the last attempted copy operation where
+       * this blob was the destination blob. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
       Azure::Nullable<std::string> CopySource;
+      /**
+       * State of the copy operation identified by the copy id. Possible values include success,
+       * pending, aborted, failed etc. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
       Azure::Nullable<Models::CopyStatus> CopyStatus;
+      /**
+       * Describes the cause of the last fatal or non-fatal copy operation failure. This is not null
+       * only when copy status is failed or pending.
+       */
       Azure::Nullable<std::string> CopyStatusDescription;
+      /**
+       * True if the copy operation is incremental copy.
+       */
       Azure::Nullable<bool> IsIncrementalCopy;
+      /**
+       * Snapshot time of the last successful incremental copy snapshot for this blob.
+       */
       Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+      /**
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * copy operation where this blob was the destination blob.
+       */
       Azure::Nullable<std::string> CopyProgress;
+      /**
+       * Conclusion time of the last attempted copy operation where this blob was the destination
+       * blob.
+       */
       Azure::Nullable<Azure::DateTime> CopyCompletedOn;
-      Azure::Nullable<std::string>
-          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
+      /**
+       * Only valid when Object Replication is enabled and current blob is the destination.
+       */
+      Azure::Nullable<std::string> ObjectReplicationDestinationPolicyId;
+      /**
+       * Only valid when Object Replication is enabled and current blob is the source.
+       */
+      std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
+      /**
+       * the number of tags stored on the blob.
+       */
       Azure::Nullable<int32_t> TagCount;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * Indicates if this is the current version of the blob. This value is null if Blob Versioning
+       * is not enabled.
+       */
       Azure::Nullable<bool> IsCurrentVersion;
     }; // struct BlobProperties
 
+    /**
+     * @brief Properties of blob service.
+     */
     struct BlobServiceProperties
     {
+      /**
+       * Azure analytics logging settings.
+       */
       AnalyticsLogging Logging;
+      /**
+       * Summary of request statistics grouped by API in hour aggregates for blobs.
+       */
       Metrics HourMetrics;
+      /**
+       * Summary of request statistics grouped by API in minute aggregates for blobs.
+       */
       Metrics MinuteMetrics;
+      /**
+       * CORS rules set.
+       */
       std::vector<CorsRule> Cors;
+      /**
+       * The default API version used to handle blob service requests if API version is not
+       * specified in the request header.
+       */
       Azure::Nullable<std::string> DefaultServiceVersion;
+      /**
+       * Retention policy that determines how long the associated data should persist.
+       */
       RetentionPolicy DeleteRetentionPolicy;
+      /**
+       * The properties that enable an storage account to host a static website.
+       */
       Models::StaticWebsite StaticWebsite;
     }; // struct BlobServiceProperties
 
@@ -570,72 +1059,230 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlockType
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::ClearPages.
+     */
     struct ClearPagesResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       int64_t SequenceNumber = 0;
     }; // struct ClearPagesResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::CommitBlockList.
+     */
     struct CommitBlockListResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
     }; // struct CommitBlockListResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::Create.
+     */
     struct CreateAppendBlobResult
     {
+      /**
+       * Indicates if the append blob was successfully created in this operation.
+       */
       bool Created = true;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct CreateAppendBlobResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Create.
+     */
     struct CreateBlobContainerResult
     {
+      /**
+       * Indicates if the container was successfully created in this operation.
+       */
       bool Created = true;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
     }; // struct CreateBlobContainerResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::CreateSnapshot.
+     */
     struct CreateBlobSnapshotResult
     {
       std::string Snapshot;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct CreateBlobSnapshotResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::Create.
+     */
     struct CreatePageBlobResult
     {
+      /**
+       * Indicates if the page blob was successfully created in this operation.
+       */
       bool Created = true;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       Azure::Nullable<int64_t> SequenceNumber;
     }; // struct CreatePageBlobResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Delete.
+     */
     struct DeleteBlobContainerResult
     {
+      /**
+       * Indicates if the container was successfully deleted in this operation.
+       */
       bool Deleted = true;
     }; // struct DeleteBlobContainerResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::Delete.
+     */
     struct DeleteBlobResult
     {
+      /**
+       * Indicates if the blob was successfully deleted in this operation.
+       */
       bool Deleted = true;
     }; // struct DeleteBlobResult
 
@@ -653,13 +1300,34 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum DeleteSnapshotsOption
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
+     */
     struct DownloadBlobResult
     {
+      /**
+       * Content of the blob or blob range.
+       */
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
+      /**
+       * Indicates the range of bytes returned.
+       */
       Azure::Core::Http::HttpRange ContentRange;
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
+      /**
+       * The blob's type.
+       */
       Models::BlobType BlobType;
-      Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
+      Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * Details information of the downloaded blob.
+       */
       DownloadBlobDetails Details;
     }; // struct DownloadBlobResult
 
@@ -679,20 +1347,51 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum EncryptionAlgorithmType
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::GetBlockList.
+     */
     struct GetBlockListResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
       std::string ContentType;
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
+      /**
+       * Collection of committed blocks.
+       */
       std::vector<BlobBlock> CommittedBlocks;
+      /**
+       * Collection of uncommitted blocks.
+       */
       std::vector<BlobBlock> UncommittedBlocks;
     }; // struct GetBlockListResult
 
     struct GetPageRangesResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
       std::vector<Azure::Core::Http::HttpRange> PageRanges;
       std::vector<Azure::Core::Http::HttpRange> ClearRanges;
@@ -774,10 +1473,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       return lhs;
     }
 
+    /**
+     * @brief Azure::Storage::Blobs::PageBlobClient::Resize.
+     */
     struct ResizePageBlobResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       int64_t SequenceNumber = 0;
     }; // struct ResizePageBlobResult
 
@@ -800,128 +1514,369 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum ScheduleBlobExpiryOriginType
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::Seal.
+     */
     struct SealAppendBlobResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * If the blob has been sealed. This value is null for block blobs or page blobs.
+       */
       bool IsSealed = true;
     }; // struct SealAppendBlobResult
 
+    /**
+     * @brief Statistics for the storage service.
+     */
     struct ServiceStatistics
     {
+      /**
+       * Geo-replication information for the secondary storage service.
+       */
       Models::GeoReplication GeoReplication;
     }; // struct ServiceStatistics
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetAccessTier.
+     */
     struct SetBlobAccessTierResult
     {
     }; // struct SetBlobAccessTierResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy.
+     */
     struct SetBlobContainerAccessPolicyResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
     }; // struct SetBlobContainerAccessPolicyResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::SetMetadata.
+     */
     struct SetBlobContainerMetadataResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
     }; // struct SetBlobContainerMetadataResult
 
+    /**
+     * @brief Response type for
+     * #Azure::Storage::Files::DataLake::DataLakeFileClient::ScheduleDeletion.
+     */
     struct SetBlobExpiryResult
     {
     }; // struct SetBlobExpiryResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetHttpHeaders.
+     */
     struct SetBlobHttpHeadersResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       Azure::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobHttpHeadersResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetMetadata.
+     */
     struct SetBlobMetadataResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       Azure::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobMetadataResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetTags.
+     */
     struct SetBlobTagsResult
     {
     }; // struct SetBlobTagsResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.
+     */
     struct SetServicePropertiesResult
     {
     }; // struct SetServicePropertiesResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri.
+     */
     struct StageBlockFromUriResult
     {
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct StageBlockFromUriResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlock.
+     */
     struct StageBlockResult
     {
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct StageBlockResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::Undelete.
+     */
     struct UndeleteBlobResult
     {
     }; // struct UndeleteBlobResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::Upload.
+     */
     struct UploadBlockBlobResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
       Azure::Nullable<std::string> VersionId;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
     }; // struct UploadBlockBlobResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri.
+     */
     struct UploadPagesFromUriResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       int64_t SequenceNumber = 0;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct UploadPagesFromUriResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UploadPages.
+     */
     struct UploadPagesResult
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
       Azure::DateTime LastModified;
+      /**
+       * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+       */
       Azure::Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
       int64_t SequenceNumber = 0;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
       bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct UploadPagesResult
 
+    /**
+     * @brief A user delegation key that can be used to sign user delegation SAS.
+     */
     struct UserDelegationKey
     {
+      /**
+       * The immutable identifier for an object in the Microsoft identity system.
+       */
       std::string SignedObjectId;
+      /**
+       * A GUID that represents the Azure AD tenant that the user is from.
+       */
       std::string SignedTenantId;
+      /**
+       * The start time of the user delegation key.
+       */
       Azure::DateTime SignedStartsOn;
+      /**
+       * The expiry time of the user delegation key.
+       */
       Azure::DateTime SignedExpiresOn;
+      /**
+       * The service of the user delegation key can be used for.
+       */
       std::string SignedService;
+      /**
+       * The rest api version used to get user delegation key.
+       */
       std::string SignedVersion;
+      /**
+       * The signature of the user delegation key.
+       */
       std::string Value;
     }; // struct UserDelegationKey
 
     namespace _detail {
       struct AcquireBlobContainerLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         std::string LeaseId;
       }; // struct AcquireBlobContainerLeaseResult
@@ -930,7 +1885,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct AcquireBlobLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         std::string LeaseId;
       }; // struct AcquireBlobLeaseResult
@@ -939,7 +1902,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct BreakBlobContainerLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         int32_t LeaseTime = 0;
       }; // struct BreakBlobContainerLeaseResult
@@ -948,7 +1919,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct BreakBlobLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         int32_t LeaseTime = 0;
       }; // struct BreakBlobLeaseResult
@@ -957,7 +1936,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct ChangeBlobContainerLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         std::string LeaseId;
       }; // struct ChangeBlobContainerLeaseResult
@@ -966,7 +1953,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct ChangeBlobLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         std::string LeaseId;
       }; // struct ChangeBlobLeaseResult
@@ -1025,7 +2020,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct ReleaseBlobContainerLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
       }; // struct ReleaseBlobContainerLeaseResult
     } // namespace _detail
@@ -1033,8 +2036,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct ReleaseBlobLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
+        /**
+         * The current sequence number for a page blob. This value is null for block blobs or append
+         * blobs.
+         */
         Azure::Nullable<int64_t> SequenceNumber;
       }; // struct ReleaseBlobLeaseResult
     } // namespace _detail
@@ -1042,7 +2057,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct RenewBlobContainerLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         std::string LeaseId;
       }; // struct RenewBlobContainerLeaseResult
@@ -1051,7 +2074,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct RenewBlobLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
         std::string LeaseId;
       }; // struct RenewBlobLeaseResult
@@ -1060,10 +2091,33 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct StartBlobCopyFromUriResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
+        /**
+         * String identifier for the last attempted Copy Blob operation where this blob was the
+         * destination. This value is null if this blob has never been the destination of a copy
+         * operation, or if this blob has been modified after a concluded copy operation.
+         */
         std::string CopyId;
+        /**
+         * State of the copy operation identified by the copy id. Possible values include success,
+         * pending, aborted, failed etc. This value is null if this blob has never been the
+         * destination of a copy operation, or if this blob has been modified after a concluded copy
+         * operation.
+         */
         Models::CopyStatus CopyStatus;
+        /**
+         * A string value that uniquely identifies the blob. This value is null if Blob Versioning
+         * is not enabled.
+         */
         Azure::Nullable<std::string> VersionId;
       }; // struct StartBlobCopyFromUriResult
     } // namespace _detail
@@ -1071,10 +2125,33 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct StartBlobCopyIncrementalResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+        /**
+         * The date and time the container was last modified. Any operation that modifies the blob,
+         * including an update of the metadata or properties, changes the last-modified time of the
+         * blob.
+         */
         Azure::DateTime LastModified;
+        /**
+         * String identifier for the last attempted Copy Blob operation where this blob was the
+         * destination. This value is null if this blob has never been the destination of a copy
+         * operation, or if this blob has been modified after a concluded copy operation.
+         */
         std::string CopyId;
+        /**
+         * State of the copy operation identified by the copy id. Possible values include success,
+         * pending, aborted, failed etc. This value is null if this blob has never been the
+         * destination of a copy operation, or if this blob has been modified after a concluded copy
+         * operation.
+         */
         Models::CopyStatus CopyStatus;
+        /**
+         * A string value that uniquely identifies the blob. This value is null if Blob Versioning
+         * is not enabled.
+         */
         Azure::Nullable<std::string> VersionId;
       }; // struct StartBlobCopyIncrementalResult
     } // namespace _detail
