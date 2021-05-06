@@ -119,7 +119,7 @@ TEST(Md5Hash, CtorDtor)
   {
     Md5Hash instance;
   }
-}s
+}
 
 TEST(Md5Hash, multiThread)
 {
