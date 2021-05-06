@@ -5,6 +5,8 @@
 
 void AzureNoReturnPath(std::string msg)
 {
+  // void msg for Release build where Assert is ignored
+  (void)msg;
   AZURE_ASSERT_MSG(false, msg);
   std::abort();
 }
