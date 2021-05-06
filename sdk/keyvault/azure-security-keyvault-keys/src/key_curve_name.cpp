@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// An SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_curve_name.hpp"
 #include "azure/keyvault/keys/details/key_constants.hpp"

@@ -1,6 +1,6 @@
 
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// An SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
