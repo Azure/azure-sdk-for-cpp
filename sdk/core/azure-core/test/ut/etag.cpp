@@ -241,6 +241,6 @@ TEST(ETag, PreCondition)
   // Release build won't provide assert msg
   ASSERT_DEATH(emptyTag.ToString(), "");
 #else
-  ASSERT_DEATH(emptyTag.ToString(), "Empty ETag, check HasValue() before calling ToString().");
+  ASSERT_DEATH(emptyTag.ToString(), "Empty ETag");
 #endif
 }
