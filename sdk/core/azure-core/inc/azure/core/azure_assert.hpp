@@ -12,14 +12,14 @@
 
 #pragma once
 
+#include <cstdlib>
+
 #if defined(NDEBUG)
 
 /*
  * NDEBUG = defined = Build is on Release
  * Define AZURE_ASSERT to call abort directly on exp == false
  */
-
-#include <cstdlib>
 
 #define AZURE_ASSERT(exp) \
   if (!(exp)) \
@@ -44,5 +44,5 @@
 #endif
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
-#define AZURE_UNREACHABLE_CODE AZURE_ASSERT_MSG(false, "Unreachable code was access")
-#define AZURE_NOT_IMPLEMENTED AZURE_ASSERT_MSG(false, "Not implemented")
+#define AZURE_UNREACHABLE_CODE std::abort()
+#define AZURE_NOT_IMPLEMENTED std::abort()
