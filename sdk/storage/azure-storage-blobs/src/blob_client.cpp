@@ -17,7 +17,10 @@
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
-#include "azure/storage/blobs/version.hpp"
+
+#include "private/package_version.hpp"
+
+#include <algorithm>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -61,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
-        _internal::FileServicePackageName,
+        _internal::BlobServicePackageName,
         _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -89,7 +92,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        _internal::FileServicePackageName,
+        _internal::BlobServicePackageName,
         _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
@@ -108,7 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
-        _internal::FileServicePackageName,
+        _internal::BlobServicePackageName,
         _detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));

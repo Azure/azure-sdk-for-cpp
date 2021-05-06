@@ -18,7 +18,8 @@
 #include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_constants.hpp"
-#include "azure/storage/files/shares/version.hpp"
+
+#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -618,6 +619,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
     return Azure::Response<Models::ForceCloseFileHandleResult>(
         Models::ForceCloseFileHandleResult(), std::move(result.RawResponse));
+  }
+
+  ForceCloseAllFileHandlesPagedResponse ShareFileClient::ForceCloseAllHandles(
+      const ForceCloseAllFileHandlesOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::ShareRestClient::File::ForceCloseHandlesOptions();
+    protocolLayerOptions.HandleId = FileAllHandles;
+    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
+    {
+      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    }
+    auto response = _detail::ShareRestClient::File::ForceCloseHandles(
+        m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);
+
+    ForceCloseAllFileHandlesPagedResponse pagedResponse;
+
+    pagedResponse.NumberOfHandlesClosed = response.Value.NumberOfHandlesClosed;
+    pagedResponse.NumberOfHandlesFailedToClose = response.Value.NumberOfHandlesFailedToClose;
+    pagedResponse.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken.ValueOr(std::string());
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
   }
 
   Azure::Response<Models::DownloadFileToResult> ShareFileClient::DownloadTo(

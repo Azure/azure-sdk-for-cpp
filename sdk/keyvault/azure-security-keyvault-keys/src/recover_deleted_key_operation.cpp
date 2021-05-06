@@ -5,6 +5,7 @@
 
 #include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
+#include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
@@ -12,15 +13,19 @@ using namespace Azure::Security::KeyVault;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
-    Azure::Core::Context& context)
+    Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
   if (!IsDone())
   {
-    rawResponse = m_pipeline->Send(
-        context,
-        Azure::Core::Http::HttpMethod::Get,
-        {_detail::KeysPath, m_value.Name(), m_value.Properties.Version});
+    try
+    {
+      rawResponse = m_keyClient->GetKey(m_value.Name(), {}, context).RawResponse;
+    }
+    catch (Azure::Core::RequestFailedException& error)
+    {
+      rawResponse = std::move(error.RawResponse);
+    }
 
     switch (rawResponse->GetStatusCode())
     {
@@ -52,9 +57,9 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOperation(
-    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> keyvaultPipeline,
+    std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient,
     Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response)
-    : m_pipeline(keyvaultPipeline)
+    : m_keyClient(keyClient)
 {
   // The response becomes useless and the value and rawResponse are now owned by the
   // DeleteKeyOperation. This is fine because the DeleteKeyOperation is what the delete key api

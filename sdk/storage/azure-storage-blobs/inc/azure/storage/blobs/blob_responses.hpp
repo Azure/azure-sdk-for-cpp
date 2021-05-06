@@ -29,54 +29,153 @@ namespace Azure { namespace Storage {
 
     namespace Models {
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobClient::DownloadTo.
+       */
       struct DownloadBlobToResult
       {
+        /**
+         * The blob's type.
+         */
         Models::BlobType BlobType;
+
+        /**
+         * Indicates the range of bytes returned.
+         */
         Azure::Core::Http::HttpRange ContentRange;
+
+        /**
+         * Size of the blob.
+         */
         int64_t BlobSize = 0;
-        Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+
+        /**
+         * The request may return a CRC64 or MD5 hash for the downloaded range of data.
+         */
+        Azure::Nullable<ContentHash> TransactionalContentHash;
+
+        /**
+         * Details information of the downloaded blob.
+         */
         DownloadBlobDetails Details;
       };
 
       using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Acquire.
+       */
       struct AcquireLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+
+        /**
+         * The date/time that the blob was last modified. The date format follows RFC 1123.
+         */
         Azure::DateTime LastModified;
+
+        /**
+         * When you request a lease, the Blob service returns a unique lease ID. While the lease is
+         * active, you must include the lease ID with any request to write to the blob, or to renew,
+         * change, or release the lease.
+         */
         std::string LeaseId;
       };
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Break.
+       */
       struct BreakLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+
+        /**
+         * The date/time that the blob was last modified. The date format follows RFC 1123.
+         */
         Azure::DateTime LastModified;
       };
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Change.
+       */
       struct ChangeLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+
+        /**
+         * The date/time that the blob was last modified. The date format follows RFC 1123.
+         */
         Azure::DateTime LastModified;
+
+        /**
+         * When you request a lease, the Blob service returns a unique lease ID. While the lease is
+         * active, you must include the lease ID with any request to write to the blob, or to renew,
+         * change, or release the lease.
+         */
         std::string LeaseId;
       };
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Release.
+       */
       struct ReleaseLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+
+        /**
+         * The date/time that the blob was last modified. The date format follows RFC 1123.
+         */
         Azure::DateTime LastModified;
       };
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Renew.
+       */
       struct RenewLeaseResult
       {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally.
+         */
         Azure::ETag ETag;
+
+        /**
+         * The date/time that the blob was last modified. The date format follows RFC 1123.
+         */
         Azure::DateTime LastModified;
+
+        /**
+         * When you request a lease, the Blob service returns a unique lease ID. While the lease is
+         * active, you must include the lease ID with any request to write to the blob, or to renew,
+         * change, or release the lease.
+         */
         std::string LeaseId;
       };
 
     } // namespace Models
 
+    /**
+     * @brief A long-running operation to copy a blob.
+     */
     class StartBlobCopyOperation : public Azure::Core::Operation<Models::BlobProperties> {
     public:
+      /**
+       * @brief Get the #Azure::Storage::Blobs::Models::BlobProperties object, which includes the
+       * latest copy information.
+       *
+       * @return The #Azure::Storage::Blobs::Models::BlobProperties object.
+       */
       Models::BlobProperties Value() const override { return m_pollResult; }
 
       StartBlobCopyOperation() = default;
@@ -95,17 +194,12 @@ namespace Azure { namespace Storage {
       }
 
       std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
-          Azure::Core::Context& context) override;
+          const Azure::Core::Context& context) override;
 
       Azure::Response<Models::BlobProperties> PollUntilDoneInternal(
           std::chrono::milliseconds period,
           Azure::Core::Context& context) override;
 
-      /**
-       * @brief Get the raw HTTP response.
-       * @return A reference to an #Azure::Core::Http::RawResponse.
-       * @note Does not give up ownership of the RawResponse.
-       */
       Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
       {
         return *m_rawResponse;
@@ -118,11 +212,25 @@ namespace Azure { namespace Storage {
       friend class Blobs::PageBlobClient;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::ListBlobContainers.
+     */
     class ListBlobContainersPagedResponse
         : public Azure::Core::PagedResponse<ListBlobContainersPagedResponse> {
     public:
+      /**
+       * Service endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * Container name prefix that's used to filter the result.
+       */
       std::string Prefix;
+
+      /**
+       * Blob container items.
+       */
       std::vector<Models::BlobContainerItem> BlobContainers;
 
     private:
@@ -136,10 +244,20 @@ namespace Azure { namespace Storage {
       friend class Files::DataLake::ListFileSystemsPagedResponse;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags.
+     */
     class FindBlobsByTagsPagedResponse
         : public Azure::Core::PagedResponse<FindBlobsByTagsPagedResponse> {
     public:
+      /**
+       * Service endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * Blob items filtered by tag.
+       */
       std::vector<Models::TaggedBlobItem> TaggedBlobs;
 
     private:
@@ -153,11 +271,29 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ListBlobs.
+     */
     class ListBlobsPagedResponse : public Azure::Core::PagedResponse<ListBlobsPagedResponse> {
     public:
+      /**
+       * Service endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * Name of the container.
+       */
       std::string BlobContainerName;
+
+      /**
+       * Blob name prefix that's used to filter the result.
+       */
       std::string Prefix;
+
+      /**
+       * Blob items.
+       */
       std::vector<Models::BlobItem> Blobs;
 
     private:
@@ -170,14 +306,41 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<ListBlobsPagedResponse>;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ByHierarchy.
+     */
     class ListBlobsByHierarchyPagedResponse
         : public Azure::Core::PagedResponse<ListBlobsByHierarchyPagedResponse> {
     public:
+      /**
+       * Service endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * Name of the container.
+       */
       std::string BlobContainerName;
+
+      /**
+       * Blob name prefix that's used to filter the result.
+       */
       std::string Prefix;
+
+      /**
+       * A character or a string used to traverse a virtual hierarchy of blobs as though it were a
+       * file system.
+       */
       std::string Delimiter;
+
+      /**
+       * Blob items.
+       */
       std::vector<Models::BlobItem> Blobs;
+
+      /**
+       * Blob prefix items.
+       */
       std::vector<std::string> BlobPrefixes;
 
     private:
@@ -191,12 +354,30 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::GetPageRanges.
+     */
     class GetPageRangesPagedResponse
         : public Azure::Core::PagedResponse<GetPageRangesPagedResponse> {
     public:
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+
+      /**
+       * The date/time that the blob was last modified. The date format follows RFC 1123.
+       */
       Azure::DateTime LastModified;
+
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
+
+      /**
+       * Page range items.
+       */
       std::vector<Azure::Core::Http::HttpRange> PageRanges;
 
     private:
@@ -209,13 +390,36 @@ namespace Azure { namespace Storage {
       friend class PagedResponse<GetPageRangesPagedResponse>;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff and
+     * #Azure::Storage::Blobs::PageBlobClient::GetManagedDiskPageRangesDiff.
+     */
     class GetPageRangesDiffPagedResponse
         : public Azure::Core::PagedResponse<GetPageRangesDiffPagedResponse> {
     public:
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
       Azure::ETag ETag;
+
+      /**
+       * The date/time that the blob was last modified. The date format follows RFC 1123.
+       */
       Azure::DateTime LastModified;
+
+      /**
+       * Size of the blob.
+       */
       int64_t BlobSize = 0;
+
+      /**
+       * Page range items.
+       */
       std::vector<Azure::Core::Http::HttpRange> PageRanges;
+
+      /**
+       * Clear range items.
+       */
       std::vector<Azure::Core::Http::HttpRange> ClearRanges;
 
     private:

@@ -35,9 +35,237 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   namespace Models {
 
-    struct AbortBlobCopyFromUriResult
+    class AccountKind {
+    public:
+      AccountKind() = default;
+      explicit AccountKind(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
+      bool operator!=(const AccountKind& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
+
+    private:
+      std::string m_value;
+    }; // extensible enum AccountKind
+
+    struct BlobBlock
     {
-    }; // struct AbortBlobCopyFromUriResult
+      std::string Name;
+      int64_t Size = 0;
+    }; // struct BlobBlock
+
+    class CopyStatus {
+    public:
+      CopyStatus() = default;
+      explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const CopyStatus& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
+
+    private:
+      std::string m_value;
+    }; // extensible enum CopyStatus
+
+    class GeoReplicationStatus {
+    public:
+      GeoReplicationStatus() = default;
+      explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
+
+    private:
+      std::string m_value;
+    }; // extensible enum GeoReplicationStatus
+
+    class LeaseDurationType {
+    public:
+      LeaseDurationType() = default;
+      explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseDurationType
+
+    class LeaseState {
+    public:
+      LeaseState() = default;
+      explicit LeaseState(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseState& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Leased;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Expired;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseState
+
+    class LeaseStatus {
+    public:
+      LeaseStatus() = default;
+      explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseStatus
+
+    class ObjectReplicationStatus {
+    public:
+      ObjectReplicationStatus() = default;
+      explicit ObjectReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ObjectReplicationStatus& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
+
+    private:
+      std::string m_value;
+    }; // extensible enum ObjectReplicationStatus
+
+    class PublicAccessType {
+    public:
+      PublicAccessType() = default;
+      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PublicAccessType
+
+    struct RetentionPolicy
+    {
+      bool IsEnabled = false;
+      Azure::Nullable<int32_t> Days;
+    }; // struct RetentionPolicy
+
+    struct SignedIdentifier
+    {
+      std::string Id;
+      Azure::DateTime StartsOn;
+      Azure::DateTime ExpiresOn;
+      std::string Permissions;
+    }; // struct SignedIdentifier
+
+    class SkuName {
+    public:
+      SkuName() = default;
+      explicit SkuName(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const SkuName& other) const { return m_value == other.m_value; }
+      bool operator!=(const SkuName& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
+
+    private:
+      std::string m_value;
+    }; // extensible enum SkuName
+
+    struct TaggedBlobItem
+    {
+      std::string BlobName;
+      std::string BlobContainerName;
+    }; // struct TaggedBlobItem
+
+    struct AnalyticsLogging
+    {
+      std::string Version;
+      bool Delete = false;
+      bool Read = false;
+      bool Write = false;
+      Models::RetentionPolicy RetentionPolicy;
+    }; // struct AnalyticsLogging
+
+    struct BlobContainerItemDetails
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Storage::Metadata Metadata;
+      PublicAccessType AccessType = PublicAccessType::None;
+      bool HasImmutabilityPolicy = false;
+      bool HasLegalHold = false;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Models::LeaseState LeaseState = Models::LeaseState::Available;
+      Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+      std::string DefaultEncryptionScope;
+      bool PreventEncryptionScopeOverride = false;
+      Azure::Nullable<int32_t> RemainingRetentionDays;
+      Azure::Nullable<Azure::DateTime> DeletedOn;
+    }; // struct BlobContainerItemDetails
+
+    struct CorsRule
+    {
+      std::string AllowedOrigins;
+      std::string AllowedMethods;
+      std::string AllowedHeaders;
+      std::string ExposedHeaders;
+      int32_t MaxAgeInSeconds = 0;
+    }; // struct CorsRule
+
+    struct GeoReplication
+    {
+      GeoReplicationStatus Status;
+      Azure::Nullable<Azure::DateTime> LastSyncedOn;
+    }; // struct GeoReplication
+
+    struct Metrics
+    {
+      std::string Version;
+      bool IsEnabled = false;
+      Models::RetentionPolicy RetentionPolicy;
+      Azure::Nullable<bool> IncludeApis;
+    }; // struct Metrics
+
+    struct ObjectReplicationRule
+    {
+      std::string RuleId;
+      ObjectReplicationStatus ReplicationStatus;
+    }; // struct ObjectReplicationRule
+
+    struct StaticWebsite
+    {
+      bool IsEnabled = false;
+      Azure::Nullable<std::string> IndexDocument;
+      Azure::Nullable<std::string> DefaultIndexDocumentPath;
+      Azure::Nullable<std::string> ErrorDocument404Path;
+    }; // struct StaticWebsite
 
     class AccessTier {
     public:
@@ -68,41 +296,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum AccessTier
 
-    class AccountKind {
-    public:
-      AccountKind() = default;
-      explicit AccountKind(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
-      bool operator!=(const AccountKind& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
-
-    private:
-      std::string m_value;
-    }; // extensible enum AccountKind
-
-    namespace _detail {
-      struct AcquireBlobContainerLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string LeaseId;
-      }; // struct AcquireBlobContainerLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct AcquireBlobLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string LeaseId;
-      }; // struct AcquireBlobLeaseResult
-    } // namespace _detail
-
     class ArchiveStatus {
     public:
       ArchiveStatus() = default;
@@ -117,11 +310,23 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum ArchiveStatus
 
-    struct BlobBlock
+    struct BlobContainerItem
     {
       std::string Name;
-      int64_t Size = 0;
-    }; // struct BlobBlock
+      bool IsDeleted = false;
+      Azure::Nullable<std::string> VersionId;
+      BlobContainerItemDetails Details;
+    }; // struct BlobContainerItem
+
+    struct BlobHttpHeaders
+    {
+      std::string ContentType;
+      std::string ContentEncoding;
+      std::string ContentLanguage;
+      Storage::ContentHash ContentHash;
+      std::string CacheControl;
+      std::string ContentDisposition;
+    }; // struct BlobHttpHeaders
 
     class BlobType {
     public:
@@ -137,6 +342,203 @@ namespace Azure { namespace Storage { namespace Blobs {
     private:
       std::string m_value;
     }; // extensible enum BlobType
+
+    struct ObjectReplicationPolicy
+    {
+      std::string PolicyId;
+      std::vector<ObjectReplicationRule> Rules;
+    }; // struct ObjectReplicationPolicy
+
+    class RehydratePriority {
+    public:
+      RehydratePriority() = default;
+      explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
+      bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
+
+    private:
+      std::string m_value;
+    }; // extensible enum RehydratePriority
+
+    struct BlobItemDetails
+    {
+      BlobHttpHeaders HttpHeaders;
+      Storage::Metadata Metadata;
+      Azure::DateTime CreatedOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
+      Azure::Nullable<Azure::DateTime> LastAccessedOn;
+      Azure::DateTime LastModified;
+      Azure::ETag ETag;
+      Azure::Nullable<Models::AccessTier> AccessTier;
+      Azure::Nullable<bool> IsAccessTierInferred;
+      Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+      Models::LeaseState LeaseState = Models::LeaseState::Available;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      bool IsServerEncrypted = false;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blobd
+      Azure::Nullable<bool> IsSealed; // only for append blob
+      std::vector<ObjectReplicationPolicy>
+          ObjectReplicationSourceProperties; // only valid for replication source blob
+    }; // struct BlobItemDetails
+
+    struct DownloadBlobDetails
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Azure::DateTime CreatedOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
+      Azure::Nullable<Azure::DateTime> LastAccessedOn;
+      BlobHttpHeaders HttpHeaders;
+      Storage::Metadata Metadata;
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
+      Azure::Nullable<int64_t> CommittedBlockCount; // only for append blob
+      Azure::Nullable<bool> IsSealed; // only for append blob
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Nullable<Models::LeaseState> LeaseState;
+      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
+      bool IsServerEncrypted = false;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<std::string>
+          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
+      std::vector<ObjectReplicationPolicy>
+          ObjectReplicationSourceProperties; // only valid for replication source blob
+      Azure::Nullable<int32_t> TagCount;
+      Azure::Nullable<std::string> CopyId;
+      Azure::Nullable<std::string> CopySource;
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Nullable<std::string> CopyStatusDescription;
+      Azure::Nullable<std::string> CopyProgress;
+      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      Azure::Nullable<std::string> VersionId;
+      Azure::Nullable<bool> IsCurrentVersion;
+    }; // struct DownloadBlobDetails
+
+    struct BlobItem
+    {
+      std::string Name;
+      int64_t BlobSize = 0;
+      Models::BlobType BlobType;
+      bool IsDeleted = false;
+      std::string Snapshot;
+      Azure::Nullable<std::string> VersionId;
+      Azure::Nullable<bool> IsCurrentVersion;
+      BlobItemDetails Details;
+    }; // struct BlobItem
+
+    struct AbortBlobCopyFromUriResult
+    {
+    }; // struct AbortBlobCopyFromUriResult
+
+    struct AccountInfo
+    {
+      Models::SkuName SkuName;
+      Models::AccountKind AccountKind;
+      bool IsHierarchicalNamespaceEnabled = false;
+    }; // struct AccountInfo
+
+    struct AppendBlockFromUriResult
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
+      int64_t AppendOffset = 0;
+      int64_t CommittedBlockCount = 0;
+      bool IsServerEncrypted = false;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+    }; // struct AppendBlockFromUriResult
+
+    struct AppendBlockResult
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
+      int64_t AppendOffset = 0;
+      int64_t CommittedBlockCount = 0;
+      bool IsServerEncrypted = false;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+    }; // struct AppendBlockResult
+
+    struct BlobContainerAccessPolicy
+    {
+      PublicAccessType AccessType = PublicAccessType::None;
+      std::vector<SignedIdentifier> SignedIdentifiers;
+    }; // struct BlobContainerAccessPolicy
+
+    struct BlobContainerProperties
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Storage::Metadata Metadata;
+      PublicAccessType AccessType = PublicAccessType::None;
+      bool HasImmutabilityPolicy = false;
+      bool HasLegalHold = false;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Models::LeaseState LeaseState = Models::LeaseState::Available;
+      Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+      std::string DefaultEncryptionScope;
+      bool PreventEncryptionScopeOverride = false;
+    }; // struct BlobContainerProperties
+
+    struct BlobProperties
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Azure::DateTime CreatedOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
+      Azure::Nullable<Azure::DateTime> LastAccessedOn;
+      Storage::Metadata Metadata;
+      Models::BlobType BlobType;
+      Azure::Nullable<LeaseDurationType> LeaseDuration;
+      Azure::Nullable<Models::LeaseState> LeaseState;
+      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
+      int64_t BlobSize = 0;
+      BlobHttpHeaders HttpHeaders;
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
+      Azure::Nullable<int32_t> CommittedBlockCount; // only for append blob
+      Azure::Nullable<bool> IsSealed; // only for append blob
+      bool IsServerEncrypted = false;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<Models::AccessTier> AccessTier;
+      Azure::Nullable<bool> IsAccessTierInferred;
+      Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
+      Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+      Azure::Nullable<Azure::DateTime> AccessTierChangedOn;
+      Azure::Nullable<std::string> CopyId;
+      Azure::Nullable<std::string> CopySource;
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+      Azure::Nullable<std::string> CopyStatusDescription;
+      Azure::Nullable<bool> IsIncrementalCopy;
+      Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+      Azure::Nullable<std::string> CopyProgress;
+      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      Azure::Nullable<std::string>
+          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
+      std::vector<ObjectReplicationPolicy>
+          ObjectReplicationSourceProperties; // only valid for replication source blob
+      Azure::Nullable<int32_t> TagCount;
+      Azure::Nullable<std::string> VersionId;
+      Azure::Nullable<bool> IsCurrentVersion;
+    }; // struct BlobProperties
+
+    struct BlobServiceProperties
+    {
+      AnalyticsLogging Logging;
+      Metrics HourMetrics;
+      Metrics MinuteMetrics;
+      std::vector<CorsRule> Cors;
+      Azure::Nullable<std::string> DefaultServiceVersion;
+      RetentionPolicy DeleteRetentionPolicy;
+      Models::StaticWebsite StaticWebsite;
+    }; // struct BlobServiceProperties
 
     class BlockListType {
     public:
@@ -168,42 +570,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlockType
 
-    namespace _detail {
-      struct BreakBlobContainerLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        int32_t LeaseTime = 0;
-      }; // struct BreakBlobContainerLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct BreakBlobLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        int32_t LeaseTime = 0;
-      }; // struct BreakBlobLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct ChangeBlobContainerLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string LeaseId;
-      }; // struct ChangeBlobContainerLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct ChangeBlobLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string LeaseId;
-      }; // struct ChangeBlobLeaseResult
-    } // namespace _detail
-
     struct ClearPagesResult
     {
       Azure::ETag ETag;
@@ -211,28 +577,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t SequenceNumber = 0;
     }; // struct ClearPagesResult
 
-    class CopyStatus {
-    public:
-      CopyStatus() = default;
-      explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
-      bool operator!=(const CopyStatus& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
-
-    private:
-      std::string m_value;
-    }; // extensible enum CopyStatus
-
-    struct CorsRule
+    struct CommitBlockListResult
     {
-      std::string AllowedOrigins;
-      std::string AllowedMethods;
-      std::string AllowedHeaders;
-      std::string ExposedHeaders;
-      int32_t MaxAgeInSeconds = 0;
-    }; // struct CorsRule
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      Azure::Nullable<std::string> VersionId;
+      bool IsServerEncrypted = false;
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Nullable<std::string> EncryptionScope;
+      Azure::Nullable<ContentHash> TransactionalContentHash;
+    }; // struct CommitBlockListResult
 
     struct CreateAppendBlobResult
     {
@@ -299,6 +653,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum DeleteSnapshotsOption
 
+    struct DownloadBlobResult
+    {
+      std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
+      Azure::Core::Http::HttpRange ContentRange;
+      int64_t BlobSize = 0;
+      Models::BlobType BlobType;
+      Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
+      DownloadBlobDetails Details;
+    }; // struct DownloadBlobResult
+
     class EncryptionAlgorithmType {
     public:
       EncryptionAlgorithmType() = default;
@@ -315,27 +679,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum EncryptionAlgorithmType
 
-    class GeoReplicationStatus {
-    public:
-      GeoReplicationStatus() = default;
-      explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
-      bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
-
-    private:
-      std::string m_value;
-    }; // extensible enum GeoReplicationStatus
-
-    namespace _detail {
-      struct GetBlobTagsResult
-      {
-        std::map<std::string, std::string> Tags;
-      }; // struct GetBlobTagsResult
-    } // namespace _detail
+    struct GetBlockListResult
+    {
+      Azure::ETag ETag;
+      Azure::DateTime LastModified;
+      std::string ContentType;
+      int64_t BlobSize = 0;
+      std::vector<BlobBlock> CommittedBlocks;
+      std::vector<BlobBlock> UncommittedBlocks;
+    }; // struct GetBlockListResult
 
     struct GetPageRangesResult
     {
@@ -345,51 +697,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<Azure::Core::Http::HttpRange> PageRanges;
       std::vector<Azure::Core::Http::HttpRange> ClearRanges;
     }; // struct GetPageRangesResult
-
-    class LeaseDurationType {
-    public:
-      LeaseDurationType() = default;
-      explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
-
-    private:
-      std::string m_value;
-    }; // extensible enum LeaseDurationType
-
-    class LeaseState {
-    public:
-      LeaseState() = default;
-      explicit LeaseState(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseState& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Leased;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Expired;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
-
-    private:
-      std::string m_value;
-    }; // extensible enum LeaseState
-
-    class LeaseStatus {
-    public:
-      LeaseStatus() = default;
-      explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
-      bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
-
-    private:
-      std::string m_value;
-    }; // extensible enum LeaseStatus
 
     enum class ListBlobContainersIncludeFlags
     {
@@ -467,99 +774,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       return lhs;
     }
 
-    class ObjectReplicationStatus {
-    public:
-      ObjectReplicationStatus() = default;
-      explicit ObjectReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const ObjectReplicationStatus& other) const
-      {
-        return m_value == other.m_value;
-      }
-      bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
-
-    private:
-      std::string m_value;
-    }; // extensible enum ObjectReplicationStatus
-
-    class PublicAccessType {
-    public:
-      PublicAccessType() = default;
-      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
-      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
-
-    private:
-      std::string m_value;
-    }; // extensible enum PublicAccessType
-
-    class RehydratePriority {
-    public:
-      RehydratePriority() = default;
-      explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
-      bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
-
-    private:
-      std::string m_value;
-    }; // extensible enum RehydratePriority
-
-    namespace _detail {
-      struct ReleaseBlobContainerLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-      }; // struct ReleaseBlobContainerLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct ReleaseBlobLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        Azure::Nullable<int64_t> SequenceNumber;
-      }; // struct ReleaseBlobLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct RenewBlobContainerLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string LeaseId;
-      }; // struct RenewBlobContainerLeaseResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct RenewBlobLeaseResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string LeaseId;
-      }; // struct RenewBlobLeaseResult
-    } // namespace _detail
-
     struct ResizePageBlobResult
     {
       Azure::ETag ETag;
       Azure::DateTime LastModified;
       int64_t SequenceNumber = 0;
     }; // struct ResizePageBlobResult
-
-    struct RetentionPolicy
-    {
-      bool IsEnabled = false;
-      Azure::Nullable<int32_t> Days;
-    }; // struct RetentionPolicy
 
     class ScheduleBlobExpiryOriginType {
     public:
@@ -586,6 +806,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::DateTime LastModified;
       bool IsSealed = true;
     }; // struct SealAppendBlobResult
+
+    struct ServiceStatistics
+    {
+      Models::GeoReplication GeoReplication;
+    }; // struct ServiceStatistics
 
     struct SetBlobAccessTierResult
     {
@@ -629,266 +854,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
     }; // struct SetServicePropertiesResult
 
-    struct SignedIdentifier
-    {
-      std::string Id;
-      Azure::DateTime StartsOn;
-      Azure::DateTime ExpiresOn;
-      std::string Permissions;
-    }; // struct SignedIdentifier
-
-    class SkuName {
-    public:
-      SkuName() = default;
-      explicit SkuName(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const SkuName& other) const { return m_value == other.m_value; }
-      bool operator!=(const SkuName& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
-
-    private:
-      std::string m_value;
-    }; // extensible enum SkuName
-
-    struct StaticWebsite
-    {
-      bool IsEnabled = false;
-      Azure::Nullable<std::string> IndexDocument;
-      Azure::Nullable<std::string> DefaultIndexDocumentPath;
-      Azure::Nullable<std::string> ErrorDocument404Path;
-    }; // struct StaticWebsite
-
-    namespace _detail {
-      struct SubmitBlobBatchResult
-      {
-        std::string ContentType;
-      }; // struct SubmitBlobBatchResult
-    } // namespace _detail
-
-    struct TaggedBlobItem
-    {
-      std::string BlobName;
-      std::string BlobContainerName;
-    }; // struct TaggedBlobItem
-
-    namespace _detail {
-      struct UndeleteBlobContainerResult
-      {
-      }; // struct UndeleteBlobContainerResult
-    } // namespace _detail
-
-    struct UndeleteBlobResult
-    {
-    }; // struct UndeleteBlobResult
-
-    struct UserDelegationKey
-    {
-      std::string SignedObjectId;
-      std::string SignedTenantId;
-      Azure::DateTime SignedStartsOn;
-      Azure::DateTime SignedExpiresOn;
-      std::string SignedService;
-      std::string SignedVersion;
-      std::string Value;
-    }; // struct UserDelegationKey
-
-    struct AccountInfo
-    {
-      Models::SkuName SkuName;
-      Models::AccountKind AccountKind;
-      bool IsHierarchicalNamespaceEnabled = false;
-    }; // struct AccountInfo
-
-    struct AnalyticsLogging
-    {
-      std::string Version;
-      bool Delete = false;
-      bool Read = false;
-      bool Write = false;
-      Models::RetentionPolicy RetentionPolicy;
-    }; // struct AnalyticsLogging
-
-    struct BlobContainerAccessPolicy
-    {
-      PublicAccessType AccessType = PublicAccessType::None;
-      std::vector<SignedIdentifier> SignedIdentifiers;
-    }; // struct BlobContainerAccessPolicy
-
-    struct BlobContainerItemDetails
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Storage::Metadata Metadata;
-      PublicAccessType AccessType = PublicAccessType::None;
-      bool HasImmutabilityPolicy = false;
-      bool HasLegalHold = false;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Models::LeaseState LeaseState = Models::LeaseState::Available;
-      Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
-      std::string DefaultEncryptionScope;
-      bool PreventEncryptionScopeOverride = false;
-      Azure::Nullable<int32_t> RemainingRetentionDays;
-      Azure::Nullable<Azure::DateTime> DeletedOn;
-    }; // struct BlobContainerItemDetails
-
-    struct BlobContainerProperties
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Storage::Metadata Metadata;
-      PublicAccessType AccessType = PublicAccessType::None;
-      bool HasImmutabilityPolicy = false;
-      bool HasLegalHold = false;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Models::LeaseState LeaseState = Models::LeaseState::Available;
-      Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
-      std::string DefaultEncryptionScope;
-      bool PreventEncryptionScopeOverride = false;
-    }; // struct BlobContainerProperties
-
-    namespace _detail {
-      struct FindBlobsByTagsResult
-      {
-        std::string ServiceEndpoint;
-        Azure::Nullable<std::string> ContinuationToken;
-        std::vector<TaggedBlobItem> Items;
-      }; // struct FindBlobsByTagsResult
-    } // namespace _detail
-
-    struct GeoReplication
-    {
-      GeoReplicationStatus Status;
-      Azure::Nullable<Azure::DateTime> LastSyncedOn;
-    }; // struct GeoReplication
-
-    struct GetBlockListResult
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      std::string ContentType;
-      int64_t BlobSize = 0;
-      std::vector<BlobBlock> CommittedBlocks;
-      std::vector<BlobBlock> UncommittedBlocks;
-    }; // struct GetBlockListResult
-
-    struct Metrics
-    {
-      std::string Version;
-      bool IsEnabled = false;
-      Models::RetentionPolicy RetentionPolicy;
-      Azure::Nullable<bool> IncludeApis;
-    }; // struct Metrics
-
-    struct ObjectReplicationRule
-    {
-      std::string RuleId;
-      ObjectReplicationStatus ReplicationStatus;
-    }; // struct ObjectReplicationRule
-
-    namespace _detail {
-      struct StartBlobCopyFromUriResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string CopyId;
-        Models::CopyStatus CopyStatus;
-        Azure::Nullable<std::string> VersionId;
-      }; // struct StartBlobCopyFromUriResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct StartBlobCopyIncrementalResult
-      {
-        Azure::ETag ETag;
-        Azure::DateTime LastModified;
-        std::string CopyId;
-        Models::CopyStatus CopyStatus;
-        Azure::Nullable<std::string> VersionId;
-      }; // struct StartBlobCopyIncrementalResult
-    } // namespace _detail
-
-    struct AppendBlockFromUriResult
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Azure::Nullable<ContentHash> TransactionalContentHash;
-      int64_t AppendOffset = 0;
-      int64_t CommittedBlockCount = 0;
-      bool IsServerEncrypted = false;
-      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Nullable<std::string> EncryptionScope;
-    }; // struct AppendBlockFromUriResult
-
-    struct AppendBlockResult
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Azure::Nullable<ContentHash> TransactionalContentHash;
-      int64_t AppendOffset = 0;
-      int64_t CommittedBlockCount = 0;
-      bool IsServerEncrypted = false;
-      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Nullable<std::string> EncryptionScope;
-    }; // struct AppendBlockResult
-
-    struct BlobContainerItem
-    {
-      std::string Name;
-      bool IsDeleted = false;
-      Azure::Nullable<std::string> VersionId;
-      BlobContainerItemDetails Details;
-    }; // struct BlobContainerItem
-
-    struct BlobHttpHeaders
-    {
-      std::string ContentType;
-      std::string ContentEncoding;
-      std::string ContentLanguage;
-      Storage::ContentHash ContentHash;
-      std::string CacheControl;
-      std::string ContentDisposition;
-    }; // struct BlobHttpHeaders
-
-    struct BlobServiceProperties
-    {
-      AnalyticsLogging Logging;
-      Metrics HourMetrics;
-      Metrics MinuteMetrics;
-      std::vector<CorsRule> Cors;
-      Azure::Nullable<std::string> DefaultServiceVersion;
-      RetentionPolicy DeleteRetentionPolicy;
-      Models::StaticWebsite StaticWebsite;
-    }; // struct BlobServiceProperties
-
-    struct CommitBlockListResult
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Azure::Nullable<std::string> VersionId;
-      bool IsServerEncrypted = false;
-      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<ContentHash> TransactionalContentHash;
-    }; // struct CommitBlockListResult
-
-    struct ObjectReplicationPolicy
-    {
-      std::string PolicyId;
-      std::vector<ObjectReplicationRule> Rules;
-    }; // struct ObjectReplicationPolicy
-
-    struct ServiceStatistics
-    {
-      Models::GeoReplication GeoReplication;
-    }; // struct ServiceStatistics
-
     struct StageBlockFromUriResult
     {
       Azure::Nullable<ContentHash> TransactionalContentHash;
@@ -904,6 +869,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct StageBlockResult
+
+    struct UndeleteBlobResult
+    {
+    }; // struct UndeleteBlobResult
 
     struct UploadBlockBlobResult
     {
@@ -938,103 +907,86 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<std::string> EncryptionScope;
     }; // struct UploadPagesResult
 
-    struct BlobItemDetails
+    struct UserDelegationKey
     {
-      BlobHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
-      Azure::DateTime CreatedOn;
-      Azure::Nullable<Azure::DateTime> ExpiresOn;
-      Azure::Nullable<Azure::DateTime> LastAccessedOn;
-      Azure::DateTime LastModified;
-      Azure::ETag ETag;
-      Azure::Nullable<Models::AccessTier> AccessTier;
-      Azure::Nullable<bool> IsAccessTierInferred;
-      Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
-      Models::LeaseState LeaseState = Models::LeaseState::Available;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      bool IsServerEncrypted = false;
-      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blobd
-      Azure::Nullable<bool> IsSealed; // only for append blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
-    }; // struct BlobItemDetails
+      std::string SignedObjectId;
+      std::string SignedTenantId;
+      Azure::DateTime SignedStartsOn;
+      Azure::DateTime SignedExpiresOn;
+      std::string SignedService;
+      std::string SignedVersion;
+      std::string Value;
+    }; // struct UserDelegationKey
 
-    struct BlobProperties
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Azure::DateTime CreatedOn;
-      Azure::Nullable<Azure::DateTime> ExpiresOn;
-      Azure::Nullable<Azure::DateTime> LastAccessedOn;
-      Storage::Metadata Metadata;
-      Models::BlobType BlobType;
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Nullable<Models::LeaseState> LeaseState;
-      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
-      int64_t BlobSize = 0;
-      BlobHttpHeaders HttpHeaders;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Nullable<int32_t> CommittedBlockCount; // only for append blob
-      Azure::Nullable<bool> IsSealed; // only for append blob
-      bool IsServerEncrypted = false;
-      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<Models::AccessTier> AccessTier;
-      Azure::Nullable<bool> IsAccessTierInferred;
-      Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
-      Azure::Nullable<Models::RehydratePriority> RehydratePriority;
-      Azure::Nullable<Azure::DateTime> AccessTierChangedOn;
-      Azure::Nullable<std::string> CopyId;
-      Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<Models::CopyStatus> CopyStatus;
-      Azure::Nullable<std::string> CopyStatusDescription;
-      Azure::Nullable<bool> IsIncrementalCopy;
-      Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
-      Azure::Nullable<std::string> CopyProgress;
-      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
-      Azure::Nullable<std::string>
-          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
-      Azure::Nullable<int32_t> TagCount;
-      Azure::Nullable<std::string> VersionId;
-      Azure::Nullable<bool> IsCurrentVersion;
-    }; // struct BlobProperties
+    namespace _detail {
+      struct AcquireBlobContainerLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct AcquireBlobContainerLeaseResult
+    } // namespace _detail
 
-    struct DownloadBlobDetails
-    {
-      Azure::ETag ETag;
-      Azure::DateTime LastModified;
-      Azure::DateTime CreatedOn;
-      Azure::Nullable<Azure::DateTime> ExpiresOn;
-      Azure::Nullable<Azure::DateTime> LastAccessedOn;
-      BlobHttpHeaders HttpHeaders;
-      Storage::Metadata Metadata;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blob
-      Azure::Nullable<int64_t> CommittedBlockCount; // only for append blob
-      Azure::Nullable<bool> IsSealed; // only for append blob
-      Azure::Nullable<LeaseDurationType> LeaseDuration;
-      Azure::Nullable<Models::LeaseState> LeaseState;
-      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
-      bool IsServerEncrypted = false;
-      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<std::string>
-          ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
-      std::vector<ObjectReplicationPolicy>
-          ObjectReplicationSourceProperties; // only valid for replication source blob
-      Azure::Nullable<int32_t> TagCount;
-      Azure::Nullable<std::string> CopyId;
-      Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<Models::CopyStatus> CopyStatus;
-      Azure::Nullable<std::string> CopyStatusDescription;
-      Azure::Nullable<std::string> CopyProgress;
-      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
-      Azure::Nullable<std::string> VersionId;
-      Azure::Nullable<bool> IsCurrentVersion;
-    }; // struct DownloadBlobDetails
+    namespace _detail {
+      struct AcquireBlobLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct AcquireBlobLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct BreakBlobContainerLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        int32_t LeaseTime = 0;
+      }; // struct BreakBlobContainerLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct BreakBlobLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        int32_t LeaseTime = 0;
+      }; // struct BreakBlobLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct ChangeBlobContainerLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct ChangeBlobContainerLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct ChangeBlobLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct ChangeBlobLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct FindBlobsByTagsResult
+      {
+        std::string ServiceEndpoint;
+        Azure::Nullable<std::string> ContinuationToken;
+        std::vector<TaggedBlobItem> Items;
+      }; // struct FindBlobsByTagsResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct GetBlobTagsResult
+      {
+        std::map<std::string, std::string> Tags;
+      }; // struct GetBlobTagsResult
+    } // namespace _detail
 
     namespace _detail {
       struct ListBlobContainersResult
@@ -1045,28 +997,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::vector<BlobContainerItem> Items;
       }; // struct ListBlobContainersResult
     } // namespace _detail
-
-    struct BlobItem
-    {
-      std::string Name;
-      int64_t BlobSize = 0;
-      Models::BlobType BlobType;
-      bool IsDeleted = false;
-      std::string Snapshot;
-      Azure::Nullable<std::string> VersionId;
-      Azure::Nullable<bool> IsCurrentVersion;
-      BlobItemDetails Details;
-    }; // struct BlobItem
-
-    struct DownloadBlobResult
-    {
-      std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
-      Azure::Core::Http::HttpRange ContentRange;
-      int64_t BlobSize = 0;
-      Models::BlobType BlobType;
-      Azure::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
-      DownloadBlobDetails Details;
-    }; // struct DownloadBlobResult
 
     namespace _detail {
       struct ListBlobsByHierarchyResult
@@ -1090,6 +1020,76 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Nullable<std::string> ContinuationToken;
         std::vector<BlobItem> Items;
       }; // struct ListBlobsResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct ReleaseBlobContainerLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+      }; // struct ReleaseBlobContainerLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct ReleaseBlobLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        Azure::Nullable<int64_t> SequenceNumber;
+      }; // struct ReleaseBlobLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct RenewBlobContainerLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct RenewBlobContainerLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct RenewBlobLeaseResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string LeaseId;
+      }; // struct RenewBlobLeaseResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct StartBlobCopyFromUriResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string CopyId;
+        Models::CopyStatus CopyStatus;
+        Azure::Nullable<std::string> VersionId;
+      }; // struct StartBlobCopyFromUriResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct StartBlobCopyIncrementalResult
+      {
+        Azure::ETag ETag;
+        Azure::DateTime LastModified;
+        std::string CopyId;
+        Models::CopyStatus CopyStatus;
+        Azure::Nullable<std::string> VersionId;
+      }; // struct StartBlobCopyIncrementalResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct SubmitBlobBatchResult
+      {
+        std::string ContentType;
+      }; // struct SubmitBlobBatchResult
+    } // namespace _detail
+
+    namespace _detail {
+      struct UndeleteBlobContainerResult
+      {
+      }; // struct UndeleteBlobContainerResult
     } // namespace _detail
 
   } // namespace Models
@@ -4667,7 +4667,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Context& context)
         {
           (void)options;
-          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, true);
+          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, false);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
           {

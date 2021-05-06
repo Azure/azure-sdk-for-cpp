@@ -11,7 +11,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StartFileCopyOperation::PollInternal(
-      Azure::Core::Context&)
+      const Azure::Core::Context&)
   {
 
     auto response = m_fileClient->GetProperties();
@@ -79,10 +79,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     *this = m_shareFileClient->ListHandles(m_operationOptions, context);
   }
 
+  void ForceCloseAllFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_shareFileClient->ForceCloseAllHandles(m_operationOptions, context);
+  }
+
   void ListDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_shareDirectoryClient->ListHandles(m_operationOptions, context);
+  }
+
+  void ForceCloseAllDirectoryHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_shareDirectoryClient->ForceCloseAllHandles(m_operationOptions, context);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

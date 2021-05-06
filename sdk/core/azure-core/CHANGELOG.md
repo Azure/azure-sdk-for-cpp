@@ -6,9 +6,15 @@
 
 - Added `Azure::PagedResponse<T>`.
 
+### Breaking Changes
+
+- Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
+- Renamed `Request::IsDownloadViaStream()` to `IsBufferedDownload()`.
+
 ### Bug Fixes
 
 - Do not re-use a libcurl connection to same host but different port.
+- Ensure uniqueness of `Azure::Core::Uuid` on POSIX platforms.
 
 ## 1.0.0-beta.8 (2021-04-07)
 

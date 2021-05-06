@@ -17,7 +17,47 @@
 
 #include <windows.h>
 
-#include "azure/core/internal/hkey_holder.hpp"
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+
+namespace Azure { namespace Core { namespace _internal {
+
+  /**
+   * @brief HkeyHolder ensures native handle resource is released.
+   */
+  class HkeyHolder {
+  private:
+    HKEY m_value = nullptr;
+
+  public:
+    explicit HkeyHolder() noexcept : m_value(nullptr){};
+
+    ~HkeyHolder() noexcept
+    {
+      if (m_value != nullptr)
+      {
+        ::RegCloseKey(m_value);
+      }
+    }
+
+    void operator=(HKEY p) noexcept
+    {
+      if (p != nullptr)
+      {
+        m_value = p;
+      }
+    }
+
+    operator HKEY() noexcept { return m_value; }
+
+    operator HKEY*() noexcept { return &m_value; }
+
+    HKEY* operator&() noexcept { return &m_value; }
+  };
+
+}}} // namespace Azure::Core::_internal
+
+#endif
 
 #elif defined(AZ_PLATFORM_POSIX)
 #include <sys/utsname.h>

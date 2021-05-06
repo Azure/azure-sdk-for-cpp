@@ -30,7 +30,7 @@ struct RequestWithContinuationToken
 };
 
 static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    Azure::Security::KeyVault::_internal::GetSinglePageOptions const& options,
+    Azure::Security::KeyVault::_internal::GetPageResultOptions const& options,
     std::vector<std::string>&& defaultPath)
 {
   RequestWithContinuationToken request;
@@ -155,45 +155,45 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
       {_detail::KeysPath, keyName, "create"});
 }
 
-KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeysSinglePage(
-    GetPropertiesOfKeysSinglePageOptions const& options,
+KeyPropertiesPageResult KeyClient::GetPropertiesOfKeys(
+    GetPropertiesOfKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::KeysPath});
-  auto response = m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesPageResult>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+        return _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
             rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyPropertiesSinglePage(
+  return KeyPropertiesPageResult(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this));
 }
 
-KeyPropertiesSinglePage KeyClient::GetPropertiesOfKeyVersionsSinglePage(
+KeyPropertiesPageResult KeyClient::GetPropertiesOfKeyVersions(
     std::string const& name,
-    GetPropertiesOfKeyVersionsSinglePageOptions const& options,
+    GetPropertiesOfKeyVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request
       = BuildRequestFromContinuationToken(options, {_detail::KeysPath, name, "versions"});
-  auto response = m_pipeline->SendRequest<KeyPropertiesSinglePage>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesPageResult>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesSinglePageSerializer::KeyPropertiesSinglePageDeserialize(
+        return _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
             rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyPropertiesSinglePage(
+  return KeyPropertiesPageResult(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this),
@@ -205,7 +205,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
     Azure::Core::Context const& context) const
 {
   return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
-      m_pipeline,
+      std::make_shared<KeyClient>(*this),
       m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::DeletedKey>(
           context,
           Azure::Core::Http::HttpMethod::Delete,
@@ -215,34 +215,12 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
           {_detail::KeysPath, name}));
 }
 
-Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::ResumeDeleteKey(
-    std::string const& resumeToken,
-    Azure::Core::Context const& context) const
-{
-  Azure::Security::KeyVault::Keys::DeleteKeyOperation operation(m_pipeline, resumeToken);
-  // Need to fix this to use context directly. See:
-  // https://github.com/Azure/azure-sdk-for-cpp/issues/2091
-  operation.Poll(context.GetApplicationContext());
-  return operation;
-}
-
-Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::ResumeRecoverDeletedKey(
-    std::string const& resumeToken,
-    Azure::Core::Context const& context) const
-{
-  Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation operation(m_pipeline, resumeToken);
-  // Need to fix this to use context directly. See:
-  // https://github.com/Azure/azure-sdk-for-cpp/issues/2091
-  operation.Poll(context.GetApplicationContext());
-  return operation;
-}
-
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
   return Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation(
-      m_pipeline,
+      std::make_shared<KeyClient>(*this),
       m_pipeline->SendRequest<Azure::Security::KeyVault::Keys::KeyVaultKey>(
           context,
           Azure::Core::Http::HttpMethod::Post,
@@ -265,22 +243,22 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
-DeletedKeySinglePage KeyClient::GetDeletedKeysSinglePage(
-    GetDeletedKeysSinglePageOptions const& options,
+DeletedKeyPageResult KeyClient::GetDeletedKeys(
+    GetDeletedKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
-  auto response = m_pipeline->SendRequest<DeletedKeySinglePage>(
+  auto response = m_pipeline->SendRequest<DeletedKeyPageResult>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesSinglePageSerializer::DeletedKeySinglePageDeserialize(
+        return _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
             rawResponse);
       },
       request.Path,
       request.Query);
 
-  return DeletedKeySinglePage(
+  return DeletedKeyPageResult(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this));

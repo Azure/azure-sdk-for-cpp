@@ -92,4 +92,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     *this = m_onNextPageFunc(NextPageToken.Value(), context);
   }
 
+  void SetPathAccessControlListRecursivePagedResponse::OnNextPage(
+      const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    if (m_mode == _detail::PathSetAccessControlRecursiveMode::Set)
+    {
+      *this = m_dataLakePathClient->SetAccessControlListRecursive(
+          m_acls, m_operationOptions, context);
+    }
+    else if (m_mode == _detail::PathSetAccessControlRecursiveMode::Modify)
+    {
+      *this = m_dataLakePathClient->UpdateAccessControlListRecursive(
+          m_acls, m_operationOptions, context);
+    }
+    else if (m_mode == _detail::PathSetAccessControlRecursiveMode::Remove)
+    {
+      *this = m_dataLakePathClient->RemoveAccessControlListRecursive(
+          m_acls, m_operationOptions, context);
+    }
+    // Execution is never expected to reach here
+    std::abort();
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

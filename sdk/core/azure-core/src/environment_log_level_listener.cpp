@@ -17,7 +17,7 @@
 #if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
                                                                      // for explanation.
 
-#include "environment_log_level_listener_private.hpp"
+#include "private/environment_log_level_listener.hpp"
 
 #include "azure/core/datetime.hpp"
 #include "azure/core/internal/strings.hpp"
