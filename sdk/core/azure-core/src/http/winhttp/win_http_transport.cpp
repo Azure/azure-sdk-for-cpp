@@ -219,6 +219,8 @@ void WinHttpTransport::CreateConnectionHandle(
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
   uint16_t port = handleManager->m_request.GetUrl().GetPort();
 
+  handleManager->m_context.ThrowIfCancelled();
+
   // Specify an HTTP server.
   // This function always operates synchronously.
   handleManager->m_connectionHandle = WinHttpConnect(
@@ -296,6 +298,8 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
 
     DWORD dwBytesWritten = 0;
 
+    handleManager->m_context.ThrowIfCancelled();
+
     // Write data to the server.
     if (!WinHttpWriteData(
             handleManager->m_requestHandle,
@@ -325,6 +329,8 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
   }
 
   int64_t streamLength = handleManager->m_request.GetBodyStream()->Length();
+
+  handleManager->m_context.ThrowIfCancelled();
 
   // Send a request.
   if (!WinHttpSendRequest(
@@ -373,6 +379,8 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
 
 void WinHttpTransport::ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager)
 {
+  handleManager->m_context.ThrowIfCancelled();
+
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
   // been received.
@@ -571,6 +579,9 @@ int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context c
   }
 
   DWORD numberOfBytesRead = 0;
+
+  // No need to check for context cancellation before the first I/O because the base class
+  // BodyStream::Read already does that.
 
   // Check for available data.
   DWORD numberOfBytesAvailable = 0;
