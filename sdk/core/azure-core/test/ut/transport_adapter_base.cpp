@@ -408,6 +408,70 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::RequestFailedException);
   }
 
+  TEST_P(TransportAdapter, validNonAsciiHost)
+  {
+    {
+      Azure::Core::Url host(u8"http://unresolvedHost\u6F22\u5B57.org/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+    {
+      Azure::Core::Url host("http://unresolvedHost\xE9\x87\x91.org/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+    {
+      Azure::Core::Url host(u8"http://unresolvedHost\uC328.org/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+    {
+      Azure::Core::Url host("http://\0/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+  }
+
+  TEST_P(TransportAdapter, invalidNonAsciiHost)
+  {
+    {
+      Azure::Core::Url host("http://unresolvedHost\xC0\x41\x42\xFE\xFE\xFF\xFF.org/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+    {
+      Azure::Core::Url host("http://\xC0\x76\x77/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+    {
+      Azure::Core::Url host("http://\xD8\x00\x01\x00/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          m_pipeline->Send(request, Azure::Core::Context::ApplicationContext),
+          Azure::Core::Http::TransportException);
+    }
+  }
+
   TEST_P(TransportAdapter, dynamicCast)
   {
     Azure::Core::Url host("http://unresolvedHost.org/get");
