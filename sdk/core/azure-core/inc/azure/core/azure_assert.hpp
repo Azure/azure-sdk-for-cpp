@@ -49,7 +49,7 @@
 
 #endif
 
-[[noreturn]] void AzureNoReturnPath(std::string msg);
+[[noreturn]] void AzureNoReturnPath(std::string const& msg);
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
 #define AZURE_UNREACHABLE_CODE AzureNoReturnPath("unreachable code!")
