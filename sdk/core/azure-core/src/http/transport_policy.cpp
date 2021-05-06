@@ -51,7 +51,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
    * - If ReadToEnd() fails while downloading all the response, the retry policy will make sure to
    * re-send the request to re-start the download.
    *
-   * - If the request returns error (statusCode < 300), even if `!request.IsBufferedDownload()`, the
+   * - If the request returns error (statusCode >= 300), even if `request.IsBufferedDownload()`, the
    * response will be download to the response's buffer.
    *
    ***********************************************************************************
