@@ -171,3 +171,20 @@ TEST(Nullable, ValueOr)
   // Ensure val2 is still disengaged after call to ValueOr
   EXPECT_FALSE(val2);
 }
+
+TEST(Nullable, Operator)
+{
+  Nullable<std::string> val1("12345");
+  EXPECT_EQ(*val1, "12345");
+  val1->append("aaaa");
+  EXPECT_EQ(*val1, "12345aaaa");
+}
+
+TEST(Nullable, Move)
+{
+  Nullable<std::unique_ptr<int>> val(std::make_unique<int>(123));
+  std::unique_ptr<int> const taken = *std::move(val);
+  EXPECT_TRUE(taken);
+  EXPECT_EQ(*taken, 123);
+  // val.HasValue() would return true, but accessing a value after it has been moved is UB anyways.
+}
