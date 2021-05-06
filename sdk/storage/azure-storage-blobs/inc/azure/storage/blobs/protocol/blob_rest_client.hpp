@@ -35,6 +35,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   namespace Models {
 
+    /**
+     * @brief Extensible enum that used to identify the account kind.
+     */
     class AccountKind {
     public:
       AccountKind() = default;
@@ -158,6 +161,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum ObjectReplicationStatus
 
+    /**
+     * @brief Extensible enum used to indicates whether data in the container may be accessed
+     * publicly and the level of access.
+     */
     class PublicAccessType {
     public:
       PublicAccessType() = default;
@@ -165,8 +172,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Indicates full public read access for container and blob data. Clients can enumerate blobs
+       * within the container via anonymous request, but cannot enumerate containers within the
+       * storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
+      /**
+       * Indicates public read access for blobs. Blob data within this container can be read via
+       * anonymous request, but container data is not available. Clients cannot enumerate blobs
+       * within the container via anonymous request.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
+      /**
+       * Indicates the container is private to the account owner.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
 
     private:
@@ -212,6 +232,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string Permissions;
     }; // struct SignedIdentifier
 
+    /**
+     * @brief Extensible enum that used to identify the sku of a storage account.
+     */
     class SkuName {
     public:
       SkuName() = default;
@@ -545,6 +568,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ContentDisposition;
     }; // struct BlobHttpHeaders
 
+    /**
+     * @brief Extensible enum used to identify blob type.
+     */
     class BlobType {
     public:
       BlobType() = default;
@@ -552,8 +578,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlobType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlobType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Block blob.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
+      /**
+       * Page blob.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
+      /**
+       * Append blob.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
 
     private:
@@ -1257,6 +1292,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     }; // extensible enum BlockListType
 
+    /**
+     * @brief Extensible enum used to specify how the service should look for a block ID.
+     */
     class BlockType {
     public:
       BlockType() = default;
@@ -1264,8 +1302,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlockType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlockType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Look for a block ID in the committed block list.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
+      /**
+       * Look for a block ID in the uncommitted block list.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
+      /**
+       * Look for a block ID in the uncommitted block list first and then in the committed block
+       * list.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
 
     private:
