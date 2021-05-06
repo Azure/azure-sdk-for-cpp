@@ -18,74 +18,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   namespace Models {
 
-    // ServiceClient models:
-
-    using SetServicePropertiesResult = _detail::ServiceSetPropertiesResult;
-
-    // ShareClient models:
-    struct CreateShareResult
-    {
-      bool Created = true;
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct DeleteShareResult
-    {
-      bool Deleted = true;
-    };
-    using CreateShareSnapshotResult = _detail::ShareCreateSnapshotResult;
-    using ShareProperties = _detail::ShareGetPropertiesResult;
-    using SetSharePropertiesResult = _detail::ShareSetPropertiesResult;
-    using SetShareMetadataResult = _detail::ShareSetMetadataResult;
-    using ShareAccessPolicy = _detail::ShareGetAccessPolicyResult;
-    using SetShareAccessPolicyResult = _detail::ShareSetAccessPolicyResult;
-    using ShareStatistics = _detail::ShareGetStatisticsResult;
-    using CreateSharePermissionResult = _detail::ShareCreatePermissionResult;
-    using AcquireLeaseResult = _detail::ShareAcquireLeaseResult;
-    using RenewLeaseResult = _detail::ShareRenewLeaseResult;
-    using ReleaseLeaseResult = _detail::ShareReleaseLeaseResult;
-    using BreakLeaseResult = _detail::ShareBreakLeaseResult;
-    using ChangeLeaseResult = _detail::ShareChangeLeaseResult;
-
-    // DirectoryClient models:
-
-    struct CreateDirectoryResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-      std::string ParentFileId;
-      bool Created = false;
-    };
-
-    struct DeleteDirectoryResult
-    {
-      bool Deleted = true;
-    };
-
-    using DirectoryProperties = _detail::DirectoryGetPropertiesResult;
-    using SetDirectoryPropertiesResult = _detail::DirectorySetPropertiesResult;
-    using SetDirectoryMetadataResult = _detail::DirectorySetMetadataResult;
-
     struct ForceCloseDirectoryHandleResult
     {
-    };
-
-    // FileClient models:
-    struct CreateFileResult
-    {
-      bool Created = true;
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-    };
-
-    struct DeleteFileResult
-    {
-      bool Deleted = true;
     };
 
     struct DownloadFileDetails
@@ -116,20 +50,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DownloadFileDetails Details;
     };
 
-    using AbortFileCopyResult = _detail::FileAbortCopyResult;
-    using FileProperties = _detail::FileGetPropertiesResult;
-    using SetFilePropertiesResult = _detail::FileSetHttpHeadersResult;
-    using ResizeFileResult = _detail::FileSetHttpHeadersResult;
-    using SetFileMetadataResult = _detail::FileSetMetadataResult;
-    using UploadFileRangeResult = _detail::FileUploadRangeResult;
     struct ClearFileRangeResult
     {
       Azure::ETag ETag;
       DateTime LastModified;
       bool IsServerEncrypted = bool();
     };
-    using UploadFileRangeFromUriResult = _detail::FileUploadRangeFromUrlResult;
-    using GetFileRangeListResult = _detail::FileGetRangeListResult;
 
     struct DownloadFileToResult
     {

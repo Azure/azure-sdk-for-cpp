@@ -207,22 +207,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderRequestIsServerEncrypted = "x-ms-request-server-encrypted";
 
     // The value must be "filesystem" for all filesystem operations.
-    class FileSystemResourceType {
+    class FileSystemResource {
     public:
-      FileSystemResourceType() = default;
-      explicit FileSystemResourceType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const FileSystemResourceType& other) const
-      {
-        return m_value == other.m_value;
-      }
-      bool operator!=(const FileSystemResourceType& other) const { return !(*this == other); }
+      FileSystemResource() = default;
+      explicit FileSystemResource(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileSystemResource& other) const { return m_value == other.m_value; }
+      bool operator!=(const FileSystemResource& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static FileSystemResourceType Filesystem;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static FileSystemResource Filesystem;
 
     private:
       std::string m_value;
-    }; // extensible enum FileSystemResourceType
+    }; // extensible enum FileSystemResource
 
     // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one
     // or more POSIX access control rights  that pre-exist on files and directories, "remove"
@@ -372,7 +369,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       public:
         struct ListPathsOptions
         {
-          FileSystemResourceType Resource;
+          FileSystemResource Resource;
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Nullable<std::string> ContinuationToken;
