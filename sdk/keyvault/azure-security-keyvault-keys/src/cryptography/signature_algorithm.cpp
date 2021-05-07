@@ -42,7 +42,7 @@ namespace Azure {
     {
       return std::make_unique<SHA512>();
     }
-    return nullptr;
+    throw std::runtime_error("Unkown Hash algorithm for: " + m_value);
   }
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
