@@ -81,12 +81,8 @@ namespace Azure { namespace Core { namespace IO {
         int64_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
-      if (!buffer || count < 0)
-      {
-        throw std::invalid_argument(
-            "Count cannot be negative: " + std::to_string(count)
-            + ", and the buffer pointer cannot be null.");
-      }
+      AZURE_ASSERT_MSG(
+          buffer && count >= 0, "Count cannot be negative, and the buffer pointer cannot be null.");
 
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
