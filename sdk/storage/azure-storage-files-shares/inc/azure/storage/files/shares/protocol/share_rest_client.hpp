@@ -38,32 +38,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The cache control of the content.
+       * The cache control of the content.
        */
       std::string CacheControl;
 
       /**
-       * @brief The disposition of the content.
+       * The disposition of the content.
        */
       std::string ContentDisposition;
 
       /**
-       * @brief The encoding of the content.
+       * The encoding of the content.
        */
       std::string ContentEncoding;
 
       /**
-       * @brief The language of the content.
+       * The language of the content.
        */
       std::string ContentLanguage;
 
       /**
-       * @brief The type of the content.
+       * The type of the content.
        */
       std::string ContentType;
 
       /**
-       * @brief The hash of the content.
+       * The hash of the content.
        */
       Storage::ContentHash ContentHash;
     };
@@ -74,39 +74,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileSmbProperties
     {
       /**
-       * @brief Permission key of the directory or file.
+       * Permission key of the directory or file.
        */
       Azure::Nullable<std::string> PermissionKey;
 
       /**
-       * @brief If specified, the provided file attributes shall be set. Default value:
+       * If specified, the provided file attributes shall be set. Default value:
        * FileAttribute::Archive for file and FileAttribute::Directory for directory.
        * FileAttribute::None can also be specified as default.
        */
       FileAttributes Attributes;
 
       /**
-       * @brief Creation time for the file/directory.
+       * Creation time for the file/directory.
        */
       Azure::Nullable<DateTime> CreatedOn;
 
       /**
-       * @brief Last write time for the file/directory.
+       * Last write time for the file/directory.
        */
       Azure::Nullable<DateTime> LastWrittenOn;
 
       /**
-       * @brief Changed time for the file/directory.
+       * Changed time for the file/directory.
        */
       Azure::Nullable<DateTime> ChangedOn;
 
       /**
-       * @brief The fileId of the file.
+       * The fileId of the file.
        */
       std::string FileId;
 
       /**
-       * @brief The parentId of the file
+       * The parentId of the file
        */
       std::string ParentFileId;
     };
@@ -174,17 +174,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct AccessPolicy
     {
       /**
-       * @brief The date-time the policy is active.
+       * The date-time the policy is active.
        */
       DateTime StartsOn;
 
       /**
-       * @brief The date-time the policy expires.
+       * The date-time the policy expires.
        */
       DateTime ExpiresOn;
 
       /**
-       * @brief The permissions for the ACL policy.
+       * The permissions for the ACL policy.
        */
       std::string Permission;
     };
@@ -198,8 +198,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct CorsRule
     {
       /**
-       * @brief The origin domains that are permitted to make a request against the storage service
-       * via CORS. The origin domain is the domain from which the request originates. Note that the
+       * The origin domains that are permitted to make a request against the storage service via
+       * CORS. The origin domain is the domain from which the request originates. Note that the
        * origin must be an exact case-sensitive match with the origin that the user age sends to the
        * service. You can also use the wildcard character '*' to allow all origin domains to make
        * requests via CORS.
@@ -207,24 +207,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string AllowedOrigins;
 
       /**
-       * @brief The methods (HTTP request verbs) that the origin domain may use for a CORS request.
-       * (comma separated)
+       * The methods (HTTP request verbs) that the origin domain may use for a CORS request. (comma
+       * separated)
        */
       std::string AllowedMethods;
 
       /**
-       * @brief The request headers that the origin domain may specify on the CORS request.
+       * The request headers that the origin domain may specify on the CORS request.
        */
       std::string AllowedHeaders;
 
       /**
-       * @brief The response headers that may be sent in the response to the CORS request and
-       * exposed by the browser to the request issuer.
+       * The response headers that may be sent in the response to the CORS request and exposed by
+       * the browser to the request issuer.
        */
       std::string ExposedHeaders;
 
       /**
-       * @brief The maximum amount time that a browser should cache the preflight OPTIONS request.
+       * The maximum amount time that a browser should cache the preflight OPTIONS request.
        */
       int32_t MaxAgeInSeconds = int32_t();
     };
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryItem
     {
       /**
-       * @brief The name of the directory.
+       * The name of the directory.
        */
       std::string Name;
     };
@@ -246,10 +246,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileItemDetails
     {
       /**
-       * @brief Content length of the file. This value may not be up-to-date since an SMB client may
-       * have modified the file locally. The value of Content-Length may not reflect that fact until
-       * the handle is closed or the op-lock is broken. To retrieve current property values, call
-       * Get File Properties.
+       * Content length of the file. This value may not be up-to-date since an SMB client may have
+       * modified the file locally. The value of Content-Length may not reflect that fact until the
+       * handle is closed or the op-lock is broken. To retrieve current property values, call Get
+       * File Properties.
        */
       int64_t ContentLength = int64_t();
     };
@@ -260,12 +260,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileItem
     {
       /**
-       * @brief The name of the file.
+       * The name of the file.
        */
       std::string Name;
 
       /**
-       * @brief The detailed information of the file.
+       * The detailed information of the file.
        */
       FileItemDetails Details;
     };
@@ -276,43 +276,42 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct HandleItem
     {
       /**
-       * @brief XSMB service handle ID
+       * XSMB service handle ID
        */
       std::string HandleId;
 
       /**
-       * @brief File or directory name including full path starting from share root
+       * File or directory name including full path starting from share root
        */
       std::string Path;
 
       /**
-       * @brief FileId uniquely identifies the file or directory.
+       * FileId uniquely identifies the file or directory.
        */
       std::string FileId;
 
       /**
-       * @brief ParentId uniquely identifies the parent directory of the object.
+       * ParentId uniquely identifies the parent directory of the object.
        */
       std::string ParentId;
 
       /**
-       * @brief SMB session ID in context of which the file handle was opened
+       * SMB session ID in context of which the file handle was opened
        */
       std::string SessionId;
 
       /**
-       * @brief Client IP that opened the handle
+       * Client IP that opened the handle
        */
       std::string ClientIp;
 
       /**
-       * @brief Time when the session that previously opened the handle has last been reconnected.
-       * (UTC)
+       * Time when the session that previously opened the handle has last been reconnected. (UTC)
        */
       DateTime OpenedOn;
 
       /**
-       * @brief Time handle was last connected to (UTC)
+       * Time handle was last connected to (UTC)
        */
       DateTime LastReconnectedOn;
     };
@@ -381,76 +380,76 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareItemDetails
     {
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties or metadata updates the last modified time. Operations on files
-       * do not affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief The ETag contains a value which represents the version of the share, in quotes.
+       * The ETag contains a value which represents the version of the share, in quotes.
        */
       Azure::ETag Etag;
 
       /**
-       * @brief The quota of the share in GB
+       * The quota of the share in GB
        */
       int64_t Quota = int64_t();
 
       /**
-       * @brief Returns the current share provisioned ipos.
+       * Returns the current share provisioned ipos.
        */
       Azure::Nullable<int32_t> ProvisionedIops;
 
       /**
-       * @brief Returns the current share provisioned ingress in megabytes per second.
+       * Returns the current share provisioned ingress in megabytes per second.
        */
       Azure::Nullable<int32_t> ProvisionedIngressMBps;
 
       Azure::Nullable<int32_t> ProvisionedEgressMBps;
 
       /**
-       * @brief Returns the current share provisioned egress in megabytes per second.
+       * Returns the current share provisioned egress in megabytes per second.
        */
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
 
       /**
-       * @brief The time on which the share was deleted.
+       * The time on which the share was deleted.
        */
       Azure::Nullable<DateTime> DeletedOn;
 
       /**
-       * @brief The remaining retention days of the share.
+       * The remaining retention days of the share.
        */
       int32_t RemainingRetentionDays = int32_t();
 
       /**
-       * @brief The access tier of the share.
+       * The access tier of the share.
        */
       Azure::Nullable<Models::AccessTier> AccessTier;
 
       /**
-       * @brief Returns the last modified time (in UTC) of the access tier of the share.
+       * Returns the last modified time (in UTC) of the access tier of the share.
        */
       Azure::Nullable<DateTime> AccessTierChangedOn;
 
       /**
-       * @brief Returns the transition state betweeen access tiers, when present.
+       * Returns the transition state betweeen access tiers, when present.
        */
       Azure::Nullable<std::string> AccessTierTransitionState;
 
       /**
-       * @brief The current lease status of the file or share.
+       * The current lease status of the file or share.
        */
       Models::LeaseStatus LeaseStatus;
 
       /**
-       * @brief Lease state of the file or share.
+       * Lease state of the file or share.
        */
       Models::LeaseState LeaseState;
 
       /**
-       * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
        * duration.
        */
       Models::LeaseDuration LeaseDuration;
@@ -462,27 +461,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareItem
     {
       /**
-       * @brief The name of the share.
+       * The name of the share.
        */
       std::string Name;
 
       /**
-       * @brief The snapshot of the share.
+       * The snapshot of the share.
        */
       std::string Snapshot;
 
       /**
-       * @brief If the share is deleted.
+       * If the share is deleted.
        */
       bool Deleted = bool();
 
       /**
-       * @brief The version string.
+       * The version string.
        */
       std::string Version;
 
       /**
-       * @brief Details of the share properties.
+       * Details of the share properties.
        */
       ShareItemDetails Details;
 
@@ -495,15 +494,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct RetentionPolicy
     {
       /**
-       * @brief Indicates whether a retention policy is enabled for the File service. If false,
-       * metrics data is retained, and the user is responsible for deleting it.
+       * Indicates whether a retention policy is enabled for the File service. If false, metrics
+       * data is retained, and the user is responsible for deleting it.
        */
       bool Enabled = bool();
 
       /**
-       * @brief Indicates the number of days that metrics data should be retained. All data older
-       * than this value will be deleted. Metrics data is deleted on a best-effort basis after the
-       * retention period expires.
+       * Indicates the number of days that metrics data should be retained. All data older than this
+       * value will be deleted. Metrics data is deleted on a best-effort basis after the retention
+       * period expires.
        */
       Azure::Nullable<int32_t> Days;
     };
@@ -514,23 +513,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct Metrics
     {
       /**
-       * @brief The version of Storage Analytics to configure.
+       * The version of Storage Analytics to configure.
        */
       std::string Version;
 
       /**
-       * @brief Indicates whether metrics are enabled for the File service.
+       * Indicates whether metrics are enabled for the File service.
        */
       bool Enabled = bool();
 
       /**
-       * @brief Indicates whether metrics should generate summary statistics for called API
-       * operations.
+       * Indicates whether metrics should generate summary statistics for called API operations.
        */
       Azure::Nullable<bool> IncludeApis;
 
       /**
-       * @brief The retention policy.
+       * The retention policy.
        */
       Models::RetentionPolicy RetentionPolicy;
     };
@@ -541,7 +539,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct SmbMultichannel
     {
       /**
-       * @brief If SMB multichannel is enabled.
+       * If SMB multichannel is enabled.
        */
       bool Enabled = bool();
     };
@@ -552,7 +550,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct SmbSettings
     {
       /**
-       * @brief Settings for SMB Multichannel.
+       * Settings for SMB Multichannel.
        */
       SmbMultichannel Multichannel;
     };
@@ -563,7 +561,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ProtocolSettings
     {
       /**
-       * @brief Settings for SMB protocol.
+       * Settings for SMB protocol.
        */
       SmbSettings Settings;
     };
@@ -574,12 +572,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct SignedIdentifier
     {
       /**
-       * @brief A unique id.
+       * A unique id.
        */
       std::string Id;
 
       /**
-       * @brief The access policy.
+       * The access policy.
        */
       AccessPolicy Policy;
     };
@@ -590,22 +588,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareServiceProperties
     {
       /**
-       * @brief A summary of request statistics grouped by API in hourly aggregates for files.
+       * A summary of request statistics grouped by API in hourly aggregates for files.
        */
       Metrics HourMetrics;
 
       /**
-       * @brief A summary of request statistics grouped by API in minute aggregates for files.
+       * A summary of request statistics grouped by API in minute aggregates for files.
        */
       Metrics MinuteMetrics;
 
       /**
-       * @brief The set of CORS rules.
+       * The set of CORS rules.
        */
       std::vector<CorsRule> Cors;
 
       /**
-       * @brief Protocol settings
+       * Protocol settings
        */
       Azure::Nullable<ProtocolSettings> Protocol;
     };
@@ -644,19 +642,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the share, in quotes.
+       * The ETag contains a value which represents the version of the share, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties or metadata updates the last modified time. Operations on files
-       * do not affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief If the object is created.
+       * If the object is created.
        */
       bool Created = true;
     };
@@ -668,76 +666,75 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The metadata of the object.
+       * The metadata of the object.
        */
       Storage::Metadata Metadata;
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief Returns the current share quota in GB.
+       * Returns the current share quota in GB.
        */
       int64_t Quota = int64_t();
 
       /**
-       * @brief Returns the current share provisioned ipos.
+       * Returns the current share provisioned ipos.
        */
       Azure::Nullable<int32_t> ProvisionedIops;
 
       /**
-       * @brief Returns the current share provisioned ingress in megabytes per second.
+       * Returns the current share provisioned ingress in megabytes per second.
        */
       Azure::Nullable<int32_t> ProvisionedIngressMBps;
 
       /**
-       * @brief Returns the current share provisioned egress in megabytes per second.
+       * Returns the current share provisioned egress in megabytes per second.
        */
       Azure::Nullable<int32_t> ProvisionedEgressMBps;
 
       /**
-       * @brief Returns the current share next allowed quota downgrade time.
+       * Returns the current share next allowed quota downgrade time.
        */
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
 
       /**
-       * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
        * duration.
        */
       Azure::Nullable<Models::LeaseDuration> LeaseDuration;
 
       /**
-       * @brief Lease state of the file or share.
+       * Lease state of the file or share.
        */
       Azure::Nullable<Models::LeaseState> LeaseState;
 
       /**
-       * @brief The current lease status of the file or share.
+       * The current lease status of the file or share.
        */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
 
       /**
-       * @brief Returns the access tier set on the share.
+       * Returns the access tier set on the share.
        */
       Azure::Nullable<Models::AccessTier> AccessTier;
 
       /**
-       * @brief Returns the last modified time (in UTC) of the access tier of the share.
+       * Returns the last modified time (in UTC) of the access tier of the share.
        */
       Azure::Nullable<DateTime> AccessTierChangedOn;
 
       /**
-       * @brief Returns the transition state betweeen access tiers, when present.
+       * Returns the transition state betweeen access tiers, when present.
        */
       Azure::Nullable<std::string> AccessTierTransitionState;
     };
@@ -749,7 +746,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief If the object is deleted.
+       * If the object is deleted.
        */
       bool Deleted = true;
     };
@@ -761,20 +758,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief Uniquely identifies a share's lease
+       * Uniquely identifies a share's lease
        */
       std::string LeaseId;
     };
@@ -786,15 +782,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -806,20 +801,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief Uniquely identifies a share's lease
+       * Uniquely identifies a share's lease
        */
       std::string LeaseId;
     };
@@ -831,20 +825,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief Uniquely identifies a share's lease
+       * Uniquely identifies a share's lease
        */
       std::string LeaseId;
     };
@@ -856,15 +849,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -876,28 +868,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief This header is a DateTime value that uniquely identifies the share snapshot. The
-       * value of this header may be used in subsequent requests to access the share snapshot. This
-       * value is opaque.
+       * This header is a DateTime value that uniquely identifies the share snapshot. The value of
+       * this header may be used in subsequent requests to access the share snapshot. This value is
+       * opaque.
        */
       std::string Snapshot;
 
       /**
-       * @brief The ETag contains a value which represents the version of the share snapshot, in
-       * quotes. A share snapshot cannot be modified, so the ETag of a given share snapshot never
-       * changes. However, if new metadata was supplied with the Snapshot Share request then the
-       * ETag of the share snapshot differs from that of the base share. If no metadata was
-       * specified with the request, the ETag of the share snapshot is identical to that of the base
-       * share at the time the share snapshot was taken.
+       * The ETag contains a value which represents the version of the share snapshot, in quotes. A
+       * share snapshot cannot be modified, so the ETag of a given share snapshot never changes.
+       * However, if new metadata was supplied with the Snapshot Share request then the ETag of the
+       * share snapshot differs from that of the base share. If no metadata was specified with the
+       * request, the ETag of the share snapshot is identical to that of the base share at the time
+       * the share snapshot was taken.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. A share snapshot cannot be
-       * modified, so the last modified time of a given share snapshot never changes. However, if
-       * new metadata was supplied with the Snapshot Share request then the last modified time of
-       * the share snapshot differs from that of the base share. If no metadata was specified with
-       * the request, the last modified time of the share snapshot is identical to that of the base
+       * Returns the date and time the share was last modified. A share snapshot cannot be modified,
+       * so the last modified time of a given share snapshot never changes. However, if new metadata
+       * was supplied with the Snapshot Share request then the last modified time of the share
+       * snapshot differs from that of the base share. If no metadata was specified with the
+       * request, the last modified time of the share snapshot is identical to that of the base
        * share at the time the share snapshot was taken.
        */
       DateTime LastModified;
@@ -910,7 +902,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief Key of the permission set for the directory/file.
+       * Key of the permission set for the directory/file.
        */
       std::string FilePermissionKey;
     };
@@ -922,15 +914,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -942,15 +933,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -970,15 +960,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -991,15 +980,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int64_t ShareUsageInBytes = int64_t();
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -1011,29 +999,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the directory, in quotes.
+       * The ETag contains a value which represents the version of the directory, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the directory or its properties updates the last modified time. Operations on files do not
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
        * affect the last modified time of the directory.
        */
       DateTime LastModified;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
 
       /**
-       * @brief If the object is created.
+       * If the object is created.
        */
       bool Created = true;
     };
@@ -1045,30 +1033,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The metadata of the object.
+       * The metadata of the object.
        */
       Storage::Metadata Metadata;
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the Directory was last modified. Operations on files
-       * within the directory do not affect the last modified time of the directory.
+       * Returns the date and time the Directory was last modified. Operations on files within the
+       * directory do not affect the last modified time of the directory.
        */
       DateTime LastModified;
 
       /**
-       * @brief The value of this header is set to true if the directory metadata is completely
-       * encrypted using the specified algorithm. Otherwise, the value is set to false.
+       * The value of this header is set to true if the directory metadata is completely encrypted
+       * using the specified algorithm. Otherwise, the value is set to false.
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
     };
@@ -1080,7 +1067,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief If the object is deleted.
+       * If the object is deleted.
        */
       bool Deleted = true;
     };
@@ -1092,24 +1079,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the directory was last modified. Any operation that
-       * modifies the directory or its properties updates the last modified time. Operations on
-       * files do not affect the last modified time of the directory.
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
        */
       DateTime LastModified;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
     };
@@ -1121,12 +1108,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the directory, in quotes.
+       * The ETag contains a value which represents the version of the directory, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
     };
@@ -1138,29 +1125,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the directory or its properties updates the last modified time. Operations on files do not
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
        * affect the last modified time of the directory.
        */
       DateTime LastModified;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
 
       /**
-       * @brief If the object is created.
+       * If the object is created.
        */
       bool Created = true;
     };
@@ -1172,97 +1159,95 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief Returns the date and time the file was last modified. The date format follows RFC
-       * 1123. Any operation that modifies the file or its properties updates the last modified
-       * time.
+       * Returns the date and time the file was last modified. The date format follows RFC 1123. Any
+       * operation that modifies the file or its properties updates the last modified time.
        */
       DateTime LastModified;
 
       /**
-       * @brief The metadata of the object.
+       * The metadata of the object.
        */
       Storage::Metadata Metadata;
 
       /**
-       * @brief The size of the file in bytes. This header returns the value of the
-       * 'x-ms-content-length' header that is stored with the file.
+       * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
+       * header that is stored with the file.
        */
       int64_t FileSize = int64_t();
 
       /**
-       * @brief The Http Headers of the object.
+       * The Http Headers of the object.
        */
       FileHttpHeaders HttpHeaders;
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Conclusion time of the last attempted Copy File operation where this file was the
+       * Conclusion time of the last attempted Copy File operation where this file was the
        * destination file. This value can specify the time of a completed, aborted, or failed copy
        * attempt.
        */
       Azure::Nullable<DateTime> CopyCompletedOn;
 
       /**
-       * @brief Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
+       * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
        * non-fatal copy operation failure.
        */
       Azure::Nullable<std::string> CopyStatusDescription;
 
       /**
-       * @brief String identifier for the last attempted Copy File operation where this file was the
+       * String identifier for the last attempted Copy File operation where this file was the
        * destination file.
        */
       Azure::Nullable<std::string> CopyId;
 
       /**
-       * @brief Contains the number of bytes copied and the total bytes in the source in the last
-       * attempted Copy File operation where this file was the destination file. Can show between 0
-       * and Content-Length bytes copied.
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * Copy File operation where this file was the destination file. Can show between 0 and
+       * Content-Length bytes copied.
        */
       Azure::Nullable<std::string> CopyProgress;
 
       /**
-       * @brief URL up to 2KB in length that specifies the source file used in the last attempted
-       * Copy File operation where this file was the destination file.
+       * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
+       * operation where this file was the destination file.
        */
       Azure::Nullable<std::string> CopySource;
 
       /**
-       * @brief State of the copy operation identified by 'x-ms-copy-id'.
+       * State of the copy operation identified by 'x-ms-copy-id'.
        */
       Azure::Nullable<Models::CopyStatus> CopyStatus;
 
       /**
-       * @brief The value of this header is set to true if the file data and application metadata
-       * are completely encrypted using the specified algorithm. Otherwise, the value is set to
-       * false (when the file is unencrypted, or if only parts of the file/application metadata are
+       * The value of this header is set to true if the file data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the file is unencrypted, or if only parts of the file/application metadata are
        * encrypted).
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
 
       /**
-       * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
        * duration.
        */
       Azure::Nullable<Models::LeaseDuration> LeaseDuration;
 
       /**
-       * @brief Lease state of the file or share.
+       * Lease state of the file or share.
        */
       Azure::Nullable<Models::LeaseState> LeaseState;
 
       /**
-       * @brief The current lease status of the file or share.
+       * The current lease status of the file or share.
        */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
@@ -1274,7 +1259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief If the object is deleted.
+       * If the object is deleted.
        */
       bool Deleted = true;
     };
@@ -1286,24 +1271,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the directory was last modified. Any operation that
-       * modifies the directory or its properties updates the last modified time. Operations on
-       * files do not affect the last modified time of the directory.
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
        */
       DateTime LastModified;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
     };
@@ -1315,12 +1300,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
     };
@@ -1332,26 +1317,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the directory was last modified. Any operation that
-       * modifies the share or its properties or metadata updates the last modified time. Operations
-       * on files do not affect the last modified time of the share.
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief This header is returned so that the client can check for message content integrity.
-       * The value of this header is computed by the File service; it is not necessarily the same
-       * value as may have been specified in the request headers.
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the File service; it is not necessarily the same value
+       * as may have been specified in the request headers.
        */
       Storage::ContentHash TransactionalContentHash;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
     };
@@ -1363,26 +1348,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the directory was last modified. Any operation that
-       * modifies the share or its properties or metadata updates the last modified time. Operations
-       * on files do not affect the last modified time of the share.
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
        */
       DateTime LastModified;
 
       /**
-       * @brief This header is returned so that the client can check for message content integrity.
-       * The value of this header is computed by the File service; it is not necessarily the same
-       * value as may have been specified in the request headers.
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the File service; it is not necessarily the same value
+       * as may have been specified in the request headers.
        */
       Storage::ContentHash TransactionalContentHash;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
     };
@@ -1396,19 +1381,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::vector<Core::Http::HttpRange> ClearRanges;
 
       /**
-       * @brief The date/time that the file was last modified. Any operation that modifies the file,
+       * The date/time that the file was last modified. Any operation that modifies the file,
        * including an update of the file's metadata or properties, changes the file's last modified
        * time.
        */
       DateTime LastModified;
 
       /**
-       * @brief The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief The size of the file in bytes.
+       * The size of the file in bytes.
        */
       int64_t FileSize = int64_t();
     };
@@ -1611,12 +1596,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FilesAndDirectoriesListSinglePage
     {
       /**
-       * @brief An array of the directory items returned.
+       * An array of the directory items returned.
        */
       std::vector<DirectoryItem> DirectoryItems;
 
       /**
-       * @brief An array of the directory items returned.
+       * An array of the directory items returned.
        */
       std::vector<FileItem> FileItems;
     };
@@ -1627,42 +1612,42 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ListFilesAndDirectoriesSinglePageResponse
     {
       /**
-       * @brief The service's endpoint.
+       * The service's endpoint.
        */
       std::string ServiceEndpoint;
 
       /**
-       * @brief The name of the share.
+       * The name of the share.
        */
       std::string ShareName;
 
       /**
-       * @brief The snapshot of the share.
+       * The snapshot of the share.
        */
       std::string ShareSnapshot;
 
       /**
-       * @brief The path of the directory.
+       * The path of the directory.
        */
       std::string DirectoryPath;
 
       /**
-       * @brief The prefix of the directories and files.
+       * The prefix of the directories and files.
        */
       std::string Prefix;
 
       /**
-       * @brief The maximum number of items to be returned in a single page.
+       * The maximum number of items to be returned in a single page.
        */
       int32_t PageSizeHint = int32_t();
 
       /**
-       * @brief A returned page.
+       * A returned page.
        */
       FilesAndDirectoriesListSinglePage SinglePage;
 
       /**
-       * @brief A continuation token used for further enumerations.
+       * A continuation token used for further enumerations.
        */
       Azure::Nullable<std::string> ContinuationToken;
     };
@@ -1673,12 +1658,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ListHandlesResponse
     {
       /**
-       * @brief An array contains all the handles returned.
+       * An array contains all the handles returned.
        */
       std::vector<HandleItem> HandleList;
 
       /**
-       * @brief A continuation token used for further enumerations.
+       * A continuation token used for further enumerations.
        */
       Azure::Nullable<std::string> ContinuationToken;
     };
@@ -1689,27 +1674,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ListSharesResponse
     {
       /**
-       * @brief The service's endpoint.
+       * The service's endpoint.
        */
       std::string ServiceEndpoint;
 
       /**
-       * @brief The prefix of the share listed.
+       * The prefix of the share listed.
        */
       std::string Prefix;
 
       /**
-       * @brief The maximum number of entries returned in a single page.
+       * The maximum number of entries returned in a single page.
        */
       int32_t PageSizeHint = int32_t();
 
       /**
-       * @brief An array of the share items returned in a single page.
+       * An array of the share items returned in a single page.
        */
       std::vector<ShareItem> Items;
 
       /**
-       * @brief A continuation token used for further enumerations.
+       * A continuation token used for further enumerations.
        */
       Azure::Nullable<std::string> ContinuationToken;
     };
@@ -1720,12 +1705,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileRange
     {
       /**
-       * @brief Start of the range.
+       * Start of the range.
        */
       int64_t Start = int64_t();
 
       /**
-       * @brief End of the range.
+       * End of the range.
        */
       int64_t End = int64_t();
     };
@@ -1736,12 +1721,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ClearRange
     {
       /**
-       * @brief Start of the range.
+       * Start of the range.
        */
       int64_t Start = int64_t();
 
       /**
-       * @brief End of the range.
+       * End of the range.
        */
       int64_t End = int64_t();
     };
@@ -1762,8 +1747,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareStats
     {
       /**
-       * @brief The approximate size of the data stored in bytes. Note that this value may not
-       * include all recently created or recently resized files.
+       * The approximate size of the data stored in bytes. Note that this value may not include all
+       * recently created or recently resized files.
        */
       int64_t ShareUsageInBytes = int64_t();
     };
@@ -1774,7 +1759,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct SharePermission
     {
       /**
-       * @brief The permission in the Security Descriptor Definition Language (SDDL).
+       * The permission in the Security Descriptor Definition Language (SDDL).
        */
       std::string FilePermission;
     };
@@ -1848,15 +1833,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the share was last modified. Any operation that modifies
-       * the share or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the share.
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
        */
       DateTime LastModified;
     };
@@ -1873,7 +1857,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * @brief The Http Headers of the object.
+       * The Http Headers of the object.
        */
       FileHttpHeaders HttpHeaders;
     };
@@ -1884,7 +1868,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * @brief The Http Headers of the object.
+       * The Http Headers of the object.
        */
       FileHttpHeaders HttpHeaders;
     };
@@ -1893,18 +1877,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief A string describing next handle to be closed. It is returned when more handles need
-       * to be closed to complete the request.
+       * A string describing next handle to be closed. It is returned when more handles need to be
+       * closed to complete the request.
        */
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * @brief Contains count of number of handles closed.
+       * Contains count of number of handles closed.
        */
       int32_t NumberOfHandlesClosed = int32_t();
 
       /**
-       * @brief Contains count of number of handles that failed to close.
+       * Contains count of number of handles that failed to close.
        */
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };
@@ -1914,115 +1898,114 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
 
       /**
-       * @brief Returns the date and time the file was last modified. Any operation that modifies
-       * the file or its properties updates the last modified time.
+       * Returns the date and time the file was last modified. Any operation that modifies the file
+       * or its properties updates the last modified time.
        */
       DateTime LastModified;
 
       /**
-       * @brief The metadata of the object.
+       * The metadata of the object.
        */
       Storage::Metadata Metadata;
 
       /**
-       * @brief The Http Headers of the object.
+       * The Http Headers of the object.
        */
       FileHttpHeaders HttpHeaders;
 
       /**
-       * @brief A HttpRange type indicates the range of the content.
+       * A HttpRange type indicates the range of the content.
        */
       Azure::Core::Http::HttpRange ContentRange;
 
       /**
-       * @brief The size of the file.
+       * The size of the file.
        */
       int64_t FileSize = int64_t();
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally, in
-       * quotes.
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief If the file has an MD5 hash and the request is to read the full file, this response
-       * header is returned so that the client can check for message content integrity. If the
-       * request is to read a specified range and the 'x-ms-range-get-content-md5' is set to true,
-       * then the request returns an MD5 hash for the range, as long as the range size is less than
-       * or equal to 4 MB. If neither of these sets of conditions is true, then no value is returned
-       * for the 'Content-MD5' header.
+       * If the file has an MD5 hash and the request is to read the full file, this response header
+       * is returned so that the client can check for message content integrity. If the request is
+       * to read a specified range and the 'x-ms-range-get-content-md5' is set to true, then the
+       * request returns an MD5 hash for the range, as long as the range size is less than or equal
+       * to 4 MB. If neither of these sets of conditions is true, then no value is returned for the
+       * 'Content-MD5' header.
        */
       Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
 
       /**
-       * @brief Indicates that the service supports requests for partial file content.
+       * Indicates that the service supports requests for partial file content.
        */
       std::string AcceptRanges;
 
       /**
-       * @brief Conclusion time of the last attempted Copy File operation where this file was the
+       * Conclusion time of the last attempted Copy File operation where this file was the
        * destination file. This value can specify the time of a completed, aborted, or failed copy
        * attempt.
        */
       Azure::Nullable<DateTime> CopyCompletedOn;
 
       /**
-       * @brief Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
+       * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
        * non-fatal copy operation failure.
        */
       Azure::Nullable<std::string> CopyStatusDescription;
 
       /**
-       * @brief String identifier for the last attempted Copy File operation where this file was the
+       * String identifier for the last attempted Copy File operation where this file was the
        * destination file.
        */
       Azure::Nullable<std::string> CopyId;
 
       /**
-       * @brief Contains the number of bytes copied and the total bytes in the source in the last
-       * attempted Copy File operation where this file was the destination file. Can show between 0
-       * and Content-Length bytes copied.
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * Copy File operation where this file was the destination file. Can show between 0 and
+       * Content-Length bytes copied.
        */
       Azure::Nullable<std::string> CopyProgress;
 
       /**
-       * @brief URL up to 2KB in length that specifies the source file used in the last attempted
-       * Copy File operation where this file was the destination file.
+       * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
+       * operation where this file was the destination file.
        */
       Azure::Nullable<std::string> CopySource;
 
       /**
-       * @brief State of the copy operation identified by 'x-ms-copy-id'.
+       * State of the copy operation identified by 'x-ms-copy-id'.
        */
       Azure::Nullable<Models::CopyStatus> CopyStatus;
 
       /**
-       * @brief The value of this header is set to true if the file data and application metadata
-       * are completely encrypted using the specified algorithm. Otherwise, the value is set to
-       * false (when the file is unencrypted, or if only parts of the file/application metadata are
+       * The value of this header is set to true if the file data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the file is unencrypted, or if only parts of the file/application metadata are
        * encrypted).
        */
       bool IsServerEncrypted = bool();
 
       /**
-       * @brief The SMB related properties of the file or directory.
+       * The SMB related properties of the file or directory.
        */
       FileSmbProperties SmbProperties;
 
       /**
-       * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
        * duration.
        */
       Azure::Nullable<Models::LeaseDuration> LeaseDuration;
 
       /**
-       * @brief Lease state of the file or share.
+       * Lease state of the file or share.
        */
       Azure::Nullable<Models::LeaseState> LeaseState;
 
       /**
-       * @brief The current lease status of the file or share.
+       * The current lease status of the file or share.
        */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
@@ -2031,20 +2014,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally. If
-       * the request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the file was last modified. Any operation that modifies
-       * the file, including an update of the file's metadata or properties, changes the
-       * last-modified time of the file.
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
        */
       DateTime LastModified;
 
       /**
-       * @brief Uniquely identifies a file's lease
+       * Uniquely identifies a file's lease
        */
       std::string LeaseId;
     };
@@ -2053,15 +2036,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally. If
-       * the request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the file was last modified. Any operation that modifies
-       * the file, including an update of the file's metadata or properties, changes the
-       * last-modified time of the file.
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
        */
       DateTime LastModified;
     };
@@ -2070,20 +2053,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally. If
-       * the request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the file was last modified. Any operation that modifies
-       * the file, including an update of the file's metadata or properties, changes the
-       * last-modified time of the file.
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
        */
       DateTime LastModified;
 
       /**
-       * @brief Uniquely identifies a file's lease
+       * Uniquely identifies a file's lease
        */
       std::string LeaseId;
     };
@@ -2092,20 +2075,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief The ETag contains a value that you can use to perform operations conditionally. If
-       * the request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date and time the file was last modified. Any operation that modifies
-       * the file, including an update of the file's metadata or properties, changes the
-       * last-modified time of the file.
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
        */
       DateTime LastModified;
 
       /**
-       * @brief Uniquely identifies a file's lease
+       * Uniquely identifies a file's lease
        */
       Azure::Nullable<std::string> LeaseId;
     };
@@ -2114,25 +2097,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief If the copy is completed, contains the ETag of the destination file. If the copy is
-       * not complete, contains the ETag of the empty file created at the start of the copy.
+       * If the copy is completed, contains the ETag of the destination file. If the copy is not
+       * complete, contains the ETag of the empty file created at the start of the copy.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief Returns the date/time that the copy operation to the destination file completed.
+       * Returns the date/time that the copy operation to the destination file completed.
        */
       DateTime LastModified;
 
       /**
-       * @brief String identifier for this copy operation. Use with Get File or Get File Properties
-       * to check the status of this copy operation, or pass to Abort Copy File to abort a pending
+       * String identifier for this copy operation. Use with Get File or Get File Properties to
+       * check the status of this copy operation, or pass to Abort Copy File to abort a pending
        * copy.
        */
       std::string CopyId;
 
       /**
-       * @brief State of the copy operation identified by x-ms-copy-id.
+       * State of the copy operation identified by x-ms-copy-id.
        */
       Models::CopyStatus CopyStatus;
     };
@@ -2143,7 +2126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * @brief The Http Headers of the object.
+       * The Http Headers of the object.
        */
       FileHttpHeaders HttpHeaders;
     };
@@ -2152,18 +2135,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
 
       /**
-       * @brief A string describing next handle to be closed. It is returned when more handles need
-       * to be closed to complete the request.
+       * A string describing next handle to be closed. It is returned when more handles need to be
+       * closed to complete the request.
        */
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * @brief Contains count of number of handles closed.
+       * Contains count of number of handles closed.
        */
       int32_t NumberOfHandlesClosed = int32_t();
 
       /**
-       * @brief Contains count of number of handles that failed to close.
+       * Contains count of number of handles that failed to close.
        */
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };

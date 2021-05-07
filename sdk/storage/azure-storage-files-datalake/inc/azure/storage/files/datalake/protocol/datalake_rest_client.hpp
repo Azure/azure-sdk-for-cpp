@@ -36,50 +36,53 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief The cache control of the content.
+       * The cache control of the content.
        */
       std::string CacheControl;
 
       /**
-       * @brief The disposition of the content.
+       * The disposition of the content.
        */
       std::string ContentDisposition;
 
       /**
-       * @brief The encoding of the content.
+       * The encoding of the content.
        */
       std::string ContentEncoding;
 
       /**
-       * @brief The language of the content.
+       * The language of the content.
        */
       std::string ContentLanguage;
 
       /**
-       * @brief The type of the content.
+       * The type of the content.
        */
       std::string ContentType;
 
       /**
-       * @brief The hash of the content.
+       * The hash of the content.
        */
       Storage::ContentHash ContentHash;
     };
 
+    /**
+     * @brief The failed entries when setting the Acl.
+     */
     struct AclFailedEntry
     {
       /**
-       * @brief The name of the failed entry.
+       * The name of the failed entry.
        */
       std::string Name;
 
       /**
-       * @brief The type of the failure.
+       * The type of the failure.
        */
       std::string Type;
 
       /**
-       * @brief The error message of the failure.
+       * The error message of the failure.
        */
       std::string ErrorMessage;
     };
@@ -87,43 +90,43 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     struct PathItem
     {
       /**
-       * @brief The name of the path item.
+       * The name of the path item.
        */
       std::string Name;
 
       /**
-       * @brief A boolean that indicates if the path is a directory.
+       * A boolean that indicates if the path is a directory.
        */
       bool IsDirectory = bool();
 
       /**
-       * @brief The data and time the file or directory was last modified.  Write operations on the
-       * file or directory update the last modified time.
+       * The data and time the file or directory was last modified.  Write operations on the file or
+       * directory update the last modified time.
        */
       DateTime LastModified;
 
       /**
-       * @brief An HTTP entity tag associated with the file or directory.
+       * An HTTP entity tag associated with the file or directory.
        */
       std::string ETag;
 
       /**
-       * @brief The size of the file.
+       * The size of the file.
        */
       int64_t FileSize = int64_t();
 
       /**
-       * @brief The owner of the file.
+       * The owner of the file.
        */
       std::string Owner;
 
       /**
-       * @brief The group of the file.
+       * The group of the file.
        */
       std::string Group;
 
       /**
-       * @brief The permission of the file.
+       * The permission of the file.
        */
       std::string Permissions;
     };
@@ -228,13 +231,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief An HTTP entity tag associated with the file or directory.
+       * An HTTP entity tag associated with the file or directory.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief The data and time the file or directory was last modified. Write operations on the
-       * file or directory update the last modified time.
+       * The data and time the file or directory was last modified. Write operations on the file or
+       * directory update the last modified time.
        */
       DateTime LastModified;
     };
@@ -246,18 +249,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief An HTTP entity tag associated with the file or directory.
+       * An HTTP entity tag associated with the file or directory.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief The data and time the file or directory was last modified.  Write operations on the
-       * file or directory update the last modified time.
+       * The data and time the file or directory was last modified.  Write operations on the file or
+       * directory update the last modified time.
        */
       DateTime LastModified;
 
       /**
-       * @brief The size of the resource in bytes.
+       * The size of the resource in bytes.
        */
       int64_t ContentLength = int64_t();
     };
@@ -269,13 +272,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief If the blob has an MD5 hash and this operation is to read the full blob, this
-       * response header is returned so that the client can check for message content integrity.
+       * If the blob has an MD5 hash and this operation is to read the full blob, this response
+       * header is returned so that the client can check for message content integrity.
        */
       Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
 
       /**
-       * @brief A boolean that indicates if the server is encrypted.
+       * A boolean that indicates if the server is encrypted.
        */
       bool IsServerEncrypted = bool();
     };
@@ -456,10 +459,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<PathItem> Items;
 
       /**
-       * @brief If the number of paths to be listed exceeds the maxResults limit, a continuation
-       * token is returned in this response header.  When a continuation token is returned in the
-       * response, it must be specified in a subsequent invocation of the list operation to continue
-       * listing the paths.
+       * If the number of paths to be listed exceeds the maxResults limit, a continuation token is
+       * returned in this response header.  When a continuation token is returned in the response,
+       * it must be specified in a subsequent invocation of the list operation to continue listing
+       * the paths.
        */
       Azure::Nullable<std::string> ContinuationToken;
     };
@@ -468,18 +471,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief An HTTP entity tag associated with the file or directory.
+       * An HTTP entity tag associated with the file or directory.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief The data and time the file or directory was last modified.  Write operations on the
-       * file or directory update the last modified time.
+       * The data and time the file or directory was last modified.  Write operations on the file or
+       * directory update the last modified time.
        */
       Azure::Nullable<DateTime> LastModified;
 
       /**
-       * @brief The size of the resource in bytes.
+       * The size of the resource in bytes.
        */
       Azure::Nullable<int64_t> ContentLength;
     };
@@ -488,78 +491,76 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief Indicates that the service supports requests for partial file content.
+       * Indicates that the service supports requests for partial file content.
        */
       Azure::Nullable<std::string> AcceptRanges;
 
       /**
-       * @brief The Http Headers of the object.
+       * The Http Headers of the object.
        */
       PathHttpHeaders HttpHeaders;
 
       /**
-       * @brief An HTTP entity tag associated with the file or directory.
+       * An HTTP entity tag associated with the file or directory.
        */
       Azure::ETag ETag;
 
       /**
-       * @brief The data and time the file or directory was last modified.  Write operations on the
-       * file or directory update the last modified time.
+       * The data and time the file or directory was last modified.  Write operations on the file or
+       * directory update the last modified time.
        */
       DateTime LastModified;
 
       /**
-       * @brief The type of the resource.  The value may be "file" or "directory".  If not set, the
-       * value is "file".
+       * The type of the resource.  The value may be "file" or "directory".  If not set, the value
+       * is "file".
        */
       Azure::Nullable<std::string> ResourceType;
 
       /**
-       * @brief The user-defined properties associated with the file or directory, in the format of
-       * a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value is a
+       * The user-defined properties associated with the file or directory, in the format of a
+       * comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value is a
        * base64 encoded string. Note that the string may only contain ASCII characters in the
        * ISO-8859-1 character set.
        */
       Azure::Nullable<std::string> Properties;
 
       /**
-       * @brief The owner of the file or directory. Included in the response if Hierarchical
-       * Namespace is enabled for the account.
+       * The owner of the file or directory. Included in the response if Hierarchical Namespace is
+       * enabled for the account.
        */
       Azure::Nullable<std::string> Owner;
 
       /**
-       * @brief The owning group of the file or directory. Included in the response if Hierarchical
+       * The owning group of the file or directory. Included in the response if Hierarchical
        * Namespace is enabled for the account.
        */
       Azure::Nullable<std::string> Group;
 
       /**
-       * @brief The POSIX access permissions for the file owner, the file owning group, and others.
+       * The POSIX access permissions for the file owner, the file owning group, and others.
        * Included in the response if Hierarchical Namespace is enabled for the account.
        */
       Azure::Nullable<std::string> Permissions;
 
       /**
-       * @brief The POSIX access control list for the file or directory.  Included in the response
-       * only if the action is "getAccessControl" and Hierarchical Namespace is enabled for the
-       * account.
+       * The POSIX access control list for the file or directory.  Included in the response only if
+       * the action is "getAccessControl" and Hierarchical Namespace is enabled for the account.
        */
       Azure::Nullable<std::string> Acl;
 
       /**
-       * @brief When a resource is leased, specifies whether the lease is of infinite or fixed
-       * duration.
+       * When a resource is leased, specifies whether the lease is of infinite or fixed duration.
        */
       Azure::Nullable<Models::LeaseDuration> LeaseDuration;
 
       /**
-       * @brief Lease state of the resource.
+       * Lease state of the resource.
        */
       Azure::Nullable<Models::LeaseState> LeaseState;
 
       /**
-       * @brief The lease status of the resource.
+       * The lease status of the resource.
        */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
@@ -568,11 +569,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
 
       /**
-       * @brief When deleting a directory, the number of paths that are deleted with each invocation
-       * is limited.  If the number of paths to be deleted exceeds this limit, a continuation token
-       * is returned in this response header.  When a continuation token is returned in the
-       * response, it must be specified in a subsequent invocation of the delete operation to
-       * continue deleting the directory.
+       * When deleting a directory, the number of paths that are deleted with each invocation is
+       * limited.  If the number of paths to be deleted exceeds this limit, a continuation token is
+       * returned in this response header.  When a continuation token is returned in the response,
+       * it must be specified in a subsequent invocation of the delete operation to continue
+       * deleting the directory.
        */
       Azure::Nullable<std::string> ContinuationToken;
     };
@@ -585,12 +586,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<AclFailedEntry> FailedEntries;
 
       /**
-       * @brief When performing setAccessControlRecursive on a directory, the number of paths that
-       * are processed with each invocation is limited.  If the number of paths to be processed
-       * exceeds this limit, a continuation token is returned in this response header.  When a
-       * continuation token is returned in the response, it must be specified in a subsequent
-       * invocation of the setAccessControlRecursive operation to continue the
-       * setAccessControlRecursive operation on the directory.
+       * When performing setAccessControlRecursive on a directory, the number of paths that are
+       * processed with each invocation is limited.  If the number of paths to be processed exceeds
+       * this limit, a continuation token is returned in this response header.  When a continuation
+       * token is returned in the response, it must be specified in a subsequent invocation of the
+       * setAccessControlRecursive operation to continue the setAccessControlRecursive operation on
+       * the directory.
        */
       Azure::Nullable<std::string> ContinuationToken;
     };
