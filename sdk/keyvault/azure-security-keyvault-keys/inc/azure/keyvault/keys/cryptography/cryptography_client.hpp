@@ -87,7 +87,7 @@ namespace Azure {
      * @brief Gets whether this #CryptographyClient runs only local operations.
      *
      */
-    bool LocalOnly() const { return m_remoteProvider == nullptr; }
+    bool LocalOnly() const noexcept { return m_remoteProvider == nullptr; }
 
     /**
      * @brief Encrypts plaintext.
