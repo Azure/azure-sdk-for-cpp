@@ -80,7 +80,6 @@ void CryptographyClient::Initialize(std::string const&, Azure::Core::Context con
       throw;
     }
   }
-
 }
 
 CryptographyClient::CryptographyClient(
