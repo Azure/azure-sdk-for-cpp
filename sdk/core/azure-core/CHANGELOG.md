@@ -17,6 +17,10 @@
 - Do not re-use a libcurl connection to same host but different port.
 - Ensure uniqueness of `Azure::Core::Uuid` on POSIX platforms.
 
+### Other Changes and Improvements
+
+- Modified precondition validation of function arguments to now result in assert failures rather than throwing an exception.
+
 ## 1.0.0-beta.8 (2021-04-07)
 
 ### New Features

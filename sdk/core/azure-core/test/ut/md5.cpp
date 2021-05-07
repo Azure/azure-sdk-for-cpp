@@ -110,10 +110,10 @@ TEST(Md5Hash, ExpectThrow)
 #else
   ASSERT_DEATH(
       instance.Final(nullptr, 1),
-      "Length cannot be negative, and length must be 0 if the data pointer is null.");
+      "Length must be 0 if the data pointer is null.");
   ASSERT_DEATH(
       instance.Append(nullptr, 1),
-      "Length cannot be negative, and length must be 0 if the data pointer is null.");
+      "Length must be 0 if the data pointer is null.");
 #endif
 
   EXPECT_EQ(
