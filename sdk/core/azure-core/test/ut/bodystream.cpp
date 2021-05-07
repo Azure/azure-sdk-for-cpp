@@ -105,7 +105,8 @@ TEST(MemoryBodyStream, BadInput)
   ASSERT_DEATH(
       MemoryBodyStream(NULL, 0), "Length cannot be negative, and the data pointer cannot be null.");
   ASSERT_DEATH(
-      MemoryBodyStream(NULL, -1), "Length cannot be negative, and the data pointer cannot be null.");
+      MemoryBodyStream(NULL, -1),
+      "Length cannot be negative, and the data pointer cannot be null.");
   ASSERT_DEATH(
       MemoryBodyStream(buffer.data(), -1),
       "Length cannot be negative, and the data pointer cannot be null.");

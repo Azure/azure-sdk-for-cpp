@@ -108,8 +108,12 @@ TEST(Md5Hash, ExpectThrow)
   ASSERT_DEATH(instance.Final(nullptr, 1), "");
   ASSERT_DEATH(instance.Append(nullptr, 1), "");
 #else
-  ASSERT_DEATH(instance.Final(nullptr, 1), "Length cannot be negative, and length must be 0 if the data pointer is null.");
-  ASSERT_DEATH(instance.Append(nullptr, 1), "Length cannot be negative, and length must be 0 if the data pointer is null.");
+  ASSERT_DEATH(
+      instance.Final(nullptr, 1),
+      "Length cannot be negative, and length must be 0 if the data pointer is null.");
+  ASSERT_DEATH(
+      instance.Append(nullptr, 1),
+      "Length cannot be negative, and length must be 0 if the data pointer is null.");
 #endif
 
   EXPECT_EQ(
