@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     void Append(const uint8_t* data, std::size_t length)
     {
       AZURE_ASSERT_MSG(
-          (data && length >= 0) || (!data && length == 0),
+          (data) || (!data && length == 0),
           "Length cannot be negative, and length must be 0 if the data pointer is null.");
       AZURE_ASSERT_MSG(!m_isDone, "Cannot call Append after calling Final().");
       OnAppend(data, length);
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     std::vector<uint8_t> Final(const uint8_t* data, std::size_t length)
     {
       AZURE_ASSERT_MSG(
-          (data && length >= 0) || (!data && length == 0),
+          (data) || (!data && length == 0),
           "Length cannot be negative, and length must be 0 if the data pointer is null.");
       AZURE_ASSERT_MSG(!m_isDone, "Cannot call Final() multiple times.");
       m_isDone = true;
