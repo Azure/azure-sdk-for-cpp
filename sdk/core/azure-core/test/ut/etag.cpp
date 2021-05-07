@@ -232,3 +232,15 @@ TEST(ETag, EqualsWeak)
   EXPECT_FALSE(ETag::Equals(weakTagTwo, weakTagtwo, ETag::ETagComparison::Weak));
   EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagTwo, ETag::ETagComparison::Weak));
 }
+
+TEST(ETag, PreCondition)
+{
+  ETag emptyTag;
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(emptyTag.ToString(), "");
+#else
+  ASSERT_DEATH(emptyTag.ToString(), "Empty ETag");
+#endif
+}

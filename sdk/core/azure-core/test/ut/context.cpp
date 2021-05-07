@@ -436,3 +436,23 @@ TEST(Context, Deadline)
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
   }
 }
+
+TEST(Context, PreCondition)
+{
+  // Get a mismatch type from the context
+  std::string s("Test String");
+
+  Context context;
+  Context::Key const key;
+
+  // New context from previous
+  auto c2 = context.WithValue(key, s);
+  int value;
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(c2.TryGetValue<int>(key, value), "");
+#else
+  ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
+#endif
+}

@@ -486,7 +486,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
-    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteType::Update;
+    protocolLayerOptions.XMsWrite = _detail::FileRangeWrite::Update;
     protocolLayerOptions.ContentLength = content.Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content.Length() - 1);
@@ -508,7 +508,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeOptions();
-    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteType::Clear;
+    protocolLayerOptions.XMsWrite = _detail::FileRangeWrite::Clear;
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + length - 1);
@@ -1116,7 +1116,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = options.SourceAccessCondition.IfNoneMatchContentHash;
     protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
         + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.Value() - 1);
-    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteFromUrlType::Update;
+    protocolLayerOptions.XMsWrite = _detail::FileRangeWriteFromUrl::Update;
 
     return _detail::ShareRestClient::File::UploadRangeFromUrl(
         m_shareFileUrl, *m_pipeline, context, protocolLayerOptions);

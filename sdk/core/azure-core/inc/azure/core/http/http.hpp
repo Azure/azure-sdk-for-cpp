@@ -36,6 +36,14 @@ namespace Azure { namespace Core { namespace Test {
   class TestHttp_RequestStartTry_Test;
   class TestURL_getters_Test;
   class TestURL_query_parameter_Test;
+  class TransportAdapter_headWithStream_Test;
+  class TransportAdapter_putWithStream_Test;
+  class TransportAdapter_deleteRequestWithStream_Test;
+  class TransportAdapter_patchWithStream_Test;
+  class TransportAdapter_putWithStreamOnFail_Test;
+  class TransportAdapter_SizePutFromFile_Test;
+  class TransportAdapter_SizePutFromFileDefault_Test;
+  class TransportAdapter_SizePutFromFileBiggerPage_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -119,6 +127,15 @@ namespace Azure { namespace Core { namespace Http {
     friend class Azure::Core::Test::TestHttp_RequestStartTry_Test;
     friend class Azure::Core::Test::TestURL_getters_Test;
     friend class Azure::Core::Test::TestURL_query_parameter_Test;
+    // make tests classes friends to validate private Request ctor that takes both stream and bool
+    friend class Azure::Core::Test::TransportAdapter_headWithStream_Test;
+    friend class Azure::Core::Test::TransportAdapter_putWithStream_Test;
+    friend class Azure::Core::Test::TransportAdapter_deleteRequestWithStream_Test;
+    friend class Azure::Core::Test::TransportAdapter_patchWithStream_Test;
+    friend class Azure::Core::Test::TransportAdapter_putWithStreamOnFail_Test;
+    friend class Azure::Core::Test::TransportAdapter_SizePutFromFile_Test;
+    friend class Azure::Core::Test::TransportAdapter_SizePutFromFileDefault_Test;
+    friend class Azure::Core::Test::TransportAdapter_SizePutFromFileBiggerPage_Test;
 #endif
 
   private:
@@ -137,7 +154,6 @@ namespace Azure { namespace Core { namespace Http {
     // previously called
     void StartTry();
 
-  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
@@ -157,6 +173,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
