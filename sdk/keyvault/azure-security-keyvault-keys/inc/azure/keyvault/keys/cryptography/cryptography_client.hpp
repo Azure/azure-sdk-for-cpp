@@ -52,14 +52,6 @@ namespace Azure {
 
     void Initialize(std::string const& operation, Azure::Core::Context const& context);
 
-    void ThrowIfLocalOnly(std::string const& name)
-    {
-      if (LocalOnly())
-      {
-        throw std::invalid_argument(name + " Not supported.");
-      }
-    }
-
   public:
     /**
      * @brief Initializes a new instance of the #CryptographyClient class.

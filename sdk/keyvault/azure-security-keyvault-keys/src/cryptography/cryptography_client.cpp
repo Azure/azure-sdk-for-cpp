@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/exception.hpp>
@@ -135,7 +136,10 @@ EncryptResult CryptographyClient::Encrypt(
 
     if (result.Ciphertext.empty())
     {
-      ThrowIfLocalOnly(KeyOperation::Encrypt.ToString());
+      // Operation is not completed yet. Either not supported by the provider or not generated.
+      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
+      // the remote provider.
+      AZURE_ASSERT_FALSE(LocalOnly());
 
       result = m_remoteProvider->Encrypt(parameters, context);
     }
@@ -176,7 +180,10 @@ DecryptResult CryptographyClient::Decrypt(
 
     if (result.Plaintext.empty())
     {
-      ThrowIfLocalOnly(KeyOperation::Decrypt.ToString());
+      // Operation is not completed yet. Either not supported by the provider or not generated.
+      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
+      // the remote provider.
+      AZURE_ASSERT_FALSE(LocalOnly());
 
       result = m_remoteProvider->Decrypt(parameters, context);
     }
@@ -218,7 +225,10 @@ WrapResult CryptographyClient::WrapKey(
 
     if (result.EncryptedKey.size() == 0)
     {
-      ThrowIfLocalOnly(KeyOperation::WrapKey.ToString());
+      // Operation is not completed yet. Either not supported by the provider or not generated.
+      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
+      // the remote provider.
+      AZURE_ASSERT_FALSE(LocalOnly());
 
       result = m_remoteProvider->WrapKey(algorithm, key, context);
     }
@@ -260,7 +270,10 @@ UnwrapResult CryptographyClient::UnwrapKey(
 
     if (result.Key.size() == 0)
     {
-      ThrowIfLocalOnly(KeyOperation::UnwrapKey.ToString());
+      // Operation is not completed yet. Either not supported by the provider or not generated.
+      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
+      // the remote provider.
+      AZURE_ASSERT_FALSE(LocalOnly());
 
       result = m_remoteProvider->UnwrapKey(algorithm, encryptedKey, context);
     }
@@ -302,7 +315,10 @@ SignResult CryptographyClient::Sign(
 
     if (result.Signature.size() == 0)
     {
-      ThrowIfLocalOnly(KeyOperation::Sign.ToString());
+      // Operation is not completed yet. Either not supported by the provider or not generated.
+      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
+      // the remote provider.
+      AZURE_ASSERT_FALSE(LocalOnly());
 
       result = m_remoteProvider->Sign(algorithm, digest, context);
     }
@@ -361,7 +377,10 @@ VerifyResult CryptographyClient::Verify(
 
     if (result.KeyId.empty())
     {
-      ThrowIfLocalOnly(KeyOperation::Verify.ToString());
+      // Operation is not completed yet. Either not supported by the provider or not generated.
+      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
+      // the remote provider.
+      AZURE_ASSERT_FALSE(LocalOnly());
 
       result = m_remoteProvider->Verify(algorithm, digest, signature, context);
     }
