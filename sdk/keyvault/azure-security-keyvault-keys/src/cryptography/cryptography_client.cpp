@@ -33,21 +33,21 @@ inline std::vector<uint8_t> CreateDigest(
   // Use heap for the reading buffer.
   auto heapBuffer = std::make_unique<std::vector<uint8_t>>(DefaultStreamDigestReadSize);
   auto* buffer = heapBuffer.get()->data();
-  auto hasAlgo = algorithm.GetHashAlgorithm();
+  auto hashAlgorithm = algorithm.GetHashAlgorithm();
   for (uint64_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
        read = data.Read(buffer, DefaultStreamDigestReadSize))
   {
-    hasAlgo->Append(buffer, static_cast<size_t>(read));
+    hashAlgorithm->Append(buffer, static_cast<size_t>(read));
   }
-  return hasAlgo->Final();
+  return hashAlgorithm->Final();
 }
 
 inline std::vector<uint8_t> CreateDigest(
     SignatureAlgorithm algorithm,
     std::vector<uint8_t> const& data)
 {
-  auto hasAlgo = algorithm.GetHashAlgorithm();
-  return hasAlgo->Final(data.data(), data.size());
+  auto hashAlgorithm = algorithm.GetHashAlgorithm();
+  return hashAlgorithm->Final(data.data(), data.size());
 }
 } // namespace
 
