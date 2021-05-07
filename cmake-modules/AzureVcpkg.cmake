@@ -44,7 +44,7 @@ macro(az_vcpkg_portfile_prep targetName fileName contentToRemove)
 
   # Produce the files to help with the VcPkg release.
   # Go to the /out/build/<cfg>/vcpkg directory, and copy (merge) "ports" folder to the vcpkg repo.
-  # Then, update portfile.cmake's SHA512 from "1" to the actual hash (a good way to do it is to uninstall a package,
+  # Then, update the portfile.cmake file SHA512 from "1" to the actual hash (a good way to do it is to uninstall a package,
   # clean vcpkg/downloads, vcpkg/buildtrees, run "vcpkg install <pkg>", and get the SHA from the error message).
   configure_file(
     "${CMAKE_BINARY_DIR}/vcpkg_prep/${targetName}/${fileName}"
@@ -128,7 +128,7 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
       COMPATIBILITY SameMajorVersion
     )
 
-  # Install package cofig and version files.
+  # Install package config and version files.
   install(
       FILES
         "${CMAKE_CURRENT_BINARY_DIR}/${targetName}-cppConfig.cmake"

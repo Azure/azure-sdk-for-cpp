@@ -103,11 +103,11 @@ if (!$DailyRelease) {
     # Grab content needed for commit message and place in a temporary file
     $packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
     $commitMessageFile = New-TemporaryFile
-    $chagelogEntry = Get-ChangeLogEntryAsString `
+    $changelogEntry = Get-ChangeLogEntryAsString `
         -ChangeLogLocation $ReleaseArtifactSourceDirectory/CHANGELOG.md `
         -VersionString $PackageVersion
 
-    "[$VcpkgPortName] Update to $PackageVersion`n$chagelogEntry" `
+    "[$VcpkgPortName] Update to $PackageVersion`n$changelogEntry" `
         | Set-Content $commitMessageFile
 
     Write-Host "Commit Message:"

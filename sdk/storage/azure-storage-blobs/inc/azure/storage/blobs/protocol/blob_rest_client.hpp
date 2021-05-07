@@ -380,7 +380,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool IsServerEncrypted = false;
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       Azure::Nullable<std::string> EncryptionScope;
-      Azure::Nullable<int64_t> SequenceNumber; // only for page blobd
+      Azure::Nullable<int64_t> SequenceNumber; // only for page blobs
       Azure::Nullable<bool> IsSealed; // only for append blob
       std::vector<ObjectReplicationPolicy>
           ObjectReplicationSourceProperties; // only valid for replication source blob

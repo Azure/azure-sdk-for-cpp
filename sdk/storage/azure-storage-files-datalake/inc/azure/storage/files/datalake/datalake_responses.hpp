@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       PublicAccessType AccessType = PublicAccessType::None;
       std::vector<SignedIdentifier> SignedIdentifiers;
-    }; // struct DataLakeFileSystemAccessPolciy
+    }; // struct FileSystemAccessPolicy
 
     using SetFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 
