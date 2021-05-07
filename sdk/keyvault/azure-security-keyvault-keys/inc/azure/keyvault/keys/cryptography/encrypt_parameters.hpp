@@ -137,7 +137,7 @@ namespace Azure {
      */
     static EncryptParameters A128GcmParameters(
         std::vector<uint8_t> const& plaintext,
-        std::vector<uint8_t> const& additionalAuthenticationData)
+        std::vector<uint8_t> const& additionalAuthenticationData = {})
     {
       return EncryptParameters(
           EncryptionAlgorithm::A128Gcm, plaintext, {}, additionalAuthenticationData);
@@ -155,7 +155,7 @@ namespace Azure {
      */
     static EncryptParameters A192GcmParameters(
         std::vector<uint8_t> const& plaintext,
-        std::vector<uint8_t> const& additionalAuthenticationData)
+        std::vector<uint8_t> const& additionalAuthenticationData = {})
     {
       return EncryptParameters(
           EncryptionAlgorithm::A192Gcm, plaintext, {}, additionalAuthenticationData);
@@ -173,7 +173,7 @@ namespace Azure {
      */
     static EncryptParameters A256GcmParameters(
         std::vector<uint8_t> const& plaintext,
-        std::vector<uint8_t> const& additionalAuthenticationData)
+        std::vector<uint8_t> const& additionalAuthenticationData = {})
     {
       return EncryptParameters(
           EncryptionAlgorithm::A256Gcm, plaintext, {}, additionalAuthenticationData);
