@@ -80,11 +80,7 @@ void CryptographyClient::Initialize(std::string const&, Azure::Core::Context con
       throw;
     }
   }
-  catch (...)
-  {
-    // re-throw any other exception
-    throw;
-  }
+
 }
 
 CryptographyClient::CryptographyClient(
