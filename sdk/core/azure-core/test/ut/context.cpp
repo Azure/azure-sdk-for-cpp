@@ -240,7 +240,7 @@ struct SomeStructForContext
 TEST(Context, InstanceValue)
 {
   Context::Key const key;
-  auto contextP = Context::GetApplicationContext().WithValue(key, SomeStructForContext());
+  auto contextP = Context::ApplicationContext.WithValue(key, SomeStructForContext());
   SomeStructForContext contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext>(key, contextValueRef));
   EXPECT_EQ(contextValueRef.someField, 12345);
@@ -250,7 +250,7 @@ TEST(Context, Ptr)
 {
   Context::Key const key;
   SomeStructForContext value;
-  auto contextP = Context::GetApplicationContext().WithValue(key, &value);
+  auto contextP = Context::ApplicationContext.WithValue(key, &value);
 
   SomeStructForContext* contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
@@ -276,7 +276,7 @@ TEST(Context, NestedClassPtr)
 
     Context::Key const key;
 
-    auto context = Context::GetApplicationContext().WithValue(key, sharedPtr);
+    auto context = Context::ApplicationContext.WithValue(key, sharedPtr);
     EXPECT_EQ(sharedPtr.use_count(), 2);
 
     std::shared_ptr<TestClass> foundPtr;
@@ -435,4 +435,24 @@ TEST(Context, Deadline)
 
     EXPECT_EQ(childCtx.GetDeadline(), Azure::DateTime::min());
   }
+}
+
+TEST(Context, PreCondition)
+{
+  // Get a mismatch type from the context
+  std::string s("Test String");
+
+  Context context;
+  Context::Key const key;
+
+  // New context from previous
+  auto c2 = context.WithValue(key, s);
+  int value;
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(c2.TryGetValue<int>(key, value), "");
+#else
+  ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
+#endif
 }

@@ -30,56 +30,90 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   namespace Models {
+
+    /**
+     * @brief The common HTTP headers.
+     */
     struct FileHttpHeaders
     {
+
+      /**
+       * The cache control of the content.
+       */
       std::string CacheControl;
+
+      /**
+       * The disposition of the content.
+       */
       std::string ContentDisposition;
+
+      /**
+       * The encoding of the content.
+       */
       std::string ContentEncoding;
+
+      /**
+       * The language of the content.
+       */
       std::string ContentLanguage;
+
+      /**
+       * The type of the content.
+       */
       std::string ContentType;
+
+      /**
+       * The hash of the content.
+       */
       Storage::ContentHash ContentHash;
     };
 
+    /**
+     * @brief The SMB related properties of the file.
+     */
     struct FileSmbProperties
     {
       /**
-       * @brief Permission key of the directory or file.
+       * Permission key of the directory or file.
        */
       Azure::Nullable<std::string> PermissionKey;
 
       /**
-       * @brief If specified, the provided file attributes shall be set. Default value:
+       * If specified, the provided file attributes shall be set. Default value:
        * FileAttribute::Archive for file and FileAttribute::Directory for directory.
        * FileAttribute::None can also be specified as default.
        */
       FileAttributes Attributes;
 
       /**
-       * @brief Creation time for the file/directory.
+       * Creation time for the file/directory.
        */
       Azure::Nullable<DateTime> CreatedOn;
 
       /**
-       * @brief Last write time for the file/directory.
+       * Last write time for the file/directory.
        */
       Azure::Nullable<DateTime> LastWrittenOn;
 
       /**
-       * @brief Changed time for the file/directory.
+       * Changed time for the file/directory.
        */
       Azure::Nullable<DateTime> ChangedOn;
 
       /**
-       * @brief The fileId of the file.
+       * The fileId of the file.
        */
       std::string FileId;
 
       /**
-       * @brief The parentId of the file
+       * The parentId of the file
        */
       std::string ParentFileId;
     };
-    // Specifies the access tier of the share.
+
+    /**
+     * @brief Specifies the access tier of the share.
+     */
     class AccessTier {
     public:
       AccessTier() = default;
@@ -97,9 +131,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum AccessTier
 
-    // Specifies the option to copy file security descriptor from source file or to set it using the
-    // value which is defined by the header value of x-ms-file-permission or
-    // x-ms-file-permission-key.
+    /**
+     * @brief Specifies the option to copy file security descriptor from source file or to set it
+     * using the value which is defined by the header value of x-ms-file-permission or
+     * x-ms-file-permission-key.
+     */
     class PermissionCopyMode {
     public:
       PermissionCopyMode() = default;
@@ -115,7 +151,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum PermissionCopyMode
 
-    // Specifies the option include to delete the base share and all of its snapshots.
+    /**
+     * @brief Specifies the option include to delete the base share and all of its snapshots.
+     */
     class DeleteSnapshotsOption {
     public:
       DeleteSnapshotsOption() = default;
@@ -130,74 +168,158 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum DeleteSnapshotsOption
 
-    // An Access policy.
+    /**
+     * @brief An Access policy.
+     */
     struct AccessPolicy
     {
-      DateTime StartsOn; // The date-time the policy is active.
-      DateTime ExpiresOn; // The date-time the policy expires.
-      std::string Permission; // The permissions for the ACL policy.
+      /**
+       * The date-time the policy is active.
+       */
+      DateTime StartsOn;
+
+      /**
+       * The date-time the policy expires.
+       */
+      DateTime ExpiresOn;
+
+      /**
+       * The permissions for the ACL policy.
+       */
+      std::string Permission;
     };
 
-    // CORS is an HTTP feature that enables a web application running under one domain to access
-    // resources in another domain. Web browsers implement a security restriction known as
-    // same-origin policy that prevents a web page from calling APIs in a different domain; CORS
-    // provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
+    /**
+     * @brief CORS is an HTTP feature that enables a web application running under one domain to
+     * access resources in another domain. Web browsers implement a security restriction known as
+     * same-origin policy that prevents a web page from calling APIs in a different domain; CORS
+     * provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
+     */
     struct CorsRule
     {
-      std::string AllowedOrigins; // The origin domains that are permitted to make a request against
-                                  // the storage service via CORS. The origin domain is the domain
-                                  // from which the request originates. Note that the origin must be
-                                  // an exact case-sensitive match with the origin that the user age
-                                  // sends to the service. You can also use the wildcard character
-                                  // '*' to allow all origin domains to make requests via CORS.
-      std::string AllowedMethods; // The methods (HTTP request verbs) that the origin domain may use
-                                  // for a CORS request. (comma separated)
-      std::string AllowedHeaders; // The request headers that the origin domain may specify on the
-                                  // CORS request.
-      std::string ExposedHeaders; // The response headers that may be sent in the response to the
-                                  // CORS request and exposed by the browser to the request issuer.
-      int32_t MaxAgeInSeconds = int32_t(); // The maximum amount time that a browser should cache
-                                           // the preflight OPTIONS request.
+      /**
+       * The origin domains that are permitted to make a request against the storage service via
+       * CORS. The origin domain is the domain from which the request originates. Note that the
+       * origin must be an exact case-sensitive match with the origin that the user age sends to the
+       * service. You can also use the wildcard character '*' to allow all origin domains to make
+       * requests via CORS.
+       */
+      std::string AllowedOrigins;
+
+      /**
+       * The methods (HTTP request verbs) that the origin domain may use for a CORS request. (comma
+       * separated)
+       */
+      std::string AllowedMethods;
+
+      /**
+       * The request headers that the origin domain may specify on the CORS request.
+       */
+      std::string AllowedHeaders;
+
+      /**
+       * The response headers that may be sent in the response to the CORS request and exposed by
+       * the browser to the request issuer.
+       */
+      std::string ExposedHeaders;
+
+      /**
+       * The maximum amount time that a browser should cache the preflight OPTIONS request.
+       */
+      int32_t MaxAgeInSeconds = int32_t();
     };
 
-    // A listed directory item.
+    /**
+     * @brief A listed directory item.
+     */
     struct DirectoryItem
     {
+      /**
+       * The name of the directory.
+       */
       std::string Name;
     };
 
-    // File properties.
+    /**
+     * @brief The detailed information of the file.
+     */
     struct FileItemDetails
     {
-      int64_t ContentLength
-          = int64_t(); // Content length of the file. This value may not be up-to-date since an SMB
-                       // client may have modified the file locally. The value of Content-Length may
-                       // not reflect that fact until the handle is closed or the op-lock is broken.
-                       // To retrieve current property values, call Get File Properties.
+      /**
+       * Content length of the file. This value may not be up-to-date since an SMB client may have
+       * modified the file locally. The value of Content-Length may not reflect that fact until the
+       * handle is closed or the op-lock is broken. To retrieve current property values, call Get
+       * File Properties.
+       */
+      int64_t ContentLength = int64_t();
     };
 
-    // A listed file item.
+    /**
+     * @brief A listed file item.
+     */
     struct FileItem
     {
+      /**
+       * The name of the file.
+       */
       std::string Name;
+
+      /**
+       * The detailed information of the file.
+       */
       FileItemDetails Details;
     };
 
-    // A listed Azure Storage handle item.
+    /**
+     * @brief A listed Azure Storage handle item.
+     */
     struct HandleItem
     {
-      std::string HandleId; // XSMB service handle ID
-      std::string Path; // File or directory name including full path starting from share root
-      std::string FileId; // FileId uniquely identifies the file or directory.
-      std::string ParentId; // ParentId uniquely identifies the parent directory of the object.
-      std::string SessionId; // SMB session ID in context of which the file handle was opened
-      std::string ClientIp; // Client IP that opened the handle
-      DateTime OpenedOn; // Time when the session that previously opened the handle has last been
-                         // reconnected. (UTC)
-      DateTime LastReconnectedOn; // Time handle was last connected to (UTC)
+      /**
+       * XSMB service handle ID
+       */
+      std::string HandleId;
+
+      /**
+       * File or directory name including full path starting from share root
+       */
+      std::string Path;
+
+      /**
+       * FileId uniquely identifies the file or directory.
+       */
+      std::string FileId;
+
+      /**
+       * ParentId uniquely identifies the parent directory of the object.
+       */
+      std::string ParentId;
+
+      /**
+       * SMB session ID in context of which the file handle was opened
+       */
+      std::string SessionId;
+
+      /**
+       * Client IP that opened the handle
+       */
+      std::string ClientIp;
+
+      /**
+       * Time when the session that previously opened the handle has last been reconnected. (UTC)
+       */
+      DateTime OpenedOn;
+
+      /**
+       * Time handle was last connected to (UTC)
+       */
+      DateTime LastReconnectedOn;
     };
 
-    // When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
+    /**
+     * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
+     * duration.
+     */
     class LeaseDuration {
     public:
       LeaseDuration() = default;
@@ -213,7 +335,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum LeaseDuration
 
-    // Lease state of the file or share.
+    /**
+     * @brief Lease state of the file or share.
+     */
     class LeaseState {
     public:
       LeaseState() = default;
@@ -232,7 +356,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum LeaseState
 
-    // The current lease status of the file or share.
+    /**
+     * @brief The current lease status of the file or share.
+     */
     class LeaseStatus {
     public:
       LeaseStatus() = default;
@@ -248,96 +374,249 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum LeaseStatus
 
-    // Properties of a share.
+    /**
+     * @brief Details of the share properties.
+     */
     struct ShareItemDetails
     {
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
+       */
       DateTime LastModified;
+
+      /**
+       * The ETag contains a value which represents the version of the share, in quotes.
+       */
       Azure::ETag Etag;
+
+      /**
+       * The quota of the share in GB
+       */
       int64_t Quota = int64_t();
+
+      /**
+       * Returns the current share provisioned ipos.
+       */
       Azure::Nullable<int32_t> ProvisionedIops;
+
+      /**
+       * Returns the current share provisioned ingress in megabytes per second.
+       */
       Azure::Nullable<int32_t> ProvisionedIngressMBps;
+
+      /**
+       * Returns the current share provisioned egress in megabytes per second.
+       */
       Azure::Nullable<int32_t> ProvisionedEgressMBps;
+
+      /**
+       * Returns the current share next allowed quota downgrade time.
+       */
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
+
+      /**
+       * The time on which the share was deleted.
+       */
       Azure::Nullable<DateTime> DeletedOn;
+
+      /**
+       * The remaining retention days of the share.
+       */
       int32_t RemainingRetentionDays = int32_t();
-      Azure::Nullable<Models::AccessTier> AccessTier; // The access tier of the share.
+
+      /**
+       * The access tier of the share.
+       */
+      Azure::Nullable<Models::AccessTier> AccessTier;
+
+      /**
+       * Returns the last modified time (in UTC) of the access tier of the share.
+       */
       Azure::Nullable<DateTime> AccessTierChangedOn;
+
+      /**
+       * Returns the transition state betweeen access tiers, when present.
+       */
       Azure::Nullable<std::string> AccessTierTransitionState;
+
+      /**
+       * The current lease status of the file or share.
+       */
       Models::LeaseStatus LeaseStatus;
+
+      /**
+       * Lease state of the file or share.
+       */
       Models::LeaseState LeaseState;
+
+      /**
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * duration.
+       */
       Models::LeaseDuration LeaseDuration;
     };
 
-    // A listed Azure Storage share item.
+    /**
+     * @brief A listed Azure Storage share item.
+     */
     struct ShareItem
     {
+      /**
+       * The name of the share.
+       */
       std::string Name;
+
+      /**
+       * The snapshot of the share.
+       */
       std::string Snapshot;
+
+      /**
+       * If the share is deleted.
+       */
       bool Deleted = bool();
+
+      /**
+       * The version string.
+       */
       std::string Version;
+
+      /**
+       * Details of the share properties.
+       */
       ShareItemDetails Details;
-      Storage::Metadata ShareMetadata;
+
+      /**
+       * The metadata of the share.
+       */
+      Storage::Metadata Metadata;
     };
 
-    // The retention policy.
+    /**
+     * @brief The retention policy.
+     */
     struct RetentionPolicy
     {
-      bool Enabled
-          = bool(); // Indicates whether a retention policy is enabled for the File service. If
-                    // false, metrics data is retained, and the user is responsible for deleting it.
-      Azure::Nullable<int32_t>
-          Days; // Indicates the number of days that metrics data should be retained. All data older
-                // than this value will be deleted. Metrics data is deleted on a best-effort basis
-                // after the retention period expires.
+      /**
+       * Indicates whether a retention policy is enabled for the File service. If false, metrics
+       * data is retained, and the user is responsible for deleting it.
+       */
+      bool Enabled = bool();
+
+      /**
+       * Indicates the number of days that metrics data should be retained. All data older than this
+       * value will be deleted. Metrics data is deleted on a best-effort basis after the retention
+       * period expires.
+       */
+      Azure::Nullable<int32_t> Days;
     };
 
-    // Storage Analytics metrics for file service.
+    /**
+     * @brief Storage Analytics metrics for file service.
+     */
     struct Metrics
     {
-      std::string Version; // The version of Storage Analytics to configure.
-      bool Enabled = bool(); // Indicates whether metrics are enabled for the File service.
-      Azure::Nullable<bool> IncludeApis; // Indicates whether metrics should generate summary
-                                         // statistics for called API operations.
+      /**
+       * The version of Storage Analytics to configure.
+       */
+      std::string Version;
+
+      /**
+       * Indicates whether metrics are enabled for the File service.
+       */
+      bool Enabled = bool();
+
+      /**
+       * Indicates whether metrics should generate summary statistics for called API operations.
+       */
+      Azure::Nullable<bool> IncludeApis;
+
+      /**
+       * The retention policy.
+       */
       Models::RetentionPolicy RetentionPolicy;
     };
 
-    // Settings for SMB multichannel
+    /**
+     * @brief Settings for SMB multichannel
+     */
     struct SmbMultichannel
     {
-      bool Enabled = bool(); // If SMB multichannel is enabled.
+      /**
+       * If SMB multichannel is enabled.
+       */
+      bool Enabled = bool();
     };
 
-    // Settings for SMB protocol.
+    /**
+     * @brief Settings for SMB protocol.
+     */
     struct SmbSettings
     {
-      SmbMultichannel Multichannel; // Settings for SMB Multichannel.
+      /**
+       * Settings for SMB Multichannel.
+       */
+      SmbMultichannel Multichannel;
     };
 
-    // Protocol settings
+    /**
+     * @brief Protocol settings
+     */
     struct ProtocolSettings
     {
-      SmbSettings Settings; // Settings for SMB protocol.
+      /**
+       * Settings for SMB protocol.
+       */
+      SmbSettings Settings;
     };
 
-    // Signed identifier.
+    /**
+     * @brief Signed identifier.
+     */
     struct SignedIdentifier
     {
-      std::string Id; // A unique id.
-      AccessPolicy Policy; // The access policy.
+      /**
+       * A unique id.
+       */
+      std::string Id;
+
+      /**
+       * The access policy.
+       */
+      AccessPolicy Policy;
     };
 
-    // Storage service properties.
+    /**
+     * @brief Storage service properties.
+     */
     struct ShareServiceProperties
     {
-      Metrics HourMetrics; // A summary of request statistics grouped by API in hourly aggregates
-                           // for files.
-      Metrics MinuteMetrics; // A summary of request statistics grouped by API in minute aggregates
-                             // for files.
-      std::vector<CorsRule> Cors; // The set of CORS rules.
-      Azure::Nullable<ProtocolSettings> Protocol; // Protocol settings
+      /**
+       * A summary of request statistics grouped by API in hourly aggregates for files.
+       */
+      Metrics HourMetrics;
+
+      /**
+       * A summary of request statistics grouped by API in minute aggregates for files.
+       */
+      Metrics MinuteMetrics;
+
+      /**
+       * The set of CORS rules.
+       */
+      std::vector<CorsRule> Cors;
+
+      /**
+       * Protocol settings
+       */
+      Azure::Nullable<ProtocolSettings> Protocol;
     };
 
-    // State of the copy operation identified by 'x-ms-copy-id'.
+    /**
+     * @brief State of the copy operation identified by 'x-ms-copy-id'.
+     */
     class CopyStatus {
     public:
       CopyStatus() = default;
@@ -355,6 +634,797 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum CopyStatus
 
+    /**
+     * @brief The serialized return result for operation: SetServiceProperties
+     */
+    struct SetServicePropertiesResult
+    {
+    };
+
+    /**
+     * @brief The serialized return result for operation: CreateShare
+     */
+    struct CreateShareResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the share, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * If the object is created.
+       */
+      bool Created = true;
+    };
+
+    /**
+     * @brief The serialized return result for operation: GetShareProperties
+     */
+    struct ShareProperties
+    {
+
+      /**
+       * The metadata of the object.
+       */
+      Storage::Metadata Metadata;
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * Returns the current share quota in GB.
+       */
+      int64_t Quota = int64_t();
+
+      /**
+       * Returns the current share provisioned ipos.
+       */
+      Azure::Nullable<int32_t> ProvisionedIops;
+
+      /**
+       * Returns the current share provisioned ingress in megabytes per second.
+       */
+      Azure::Nullable<int32_t> ProvisionedIngressMBps;
+
+      /**
+       * Returns the current share provisioned egress in megabytes per second.
+       */
+      Azure::Nullable<int32_t> ProvisionedEgressMBps;
+
+      /**
+       * Returns the current share next allowed quota downgrade time.
+       */
+      Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
+
+      /**
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * duration.
+       */
+      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+
+      /**
+       * Lease state of the file or share.
+       */
+      Azure::Nullable<Models::LeaseState> LeaseState;
+
+      /**
+       * The current lease status of the file or share.
+       */
+      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
+
+      /**
+       * Returns the access tier set on the share.
+       */
+      Azure::Nullable<Models::AccessTier> AccessTier;
+
+      /**
+       * Returns the last modified time (in UTC) of the access tier of the share.
+       */
+      Azure::Nullable<DateTime> AccessTierChangedOn;
+
+      /**
+       * Returns the transition state betweeen access tiers, when present.
+       */
+      Azure::Nullable<std::string> AccessTierTransitionState;
+    };
+
+    /**
+     * @brief The serialized return result for operation: DeleteShare
+     */
+    struct DeleteShareResult
+    {
+
+      /**
+       * If the object is deleted.
+       */
+      bool Deleted = true;
+    };
+
+    /**
+     * @brief The serialized return result for operation: AcquireLease
+     */
+    struct AcquireLeaseResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * Uniquely identifies a share's lease
+       */
+      std::string LeaseId;
+    };
+
+    /**
+     * @brief The serialized return result for operation: ReleaseLease
+     */
+    struct ReleaseLeaseResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: ChangeLease
+     */
+    struct ChangeLeaseResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * Uniquely identifies a share's lease
+       */
+      std::string LeaseId;
+    };
+
+    /**
+     * @brief The serialized return result for operation: RenewLease
+     */
+    struct RenewLeaseResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * Uniquely identifies a share's lease
+       */
+      std::string LeaseId;
+    };
+
+    /**
+     * @brief The serialized return result for operation: BreakLease
+     */
+    struct BreakLeaseResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: CreateShareSnapshot
+     */
+    struct CreateShareSnapshotResult
+    {
+
+      /**
+       * This header is a DateTime value that uniquely identifies the share snapshot. The value of
+       * this header may be used in subsequent requests to access the share snapshot. This value is
+       * opaque.
+       */
+      std::string Snapshot;
+
+      /**
+       * The ETag contains a value which represents the version of the share snapshot, in quotes. A
+       * share snapshot cannot be modified, so the ETag of a given share snapshot never changes.
+       * However, if new metadata was supplied with the Snapshot Share request then the ETag of the
+       * share snapshot differs from that of the base share. If no metadata was specified with the
+       * request, the ETag of the share snapshot is identical to that of the base share at the time
+       * the share snapshot was taken.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. A share snapshot cannot be modified,
+       * so the last modified time of a given share snapshot never changes. However, if new metadata
+       * was supplied with the Snapshot Share request then the last modified time of the share
+       * snapshot differs from that of the base share. If no metadata was specified with the
+       * request, the last modified time of the share snapshot is identical to that of the base
+       * share at the time the share snapshot was taken.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: CreateSharePermission
+     */
+    struct CreateSharePermissionResult
+    {
+
+      /**
+       * Key of the permission set for the directory/file.
+       */
+      std::string FilePermissionKey;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetShareProperties
+     */
+    struct SetSharePropertiesResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetShareMetadata
+     */
+    struct SetShareMetadataResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: GetShareAccessPolicy
+     */
+    struct ShareAccessPolicy
+    {
+      std::vector<SignedIdentifier> SignedIdentifiers;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetShareAccessPolicy
+     */
+    struct SetShareAccessPolicyResult
+    {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: GetShareStatistics
+     */
+    struct ShareStatistics
+    {
+      /**
+       * The approximate size of the data stored in bytes. Note that this value may not include all
+       * recently created or recently resized files.
+       */
+      int64_t ShareUsageInBytes = int64_t();
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: CreateDirectory
+     */
+    struct CreateDirectoryResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the directory, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
+      FileSmbProperties SmbProperties;
+
+      /**
+       * If the object is created.
+       */
+      bool Created = true;
+    };
+
+    /**
+     * @brief The serialized return result for operation: GetDirectoryProperties
+     */
+    struct DirectoryProperties
+    {
+
+      /**
+       * The metadata of the object.
+       */
+      Storage::Metadata Metadata;
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the Directory was last modified. Operations on files within the
+       * directory do not affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+
+      /**
+       * The value of this header is set to true if the directory metadata is completely encrypted
+       * using the specified algorithm. Otherwise, the value is set to false.
+       */
+      bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
+      FileSmbProperties SmbProperties;
+    };
+
+    /**
+     * @brief The serialized return result for operation: DeleteDirectory
+     */
+    struct DeleteDirectoryResult
+    {
+
+      /**
+       * If the object is deleted.
+       */
+      bool Deleted = true;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetDirectoryProperties
+     */
+    struct SetDirectoryPropertiesResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
+      FileSmbProperties SmbProperties;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetDirectoryMetadata
+     */
+    struct SetDirectoryMetadataResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the directory, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+    };
+
+    /**
+     * @brief The serialized return result for operation: CreateFile
+     */
+    struct CreateFileResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
+      FileSmbProperties SmbProperties;
+
+      /**
+       * If the object is created.
+       */
+      bool Created = true;
+    };
+
+    /**
+     * @brief The serialized return result for operation: GetFileProperties
+     */
+    struct FileProperties
+    {
+
+      /**
+       * Returns the date and time the file was last modified. The date format follows RFC 1123. Any
+       * operation that modifies the file or its properties updates the last modified time.
+       */
+      DateTime LastModified;
+
+      /**
+       * The metadata of the object.
+       */
+      Storage::Metadata Metadata;
+
+      /**
+       * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
+       * header that is stored with the file.
+       */
+      int64_t FileSize = int64_t();
+
+      /**
+       * The Http Headers of the object.
+       */
+      FileHttpHeaders HttpHeaders;
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Conclusion time of the last attempted Copy File operation where this file was the
+       * destination file. This value can specify the time of a completed, aborted, or failed copy
+       * attempt.
+       */
+      Azure::Nullable<DateTime> CopyCompletedOn;
+
+      /**
+       * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
+       * non-fatal copy operation failure.
+       */
+      Azure::Nullable<std::string> CopyStatusDescription;
+
+      /**
+       * String identifier for the last attempted Copy File operation where this file was the
+       * destination file.
+       */
+      Azure::Nullable<std::string> CopyId;
+
+      /**
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * Copy File operation where this file was the destination file. Can show between 0 and
+       * Content-Length bytes copied.
+       */
+      Azure::Nullable<std::string> CopyProgress;
+
+      /**
+       * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
+       * operation where this file was the destination file.
+       */
+      Azure::Nullable<std::string> CopySource;
+
+      /**
+       * State of the copy operation identified by 'x-ms-copy-id'.
+       */
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+
+      /**
+       * The value of this header is set to true if the file data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the file is unencrypted, or if only parts of the file/application metadata are
+       * encrypted).
+       */
+      bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
+      FileSmbProperties SmbProperties;
+
+      /**
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * duration.
+       */
+      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+
+      /**
+       * Lease state of the file or share.
+       */
+      Azure::Nullable<Models::LeaseState> LeaseState;
+
+      /**
+       * The current lease status of the file or share.
+       */
+      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
+    };
+
+    /**
+     * @brief The serialized return result for operation: DeleteFile
+     */
+    struct DeleteFileResult
+    {
+
+      /**
+       * If the object is deleted.
+       */
+      bool Deleted = true;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetFileProperties
+     */
+    struct SetFilePropertiesResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
+      FileSmbProperties SmbProperties;
+    };
+
+    /**
+     * @brief The serialized return result for operation: SetFileMetadata
+     */
+    struct SetFileMetadataResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+    };
+
+    /**
+     * @brief The serialized return result for operation: UploadFileRange
+     */
+    struct UploadFileRangeResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the File service; it is not necessarily the same value
+       * as may have been specified in the request headers.
+       */
+      Storage::ContentHash TransactionalContentHash;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+    };
+
+    /**
+     * @brief The serialized return result for operation: UploadFileRangeFromUri
+     */
+    struct UploadFileRangeFromUriResult
+    {
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the directory was last modified. Any operation that modifies the
+       * share or its properties or metadata updates the last modified time. Operations on files do
+       * not affect the last modified time of the share.
+       */
+      DateTime LastModified;
+
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the File service; it is not necessarily the same value
+       * as may have been specified in the request headers.
+       */
+      Storage::ContentHash TransactionalContentHash;
+
+      /**
+       * A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+    };
+
+    /**
+     * @brief The serialized return result for operation: GetFileRangeList
+     */
+    struct GetFileRangeListResult
+    {
+      /**
+       * Ranges of the file.
+       */
+      std::vector<Core::Http::HttpRange> Ranges;
+
+      /**
+       * Cleared ranges of the file
+       */
+      std::vector<Core::Http::HttpRange> ClearRanges;
+
+      /**
+       * The date/time that the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the file's last modified
+       * time.
+       */
+      DateTime LastModified;
+
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * The size of the file in bytes.
+       */
+      int64_t FileSize = int64_t();
+    };
+
+    /**
+     * @brief The serialized return result for operation: AbortFileCopy
+     */
+    struct AbortFileCopyResult
+    {
+    };
+
+    /**
+     * @brief Include this parameter to specify one or more datasets to include in the response.
+     */
     enum class ListSharesIncludeFlags
     {
       None = 0,
@@ -454,7 +1524,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderFilePermission = "x-ms-file-permission";
     constexpr static const char* HeaderFilePermissionKey = "x-ms-file-permission-key";
     constexpr static const char* HeaderFileRangeWriteFromUrl = "x-ms-write";
-    constexpr static const char* HeaderFileRangeWriteFromUrlTypeDefault = "update";
+    constexpr static const char* HeaderFileRangeWriteFromUrlDefault = "update";
     constexpr static const char* HeaderFileTypeConstant = "x-ms-type";
     constexpr static const char* HeaderRangeGetContentMd5 = "x-ms-range-get-content-md5";
     constexpr static const char* HeaderHandleId = "x-ms-handle-id";
@@ -518,103 +1588,211 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderCopyProgress = "x-ms-copy-progress";
     constexpr static const char* HeaderCopyStatus = "x-ms-copy-status";
     constexpr static const char* HeaderXMsRange = "x-ms-range";
-    constexpr static const char* HeaderFileRangeWriteType = "x-ms-write";
-    constexpr static const char* HeaderFileRangeWriteTypeDefault = "update";
+    constexpr static const char* HeaderFileRangeWrite = "x-ms-write";
+    constexpr static const char* HeaderFileRangeWriteDefault = "update";
     constexpr static const char* HeaderTransactionalContentHashCrc64 = "x-ms-content-crc64";
 
-    // Only update is supported: - Update: Writes the bytes downloaded from the source url into the
-    // specified range.
-    class FileRangeWriteFromUrlType {
+    /**
+     * @brief Only update is supported: - Update: Writes the bytes downloaded from the source url
+     * into the specified range.
+     */
+    class FileRangeWriteFromUrl {
     public:
-      FileRangeWriteFromUrlType() = default;
-      explicit FileRangeWriteFromUrlType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const FileRangeWriteFromUrlType& other) const
-      {
-        return m_value == other.m_value;
-      }
-      bool operator!=(const FileRangeWriteFromUrlType& other) const { return !(*this == other); }
+      FileRangeWriteFromUrl() = default;
+      explicit FileRangeWriteFromUrl(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileRangeWriteFromUrl& other) const { return m_value == other.m_value; }
+      bool operator!=(const FileRangeWriteFromUrl& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteFromUrlType Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteFromUrl Update;
 
     private:
       std::string m_value;
-    }; // extensible enum FileRangeWriteFromUrlType
+    }; // extensible enum FileRangeWriteFromUrl
 
-    // Abstract for entries that can be listed from Directory.
+    /**
+     * @brief Abstract for entries that can be listed from Directory.
+     */
     struct FilesAndDirectoriesListSinglePage
     {
+      /**
+       * An array of the directory items returned.
+       */
       std::vector<DirectoryItem> DirectoryItems;
+
+      /**
+       * An array of the directory items returned.
+       */
       std::vector<FileItem> FileItems;
     };
 
-    // An enumeration of directories and files.
+    /**
+     * @brief An enumeration of directories and files.
+     */
     struct ListFilesAndDirectoriesSinglePageResponse
     {
+      /**
+       * The service's endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * The name of the share.
+       */
       std::string ShareName;
+
+      /**
+       * The snapshot of the share.
+       */
       std::string ShareSnapshot;
+
+      /**
+       * The path of the directory.
+       */
       std::string DirectoryPath;
+
+      /**
+       * The prefix of the directories and files.
+       */
       std::string Prefix;
+
+      /**
+       * The maximum number of items to be returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
+
+      /**
+       * A returned page.
+       */
       FilesAndDirectoriesListSinglePage SinglePage;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    // An enumeration of handles.
+    /**
+     * @brief An enumeration of handles.
+     */
     struct ListHandlesResponse
     {
+      /**
+       * An array contains all the handles returned.
+       */
       std::vector<HandleItem> HandleList;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    // An enumeration of shares.
+    /**
+     * @brief An enumeration of shares.
+     */
     struct ListSharesResponse
     {
+      /**
+       * The service's endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * The prefix of the share listed.
+       */
       std::string Prefix;
+
+      /**
+       * The maximum number of entries returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
+
+      /**
+       * An array of the share items returned in a single page.
+       */
       std::vector<ShareItem> Items;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    // An Azure Storage file range.
+    /**
+     * @brief An Azure Storage file range.
+     */
     struct FileRange
     {
-      int64_t Start = int64_t(); // Start of the range.
-      int64_t End = int64_t(); // End of the range.
+      /**
+       * Start of the range.
+       */
+      int64_t Start = int64_t();
+
+      /**
+       * End of the range.
+       */
+      int64_t End = int64_t();
     };
 
-    // An Azure Storage file clear range.
+    /**
+     * @brief An Azure Storage file clear range.
+     */
     struct ClearRange
     {
-      int64_t Start = int64_t(); // Start of the range.
-      int64_t End = int64_t(); // End of the range.
+      /**
+       * Start of the range.
+       */
+      int64_t Start = int64_t();
+
+      /**
+       * End of the range.
+       */
+      int64_t End = int64_t();
     };
 
-    // The list of file ranges
+    /**
+     * @brief The list of file ranges
+     */
     struct RangeList
     {
+      /**
+       * Ranges of the file.
+       */
       std::vector<Core::Http::HttpRange> Ranges;
+
+      /**
+       * Cleared ranges of the file
+       */
       std::vector<Core::Http::HttpRange> ClearRanges;
     };
 
-    // Stats for the share.
+    /**
+     * @brief Stats for the share.
+     */
     struct ShareStats
     {
-      int64_t ShareUsageInBytes
-          = int64_t(); // The approximate size of the data stored in bytes. Note that this value may
-                       // not include all recently created or recently resized files.
+      /**
+       * The approximate size of the data stored in bytes. Note that this value may not include all
+       * recently created or recently resized files.
+       */
+      int64_t ShareUsageInBytes = int64_t();
     };
 
-    // A permission (a security descriptor) at the share level.
+    /**
+     * @brief A permission (a security descriptor) at the share level.
+     */
     struct SharePermission
     {
-      std::string
-          FilePermission; // The permission in the Security Descriptor Definition Language (SDDL).
+      /**
+       * The permission in the Security Descriptor Definition Language (SDDL).
+       */
+      std::string FilePermission;
     };
 
-    // Describes what lease action to take.
+    /**
+     * @brief Describes what lease action to take.
+     */
     class LeaseAction {
     public:
       LeaseAction() = default;
@@ -633,368 +1811,451 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum LeaseAction
 
-    // Specify one of the following options: - Update: Writes the bytes specified by the request
-    // body into the specified range. The Range and Content-Length headers must match to perform the
-    // update. - Clear: Clears the specified range and releases the space used in storage for that
-    // range. To clear a range, set the Content-Length header to zero, and set the Range header to a
-    // value that indicates the range to clear, up to maximum file size.
-    class FileRangeWriteType {
+    /**
+     * @brief Specify one of the following options: - Update: Writes the bytes specified by the
+     * request body into the specified range. The Range and Content-Length headers must match to
+     * perform the update. - Clear: Clears the specified range and releases the space used in
+     * storage for that range. To clear a range, set the Content-Length header to zero, and set the
+     * Range header to a value that indicates the range to clear, up to maximum file size.
+     */
+    class FileRangeWrite {
     public:
-      FileRangeWriteType() = default;
-      explicit FileRangeWriteType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const FileRangeWriteType& other) const { return m_value == other.m_value; }
-      bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
+      FileRangeWrite() = default;
+      explicit FileRangeWrite(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileRangeWrite& other) const { return m_value == other.m_value; }
+      bool operator!=(const FileRangeWrite& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
 
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Update;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWriteType Clear;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWrite Update;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileRangeWrite Clear;
 
     private:
       std::string m_value;
-    }; // extensible enum FileRangeWriteType
-
-    struct ServiceSetPropertiesResult
-    {
-    };
+    }; // extensible enum FileRangeWrite
 
     struct ServiceGetPropertiesResult
     {
+      /**
+       * A summary of request statistics grouped by API in hourly aggregates for files.
+       */
       Metrics HourMetrics;
+
+      /**
+       * A summary of request statistics grouped by API in minute aggregates for files.
+       */
       Metrics MinuteMetrics;
+
+      /**
+       * The set of CORS rules.
+       */
       std::vector<CorsRule> Cors;
+
+      /**
+       * Protocol settings
+       */
       Azure::Nullable<ProtocolSettings> Protocol;
     };
 
     struct ServiceListSharesSinglePageResult
     {
+      /**
+       * The service's endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * The prefix of the share listed.
+       */
       std::string Prefix;
+
+      /**
+       * The maximum number of entries returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
+
+      /**
+       * An array of the share items returned in a single page.
+       */
       std::vector<ShareItem> Items;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
-    };
-
-    struct ShareCreateResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareGetPropertiesResult
-    {
-      Storage::Metadata Metadata;
-      Azure::ETag ETag;
-      DateTime LastModified;
-      int64_t Quota = int64_t();
-      Azure::Nullable<int32_t> ProvisionedIops;
-      Azure::Nullable<int32_t> ProvisionedIngressMBps;
-      Azure::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
-      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
-      Azure::Nullable<Models::LeaseState> LeaseState;
-      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
-      Azure::Nullable<Models::AccessTier> AccessTier;
-      Azure::Nullable<DateTime> AccessTierChangedOn;
-      Azure::Nullable<std::string> AccessTierTransitionState;
-    };
-
-    struct ShareDeleteResult
-    {
-    };
-
-    struct ShareAcquireLeaseResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      std::string LeaseId;
-    };
-
-    struct ShareReleaseLeaseResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareChangeLeaseResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      std::string LeaseId;
-    };
-
-    struct ShareRenewLeaseResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      std::string LeaseId;
-    };
-
-    struct ShareBreakLeaseResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareCreateSnapshotResult
-    {
-      std::string Snapshot;
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareCreatePermissionResult
-    {
-      std::string FilePermissionKey;
     };
 
     struct ShareGetPermissionResult
     {
+      /**
+       * The permission in the Security Descriptor Definition Language (SDDL).
+       */
       std::string FilePermission;
-    };
-
-    struct ShareSetPropertiesResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareSetMetadataResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareGetAccessPolicyResult
-    {
-      std::vector<SignedIdentifier> SignedIdentifiers;
-    };
-
-    struct ShareSetAccessPolicyResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-    };
-
-    struct ShareGetStatisticsResult
-    {
-      int64_t ShareUsageInBytes = int64_t();
-      Azure::ETag ETag;
-      DateTime LastModified;
     };
 
     struct ShareRestoreResult
     {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
       Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
       DateTime LastModified;
-    };
-
-    struct DirectoryCreateResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-    };
-
-    struct DirectoryGetPropertiesResult
-    {
-      Storage::Metadata Metadata;
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-    };
-
-    struct DirectoryDeleteResult
-    {
-    };
-
-    struct DirectorySetPropertiesResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-    };
-
-    struct DirectorySetMetadataResult
-    {
-      Azure::ETag ETag;
-      bool IsServerEncrypted = bool();
     };
 
     struct DirectoryListFilesAndDirectoriesSinglePageResult
     {
+      /**
+       * The service's endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * The name of the share.
+       */
       std::string ShareName;
+
+      /**
+       * The snapshot of the share.
+       */
       std::string ShareSnapshot;
+
+      /**
+       * The path of the directory.
+       */
       std::string DirectoryPath;
+
+      /**
+       * The prefix of the directories and files.
+       */
       std::string Prefix;
+
+      /**
+       * The maximum number of items to be returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
+
+      /**
+       * A returned page.
+       */
       FilesAndDirectoriesListSinglePage SinglePage;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * The Http Headers of the object.
+       */
       FileHttpHeaders HttpHeaders;
     };
 
     struct DirectoryListHandlesResult
     {
+      /**
+       * An array contains all the handles returned.
+       */
       std::vector<HandleItem> HandleList;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * The Http Headers of the object.
+       */
       FileHttpHeaders HttpHeaders;
     };
 
     struct DirectoryForceCloseHandlesResult
     {
-      Azure::Nullable<std::string> ContinuationToken;
-      int32_t NumberOfHandlesClosed = int32_t();
-      int32_t NumberOfHandlesFailedToClose = int32_t();
-    };
 
-    struct FileCreateResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
+      /**
+       * A string describing next handle to be closed. It is returned when more handles need to be
+       * closed to complete the request.
+       */
+      Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * Contains count of number of handles closed.
+       */
+      int32_t NumberOfHandlesClosed = int32_t();
+
+      /**
+       * Contains count of number of handles that failed to close.
+       */
+      int32_t NumberOfHandlesFailedToClose = int32_t();
     };
 
     struct FileDownloadResult
     {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
+
+      /**
+       * Returns the date and time the file was last modified. Any operation that modifies the file
+       * or its properties updates the last modified time.
+       */
       DateTime LastModified;
+
+      /**
+       * The metadata of the object.
+       */
       Storage::Metadata Metadata;
+
+      /**
+       * The Http Headers of the object.
+       */
       FileHttpHeaders HttpHeaders;
+
+      /**
+       * A HttpRange type indicates the range of the content.
+       */
       Azure::Core::Http::HttpRange ContentRange;
+
+      /**
+       * The size of the file.
+       */
       int64_t FileSize = int64_t();
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
       Azure::ETag ETag;
+
+      /**
+       * If the file has an MD5 hash and the request is to read the full file, this response header
+       * is returned so that the client can check for message content integrity. If the request is
+       * to read a specified range and the 'x-ms-range-get-content-md5' is set to true, then the
+       * request returns an MD5 hash for the range, as long as the range size is less than or equal
+       * to 4 MB. If neither of these sets of conditions is true, then no value is returned for the
+       * 'Content-MD5' header.
+       */
       Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
+
+      /**
+       * Indicates that the service supports requests for partial file content.
+       */
       std::string AcceptRanges;
+
+      /**
+       * Conclusion time of the last attempted Copy File operation where this file was the
+       * destination file. This value can specify the time of a completed, aborted, or failed copy
+       * attempt.
+       */
       Azure::Nullable<DateTime> CopyCompletedOn;
+
+      /**
+       * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
+       * non-fatal copy operation failure.
+       */
       Azure::Nullable<std::string> CopyStatusDescription;
+
+      /**
+       * String identifier for the last attempted Copy File operation where this file was the
+       * destination file.
+       */
       Azure::Nullable<std::string> CopyId;
+
+      /**
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * Copy File operation where this file was the destination file. Can show between 0 and
+       * Content-Length bytes copied.
+       */
       Azure::Nullable<std::string> CopyProgress;
+
+      /**
+       * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
+       * operation where this file was the destination file.
+       */
       Azure::Nullable<std::string> CopySource;
+
+      /**
+       * State of the copy operation identified by 'x-ms-copy-id'.
+       */
       Azure::Nullable<Models::CopyStatus> CopyStatus;
+
+      /**
+       * The value of this header is set to true if the file data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the file is unencrypted, or if only parts of the file/application metadata are
+       * encrypted).
+       */
       bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
       FileSmbProperties SmbProperties;
+
+      /**
+       * When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * duration.
+       */
       Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+
+      /**
+       * Lease state of the file or share.
+       */
       Azure::Nullable<Models::LeaseState> LeaseState;
+
+      /**
+       * The current lease status of the file or share.
+       */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
-    };
-
-    struct FileGetPropertiesResult
-    {
-      DateTime LastModified;
-      Storage::Metadata Metadata;
-      int64_t FileSize = int64_t();
-      FileHttpHeaders HttpHeaders;
-      Azure::ETag ETag;
-      Azure::Nullable<DateTime> CopyCompletedOn;
-      Azure::Nullable<std::string> CopyStatusDescription;
-      Azure::Nullable<std::string> CopyId;
-      Azure::Nullable<std::string> CopyProgress;
-      Azure::Nullable<std::string> CopySource;
-      Azure::Nullable<Models::CopyStatus> CopyStatus;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
-      Azure::Nullable<Models::LeaseState> LeaseState;
-      Azure::Nullable<Models::LeaseStatus> LeaseStatus;
-    };
-
-    struct FileDeleteResult
-    {
-    };
-
-    struct FileSetHttpHeadersResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      bool IsServerEncrypted = bool();
-      FileSmbProperties SmbProperties;
-    };
-
-    struct FileSetMetadataResult
-    {
-      Azure::ETag ETag;
-      bool IsServerEncrypted = bool();
     };
 
     struct FileAcquireLeaseResult
     {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
       Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
+       */
       DateTime LastModified;
+
+      /**
+       * Uniquely identifies a file's lease
+       */
       std::string LeaseId;
     };
 
     struct FileReleaseLeaseResult
     {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
       Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
+       */
       DateTime LastModified;
     };
 
     struct FileChangeLeaseResult
     {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
       Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
+       */
       DateTime LastModified;
+
+      /**
+       * Uniquely identifies a file's lease
+       */
       std::string LeaseId;
     };
 
     struct FileBreakLeaseResult
     {
+
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
       Azure::ETag ETag;
+
+      /**
+       * Returns the date and time the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the last-modified time of
+       * the file.
+       */
       DateTime LastModified;
+
+      /**
+       * Uniquely identifies a file's lease
+       */
       Azure::Nullable<std::string> LeaseId;
-    };
-
-    struct FileUploadRangeResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      Storage::ContentHash TransactionalContentHash;
-      bool IsServerEncrypted = bool();
-    };
-
-    struct FileUploadRangeFromUrlResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      Storage::ContentHash TransactionalContentHash;
-      bool IsServerEncrypted = bool();
-    };
-
-    struct FileGetRangeListResult
-    {
-      std::vector<Core::Http::HttpRange> Ranges;
-      std::vector<Core::Http::HttpRange> ClearRanges;
-      DateTime LastModified;
-      Azure::ETag ETag;
-      int64_t FileSize = int64_t();
     };
 
     struct FileStartCopyResult
     {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      std::string CopyId;
-      Models::CopyStatus CopyStatus;
-    };
 
-    struct FileAbortCopyResult
-    {
+      /**
+       * If the copy is completed, contains the ETag of the destination file. If the copy is not
+       * complete, contains the ETag of the empty file created at the start of the copy.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * Returns the date/time that the copy operation to the destination file completed.
+       */
+      DateTime LastModified;
+
+      /**
+       * String identifier for this copy operation. Use with Get File or Get File Properties to
+       * check the status of this copy operation, or pass to Abort Copy File to abort a pending
+       * copy.
+       */
+      std::string CopyId;
+
+      /**
+       * State of the copy operation identified by x-ms-copy-id.
+       */
+      Models::CopyStatus CopyStatus;
     };
 
     struct FileListHandlesResult
     {
+      /**
+       * An array contains all the handles returned.
+       */
       std::vector<HandleItem> HandleList;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * The Http Headers of the object.
+       */
       FileHttpHeaders HttpHeaders;
     };
 
     struct FileForceCloseHandlesResult
     {
+
+      /**
+       * A string describing next handle to be closed. It is returned when more handles need to be
+       * closed to complete the request.
+       */
       Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * Contains count of number of handles closed.
+       */
       int32_t NumberOfHandlesClosed = int32_t();
+
+      /**
+       * Contains count of number of handles that failed to close.
+       */
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };
 
@@ -1061,7 +2322,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<ServiceSetPropertiesResult> SetProperties(
+        static Azure::Response<Models::SetServicePropertiesResult> SetProperties(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -1176,7 +2437,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
       private:
-        static Azure::Response<ServiceSetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Response<Models::SetServicePropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1184,8 +2445,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Success (Accepted)
-            ServiceSetPropertiesResult result;
-            return Azure::Response<ServiceSetPropertiesResult>(
+            Models::SetServicePropertiesResult result;
+            return Azure::Response<Models::SetServicePropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2306,7 +3567,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Metadata)
               {
-                result.ShareMetadata = MetadataFromXml(reader);
+                result.Metadata = MetadataFromXml(reader);
                 path.pop_back();
               }
             }
@@ -2461,7 +3722,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<ShareCreateResult> Create(
+        static Azure::Response<Models::CreateShareResult> Create(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2502,7 +3763,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareGetPropertiesResult> GetProperties(
+        static Azure::Response<Models::ShareProperties> GetProperties(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2540,7 +3801,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareDeleteResult> Delete(
+        static Azure::Response<Models::DeleteShareResult> Delete(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2583,7 +3844,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Response<ShareAcquireLeaseResult> AcquireLease(
+        static Azure::Response<Models::AcquireLeaseResult> AcquireLease(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2627,7 +3888,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Response<ShareReleaseLeaseResult> ReleaseLease(
+        static Azure::Response<Models::ReleaseLeaseResult> ReleaseLease(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2665,7 +3926,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Response<ShareChangeLeaseResult> ChangeLease(
+        static Azure::Response<Models::ChangeLeaseResult> ChangeLease(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2707,7 +3968,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Response<ShareRenewLeaseResult> RenewLease(
+        static Azure::Response<Models::RenewLeaseResult> RenewLease(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2745,7 +4006,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> ShareSnapshot;
         };
 
-        static Azure::Response<ShareBreakLeaseResult> BreakLease(
+        static Azure::Response<Models::BreakLeaseResult> BreakLease(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2790,7 +4051,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<ShareCreateSnapshotResult> CreateSnapshot(
+        static Azure::Response<Models::CreateShareSnapshotResult> CreateSnapshot(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2822,7 +4083,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           SharePermission Permission;
         };
 
-        static Azure::Response<ShareCreatePermissionResult> CreatePermission(
+        static Azure::Response<Models::CreateSharePermissionResult> CreatePermission(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2890,7 +4151,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareSetPropertiesResult> SetProperties(
+        static Azure::Response<Models::SetSharePropertiesResult> SetProperties(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2933,7 +4194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareSetMetadataResult> SetMetadata(
+        static Azure::Response<Models::SetShareMetadataResult> SetMetadata(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -2969,7 +4230,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
+        static Azure::Response<Models::ShareAccessPolicy> GetAccessPolicy(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -3002,7 +4263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
+        static Azure::Response<Models::SetShareAccessPolicyResult> SetAccessPolicy(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -3045,7 +4306,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<ShareGetStatisticsResult> GetStatistics(
+        static Azure::Response<Models::ShareStatistics> GetStatistics(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -3108,7 +4369,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
       private:
-        static Azure::Response<ShareCreateResult> CreateParseResult(
+        static Azure::Response<Models::CreateShareResult> CreateParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3116,12 +4377,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success, Share created.
-            ShareCreateResult result;
+            Models::CreateShareResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareCreateResult>(std::move(result), std::move(responsePtr));
+            return Azure::Response<Models::CreateShareResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -3130,7 +4392,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<Models::ShareProperties> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3138,7 +4400,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success
-            ShareGetPropertiesResult result;
+            Models::ShareProperties result;
 
             for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
@@ -3211,7 +4473,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.AccessTierTransitionState
                   = response.GetHeaders().at(_detail::HeaderAccessTierTransitionState);
             }
-            return Azure::Response<ShareGetPropertiesResult>(
+            return Azure::Response<Models::ShareProperties>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3221,7 +4483,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareDeleteResult> DeleteParseResult(
+        static Azure::Response<Models::DeleteShareResult> DeleteParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3229,8 +4491,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Accepted
-            ShareDeleteResult result;
-            return Azure::Response<ShareDeleteResult>(std::move(result), std::move(responsePtr));
+            Models::DeleteShareResult result;
+            return Azure::Response<Models::DeleteShareResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -3239,7 +4502,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareAcquireLeaseResult> AcquireLeaseParseResult(
+        static Azure::Response<Models::AcquireLeaseResult> AcquireLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3247,13 +4510,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // The Acquire operation completed successfully.
-            ShareAcquireLeaseResult result;
+            Models::AcquireLeaseResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            return Azure::Response<ShareAcquireLeaseResult>(
+            return Azure::Response<Models::AcquireLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3263,7 +4526,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareReleaseLeaseResult> ReleaseLeaseParseResult(
+        static Azure::Response<Models::ReleaseLeaseResult> ReleaseLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3271,12 +4534,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The Release operation completed successfully.
-            ShareReleaseLeaseResult result;
+            Models::ReleaseLeaseResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareReleaseLeaseResult>(
+            return Azure::Response<Models::ReleaseLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3286,7 +4549,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareChangeLeaseResult> ChangeLeaseParseResult(
+        static Azure::Response<Models::ChangeLeaseResult> ChangeLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3294,13 +4557,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The Change operation completed successfully.
-            ShareChangeLeaseResult result;
+            Models::ChangeLeaseResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            return Azure::Response<ShareChangeLeaseResult>(
+            return Azure::Response<Models::ChangeLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3310,7 +4573,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareRenewLeaseResult> RenewLeaseParseResult(
+        static Azure::Response<Models::RenewLeaseResult> RenewLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3318,13 +4581,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The Renew operation completed successfully.
-            ShareRenewLeaseResult result;
+            Models::RenewLeaseResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(_detail::HeaderLeaseId);
-            return Azure::Response<ShareRenewLeaseResult>(
+            return Azure::Response<Models::RenewLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3334,7 +4597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareBreakLeaseResult> BreakLeaseParseResult(
+        static Azure::Response<Models::BreakLeaseResult> BreakLeaseParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3342,12 +4605,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // The Break operation completed successfully.
-            ShareBreakLeaseResult result;
+            Models::BreakLeaseResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareBreakLeaseResult>(
+            return Azure::Response<Models::BreakLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3357,7 +4620,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareCreateSnapshotResult> CreateSnapshotParseResult(
+        static Azure::Response<Models::CreateShareSnapshotResult> CreateSnapshotParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3365,13 +4628,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success, Share snapshot created.
-            ShareCreateSnapshotResult result;
+            Models::CreateShareSnapshotResult result;
             result.Snapshot = response.GetHeaders().at(_detail::HeaderSnapshot);
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareCreateSnapshotResult>(
+            return Azure::Response<Models::CreateShareSnapshotResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3381,7 +4644,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareCreatePermissionResult> CreatePermissionParseResult(
+        static Azure::Response<Models::CreateSharePermissionResult> CreatePermissionParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3389,9 +4652,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success, Share level permission created.
-            ShareCreatePermissionResult result;
+            Models::CreateSharePermissionResult result;
             result.FilePermissionKey = response.GetHeaders().at(_detail::HeaderFilePermissionKey);
-            return Azure::Response<ShareCreatePermissionResult>(
+            return Azure::Response<Models::CreateSharePermissionResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3447,7 +4710,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Response<ShareSetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Response<Models::SetSharePropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3455,12 +4718,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success
-            ShareSetPropertiesResult result;
+            Models::SetSharePropertiesResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareSetPropertiesResult>(
+            return Azure::Response<Models::SetSharePropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3470,7 +4733,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareSetMetadataResult> SetMetadataParseResult(
+        static Azure::Response<Models::SetShareMetadataResult> SetMetadataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3478,12 +4741,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success
-            ShareSetMetadataResult result;
+            Models::SetShareMetadataResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareSetMetadataResult>(
+            return Azure::Response<Models::SetShareMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3493,7 +4756,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<ShareGetAccessPolicyResult> GetAccessPolicyParseResult(
+        static Azure::Response<Models::ShareAccessPolicy> GetAccessPolicyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3504,10 +4767,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             const auto& bodyBuffer = response.GetBody();
             auto reader = _internal::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-            ShareGetAccessPolicyResult result = bodyBuffer.empty()
-                ? ShareGetAccessPolicyResult()
-                : ShareGetAccessPolicyResultFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
-            return Azure::Response<ShareGetAccessPolicyResult>(
+            Models::ShareAccessPolicy result = bodyBuffer.empty()
+                ? Models::ShareAccessPolicy()
+                : ShareAccessPolicyFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
+            return Azure::Response<Models::ShareAccessPolicy>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3707,15 +4970,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareGetAccessPolicyResult ShareGetAccessPolicyResultFromSignedIdentifiers(
+        static Models::ShareAccessPolicy ShareAccessPolicyFromSignedIdentifiers(
             std::vector<SignedIdentifier> object)
         {
-          ShareGetAccessPolicyResult result;
+          Models::ShareAccessPolicy result;
           result.SignedIdentifiers = std::move(object);
 
           return result;
         }
-        static Azure::Response<ShareSetAccessPolicyResult> SetAccessPolicyParseResult(
+        static Azure::Response<Models::SetShareAccessPolicyResult> SetAccessPolicyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3723,12 +4986,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success.
-            ShareSetAccessPolicyResult result;
+            Models::SetShareAccessPolicyResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareSetAccessPolicyResult>(
+            return Azure::Response<Models::SetShareAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3789,7 +5052,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
-        static Azure::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
+        static Azure::Response<Models::ShareStatistics> GetStatisticsParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3800,14 +5063,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             const auto& bodyBuffer = response.GetBody();
             auto reader = _internal::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-            ShareGetStatisticsResult result = bodyBuffer.empty()
-                ? ShareGetStatisticsResult()
-                : ShareGetStatisticsResultFromShareStats(ShareStatsFromXml(reader));
+            Models::ShareStatistics result = bodyBuffer.empty()
+                ? Models::ShareStatistics()
+                : ShareStatisticsFromShareStats(ShareStatsFromXml(reader));
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
-            return Azure::Response<ShareGetStatisticsResult>(
+            return Azure::Response<Models::ShareStatistics>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3874,9 +5137,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareGetStatisticsResult ShareGetStatisticsResultFromShareStats(ShareStats object)
+        static Models::ShareStatistics ShareStatisticsFromShareStats(ShareStats object)
         {
-          ShareGetStatisticsResult result;
+          Models::ShareStatistics result;
           result.ShareUsageInBytes = object.ShareUsageInBytes;
 
           return result;
@@ -3918,7 +5181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string FileLastWriteTime;
         };
 
-        static Azure::Response<DirectoryCreateResult> Create(
+        static Azure::Response<Models::CreateDirectoryResult> Create(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -3960,7 +5223,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<DirectoryGetPropertiesResult> GetProperties(
+        static Azure::Response<Models::DirectoryProperties> GetProperties(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -3991,7 +5254,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<DirectoryDeleteResult> Delete(
+        static Azure::Response<Models::DeleteDirectoryResult> Delete(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -4020,7 +5283,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string FileLastWriteTime;
         };
 
-        static Azure::Response<DirectorySetPropertiesResult> SetProperties(
+        static Azure::Response<Models::SetDirectoryPropertiesResult> SetProperties(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -4062,7 +5325,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<DirectorySetMetadataResult> SetMetadata(
+        static Azure::Response<Models::SetDirectoryMetadataResult> SetMetadata(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -4254,7 +5517,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
       private:
-        static Azure::Response<DirectoryCreateResult> CreateParseResult(
+        static Azure::Response<Models::CreateDirectoryResult> CreateParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4262,7 +5525,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success, Directory created.
-            DirectoryCreateResult result;
+            Models::CreateDirectoryResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
@@ -4283,7 +5546,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
                 = response.GetHeaders().at(_detail::HeaderParentFileId);
-            return Azure::Response<DirectoryCreateResult>(
+            return Azure::Response<Models::CreateDirectoryResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4293,7 +5556,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<DirectoryGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<Models::DirectoryProperties> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4301,7 +5564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success.
-            DirectoryGetPropertiesResult result;
+            Models::DirectoryProperties result;
 
             for (auto i = response.GetHeaders().lower_bound(_detail::HeaderMetadata);
                  i != response.GetHeaders().end()
@@ -4330,7 +5593,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
                 = response.GetHeaders().at(_detail::HeaderParentFileId);
-            return Azure::Response<DirectoryGetPropertiesResult>(
+            return Azure::Response<Models::DirectoryProperties>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4340,7 +5603,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<DirectoryDeleteResult> DeleteParseResult(
+        static Azure::Response<Models::DeleteDirectoryResult> DeleteParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4348,8 +5611,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Success (Accepted).
-            DirectoryDeleteResult result;
-            return Azure::Response<DirectoryDeleteResult>(
+            Models::DeleteDirectoryResult result;
+            return Azure::Response<Models::DeleteDirectoryResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4359,7 +5622,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<DirectorySetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Response<Models::SetDirectoryPropertiesResult> SetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4367,7 +5630,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success
-            DirectorySetPropertiesResult result;
+            Models::SetDirectoryPropertiesResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
@@ -4388,7 +5651,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
                 = response.GetHeaders().at(_detail::HeaderParentFileId);
-            return Azure::Response<DirectorySetPropertiesResult>(
+            return Azure::Response<Models::SetDirectoryPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4398,7 +5661,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<DirectorySetMetadataResult> SetMetadataParseResult(
+        static Azure::Response<Models::SetDirectoryMetadataResult> SetMetadataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4406,11 +5669,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success (OK).
-            DirectorySetMetadataResult result;
+            Models::SetDirectoryMetadataResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Response<DirectorySetMetadataResult>(
+            return Azure::Response<Models::SetDirectoryMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -5082,7 +6345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileCreateResult> Create(
+        static Azure::Response<Models::CreateFileResult> Create(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5170,7 +6433,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Azure::Core::Context context,
             const DownloadOptions& downloadOptions)
         {
-          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url, true);
+          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url, false);
           if (downloadOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
@@ -5204,7 +6467,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileGetPropertiesResult> GetProperties(
+        static Azure::Response<Models::FileProperties> GetProperties(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5239,7 +6502,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileDeleteResult> Delete(
+        static Azure::Response<Models::DeleteFileResult> Delete(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5279,7 +6542,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileSetHttpHeadersResult> SetHttpHeaders(
+        static Azure::Response<Models::SetFilePropertiesResult> SetHttpHeaders(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5366,7 +6629,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileSetMetadataResult> SetMetadata(
+        static Azure::Response<Models::SetFileMetadataResult> SetMetadata(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5531,14 +6794,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           Azure::Nullable<int32_t> Timeout;
           std::string XMsRange;
-          FileRangeWriteType XMsWrite;
+          FileRangeWrite XMsWrite;
           int64_t ContentLength = int64_t();
           Azure::Nullable<Storage::ContentHash> ContentMd5;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileUploadRangeResult> UploadRange(
+        static Azure::Response<Models::UploadFileRangeResult> UploadRange(
             const Azure::Core::Url& url,
             Azure::Core::IO::BodyStream& bodyStream,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
@@ -5555,8 +6818,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(uploadRangeOptions.Timeout.Value())));
           }
           request.SetHeader(_detail::HeaderXMsRange, uploadRangeOptions.XMsRange);
-          request.SetHeader(
-              _detail::HeaderFileRangeWriteType, uploadRangeOptions.XMsWrite.ToString());
+          request.SetHeader(_detail::HeaderFileRangeWrite, uploadRangeOptions.XMsWrite.ToString());
           request.SetHeader(
               _detail::HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
           if (uploadRangeOptions.ContentMd5.HasValue())
@@ -5579,7 +6841,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string TargetRange;
           std::string CopySource;
           Azure::Nullable<std::string> SourceRange;
-          FileRangeWriteFromUrlType XMsWrite;
+          FileRangeWriteFromUrl XMsWrite;
           int64_t ContentLength = int64_t();
           Azure::Nullable<Storage::ContentHash> SourceContentCrc64;
           Azure::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
@@ -5588,7 +6850,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
+        static Azure::Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUrl(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5654,7 +6916,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileGetRangeListResult> GetRangeList(
+        static Azure::Response<Models::GetFileRangeListResult> GetRangeList(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5790,7 +7052,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Nullable<std::string> LeaseIdOptional;
         };
 
-        static Azure::Response<FileAbortCopyResult> AbortCopy(
+        static Azure::Response<Models::AbortFileCopyResult> AbortCopy(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -5908,7 +7170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
       private:
-        static Azure::Response<FileCreateResult> CreateParseResult(
+        static Azure::Response<Models::CreateFileResult> CreateParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -5916,7 +7178,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success, File created.
-            FileCreateResult result;
+            Models::CreateFileResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
@@ -5937,7 +7199,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
                 = response.GetHeaders().at(_detail::HeaderParentFileId);
-            return Azure::Response<FileCreateResult>(std::move(result), std::move(responsePtr));
+            return Azure::Response<Models::CreateFileResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6272,7 +7535,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Response<Models::FileProperties> GetPropertiesParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6280,7 +7543,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success.
-            FileGetPropertiesResult result;
+            Models::FileProperties result;
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
@@ -6399,7 +7662,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.LeaseStatus
                   = LeaseStatus(response.GetHeaders().at(_detail::HeaderLeaseStatus));
             }
-            return Azure::Response<FileGetPropertiesResult>(
+            return Azure::Response<Models::FileProperties>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6409,7 +7672,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileDeleteResult> DeleteParseResult(
+        static Azure::Response<Models::DeleteFileResult> DeleteParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6417,8 +7680,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Success (Accepted).
-            FileDeleteResult result;
-            return Azure::Response<FileDeleteResult>(std::move(result), std::move(responsePtr));
+            Models::DeleteFileResult result;
+            return Azure::Response<Models::DeleteFileResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -6427,7 +7691,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileSetHttpHeadersResult> SetHttpHeadersParseResult(
+        static Azure::Response<Models::SetFilePropertiesResult> SetHttpHeadersParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6435,7 +7699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success
-            FileSetHttpHeadersResult result;
+            Models::SetFilePropertiesResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
@@ -6456,7 +7720,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.SmbProperties.FileId = response.GetHeaders().at(_detail::HeaderFileId);
             result.SmbProperties.ParentFileId
                 = response.GetHeaders().at(_detail::HeaderParentFileId);
-            return Azure::Response<FileSetHttpHeadersResult>(
+            return Azure::Response<Models::SetFilePropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6466,7 +7730,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileSetMetadataResult> SetMetadataParseResult(
+        static Azure::Response<Models::SetFileMetadataResult> SetMetadataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6474,11 +7738,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Success (OK).
-            FileSetMetadataResult result;
+            Models::SetFileMetadataResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Response<FileSetMetadataResult>(
+            return Azure::Response<Models::SetFileMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6585,7 +7849,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileUploadRangeResult> UploadRangeParseResult(
+        static Azure::Response<Models::UploadFileRangeResult> UploadRangeParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6593,7 +7857,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success (Created).
-            FileUploadRangeResult result;
+            Models::UploadFileRangeResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
@@ -6611,7 +7875,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.IsServerEncrypted
                   = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
             }
-            return Azure::Response<FileUploadRangeResult>(
+            return Azure::Response<Models::UploadFileRangeResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6621,7 +7885,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrlParseResult(
+        static Azure::Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUrlParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6629,7 +7893,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Success (Created).
-            FileUploadRangeFromUrlResult result;
+            Models::UploadFileRangeFromUriResult result;
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
@@ -6639,7 +7903,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 HashAlgorithm::Crc64);
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Response<FileUploadRangeFromUrlResult>(
+            return Azure::Response<Models::UploadFileRangeFromUriResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6649,7 +7913,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileGetRangeListResult> GetRangeListParseResult(
+        static Azure::Response<Models::GetFileRangeListResult> GetRangeListParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6660,15 +7924,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             const auto& bodyBuffer = response.GetBody();
             auto reader = _internal::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-            FileGetRangeListResult result = bodyBuffer.empty()
-                ? FileGetRangeListResult()
-                : FileGetRangeListResultFromRangeList(RangeListFromXml(reader));
+            Models::GetFileRangeListResult result = bodyBuffer.empty()
+                ? Models::GetFileRangeListResult()
+                : GetFileRangeListResultFromRangeList(RangeListFromXml(reader));
             result.LastModified = DateTime::Parse(
                 response.GetHeaders().at(_detail::HeaderLastModified),
                 DateTime::DateFormat::Rfc1123);
             result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
             result.FileSize = std::stoll(response.GetHeaders().at(_detail::HeaderXMsContentLength));
-            return Azure::Response<FileGetRangeListResult>(
+            return Azure::Response<Models::GetFileRangeListResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -6747,9 +8011,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileGetRangeListResult FileGetRangeListResultFromRangeList(RangeList object)
+        static Models::GetFileRangeListResult GetFileRangeListResultFromRangeList(RangeList object)
         {
-          FileGetRangeListResult result;
+          Models::GetFileRangeListResult result;
           result.Ranges = std::move(object.Ranges);
           result.ClearRanges = std::move(object.ClearRanges);
 
@@ -6786,7 +8050,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Response<FileAbortCopyResult> AbortCopyParseResult(
+        static Azure::Response<Models::AbortFileCopyResult> AbortCopyParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -6794,8 +8058,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
           {
             // The delete request was accepted and the file will be deleted.
-            FileAbortCopyResult result;
-            return Azure::Response<FileAbortCopyResult>(std::move(result), std::move(responsePtr));
+            Models::AbortFileCopyResult result;
+            return Azure::Response<Models::AbortFileCopyResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {

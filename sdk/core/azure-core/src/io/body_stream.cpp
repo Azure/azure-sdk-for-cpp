@@ -33,6 +33,12 @@
 using Azure::Core::Context;
 using namespace Azure::Core::IO;
 
+#if defined(AZ_PLATFORM_WINDOWS)
+// For an abundance of caution, adding this as a compile time check since we are using static_cast
+// between windows HANDLE and void* to avoid having windows.h headers exposed in public headers.
+static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE to void* and back.");
+#endif
+
 // Keep reading until buffer is all fill out of the end of stream content is reached
 int64_t BodyStream::ReadToCount(uint8_t* buffer, int64_t count, Context const& context)
 {
@@ -84,12 +90,12 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
 FileBodyStream::FileBodyStream(const std::string& filename)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
-
+  HANDLE fileHandle;
   try
   {
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-    m_filehandle = CreateFile(
+    fileHandle = CreateFile(
         filename.data(),
         GENERIC_READ,
         FILE_SHARE_READ,
@@ -99,7 +105,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
                                    // intended to be sequential from beginning to end.
         NULL);
 #else
-    m_filehandle = CreateFile2(
+    fileHandle = CreateFile2(
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
         GENERIC_READ,
         FILE_SHARE_READ,
@@ -107,21 +113,22 @@ FileBodyStream::FileBodyStream(const std::string& filename)
         NULL);
 #endif
 
-    if (m_filehandle == INVALID_HANDLE_VALUE)
+    if (fileHandle == INVALID_HANDLE_VALUE)
     {
       throw std::runtime_error("Failed to open file for reading. File name: '" + filename + "'");
     }
     LARGE_INTEGER fileSize;
-    if (!GetFileSizeEx(m_filehandle, &fileSize))
+    if (!GetFileSizeEx(fileHandle, &fileSize))
     {
       throw std::runtime_error("Failed to get size of file. File name: '" + filename + "'");
     }
+    m_filehandle = static_cast<void*>(fileHandle);
     m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
         _internal::RandomAccessFileBodyStream(m_filehandle, 0, fileSize.QuadPart));
   }
   catch (std::exception&)
   {
-    CloseHandle(m_filehandle);
+    CloseHandle(fileHandle);
     throw;
   }
 
@@ -156,7 +163,7 @@ FileBodyStream::~FileBodyStream()
 #if defined(AZ_PLATFORM_WINDOWS)
   if (m_filehandle)
   {
-    CloseHandle(m_filehandle);
+    CloseHandle(static_cast<HANDLE>(m_filehandle));
     m_filehandle = NULL;
   }
 #elif defined(AZ_PLATFORM_POSIX)

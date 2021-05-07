@@ -5,23 +5,13 @@
 
 #include <azure/core/platform.hpp>
 
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <windows.h>
-#endif
-
 #include <cstdint>
 #include <string>
 
 namespace Azure { namespace Storage { namespace _internal {
 
 #if defined(AZ_PLATFORM_WINDOWS)
-  using FileHandle = HANDLE;
+  using FileHandle = void*;
 #elif defined(AZ_PLATFORM_POSIX)
   using FileHandle = int;
 #endif

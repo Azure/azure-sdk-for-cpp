@@ -52,8 +52,10 @@ int64_t RandomAccessFileBodyStream::OnRead(
   o.Offset = static_cast<DWORD>(this->m_baseOffset + this->m_offset);
   o.OffsetHigh = static_cast<DWORD>((this->m_baseOffset + this->m_offset) >> 32);
 
+  HANDLE fileHandle = static_cast<HANDLE>(this->m_filehandle);
+
   auto result = ReadFile(
-      this->m_filehandle,
+      fileHandle,
       buffer,
       // at most 4Gb to be read
       static_cast<DWORD>(std::min(
