@@ -484,10 +484,17 @@ TEST(Context, KeyTypePairPrecondition)
 #endif
 
   EXPECT_TRUE(strValue == "previous value");
+
   EXPECT_TRUE(c2.TryGetValue<int>(key, intValue));
   EXPECT_TRUE(intValue == 123);
 
-  EXPECT_TRUE(c3.TryGetValue<int>(key, intValue));
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "");
+#else
+  ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "Type mismatch for Context::TryGetValue");
+#endif
+
   EXPECT_TRUE(intValue == 123);
 
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
