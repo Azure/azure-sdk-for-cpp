@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     using UserDelegationKey = Blobs::Models::UserDelegationKey;
 
-     /**
+    /**
      * @brief The detailed information of a file system.
      */
     struct FileSystemItemDetails
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
     }; // struct FileSystemItemDetails
 
-     /**
+    /**
      * @brief The file system item returned when listing the file systems.
      */
     struct FileSystemItem
@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     // FileSystemClient models:
 
-     /**
+    /**
      * @brief The access policy of a file system.
      */
     struct FileSystemAccessPolicy
@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       DateTime LastModified;
 
-       /**
+      /**
        * The Metadata of the file system.
        */
       Storage::Metadata Metadata;
@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The state of the lease on the path.
        */
       Azure::Nullable<Models::LeaseState> LeaseState;
-      
+
       /**
        * The status of the lease on the path.
        */

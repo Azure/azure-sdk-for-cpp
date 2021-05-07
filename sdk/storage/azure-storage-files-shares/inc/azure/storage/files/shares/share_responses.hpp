@@ -19,8 +19,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   namespace Models {
 
     /**
-    * @brief The information returned when forcing the directory handles to close.
-    */
+     * @brief The information returned when forcing the directory handles to close.
+     */
     struct ForceCloseDirectoryHandleResult
     {
     };
