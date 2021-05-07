@@ -406,10 +406,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Azure::Nullable<int32_t> ProvisionedIngressMBps;
 
+      /**
+       * Returns the current share provisioned egress in megabytes per second.
+       */
       Azure::Nullable<int32_t> ProvisionedEgressMBps;
 
       /**
-       * Returns the current share provisioned egress in megabytes per second.
+       * Returns the current share next allowed quota downgrade time.
        */
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
 
@@ -485,7 +488,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       ShareItemDetails Details;
 
-      Storage::Metadata ShareMetadata;
+      /**
+       * The metadata of the share.
+       */
+      Storage::Metadata Metadata;
     };
 
     /**
@@ -977,6 +983,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ShareStatistics
     {
+      /**
+       * The approximate size of the data stored in bytes. Note that this value may not include all
+       * recently created or recently resized files.
+       */
       int64_t ShareUsageInBytes = int64_t();
 
       /**
@@ -1377,7 +1387,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct GetFileRangeListResult
     {
+      /**
+       * Ranges of the file.
+       */
       std::vector<Core::Http::HttpRange> Ranges;
+
+      /**
+       * Cleared ranges of the file
+       */
       std::vector<Core::Http::HttpRange> ClearRanges;
 
       /**
@@ -1405,6 +1422,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
     };
 
+    /**
+     * @brief Include this parameter to specify one or more datasets to include in the response.
+     */
     enum class ListSharesIncludeFlags
     {
       None = 0,
@@ -1736,8 +1756,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct RangeList
     {
+      /**
+       * Ranges of the file.
+       */
       std::vector<Core::Http::HttpRange> Ranges;
 
+      /**
+       * Cleared ranges of the file
+       */
       std::vector<Core::Http::HttpRange> ClearRanges;
     };
 
@@ -1809,23 +1835,60 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ServiceGetPropertiesResult
     {
+      /**
+       * A summary of request statistics grouped by API in hourly aggregates for files.
+       */
       Metrics HourMetrics;
+
+      /**
+       * A summary of request statistics grouped by API in minute aggregates for files.
+       */
       Metrics MinuteMetrics;
+
+      /**
+       * The set of CORS rules.
+       */
       std::vector<CorsRule> Cors;
+
+      /**
+       * Protocol settings
+       */
       Azure::Nullable<ProtocolSettings> Protocol;
     };
 
     struct ServiceListSharesSinglePageResult
     {
+      /**
+       * The service's endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * The prefix of the share listed.
+       */
       std::string Prefix;
+
+      /**
+       * The maximum number of entries returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
+
+      /**
+       * An array of the share items returned in a single page.
+       */
       std::vector<ShareItem> Items;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct ShareGetPermissionResult
     {
+      /**
+       * The permission in the Security Descriptor Definition Language (SDDL).
+       */
       std::string FilePermission;
     };
 
@@ -1847,13 +1910,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DirectoryListFilesAndDirectoriesSinglePageResult
     {
+      /**
+       * The service's endpoint.
+       */
       std::string ServiceEndpoint;
+
+      /**
+       * The name of the share.
+       */
       std::string ShareName;
+
+      /**
+       * The snapshot of the share.
+       */
       std::string ShareSnapshot;
+
+      /**
+       * The path of the directory.
+       */
       std::string DirectoryPath;
+
+      /**
+       * The prefix of the directories and files.
+       */
       std::string Prefix;
+
+      /**
+       * The maximum number of items to be returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
+
+      /**
+       * A returned page.
+       */
       FilesAndDirectoriesListSinglePage SinglePage;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
@@ -1864,7 +1958,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DirectoryListHandlesResult
     {
+      /**
+       * An array contains all the handles returned.
+       */
       std::vector<HandleItem> HandleList;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
@@ -2122,7 +2223,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileListHandlesResult
     {
+      /**
+       * An array contains all the handles returned.
+       */
       std::vector<HandleItem> HandleList;
+
+      /**
+       * A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
@@ -3459,7 +3567,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Metadata)
               {
-                result.ShareMetadata = MetadataFromXml(reader);
+                result.Metadata = MetadataFromXml(reader);
                 path.pop_back();
               }
             }

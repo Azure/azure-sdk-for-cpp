@@ -131,6 +131,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string Permissions;
     };
 
+    /**
+     * @brief The public access type of a file system.
+     */
     class PublicAccessType {
     public:
       PublicAccessType() = default;
@@ -405,6 +408,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<AclFailedEntry> FailedEntries;
     };
 
+    /**
+     * @brief The items returned when listing paths.
+     */
     struct PathList
     {
       std::vector<PathItem> Items;
