@@ -103,7 +103,7 @@ namespace Azure { namespace Storage {
         }
         else
         {
-          throw std::runtime_error("unknwon algorithm type");
+          throw std::runtime_error("unknown algorithm type");
         }
 
         unsigned long algorithmFlags = 0;

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Define the main performance framewoek program.
+ * @brief Define the main performance framework program.
  *
  */
 

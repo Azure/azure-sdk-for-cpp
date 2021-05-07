@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
-   * @brief Client options used to initalize all DataLake clients.
+   * @brief Client options used to initialize all DataLake clients.
    */
   struct DataLakeClientOptions : Azure::Core::_internal::ClientOptions
   {

@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The signed identifiers of the file system.
        */
       std::vector<SignedIdentifier> SignedIdentifiers;
-    }; // struct DataLakeFileSystemAccessPolciy
+    }; // struct FileSystemAccessPolicy
 
     using SetFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 

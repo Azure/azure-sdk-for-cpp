@@ -11,7 +11,7 @@ $repoRoot = Resolve-Path "$PSScriptRoot/../..";
 . (Join-Path ${repoRoot} eng common scripts logging.ps1)
 . (Join-Path ${repoRoot} eng scripts SdkVersion-Common.ps1)
 
-$versionFileLocation = Get-VersionHppLocaiton `
+$versionFileLocation = Get-VersionHppLocation `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 

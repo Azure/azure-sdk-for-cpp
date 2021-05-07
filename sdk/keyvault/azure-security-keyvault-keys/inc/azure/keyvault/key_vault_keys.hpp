@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief General purpose header for Key Vault keys functionaly.
+ * @brief General purpose header for Key Vault keys functionality.
  *
  */
 
 #pragma once
 
+#include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
+#include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/dll_import_export.hpp"
