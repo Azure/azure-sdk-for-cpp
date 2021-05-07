@@ -42,7 +42,7 @@ namespace Azure {
       {
       }
 
-      bool CanRemote() const override { return m_canRemote; };
+      bool CanRemote() const noexcept override { return m_canRemote; };
 
       bool MustRemote() const { return m_canRemote && !m_keyMaterial.HasPrivateKey(); }
     };

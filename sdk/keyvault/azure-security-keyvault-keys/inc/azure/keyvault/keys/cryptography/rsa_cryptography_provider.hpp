@@ -31,7 +31,8 @@ namespace Azure {
       {
       }
 
-      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation operation) override
+      bool SupportsOperation(
+          Azure::Security::KeyVault::Keys::KeyOperation operation) const noexcept override
       {
         if (operation == Azure::Security::KeyVault::Keys::KeyOperation::Encrypt
             || operation == Azure::Security::KeyVault::Keys::KeyOperation::Decrypt

@@ -38,9 +38,10 @@ namespace Azure {
     {
       virtual ~CryptographyProvider() = default;
 
-      virtual bool CanRemote() const = 0;
+      virtual bool CanRemote() const noexcept = 0;
 
-      virtual bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation operation) = 0;
+      virtual bool SupportsOperation(
+          Azure::Security::KeyVault::Keys::KeyOperation operation) const noexcept = 0;
 
       virtual EncryptResult Encrypt(
           EncryptParameters const& parameters,

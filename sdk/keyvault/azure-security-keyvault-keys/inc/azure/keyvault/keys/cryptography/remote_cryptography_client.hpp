@@ -42,9 +42,9 @@ namespace Azure {
           std::shared_ptr<Core::Credentials::TokenCredential const> credential,
           CryptographyClientOptions options = CryptographyClientOptions());
 
-      bool CanRemote() const override { return true; }
+      bool CanRemote() const noexcept override { return true; }
 
-      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation) override
+      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation) const noexcept override
       {
         return true;
       };
