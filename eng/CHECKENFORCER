@@ -28,7 +28,7 @@ message: >
   /check-enforcer evaluate
   ```
   
-  Typically evaulation only takes a few seconds. If you know that your pull
+  Typically evaluation only takes a few seconds. If you know that your pull
   request is not covered by a pipeline and this is expected you can override
   Check Enforcer using the following command:
   

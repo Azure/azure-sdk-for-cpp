@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief General purpose header for Key Vault keys functionaly.
+ * @brief General purpose header for Key Vault keys functionality.
  *
  */
 

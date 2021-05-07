@@ -5,7 +5,7 @@
  * @file
  * @brief The base class for the common bahavior of the transport adapter tests.
  *
- * @brief Any http trasport adapter can be used for this tests.
+ * @brief Any http transport adapter can be used for this tests.
  *
  */
 
