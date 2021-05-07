@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <azure/core.hpp>
-#include <azure/keyvault/key_vault.hpp>
+#include <azure/keyvault/key_vault_keys.hpp>
 
 #include <cstdio>
 
