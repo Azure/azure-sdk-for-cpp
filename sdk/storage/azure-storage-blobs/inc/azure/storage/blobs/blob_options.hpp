@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Specifies HTTP options for conditioanal requests based on tags.
+   * @brief Specifies HTTP options for conditional requests based on tags.
    */
   struct TagAccessConditions
   {
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Client options used to initalize all kinds of blob clients.
+   * @brief Client options used to initialize all kinds of blob clients.
    */
   struct BlobClientOptions : Azure::Core::_internal::ClientOptions
   {

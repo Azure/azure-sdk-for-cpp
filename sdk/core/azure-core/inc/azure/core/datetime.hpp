@@ -28,7 +28,7 @@ namespace _detail {
     // system_clock is not a steady clock. It is calendar-based, which means it can be adjusted,
     // and it may go backwards in time after adjustments, or jump forward faster than the actual
     // time passes, if you catch the moment before and after syncing the clock.
-    // Steady clock would be good for measuring elapsed time without reboots (or hybernation?).
+    // Steady clock would be good for measuring elapsed time without reboots (or hibernation?).
     // Steady clock's epoch = boot time, and it would only go forward in steady fashion, after the
     // system has started.
     // Using this clock in combination with system_clock is common scenario.

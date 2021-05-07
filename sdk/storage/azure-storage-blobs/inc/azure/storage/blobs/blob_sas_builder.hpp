@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Uses an account's user delegation key to sign this shared access signature, to
      * produce the proper SAS query parameters for authentication requests.
      *
-     * @param userDelegationKey UserDelegationKey retruned from
+     * @param userDelegationKey UserDelegationKey returned from
      * BlobServiceClient.GetUserDelegationKey.
      * @param accountName The name of the storage account.
      * @return The SAS query parameters used for authenticating requests.

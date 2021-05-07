@@ -1120,7 +1120,7 @@ inline parser_results parser::parse(int argc, const char** argv, bool posOnly) c
 
       // Now we check if this is just "--" which is a special argument that
       // causes all following arguments to be treated as non-options and is
-      // itselve discarded.
+      // itself discarded.
       if (std::strncmp(arg_i_cstr, "--", 2) == 0 && arg_i_len == 2)
       {
         ignore_flags = true;

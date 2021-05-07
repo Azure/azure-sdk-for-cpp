@@ -16,7 +16,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
-   * @brief Client options used to initalize share clients.
+   * @brief Client options used to initialize share clients.
    */
   struct ShareClientOptions : Azure::Core::_internal::ClientOptions
   {
