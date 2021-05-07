@@ -13,12 +13,29 @@
 
 namespace Azure { namespace Storage {
 
+  /**
+   * @brief An exception thrown when storage service request fails.
+   */
   struct StorageException : public Azure::Core::RequestFailedException
   {
+    /**
+     * @brief Constructs a #StorageException with a message.
+     *
+     * @param message The explanatory string.
+     */
     explicit StorageException(const std::string& message) : RequestFailedException(message) {}
 
+    /**
+     * Some storage-specific information in response body.
+     */
     std::map<std::string, std::string> AdditionalInformation;
 
+    /**
+     * @brief Constructs a #StorageException from a failed storage service response.
+     *
+     * @param response Raw HTTP response from storage service.
+     * @return #StorageException.
+     */
     static StorageException CreateFromResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
   };

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/core/azure_assert.hpp"
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 
@@ -175,11 +176,9 @@ namespace Azure { namespace Core {
       {
         if (ptr->Key == key)
         {
-          if (typeid(T) != ptr->ValueType)
-          {
-            // type mismatch
-            std::abort();
-          }
+          AZURE_ASSERT_MSG(
+              typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
+
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
         }
