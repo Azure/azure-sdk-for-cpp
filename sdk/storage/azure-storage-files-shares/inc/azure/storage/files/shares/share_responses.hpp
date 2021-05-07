@@ -18,59 +18,187 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   namespace Models {
 
+    /**
+    * @brief The information returned when forcing the directory handles to close.
+    */
     struct ForceCloseDirectoryHandleResult
     {
     };
 
+    /**
+     * @brief The detailed information returned when downloading a file.
+     */
     struct DownloadFileDetails
     {
-      DateTime LastModified;
-      Storage::Metadata Metadata;
+      /**
+       * An HTTP entity tag associated with the file.
+       */
       Azure::ETag ETag;
+
+      /**
+       * The data and time the file was last modified.
+       */
+      DateTime LastModified;
+
+      /**
+       * The metadata of the file.
+       */
+      Storage::Metadata Metadata;
+
+      /**
+       * The copy completed time of the file, if the file is created from a copy operation.
+       */
       Nullable<DateTime> CopyCompletedOn;
+
+      /**
+       * The copy status's description of the file, if the file is created from a copy operation.
+       */
       Nullable<std::string> CopyStatusDescription;
+
+      /**
+       * The copy ID of the file, if the file is created from a copy operation.
+       */
       Nullable<std::string> CopyId;
+
+      /**
+       * The copy progress of the file, if the file is created from a copy operation.
+       */
       Nullable<std::string> CopyProgress;
+
+      /**
+       * The copy source of the file, if the file is created from a copy operation.
+       */
       Nullable<std::string> CopySource;
+
+      /**
+       * The copy status of the file, if the file is created from a copy operation.
+       */
       Nullable<Models::CopyStatus> CopyStatus;
+
+      /**
+       * A boolean indicates if the service is encrypted.
+       */
       bool IsServerEncrypted = bool();
+
+      /**
+       * The SMB related properties of the file or directory.
+       */
       FileSmbProperties SmbProperties;
+
+      /**
+       * When a file is leased, specifies whether the lease is of infinite or fixed duration.
+       */
       Nullable<Models::LeaseDuration> LeaseDuration;
+
+      /**
+       * Lease state of the file.
+       */
       Nullable<Models::LeaseState> LeaseState;
+
+      /**
+       * The current lease status of the file.
+       */
       Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
+    /**
+     * @brief The content and information returned when downloading a file.
+     */
     struct DownloadFileResult
     {
+      /**
+       * The body of the downloaded result.
+       */
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
+
+      /**
+       * The range of the downloaded content.
+       */
       Azure::Core::Http::HttpRange ContentRange;
+
+      /**
+       * The size of the file.
+       */
       int64_t FileSize = 0;
+
+      /**
+       * The transactional hash of the downloaded content.
+       */
       Nullable<Storage::ContentHash> TransactionalContentHash;
+
+      /**
+       * The common Http headers of the file.
+       */
       FileHttpHeaders HttpHeaders;
+
+      /**
+       * The detailed information of the downloaded file.
+       */
       DownloadFileDetails Details;
     };
 
+    /**
+     * @brief The information returned when clearing a range in the file.
+     */
     struct ClearFileRangeResult
     {
+      /**
+       * An HTTP entity tag associated with the file.
+       */
       Azure::ETag ETag;
+
+      /**
+       * The data and time the file was last modified.
+       */
       DateTime LastModified;
+
+      /**
+       * A boolean indicates if the service is encrypted.
+       */
       bool IsServerEncrypted = bool();
     };
 
+    /**
+     * @brief The information returned when downloading a file to a destination.
+     */
     struct DownloadFileToResult
     {
+      /**
+       * The size of the file.
+       */
       int64_t FileSize = 0;
+
+      /**
+       * The range of the downloaded content.
+       */
       Azure::Core::Http::HttpRange ContentRange;
+
+      /**
+       * The common Http headers of the file.
+       */
       FileHttpHeaders HttpHeaders;
+
+      /**
+       * The detailed information of the downloaded file.
+       */
       DownloadFileDetails Details;
     };
 
+    /**
+     * @brief The information returned when forcing a file handle to close.
+     */
     struct ForceCloseFileHandleResult
     {
     };
 
+    /**
+     * @brief The information returned when uploading a file from a source.
+     */
     struct UploadFileFromResult
     {
+      /**
+       * A boolean indicates if the service is encrypted.
+       */
       bool IsServerEncrypted = false;
     };
 

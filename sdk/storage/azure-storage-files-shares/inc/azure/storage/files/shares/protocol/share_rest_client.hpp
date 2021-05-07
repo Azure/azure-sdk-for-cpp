@@ -36,10 +36,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct FileHttpHeaders
     {
+
+      /**
+       * @brief The cache control of the content.
+       */
       std::string CacheControl;
+
+      /**
+       * @brief The disposition of the content.
+       */
       std::string ContentDisposition;
+
+      /**
+       * @brief The encoding of the content.
+       */
       std::string ContentEncoding;
+
+      /**
+       * @brief The language of the content.
+       */
       std::string ContentLanguage;
+
+      /**
+       * @brief The type of the content.
+       */
       std::string ContentType;
 
       /**
@@ -214,11 +234,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct DirectoryItem
     {
+      /**
+       * @brief The name of the directory.
+       */
       std::string Name;
     };
 
     /**
-     * @brief File properties.
+     * @brief The detailed information of the file.
      */
     struct FileItemDetails
     {
@@ -236,8 +259,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct FileItem
     {
+      /**
+       * @brief The name of the file.
+       */
       std::string Name;
 
+      /**
+       * @brief The detailed information of the file.
+       */
       FileItemDetails Details;
     };
 
@@ -347,26 +376,52 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }; // extensible enum LeaseStatus
 
     /**
-     * @brief Properties of a share.
+     * @brief Details of the share properties.
      */
     struct ShareItemDetails
     {
+      /**
+       * @brief Returns the date and time the share was last modified. Any operation that modifies
+       * the share or its properties or metadata updates the last modified time. Operations on files
+       * do not affect the last modified time of the share.
+       */
       DateTime LastModified;
 
+      /**
+       * @brief The ETag contains a value which represents the version of the share, in quotes.
+       */
       Azure::ETag Etag;
 
+      /**
+       * @brief The quota of the share in GB
+       */
       int64_t Quota = int64_t();
 
+      /**
+       * @brief Returns the current share provisioned ipos.
+       */
       Azure::Nullable<int32_t> ProvisionedIops;
 
+      /**
+       * @brief Returns the current share provisioned ingress in megabytes per second.
+       */
       Azure::Nullable<int32_t> ProvisionedIngressMBps;
 
       Azure::Nullable<int32_t> ProvisionedEgressMBps;
 
+      /**
+       * @brief Returns the current share provisioned egress in megabytes per second.
+       */
       Azure::Nullable<DateTime> NextAllowedQuotaDowngradeTime;
 
+      /**
+       * @brief The time on which the share was deleted.
+       */
       Azure::Nullable<DateTime> DeletedOn;
 
+      /**
+       * @brief The remaining retention days of the share.
+       */
       int32_t RemainingRetentionDays = int32_t();
 
       /**
@@ -374,14 +429,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Azure::Nullable<Models::AccessTier> AccessTier;
 
+      /**
+       * @brief Returns the last modified time (in UTC) of the access tier of the share.
+       */
       Azure::Nullable<DateTime> AccessTierChangedOn;
 
+      /**
+       * @brief Returns the transition state betweeen access tiers, when present.
+       */
       Azure::Nullable<std::string> AccessTierTransitionState;
 
+      /**
+       * @brief The current lease status of the file or share.
+       */
       Models::LeaseStatus LeaseStatus;
 
+      /**
+       * @brief Lease state of the file or share.
+       */
       Models::LeaseState LeaseState;
 
+      /**
+       * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
+       * duration.
+       */
       Models::LeaseDuration LeaseDuration;
     };
 
@@ -390,14 +461,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ShareItem
     {
+      /**
+       * @brief The name of the share.
+       */
       std::string Name;
 
+      /**
+       * @brief The snapshot of the share.
+       */
       std::string Snapshot;
 
+      /**
+       * @brief If the share is deleted.
+       */
       bool Deleted = bool();
 
+      /**
+       * @brief The version string.
+       */
       std::string Version;
 
+      /**
+       * @brief Details of the share properties.
+       */
       ShareItemDetails Details;
 
       Storage::Metadata ShareMetadata;
@@ -443,6 +529,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Azure::Nullable<bool> IncludeApis;
 
+      /**
+       * @brief The retention policy.
+       */
       Models::RetentionPolicy RetentionPolicy;
     };
 
@@ -1521,8 +1610,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct FilesAndDirectoriesListSinglePage
     {
+      /**
+       * @brief An array of the directory items returned.
+       */
       std::vector<DirectoryItem> DirectoryItems;
 
+      /**
+       * @brief An array of the directory items returned.
+       */
       std::vector<FileItem> FileItems;
     };
 
@@ -1531,20 +1626,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ListFilesAndDirectoriesSinglePageResponse
     {
+      /**
+       * @brief The service's endpoint.
+       */
       std::string ServiceEndpoint;
 
+      /**
+       * @brief The name of the share.
+       */
       std::string ShareName;
 
+      /**
+       * @brief The snapshot of the share.
+       */
       std::string ShareSnapshot;
 
+      /**
+       * @brief The path of the directory.
+       */
       std::string DirectoryPath;
 
+      /**
+       * @brief The prefix of the directories and files.
+       */
       std::string Prefix;
 
+      /**
+       * @brief The maximum number of items to be returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
 
+      /**
+       * @brief A returned page.
+       */
       FilesAndDirectoriesListSinglePage SinglePage;
 
+      /**
+       * @brief A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
@@ -1553,8 +1672,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ListHandlesResponse
     {
+      /**
+       * @brief An array contains all the handles returned.
+       */
       std::vector<HandleItem> HandleList;
 
+      /**
+       * @brief A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
@@ -1563,14 +1688,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ListSharesResponse
     {
+      /**
+       * @brief The service's endpoint.
+       */
       std::string ServiceEndpoint;
 
+      /**
+       * @brief The prefix of the share listed.
+       */
       std::string Prefix;
 
+      /**
+       * @brief The maximum number of entries returned in a single page.
+       */
       int32_t PageSizeHint = int32_t();
 
+      /**
+       * @brief An array of the share items returned in a single page.
+       */
       std::vector<ShareItem> Items;
 
+      /**
+       * @brief A continuation token used for further enumerations.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 

@@ -28,32 +28,103 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace Models {
+
+    /**
+     * @brief The common HTTP headers.
+     */
     struct PathHttpHeaders
     {
+
+      /**
+       * @brief The cache control of the content.
+       */
       std::string CacheControl;
+
+      /**
+       * @brief The disposition of the content.
+       */
       std::string ContentDisposition;
+
+      /**
+       * @brief The encoding of the content.
+       */
       std::string ContentEncoding;
+
+      /**
+       * @brief The language of the content.
+       */
       std::string ContentLanguage;
+
+      /**
+       * @brief The type of the content.
+       */
       std::string ContentType;
+
+      /**
+       * @brief The hash of the content.
+       */
       Storage::ContentHash ContentHash;
     };
 
     struct AclFailedEntry
     {
+      /**
+       * @brief The name of the failed entry.
+       */
       std::string Name;
+
+      /**
+       * @brief The type of the failure.
+       */
       std::string Type;
+
+      /**
+       * @brief The error message of the failure.
+       */
       std::string ErrorMessage;
     };
 
     struct PathItem
     {
+      /**
+       * @brief The name of the path item.
+       */
       std::string Name;
+
+      /**
+       * @brief A boolean that indicates if the path is a directory.
+       */
       bool IsDirectory = bool();
+
+      /**
+       * @brief The data and time the file or directory was last modified.  Write operations on the
+       * file or directory update the last modified time.
+       */
       DateTime LastModified;
+
+      /**
+       * @brief An HTTP entity tag associated with the file or directory.
+       */
       std::string ETag;
+
+      /**
+       * @brief The size of the file.
+       */
       int64_t FileSize = int64_t();
+
+      /**
+       * @brief The owner of the file.
+       */
       std::string Owner;
+
+      /**
+       * @brief The group of the file.
+       */
       std::string Group;
+
+      /**
+       * @brief The permission of the file.
+       */
       std::string Permissions;
     };
 
@@ -73,7 +144,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum PublicAccessType
 
-    // Required only for Create File and Create Directory. The value must be "file" or "directory".
+    /**
+     * @brief Required only for Create File and Create Directory. The value must be "file" or
+     * "directory".
+     */
     class PathResourceType {
     public:
       PathResourceType() = default;
@@ -89,7 +163,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum PathResourceType
 
-    // When a resource is leased, specifies whether the lease is of infinite or fixed duration.
+    /**
+     * @brief When a resource is leased, specifies whether the lease is of infinite or fixed
+     * duration.
+     */
     class LeaseDuration {
     public:
       LeaseDuration() = default;
@@ -105,7 +182,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum LeaseDuration
 
-    // Lease state of the resource.
+    /**
+     * @brief Lease state of the resource.
+     */
     class LeaseState {
     public:
       LeaseState() = default;
@@ -124,7 +203,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum LeaseState
 
-    // The lease status of the resource.
+    /**
+     * @brief The lease status of the resource.
+     */
     class LeaseStatus {
     public:
       LeaseStatus() = default;
@@ -139,6 +220,65 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     private:
       std::string m_value;
     }; // extensible enum LeaseStatus
+
+    /**
+     * @brief The serialized return result for operation: SetPathAccessControlList
+     */
+    struct SetPathAccessControlListResult
+    {
+
+      /**
+       * @brief An HTTP entity tag associated with the file or directory.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * @brief The data and time the file or directory was last modified. Write operations on the
+       * file or directory update the last modified time.
+       */
+      DateTime LastModified;
+    };
+
+    /**
+     * @brief The serialized return result for operation: FlushFile
+     */
+    struct FlushFileResult
+    {
+
+      /**
+       * @brief An HTTP entity tag associated with the file or directory.
+       */
+      Azure::ETag ETag;
+
+      /**
+       * @brief The data and time the file or directory was last modified.  Write operations on the
+       * file or directory update the last modified time.
+       */
+      DateTime LastModified;
+
+      /**
+       * @brief The size of the resource in bytes.
+       */
+      int64_t ContentLength = int64_t();
+    };
+
+    /**
+     * @brief The serialized return result for operation: AppendFile
+     */
+    struct AppendFileResult
+    {
+
+      /**
+       * @brief If the blob has an MD5 hash and this operation is to read the full blob, this
+       * response header is returned so that the client can check for message content integrity.
+       */
+      Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
+
+      /**
+       * @brief A boolean that indicates if the server is encrypted.
+       */
+      bool IsServerEncrypted = bool();
+    };
 
   } // namespace Models
   namespace _detail {
@@ -206,7 +346,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* HeaderLeaseStatus = "x-ms-lease-status";
     constexpr static const char* HeaderRequestIsServerEncrypted = "x-ms-request-server-encrypted";
 
-    // The value must be "filesystem" for all filesystem operations.
+    /**
+     * @brief The value must be "filesystem" for all filesystem operations.
+     */
     class FileSystemResource {
     public:
       FileSystemResource() = default;
@@ -221,10 +363,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum FileSystemResource
 
-    // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one
-    // or more POSIX access control rights  that pre-exist on files and directories, "remove"
-    // removes one or more POSIX access control rights  that were present earlier on files and
-    // directories
+    /**
+     * @brief Mode "set" sets POSIX access control rights on files and directories, "modify"
+     * modifies one or more POSIX access control rights  that pre-exist on files and directories,
+     * "remove" removes one or more POSIX access control rights  that were present earlier on files
+     * and directories
+     */
     class PathSetAccessControlRecursiveMode {
     public:
       PathSetAccessControlRecursiveMode() = default;
@@ -250,8 +394,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     struct SetAccessControlRecursiveResponse
     {
       int32_t NumberOfSuccessfulDirectories = int32_t();
+
       int32_t NumberOfSuccessfulFiles = int32_t();
+
       int32_t NumberOfFailures = int32_t();
+
       std::vector<AclFailedEntry> FailedEntries;
     };
 
@@ -260,9 +407,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<PathItem> Items;
     };
 
-    // Optional. Valid only when namespace is enabled. This parameter determines the behavior of the
-    // rename operation. The value must be "legacy" or "posix", and the default value will be
-    // "posix".
+    /**
+     * @brief Optional. Valid only when namespace is enabled. This parameter determines the behavior
+     * of the rename operation. The value must be "legacy" or "posix", and the default value will be
+     * "posix".
+     */
     class PathRenameMode {
     public:
       PathRenameMode() = default;
@@ -278,10 +427,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum PathRenameMode
 
-    // Optional. If the value is "getStatus" only the system defined properties for the path are
-    // returned. If the value is "getAccessControl" the access control list is returned in the
-    // response headers (Hierarchical Namespace must be enabled for the account), otherwise the
-    // properties are returned.
+    /**
+     * @brief Optional. If the value is "getStatus" only the system defined properties for the path
+     * are returned. If the value is "getAccessControl" the access control list is returned in the
+     * response headers (Hierarchical Namespace must be enabled for the account), otherwise the
+     * properties are returned.
+     */
     class PathGetPropertiesAction {
     public:
       PathGetPropertiesAction() = default;
@@ -303,42 +454,127 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     struct FileSystemListPathsResult
     {
       std::vector<PathItem> Items;
+
+      /**
+       * @brief If the number of paths to be listed exceeds the maxResults limit, a continuation
+       * token is returned in this response header.  When a continuation token is returned in the
+       * response, it must be specified in a subsequent invocation of the list operation to continue
+       * listing the paths.
+       */
       Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct PathCreateResult
     {
+
+      /**
+       * @brief An HTTP entity tag associated with the file or directory.
+       */
       Azure::ETag ETag;
+
+      /**
+       * @brief The data and time the file or directory was last modified.  Write operations on the
+       * file or directory update the last modified time.
+       */
       Azure::Nullable<DateTime> LastModified;
+
+      /**
+       * @brief The size of the resource in bytes.
+       */
       Azure::Nullable<int64_t> ContentLength;
     };
 
     struct PathGetPropertiesResult
     {
+
+      /**
+       * @brief Indicates that the service supports requests for partial file content.
+       */
       Azure::Nullable<std::string> AcceptRanges;
+
+      /**
+       * @brief The Http Headers of the object.
+       */
       PathHttpHeaders HttpHeaders;
+
+      /**
+       * @brief An HTTP entity tag associated with the file or directory.
+       */
       Azure::ETag ETag;
+
+      /**
+       * @brief The data and time the file or directory was last modified.  Write operations on the
+       * file or directory update the last modified time.
+       */
       DateTime LastModified;
+
+      /**
+       * @brief The type of the resource.  The value may be "file" or "directory".  If not set, the
+       * value is "file".
+       */
       Azure::Nullable<std::string> ResourceType;
+
+      /**
+       * @brief The user-defined properties associated with the file or directory, in the format of
+       * a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value is a
+       * base64 encoded string. Note that the string may only contain ASCII characters in the
+       * ISO-8859-1 character set.
+       */
       Azure::Nullable<std::string> Properties;
+
+      /**
+       * @brief The owner of the file or directory. Included in the response if Hierarchical
+       * Namespace is enabled for the account.
+       */
       Azure::Nullable<std::string> Owner;
+
+      /**
+       * @brief The owning group of the file or directory. Included in the response if Hierarchical
+       * Namespace is enabled for the account.
+       */
       Azure::Nullable<std::string> Group;
+
+      /**
+       * @brief The POSIX access permissions for the file owner, the file owning group, and others.
+       * Included in the response if Hierarchical Namespace is enabled for the account.
+       */
       Azure::Nullable<std::string> Permissions;
+
+      /**
+       * @brief The POSIX access control list for the file or directory.  Included in the response
+       * only if the action is "getAccessControl" and Hierarchical Namespace is enabled for the
+       * account.
+       */
       Azure::Nullable<std::string> Acl;
+
+      /**
+       * @brief When a resource is leased, specifies whether the lease is of infinite or fixed
+       * duration.
+       */
       Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+
+      /**
+       * @brief Lease state of the resource.
+       */
       Azure::Nullable<Models::LeaseState> LeaseState;
+
+      /**
+       * @brief The lease status of the resource.
+       */
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
     struct PathDeleteResult
     {
-      Azure::Nullable<std::string> ContinuationToken;
-    };
 
-    struct PathSetAccessControlResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
+      /**
+       * @brief When deleting a directory, the number of paths that are deleted with each invocation
+       * is limited.  If the number of paths to be deleted exceeds this limit, a continuation token
+       * is returned in this response header.  When a continuation token is returned in the
+       * response, it must be specified in a subsequent invocation of the delete operation to
+       * continue deleting the directory.
+       */
+      Azure::Nullable<std::string> ContinuationToken;
     };
 
     struct PathSetAccessControlRecursiveResult
@@ -347,20 +583,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int32_t NumberOfSuccessfulFiles = int32_t();
       int32_t NumberOfFailures = int32_t();
       std::vector<AclFailedEntry> FailedEntries;
+
+      /**
+       * @brief When performing setAccessControlRecursive on a directory, the number of paths that
+       * are processed with each invocation is limited.  If the number of paths to be processed
+       * exceeds this limit, a continuation token is returned in this response header.  When a
+       * continuation token is returned in the response, it must be specified in a subsequent
+       * invocation of the setAccessControlRecursive operation to continue the
+       * setAccessControlRecursive operation on the directory.
+       */
       Azure::Nullable<std::string> ContinuationToken;
-    };
-
-    struct PathFlushDataResult
-    {
-      Azure::ETag ETag;
-      DateTime LastModified;
-      int64_t ContentLength = int64_t();
-    };
-
-    struct PathAppendDataResult
-    {
-      Azure::Nullable<Storage::ContentHash> TransactionalContentHash;
-      bool IsServerEncrypted = bool();
     };
 
     class DataLakeRestClient {
@@ -808,7 +1040,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<PathSetAccessControlResult> SetAccessControl(
+        static Azure::Response<Models::SetPathAccessControlListResult> SetAccessControl(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -952,7 +1184,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<PathFlushDataResult> FlushData(
+        static Azure::Response<Models::FlushFileResult> FlushData(
             const Azure::Core::Url& url,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             Azure::Core::Context context,
@@ -1062,7 +1294,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
         };
 
-        static Azure::Response<PathAppendDataResult> AppendData(
+        static Azure::Response<Models::AppendFileResult> AppendData(
             const Azure::Core::Url& url,
             Azure::Core::IO::BodyStream& bodyStream,
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
@@ -1277,7 +1509,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Response<PathSetAccessControlResult> SetAccessControlParseResult(
+        static Azure::Response<Models::SetPathAccessControlListResult> SetAccessControlParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1285,7 +1517,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Set directory access control response.
-            PathSetAccessControlResult result;
+            Models::SetPathAccessControlListResult result;
             if (response.GetHeaders().find(_detail::HeaderETag) != response.GetHeaders().end())
             {
               result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
@@ -1297,7 +1529,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   response.GetHeaders().at(_detail::HeaderLastModified),
                   DateTime::DateFormat::Rfc1123);
             }
-            return Azure::Response<PathSetAccessControlResult>(
+            return Azure::Response<Models::SetPathAccessControlListResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1372,7 +1604,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
           return result;
         }
-        static Azure::Response<PathFlushDataResult> FlushDataParseResult(
+        static Azure::Response<Models::FlushFileResult> FlushDataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1380,7 +1612,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The data was flushed (written) to the file successfully.
-            PathFlushDataResult result;
+            Models::FlushFileResult result;
             if (response.GetHeaders().find(_detail::HeaderETag) != response.GetHeaders().end())
             {
               result.ETag = Azure::ETag(response.GetHeaders().at(_detail::HeaderETag));
@@ -1398,7 +1630,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.ContentLength
                   = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
             }
-            return Azure::Response<PathFlushDataResult>(std::move(result), std::move(responsePtr));
+            return Azure::Response<Models::FlushFileResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -1407,7 +1640,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Response<PathAppendDataResult> AppendDataParseResult(
+        static Azure::Response<Models::AppendFileResult> AppendDataParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1415,7 +1648,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Append data to file control response.
-            PathAppendDataResult result;
+            Models::AppendFileResult result;
             if (response.GetHeaders().find(_detail::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
@@ -1431,7 +1664,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             }
             result.IsServerEncrypted
                 = response.GetHeaders().at(_detail::HeaderRequestIsServerEncrypted) == "true";
-            return Azure::Response<PathAppendDataResult>(std::move(result), std::move(responsePtr));
+            return Azure::Response<Models::AppendFileResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
