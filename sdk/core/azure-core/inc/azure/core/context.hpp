@@ -8,12 +8,13 @@
 
 #pragma once
 
+#include "azure/core/azure_assert.hpp"
 #include "azure/core/datetime.hpp"
+#include "azure/core/dll_import_export.hpp"
 
 #include <atomic>
 #include <chrono>
 #include <memory>
-#include <new> //For the non-allocating placement new
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -175,11 +176,9 @@ namespace Azure { namespace Core {
       {
         if (ptr->Key == key)
         {
-          if (typeid(T) != ptr->ValueType)
-          {
-            // type mismatch
-            std::abort();
-          }
+          AZURE_ASSERT_MSG(
+              typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
+
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
         }
@@ -200,7 +199,7 @@ namespace Azure { namespace Core {
      * @brief Check if the context is cancelled.
      * @return `true` if this context is cancelled, `false` otherwise.
      */
-    bool IsCancelled() const { return GetDeadline() < std::chrono::system_clock::now(); }
+    bool IsCancelled() const noexcept { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
      * @brief Throw an exception if the context was cancelled.
@@ -214,8 +213,8 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get the application context (root).
+     * @brief The application context (root).
      */
-    static Context& GetApplicationContext();
+    static AZ_CORE_DLLEXPORT Context ApplicationContext;
   };
 }} // namespace Azure::Core

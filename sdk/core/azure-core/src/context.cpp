@@ -5,11 +5,7 @@
 
 using namespace Azure::Core;
 
-Context& Azure::Core::Context::GetApplicationContext()
-{
-  static Context context;
-  return context;
-}
+Context Context::ApplicationContext;
 
 Azure::DateTime Azure::Core::Context::GetDeadline() const
 {

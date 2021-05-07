@@ -3,7 +3,7 @@
   "language": "en",
   "languageId": "cpp",
   "dictionaries": ["powershell"],
-  "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib"],
+  "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib", ".vscode/cspell.json"],
   "words": [
     "azsdk",
     "cmake",
@@ -13,6 +13,8 @@
     "moxygen",
     "NOMINMAX",
     "pwsh",
+    "SPDX",
+    "stoi",
     "vcpkg"
   ],
   "overrides": [

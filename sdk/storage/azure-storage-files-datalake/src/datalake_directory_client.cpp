@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const Azure::Core::Context& context) const
   {
     _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
-    protocolLayerOptions.Resource = _detail::FileSystemResourceType::Filesystem;
+    protocolLayerOptions.Resource = _detail::FileSystemResource::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
 
     protocolLayerOptions.MaxResults = options.PageSizeHint;

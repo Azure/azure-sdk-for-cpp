@@ -17,6 +17,12 @@
 #include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
 #include <winsock2.h> // for WSAPoll();
 #endif
 
@@ -803,7 +809,7 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
 
   auto totalRead = int64_t();
   auto readRequestLength = this->m_isChunkedResponseType
-      ? std::min(this->m_chunkSize - this->m_sessionTotalRead, count)
+      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, count)
       : count;
 
   // For responses with content-length, avoid trying to read beyond Content-length or
@@ -812,7 +818,7 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   if (this->m_contentLength > 0)
   {
     auto remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
-    readRequestLength = std::min(readRequestLength, remainingBodyContent);
+    readRequestLength = (std::min)(readRequestLength, remainingBodyContent);
   }
 
   // Take data from inner buffer if any

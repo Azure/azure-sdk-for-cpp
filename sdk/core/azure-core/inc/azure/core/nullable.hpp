@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include <cstdlib> // for abort
+#include <azure/core/azure_assert.hpp>
+
 #include <new> // for placement new
 #include <type_traits>
 #include <utility> // for swap and move
@@ -220,12 +221,7 @@ public:
    */
   const T& Value() const& noexcept
   {
-    if (!m_hasValue)
-    {
-      // throwing here prohibited by our guidelines
-      // https://azure.github.io/azure-sdk/cpp_design.html#pre-conditions
-      std::abort();
-    }
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -235,12 +231,7 @@ public:
    */
   T& Value() & noexcept
   {
-    if (!m_hasValue)
-    {
-      // throwing here prohibited by our guidelines
-      // https://azure.github.io/azure-sdk/cpp_design.html#pre-conditions
-      std::abort();
-    }
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -250,12 +241,7 @@ public:
    */
   T&& Value() && noexcept
   {
-    if (!m_hasValue)
-    {
-      // throwing here prohibited by our guidelines
-      // https://azure.github.io/azure-sdk/cpp_design.html#pre-conditions
-      std::abort();
-    }
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return std::move(m_value);
   }

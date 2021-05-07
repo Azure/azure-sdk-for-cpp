@@ -5,6 +5,7 @@
 ### New Features
 
 - Added support for importing and deserializing EC and OCT keys.
+- Added `CreateFromResumeToken()` to `DeletedKeyOperation` and `RecoverKeyOperation`.
 
 ### Breaking Changes
 
@@ -23,6 +24,7 @@
 - Changed the returned type for list keys, key versions, and deleted keys from `Response<T>` to `PagedResponse<T>` affecting:
   - `GetPropertiesOfKeysSinglePage()` and `GetPropertiesOfKeyVersionsSinglePage()` now returns `KeyProperties`.
   - `GetDeletedKeysSinglePage()` now returns `DeletedKey`.
+- Removed `ResumeDeleteKeyOperation()` and `ResumeRecoverKeyOperation()`.
 
 ### Bug Fixes
 
