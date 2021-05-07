@@ -45,10 +45,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
       bool operator!=(const AccountKind& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * General-purpose v1 account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
+      /**
+       * Blob Storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
+      /**
+       * General-purpose v2 account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
+      /**
+       * File Storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
+      /**
+       * Block Blob Storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
 
     private:
@@ -70,6 +85,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t Size = 0;
     }; // struct BlobBlock
 
+    /**
+     * @brief Extensible enum used to identify copy status of a copy operation.
+     */
     class CopyStatus {
     public:
       CopyStatus() = default;
@@ -77,13 +95,22 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const CopyStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Successful.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
+      /**
+       * Pending.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
 
     private:
       std::string m_value;
     }; // extensible enum CopyStatus
 
+    /**
+     * @brief Extensible enum used to identify the status of secondary storage endpoint.
+     */
     class GeoReplicationStatus {
     public:
       GeoReplicationStatus() = default;
@@ -91,14 +118,26 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * The secondary location is active and operational.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
+      /**
+       * Initial synchronization from the primary location to the secondary location is in progress.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      /**
+       * The secondary location is temporarily unavailable.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
 
     private:
       std::string m_value;
     }; // extensible enum GeoReplicationStatus
 
+    /**
+     * @brief Extensible enum used to identify the lease is of inifinite or fixed duration.
+     */
     class LeaseDurationType {
     public:
       LeaseDurationType() = default;
@@ -106,13 +145,22 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Infinite duration.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
+      /**
+       * Fixed duration.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
 
     private:
       std::string m_value;
     }; // extensible enum LeaseDurationType
 
+    /**
+     * @brief Extensible enum used to identify the state of lease.
+     */
     class LeaseState {
     public:
       LeaseState() = default;
@@ -120,16 +168,35 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseState& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * The lease is unlocked and can be acquired.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
+      /**
+       * The lease is locked.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Leased;
+      /**
+       * The lease duration has expired.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Expired;
+      /**
+       * The lease has been broken, but the lease will continue to be locked until the break period
+       * has expired.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
+      /**
+       * The lease has been broken, and the break period has expired.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
 
     private:
       std::string m_value;
     }; // extensible enum LeaseState
 
+    /**
+     * @brief Extensible enum used to identify the status of lease.
+     */
     class LeaseStatus {
     public:
       LeaseStatus() = default;
@@ -137,13 +204,22 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * The lease is locked.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
+      /**
+       * The lease is unlocked.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
 
     private:
       std::string m_value;
     }; // extensible enum LeaseStatus
 
+    /**
+     * @brief Extensible enum used to identify object replication status.
+     */
     class ObjectReplicationStatus {
     public:
       ObjectReplicationStatus() = default;
@@ -154,7 +230,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Object replication to the destination container completed.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
+      /**
+       * Object replication to the destination container failed.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
 
     private:
@@ -242,13 +324,37 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const SkuName& other) const { return m_value == other.m_value; }
       bool operator!=(const SkuName& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Standard Locally Redundant Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
+      /**
+       * Standard Geo Replicated Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
+      /**
+       * Standard Read-access Geo Replicated Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
+      /**
+       * Standard Zone Redundant Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
+      /**
+       * Provisioned IO Locally Redundant Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
+      /**
+       * Provisioned IO Zone Redundant Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
+      /**
+       * Standard Geo-zone-redundant Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
+      /**
+       * Standard Read-access Geo-zone-redundant Storage
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
 
     private:
@@ -469,6 +575,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Nullable<std::string> ErrorDocument404Path;
     }; // struct StaticWebsite
 
+    /**
+     * @brief Extensible enum used to identify access tier of a blob.
+     */
     class AccessTier {
     public:
       AccessTier() = default;
@@ -476,28 +585,84 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
       bool operator!=(const AccessTier& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * P1 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
+      /**
+       * P2 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P2;
+      /**
+       * P3 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P3;
+      /**
+       * P4 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P4;
+      /**
+       * P6 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P6;
+      /**
+       * P10 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P10;
+      /**
+       * P15 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P15;
+      /**
+       * P20 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P20;
+      /**
+       * P30 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P30;
+      /**
+       * P40 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P40;
+      /**
+       * P50 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P50;
+      /**
+       * P60 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P60;
+      /**
+       * P70 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P70;
+      /**
+       * P80 tier for page blob in a premium storage account.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P80;
+      /**
+       * Optimized for storing data that is accessed frequently.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Hot;
+      /**
+       * Optimized for storing data that is infrequently accessed and stored for at least 30 days.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
+      /**
+       * Optimized for storing data that is rarely accessed and stored for at least 180 days with
+       * flexible latency requirements, on the order of hours.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
 
     private:
       std::string m_value;
     }; // extensible enum AccessTier
 
+    /**
+     * @brief Extensible enum used to identify the destination tier when a blob is being rehydrated
+     * and is not complete.
+     */
     class ArchiveStatus {
     public:
       ArchiveStatus() = default;
@@ -505,7 +670,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const ArchiveStatus& other) const { return m_value == other.m_value; }
       bool operator!=(const ArchiveStatus& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * The blob is being rehydrated to hot tier.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToHot;
+      /**
+       * The blob is being rehydrated to cool tier.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
 
     private:
@@ -613,6 +784,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationRule> Rules;
     }; // struct ObjectReplicationPolicy
 
+    /**
+     * @brief Extensible enum used to identify rehydrate priority.
+     */
     class RehydratePriority {
     public:
       RehydratePriority() = default;
@@ -620,7 +794,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
       bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * High priority.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
+      /**
+       * Standard priority.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
 
     private:
@@ -1277,6 +1457,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::StaticWebsite StaticWebsite;
     }; // struct BlobServiceProperties
 
+    /**
+     * @brief Extensible enum used to specify blocks to list.
+     */
     class BlockListType {
     public:
       BlockListType() = default;
@@ -1284,8 +1467,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const BlockListType& other) const { return m_value == other.m_value; }
       bool operator!=(const BlockListType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Only list committed blocks.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Committed;
+      /**
+       * Only list uncommitted blocks.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Uncommitted;
+      /**
+       * List both committed and uncommitted blocks.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
 
     private:
@@ -1547,6 +1739,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool Deleted = true;
     }; // struct DeleteBlobResult
 
+    /**
+     * @brief Extensible enum used to specify whether base blob should be deleted in a delete blob
+     * operation.
+     */
     class DeleteSnapshotsOption {
     public:
       DeleteSnapshotsOption() = default;
@@ -1554,7 +1750,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
       bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Delete the base blob and all snapshots.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
+      /**
+       * Delete only the blob's snapshots and not the blob itself.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
 
     private:
@@ -1592,6 +1794,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       DownloadBlobDetails Details;
     }; // struct DownloadBlobResult
 
+    /**
+     * @brief Extensible enum used to identify encryption algorithm.
+     */
     class EncryptionAlgorithmType {
     public:
       EncryptionAlgorithmType() = default;
@@ -1602,6 +1807,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const EncryptionAlgorithmType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * AES-256
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
 
     private:
@@ -1660,8 +1868,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     enum class ListBlobContainersIncludeFlags
     {
+      /**
+       * No extra data should be included.
+       */
       None = 0,
+      /**
+       * Metadata should be included.
+       */
       Metadata = 1,
+      /**
+       * Soft-deleted containers should be included in the response.
+       */
       Deleted = 2,
     }; // bitwise enum ListBlobContainersIncludeFlags
 
@@ -1701,12 +1918,33 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     enum class ListBlobsIncludeFlags
     {
+      /**
+       * No extra data should be included.
+       */
       None = 0,
+      /**
+       * Metadata related to any current or previous copy operations should be included.
+       */
       Copy = 1,
+      /**
+       * Soft-deleted blobs should be included.
+       */
       Deleted = 2,
+      /**
+       * Metadata should be included.
+       */
       Metadata = 4,
+      /**
+       * Snapshots should be included.
+       */
       Snapshots = 8,
+      /**
+       * Versions of blobs should be included.
+       */
       Versions = 16,
+      /**
+       * Uncommitted blobs should be included.
+       */
       UncomittedBlobs = 32,
     }; // bitwise enum ListBlobsIncludeFlags
 
@@ -1756,6 +1994,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t SequenceNumber = 0;
     }; // struct ResizePageBlobResult
 
+    /**
+     * @brief Extensible enum used to specify when a file's expiration time should be relative to.
+     */
     class ScheduleBlobExpiryOriginType {
     public:
       ScheduleBlobExpiryOriginType() = default;
@@ -1766,9 +2007,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
+      /**
+       * Never expires.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
+      /**
+       * Relative to file's creation time.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
+      /**
+       * Relative to current time.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
+      /**
+       * Absolute time.
+       */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
 
     private:
@@ -2139,6 +2392,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Uniquely identifies a container's or blob's lease.
+         */
         std::string LeaseId;
       }; // struct AcquireBlobContainerLeaseResult
     } // namespace _detail
@@ -2156,6 +2412,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Uniquely identifies a container's or blob's lease.
+         */
         std::string LeaseId;
       }; // struct AcquireBlobLeaseResult
     } // namespace _detail
@@ -2173,6 +2432,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Approximate time remaining in the lease period in seconds.
+         */
         int32_t LeaseTime = 0;
       }; // struct BreakBlobContainerLeaseResult
     } // namespace _detail
@@ -2190,6 +2452,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Approximate time remaining in the lease period in seconds.
+         */
         int32_t LeaseTime = 0;
       }; // struct BreakBlobLeaseResult
     } // namespace _detail
@@ -2207,6 +2472,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Uniquely identifies a container's or blob's lease.
+         */
         std::string LeaseId;
       }; // struct ChangeBlobContainerLeaseResult
     } // namespace _detail
@@ -2224,6 +2492,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Uniquely identifies a container's or blob's lease.
+         */
         std::string LeaseId;
       }; // struct ChangeBlobLeaseResult
     } // namespace _detail
@@ -2328,6 +2599,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Uniquely identifies a container's or blob's lease.
+         */
         std::string LeaseId;
       }; // struct RenewBlobContainerLeaseResult
     } // namespace _detail
@@ -2345,6 +2619,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
+        /**
+         * Uniquely identifies a container's or blob's lease.
+         */
         std::string LeaseId;
       }; // struct RenewBlobLeaseResult
     } // namespace _detail
