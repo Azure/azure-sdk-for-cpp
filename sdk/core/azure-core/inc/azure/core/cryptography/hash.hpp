@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "azure/core/azure_assert.hpp"
+
 #include <memory>
 #include <stdexcept>
 #include <stdint.h>
@@ -60,15 +62,10 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     void Append(const uint8_t* data, std::size_t length)
     {
-      if (!data && length != 0)
-      {
-        throw std::invalid_argument(
-            "Length cannot be " + std::to_string(length) + " if the data pointer is null.");
-      }
-      if (m_isDone)
-      {
-        throw std::runtime_error("Cannot call Append after calling Final().");
-      }
+      AZURE_ASSERT_MSG(
+          (data && length >= 0) || (!data && length == 0),
+          "Length cannot be negative, and length must be 0 if the data pointer is null.");
+      AZURE_ASSERT_MSG(!m_isDone, "Cannot call Append after calling Final().");
       OnAppend(data, length);
     }
 
@@ -83,15 +80,10 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     std::vector<uint8_t> Final(const uint8_t* data, std::size_t length)
     {
-      if (!data && length != 0)
-      {
-        throw std::invalid_argument(
-            "Length cannot be " + std::to_string(length) + " if the data pointer is null.");
-      }
-      if (m_isDone)
-      {
-        throw std::runtime_error("Cannot call Final() multiple times.");
-      }
+      AZURE_ASSERT_MSG(
+          (data && length >= 0) || (!data && length == 0),
+          "Length cannot be negative, and length must be 0 if the data pointer is null.");
+      AZURE_ASSERT_MSG(!m_isDone, "Cannot call Final() multiple times.");
       m_isDone = true;
       return OnFinal(data, length);
     }

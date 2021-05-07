@@ -103,15 +103,29 @@ TEST(Md5Hash, ExpectThrow)
   const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.c_str());
   Md5Hash instance;
 
-  EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
-  EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(instance.Final(nullptr, 1), "");
+  ASSERT_DEATH(instance.Append(nullptr, 1), "");
+#else
+  ASSERT_DEATH(instance.Final(nullptr, 1), "Length cannot be negative, and length must be 0 if the data pointer is null.");
+  ASSERT_DEATH(instance.Append(nullptr, 1), "Length cannot be negative, and length must be 0 if the data pointer is null.");
+#endif
 
   EXPECT_EQ(
       Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())),
       "1B2M2Y8AsgTpgAmY7PhCfg==");
-  EXPECT_THROW(instance.Final(), std::runtime_error);
-  EXPECT_THROW(instance.Final(ptr, data.length()), std::runtime_error);
-  EXPECT_THROW(instance.Append(ptr, data.length()), std::runtime_error);
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(instance.Final(), "");
+  ASSERT_DEATH(instance.Final(ptr, data.length()), "");
+  ASSERT_DEATH(instance.Append(ptr, data.length()), "");
+#else
+  ASSERT_DEATH(instance.Final(), "Cannot call Final");
+  ASSERT_DEATH(instance.Final(ptr, data.length()), "Cannot call Final");
+  ASSERT_DEATH(instance.Append(ptr, data.length()), "Cannot call Append after calling Final");
+#endif
 }
 
 TEST(Md5Hash, CtorDtor)

@@ -33,7 +33,15 @@ class TestBodyStream : public BodyStream {
 TEST(BodyStream, Rewind)
 {
   TestBodyStream tb;
-  EXPECT_THROW(tb.Rewind(), std::logic_error);
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(tb.Rewind(), "");
+#else
+  ASSERT_DEATH(
+      tb.Rewind(),
+      "The specified BodyStream doesn't support Rewind which is required to guarantee fault ");
+#endif
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
 
@@ -53,9 +61,66 @@ TEST(BodyStream, Rewind)
   EXPECT_NO_THROW(ms.Rewind());
 }
 
+TEST(BodyStream, BadInput)
+{
+  TestBodyStream tb;
+  std::vector<uint8_t> buffer(10);
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(tb.Read(NULL, 0), "");
+  ASSERT_DEATH(tb.Read(NULL, -1), "");
+  ASSERT_DEATH(tb.Read(buffer.data(), -1), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, 0, Azure::Core::Context::ApplicationContext), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, -1, Azure::Core::Context::ApplicationContext), "");
+  ASSERT_DEATH(tb.ReadToCount(buffer.data(), -1, Azure::Core::Context::ApplicationContext), "");
+#else
+  ASSERT_DEATH(
+      tb.Read(NULL, 0), "Count cannot be negative, and the buffer pointer cannot be null.");
+  ASSERT_DEATH(
+      tb.Read(NULL, -1), "Count cannot be negative, and the buffer pointer cannot be null.");
+  ASSERT_DEATH(
+      tb.Read(buffer.data(), -1),
+      "Count cannot be negative, and the buffer pointer cannot be null.");
+  ASSERT_DEATH(
+      tb.ReadToCount(NULL, 0, Azure::Core::Context::ApplicationContext),
+      "Count cannot be negative, and the buffer pointer cannot be null.");
+  ASSERT_DEATH(
+      tb.ReadToCount(NULL, -1, Azure::Core::Context::ApplicationContext),
+      "Count cannot be negative, and the buffer pointer cannot be null.");
+  ASSERT_DEATH(
+      tb.ReadToCount(buffer.data(), -1, Azure::Core::Context::ApplicationContext),
+      "Count cannot be negative, and the buffer pointer cannot be null.");
+#endif
+}
+
+TEST(MemoryBodyStream, BadInput)
+{
+  std::vector<uint8_t> buffer(10);
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(MemoryBodyStream(NULL, 0), "");
+  ASSERT_DEATH(MemoryBodyStream(NULL, -1), "");
+  ASSERT_DEATH(MemoryBodyStream(buffer.data(), -1), "");
+#else
+  ASSERT_DEATH(
+      MemoryBodyStream(NULL, 0), "Length cannot be negative, and the data pointer cannot be null.");
+  ASSERT_DEATH(
+      MemoryBodyStream(NULL, -1), "Length cannot be negative, and the data pointer cannot be null.");
+  ASSERT_DEATH(
+      MemoryBodyStream(buffer.data(), -1),
+      "Length cannot be negative, and the data pointer cannot be null.");
+#endif
+}
+
 TEST(FileBodyStream, BadInput)
 {
-  EXPECT_THROW(Azure::Core::IO::FileBodyStream(""), std::runtime_error);
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(FileBodyStream(""), "");
+#else
+  ASSERT_DEATH(FileBodyStream(""), "The file name must not be an empty string.");
+#endif
+
   EXPECT_THROW(Azure::Core::IO::FileBodyStream("FileNotFound"), std::runtime_error);
 }
 
