@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR;

@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  class SharedKeyPolicy : public Core::Http::Policies::HttpPolicy {
+  class SharedKeyPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
     explicit SharedKeyPolicy(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))

@@ -17,6 +17,8 @@ namespace Azure { namespace Storage {
    */
   struct LeaseAccessConditions
   {
+    virtual ~LeaseAccessConditions() = default;
+
     /**
      * @brief Specify this header to perform the operation only if the resource has an
      * active lease mathing this id.
@@ -27,7 +29,7 @@ namespace Azure { namespace Storage {
   /**
    * @brief Specifies HTTP options for conditional requests based on ContentHash.
    */
-  struct ContentHashAccessConditions
+  struct ContentHashAccessConditions final
   {
     /**
      * @brief Specify this header to perform the operation only if the resource's ContentHash

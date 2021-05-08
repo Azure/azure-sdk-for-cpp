@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class PeekHttpRequestPolicy : public Core::Http::Policies::HttpPolicy {
+  class PeekHttpRequestPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
     PeekHttpRequestPolicy(std::function<void(const Core::Http::Request&)> callback)
         : m_callback(std::move(callback))

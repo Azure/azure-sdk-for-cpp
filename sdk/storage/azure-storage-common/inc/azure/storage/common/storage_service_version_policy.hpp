@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  class StorageServiceVersionPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  class StorageServiceVersionPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
   public:
     explicit StorageServiceVersionPolicy(std::string apiVersion)
         : m_apiVersion(std::move(apiVersion))

@@ -11,7 +11,7 @@
 namespace Azure { namespace Storage { namespace _internal {
 
   // Options used by reliable stream
-  struct ReliableStreamOptions
+  struct ReliableStreamOptions final
   {
     // configures the maximun retries to be done.
     int64_t MaxRetryRequests;
@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace _internal {
    * offset provided by the ReliableStream.
    *
    */
-  class ReliableStream : public Azure::Core::IO::BodyStream {
+  class ReliableStream final : public Azure::Core::IO::BodyStream {
   private:
     // initial bodyStream.
     std::unique_ptr<Azure::Core::IO::BodyStream> m_inner;

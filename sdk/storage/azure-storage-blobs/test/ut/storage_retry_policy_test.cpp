@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class MockTransportPolicy : public Core::Http::Policies::HttpPolicy {
+  class MockTransportPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
     MockTransportPolicy() {}
 

@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  class StoragePerRetryPolicy : public Core::Http::Policies::HttpPolicy {
+  class StoragePerRetryPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
     ~StoragePerRetryPolicy() override {}
 

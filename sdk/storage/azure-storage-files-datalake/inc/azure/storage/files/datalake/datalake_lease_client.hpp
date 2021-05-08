@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief DataLakeLeaseClient allows you to manipulate Azure Storage leases on filesystems and
    * paths.
    */
-  class DataLakeLeaseClient {
+  class DataLakeLeaseClient final {
   public:
     /**
      * @brief Initializes a new instance of the DataLakeLeaseClient.

@@ -33,6 +33,8 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   class BlobClient {
   public:
+    virtual ~BlobClient() = default;
+
     /**
      * @brief Initialize a new instance of BlobClient.
      *

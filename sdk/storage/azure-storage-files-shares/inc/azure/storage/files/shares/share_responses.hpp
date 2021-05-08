@@ -21,14 +21,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when forcing the directory handles to close.
      */
-    struct ForceCloseDirectoryHandleResult
+    struct ForceCloseDirectoryHandleResult final
     {
     };
 
     /**
      * @brief The detailed information returned when downloading a file.
      */
-    struct DownloadFileDetails
+    struct DownloadFileDetails final
     {
       /**
        * An HTTP entity tag associated with the file.
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The content and information returned when downloading a file.
      */
-    struct DownloadFileResult
+    struct DownloadFileResult final
     {
       /**
        * The body of the downloaded result.
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when clearing a range in the file.
      */
-    struct ClearFileRangeResult
+    struct ClearFileRangeResult final
     {
       /**
        * An HTTP entity tag associated with the file.
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when downloading a file to a destination.
      */
-    struct DownloadFileToResult
+    struct DownloadFileToResult final
     {
       /**
        * The size of the file.
@@ -187,14 +187,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when forcing a file handle to close.
      */
-    struct ForceCloseFileHandleResult
+    struct ForceCloseFileHandleResult final
     {
     };
 
     /**
      * @brief The information returned when uploading a file from a source.
      */
-    struct UploadFileFromResult
+    struct UploadFileFromResult final
     {
       /**
        * A boolean indicates if the service is encrypted.
@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   } // namespace Models
 
-  class StartFileCopyOperation : public Azure::Core::Operation<Models::FileProperties> {
+  class StartFileCopyOperation final : public Azure::Core::Operation<Models::FileProperties> {
   public:
     Models::FileProperties Value() const override { return m_pollResult; }
 
@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareFileClient;
   };
 
-  class ListSharesPagedResponse : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
+  class ListSharesPagedResponse final : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
   public:
     std::string ServiceEndpoint;
     std::string Prefix;
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListSharesPagedResponse>;
   };
 
-  class ListFilesAndDirectoriesPagedResponse
+  class ListFilesAndDirectoriesPagedResponse final
       : public Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse> {
   public:
     std::string ServiceEndpoint;
@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
   };
 
-  class ListFileHandlesPagedResponse
+  class ListFileHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ListFileHandlesPagedResponse> {
   public:
     std::vector<Models::HandleItem> FileHandles;
@@ -298,7 +298,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListFileHandlesPagedResponse>;
   };
 
-  class ForceCloseAllFileHandlesPagedResponse
+  class ForceCloseAllFileHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ForceCloseAllFileHandlesPagedResponse> {
   public:
     int32_t NumberOfHandlesClosed = 0;
@@ -314,7 +314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
   };
 
-  class ListDirectoryHandlesPagedResponse
+  class ListDirectoryHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse> {
   public:
     std::vector<Models::HandleItem> DirectoryHandles;
@@ -329,7 +329,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class PagedResponse<ListDirectoryHandlesPagedResponse>;
   };
 
-  class ForceCloseAllDirectoryHandlesPagedResponse
+  class ForceCloseAllDirectoryHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse> {
   public:
     int32_t NumberOfHandlesClosed = 0;

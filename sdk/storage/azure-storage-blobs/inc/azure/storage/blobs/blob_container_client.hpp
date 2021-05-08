@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * The BlobContainerClient allows you to manipulate Azure Storage containers and their
    * blobs.
    */
-  class BlobContainerClient {
+  class BlobContainerClient final {
   public:
     /**
      * @brief Initialize a new instance of BlobContainerClient.

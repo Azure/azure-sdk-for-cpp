@@ -23,6 +23,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakePathClient {
   public:
+    virtual ~DataLakePathClient() = default;
+
     /**
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
