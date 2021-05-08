@@ -55,7 +55,10 @@ EnvironmentCredential::EnvironmentCredential(
       if (authority != nullptr)
       {
         ClientSecretCredentialOptions clientSecretCredentialOptions;
-        static_cast<Core::_internal::ClientOptions&>(clientSecretCredentialOptions) = options;
+        static_cast<Azure::Core::Credentials::TokenCredentialOptions&>(
+            clientSecretCredentialOptions)
+            = options;
+
         clientSecretCredentialOptions.AuthorityHost = authority;
 
         m_credentialImpl.reset(new ClientSecretCredential(
