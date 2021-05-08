@@ -275,7 +275,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListSharesOptions m_operationOptions;
 
     friend class ShareServiceClient;
-    friend class PagedResponse<ListSharesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListSharesPagedResponse>;
   };
 
   /**
@@ -321,7 +321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListFilesAndDirectoriesOptions m_operationOptions;
 
     friend class ShareDirectoryClient;
-    friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse>;
   };
 
   /**
@@ -342,7 +342,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListFileHandlesOptions m_operationOptions;
 
     friend class ShareFileClient;
-    friend class PagedResponse<ListFileHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListFileHandlesPagedResponse>;
   };
 
   /**
@@ -367,7 +367,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ForceCloseAllFileHandlesOptions m_operationOptions;
 
     friend class ShareFileClient;
-    friend class PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
   };
 
   /**
@@ -388,7 +388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListDirectoryHandlesOptions m_operationOptions;
 
     friend class ShareDirectoryClient;
-    friend class PagedResponse<ListDirectoryHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse>;
   };
 
   /**
@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ForceCloseAllDirectoryHandlesOptions m_operationOptions;
 
     friend class ShareDirectoryClient;
-    friend class PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
   };
 
 }}}} // namespace Azure::Storage::Files::Shares

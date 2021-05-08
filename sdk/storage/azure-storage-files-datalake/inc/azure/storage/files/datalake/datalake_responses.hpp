@@ -692,7 +692,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ListFileSystemsOptions m_operationOptions;
 
     friend class DataLakeServiceClient;
-    friend class PagedResponse<ListFileSystemsPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListFileSystemsPagedResponse>;
   };
 
   /**
@@ -714,7 +714,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
-    friend class PagedResponse<ListPathsPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListPathsPagedResponse>;
   };
 
   /**
@@ -750,7 +750,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     _detail::PathSetAccessControlRecursiveMode m_mode;
 
     friend class DataLakePathClient;
-    friend class PagedResponse<SetPathAccessControlListRecursivePagedResponse>;
+    friend class Azure::Core::PagedResponse<SetPathAccessControlListRecursivePagedResponse>;
   };
 
   using UpdatePathAccessControlListRecursivePagedResponse
