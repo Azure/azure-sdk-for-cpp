@@ -23,7 +23,7 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    struct LocalCryptographyProviderFactory
+    struct LocalCryptographyProviderFactory final
     {
       LocalCryptographyProviderFactory() = delete;
 

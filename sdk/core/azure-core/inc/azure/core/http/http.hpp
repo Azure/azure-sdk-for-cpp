@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief HTTP transport layer error.
    */
-  class TransportException : public Azure::Core::RequestFailedException {
+  class TransportException final : public Azure::Core::RequestFailedException {
   public:
     /**
      * @brief An error while sending the HTTP request with the transport adapter.
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Http {
    * `Offset + Length - 1` inclusively.
    *
    */
-  struct HttpRange
+  struct HttpRange final
   {
     /**
      * @brief The starting point of the HTTP Range.
@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * HTTP request method.
    */
-  class HttpMethod {
+  class HttpMethod final {
   public:
     HttpMethod() = delete;
     explicit HttpMethod(std::string value) : m_value(std::move(value)) {}
@@ -118,7 +118,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief HTTP request.
    */
-  class Request {
+  class Request final {
     friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
 #if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
@@ -258,7 +258,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   namespace _detail {
-    struct RawResponseHelpers
+    struct RawResponseHelpers final
     {
       /**
        * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace _internal {
 
-    struct HttpShared
+    struct HttpShared final
     {
       AZ_CORE_DLLEXPORT static char const ContentType[];
       AZ_CORE_DLLEXPORT static char const ApplicationJson[];

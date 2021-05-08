@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
    * @brief Empty #Azure::Core::IO::BodyStream.
    * @remark Used for requests with no body.
    */
-  class NullBodyStream : public BodyStream {
+  class NullBodyStream final : public BodyStream {
   private:
     int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override
     {

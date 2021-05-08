@@ -26,11 +26,6 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-if(BUILD_TESTING)
-  # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
-endif()
-
 set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp

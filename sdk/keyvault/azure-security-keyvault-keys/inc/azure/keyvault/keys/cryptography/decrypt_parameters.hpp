@@ -24,7 +24,7 @@ namespace Azure {
    * @brief Parameters for decrypting ciphertext.
    *
    */
-  struct DecryptParameters
+  struct DecryptParameters final
   {
     /**
      * @brief Construct a new Decrypt Parameters object.

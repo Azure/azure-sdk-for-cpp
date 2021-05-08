@@ -22,7 +22,7 @@
 
 #include <vector>
 
-class DllExportTest {
+class DllExportTest final {
   AZ_CORE_DLLEXPORT static const bool DllExportHIncluded;
 };
 

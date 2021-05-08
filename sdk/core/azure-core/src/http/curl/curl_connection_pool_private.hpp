@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * This pool offers static methods and it is allocated statically. There can be only one
    * connection pool per application.
    */
-  class CurlConnectionPool {
+  class CurlConnectionPool final {
 #if defined(TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;

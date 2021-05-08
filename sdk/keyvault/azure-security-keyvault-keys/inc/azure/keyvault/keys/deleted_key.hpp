@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * needed.
    *
    */
-  struct DeletedKey : public KeyVaultKey
+  struct DeletedKey final : public KeyVaultKey
   {
     /**
      * @brief A recovery url that can be used to recover it.

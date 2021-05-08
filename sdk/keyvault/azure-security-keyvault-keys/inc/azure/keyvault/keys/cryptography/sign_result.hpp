@@ -24,7 +24,7 @@ namespace Azure {
    * @brief Represents information about a sign operation.
    *
    */
-  struct SignResult
+  struct SignResult final
   {
     /**
      * @brief Gets the key identifier of the #KeyVaultKey used to sign. This must be stored

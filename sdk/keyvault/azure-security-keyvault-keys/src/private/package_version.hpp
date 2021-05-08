@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MAJOR;

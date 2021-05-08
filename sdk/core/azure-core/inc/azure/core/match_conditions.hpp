@@ -19,6 +19,8 @@ namespace Azure {
  */
 struct MatchConditions
 {
+  virtual ~MatchConditions() = default;
+
   /**
    * @brief Optionally limit requests to resources that match the value specified.
    */

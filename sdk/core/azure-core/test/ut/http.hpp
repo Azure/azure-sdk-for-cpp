@@ -13,7 +13,7 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  class TestHttp : public ::testing::Test {
+  class TestHttp final : public ::testing::Test {
   };
 
 }}} // namespace Azure::Core::Test

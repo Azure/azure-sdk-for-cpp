@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace {
-class NoOpPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+class NoOpPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
 public:
   std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
   {
@@ -26,7 +26,7 @@ public:
 
 // A policy to test retry state
 static int retryCounterState = 0;
-struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPolicy
+struct TestRetryPolicySharedState final : public Azure::Core::Http::Policies::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
   {
@@ -47,7 +47,7 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
 
 Azure::Core::Context::Key const TheKey;
 
-struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
+struct TestContextTreeIntegrity final : public Azure::Core::Http::Policies::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
   {
@@ -66,7 +66,7 @@ struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
   }
 };
 
-class SuccessAfter : public Azure::Core::Http::Policies::HttpPolicy {
+class SuccessAfter final : public Azure::Core::Http::Policies::HttpPolicy {
 private:
   int m_successAfter; // Always success
 

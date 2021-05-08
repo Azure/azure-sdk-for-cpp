@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace _detail {
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_CORE_VERSION_MAJOR;
