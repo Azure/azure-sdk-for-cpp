@@ -54,7 +54,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   }; // namespace Test
 
   // A derived class with no credential and authentication
-  class KeyClientWithNoAuthenticationPolicy final : public Azure::Security::KeyVault::Keys::KeyClient {
+  class KeyClientWithNoAuthenticationPolicy final
+      : public Azure::Security::KeyVault::Keys::KeyClient {
   public:
     explicit KeyClientWithNoAuthenticationPolicy(
         std::string const& vaultUrl,

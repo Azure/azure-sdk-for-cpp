@@ -142,7 +142,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetDeletedKeys.
    *
    */
-  struct GetDeletedKeysOptions final : public Azure::Security::KeyVault::_internal::GetPageResultOptions
+  struct GetDeletedKeysOptions final
+      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
