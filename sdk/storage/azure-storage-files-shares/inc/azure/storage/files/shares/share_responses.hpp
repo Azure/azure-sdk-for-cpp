@@ -204,8 +204,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   } // namespace Models
 
+  /**
+   * @brief A long-running operation to copy a file.
+   */
   class StartFileCopyOperation final : public Azure::Core::Operation<Models::FileProperties> {
   public:
+    /**
+     * @brief Get the #Azure::Storage::Files::Shares::Models::FileProperties object which includes
+     * the latest copy information.
+     *
+     * @return An #Azure::Storage::Files::Shares::Models::FileProperties object.
+     */
     Models::FileProperties Value() const override { return m_pollResult; }
 
     StartFileCopyOperation() = default;
@@ -230,11 +239,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
-    /**
-     * @brief Get the raw HTTP response.
-     * @return A pointer to #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
     const Azure::Core::Http::RawResponse& GetRawResponseInternal() const override
     {
       return *m_rawResponse;
@@ -246,10 +250,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareFileClient;
   };
 
+  /**
+   * @brief Response type for #Azure::Storage::Files::Shares::ShareServiceClient::ListShares.
+   */
   class ListSharesPagedResponse final : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
   public:
+    /**
+     * Service endpoint.
+     */
     std::string ServiceEndpoint;
+    /**
+     * Share name prefix that's used to filter the result.
+     */
     std::string Prefix;
+    /**
+     * File share items.
+     */
     std::vector<Models::ShareItem> Shares;
 
   private:
@@ -259,18 +275,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListSharesOptions m_operationOptions;
 
     friend class ShareServiceClient;
-    friend class PagedResponse<ListSharesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListSharesPagedResponse>;
   };
 
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::Shares::ShareDirectoryClient::ListFilesAndDirectories.
+   */
   class ListFilesAndDirectoriesPagedResponse final
       : public Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse> {
   public:
+    /**
+     * Service endpoint.
+     */
     std::string ServiceEndpoint;
+    /**
+     * Name of the file share.
+     */
     std::string ShareName;
+    /**
+     * The share snapshot for the list operation.
+     */
     std::string ShareSnapshot;
+    /**
+     * Directory path for the list operation.
+     */
     std::string DirectoryPath;
+    /**
+     * Name prefix that's used to filter the result.
+     */
     std::string Prefix;
+    /**
+     * Directory items.
+     */
     std::vector<Models::DirectoryItem> Directories;
+    /**
+     * File items.
+     */
     std::vector<Models::FileItem> Files;
 
   private:
@@ -280,12 +321,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListFilesAndDirectoriesOptions m_operationOptions;
 
     friend class ShareDirectoryClient;
-    friend class PagedResponse<ListFilesAndDirectoriesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse>;
   };
 
+  /**
+   * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::ListHandles.
+   */
   class ListFileHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ListFileHandlesPagedResponse> {
   public:
+    /**
+     * File handles.
+     */
     std::vector<Models::HandleItem> FileHandles;
 
   private:
@@ -295,13 +342,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListFileHandlesOptions m_operationOptions;
 
     friend class ShareFileClient;
-    friend class PagedResponse<ListFileHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListFileHandlesPagedResponse>;
   };
 
+  /**
+   * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::ForceCloseAllHandles.
+   */
   class ForceCloseAllFileHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ForceCloseAllFileHandlesPagedResponse> {
   public:
+    /**
+     * Number of file handles that were closed.
+     */
     int32_t NumberOfHandlesClosed = 0;
+    /**
+     * Number of file handles that fialed to close.
+     */
     int32_t NumberOfHandlesFailedToClose = 0;
 
   private:
@@ -311,12 +367,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ForceCloseAllFileHandlesOptions m_operationOptions;
 
     friend class ShareFileClient;
-    friend class PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ForceCloseAllFileHandlesPagedResponse>;
   };
 
+  /**
+   * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::ListHandles.
+   */
   class ListDirectoryHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse> {
   public:
+    /**
+     * File handles.
+     */
     std::vector<Models::HandleItem> DirectoryHandles;
 
   private:
@@ -326,13 +388,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListDirectoryHandlesOptions m_operationOptions;
 
     friend class ShareDirectoryClient;
-    friend class PagedResponse<ListDirectoryHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse>;
   };
 
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::Shares::ShareDirectoryClient::ForceCloseAllHandles.
+   */
   class ForceCloseAllDirectoryHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse> {
   public:
+    /**
+     * Number of file handles that were closed.
+     */
     int32_t NumberOfHandlesClosed = 0;
+    /**
+     * Number of file handles that fialed to close.
+     */
     int32_t NumberOfHandlesFailedToClose = 0;
 
   private:
@@ -342,7 +414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ForceCloseAllDirectoryHandlesOptions m_operationOptions;
 
     friend class ShareDirectoryClient;
-    friend class PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
+    friend class Azure::Core::PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse>;
   };
 
 }}}} // namespace Azure::Storage::Files::Shares

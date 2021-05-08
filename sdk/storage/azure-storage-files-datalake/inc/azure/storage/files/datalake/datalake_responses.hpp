@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The signed identifiers of the file system.
        */
       std::vector<SignedIdentifier> SignedIdentifiers;
-    }; // struct FileSystemAccessPolicy
+    };
 
     using SetFileSystemAccessPolicyResult = Blobs::Models::SetBlobContainerAccessPolicyResult;
 
@@ -665,11 +665,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   } // namespace Models
 
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::DataLake::DataLakeServiceClient::ListFileSystems.
+   */
   class ListFileSystemsPagedResponse final
       : public Azure::Core::PagedResponse<ListFileSystemsPagedResponse> {
   public:
+    /**
+     * Service endpoint.
+     */
     std::string ServiceEndpoint;
+    /**
+     * File system name prefix that's used to filter the result.
+     */
     std::string Prefix;
+    /**
+     * File system items.
+     */
     std::vector<Models::FileSystemItem> FileSystems;
 
   private:
@@ -679,11 +692,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ListFileSystemsOptions m_operationOptions;
 
     friend class DataLakeServiceClient;
-    friend class PagedResponse<ListFileSystemsPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListFileSystemsPagedResponse>;
   };
 
+  /**
+   * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::ListPaths
+   * and #Azure::Storage::Files::DataLake::DataLakeDirectoryClient::ListPaths.
+   */
   class ListPathsPagedResponse final : public Azure::Core::PagedResponse<ListPathsPagedResponse> {
   public:
+    /**
+     * Path items.
+     */
     std::vector<Models::PathItem> Paths;
 
   private:
@@ -694,15 +714,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
-    friend class PagedResponse<ListPathsPagedResponse>;
+    friend class Azure::Core::PagedResponse<ListPathsPagedResponse>;
   };
 
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::DataLake::DataLakePathClient::SetAccessControlListRecursive.
+   */
   class SetPathAccessControlListRecursivePagedResponse final
       : public Azure::Core::PagedResponse<SetPathAccessControlListRecursivePagedResponse> {
   public:
+    /**
+     * Number of directories where Access Control List has been updated successfully.
+     */
     int32_t NumberOfSuccessfulDirectories = 0;
+    /**
+     * Number of files where Access Control List has been updated successfully.
+     */
     int32_t NumberOfSuccessfulFiles = 0;
+    /**
+     * Number of paths where Access Control List update has failed.
+     */
     int32_t NumberOfFailures = 0;
+    /**
+     * A collection of path entries that failed to update ACL.
+     */
     std::vector<Models::AclFailedEntry> FailedEntries;
 
   private:
@@ -714,7 +750,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     _detail::PathSetAccessControlRecursiveMode m_mode;
 
     friend class DataLakePathClient;
-    friend class PagedResponse<SetPathAccessControlListRecursivePagedResponse>;
+    friend class Azure::Core::PagedResponse<SetPathAccessControlListRecursivePagedResponse>;
   };
 
   using UpdatePathAccessControlListRecursivePagedResponse
