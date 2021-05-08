@@ -93,6 +93,6 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @return C string with explanatory information.
      */
-    char const* what() const noexcept final { return m_message.c_str(); }
+    char const* what() const noexcept override { return m_message.c_str(); }
   };
 }}} // namespace Azure::Core::Credentials
