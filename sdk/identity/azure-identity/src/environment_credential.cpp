@@ -57,7 +57,6 @@ EnvironmentCredential::EnvironmentCredential(
         using namespace Azure::Core::Credentials;
         ClientSecretCredentialOptions clientSecretCredentialOptions;
         static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
-
         clientSecretCredentialOptions.AuthorityHost = authority;
 
         m_credentialImpl.reset(new ClientSecretCredential(
