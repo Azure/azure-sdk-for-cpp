@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  class TestURL final : public ::testing::Test {
+  class TestURL : public ::testing::Test {
   };
 
 }}} // namespace Azure::Core::Test
