@@ -54,10 +54,9 @@ EnvironmentCredential::EnvironmentCredential(
     {
       if (authority != nullptr)
       {
+        using namespace Azure::Core::Credentials;
         ClientSecretCredentialOptions clientSecretCredentialOptions;
-        static_cast<Azure::Core::Credentials::TokenCredentialOptions&>(
-            clientSecretCredentialOptions)
-            = options;
+        static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
 
         clientSecretCredentialOptions.AuthorityHost = authority;
 
