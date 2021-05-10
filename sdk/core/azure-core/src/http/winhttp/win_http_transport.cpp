@@ -201,24 +201,27 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
       exceptionMessage + " Error Code: " + std::to_string(error) + ".");
 }
 
-void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
+void WinHttpTransport::CreateSessionHandle()
 {
-  // Use WinHttpOpen to obtain a session handle.
-  // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
-  handleManager->m_sessionHandle = WinHttpOpen(
-      NULL, // Do not use a fallback user-agent string, and only rely on the header within the
-            // request itself.
-      WINHTTP_ACCESS_TYPE_NO_PROXY,
-      WINHTTP_NO_PROXY_NAME,
-      WINHTTP_NO_PROXY_BYPASS,
-      0);
-
-  if (!handleManager->m_sessionHandle)
+  if (!m_sessionHandle)
   {
-    // Errors include:
-    // ERROR_WINHTTP_INTERNAL_ERROR
-    // ERROR_NOT_ENOUGH_MEMORY
-    GetErrorAndThrow("Error while getting a session handle.");
+    // Use WinHttpOpen to obtain a session handle.
+    // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
+    m_sessionHandle = WinHttpOpen(
+        NULL, // Do not use a fallback user-agent string, and only rely on the header within the
+              // request itself.
+        WINHTTP_ACCESS_TYPE_NO_PROXY,
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS,
+        0);
+
+    if (!m_sessionHandle)
+    {
+      // Errors include:
+      // ERROR_WINHTTP_INTERNAL_ERROR
+      // ERROR_NOT_ENOUGH_MEMORY
+      GetErrorAndThrow("Error while getting a session handle.");
+    }
   }
 }
 
@@ -233,7 +236,7 @@ void WinHttpTransport::CreateConnectionHandle(
   // Specify an HTTP server.
   // This function always operates synchronously.
   handleManager->m_connectionHandle = WinHttpConnect(
-      handleManager->m_sessionHandle,
+      m_sessionHandle,
       StringToWideString(handleManager->m_request.GetUrl().GetHost()).c_str(),
       port == 0 ? INTERNET_DEFAULT_PORT : port,
       0);
@@ -568,7 +571,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 {
   auto handleManager = std::make_unique<_detail::HandleManager>(request, context);
 
-  CreateSessionHandle(handleManager);
+  CreateSessionHandle();
   CreateConnectionHandle(handleManager);
   CreateRequestHandle(handleManager);
 
