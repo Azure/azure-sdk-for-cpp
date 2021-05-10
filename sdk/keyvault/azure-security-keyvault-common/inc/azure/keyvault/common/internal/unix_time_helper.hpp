@@ -17,7 +17,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
   /**
    * @brief Provides convertion methods for unix time to Azure Core Datetime.
    */
-  class UnixTimeConverter {
+  class UnixTimeConverter final {
   public:
     /**
      * @brief Converts unix time to a #Azure::Core::Datetime.

@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Elliptic Curve Cryptography (ECC) curve names.
    *
    */
-  class KeyCurveName {
+  class KeyCurveName final {
   private:
     std::string m_value;
 

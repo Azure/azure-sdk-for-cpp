@@ -21,7 +21,7 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    struct RsaCryptographyProvider : public LocalCryptographyProvider
+    struct RsaCryptographyProvider final : public LocalCryptographyProvider
     {
       RsaCryptographyProvider(
           Azure::Security::KeyVault::Keys::JsonWebKey const& keyMaterial,

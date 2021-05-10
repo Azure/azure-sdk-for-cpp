@@ -20,7 +20,7 @@ namespace {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
-class Md5AlgorithmProvider {
+class Md5AlgorithmProvider final {
 private:
   // Make sure the initial state of status is non-successful
   NTSTATUS m_status = 0;
@@ -86,7 +86,7 @@ Md5AlgorithmProvider const& GetMD5AlgorithmProvider()
   return instance;
 }
 
-class Md5BCrypt : public Azure::Core::Cryptography::Hash {
+class Md5BCrypt final : public Azure::Core::Cryptography::Hash {
 private:
   // Make sure the initial state of status is non-successful
   NTSTATUS m_status = 0;
@@ -159,7 +159,7 @@ Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_uniqu
 
 #elif defined(AZ_PLATFORM_POSIX)
 
-class Md5OpenSSL : public Azure::Core::Cryptography::Hash {
+class Md5OpenSSL final : public Azure::Core::Cryptography::Hash {
 private:
   std::unique_ptr<MD5_CTX> m_context;
 

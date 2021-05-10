@@ -24,7 +24,7 @@ namespace Azure {
    * @brief Represents information about a verify operation.
    *
    */
-  struct VerifyResult
+  struct VerifyResult final
   {
     /**
      * @brief Gets the key identifier of the #KeyVaultKey used to verify.

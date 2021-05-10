@@ -23,7 +23,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
-struct RequestWithContinuationToken
+struct RequestWithContinuationToken final
 {
   std::vector<std::string> Path;
   std::unique_ptr<std::map<std::string, std::string>> Query;

@@ -24,7 +24,7 @@ namespace Azure {
    * @brief An algorithm used for key wrap and unwrap.
    *
    */
-  class KeyWrapAlgorithm {
+  class KeyWrapAlgorithm final {
   private:
     std::string m_value;
 

@@ -20,6 +20,8 @@ namespace Azure {
  */
 struct ModifiedConditions
 {
+  virtual ~ModifiedConditions() = default;
+
   /**
    * @brief Optionally limit requests to resources that have only been modified since this point
    * in time.

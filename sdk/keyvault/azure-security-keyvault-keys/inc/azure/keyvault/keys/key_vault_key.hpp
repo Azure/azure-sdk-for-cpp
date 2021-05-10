@@ -25,6 +25,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct KeyVaultKey
   {
+    virtual ~KeyVaultKey() = default;
+
     /**
      * @brief The cryptographic key, the key type, and the operations you can perform using the key.
      *

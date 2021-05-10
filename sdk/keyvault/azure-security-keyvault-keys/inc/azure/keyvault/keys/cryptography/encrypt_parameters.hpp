@@ -24,7 +24,7 @@ namespace Azure {
    * @brief Parameters for encrypting plaintext.
    *
    */
-  struct EncryptParameters
+  struct EncryptParameters final
   {
     /**
      * @brief Construct a new Encrypt Parameters object.

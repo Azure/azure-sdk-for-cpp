@@ -29,7 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief A long running operation to delete a key.
    *
    */
-  class DeleteKeyOperation
+  class DeleteKeyOperation final
       : public Azure::Core::Operation<Azure::Security::KeyVault::Keys::DeletedKey> {
   private:
     /* DeleteKeyOperation can be constructed only by friends classes (internal creation). The

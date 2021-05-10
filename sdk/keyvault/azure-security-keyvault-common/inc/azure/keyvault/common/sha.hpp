@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault {
    * @brief Defines #SHA256.
    *
    */
-  class SHA256 : public Azure::Core::Cryptography::Hash {
+  class SHA256 final : public Azure::Core::Cryptography::Hash {
   public:
     /**
      * @brief Construct a default instance of #SHA256.
@@ -71,7 +71,7 @@ namespace Azure { namespace Security { namespace KeyVault {
    * @brief Defines #SHA384.
    *
    */
-  class SHA384 : public Azure::Core::Cryptography::Hash {
+  class SHA384 final : public Azure::Core::Cryptography::Hash {
   public:
     /**
      * @brief Construct a default instance of #SHA384.
@@ -121,7 +121,7 @@ namespace Azure { namespace Security { namespace KeyVault {
    * @brief Defines #SHA512.
    *
    */
-  class SHA512 : public Azure::Core::Cryptography::Hash {
+  class SHA512 final : public Azure::Core::Cryptography::Hash {
   public:
     /**
      * @brief Construct a default instance of #SHA512.
