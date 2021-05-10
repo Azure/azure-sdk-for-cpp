@@ -37,8 +37,6 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
       <th>credential class</th>
       <th>usage</th>
       <th>configuration</th>
-      <th>example</th>
-      <th>reference</th>
     </tr>
   </thead>
   <tbody>
