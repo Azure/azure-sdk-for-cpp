@@ -45,8 +45,6 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
     <tr>
       <td><code>ClientSecretCredential</code></td>
       <td>authenticates a service principal using a secret</td>
-      <td><a href="https://github.com/Azure/azure-sdk-for-java/wiki/Set-up-Your-Environment-for-Authentication#creating-a-service-principal-with-the-azure-cli">configuration</a></td>
-      <td><a href="https://github.com/Azure/azure-sdk-for-java/wiki/Azure-Identity-Examples#authenticating-a-service-principal-with-a-client-secret">example</a></td>
       <td><a href="https://docs.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals">Service principal authentication</a></td>
     </tr>
   </tbody>
