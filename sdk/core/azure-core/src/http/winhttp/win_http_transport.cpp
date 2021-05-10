@@ -591,39 +591,12 @@ int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context c
 
   // No need to check for context cancellation before the first I/O because the base class
   // BodyStream::Read already does that.
-
-  // Check for available data.
-  DWORD numberOfBytesAvailable = 0;
-  if (!WinHttpQueryDataAvailable(this->m_handleManager->m_requestHandle, &numberOfBytesAvailable))
-  {
-    // Errors include:
-    // ERROR_WINHTTP_CONNECTION_ERROR
-    // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
-    // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
-    // ERROR_WINHTTP_INTERNAL_ERROR
-    // ERROR_WINHTTP_OPERATION_CANCELLED
-    // ERROR_WINHTTP_TIMEOUT
-    // ERROR_NOT_ENOUGH_MEMORY
-
-    DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
-        "Error while querying how much data is available to read. Error Code: "
-        + std::to_string(error) + ".");
-  }
-
-  DWORD numberOfBytesToRead = numberOfBytesAvailable;
-  if (numberOfBytesAvailable > count)
-  {
-    numberOfBytesToRead = static_cast<DWORD>(count);
-  }
-
-  // Check context cancellation again before the next I/O
-  context.ThrowIfCancelled();
+  (void)context;
 
   if (!WinHttpReadData(
           this->m_handleManager->m_requestHandle,
           (LPVOID)(buffer),
-          numberOfBytesToRead,
+          static_cast<DWORD>(count),
           &numberOfBytesRead))
   {
     // Errors include:
