@@ -25,8 +25,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief Defines options for token authentication.
    */
-  struct ClientSecretCredentialOptions final
-      : public Azure::Core::Credentials::TokenCredentialOptions
+  struct ClientSecretCredentialOptions : public Azure::Core::Credentials::TokenCredentialOptions
   {
   public:
     /**
@@ -45,7 +44,7 @@ namespace Azure { namespace Identity {
    * @brief This class is used by Azure SDK clients to authenticate with the Azure service using a
    * tenant ID, client ID and client secret.
    */
-  class ClientSecretCredential final : public Core::Credentials::TokenCredential {
+  class ClientSecretCredential : public Core::Credentials::TokenCredential {
   private:
     std::string m_tenantId;
     std::string m_clientId;

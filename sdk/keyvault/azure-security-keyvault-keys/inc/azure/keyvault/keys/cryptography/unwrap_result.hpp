@@ -24,7 +24,7 @@ namespace Azure {
    * @brief Represents information about an unwrap operation.
    *
    */
-  struct UnwrapResult final
+  struct UnwrapResult
   {
     /**
      * @brief Gets the key identifier of the #Key used to uwrap.

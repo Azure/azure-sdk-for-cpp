@@ -19,17 +19,11 @@ param(
 Set-StrictMode -Version 3
 
 if (!(Get-Command az -ErrorAction SilentlyContinue)) {
-  Write-Error 'You must have the Azure CLI installed: https://aka.ms/azure-cli'
+  Write-Host 'You must have the Azure CLI installed: https://aka.ms/azure-cli'
   exit 1
 }
 
-az account show *> $null
-if (!$?) {
-  Write-Host 'Running az login...'
-  az login *> $null
-}
-
-az extension show -n azure-devops *> $null
+az extension show -n azure-devops > $null
 if (!$?){
   Write-Host 'Installing azure-devops extension'
   az extension add --name azure-devops

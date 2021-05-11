@@ -34,7 +34,7 @@ namespace Azure {
    * @brief A client used to perform cryptographic operations with Azure Key Vault keys.
    *
    */
-  class CryptographyClient final {
+  class CryptographyClient {
   private:
     std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
     std::string m_keyId;

@@ -17,7 +17,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief An environment credential.
    */
-  class EnvironmentCredential final : public Core::Credentials::TokenCredential {
+  class EnvironmentCredential : public Core::Credentials::TokenCredential {
     std::unique_ptr<TokenCredential> m_credentialImpl;
 
   public:

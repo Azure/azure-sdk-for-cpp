@@ -13,7 +13,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
-class TestTransportPolicy final : public HttpPolicy {
+class TestTransportPolicy : public HttpPolicy {
 private:
   std::function<std::unique_ptr<RawResponse>()> m_send;
 
@@ -34,7 +34,7 @@ public:
   };
 };
 
-class RetryPolicyTest final : public RetryPolicy {
+class RetryPolicyTest : public RetryPolicy {
 private:
   std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
       m_shouldRetryOnTransportFailure;
@@ -319,7 +319,7 @@ TEST(RetryPolicy, ShouldRetryOnTransportFailure)
 }
 
 namespace {
-class RetryLogic final : private RetryPolicy {
+class RetryLogic : private RetryPolicy {
   RetryLogic() : RetryPolicy(RetryOptions()){};
   ~RetryLogic(){};
 

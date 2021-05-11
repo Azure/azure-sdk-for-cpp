@@ -7,10 +7,5 @@ project (azure-security-keyvault LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(BUILD_TESTING)
-  # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
-endif()
-
 add_subdirectory(azure-security-keyvault-common)
 add_subdirectory(azure-security-keyvault-keys)

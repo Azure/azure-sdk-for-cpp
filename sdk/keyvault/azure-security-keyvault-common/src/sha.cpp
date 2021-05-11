@@ -32,7 +32,7 @@ enum class SHASize
 };
 
 /*************************** SHA256 *******************/
-class SHAWithOpenSSL final : public Azure::Core::Cryptography::Hash {
+class SHAWithOpenSSL : public Azure::Core::Cryptography::Hash {
 private:
   EVP_MD_CTX* m_context;
 
@@ -116,7 +116,7 @@ Azure::Security::KeyVault::SHA512::SHA512()
 
 #if defined(AZ_PLATFORM_WINDOWS)
 namespace {
-struct AlgorithmProviderInstance final
+struct AlgorithmProviderInstance
 {
   BCRYPT_ALG_HANDLE Handle;
   std::size_t ContextSize;
@@ -161,7 +161,7 @@ struct AlgorithmProviderInstance final
   ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
 };
 
-class SHAWithBCrypt final : public Azure::Core::Cryptography::Hash {
+class SHAWithBCrypt : public Azure::Core::Cryptography::Hash {
 private:
   std::string m_buffer;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;

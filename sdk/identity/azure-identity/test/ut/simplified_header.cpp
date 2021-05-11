@@ -11,7 +11,7 @@
 #include <azure/identity.hpp>
 #include <gtest/gtest.h>
 
-class DllExportTest final {
+class DllExportTest {
   AZ_IDENTITY_DLLEXPORT static const bool DllExportHIncluded;
 };
 

@@ -232,7 +232,7 @@ TEST(Context, MatchingKeys)
   EXPECT_TRUE(valueT3 == 456);
 }
 
-struct SomeStructForContext final
+struct SomeStructForContext
 {
   int someField = 12345;
 };
@@ -260,7 +260,7 @@ TEST(Context, Ptr)
 
 TEST(Context, NestedClassPtr)
 {
-  class TestClass final {
+  class TestClass {
   private:
     int* m_instanceCount;
 

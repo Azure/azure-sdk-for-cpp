@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 namespace {
-class TestTokenCredential final : public Azure::Core::Credentials::TokenCredential {
+class TestTokenCredential : public Azure::Core::Credentials::TokenCredential {
 private:
   std::shared_ptr<Azure::Core::Credentials::AccessToken const> m_accessToken;
 
@@ -26,7 +26,7 @@ public:
   }
 };
 
-class TestTransportPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
+class TestTransportPolicy : public Azure::Core::Http::Policies::HttpPolicy {
 public:
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request&,
