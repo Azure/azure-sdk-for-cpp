@@ -587,11 +587,11 @@ int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context c
     return 0;
   }
 
-  DWORD numberOfBytesRead = 0;
-
   // No need to check for context cancellation before the first I/O because the base class
   // BodyStream::Read already does that.
   (void)context;
+
+  DWORD numberOfBytesRead = 0;
 
   if (!WinHttpReadData(
           this->m_handleManager->m_requestHandle,
