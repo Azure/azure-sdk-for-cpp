@@ -220,6 +220,40 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManage
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a session handle.");
   }
+
+// These options are only available starting Windows 10 Version 2004, starting 06/09/2020
+// These are primarily round trip time (RTT) performance optimizations, and hence if they don't get
+// set successfully, we shouldn't fail the request and continue as if the options don't exist.
+// Therefore, we just log the error to console and move on.
+#ifdef WINHTTP_OPTION_TCP_FAST_OPEN
+  BOOL tcp_fast_open = TRUE;
+  if (!WinHttpSetOption(
+          handleManager->m_sessionHandle,
+          WINHTTP_OPTION_TCP_FAST_OPEN,
+          &tcp_fast_open,
+          sizeof(tcp_fast_open)))
+  {
+    DWORD error = GetLastError();
+    std::wstring message
+        = L"Unable to set TCP Fast Open. Error Code: " + std::to_wstring(error) + L".\n";
+    wprintf(message.c_str());
+  }
+#endif
+
+#ifdef WINHTTP_OPTION_TLS_FALSE_START
+  BOOL tcp_false_start = TRUE;
+  if (!WinHttpSetOption(
+          handleManager->m_sessionHandle,
+          WINHTTP_OPTION_TLS_FALSE_START,
+          &tcp_false_start,
+          sizeof(tcp_false_start)))
+  {
+    DWORD error = GetLastError();
+    std::wstring message
+        = L"Unable to set TCP False Start. Error Code: " + std::to_wstring(error) + L".\n";
+    wprintf(message.c_str());
+  }
+#endif
 }
 
 void WinHttpTransport::CreateConnectionHandle(
